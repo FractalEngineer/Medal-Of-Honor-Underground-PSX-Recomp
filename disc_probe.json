@@ -1,0 +1,31 @@
+{
+  "cue_path": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\Medal Of Honor Underground (USA)\\MOHU (USA).cue",
+  "cue_name": "MOHU (USA).cue",
+  "bin_name": "MOHU (USA).bin",
+  "track_count": 1,
+  "data_track_size": 748001856,
+  "data_track_md5": "8a2e3361e8272ce09e9a4ea7bd0403ad",
+  "data_track_sha1": "8f5a23bb21e626b4625cfd923aa4e2faec57165f",
+  "data_track_crc32": "91bd1816",
+  "boot_exe": "SLUS_012.70",
+  "serial": "SLUS-01270",
+  "serial_exe": "SLUS_012.70",
+  "volume_id": "MOHU_NTSC",
+  "display_name": "Medal of Honor Underground",
+  "load_address": "0x80010000",
+  "entry_pc": "0x8001F844",
+  "text_size": "0x0002B800",
+  "stack_base": "0x801FFFF0",
+  "require_cue": true,
+  "required_disc_fp": "5abe13ac21c40bd37cccbad669472f507fae740c920b971817a4eab6a49de417",
+  "boot_exe_sha256": "5c4566b7264a29554abb9d868f23cc40e99ebf3b58b9776dfe2f4ae465bbd641",
+  "seed_count": 302,
+  "warnings": [
+    "cue has only 1 TRACK \u2014 Track-01-only dumps fail multi-track netplay/catalog gates; prefer a full Redump cue."
+  ],
+  "notes": [
+    "entry_pc/load_address/text_size/stack_base taken from PS-X EXE header.",
+    "seeds are first-pass boot-EXE JAL targets (+ entry); expect to grow as overlays / runtime paths are discovered.",
+    "required_disc_fp is psxrecomp-toc-v1 (matches runtime DiscIdentity)."
+  ]
+}

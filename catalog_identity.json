@@ -1,0 +1,48 @@
+{
+  "format_version": 1,
+  "game": {
+    "name": "Medal of Honor Underground",
+    "id": "SLUS-01270",
+    "boot_exe": "SLUS_012.70"
+  },
+  "marketing": {
+    "description": "",
+    "publisher": "",
+    "year": "",
+    "region": "USA",
+    "players": 2
+  },
+  "rom_identity": {
+    "cue_name": "MOHU (USA).cue",
+    "bin_name": "MOHU (USA).bin",
+    "track_counts": [
+      1
+    ],
+    "require_cue": true,
+    "data_track": {
+      "size": 748001856,
+      "md5": "8a2e3361e8272ce09e9a4ea7bd0403ad",
+      "sha1": "8f5a23bb21e626b4625cfd923aa4e2faec57165f",
+      "crc32": "91bd1816"
+    },
+    "disc_fp": "5abe13ac21c40bd37cccbad669472f507fae740c920b971817a4eab6a49de417"
+  },
+  "exe": {
+    "load_address": "0x80010000",
+    "entry_pc": "0x8001F844",
+    "text_size": "0x0002B800",
+    "stack_base": "0x801FFFF0"
+  },
+  "seeds": {
+    "count": 302,
+    "source": "boot_exe_jal"
+  },
+  "warnings": [
+    "cue has only 1 TRACK \u2014 Track-01-only dumps fail multi-track netplay/catalog gates; prefer a full Redump cue."
+  ],
+  "notes": [
+    "entry_pc/load_address/text_size/stack_base taken from PS-X EXE header.",
+    "seeds are first-pass boot-EXE JAL targets (+ entry); expect to grow as overlays / runtime paths are discovered.",
+    "required_disc_fp is psxrecomp-toc-v1 (matches runtime DiscIdentity)."
+  ]
+}
