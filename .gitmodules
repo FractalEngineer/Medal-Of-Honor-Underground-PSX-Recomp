@@ -1,6 +1,6 @@
 [submodule "psxrecomp"]
 	path = psxrecomp
-	url = https://github.com/RetroPortingToolKit/psxrecomp.git
+	url = https://github.com/FractalEngineer/psxrecomp.git
 	branch = master
 [submodule "recomp-ui"]
 	path = recomp-ui
