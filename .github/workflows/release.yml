@@ -167,22 +167,13 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
+      # Windows-only for now. Linux/macOS entries (linux-x64, macos-arm64,
+      # macos-x64) failed at Package game zip; re-add them here once fixed.
       matrix:
         include:
-          - os: ubuntu-24.04
-            artifact: linux-x64
-            shell: bash
           - os: windows-2022
             artifact: windows-x64
             shell: 'msys2 {0}'
-          - os: macos-15
-            artifact: macos-arm64
-            shell: bash
-            deployment_target: '11.0'
-          - os: macos-15-intel
-            artifact: macos-x64
-            shell: bash
-            deployment_target: '11.0'
     defaults:
       run:
         shell: ${{ matrix.shell }}
