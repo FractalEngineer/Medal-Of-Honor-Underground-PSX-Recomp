@@ -244,9 +244,37 @@
 - Full receipt:
   [PGXP_RENDER_VIEW_EVIDENCE.md](PGXP_RENDER_VIEW_EVIDENCE.md).
 
+### Persistent build workflow
+
+- Reused the existing `build-vr-pgxp/` executable after the operator created a
+  fresh PGXP save in slot `2`; the zero-pose run reached 240 consecutive pairs
+  with status zero and equal per-eye pose applications.
+- Confirmed that the former save failures came from fixture invalidation, not
+  from reusing a build directory. ABI-flavor changes and runtime source
+  identity changes can invalidate a PGXP state regardless of its directory.
+- Standardized on `build-release/` as the flat A/B control and
+  `build-vr-pgxp/` as the mutable VR development build. Future features will
+  reconfigure the latter in place instead of creating more `build-vr-*`
+  directories.
+
+### OpenXR bootstrap
+
+- Added opt-in `MOHU_VR_OPENXR=1` handling to the diagnostic plugin. It implies
+  stereo proof, render-view, and guest-submit mode, and locates the two eye
+  views from the headset frame.
+- Added a native head-relative menu surface that remains active until the first
+  guarded gameplay stereo frame, plus fail-closed begin/view handling.
+- Reconfigured `build-vr-pgxp/` in place with `PSX_OPENXR=ON`; the framework
+  built the OpenXR loader and runtime successfully without a new build
+  directory.
+- Verified PGXP slot `2` still loads after the rebuild. Without a headset,
+  OpenXR fails at the system stage (`-35`) and the process remains alive on the
+  flat fallback; no pair is submitted.
+- Receipt: [OPENXR_EVIDENCE.md](OPENXR_EVIDENCE.md).
+
 ## Next work
 
 1. Repeat the PGXP pose sweep in additional scenes and near-wall positions.
 2. Rebuild the flat target and repeat interactive boot/menu/gameplay validation.
 3. Label the actor/camera update and separate camera motion from player motion.
-4. Bootstrap the opt-in native-screen OpenXR and per-eye presentation path.
+4. Run and accept the opt-in OpenXR path on a headset.

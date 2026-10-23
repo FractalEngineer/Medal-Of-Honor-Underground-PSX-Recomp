@@ -12,6 +12,7 @@ This directory is the home for retained project documentation.
 - [Camera evidence](vr/CAMERA_EVIDENCE.md)
 - [Stereo view evidence](vr/STEREO_VIEW_EVIDENCE.md)
 - [PGXP render-view evidence](vr/PGXP_RENDER_VIEW_EVIDENCE.md)
+- [OpenXR bootstrap evidence](vr/OPENXR_EVIDENCE.md)
 - [Generated candidate report](vr/ENGINE_EQUIVALENCE_REPORT.md)
 - [Implementation log](vr/IMPLEMENTATION_LOG.md)
 

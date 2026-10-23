@@ -27,6 +27,8 @@ executable and live overlay content.
 10. [PGXP_RENDER_VIEW_EVIDENCE.md](PGXP_RENDER_VIEW_EVIDENCE.md) records the
     full render-view, guest OT submission, projective near-plane path, and
     PGXP save-state flavor requirement.
+11. [OPENXR_EVIDENCE.md](OPENXR_EVIDENCE.md) records the opt-in headset frame
+    lifecycle, native menu surface, and the current fallback-only validation.
 
 The latest machine-ranked function candidates are in
 [ENGINE_EQUIVALENCE_REPORT.md](ENGINE_EQUIVALENCE_REPORT.md). They are
@@ -63,5 +65,7 @@ full-scene parallax pairs from a complete `PSXModRenderView`. Guest `DrawOTag`
 preserves packet provenance for PGXP homogeneous clipping, including a tested
 forward/downward near-plane pose. Render-scoped signed-NCLIP counters now
 receipt zero, lateral, pitch, and yaw poses with no precise-projection misses.
-The OT-only and frame-driver paths remain controls, not stereo evidence. No
-OpenXR mode, launcher, or production VR hook is active yet.
+The OT-only and frame-driver paths remain controls, not stereo evidence. The
+diagnostic plugin can now opt into OpenXR, obtain headset eye views, and submit
+the verified pair. Headset acceptance, production input, and HUD policy remain
+active work.
