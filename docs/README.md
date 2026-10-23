@@ -4,6 +4,7 @@ This directory is the home for retained project documentation.
 
 ## VR port
 
+- [Current handoff](vr/HANDOFF.md)
 - [VR port index](vr/README.md)
 - [Implementation plan](vr/VR_PLAN.md)
 - [Verified baseline](vr/BASELINE.md)

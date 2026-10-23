@@ -7,14 +7,15 @@ executable and live overlay content.
 
 ## Start here
 
-1. [VR_PLAN.md](VR_PLAN.md) defines scope, gates, and implementation order.
-2. [BASELINE.md](BASELINE.md) records the exact source and target revisions,
+1. [HANDOFF.md](HANDOFF.md) is the canonical current state and next-action file.
+2. [VR_PLAN.md](VR_PLAN.md) defines scope, gates, and implementation order.
+3. [BASELINE.md](BASELINE.md) records the exact source and target revisions,
    build configuration, and current verification status.
-3. [ENGINE_EQUIVALENCE.md](ENGINE_EQUIVALENCE.md) tracks candidate function
+4. [ENGINE_EQUIVALENCE.md](ENGINE_EQUIVALENCE.md) tracks candidate function
    mappings and the evidence required before a hook can be registered.
-4. [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md) records completed work and
+5. [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md) records completed work and
    reproducible checks.
-5. [CAMERA_EVIDENCE.md](CAMERA_EVIDENCE.md) records the current camera-motion
+6. [CAMERA_EVIDENCE.md](CAMERA_EVIDENCE.md) records the current camera-motion
    probe and its unresolved mapping work.
 
 The latest machine-ranked function candidates are in
