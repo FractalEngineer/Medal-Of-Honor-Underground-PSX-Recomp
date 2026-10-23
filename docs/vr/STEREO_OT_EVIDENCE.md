@@ -3,7 +3,10 @@
 Date: 2026-10-24
 
 This note records the diagnostic work that followed the byte-identical
-frame-driver replay. It does not claim stereo or OpenXR support.
+frame-driver replay. Its negative controls remain rejected; the later accepted
+same-checkpoint parallax pair is recorded in
+[STEREO_VIEW_EVIDENCE.md](STEREO_VIEW_EVIDENCE.md). It does not claim OpenXR
+support.
 
 ## Correct natural frame entry
 
@@ -126,6 +129,24 @@ Current negative results:
 - Host render-view offset plus full driver replay: full scene, byte-identical.
 - Direct per-eye TRX offset plus post-driver OT base: black pair.
 - Frame-render replay plus clear: incomplete or replaced list, not stereo proof.
+
+## Correction: scoped view offset on frame-render replay
+
+The earlier host-offset result above was produced before the current
+frame-render replay controls and did not isolate zero and signed offsets on
+that path. A later run replayed the guarded frame render at `0x80053BB4` and
+called `psx_mod_render_view_offset()` inside each eye transaction:
+
+- `MOHU_VR_EYE_OFFSET=0` reproduced the full courtyard with a byte-identical
+  left/right pair;
+- `MOHU_VR_EYE_OFFSET=24` produced signed `-24` / `+24` camera offsets, a full
+  courtyard pair, 94,282 changed pixels, and depth-dependent world motion.
+
+This supersedes the old statement that a host view offset always submits an
+identical full-scene pair. The driver replay remains rejected; the accepted
+seam is the frame-render replay. See
+[STEREO_VIEW_EVIDENCE.md](STEREO_VIEW_EVIDENCE.md) for images, hashes, runtime
+cycles, and the zero-offset control.
 
 The black driver/TRX control hashes to:
 

@@ -301,3 +301,14 @@ A secondary writer at `0x800140B0` has caller `0x80091AC4`.
 
 The next boundary to reconstruct is therefore above the prebuilt world-packet
 list, not the frame driver or `DrawOTag` wrapper itself.
+
+## Follow-up: accepted frame-render replay
+
+The next session found the natural caller of the frame driver at `0x80070444`
+(`jal 0x8006D65C` at `0x800705E4`, returning to `0x800705EC`), but did not
+promote it because it also contains simulation and device-state work. Replaying
+the already guarded frame render at `0x80053BB4` with a scoped view offset did
+produce a complete depth-parallax pair while retaining a byte-identical zero
+control. The packet producers above remain useful for future exact-camera and
+visibility work, but the visible packet list is no longer a blocker for stereo
+proof. See [STEREO_VIEW_EVIDENCE.md](STEREO_VIEW_EVIDENCE.md).

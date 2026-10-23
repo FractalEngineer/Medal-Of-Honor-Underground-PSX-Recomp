@@ -2,7 +2,9 @@
 #include "camera_map.h"
 #include "engine_map.h"
 #include "mod_plugins.h"
+#include "vr_pose_math.h"
 
+#include <math.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -15,9 +17,23 @@
 #define MOHU_VR_LEVEL_OFFSET_LIMIT 2048
 #define MOHU_VR_STEREO_PROOF_ENV "MOHU_VR_STEREO_PROOF"
 #define MOHU_VR_EYE_OFFSET_ENV "MOHU_VR_EYE_OFFSET"
+#define MOHU_VR_EYE_OFFSET_ALL_SPANS_ENV "MOHU_VR_EYE_OFFSET_ALL_SPANS"
+#define MOHU_VR_EYE_RENDER_VIEW_ENV "MOHU_VR_EYE_RENDER_VIEW"
+#define MOHU_VR_EYE_VIEW_OFFSET_ENV "MOHU_VR_EYE_VIEW_OFFSET"
+#define MOHU_VR_EYE_YAW_MDEG_ENV "MOHU_VR_EYE_YAW_MDEG"
+#define MOHU_VR_EYE_PITCH_MDEG_ENV "MOHU_VR_EYE_PITCH_MDEG"
+#define MOHU_VR_EYE_HEAD_X_MILLI_ENV "MOHU_VR_EYE_HEAD_X_MILLI"
+#define MOHU_VR_EYE_HEAD_Y_MILLI_ENV "MOHU_VR_EYE_HEAD_Y_MILLI"
+#define MOHU_VR_EYE_HEAD_Z_MILLI_ENV "MOHU_VR_EYE_HEAD_Z_MILLI"
+#define MOHU_VR_EYE_GUEST_SUBMIT_ENV "MOHU_VR_EYE_GUEST_SUBMIT"
 #define MOHU_VR_REPLAY_DRIVER_ENV "MOHU_VR_REPLAY_FRAME_DRIVER"
 #define MOHU_VR_OT_ONLY_ENV "MOHU_VR_STEREO_OT_ONLY"
 #define MOHU_VR_EYE_OFFSET_LIMIT 256
+#define MOHU_VR_EYE_ANGLE_LIMIT 180000
+#define MOHU_VR_EYE_HEAD_MILLI_LIMIT 4096000
+#define MOHU_VR_DIAGNOSTIC_UNITS_PER_METER 1000.0
+#define MOHU_VR_PI 3.14159265358979323846
+#define MOHU_VR_FALLBACK_PROJECTION_H 400.0
 
 #define MOHU_VR_FRAME_CONTEXT_ADDR 0x800A7138u
 #define MOHU_VR_WORLD_POINTER_ADDR 0x800A977Cu
@@ -38,7 +54,16 @@ static uint32_t g_stereo_current_eye;
 static bool g_stereo_base_valid;
 static uint32_t g_stereo_base_trx;
 static uint32_t g_stereo_level_hits[2];
-static uint32_t g_stereo_view_apps[2];
+static uint32_t g_stereo_pose_apps[2];
+static uint32_t g_stereo_guest_submits;
+static bool g_stereo_apply_all_spans;
+static bool g_stereo_render_view;
+static bool g_stereo_guest_submit;
+static bool g_stereo_pose_logged[2];
+static bool g_stereo_pose_failure_reported;
+static int32_t g_stereo_yaw_mdeg;
+static int32_t g_stereo_pitch_mdeg;
+static int32_t g_stereo_head_milli[3];
 static uint32_t g_stereo_waits_skipped;
 static uint32_t g_stereo_ot_words;
 static uint32_t g_stereo_attempts;
@@ -67,6 +92,20 @@ static bool parse_bounded_int(const char* value, int32_t limit,
     }
     *result = (int32_t)parsed;
     return true;
+}
+
+static void parse_optional_int(const char* name, int32_t limit,
+                               int32_t* value) {
+    const char* text = getenv(name);
+    if (!text || !*text) {
+        return;
+    }
+    if (!parse_bounded_int(text, limit, value)) {
+        fprintf(stdout,
+                "mohu-vr-diag: ignored invalid %s=%s (range -%d..%d)\n",
+                name, text, limit, limit);
+        fflush(stdout);
+    }
 }
 
 static uint32_t guest_function_fnv1a(const MohuVrEngineBinding* binding) {
@@ -217,6 +256,105 @@ static bool prepare_stereo_draw_env(CPUState* cpu, uint32_t ra) {
     return true;
 }
 
+static void stereo_quat_multiply(const double a[4], const double b[4],
+                                 double out[4]) {
+    out[0] = a[3] * b[0] + a[0] * b[3] + a[1] * b[2] - a[2] * b[1];
+    out[1] = a[3] * b[1] - a[0] * b[2] + a[1] * b[3] + a[2] * b[0];
+    out[2] = a[3] * b[2] + a[0] * b[1] - a[1] * b[0] + a[2] * b[3];
+    out[3] = a[3] * b[3] - a[0] * b[0] - a[1] * b[1] - a[2] * b[2];
+}
+
+static bool build_stereo_render_view(CPUState* cpu, uint32_t eye,
+                                     PSXModRenderView* view) {
+    double focal = (uint16_t)cpu->gte_ctrl[26];
+    const double width = (double)g_stereo_frame_w;
+    const double height = (double)g_stereo_frame_h;
+    if (!view || width <= 0.0 || height <= 0.0) {
+        return false;
+    }
+
+    const bool guest_projection = focal > 0.0 && focal < 4096.0;
+    if (!guest_projection) {
+        focal = MOHU_VR_FALLBACK_PROJECTION_H;
+    }
+    double ofx = guest_projection
+                     ? (double)(int32_t)cpu->gte_ctrl[24] / 65536.0
+                     : width * 0.5;
+    double ofy = guest_projection
+                     ? (double)(int32_t)cpu->gte_ctrl[25] / 65536.0
+                     : height * 0.5;
+    if (ofx <= 0.0 || ofx >= width) {
+        ofx = width * 0.5;
+    }
+    if (ofy <= 0.0 || ofy >= height) {
+        ofy = height * 0.5;
+    }
+    const double fov[4] = {
+        atan(-ofx / focal),
+        atan((width - ofx) / focal),
+        atan(ofy / focal),
+        -atan((height - ofy) / focal),
+    };
+
+    const double yaw =
+        (double)g_stereo_yaw_mdeg * 0.001 * MOHU_VR_PI / 180.0;
+    const double pitch =
+        (double)g_stereo_pitch_mdeg * 0.001 * MOHU_VR_PI / 180.0;
+    const double qyaw[4] = {0.0, sin(yaw * 0.5), 0.0, cos(yaw * 0.5)};
+    const double qpitch[4] = {sin(pitch * 0.5), 0.0, 0.0,
+                              cos(pitch * 0.5)};
+    double orientation[4];
+    stereo_quat_multiply(qyaw, qpitch, orientation);
+
+    const double eye_sign = eye == PSX_MOD_EYE_LEFT ? -1.0 : 1.0;
+    const double position[3] = {
+        eye_sign * (double)g_stereo_eye_offset /
+                MOHU_VR_DIAGNOSTIC_UNITS_PER_METER +
+            (double)g_stereo_head_milli[0] /
+                (1000.0 * MOHU_VR_DIAGNOSTIC_UNITS_PER_METER),
+        (double)g_stereo_head_milli[1] /
+            (1000.0 * MOHU_VR_DIAGNOSTIC_UNITS_PER_METER),
+        -(double)g_stereo_head_milli[2] /
+            (1000.0 * MOHU_VR_DIAGNOSTIC_UNITS_PER_METER),
+    };
+    const double origin_orientation[4] = {0.0, 0.0, 0.0, 1.0};
+    const double origin_position[3] = {0.0, 0.0, 0.0};
+    if (!vr_pose_to_view(orientation, position, origin_orientation,
+                         origin_position, fov,
+                         MOHU_VR_DIAGNOSTIC_UNITS_PER_METER,
+                         (int)width, (int)height, view)) {
+        if (!g_stereo_pose_failure_reported) {
+            g_stereo_pose_failure_reported = true;
+            fprintf(stdout,
+                    "mohu-vr-diag: stereo_pose conversion failed eye=%u "
+                    "fov=%.6f,%.6f,%.6f,%.6f "
+                    "position=%.6f,%.6f,%.6f orientation=%.6f,%.6f,%.6f,%.6f\n",
+                    eye, fov[0], fov[1], fov[2], fov[3], position[0],
+                    position[1], position[2], orientation[0],
+                    orientation[1], orientation[2], orientation[3]);
+            fflush(stdout);
+        }
+        return false;
+    }
+    if (!g_stereo_pose_logged[eye]) {
+        g_stereo_pose_logged[eye] = true;
+        fprintf(stdout,
+                "mohu-vr-diag: stereo_pose eye=%u h=%.0f ofx=%.3f ofy=%.3f "
+                "projection=%s "
+                "translation=%d,%d,%d precise=%.6f,%.6f,%.6f "
+                "yaw_mdeg=%d pitch_mdeg=%d head_milli=%d,%d,%d\n",
+                eye, focal, ofx, ofy, guest_projection ? "guest" : "fallback",
+                view->translation[0],
+                view->translation[1], view->translation[2],
+                view->translation_precise[0], view->translation_precise[1],
+                view->translation_precise[2], g_stereo_yaw_mdeg,
+                g_stereo_pitch_mdeg, g_stereo_head_milli[0],
+                g_stereo_head_milli[1], g_stereo_head_milli[2]);
+        fflush(stdout);
+    }
+    return true;
+}
+
 static int vr_stereo_eye_draw(CPUState* cpu, void* user, uint32_t eye) {
     (void)user;
     if (!g_stereo_proof || !g_stereo_active || eye > 1u) {
@@ -226,7 +364,35 @@ static int vr_stereo_eye_draw(CPUState* cpu, void* user, uint32_t eye) {
     g_stereo_base_valid = false;
 
     uint32_t ra = cpu->gpr[31];
-    uint32_t ctx = MOHU_VR_FRAME_CONTEXT_ADDR;
+    if (g_stereo_render_view) {
+        PSXModRenderView view;
+        if (!build_stereo_render_view(cpu, eye, &view)) {
+            if (!g_stereo_pose_failure_reported) {
+                g_stereo_pose_failure_reported = true;
+                fprintf(stdout,
+                        "mohu-vr-diag: stereo_pose build failed eye=%u "
+                        "frame=%ux%u h=%u ofx=0x%08X ofy=0x%08X\n",
+                        eye, g_stereo_frame_w, g_stereo_frame_h,
+                        (uint16_t)cpu->gte_ctrl[26], cpu->gte_ctrl[24],
+                        cpu->gte_ctrl[25]);
+                fflush(stdout);
+            }
+            return 0;
+        }
+        if (!psx_mod_render_view(&view)) {
+            if (!g_stereo_pose_failure_reported) {
+                g_stereo_pose_failure_reported = true;
+                fprintf(stdout,
+                        "mohu-vr-diag: stereo_pose rejected eye=%u "
+                        "translation=%d,%d,%d projection=%u precise=%u\n",
+                        eye, view.translation[0], view.translation[1],
+                        view.translation[2], view.projection, view.precise);
+                fflush(stdout);
+            }
+            return 0;
+        }
+        g_stereo_pose_apps[eye]++;
+    }
     if (!prepare_stereo_draw_env(cpu, ra)) {
         return 0;
     }
@@ -277,6 +443,17 @@ static int vr_stereo_eye_draw(CPUState* cpu, void* user, uint32_t eye) {
     if (ot < 0x80000000u || ot >= 0x80200000u) {
         return 0;
     }
+    if (g_stereo_guest_submit) {
+        const MohuVrEngineBinding* draw_otag =
+            mohu_vr_engine_map_find(MOHU_VR_ROLE_DRAW_OTAG);
+        if (!draw_otag || !ensure_binding_verified(draw_otag)) {
+            return 0;
+        }
+        stereo_guest_call(cpu, draw_otag->target_address,
+                          ot + 511u * 4u, 0u, 0u, ra);
+        g_stereo_guest_submits++;
+        return 1;
+    }
     return submit_stereo_ot(ot);
 }
 
@@ -312,13 +489,13 @@ static void run_stereo_proof(CPUState* cpu) {
     if (g_stereo_attempts <= 3u || (g_stereo_attempts % 60u) == 0u) {
         fprintf(stdout,
                 "mohu-vr-diag: stereo_proof attempt=%u pairs=%u rendered=%d "
-                "status=%u y=%u offset=%d level_hits=%u/%u view_apps=%u/%u "
-                "ot_words=%u\n",
+                "status=%u y=%u offset=%d level_hits=%u/%u pose_apps=%u/%u "
+                "guest_submits=%u ot_words=%u\n",
                 g_stereo_attempts, g_stereo_pairs, rendered,
                 psx_mod_render_stereo_status(), frame.y, g_stereo_eye_offset,
                 g_stereo_level_hits[0], g_stereo_level_hits[1],
-                g_stereo_view_apps[0], g_stereo_view_apps[1],
-                g_stereo_ot_words);
+                g_stereo_pose_apps[0], g_stereo_pose_apps[1],
+                g_stereo_guest_submits, g_stereo_ot_words);
         fflush(stdout);
         if (g_replay_frame_driver) {
             fprintf(stdout, "mohu-vr-diag: stereo waits_skipped=%u\n",
@@ -353,14 +530,15 @@ static void vr_diagnostic_entry(CPUState* cpu, uint32_t address) {
                 g_stereo_base_trx = cpu->gte_ctrl[5];
                 g_stereo_base_valid = true;
             }
-            if (g_stereo_eye_offset != 0 &&
-                cpu->gte_ctrl[5] == g_stereo_base_trx) {
+            if (!g_stereo_render_view && g_stereo_eye_offset != 0 &&
+                (g_stereo_apply_all_spans ||
+                 cpu->gte_ctrl[5] == g_stereo_base_trx)) {
                 int32_t signed_offset =
                     g_stereo_current_eye == 0u ? -g_stereo_eye_offset
                                               : g_stereo_eye_offset;
                 cpu->gte_ctrl[5] =
                     (uint32_t)((int32_t)cpu->gte_ctrl[5] + signed_offset);
-                g_stereo_view_apps[eye]++;
+                g_stereo_pose_apps[eye]++;
             }
         } else if (!g_stereo_active && g_level_offset_x != 0 &&
                    !g_level_offset_applied) {
@@ -428,8 +606,32 @@ static void vr_diagnostic_activate(void) {
     const char* replay_driver = getenv(MOHU_VR_REPLAY_DRIVER_ENV);
     g_replay_frame_driver = replay_driver && *replay_driver &&
                             *replay_driver != '0';
+    const char* all_spans = getenv(MOHU_VR_EYE_OFFSET_ALL_SPANS_ENV);
+    g_stereo_apply_all_spans = all_spans && *all_spans && *all_spans != '0';
+    const char* render_view = getenv(MOHU_VR_EYE_RENDER_VIEW_ENV);
+    if (!render_view || !*render_view) {
+        render_view = getenv(MOHU_VR_EYE_VIEW_OFFSET_ENV);
+    }
+    g_stereo_render_view = render_view && *render_view &&
+                           *render_view != '0';
+    parse_optional_int(MOHU_VR_EYE_YAW_MDEG_ENV, MOHU_VR_EYE_ANGLE_LIMIT,
+                       &g_stereo_yaw_mdeg);
+    parse_optional_int(MOHU_VR_EYE_PITCH_MDEG_ENV, MOHU_VR_EYE_ANGLE_LIMIT,
+                       &g_stereo_pitch_mdeg);
+    parse_optional_int(MOHU_VR_EYE_HEAD_X_MILLI_ENV,
+                       MOHU_VR_EYE_HEAD_MILLI_LIMIT,
+                       &g_stereo_head_milli[0]);
+    parse_optional_int(MOHU_VR_EYE_HEAD_Y_MILLI_ENV,
+                       MOHU_VR_EYE_HEAD_MILLI_LIMIT,
+                       &g_stereo_head_milli[1]);
+    parse_optional_int(MOHU_VR_EYE_HEAD_Z_MILLI_ENV,
+                       MOHU_VR_EYE_HEAD_MILLI_LIMIT,
+                       &g_stereo_head_milli[2]);
     const char* ot_only = getenv(MOHU_VR_OT_ONLY_ENV);
     g_stereo_ot_only = ot_only && *ot_only && *ot_only != '0';
+    const char* guest_submit = getenv(MOHU_VR_EYE_GUEST_SUBMIT_ENV);
+    g_stereo_guest_submit = guest_submit && *guest_submit &&
+                            *guest_submit != '0';
     if (g_replay_frame_driver) {
         g_frame_driver_args[0] = MOHU_VR_FRAME_CONTEXT_ADDR;
         g_frame_driver_args_valid = true;
@@ -446,6 +648,9 @@ static void vr_diagnostic_activate(void) {
                     MOHU_VR_EYE_OFFSET_LIMIT, MOHU_VR_EYE_OFFSET_LIMIT);
         }
         (void)psx_mod_set_stereo_presentation(1u);
+        if (g_stereo_render_view) {
+            psx_mod_set_render_projective(1);
+        }
     }
     size_t hooks = 0;
     for (size_t i = 0; i < mohu_vr_engine_map_count(); ++i) {
@@ -457,10 +662,16 @@ static void vr_diagnostic_activate(void) {
     }
     fprintf(stdout,
             "mohu-vr-diag: active bindings=%zu overlay_hooks=%zu read_only=%d "
-            "level_offset_x=%d stereo_proof=%d eye_offset=%d replay_driver=%d\n",
+            "level_offset_x=%d stereo_proof=%d eye_offset=%d render_view=%d "
+            "all_spans=%d replay_driver=%d yaw_mdeg=%d pitch_mdeg=%d "
+            "head_milli=%d,%d,%d guest_submit=%d\n",
             mohu_vr_engine_map_count(), hooks, g_stereo_proof ? 0 : 1,
             g_level_offset_x, g_stereo_proof ? 1 : 0, g_stereo_eye_offset,
-            g_replay_frame_driver ? 1 : 0);
+            g_stereo_render_view ? 1 : 0, g_stereo_apply_all_spans ? 1 : 0,
+            g_replay_frame_driver ? 1 : 0, g_stereo_yaw_mdeg,
+            g_stereo_pitch_mdeg, g_stereo_head_milli[0],
+            g_stereo_head_milli[1], g_stereo_head_milli[2],
+            g_stereo_guest_submit ? 1 : 0);
     fprintf(stdout,
             "mohu-vr-diag: single_player_scene=0x%08X player=0x%08X "
             "player_input_offset=0x%X\n",

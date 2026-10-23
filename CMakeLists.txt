@@ -33,14 +33,19 @@ include("${PSXRECOMP_ROOT}/runtime/runtime.cmake")
 # directory broke all five silently (bead beads-eio.3.101).
 if(MOHU_VR_DIAGNOSTICS)
     set(PSX_PRELOADED_MODS "${CMAKE_CURRENT_SOURCE_DIR}/vr/preloaded")
+    # Full render-view tests need PGXP packet provenance. The default target
+    # below remains the base flavor.
+    set(_MOHU_RUNTIME_OPTIONS PGXP)
 else()
     set(PSX_PRELOADED_MODS "${CMAKE_CURRENT_SOURCE_DIR}/mods/preloaded")
+    set(_MOHU_RUNTIME_OPTIONS)
 endif()
 if(NOT IS_DIRECTORY "${PSX_PRELOADED_MODS}")
     set(PSX_PRELOADED_MODS "NONE")
 endif()
 
 psxrecomp_add_game_runtime(psx-runtime
+    ${_MOHU_RUNTIME_OPTIONS}
     PRELOADED_MODS_DIR "${PSX_PRELOADED_MODS}"
     # ENABLE_NETPLAY_IF_PRESENT
     # NETPLAY_LOBBY_URL "ws://netplay.retcomm.net:8765"
