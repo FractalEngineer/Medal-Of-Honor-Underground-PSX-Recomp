@@ -106,3 +106,45 @@ With an active headset runtime, require:
 
 The current native surface and per-eye path have not been accepted on a
 headset, and the existing controller and HUD work remains future scope.
+
+## Headless null-HMD acceptance
+
+The shared launcher now has a SteamVR null-HMD mode, matching the reference
+repository's test layout. It temporarily forces Valve's null driver, starts
+SteamVR, runs the normal OpenXR path, and restores the original
+`steamvr.vrsettings` after stopping its own processes:
+
+```powershell
+.\RunVR-SteamVR.bat -Headless -Seconds 10
+```
+
+The default scale profile now matches the accepted reference profile:
+
+| Setting | Value |
+| --- | --- |
+| User IPD calibration | `67` mm |
+| `WorldScale` | `3` |
+| Base units per meter | `716.417910447761` |
+| Effective units per meter | `238.805970149254` |
+| Stereo shedding | off |
+| Desktop VSync while XR runs | off |
+
+The first headset run used the previous unscaled `716.418` units-per-meter
+profile. It tracked correctly, but the operator reported an oversized world and
+black flashing. The null-HMD run validates the corrected submission profile;
+visual headset acceptance of the scale and flashing fix is still required.
+
+On 2026-10-24, a 6-second null-HMD run loaded PGXP slot `2` and produced:
+
+- startup receipt `submitted=3`, `empty=0`, `failures=0`, `tracking=1`;
+- stereo proof advancing from `pairs=3` to `pairs=60` in the 2-second sample;
+- `rendered=1` with `pairs=attempts` at every sample;
+- zero OpenXR begin failures and zero eye-view failures;
+- 120 guest `DrawOTag` submissions by the second sample;
+- successful SteamVR stop and settings restoration (`forcedDriver` and
+  `driver_null` absent after exit).
+
+The retained receipt is generated as `analysis/vr-baseline/startup.json` and
+`analysis/vr-baseline/openxr-smoke.json` for each local run. Null-HMD testing
+verifies runtime submission and cadence; it does not replace visual comfort,
+world-scale, or flicker acceptance on the physical headset.

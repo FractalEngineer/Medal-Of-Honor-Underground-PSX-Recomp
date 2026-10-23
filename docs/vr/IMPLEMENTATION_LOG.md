@@ -273,9 +273,24 @@
   flat fallback; no pair is submitted.
 - Receipt: [OPENXR_EVIDENCE.md](OPENXR_EVIDENCE.md).
 
+### Headless OpenXR acceptance
+
+- Ported the reference repository's SteamVR null-HMD settings helper and
+  `-Headless` launcher mode to Underground.
+- Adopted the reference scale profile: 67 mm IPD calibration, `WorldScale=3`,
+  and 238.806 effective game units per metre.
+- Disabled the redundant desktop VSync wait while the OpenXR compositor owns
+  pacing.
+- Verified slot `2`, a sustained 57-pair sample over 2 seconds, zero empty
+  startup frames, zero XR begin/view failures, and clean SteamVR settings
+  restoration.
+- The earlier physical-headset run used the unscaled profile and reported an
+  oversized world plus black flashing. Visual retest of the corrected profile
+  remains the next gate.
+
 ## Next work
 
 1. Repeat the PGXP pose sweep in additional scenes and near-wall positions.
 2. Rebuild the flat target and repeat interactive boot/menu/gameplay validation.
 3. Label the actor/camera update and separate camera motion from player motion.
-4. Run and accept the opt-in OpenXR path on a headset.
+4. Retest the corrected scale and VSync profile on the physical headset.

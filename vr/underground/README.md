@@ -86,10 +86,26 @@ $env:MOHU_VR_OPENXR = '1'
 
 OpenXR mode implies the render-view, guest-submit, and stereo-proof flags. It
 shows boot/menu content on a native head-relative surface, then switches to one
-complete per-eye pair at gameplay. The default world scale is 716.4179 GTE
-units per metre; `MOHU_VR_UNITS_PER_METER`, `MOHU_VR_MENU_DISTANCE`, and
-`MOHU_VR_MENU_WIDTH` tune it. Start the headset runtime before launch. The
-current no-headset receipt validates only compile and fail-closed fallback.
+complete per-eye pair at gameplay. The launcher defaults to `WorldScale=3`
+with a 67 mm IPD calibration, leaving 238.80597 effective GTE units per metre.
+`MOHU_VR_UNITS_PER_METER`, `MOHU_VR_MENU_DISTANCE`, and
+`MOHU_VR_MENU_WIDTH` remain the underlying runtime controls. Start the headset
+runtime before a physical launch.
+
+For no-headset OpenXR validation, use SteamVR's null driver through the shared
+launcher:
+
+```powershell
+.\RunVR-SteamVR.bat -Headless -Seconds 10
+```
+
+The launcher forces the null HMD only for that process, waits for complete
+stereo pairs, restores the original SteamVR settings, and stops SteamVR when
+done. The default profile is `-IPDmm 67 -WorldScale 3`, which matches the
+reference game's accepted provisional profile and produces
+`238.805970149254` effective GTE units per metre. `-UnitsPerMeter` remains
+available as a base-mapping override; `WorldScale` is applied after it.
+Headset IPD positions still come from the OpenXR runtime.
 
 PGXP diagnostic states use ABI `131106`; base-flavor states use `34`. Savestates
 also carry the framework execution identity, so runtime source changes can
