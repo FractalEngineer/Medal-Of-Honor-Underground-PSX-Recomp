@@ -97,6 +97,61 @@
 - The engine map compiles standalone with Clang using
   `-std=c11 -Wall -Wextra -Werror`.
 
+### Scene draw bridge
+
+- Identified the overlay function at `0x80090760` as the draw bridge containing
+  the live entity-transform call site whose return address is `0x800908E4`.
+  The function is bounded by the next prologue at `0x800911D4`.
+- Recorded the exact 2,676-byte SHA-256 and FNV-1a guards. The function saves
+  GTE control state, calls the entity transformer, loads GTE RT from the composed
+  scratch matrix, and performs three RTPS operations per draw pass.
+- Added a static-confirmed read-only diagnostic binding. It does not write guest
+  state; the entry hook exists only to capture the caller contract.
+- Live confirmation observed `0x80090760 <-- 0x80091854`; the bridge returned
+  through the branch at `0x800919BC`. Added a second guarded, read-only binding
+  for the 840-byte dispatcher at `0x80091854`.
+- The dispatcher is live-confirmed from `0x800913A0` with return address
+  `0x80091420`. Added a guarded binding for that 1,204-byte entity render entry;
+  its alternate paths mean it is not yet a safe whole-scene replay callback.
+- The entity render entry is called by a 180-byte wrapper at `0x80079AF8`
+  (`$ra=0x80079B50`). Added a guarded binding for this wrapper; a second call
+  site at `0x80079CD4` shows that the wrapper is not the frame root.
+- The wrapper is live-confirmed from the 472-byte actor render entry at
+  `0x80076A50` (`$ra=0x80076B90`). The parent branches on actor flags before
+  calling it, so it is not yet a whole-frame callback.
+- The actor render entry is live-confirmed from a 352-byte player-oriented entry
+  at `0x8008AB84` (`$ra=0x8008AC60`). It reads the verified player input field
+  at `+0x39C` before calling the actor path.
+- The player entry is invoked indirectly through the object vtable at
+  `object+0x384`; the return address `0x8008AC60` follows the `jalr` in
+  `0x80078E08`. Added a guarded binding for that 436-byte actor update dispatcher.
+- The actor dispatcher is live-confirmed from `0x80053BB4`. Disassembly shows a
+  complete frame sequence: scene setup, two conditional world passes, render
+  environment, display projection, actor traversal, player draw, and the wait
+  helper. This is the first whole-frame draw candidate; replay must omit the
+  embedded wait helper.
+- Added an opt-in dual-eye replay proof at `0x80053BB4`. It reproduces the
+  pre-wait frame calls twice under the runtime's rollback transaction. A zero
+  offset published a pair; frame tracing then showed zero GPU primitives, so an
+  unchanged pair was correctly rejected as evidence.
+- Matched the reference `DrawOTag` at `0x800172D8` to Underground
+  `0x80018B50` and added its exact byte guard to the replay. The submission call
+  is required after the scene-building calls and before the omitted wait helper.
+- The first frame-render replay submitted 1,002/1,004 primitives per eye but
+  produced identical images because its ordering table was already built before
+  entry. Added an environment-gated, guarded experiment that replays the full
+  frame driver at `0x8006D66C` so geometry generation and submission share the
+  same eye transaction.
+- Completed the frame-driver replay by finishing the verified
+  `0x8009D828` wait early and skipping the post-render timer update at
+  `0x8004356C` inside the eye transaction. The run published 180 pairs with
+  four level-transformer entries per eye and no watchdog aborts.
+- The driver pair remained byte-identical. This proves the visible level
+  ordering table is generated before `0x8006D66C`; the next search must move to
+  that earlier geometry-generation boundary.
+- Clarified that the write trace names renderer output, not the camera update
+  that originally authored the camera motion.
+
 ### VR isolation invariant
 
 - All VR implementation and diagnostic files are kept under the root `vr/`

@@ -1,6 +1,6 @@
 # VR Port Handoff
 
-Last updated: 2026-10-23
+Last updated: 2026-10-24
 
 This is the canonical current-state handoff for the Underground VR port. Update
 it before ending every implementation session.
@@ -10,7 +10,7 @@ it before ending every implementation session.
 | Item | Value |
 | --- | --- |
 | Target branch | `feature/vr-port` |
-| Last implementation commit | `3ea600b` |
+| Last implementation commit | pending this checkpoint |
 | Target base | `7fcb0ca35af683ac38c4c501347d59916a924aa4` |
 | Reference branch | `master` |
 | Reference commit | `b33a7d96d596214233d3aef5ecacbf3736ad29e3` |
@@ -40,7 +40,7 @@ modify it as part of VR work.
 
 ## Current implementation
 
-The engine map is in `vr/underground/engine_map.c`. Five mappings are recorded
+The engine map is in `vr/underground/engine_map.c`. Sixteen mappings are recorded
 with function SHA-256 and FNV-1a guards:
 
 | Role | Reference | Underground | Evidence |
@@ -50,6 +50,17 @@ with function SHA-256 and FNV-1a guards:
 | GTE RT/TR loader | `0x80013E58` | `0x80013EB4` | Byte-identical; live function ring |
 | Level vertex transformer | `0x8008B3E8` | `0x80099960` | 710/710 opcodes; 12 RTPS; live execution |
 | Gameplay render wait | `0x80090B80` | `0x8009D828` | 110/110 opcodes; live execution |
+| Scene draw bridge | undiscovered | `0x80090760` | 669 instructions; live caller chain |
+| Scene draw dispatcher | undiscovered | `0x80091854` | 840 bytes; live execution |
+| Entity render entry | `0x800824D0` | `0x800913A0` | 1,204 bytes; live execution |
+| Render-list wrapper | undiscovered | `0x80079AF8` | 180 bytes; live execution |
+| Actor render entry | undiscovered | `0x80076A50` | 472 bytes; live execution |
+| Player render entry | undiscovered | `0x8008AB84` | 352 bytes; live execution |
+| Actor update dispatcher | undiscovered | `0x80078E08` | object vtable dispatch; live execution |
+| Frame render | undiscovered | `0x80053BB4` | 240 bytes; live execution |
+| Frame driver | undiscovered | `0x8006D66C` | 1,496 bytes; replay execution |
+| DrawOTag | `0x800172D8` | `0x80018B50` | 26 instructions; live submission |
+| Post-render update | undiscovered | `0x8004356C` | 1,588 bytes; live execution |
 
 The live-confirmed entity transform calls `0x80013B40`, not the near-identical
 duplicate at `0x80014184`. The node transformer calls `0x80013EB4`, not
@@ -60,12 +71,12 @@ The opt-in diagnostic plugin is:
 - Source: `vr/underground/vr_diagnostic.c`
 - Package: `vr/preloaded/packages/mohu.vr.diagnostic/0.1.0/manifest.toml`
 - Plugin ID: `mohu.vr.diagnostic`
-- Behavior: read-only function-entry logging after exact function-byte
-  verification
+- Behavior: function-entry logging after exact function-byte verification, plus
+  environment-gated replay experiments. Canonical execution is unchanged unless
+  `MOHU_VR_STEREO_PROOF=1`.
 
-The diagnostic target reports five active bindings, three overlay hooks, and
-successfully verifies the entity, level-transform, and render-wait functions in
-the isolated slot-0 scene.
+The diagnostic target reports sixteen active bindings and thirteen overlay hooks.
+The isolated slot-0 scene verifies the render chain through the frame driver.
 
 The single-player scene roots are measured:
 
@@ -94,8 +105,17 @@ the function-byte hash.
   `0x8008C000`.
 - The level transformer consumes the camera's rotation in GTE RT and projects
   camera-relative coordinates with TR zero.
-- The stable scene/player pointer globals are now mapped (see above). The exact
-  actor/camera update function that owns the RT load remains to be labelled.
+- The stable scene/player pointer globals are mapped (see above). The frame
+  render chain is mapped, but the high-level actor/camera update that originates
+  camera motion remains unresolved.
+- `0x80090760` is a render bridge, not the camera updater. It saves GTE state,
+  calls `0x80093830`, projects three RTPS groups, builds packets, and restores
+  state.
+- The render call chain is
+  `0x80053BB4 -> 0x80078E08 -> object+0x384 -> 0x8008AB84 -> ... ->
+  0x80090760`.
+- `0x80053BB4` is followed by the verified wait helper `0x80053CFC`, which calls
+  `0x8009D828`.
 
 See `CAMERA_EVIDENCE.md` for measurements.
 
@@ -125,6 +145,40 @@ At `TRX + 20`, far rows aligned at +2 px, mid rows at +5 px, and near rows at
 +6 px. The HUD and first-person weapon remained fixed. This establishes true
 world-space parallax for the future eye-replay path.
 
+## Stereo replay probe
+
+The diagnostic build contains an environment-gated stereo experiment:
+
+```powershell
+$env:MOHU_VR_STEREO_PROOF = '1'
+$env:MOHU_VR_EYE_OFFSET = '24'
+$env:MOHU_VR_REPLAY_FRAME_DRIVER = '1'
+```
+
+The replay path:
+
+1. Starts from `0x8006D66C` in a rollback-safe `psx_mod_render_stereo`
+   transaction.
+2. Applies signed `TRX` offsets at the verified level transformer.
+3. Finishes `0x8009D828` early inside the transaction so the emulated wait cannot
+   block replay.
+4. Skips the post-render timer update at `0x8004356C`, which otherwise reads
+   uncheckpointed device `0x1F801C0C`.
+5. Submits the ordering table through guarded `DrawOTag` at `0x80018B50`.
+
+Measured result:
+
+- Zero-offset frame-render replay published pairs successfully.
+- Full-driver replay published 180 pairs in the sampled run with four
+  level-transformer entries per eye and no watchdog abort.
+- `DrawOTag` submission produced roughly 1,000 GPU primitives per eye.
+- The resulting left and right PNGs were still byte-identical.
+
+Conclusion: rollback, wait bypass, submission, and per-eye CPU/GTE balance work,
+but the visible level ordering table is generated before `0x8006D66C`. This
+replay is diagnostic only and remains off by default. It is **not** parallax
+proof and is not an OpenXR path.
+
 ## Build and test state
 
 Flat build:
@@ -146,6 +200,8 @@ VR diagnostic build:
 - A 512x240 screenshot confirmed the saved state is a playable courtyard scene.
 - Interpreter-only diagnostic captures confirmed the camera roots and the
   `TRX` world-space probe.
+- Hidden-window OpenGL replay confirmed the runtime stereo transaction can
+  publish complete pairs with balanced eye cycles.
 
 Last checks:
 
@@ -153,8 +209,10 @@ Last checks:
 - Engine-map and diagnostic-plugin C files compile with
   `-Wall -Wextra -Werror`.
 - All VR documentation links resolve.
-- The diagnostic target builds and activates five guarded bindings.
+- The diagnostic target builds and activates sixteen guarded bindings.
 - TRX 0/20/200 A/B captures produce the expected depth-dependent world motion.
+- Frame-driver replay completes and balances both eyes, but is rejected as image
+  evidence because the eyes are identical.
 - No owned game process remains running.
 
 The first startup smoke used the default memcard directory before isolation and
@@ -187,20 +245,24 @@ $env:PSX_LOAD_SLOT = '0'
 Expected startup:
 
 ```text
-mohu-vr-diag: active bindings=5 overlay_hooks=3 read_only=1 level_offset_x=0
+mohu-vr-diag: active bindings=16 overlay_hooks=13 read_only=1 level_offset_x=0 stereo_proof=0 eye_offset=0 replay_driver=0
 mohu-vr-diag: single_player_scene=0x800AA174 player=0x800AA17C player_input_offset=0x39C
 ```
 
 ## Open gates
 
-1. Label the actor/camera update function that owns the RT load.
-2. Separate camera motion from player translation over controlled inputs.
-3. Add guarded entry instrumentation for the main-EXE node/loader path only
-   through the supported recompiler hook process if it becomes necessary.
-4. Complete interactive flat boot/menu/gameplay validation.
-5. Implement the minimal OpenXR/native-screen startup path without modifying
+1. Find the geometry-generation boundary before `0x8006D66C` that builds the
+   visible level ordering table.
+2. Replay from that boundary with the verified `TRX` eye offset and prove a
+   non-identical pair with depth-dependent motion.
+3. Keep the wait bypass and post-render timer skip scoped strictly to eye replay.
+4. Label the actor/camera update function and separate camera motion from player
+   translation over controlled inputs.
+5. Complete interactive flat boot/menu/gameplay validation.
+6. Implement the minimal OpenXR/native-screen startup path without modifying
    defaults used by `RunFlat` or the existing flat executable.
-6. Then proceed to checkpoint/no-op replay, zero-IPD stereo, and real parallax.
+7. Only after a true parallax pair, connect the verified pair to OpenXR
+   presentation and headset pose.
 
-Do not begin state-changing stereo hooks before the camera and player ownership
-is settled.
+Do not treat the current frame-driver replay as working stereo. The rollback
+transaction is proven; the visible geometry is still outside it.
