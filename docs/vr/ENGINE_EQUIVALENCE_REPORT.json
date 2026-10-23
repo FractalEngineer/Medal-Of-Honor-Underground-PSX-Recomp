@@ -1,6 +1,6 @@
 {
   "discover_prologues": true,
-  "generated_utc": "2026-10-23T13:23:59+00:00",
+  "generated_utc": "2026-10-23T13:36:04+00:00",
   "landmarks": [
     {
       "candidates": [
@@ -21,7 +21,7 @@
           "stores": 16,
           "target_address": "0x80093830",
           "target_identity": "overlay-91ef75121345",
-          "target_image": "target overlay 17 @0x8008C000 91ef7512",
+          "target_image": "target overlay 16 @0x8008C000 91ef7512",
           "token_ratio": 0.829268
         },
         {
@@ -61,28 +61,8 @@
           "stores": 10,
           "target_address": "0x8009A478",
           "target_identity": "overlay-fe5742fbf669",
-          "target_image": "target overlay 18 @0x80097000 fe5742fb",
+          "target_image": "target overlay 17 @0x80097000 fe5742fb",
           "token_ratio": 0.04878
-        },
-        {
-          "branches": 3,
-          "calls": 2,
-          "classification": "low similarity",
-          "gte": {},
-          "gte_ratio": 1.0,
-          "instructions": 36,
-          "length_ratio": 0.878049,
-          "loads": 3,
-          "opcode_ratio": 0.363636,
-          "profile_ratio": 0.882791,
-          "returns": 0,
-          "score": 0.413746,
-          "source_image": "source overlay 14 @0x80074000 c9fcfbe4",
-          "stores": 12,
-          "target_address": "0x8006E924",
-          "target_identity": "overlay-764bda4b4153",
-          "target_image": "target overlay 11 @0x8006B000 764bda4b",
-          "token_ratio": 0.103896
         },
         {
           "branches": 1,
@@ -101,7 +81,7 @@
           "stores": 8,
           "target_address": "0x8008AF90",
           "target_identity": "overlay-6667c9b45416",
-          "target_image": "target overlay 16 @0x80089000 6667c9b4",
+          "target_image": "target overlay 15 @0x80089000 6667c9b4",
           "token_ratio": 0.085714
         },
         {
@@ -121,7 +101,7 @@
           "stores": 8,
           "target_address": "0x800998D4",
           "target_identity": "overlay-fe5742fbf669",
-          "target_image": "target overlay 18 @0x80097000 fe5742fb",
+          "target_image": "target overlay 17 @0x80097000 fe5742fb",
           "token_ratio": 0.089552
         },
         {
@@ -141,7 +121,7 @@
           "stores": 19,
           "target_address": "0x8007A494",
           "target_identity": "overlay-a7fc9016abe8",
-          "target_image": "target overlay 14 @0x80076000 a7fc9016",
+          "target_image": "target overlay 13 @0x80076000 a7fc9016",
           "token_ratio": 0.089888
         },
         {
@@ -163,6 +143,26 @@
           "target_identity": "overlay-71d0ce257858",
           "target_image": "target overlay 2 @0x80040000 71d0ce25",
           "token_ratio": 0.109589
+        },
+        {
+          "branches": 1,
+          "calls": 2,
+          "classification": "low similarity",
+          "gte": {},
+          "gte_ratio": 1.0,
+          "instructions": 42,
+          "length_ratio": 0.97619,
+          "loads": 3,
+          "opcode_ratio": 0.409639,
+          "profile_ratio": 0.791521,
+          "returns": 0,
+          "score": 0.400868,
+          "source_image": "source overlay 14 @0x80074000 c9fcfbe4",
+          "stores": 4,
+          "target_address": "0x8001F844",
+          "target_identity": "main-6ea5e7d0c719",
+          "target_image": "target main EXE",
+          "token_ratio": 0.048193
         }
       ],
       "role": "entity transform",
@@ -268,7 +268,7 @@
           "stores": 46,
           "target_address": "0x800863BC",
           "target_identity": "overlay-46bcea658060",
-          "target_image": "target overlay 15 @0x80082000 46bcea65",
+          "target_image": "target overlay 14 @0x80082000 46bcea65",
           "token_ratio": 0.079625
         },
         {
@@ -290,7 +290,7 @@
           "stores": 23,
           "target_address": "0x80092BB8",
           "target_identity": "overlay-91ef75121345",
-          "target_image": "target overlay 17 @0x8008C000 91ef7512",
+          "target_image": "target overlay 16 @0x8008C000 91ef7512",
           "token_ratio": 0.05277
         },
         {
@@ -312,7 +312,7 @@
           "stores": 53,
           "target_address": "0x80077FE0",
           "target_identity": "overlay-a7fc9016abe8",
-          "target_image": "target overlay 14 @0x80076000 a7fc9016",
+          "target_image": "target overlay 13 @0x80076000 a7fc9016",
           "token_ratio": 0.062963
         },
         {
@@ -443,7 +443,7 @@
           "stores": 3,
           "target_address": "0x80086280",
           "target_identity": "overlay-46bcea658060",
-          "target_image": "target overlay 15 @0x80082000 46bcea65",
+          "target_image": "target overlay 14 @0x80082000 46bcea65",
           "token_ratio": 0.101266
         },
         {
@@ -486,8 +486,8 @@
           "source_image": "source main EXE",
           "stores": 17,
           "target_address": "0x80067EF4",
-          "target_identity": "overlay-80fa516c5632",
-          "target_image": "target overlay 10 @0x80066000 80fa516c",
+          "target_identity": "overlay-777f033e8f80",
+          "target_image": "target overlay 10 @0x80067000 777f033e",
           "token_ratio": 0.068027
         },
         {
@@ -508,8 +508,8 @@
           "source_image": "source main EXE",
           "stores": 18,
           "target_address": "0x8006CD3C",
-          "target_identity": "overlay-764bda4b4153",
-          "target_image": "target overlay 11 @0x8006B000 764bda4b",
+          "target_identity": "overlay-21d648bade97",
+          "target_image": "target overlay 11 @0x8006C000 21d648ba",
           "token_ratio": 0.071006
         },
         {
@@ -599,7 +599,7 @@
           "stores": 120,
           "target_address": "0x80090760",
           "target_identity": "overlay-91ef75121345",
-          "target_image": "target overlay 17 @0x8008C000 91ef7512",
+          "target_image": "target overlay 16 @0x8008C000 91ef7512",
           "token_ratio": 0.303286
         },
         {
@@ -621,7 +621,7 @@
           "stores": 158,
           "target_address": "0x80099960",
           "target_identity": "overlay-fe5742fbf669",
-          "target_image": "target overlay 18 @0x80097000 fe5742fb",
+          "target_image": "target overlay 17 @0x80097000 fe5742fb",
           "token_ratio": 0.100977
         },
         {
@@ -643,7 +643,7 @@
           "stores": 28,
           "target_address": "0x8008FCE8",
           "target_identity": "overlay-91ef75121345",
-          "target_image": "target overlay 17 @0x8008C000 91ef7512",
+          "target_image": "target overlay 16 @0x8008C000 91ef7512",
           "token_ratio": 0.088235
         },
         {
@@ -665,7 +665,7 @@
           "stores": 48,
           "target_address": "0x800976D0",
           "target_identity": "overlay-fe5742fbf669",
-          "target_image": "target overlay 18 @0x80097000 fe5742fb",
+          "target_image": "target overlay 17 @0x80097000 fe5742fb",
           "token_ratio": 0.081046
         },
         {
@@ -690,7 +690,7 @@
           "stores": 68,
           "target_address": "0x80090224",
           "target_identity": "overlay-91ef75121345",
-          "target_image": "target overlay 17 @0x8008C000 91ef7512",
+          "target_image": "target overlay 16 @0x8008C000 91ef7512",
           "token_ratio": 0.086753
         },
         {
@@ -712,7 +712,7 @@
           "stores": 55,
           "target_address": "0x8008DE88",
           "target_identity": "overlay-91ef75121345",
-          "target_image": "target overlay 17 @0x8008C000 91ef7512",
+          "target_image": "target overlay 16 @0x8008C000 91ef7512",
           "token_ratio": 0.036772
         },
         {
@@ -756,7 +756,7 @@
           "stores": 54,
           "target_address": "0x8009CB7C",
           "target_identity": "overlay-fe5742fbf669",
-          "target_image": "target overlay 18 @0x80097000 fe5742fb",
+          "target_image": "target overlay 17 @0x80097000 fe5742fb",
           "token_ratio": 0.107006
         }
       ],
@@ -805,7 +805,7 @@
           "stores": 120,
           "target_address": "0x80090760",
           "target_identity": "overlay-91ef75121345",
-          "target_image": "target overlay 17 @0x8008C000 91ef7512",
+          "target_image": "target overlay 16 @0x8008C000 91ef7512",
           "token_ratio": 0.291105
         },
         {
@@ -827,7 +827,7 @@
           "stores": 28,
           "target_address": "0x8008FCE8",
           "target_identity": "overlay-91ef75121345",
-          "target_image": "target overlay 17 @0x8008C000 91ef7512",
+          "target_image": "target overlay 16 @0x8008C000 91ef7512",
           "token_ratio": 0.10089
         },
         {
@@ -852,7 +852,7 @@
           "stores": 68,
           "target_address": "0x80090224",
           "target_identity": "overlay-91ef75121345",
-          "target_image": "target overlay 17 @0x8008C000 91ef7512",
+          "target_image": "target overlay 16 @0x8008C000 91ef7512",
           "token_ratio": 0.097561
         },
         {
@@ -874,7 +874,7 @@
           "stores": 48,
           "target_address": "0x800976D0",
           "target_identity": "overlay-fe5742fbf669",
-          "target_image": "target overlay 18 @0x80097000 fe5742fb",
+          "target_image": "target overlay 17 @0x80097000 fe5742fb",
           "token_ratio": 0.089725
         },
         {
@@ -896,7 +896,7 @@
           "stores": 158,
           "target_address": "0x80099960",
           "target_identity": "overlay-fe5742fbf669",
-          "target_image": "target overlay 18 @0x80097000 fe5742fb",
+          "target_image": "target overlay 17 @0x80097000 fe5742fb",
           "token_ratio": 0.103986
         },
         {
@@ -918,7 +918,7 @@
           "stores": 55,
           "target_address": "0x8008DE88",
           "target_identity": "overlay-91ef75121345",
-          "target_image": "target overlay 17 @0x8008C000 91ef7512",
+          "target_image": "target overlay 16 @0x8008C000 91ef7512",
           "token_ratio": 0.041989
         },
         {
@@ -962,7 +962,7 @@
           "stores": 54,
           "target_address": "0x8009CB7C",
           "target_identity": "overlay-fe5742fbf669",
-          "target_image": "target overlay 18 @0x80097000 fe5742fb",
+          "target_image": "target overlay 17 @0x80097000 fe5742fb",
           "token_ratio": 0.109705
         }
       ],
@@ -1006,7 +1006,7 @@
           "stores": 24,
           "target_address": "0x800913A0",
           "target_identity": "overlay-91ef75121345",
-          "target_image": "target overlay 17 @0x8008C000 91ef7512",
+          "target_image": "target overlay 16 @0x8008C000 91ef7512",
           "token_ratio": 0.565588
         },
         {
@@ -1026,7 +1026,7 @@
           "stores": 11,
           "target_address": "0x80091854",
           "target_identity": "overlay-91ef75121345",
-          "target_image": "target overlay 17 @0x8008C000 91ef7512",
+          "target_image": "target overlay 16 @0x8008C000 91ef7512",
           "token_ratio": 0.230769
         },
         {
@@ -1046,7 +1046,7 @@
           "stores": 25,
           "target_address": "0x8007A554",
           "target_identity": "overlay-a7fc9016abe8",
-          "target_image": "target overlay 14 @0x80076000 a7fc9016",
+          "target_image": "target overlay 13 @0x80076000 a7fc9016",
           "token_ratio": 0.156522
         },
         {
@@ -1090,26 +1090,6 @@
           "token_ratio": 0.178794
         },
         {
-          "branches": 13,
-          "calls": 6,
-          "classification": "low similarity",
-          "gte": {},
-          "gte_ratio": 1.0,
-          "instructions": 124,
-          "length_ratio": 0.433566,
-          "loads": 21,
-          "opcode_ratio": 0.346341,
-          "profile_ratio": 0.944253,
-          "returns": 1,
-          "score": 0.394611,
-          "source_image": "source overlay 14 @0x80074000 c9fcfbe4",
-          "stores": 14,
-          "target_address": "0x80073560",
-          "target_identity": "overlay-b148e588aa7c",
-          "target_image": "target overlay 13 @0x80072000 b148e588",
-          "token_ratio": 0.156098
-        },
-        {
           "branches": 25,
           "calls": 12,
           "classification": "low similarity",
@@ -1148,6 +1128,26 @@
           "target_identity": "overlay-0842593972a3",
           "target_image": "target overlay 4 @0x80047000 08425939",
           "token_ratio": 0.120635
+        },
+        {
+          "branches": 29,
+          "calls": 2,
+          "classification": "low similarity",
+          "gte": {},
+          "gte_ratio": 1.0,
+          "instructions": 234,
+          "length_ratio": 0.818182,
+          "loads": 60,
+          "opcode_ratio": 0.292308,
+          "profile_ratio": 0.907925,
+          "returns": 1,
+          "score": 0.388957,
+          "source_image": "source overlay 14 @0x80074000 c9fcfbe4",
+          "stores": 27,
+          "target_address": "0x8004195C",
+          "target_identity": "overlay-71d0ce257858",
+          "target_image": "target overlay 2 @0x80040000 71d0ce25",
+          "token_ratio": 0.096154
         }
       ],
       "role": "per-model render entry",
@@ -1187,7 +1187,7 @@
           "stores": 158,
           "target_address": "0x80099960",
           "target_identity": "overlay-fe5742fbf669",
-          "target_image": "target overlay 18 @0x80097000 fe5742fb",
+          "target_image": "target overlay 17 @0x80097000 fe5742fb",
           "token_ratio": 0.987324
         },
         {
@@ -1209,7 +1209,7 @@
           "stores": 54,
           "target_address": "0x8009CB7C",
           "target_identity": "overlay-fe5742fbf669",
-          "target_image": "target overlay 18 @0x80097000 fe5742fb",
+          "target_image": "target overlay 17 @0x80097000 fe5742fb",
           "token_ratio": 0.100307
         },
         {
@@ -1234,7 +1234,7 @@
           "stores": 120,
           "target_address": "0x80090760",
           "target_identity": "overlay-91ef75121345",
-          "target_image": "target overlay 17 @0x8008C000 91ef7512",
+          "target_image": "target overlay 16 @0x8008C000 91ef7512",
           "token_ratio": 0.08992
         },
         {
@@ -1278,7 +1278,7 @@
           "stores": 55,
           "target_address": "0x8008DE88",
           "target_identity": "overlay-91ef75121345",
-          "target_image": "target overlay 17 @0x8008C000 91ef7512",
+          "target_image": "target overlay 16 @0x8008C000 91ef7512",
           "token_ratio": 0.029035
         },
         {
@@ -1300,7 +1300,7 @@
           "stores": 48,
           "target_address": "0x800976D0",
           "target_identity": "overlay-fe5742fbf669",
-          "target_image": "target overlay 18 @0x80097000 fe5742fb",
+          "target_image": "target overlay 17 @0x80097000 fe5742fb",
           "token_ratio": 0.045977
         },
         {
@@ -1322,7 +1322,7 @@
           "stores": 28,
           "target_address": "0x8008FCE8",
           "target_identity": "overlay-91ef75121345",
-          "target_image": "target overlay 17 @0x8008C000 91ef7512",
+          "target_image": "target overlay 16 @0x8008C000 91ef7512",
           "token_ratio": 0.048936
         },
         {
@@ -1465,7 +1465,7 @@
           "stores": 2,
           "target_address": "0x800767D4",
           "target_identity": "overlay-a7fc9016abe8",
-          "target_image": "target overlay 14 @0x80076000 a7fc9016",
+          "target_image": "target overlay 13 @0x80076000 a7fc9016",
           "token_ratio": 0.52381
         },
         {
@@ -1564,7 +1564,7 @@
           "stores": 14,
           "target_address": "0x80087C94",
           "target_identity": "overlay-46bcea658060",
-          "target_image": "target overlay 15 @0x80082000 46bcea65",
+          "target_image": "target overlay 14 @0x80082000 46bcea65",
           "token_ratio": 0.161137
         },
         {
@@ -1584,7 +1584,7 @@
           "stores": 11,
           "target_address": "0x80083044",
           "target_identity": "overlay-46bcea658060",
-          "target_image": "target overlay 15 @0x80082000 46bcea65",
+          "target_image": "target overlay 14 @0x80082000 46bcea65",
           "token_ratio": 0.168317
         },
         {
@@ -1668,26 +1668,6 @@
           "token_ratio": 0.157303
         },
         {
-          "branches": 8,
-          "calls": 1,
-          "classification": "low similarity",
-          "gte": {},
-          "gte_ratio": 1.0,
-          "instructions": 99,
-          "length_ratio": 0.9,
-          "loads": 20,
-          "opcode_ratio": 0.363636,
-          "profile_ratio": 0.912121,
-          "returns": 1,
-          "score": 0.423796,
-          "source_image": "source overlay 16 @0x80090000 25b98476",
-          "stores": 11,
-          "target_address": "0x8006E414",
-          "target_identity": "overlay-764bda4b4153",
-          "target_image": "target overlay 11 @0x8006B000 764bda4b",
-          "token_ratio": 0.114833
-        },
-        {
           "branches": 11,
           "calls": 5,
           "classification": "low similarity",
@@ -1704,8 +1684,28 @@
           "stores": 15,
           "target_address": "0x80087E28",
           "target_identity": "overlay-46bcea658060",
-          "target_image": "target overlay 15 @0x80082000 46bcea65",
+          "target_image": "target overlay 14 @0x80082000 46bcea65",
           "token_ratio": 0.139535
+        },
+        {
+          "branches": 5,
+          "calls": 6,
+          "classification": "low similarity",
+          "gte": {},
+          "gte_ratio": 1.0,
+          "instructions": 111,
+          "length_ratio": 0.990991,
+          "loads": 18,
+          "opcode_ratio": 0.262443,
+          "profile_ratio": 0.937183,
+          "returns": 1,
+          "score": 0.415442,
+          "source_image": "source overlay 16 @0x80090000 25b98476",
+          "stores": 14,
+          "target_address": "0x80043BA0",
+          "target_identity": "overlay-240385f84e9c",
+          "target_image": "target overlay 3 @0x80043000 240385f8",
+          "token_ratio": 0.126697
         }
       ],
       "role": "gameplay render wait",
@@ -1767,7 +1767,7 @@
           "stores": 54,
           "target_address": "0x8009CB7C",
           "target_identity": "overlay-fe5742fbf669",
-          "target_image": "target overlay 18 @0x80097000 fe5742fb",
+          "target_image": "target overlay 17 @0x80097000 fe5742fb",
           "token_ratio": 0.118081
         },
         {
@@ -1789,7 +1789,7 @@
           "stores": 48,
           "target_address": "0x800976D0",
           "target_identity": "overlay-fe5742fbf669",
-          "target_image": "target overlay 18 @0x80097000 fe5742fb",
+          "target_image": "target overlay 17 @0x80097000 fe5742fb",
           "token_ratio": 0.049808
         },
         {
@@ -1811,7 +1811,7 @@
           "stores": 28,
           "target_address": "0x8008FCE8",
           "target_identity": "overlay-91ef75121345",
-          "target_image": "target overlay 17 @0x8008C000 91ef7512",
+          "target_image": "target overlay 16 @0x8008C000 91ef7512",
           "token_ratio": 0.047525
         },
         {
@@ -1833,7 +1833,7 @@
           "stores": 158,
           "target_address": "0x80099960",
           "target_identity": "overlay-fe5742fbf669",
-          "target_image": "target overlay 18 @0x80097000 fe5742fb",
+          "target_image": "target overlay 17 @0x80097000 fe5742fb",
           "token_ratio": 0.093401
         },
         {
@@ -1901,7 +1901,7 @@
           "stores": 39,
           "target_address": "0x8009A614",
           "target_identity": "overlay-fe5742fbf669",
-          "target_image": "target overlay 18 @0x80097000 fe5742fb",
+          "target_image": "target overlay 17 @0x80097000 fe5742fb",
           "token_ratio": 0.036364
         }
       ],
@@ -1945,7 +1945,7 @@
           "stores": 79,
           "target_address": "0x8008D81C",
           "target_identity": "overlay-91ef75121345",
-          "target_image": "target overlay 17 @0x8008C000 91ef7512",
+          "target_image": "target overlay 16 @0x8008C000 91ef7512",
           "token_ratio": 0.514886
         },
         {
@@ -1967,7 +1967,7 @@
           "stores": 6,
           "target_address": "0x8008E5C8",
           "target_identity": "overlay-91ef75121345",
-          "target_image": "target overlay 17 @0x8008C000 91ef7512",
+          "target_image": "target overlay 16 @0x8008C000 91ef7512",
           "token_ratio": 0.054381
         },
         {
@@ -2078,7 +2078,7 @@
           "stores": 64,
           "target_address": "0x8008C620",
           "target_identity": "overlay-91ef75121345",
-          "target_image": "target overlay 17 @0x8008C000 91ef7512",
+          "target_image": "target overlay 16 @0x8008C000 91ef7512",
           "token_ratio": 0.055285
         },
         {
@@ -2141,7 +2141,7 @@
           "stores": 8,
           "target_address": "0x8008A174",
           "target_identity": "overlay-6667c9b45416",
-          "target_image": "target overlay 16 @0x80089000 6667c9b4",
+          "target_image": "target overlay 15 @0x80089000 6667c9b4",
           "token_ratio": 0.357143
         },
         {
@@ -2181,7 +2181,7 @@
           "stores": 3,
           "target_address": "0x80079FA0",
           "target_identity": "overlay-a7fc9016abe8",
-          "target_image": "target overlay 14 @0x80076000 a7fc9016",
+          "target_image": "target overlay 13 @0x80076000 a7fc9016",
           "token_ratio": 0.210526
         },
         {
@@ -2221,7 +2221,7 @@
           "stores": 3,
           "target_address": "0x800765E8",
           "target_identity": "overlay-a7fc9016abe8",
-          "target_image": "target overlay 14 @0x80076000 a7fc9016",
+          "target_image": "target overlay 13 @0x80076000 a7fc9016",
           "token_ratio": 0.214286
         },
         {
@@ -2241,7 +2241,7 @@
           "stores": 4,
           "target_address": "0x8009AE70",
           "target_identity": "overlay-fe5742fbf669",
-          "target_image": "target overlay 18 @0x80097000 fe5742fb",
+          "target_image": "target overlay 17 @0x80097000 fe5742fb",
           "token_ratio": 0.185185
         },
         {
@@ -2265,24 +2265,24 @@
           "token_ratio": 0.115385
         },
         {
-          "branches": 1,
+          "branches": 0,
           "calls": 0,
           "classification": "low similarity",
           "gte": {},
           "gte_ratio": 1.0,
-          "instructions": 23,
-          "length_ratio": 0.884615,
-          "loads": 3,
-          "opcode_ratio": 0.489796,
-          "profile_ratio": 0.819398,
+          "instructions": 13,
+          "length_ratio": 0.5,
+          "loads": 10,
+          "opcode_ratio": 0.512821,
+          "profile_ratio": 0.692308,
           "returns": 1,
-          "score": 0.484687,
+          "score": 0.485897,
           "source_image": "source overlay 14 @0x80074000 c9fcfbe4",
-          "stores": 4,
-          "target_address": "0x80022F08",
-          "target_identity": "main-6ea5e7d0c719",
-          "target_image": "target main EXE",
-          "token_ratio": 0.204082
+          "stores": 0,
+          "target_address": "0x80070410",
+          "target_identity": "overlay-def9baa91fd5",
+          "target_image": "target overlay 12 @0x80070000 def9baa9",
+          "token_ratio": 0.307692
         }
       ],
       "role": "weapon vertex filter",
@@ -2326,7 +2326,7 @@
           "stores": 17,
           "target_address": "0x80076C28",
           "target_identity": "overlay-a7fc9016abe8",
-          "target_image": "target overlay 14 @0x80076000 a7fc9016",
+          "target_image": "target overlay 13 @0x80076000 a7fc9016",
           "token_ratio": 0.861538
         },
         {
@@ -2346,7 +2346,7 @@
           "stores": 14,
           "target_address": "0x8009BE98",
           "target_identity": "overlay-fe5742fbf669",
-          "target_image": "target overlay 18 @0x80097000 fe5742fb",
+          "target_image": "target overlay 17 @0x80097000 fe5742fb",
           "token_ratio": 0.300885
         },
         {
@@ -2366,7 +2366,7 @@
           "stores": 7,
           "target_address": "0x80076D2C",
           "target_identity": "overlay-a7fc9016abe8",
-          "target_image": "target overlay 14 @0x80076000 a7fc9016",
+          "target_image": "target overlay 13 @0x80076000 a7fc9016",
           "token_ratio": 0.3
         },
         {
@@ -2405,29 +2405,9 @@
           "source_image": "source overlay 13 @0x8006A000 3c1c8089",
           "stores": 20,
           "target_address": "0x8006CFC4",
-          "target_identity": "overlay-764bda4b4153",
-          "target_image": "target overlay 11 @0x8006B000 764bda4b",
+          "target_identity": "overlay-21d648bade97",
+          "target_image": "target overlay 11 @0x8006C000 21d648ba",
           "token_ratio": 0.061538
-        },
-        {
-          "branches": 5,
-          "calls": 7,
-          "classification": "low similarity",
-          "gte": {},
-          "gte_ratio": 1.0,
-          "instructions": 71,
-          "length_ratio": 0.915493,
-          "loads": 11,
-          "opcode_ratio": 0.367647,
-          "profile_ratio": 0.832611,
-          "returns": 1,
-          "score": 0.446134,
-          "source_image": "source overlay 13 @0x8006A000 3c1c8089",
-          "stores": 9,
-          "target_address": "0x800728E8",
-          "target_identity": "overlay-b148e588aa7c",
-          "target_image": "target overlay 13 @0x80072000 b148e588",
-          "token_ratio": 0.176471
         },
         {
           "branches": 2,
@@ -2466,8 +2446,28 @@
           "stores": 10,
           "target_address": "0x80086B80",
           "target_identity": "overlay-46bcea658060",
-          "target_image": "target overlay 15 @0x80082000 46bcea65",
+          "target_image": "target overlay 14 @0x80082000 46bcea65",
           "token_ratio": 0.119658
+        },
+        {
+          "branches": 4,
+          "calls": 5,
+          "classification": "low similarity",
+          "gte": {},
+          "gte_ratio": 1.0,
+          "instructions": 53,
+          "length_ratio": 0.815385,
+          "loads": 11,
+          "opcode_ratio": 0.457627,
+          "profile_ratio": 0.869521,
+          "returns": 1,
+          "score": 0.436287,
+          "source_image": "source overlay 13 @0x8006A000 3c1c8089",
+          "stores": 8,
+          "target_address": "0x80057D60",
+          "target_identity": "overlay-9eac80391134",
+          "target_image": "target overlay 8 @0x80057000 9eac8039",
+          "token_ratio": 0.118644
         }
       ],
       "role": "primary shot basis",
@@ -2505,7 +2505,7 @@
           "stores": 17,
           "target_address": "0x8009B3A8",
           "target_identity": "overlay-fe5742fbf669",
-          "target_image": "target overlay 18 @0x80097000 fe5742fb",
+          "target_image": "target overlay 17 @0x80097000 fe5742fb",
           "token_ratio": 0.953271
         },
         {
@@ -2525,7 +2525,7 @@
           "stores": 67,
           "target_address": "0x8009B64C",
           "target_identity": "overlay-fe5742fbf669",
-          "target_image": "target overlay 18 @0x80097000 fe5742fb",
+          "target_image": "target overlay 17 @0x80097000 fe5742fb",
           "token_ratio": 0.197248
         },
         {
@@ -2545,7 +2545,7 @@
           "stores": 16,
           "target_address": "0x80097AAC",
           "target_identity": "overlay-fe5742fbf669",
-          "target_image": "target overlay 18 @0x80097000 fe5742fb",
+          "target_image": "target overlay 17 @0x80097000 fe5742fb",
           "token_ratio": 0.090909
         },
         {
@@ -2565,7 +2565,7 @@
           "stores": 11,
           "target_address": "0x80083044",
           "target_identity": "overlay-46bcea658060",
-          "target_image": "target overlay 15 @0x80082000 46bcea65",
+          "target_image": "target overlay 14 @0x80082000 46bcea65",
           "token_ratio": 0.113402
         },
         {
@@ -2668,6 +2668,26 @@
     {
       "candidates": [
         {
+          "branches": 0,
+          "calls": 0,
+          "classification": "low similarity",
+          "gte": {},
+          "gte_ratio": 0.0,
+          "instructions": 13,
+          "length_ratio": 0.282609,
+          "loads": 10,
+          "opcode_ratio": 0.440678,
+          "profile_ratio": 0.64214,
+          "returns": 1,
+          "score": 0.385695,
+          "source_image": "source overlay 15 @0x8008A000 81b86e73",
+          "stores": 0,
+          "target_address": "0x80070410",
+          "target_identity": "overlay-def9baa91fd5",
+          "target_image": "target overlay 12 @0x80070000 def9baa9",
+          "token_ratio": 0.40678
+        },
+        {
           "branches": 2,
           "calls": 0,
           "classification": "low similarity",
@@ -2684,7 +2704,7 @@
           "stores": 8,
           "target_address": "0x8008A174",
           "target_identity": "overlay-6667c9b45416",
-          "target_image": "target overlay 16 @0x80089000 6667c9b4",
+          "target_image": "target overlay 15 @0x80089000 6667c9b4",
           "token_ratio": 0.236842
         },
         {
@@ -2744,7 +2764,7 @@
           "stores": 2,
           "target_address": "0x800921D0",
           "target_identity": "overlay-91ef75121345",
-          "target_image": "target overlay 17 @0x8008C000 91ef7512",
+          "target_image": "target overlay 16 @0x8008C000 91ef7512",
           "token_ratio": 0.188235
         },
         {
@@ -2764,7 +2784,7 @@
           "stores": 4,
           "target_address": "0x80095788",
           "target_identity": "overlay-91ef75121345",
-          "target_image": "target overlay 17 @0x8008C000 91ef7512",
+          "target_image": "target overlay 16 @0x8008C000 91ef7512",
           "token_ratio": 0.130435
         },
         {
@@ -2788,26 +2808,6 @@
           "token_ratio": 0.183908
         },
         {
-          "branches": 8,
-          "calls": 1,
-          "classification": "low similarity",
-          "gte": {},
-          "gte_ratio": 0.0,
-          "instructions": 50,
-          "length_ratio": 0.92,
-          "loads": 10,
-          "opcode_ratio": 0.395833,
-          "profile_ratio": 0.78913,
-          "returns": 1,
-          "score": 0.335496,
-          "source_image": "source overlay 15 @0x8008A000 81b86e73",
-          "stores": 3,
-          "target_address": "0x80072468",
-          "target_identity": "overlay-b148e588aa7c",
-          "target_image": "target overlay 13 @0x80072000 b148e588",
-          "token_ratio": 0.145833
-        },
-        {
           "branches": 3,
           "calls": 5,
           "classification": "low similarity",
@@ -2824,7 +2824,7 @@
           "stores": 3,
           "target_address": "0x80095AF8",
           "target_identity": "overlay-91ef75121345",
-          "target_image": "target overlay 17 @0x8008C000 91ef7512",
+          "target_image": "target overlay 16 @0x8008C000 91ef7512",
           "token_ratio": 0.131868
         }
       ],

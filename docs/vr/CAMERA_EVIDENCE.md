@@ -23,9 +23,8 @@ zero. This agrees with the reference game's camera-relative storage model.
 
 A write trace over scratchpad `0x1F800000..0x1F800100` reported sampled writers
 in the range `0x80090B98..0x8009115C`, with return address `0x800908E4`. The
-producer is in overlay capture `91ef75121345` at base `0x8008C000`. Its owning
-function boundary and caller contract still need disassembly before any hook is
-proposed.
+producer is in the overlay loaded at base `0x8008C000`. Its owning function
+boundary and caller contract still need disassembly before any hook is proposed.
 
 The trace also exposed stable pointer-like arguments:
 

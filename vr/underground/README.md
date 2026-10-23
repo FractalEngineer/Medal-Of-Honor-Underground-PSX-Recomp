@@ -10,9 +10,11 @@ Underground. It is intentionally not compiled into the current flat
 - a specific target overlay capture hash;
 - observed execution in the loaded Underground gameplay capture.
 
-The map does not register hooks. A later adapter must verify the game ID,
-overlay hash, function bytes, and caller contract before activation. The flat
-launcher and existing executable must continue to work without any VR state.
+The map itself does not register hooks. Its opt-in diagnostic consumer verifies
+function bytes and logs entry registers without changing guest state. A later
+state-changing adapter must still verify the game ID, overlay hash, and caller
+contract before activation. The flat launcher and existing executable must
+continue to work without any VR state.
 
 Current confirmed mappings:
 
@@ -24,5 +26,26 @@ Current confirmed mappings:
 | Level vertex transformer | `0x8008B3E8` | `0x80099960` | 710/710 opcodes, 12 RTPS, live execution |
 | Gameplay render wait | `0x80090B80` | `0x8009D828` | 110/110 opcodes, live execution |
 
-Executable/overlay and function SHA-256 values are recorded in `engine_map.c`
-so future hooks can fail closed instead of trusting an address alone.
+Main-executable SHA-256 values and every function SHA-256/FNV-1a value are
+recorded in `engine_map.c`. Whole overlay-capture hashes remain empty because
+the capture windows change between sessions; function bytes are the stable
+identity.
+
+## Diagnostic build
+
+The guard path is opt-in:
+
+```powershell
+cmake -S . -B build-vr-diagnostic `
+  -DMOHU_VR_DIAGNOSTICS=ON `
+  -DPSX_DEBUG_TOOLS=ON `
+  -DPSX_OPENXR=OFF
+```
+
+`vr_diagnostic.c` registers read-only function-entry hooks. On first entry it
+computes the function's FNV-1a checksum in guest RAM and logs the entry
+registers only when the checksum matches `engine_map.c`. A mismatch disables
+logging for that binding and never alters guest state.
+
+The default build keeps `MOHU_VR_DIAGNOSTICS=OFF`, uses the existing
+`mods/preloaded` catalog, and does not compile these sources.

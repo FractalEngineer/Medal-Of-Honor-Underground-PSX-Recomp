@@ -72,10 +72,10 @@ captured overlay generation:
 | `0x8008B3E8` | Level vertex transformer | `0x80099960` | 710/710 mnemonics; 12 RTPS on both sides; 9 address-only differences |
 | `0x80090B80` | Gameplay render wait | `0x8009D828` | 110/110 mnemonics; 10 calls and 8 branches on both sides; 29 address-only differences |
 
-The confirmed target functions live in overlay capture `16fc9e35958b` at base
-`0x80097000`, except the entity transform, which lives in capture
-`91ef75121345` at base `0x8008C000`. Exact overlay and function hashes are in
-`vr/underground/engine_map.c`.
+The confirmed target functions live in overlay captures based at `0x80097000`
+and `0x8008C000`. Whole-capture hashes change as the runtime's capture windows
+advance, so they are observations only. Each function's exact byte hash and
+FNV-1a guard are stored in `vr/underground/engine_map.c`.
 
 The PsyQ `VSync` wrapper is also a near-identical static match
 (`0x80016E38` -> `0x800186A8`). It remains a broad library wrapper and is not the
@@ -106,11 +106,11 @@ against the specific capture generation that will run in Underground.
 
 | Reference | Target address | Overlay identity | Signature | Contract | Live evidence | Confidence | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Entity transform | `0x80093830` | `91ef75121345` @ `0x8008C000` | 41 instructions | `$a0` entity, position fields still unverified | Capture execution | High | Mapped, no hook |
-| Entity node transformer | `0x80013B40` | Main EXE | 221 instructions | Recursive node walk; caller chain confirmed | Live call ring | High | Mapped, no hook |
-| GTE RT/TR loader | `0x80013EB4` | Main EXE | 79 instructions | Loads view/model matrix and translation into GTE | Live call ring | High | Mapped, no hook |
-| Level vertex transformer | `0x80099960` | `16fc9e35958b` @ `0x80097000` | 710 instructions, 12 RTPS | Register/contract still being decoded | Capture execution | High | Mapped, no hook |
-| Gameplay render wait | `0x8009D828` | `16fc9e35958b` @ `0x80097000` | 110 instructions, 10 calls | Replay seam still being decoded | Capture execution | High | Mapped, no hook |
+| Entity transform | `0x80093830` | `91ef75121345` @ `0x8008C000` | 41 instructions | `$a0` entity, position fields still unverified | Capture execution | High | Read-only diagnostic hook |
+| Entity node transformer | `0x80013B40` | Main EXE | 221 instructions | Recursive node walk; caller chain confirmed | Live call ring | High | Live trace only |
+| GTE RT/TR loader | `0x80013EB4` | Main EXE | 79 instructions | Loads view/model matrix and translation into GTE | Live call ring | High | Live trace only |
+| Level vertex transformer | `0x80099960` | Overlay @ `0x80097000` | 710 instructions, 12 RTPS | Register/contract still being decoded | Capture execution | High | Read-only diagnostic hook |
+| Gameplay render wait | `0x8009D828` | Overlay @ `0x80097000` | 110 instructions, 10 calls | Replay seam still being decoded | Capture execution | High | Read-only diagnostic hook |
 | Camera source | TBD | TBD | TBD | TBD | TBD | None | Disabled |
 | Player/scene roots | TBD | TBD | TBD | TBD | TBD | None | Disabled |
 | Weapon geometry | TBD | TBD | TBD | TBD | TBD | None | Disabled |
