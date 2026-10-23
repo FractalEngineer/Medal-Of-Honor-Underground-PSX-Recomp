@@ -13,6 +13,7 @@ extern void cosim_instr(uint32_t pc);
 extern int  psx_game_text_native_ok(uint32_t addr);  /* stale-static guard (dispatch shard) */
 extern int  psx_datashard_enter(CPUState* cpu, uint32_t key);  /* data-shard replay/capture (data_shards.c) */
 extern void psx_mod_instruction(CPUState*, uint32_t, uint32_t);
+extern uint32_t psx_mod_memory_address(const CPUState*, uint32_t, uint32_t, uint32_t);
 extern int psx_mod_function_entry(CPUState* cpu, uint32_t address);  /* trusted opt-in game-mod hook */
 extern int psx_ws_masked_reject(uint32_t flags, uint32_t mask); /* guarded packed-coordinate reject */
 extern int psx_ws_nclip_branch(uint32_t pc, uint32_t instr, int32_t mac0, int vanilla);

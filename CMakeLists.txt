@@ -53,6 +53,20 @@ psxrecomp_add_game_runtime(psx-runtime
     CODEGEN_SETUP_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/codegen_setup.c"
 )
 
+# Current psxrecomp embeds its UTF-8 manifest as an object library. recomp-ui
+# cannot detect that when adding its older fallback manifest, so keep the
+# framework manifest and drop the duplicate resource source.
+if(WIN32 AND NOT MSVC)
+    set(_recomp_ui_manifest
+        "${CMAKE_CURRENT_BINARY_DIR}/psx-runtime_recomp_utf8_manifest.rc")
+    get_target_property(_psx_runtime_sources psx-runtime SOURCES)
+    if(_recomp_ui_manifest IN_LIST _psx_runtime_sources)
+        list(REMOVE_ITEM _psx_runtime_sources "${_recomp_ui_manifest}")
+        set_target_properties(psx-runtime PROPERTIES
+            SOURCES "${_psx_runtime_sources}")
+    endif()
+endif()
+
 # Stage runtime configs next to the exe for direct build/ launches. Only copy
 # files that exist — never fail POST_BUILD when game_options.toml is absent.
 foreach(_PSX_RUNTIME_CONFIG game.toml game_options.toml)
