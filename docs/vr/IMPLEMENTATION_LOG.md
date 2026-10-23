@@ -68,6 +68,23 @@
 - Captured a 512x240 screenshot of the loaded courtyard to confirm the save is
   an actual playable scene rather than a menu or paused placeholder.
 
+### Camera roots and transform probe
+
+- Mapped the reference scene/player globals to Underground's
+  `0x800AA174`/`0x800AA17C` through the 710-instruction level-transformer
+  equivalence and live pointer reads.
+- Confirmed slot-0 `scene=0x800F2180`, `player=0x800F0BE0`, and
+  `input=0x800F0FDC`; the player global remained stable through a right-stick
+  camera turn while GTE RT changed and TR stayed zero.
+- Added camera root constants under `vr/underground/camera_map.h`.
+- Added a diagnostic-only, fail-closed level-transform TRX offset controlled by
+  `MOHU_VR_LEVEL_OFFSET_X`; it is frame-span scoped by the verified render-wait
+  boundary and is inert by default.
+- A same-scene A/B at `TRX=0/20/200` changed 32.53% and 64.24% of the frame
+  respectively. At `TRX=20`, far rows shifted +2 px, mid rows +5 px, and near
+  rows +6 px, proving depth-dependent world parallax while HUD/weapon stayed
+  fixed. Evidence is under `vr/proof/`.
+
 ### Flat-path preservation
 
 - Kept every VR implementation file under root `vr/`.

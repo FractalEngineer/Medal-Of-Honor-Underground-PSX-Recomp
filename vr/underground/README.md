@@ -11,10 +11,9 @@ Underground. It is intentionally not compiled into the current flat
 - observed execution in the loaded Underground gameplay capture.
 
 The map itself does not register hooks. Its opt-in diagnostic consumer verifies
-function bytes and logs entry registers without changing guest state. A later
-state-changing adapter must still verify the game ID, overlay hash, and caller
-contract before activation. The flat launcher and existing executable must
-continue to work without any VR state.
+function bytes and logs entry registers. An additional transform probe is inert
+unless `MOHU_VR_LEVEL_OFFSET_X` is set in the diagnostic build. The flat launcher
+and existing executable must continue to work without any VR state.
 
 Current confirmed mappings:
 
@@ -42,10 +41,14 @@ cmake -S . -B build-vr-diagnostic `
   -DPSX_OPENXR=OFF
 ```
 
-`vr_diagnostic.c` registers read-only function-entry hooks. On first entry it
-computes the function's FNV-1a checksum in guest RAM and logs the entry
-registers only when the checksum matches `engine_map.c`. A mismatch disables
-logging for that binding and never alters guest state.
+`vr_diagnostic.c` registers function-entry hooks. On first entry it computes the
+function's FNV-1a checksum in guest RAM and logs the entry registers only when
+the checksum matches `engine_map.c`. A mismatch disables that binding.
+
+The optional transform probe adds `MOHU_VR_LEVEL_OFFSET_X` to GTE TRX at the
+level transformer once per draw span. It restores the saved TRX at the verified
+gameplay render-wait entry. With the environment variable unset, the probe does
+not alter GTE state.
 
 The default build keeps `MOHU_VR_DIAGNOSTICS=OFF`, uses the existing
 `mods/preloaded` catalog, and does not compile these sources.

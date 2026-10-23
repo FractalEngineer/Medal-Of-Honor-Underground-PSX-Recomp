@@ -111,8 +111,8 @@ against the specific capture generation that will run in Underground.
 | GTE RT/TR loader | `0x80013EB4` | Main EXE | 79 instructions | Loads view/model matrix and translation into GTE | Live call ring | High | Live trace only |
 | Level vertex transformer | `0x80099960` | Overlay @ `0x80097000` | 710 instructions, 12 RTPS | Register/contract still being decoded | Capture execution | High | Read-only diagnostic hook |
 | Gameplay render wait | `0x8009D828` | Overlay @ `0x80097000` | 110 instructions, 10 calls | Replay seam still being decoded | Capture execution | High | Read-only diagnostic hook |
-| Camera source | TBD | TBD | TBD | TBD | TBD | None | Disabled |
-| Player/scene roots | TBD | TBD | TBD | TBD | TBD | None | Disabled |
+| Camera source | GTE RT at level transform | GTE RT at `0x80099960` | 12-RTPS camera-relative projector | Read per draw; TR remains zero | Live turn trace | High | Read-only |
+| Player/scene roots | `0x8009D64C` / `0x8009D654` | `0x800AA174` / `0x800AA17C` | Pointer globals | Read pointer, then actor fields | Live root/input trace | High | Read-only |
 | Weapon geometry | TBD | TBD | TBD | TBD | TBD | None | Disabled |
 | Shot basis | TBD | TBD | TBD | TBD | TBD | None | Disabled |
 | Native HUD producers | TBD | TBD | TBD | TBD | TBD | None | Disabled |
