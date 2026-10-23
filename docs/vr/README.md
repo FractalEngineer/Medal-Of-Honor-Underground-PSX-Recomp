@@ -17,6 +17,9 @@ executable and live overlay content.
    reproducible checks.
 6. [CAMERA_EVIDENCE.md](CAMERA_EVIDENCE.md) records the current camera-motion
    probe and its unresolved mapping work.
+7. [DRAW_BRIDGE_EVIDENCE.md](DRAW_BRIDGE_EVIDENCE.md) records the guarded
+   overlay draw bridge and the boundary between renderer output and camera
+   ownership.
 
 The latest machine-ranked function candidates are in
 [ENGINE_EQUIVALENCE_REPORT.md](ENGINE_EQUIVALENCE_REPORT.md). They are
