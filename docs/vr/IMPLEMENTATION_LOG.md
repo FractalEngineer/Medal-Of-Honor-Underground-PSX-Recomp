@@ -244,18 +244,20 @@
 - Full receipt:
   [PGXP_RENDER_VIEW_EVIDENCE.md](PGXP_RENDER_VIEW_EVIDENCE.md).
 
-### Persistent build workflow
+### Single-build launcher workflow
 
-- Reused the existing `build-vr-pgxp/` executable after the operator created a
-  fresh PGXP save in slot `2`; the zero-pose run reached 240 consecutive pairs
-  with status zero and equal per-eye pose applications.
-- Confirmed that the former save failures came from fixture invalidation, not
-  from reusing a build directory. ABI-flavor changes and runtime source
-  identity changes can invalidate a PGXP state regardless of its directory.
-- Standardized on `build-release/` as the flat A/B control and
-  `build-vr-pgxp/` as the mutable VR development build. Future features will
-  reconfigure the latter in place instead of creating more `build-vr-*`
-  directories.
+- Matched the reference repository's single-build layout: `build-release/` is
+  now the active Release, OpenXR, PGXP diagnostic target.
+- Added root `RunFlat.bat`, `RunVR-VDXR.bat`, `RunVR-Oculus.bat`, and
+  `RunVR-SteamVR.bat`. The VR wrappers call shared `vr/run_vr.ps1`, which pins
+  the selected runtime, enables Underground's OpenXR mode, waits for a fresh
+  headset submission receipt, and restores the parent environment.
+- Flat mode clears VR environment variables and leaves the loaded diagnostic
+  plugin inert.
+- Confirmed that save failures came from ABI or runtime-identity invalidation,
+  not from a reused build directory.
+- Deleted `build-vr-diagnostic/`, `build-vr-pgxp/`, `build-vr-pose/`,
+  `build-fw-tests/`, and `build-recompiler/`; only `build-release/` remains.
 
 ### OpenXR bootstrap
 
@@ -264,9 +266,8 @@
   views from the headset frame.
 - Added a native head-relative menu surface that remains active until the first
   guarded gameplay stereo frame, plus fail-closed begin/view handling.
-- Reconfigured `build-vr-pgxp/` in place with `PSX_OPENXR=ON`; the framework
-  built the OpenXR loader and runtime successfully without a new build
-  directory.
+- Reconfigured `build-release/` in place with `PSX_OPENXR=ON`; the framework
+  built the OpenXR loader and runtime successfully without another directory.
 - Verified PGXP slot `2` still loads after the rebuild. Without a headset,
   OpenXR fails at the system stage (`-35`) and the process remains alive on the
   flat fallback; no pair is submitted.

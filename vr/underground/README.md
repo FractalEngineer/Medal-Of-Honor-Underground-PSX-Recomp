@@ -30,16 +30,17 @@ recorded in `engine_map.c`. Whole overlay-capture hashes remain empty because
 the capture windows change between sessions; function bytes are the stable
 identity.
 
-## Diagnostic build
+## Shared release build
 
-The guard path is opt-in. Create one persistent development build and reconfigure
-that directory in place; do not create a new build directory per feature:
+The guard path is opt-in at runtime and built into the single `build-release`
+target used by every launcher. Reconfigure that directory in place; do not
+create a build directory per feature:
 
 ```powershell
-cmake -S . -B build-vr-diagnostic `
+cmake -S . -B build-release `
   -DMOHU_VR_DIAGNOSTICS=ON `
-  -DPSX_DEBUG_TOOLS=ON `
-  -DPSX_OPENXR=OFF
+  -DPSX_DEBUG_TOOLS=OFF `
+  -DPSX_OPENXR=ON
 ```
 
 `vr_diagnostic.c` registers function-entry hooks. On first entry it computes the
@@ -96,10 +97,10 @@ invalidate an older slot. Never patch a save header. If the PGXP runtime rejects
 the fixture with `state_load_failed` or `last_ok=0`, ask the operator for a fresh
 PGXP slot and copy its `.pst` and `.thumb` into the isolated tree.
 
-Keep `build-release/` as the flat control and `build-vr-pgxp/` as the reusable
-VR development build. The flat/control separation is still needed for A/B
-testing because the two flavors use different savestate ABIs. Creating more
-build directories does not prevent state invalidation.
+`build-release/` is the only active build. The root `RunFlat.bat` and
+`RunVR-*.bat` launchers all target it. Flat mode clears the VR environment and
+leaves this diagnostic plugin inert. Creating more build directories does not
+prevent ABI or runtime-identity state invalidation.
 
-The default build keeps `MOHU_VR_DIAGNOSTICS=OFF`, uses the existing
-`mods/preloaded` catalog, and does not compile these sources.
+The CMake default remains `MOHU_VR_DIAGNOSTICS=OFF` so package builds can use
+the original `mods/preloaded` catalog without compiling these sources.

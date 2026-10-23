@@ -36,8 +36,8 @@ remain untouched. Slot `1` is retained as a stale-identity control.
 - All VR implementation, tools, tests, and integration files live under root
   `vr/`.
 - All retained VR documentation lives under `docs/vr/`.
-- The flat executable must launch without a headset, VR environment variable, or
-  VR diagnostic package.
+- The flat launcher must start without a headset or VR environment variable.
+  `build-release` may contain the inert diagnostic plugin for development.
 - `MOHU_VR_DIAGNOSTICS` defaults to `OFF`. With it off, the original
   `mods/preloaded` catalog is used and no VR source is compiled.
 - `game.toml` and `generated/` remain unchanged by the current VR checkpoint.
@@ -45,8 +45,9 @@ remain untouched. Slot `1` is retained as a stale-identity control.
   signature, container identity, and call contract.
 - Do not enable a state-changing hook before flat behavior and the relevant VR
   transaction tests have been rechecked.
-- A PGXP diagnostic build uses boot-state ABI `131106`; the base flavor uses
-  `34`. Savestates also carry the framework execution identity, so a source
+- The active development build uses the PGXP flavor and boot-state ABI `131106`;
+  the base flavor uses `34`. Savestates also carry the framework execution
+  identity, so a source
   change can invalidate a fixture without changing the ABI. If a load reports
   `abi_tag=34(want 131106)`, `state_load_failed`, or `last_ok=0`, ask the
   operator to create a fresh PGXP save slot. Never patch the ABI, identity, or
@@ -270,21 +271,16 @@ no-runtime fallback.
 
 ## Build and test state
 
-Use two persistent build directories. Do not create a new build directory for
-each feature:
+There is one active build directory, matching the reference game repository:
 
-1. `build-release/` is the flat control. Keep it at
-   `MOHU_VR_DIAGNOSTICS=OFF`, `PSX_OPENXR=OFF`, and the base hook flavor. Build
-   it only when checking that the flat product still starts or when refreshing
-   the flat baseline.
-2. `build-vr-pgxp/` is the mutable VR development build. Reconfigure and rebuild
-   this directory in place for render-view, NCLIP, and later OpenXR work.
-
-This separation is still useful for A/B testing because the flat build has boot
-state ABI `34` while the PGXP diagnostic build has ABI `131106`. A build
-directory is only a workspace, not an A/B mode: switch diagnostic behavior with
-the environment gates and compare against the retained evidence or committed
-source revisions.
+- Directory: `build-release/`
+- Release, OpenGL, OpenXR on, debug tools off.
+- `MOHU_VR_DIAGNOSTICS=ON`; PGXP hook flavor `2`, ABI tag `131106`.
+- Seven packages: one game-owned diagnostic plus six framework packages.
+- `RunFlat.bat`, `RunVR-VDXR.bat`, `RunVR-Oculus.bat`, and
+  `RunVR-SteamVR.bat` all launch this same executable.
+- The flat launcher clears VR environment variables. The diagnostic plugin
+  remains loaded but inert in that mode.
 
 Creating another build directory does not repair an invalid savestate. A fresh
 folder can contain the same runtime identity and the same ABI mismatch. A
@@ -292,26 +288,12 @@ source-level runtime change can still invalidate the PGXP fixture, so ask the
 operator for a fresh PGXP save whenever the runtime reports
 `state_load_failed`, `last_ok=0`, or an ABI mismatch.
 
-The existing `build-vr-pgxp/` was reused after the operator created PGXP slot
-`2`; its zero-pose run reached 240 consecutive pairs with status zero and equal
-per-eye pose applications. That verified the fixture, not a new build, was the
-missing state.
+The reusable `build-vr-pgxp/`, `build-vr-diagnostic/`, `build-vr-pose/`,
+`build-fw-tests/`, and `build-recompiler/` directories were deleted on
+2026-10-24. Only `build-release/` remains.
 
-Flat build:
+Current `build-release/` state:
 
-- Directory: `build-release/`
-- Release, OpenGL, OpenXR off, debug tools off.
-- `MOHU_VR_DIAGNOSTICS=OFF`.
-- Six packages: framework-only.
-- Builds and starts headless with the config, OpenBIOS, overlay autocompile, and
-  guest execution all initialized.
-
-PGXP diagnostic build:
-
-- Directory: `build-vr-pgxp/`
-- Release, OpenXR on, debug tools on.
-- `MOHU_VR_DIAGNOSTICS=ON`; PGXP hook flavor `2`, ABI tag `131106`.
-- Seven packages: one game-owned diagnostic plus six framework packages.
 - PGXP slot 2 loads from `analysis/vr-baseline/saves/`.
 - The saved state thumbnail confirms a playable courtyard scene.
 - Interpreter-only diagnostic captures confirmed the camera roots and the
@@ -321,9 +303,9 @@ PGXP diagnostic build:
 - OpenXR lifecycle compiles and loads the headless fallback with PGXP slot 2.
   Without an active headset runtime, `openxr_stats` reports `result=-35`,
   `stage=system`, and zero submitted layers.
-
-`build-vr-diagnostic/` is historical. Check its executable flavor and savestate
-ABI before reusing it; a base-flavor executable cannot load the PGXP fixture.
+- `RunFlat.bat` starts the same executable with no VR activation.
+- Pass `-Build` to any VR launcher to reconfigure and build `build-release` in
+  place.
 
 Last checks:
 
@@ -345,9 +327,7 @@ Last checks:
   every sampled NCLIP had a precise projection and pose-dependent final sign.
 - Guest `DrawOTag` reports homogeneous projective draws rather than untracked
   manual-GP0 submissions.
-- The flat target reconfigures with `MOHU_VR_DIAGNOSTICS=OFF`, contains neither
-  the PGXP define nor the VR diagnostic source, and starts headless without VR
-  environment variables.
+- `RunFlat.bat` starts the shared release executable without activating VR.
 - Frame-driver replay and the all-span TRX variant remain rejected image
   controls.
 - No owned game process remains running.
@@ -358,33 +338,38 @@ Existing savestate files retained their original sizes and timestamps.
 
 ## Reproduce the diagnostic checkpoint
 
-The diagnostic build needs a local libwebp source because network fetches are
+The shared release build needs local dependency sources when network fetches are
 restricted:
 
 ```powershell
 $env:PSX_LIBWEBP_SOURCE_DIR = (Resolve-Path 'build-release\_deps\psx_libwebp-src').Path
-cmake -S . -B build-vr-pgxp `
-  -DCMAKE_C_COMPILER=clang `
-  -DCMAKE_CXX_COMPILER=clang++ `
-  -DCMAKE_C_COMPILER_LAUNCHER= `
-  -DCMAKE_CXX_COMPILER_LAUNCHER= `
-  -DPSX_DEBUG_TOOLS=ON `
-  -DPSX_OPENXR=OFF `
-  -DMOHU_VR_DIAGNOSTICS=ON
-cmake --build build-vr-pgxp --target psx-runtime -- -j 8
+$env:PSX_OPENXR_SDK_SOURCE_DIR = (Resolve-Path 'build-release\_deps\psx_openxr_sdk-src').Path
+cmake -S . -B build-release `
+  -DCMAKE_BUILD_TYPE=Release `
+  -DPSX_DEBUG_TOOLS=OFF `
+  -DPSX_OPENXR=ON `
+  -DMOHU_VR_DIAGNOSTICS=ON `
+  -DPSXRECOMP_REQUIRE_GAME_C=ON
+cmake --build build-release --target psx-runtime -- -j 8
 ```
 
-Run from an isolated save copy:
+The clickable VR launchers build the same target when passed `-Build`:
 
 ```powershell
+.\RunVR-VDXR.bat -Build
+.\RunVR-Oculus.bat
+.\RunVR-SteamVR.bat
+```
+
+Run the headless proof from the isolated save copy:
+
+```powershell
+$env:PSX_OPENXR_ENABLE = '1'
+$env:MOHU_VR_OPENXR = '1'
 $env:PSX_LOAD_SLOT = '2'
-$env:MOHU_VR_STEREO_PROOF = '1'
-$env:MOHU_VR_EYE_RENDER_VIEW = '1'
-$env:MOHU_VR_EYE_GUEST_SUBMIT = '1'
-$env:MOHU_VR_EYE_OFFSET = '24'
 $env:PSX_RENDER_PASS_VERIFY = '1'
 $env:PSX_STEREO_SHED = '0'
-.\build-vr-pgxp\Medal_of_Honor_Underground_Recompiled.exe `
+.\build-release\Medal_of_Honor_Underground_Recompiled.exe `
   --game (Resolve-Path 'analysis\vr-baseline\game-interp.toml').Path `
   --headless-opengl --no-launcher --debug-port 4372 `
   --memcard-dir (Resolve-Path 'analysis\vr-baseline\saves').Path
@@ -393,7 +378,7 @@ $env:PSX_STEREO_SHED = '0'
 Expected startup:
 
 ```text
-mohu-vr-diag: active bindings=17 overlay_hooks=13 read_only=0 level_offset_x=0 stereo_proof=1 eye_offset=24 render_view=1 all_spans=0 replay_driver=0 yaw_mdeg=0 pitch_mdeg=0 head_milli=0,0,0 guest_submit=1
+mohu-vr-diag: active bindings=17 overlay_hooks=13 read_only=0 level_offset_x=0 stereo_proof=1 eye_offset=0 render_view=1 all_spans=0 replay_driver=0 yaw_mdeg=0 pitch_mdeg=0 head_milli=0,0,0 guest_submit=1 openxr=1 units_per_meter=716.418
 mohu-vr-diag: single_player_scene=0x800AA174 player=0x800AA17C player_input_offset=0x39C
 ```
 

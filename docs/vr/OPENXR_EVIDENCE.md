@@ -27,21 +27,21 @@ stale stereo pair.
 
 ## Configuration
 
-Build the existing development directory in place:
+Build the shared release directory in place:
 
 ```powershell
 $env:PSX_LIBWEBP_SOURCE_DIR = (Resolve-Path 'build-release\_deps\psx_libwebp-src').Path
 $env:PSX_OPENXR_SDK_SOURCE_DIR = (Resolve-Path `
   'C:\Users\titan\Desktop\Github_Projects\Mine\Medal-Of-Honor-PSX-Recomp\build-release\_deps\psx_openxr_sdk-src').Path
-cmake -S . -B build-vr-pgxp `
+cmake -S . -B build-release `
   -DCMAKE_C_COMPILER=clang `
   -DCMAKE_CXX_COMPILER=clang++ `
   -DCMAKE_C_COMPILER_LAUNCHER= `
   -DCMAKE_CXX_COMPILER_LAUNCHER= `
-  -DPSX_DEBUG_TOOLS=ON `
+  -DPSX_DEBUG_TOOLS=OFF `
   -DPSX_OPENXR=ON `
   -DMOHU_VR_DIAGNOSTICS=ON
-cmake --build build-vr-pgxp --target psx-runtime -- -j 8
+cmake --build build-release --target psx-runtime -- -j 8
 ```
 
 Run with the headset runtime active before launching the process:
@@ -51,7 +51,7 @@ $env:PSX_OPENXR_ENABLE = '1'
 $env:MOHU_VR_OPENXR = '1'
 $env:PSX_LOAD_SLOT = '2'
 $env:PSX_STEREO_SHED = '0'
-.\build-vr-pgxp\Medal_of_Honor_Underground_Recompiled.exe `
+.\build-release\Medal_of_Honor_Underground_Recompiled.exe `
   --game (Resolve-Path 'analysis\vr-baseline\game-interp.toml').Path `
   --no-launcher --debug-port 4372 `
   --memcard-dir (Resolve-Path 'analysis\vr-baseline\saves').Path
@@ -72,7 +72,7 @@ guest frame.
 
 ## Build and fallback receipt
 
-The existing `build-vr-pgxp/` directory was reconfigured in place with
+The shared `build-release/` directory was reconfigured in place with
 `PSX_OPENXR=ON`. Rebuilding produced the OpenXR loader and runtime executable
 successfully. Strict C compilation with `-Wall -Wextra -Werror` passed.
 

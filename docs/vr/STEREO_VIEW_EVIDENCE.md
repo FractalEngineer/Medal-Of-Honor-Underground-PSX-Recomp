@@ -28,7 +28,12 @@ by `MOHU_VR_STEREO_PROOF=1` and `MOHU_VR_EYE_VIEW_OFFSET=1`.
 
 ## Reproduction
 
-The run uses the isolated slot-0 save and an OpenGL diagnostic build:
+The original run used a base-flavor slot-0 save and the now-deleted
+`build-vr-diagnostic/` directory. It is retained as historical evidence and is
+not reproducible from the current PGXP-only `build-release/`; use
+[OPENXR_EVIDENCE.md](OPENXR_EVIDENCE.md) for the current launch path.
+
+Historical invocation:
 
 ```powershell
 $env:PSX_LOAD_SLOT = '0'

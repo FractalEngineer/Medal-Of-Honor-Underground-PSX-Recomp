@@ -188,25 +188,25 @@ Side-by-side receipts:
 
 ## Reproduction
 
-Configure the persistent PGXP diagnostic build once. Reuse and reconfigure this
-directory in place for later diagnostic features; a new build directory does not
-repair a savestate invalidated by ABI or runtime identity changes:
+Configure the shared release build once. Reuse and reconfigure `build-release/`
+in place; a new build directory does not repair a savestate invalidated by ABI
+or runtime identity changes:
 
 ```powershell
 $env:PSX_LIBWEBP_SOURCE_DIR = (Resolve-Path 'build-release\_deps\psx_libwebp-src').Path
-cmake -S . -B build-vr-pgxp `
+cmake -S . -B build-release `
   -DCMAKE_C_COMPILER=clang `
   -DCMAKE_CXX_COMPILER=clang++ `
   -DCMAKE_C_COMPILER_LAUNCHER= `
   -DCMAKE_CXX_COMPILER_LAUNCHER= `
-  -DPSX_DEBUG_TOOLS=ON `
-  -DPSX_OPENXR=OFF `
+  -DPSX_DEBUG_TOOLS=OFF `
+  -DPSX_OPENXR=ON `
   -DMOHU_VR_DIAGNOSTICS=ON
-cmake --build build-vr-pgxp --target psx-runtime -- -j 8
+cmake --build build-release --target psx-runtime -- -j 8
 ```
 
-`build-release/` remains the flat control. Reconfigure `build-vr-pgxp/` in place
-when adding OpenXR or other VR development options.
+`RunFlat.bat` clears VR variables. The root `RunVR-*.bat` wrappers enable VR in
+the same executable, so no second build target is required.
 
 The accepted runs use `analysis\vr-baseline\game-interp.toml`, so the overlay
 hook chain remains visible and the real guest `DrawOTag` provides packet

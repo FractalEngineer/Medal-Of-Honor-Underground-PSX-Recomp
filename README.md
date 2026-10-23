@@ -75,9 +75,23 @@ git submodule update --init --recursive
 python3 psxrecomp/psxrecomp_cli.py generate \
   --config game.toml --project-root . --disc disc/<your>.cue
 git add generated && git commit -m "Regenerate game C"
-cmake -S . -B build-release -G Ninja -DCMAKE_BUILD_TYPE=Release
+cmake -S . -B build-release -G Ninja -DCMAKE_BUILD_TYPE=Release \
+  -DMOHU_VR_DIAGNOSTICS=ON -DPSX_OPENXR=ON -DPSX_DEBUG_TOOLS=OFF
 cmake --build build-release --target psx-runtime
 ```
+
+## Launchers
+
+The repository uses one active build directory, `build-release`, for flat and
+VR launches:
+
+- `RunFlat.bat` clears VR environment variables and starts flat mode.
+- `RunVR-VDXR.bat`, `RunVR-Oculus.bat`, and `RunVR-SteamVR.bat` select and pin
+  the corresponding OpenXR runtime.
+- VR launchers default to PGXP slot `2`; pass `-Slot -1` for a normal boot or
+  `-Build` to rebuild `build-release` before launch.
+- Additional PowerShell options such as `-Seconds`, `-GameConfig`, and
+  `-MemcardDirectory` can be passed through the `.bat` wrappers.
 
 Releases: tag `vX.Y.Z` (or run the *Release builds* workflow). CI builds the
 committed `generated/` C on Linux, Windows and macOS and attaches
