@@ -28,10 +28,17 @@
 #define MOHU_VR_EYE_GUEST_SUBMIT_ENV "MOHU_VR_EYE_GUEST_SUBMIT"
 #define MOHU_VR_REPLAY_DRIVER_ENV "MOHU_VR_REPLAY_FRAME_DRIVER"
 #define MOHU_VR_OT_ONLY_ENV "MOHU_VR_STEREO_OT_ONLY"
+#define MOHU_VR_OPENXR_ENV "MOHU_VR_OPENXR"
+#define MOHU_VR_UNITS_PER_METER_ENV "MOHU_VR_UNITS_PER_METER"
+#define MOHU_VR_MENU_DISTANCE_ENV "MOHU_VR_MENU_DISTANCE"
+#define MOHU_VR_MENU_WIDTH_ENV "MOHU_VR_MENU_WIDTH"
 #define MOHU_VR_EYE_OFFSET_LIMIT 256
 #define MOHU_VR_EYE_ANGLE_LIMIT 180000
 #define MOHU_VR_EYE_HEAD_MILLI_LIMIT 4096000
 #define MOHU_VR_DIAGNOSTIC_UNITS_PER_METER 1000.0
+#define MOHU_VR_DEFAULT_UNITS_PER_METER (48.0 / 0.067)
+#define MOHU_VR_DEFAULT_MENU_DISTANCE 2.0
+#define MOHU_VR_DEFAULT_MENU_WIDTH 2.0
 #define MOHU_VR_PI 3.14159265358979323846
 #define MOHU_VR_FALLBACK_PROJECTION_H 400.0
 
@@ -79,6 +86,16 @@ static bool g_frame_driver_args_valid;
 static uint32_t g_frame_driver_args[4];
 static bool g_frame_render_args_valid;
 static uint32_t g_frame_render_args[4];
+static bool g_openxr;
+static int g_openxr_native_surface = -1;
+static double g_openxr_units_per_meter = MOHU_VR_DEFAULT_UNITS_PER_METER;
+static double g_openxr_menu_distance = MOHU_VR_DEFAULT_MENU_DISTANCE;
+static double g_openxr_menu_width = MOHU_VR_DEFAULT_MENU_WIDTH;
+static PSXModRenderView g_openxr_eye_view[2];
+static uint32_t g_openxr_begin_failures;
+static uint32_t g_openxr_view_failures;
+static uint32_t g_openxr_ends;
+static bool g_openxr_failure_reported;
 
 static bool parse_bounded_int(const char* value, int32_t limit,
                               int32_t* result) {
@@ -106,6 +123,25 @@ static void parse_optional_int(const char* name, int32_t limit,
                 name, text, limit, limit);
         fflush(stdout);
     }
+}
+
+static void parse_optional_double(const char* name, double minimum,
+                                  double maximum, double* value) {
+    const char* text = getenv(name);
+    if (!text || !*text) {
+        return;
+    }
+    char* end = NULL;
+    double parsed = strtod(text, &end);
+    if (!end || *end || !isfinite(parsed) || parsed < minimum ||
+        parsed > maximum) {
+        fprintf(stdout,
+                "mohu-vr-diag: ignored invalid %s=%s (range %.3f..%.3f)\n",
+                name, text, minimum, maximum);
+        fflush(stdout);
+        return;
+    }
+    *value = parsed;
 }
 
 static uint32_t guest_function_fnv1a(const MohuVrEngineBinding* binding) {
@@ -256,6 +292,28 @@ static bool prepare_stereo_draw_env(CPUState* cpu, uint32_t ra) {
     return true;
 }
 
+static void set_openxr_native_surface(bool enabled) {
+    if (!g_openxr || g_openxr_native_surface == (enabled ? 1 : 0)) {
+        return;
+    }
+    double distance = enabled ? g_openxr_menu_distance : 0.0;
+    double width = enabled ? g_openxr_menu_width : 0.0;
+    double units = enabled ? g_openxr_units_per_meter : 0.0;
+    if (!psx_mod_openxr_native_surface(distance, width, units)) {
+        if (!g_openxr_failure_reported) {
+            g_openxr_failure_reported = true;
+            fprintf(stdout,
+                    "mohu-vr-diag: OpenXR native surface request failed "
+                    "enabled=%d distance=%.3f width=%.3f units_per_meter=%.3f\n",
+                    enabled ? 1 : 0, distance, width, units);
+            fflush(stdout);
+        }
+        return;
+    }
+    g_openxr_native_surface = enabled ? 1 : 0;
+    (void)psx_mod_set_stereo_presentation(enabled ? 0u : 1u);
+}
+
 static void stereo_quat_multiply(const double a[4], const double b[4],
                                  double out[4]) {
     out[0] = a[3] * b[0] + a[0] * b[3] + a[1] * b[2] - a[2] * b[1];
@@ -366,7 +424,9 @@ static int vr_stereo_eye_draw(CPUState* cpu, void* user, uint32_t eye) {
     uint32_t ra = cpu->gpr[31];
     if (g_stereo_render_view) {
         PSXModRenderView view;
-        if (!build_stereo_render_view(cpu, eye, &view)) {
+        if (g_openxr) {
+            view = g_openxr_eye_view[eye];
+        } else if (!build_stereo_render_view(cpu, eye, &view)) {
             if (!g_stereo_pose_failure_reported) {
                 g_stereo_pose_failure_reported = true;
                 fprintf(stdout,
@@ -479,10 +539,47 @@ static void run_stereo_proof(CPUState* cpu) {
     g_stereo_frame_w = frame.w;
     g_stereo_frame_h = frame.h;
 
+    if (g_openxr) {
+        set_openxr_native_surface(false);
+        if (!psx_mod_openxr_begin(frame.w, frame.h,
+                                  g_openxr_units_per_meter)) {
+            g_openxr_begin_failures++;
+            set_openxr_native_surface(true);
+            if (!g_openxr_failure_reported) {
+                g_openxr_failure_reported = true;
+                fprintf(stdout,
+                        "mohu-vr-diag: OpenXR begin failed; flat native "
+                        "surface remains active\n");
+                fflush(stdout);
+            }
+            return;
+        }
+        if (!psx_mod_openxr_view(PSX_MOD_EYE_LEFT,
+                                 &g_openxr_eye_view[PSX_MOD_EYE_LEFT]) ||
+            !psx_mod_openxr_view(PSX_MOD_EYE_RIGHT,
+                                 &g_openxr_eye_view[PSX_MOD_EYE_RIGHT])) {
+            g_openxr_view_failures++;
+            (void)psx_mod_openxr_end(0);
+            set_openxr_native_surface(true);
+            if (!g_openxr_failure_reported) {
+                g_openxr_failure_reported = true;
+                fprintf(stdout,
+                        "mohu-vr-diag: OpenXR eye view location failed; "
+                        "no stereo pair submitted\n");
+                fflush(stdout);
+            }
+            return;
+        }
+    }
+
     g_stereo_attempts++;
     g_stereo_active = true;
     int rendered = psx_mod_render_stereo(cpu, &frame, vr_stereo_eye_draw, NULL);
     g_stereo_active = false;
+    if (g_openxr) {
+        (void)psx_mod_openxr_end(rendered);
+        g_openxr_ends++;
+    }
     if (rendered) {
         g_stereo_pairs++;
     }
@@ -490,12 +587,15 @@ static void run_stereo_proof(CPUState* cpu) {
         fprintf(stdout,
                 "mohu-vr-diag: stereo_proof attempt=%u pairs=%u rendered=%d "
                 "status=%u y=%u offset=%d level_hits=%u/%u pose_apps=%u/%u "
-                "guest_submits=%u ot_words=%u\n",
+                "guest_submits=%u ot_words=%u openxr=%d "
+                "xr_begin_failures=%u xr_view_failures=%u xr_ends=%u\n",
                 g_stereo_attempts, g_stereo_pairs, rendered,
                 psx_mod_render_stereo_status(), frame.y, g_stereo_eye_offset,
                 g_stereo_level_hits[0], g_stereo_level_hits[1],
                 g_stereo_pose_apps[0], g_stereo_pose_apps[1],
-                g_stereo_guest_submits, g_stereo_ot_words);
+                g_stereo_guest_submits, g_stereo_ot_words, g_openxr ? 1 : 0,
+                g_openxr_begin_failures, g_openxr_view_failures,
+                g_openxr_ends);
         fflush(stdout);
         if (g_replay_frame_driver) {
             fprintf(stdout, "mohu-vr-diag: stereo waits_skipped=%u\n",
@@ -632,6 +732,26 @@ static void vr_diagnostic_activate(void) {
     const char* guest_submit = getenv(MOHU_VR_EYE_GUEST_SUBMIT_ENV);
     g_stereo_guest_submit = guest_submit && *guest_submit &&
                             *guest_submit != '0';
+    const char* openxr = getenv(MOHU_VR_OPENXR_ENV);
+    g_openxr = openxr && *openxr && *openxr != '0';
+    if (g_openxr) {
+        g_stereo_proof = true;
+        g_stereo_render_view = true;
+        g_stereo_guest_submit = true;
+        parse_optional_double(MOHU_VR_UNITS_PER_METER_ENV, 1.0, 65536.0,
+                              &g_openxr_units_per_meter);
+        parse_optional_double(MOHU_VR_MENU_DISTANCE_ENV, 0.25, 20.0,
+                              &g_openxr_menu_distance);
+        parse_optional_double(MOHU_VR_MENU_WIDTH_ENV, 0.25, 10.0,
+                              &g_openxr_menu_width);
+        if (!psx_mod_openxr_enable(1)) {
+            g_openxr = false;
+            fprintf(stdout,
+                    "mohu-vr-diag: OpenXR unavailable; built without "
+                    "PSX_OPENXR or no OpenGL renderer\n");
+            fflush(stdout);
+        }
+    }
     if (g_replay_frame_driver) {
         g_frame_driver_args[0] = MOHU_VR_FRAME_CONTEXT_ADDR;
         g_frame_driver_args_valid = true;
@@ -651,6 +771,9 @@ static void vr_diagnostic_activate(void) {
         if (g_stereo_render_view) {
             psx_mod_set_render_projective(1);
         }
+        if (g_openxr) {
+            set_openxr_native_surface(true);
+        }
     }
     size_t hooks = 0;
     for (size_t i = 0; i < mohu_vr_engine_map_count(); ++i) {
@@ -664,14 +787,16 @@ static void vr_diagnostic_activate(void) {
             "mohu-vr-diag: active bindings=%zu overlay_hooks=%zu read_only=%d "
             "level_offset_x=%d stereo_proof=%d eye_offset=%d render_view=%d "
             "all_spans=%d replay_driver=%d yaw_mdeg=%d pitch_mdeg=%d "
-            "head_milli=%d,%d,%d guest_submit=%d\n",
+            "head_milli=%d,%d,%d guest_submit=%d openxr=%d "
+            "units_per_meter=%.3f\n",
             mohu_vr_engine_map_count(), hooks, g_stereo_proof ? 0 : 1,
             g_level_offset_x, g_stereo_proof ? 1 : 0, g_stereo_eye_offset,
             g_stereo_render_view ? 1 : 0, g_stereo_apply_all_spans ? 1 : 0,
             g_replay_frame_driver ? 1 : 0, g_stereo_yaw_mdeg,
             g_stereo_pitch_mdeg, g_stereo_head_milli[0],
             g_stereo_head_milli[1], g_stereo_head_milli[2],
-            g_stereo_guest_submit ? 1 : 0);
+            g_stereo_guest_submit ? 1 : 0, g_openxr ? 1 : 0,
+            g_openxr_units_per_meter);
     fprintf(stdout,
             "mohu-vr-diag: single_player_scene=0x%08X player=0x%08X "
             "player_input_offset=0x%X\n",

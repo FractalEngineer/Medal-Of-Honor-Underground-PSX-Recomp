@@ -10,7 +10,7 @@ it before ending every implementation session.
 | Item | Value |
 | --- | --- |
 | Target branch | `feature/vr-port` |
-| Last game-tree checkpoint | `ddb431e` |
+| Last game-tree checkpoint | `946f952` |
 | Current framework implementation | `d9b0f382` |
 | Target base | `7fcb0ca35af683ac38c4c501347d59916a924aa4` |
 | Reference branch | `master` |
@@ -260,10 +260,42 @@ poses. All had zero precise-projection misses; final sign distributions and
 corrections were pose-dependent. The old widescreen `nclip_stats` command
 remains disabled (`enabled=0`) and is not the receipt for this path.
 
-This work is diagnostic only and remains off by default. It is not yet an
-OpenXR path; head motion is simulated in GTE units and is not a headset pose.
+The diagnostic plugin now has an opt-in OpenXR path. `MOHU_VR_OPENXR=1` enables
+the backend, presents a native head-relative surface until the first gameplay
+frame, obtains the two headset `PSXModRenderView` values, and submits the
+verified complete pair. The default world scale is 716.4179 GTE units per
+metre. This remains diagnostic and off by default. No headset acceptance run
+has been completed yet; the current receipt is compile plus fail-closed
+no-runtime fallback.
 
 ## Build and test state
+
+Use two persistent build directories. Do not create a new build directory for
+each feature:
+
+1. `build-release/` is the flat control. Keep it at
+   `MOHU_VR_DIAGNOSTICS=OFF`, `PSX_OPENXR=OFF`, and the base hook flavor. Build
+   it only when checking that the flat product still starts or when refreshing
+   the flat baseline.
+2. `build-vr-pgxp/` is the mutable VR development build. Reconfigure and rebuild
+   this directory in place for render-view, NCLIP, and later OpenXR work.
+
+This separation is still useful for A/B testing because the flat build has boot
+state ABI `34` while the PGXP diagnostic build has ABI `131106`. A build
+directory is only a workspace, not an A/B mode: switch diagnostic behavior with
+the environment gates and compare against the retained evidence or committed
+source revisions.
+
+Creating another build directory does not repair an invalid savestate. A fresh
+folder can contain the same runtime identity and the same ABI mismatch. A
+source-level runtime change can still invalidate the PGXP fixture, so ask the
+operator for a fresh PGXP save whenever the runtime reports
+`state_load_failed`, `last_ok=0`, or an ABI mismatch.
+
+The existing `build-vr-pgxp/` was reused after the operator created PGXP slot
+`2`; its zero-pose run reached 240 consecutive pairs with status zero and equal
+per-eye pose applications. That verified the fixture, not a new build, was the
+missing state.
 
 Flat build:
 
@@ -277,7 +309,7 @@ Flat build:
 PGXP diagnostic build:
 
 - Directory: `build-vr-pgxp/`
-- Release, OpenXR off, debug tools on.
+- Release, OpenXR on, debug tools on.
 - `MOHU_VR_DIAGNOSTICS=ON`; PGXP hook flavor `2`, ABI tag `131106`.
 - Seven packages: one game-owned diagnostic plus six framework packages.
 - PGXP slot 2 loads from `analysis/vr-baseline/saves/`.
@@ -286,6 +318,9 @@ PGXP diagnostic build:
   `TRX` world-space probe.
 - Hidden-window OpenGL replay confirmed complete pairs, projective draws, and
   balanced eye cycles.
+- OpenXR lifecycle compiles and loads the headless fallback with PGXP slot 2.
+  Without an active headset runtime, `openxr_stats` reports `result=-35`,
+  `stage=system`, and zero submitted layers.
 
 `build-vr-diagnostic/` is historical. Check its executable flavor and savestate
 ABI before reusing it; a base-flavor executable cannot load the PGXP fixture.
@@ -373,9 +408,8 @@ mohu-vr-diag: single_player_scene=0x800AA174 player=0x800AA17C player_input_offs
 4. Label the actor/camera update function and separate camera motion from player
    translation over controlled inputs.
 5. Complete interactive flat boot/menu/gameplay validation.
-6. Implement the minimal OpenXR/native-screen startup path without modifying
-   defaults used by `RunFlat` or the existing flat executable.
-7. Connect the verified per-eye views to OpenXR presentation and headset pose.
+6. Accept the opt-in OpenXR native surface and per-eye presentation on a
+   headset, then add input and HUD policy.
 
 Do not treat the frame-driver replay as working stereo. The accepted evidence
 uses the frame-render replay; the driver path still does not own the visible

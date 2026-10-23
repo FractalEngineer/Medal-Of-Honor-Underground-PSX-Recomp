@@ -188,7 +188,9 @@ Side-by-side receipts:
 
 ## Reproduction
 
-Configure a clean PGXP diagnostic build:
+Configure the persistent PGXP diagnostic build once. Reuse and reconfigure this
+directory in place for later diagnostic features; a new build directory does not
+repair a savestate invalidated by ABI or runtime identity changes:
 
 ```powershell
 $env:PSX_LIBWEBP_SOURCE_DIR = (Resolve-Path 'build-release\_deps\psx_libwebp-src').Path
@@ -202,6 +204,9 @@ cmake -S . -B build-vr-pgxp `
   -DMOHU_VR_DIAGNOSTICS=ON
 cmake --build build-vr-pgxp --target psx-runtime -- -j 8
 ```
+
+`build-release/` remains the flat control. Reconfigure `build-vr-pgxp/` in place
+when adding OpenXR or other VR development options.
 
 The accepted runs use `analysis\vr-baseline\game-interp.toml`, so the overlay
 hook chain remains visible and the real guest `DrawOTag` provides packet

@@ -32,7 +32,8 @@ identity.
 
 ## Diagnostic build
 
-The guard path is opt-in:
+The guard path is opt-in. Create one persistent development build and reconfigure
+that directory in place; do not create a new build directory per feature:
 
 ```powershell
 cmake -S . -B build-vr-diagnostic `
@@ -75,11 +76,30 @@ While the projective render pass is active, `{"cmd":"mod_counters"}` reports
 counters are scoped to the signed homogeneous-winding decision and do not
 require widescreen `precise_nclip`.
 
+The same diagnostic build can opt into the headset lifecycle:
+
+```powershell
+$env:PSX_OPENXR_ENABLE = '1'
+$env:MOHU_VR_OPENXR = '1'
+```
+
+OpenXR mode implies the render-view, guest-submit, and stereo-proof flags. It
+shows boot/menu content on a native head-relative surface, then switches to one
+complete per-eye pair at gameplay. The default world scale is 716.4179 GTE
+units per metre; `MOHU_VR_UNITS_PER_METER`, `MOHU_VR_MENU_DISTANCE`, and
+`MOHU_VR_MENU_WIDTH` tune it. Start the headset runtime before launch. The
+current no-headset receipt validates only compile and fail-closed fallback.
+
 PGXP diagnostic states use ABI `131106`; base-flavor states use `34`. Savestates
 also carry the framework execution identity, so runtime source changes can
 invalidate an older slot. Never patch a save header. If the PGXP runtime rejects
 the fixture with `state_load_failed` or `last_ok=0`, ask the operator for a fresh
 PGXP slot and copy its `.pst` and `.thumb` into the isolated tree.
+
+Keep `build-release/` as the flat control and `build-vr-pgxp/` as the reusable
+VR development build. The flat/control separation is still needed for A/B
+testing because the two flavors use different savestate ABIs. Creating more
+build directories does not prevent state invalidation.
 
 The default build keeps `MOHU_VR_DIAGNOSTICS=OFF`, uses the existing
 `mods/preloaded` catalog, and does not compile these sources.
