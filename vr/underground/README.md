@@ -70,9 +70,16 @@ translation. The manual GP0 walker loses packet provenance and is not valid for
 PGXP projective validation. `MOHU_VR_EYE_OFFSET_ALL_SPANS=1` selects the
 rejected direct-TRX experiment; that variant produced a black pair.
 
-PGXP diagnostic states use ABI `131106`; base-flavor states use `34`. Never
-patch a save header. If the PGXP runtime rejects the fixture, ask the operator
-for a fresh PGXP slot and copy its `.pst` and `.thumb` into the isolated tree.
+While the projective render pass is active, `{"cmd":"mod_counters"}` reports
+`vr.nclip.render.{total,precise,miss,corrected,positive,negative,zero}`. These
+counters are scoped to the signed homogeneous-winding decision and do not
+require widescreen `precise_nclip`.
+
+PGXP diagnostic states use ABI `131106`; base-flavor states use `34`. Savestates
+also carry the framework execution identity, so runtime source changes can
+invalidate an older slot. Never patch a save header. If the PGXP runtime rejects
+the fixture with `state_load_failed` or `last_ok=0`, ask the operator for a fresh
+PGXP slot and copy its `.pst` and `.thumb` into the isolated tree.
 
 The default build keeps `MOHU_VR_DIAGNOSTICS=OFF`, uses the existing
 `mods/preloaded` catalog, and does not compile these sources.
