@@ -238,3 +238,66 @@ advancing guest time.
 The known `MOHU_VR_LEVEL_OFFSET_X` path remains preferable for a first
 camera-space stereo proof because it is already bounded by the verified level
 transformer and render wait.
+
+## Correction: natural frame entry
+
+The frame driver replay was initially launched at `0x8006D66C`. That address is
+four instructions into the natural function. The real entry is
+`0x8006D65C`, which loads the frame context at `0x800A70E8` and the status word
+at `0x800B9784` before falling into the old prologue:
+
+```text
+entry    = 0x8006D65C
+end      = 0x8006DC44
+sha256   = bc1f06d66e91b9f93337fc0cba511cc112e0d2d2043427aa5d385a3911b77cc0
+fnv1a    = 0x7F07744E
+```
+
+The corrected entry is live-confirmed from `$ra=0x800705EC`. It remains above
+the observable level-transformer calls, but it does toggle the game's OT base.
+
+## Ordering-table controls
+
+`PutDrawEnv` matches Underground `0x80018BB8` at 0.981 structural similarity.
+The live DRAWENV at index 1 is `x=0, y=240, w=512, h=240`.
+
+The frame context's OT base is `[0x800A7138 + 0x2218]`. The slot-0 frame-render
+entry observed:
+
+```text
+base = 0x800A72E0
+head = 0x800A7ADC
+tag  = 0x000A8AD8
+```
+
+The driver then toggles the context base to `0x800A82E0`.
+
+A bounded direct-GP0 OT walk of the `0x800A72E0` list rendered the complete
+courtyard, weapon, and HUD. This proves:
+
+- the clear and eye capture target work;
+- the OT head and packet tags are valid;
+- the prebuilt scene can be submitted inside the rollback transaction;
+- a full-scene pair alone is not proof of fresh eye rendering.
+
+## Packet producer trace
+
+Writes to `0x0013DFE0..0x0013E030` were captured with `wtrace`. The scene draw
+bridge produced packet writes through:
+
+```text
+PC 0x80090D68..0x8009104C
+RA 0x800908E4
+```
+
+The packet command writer produced the vertex/command words through:
+
+```text
+PC 0x800110C4..0x80011334
+RA 0x80011008
+```
+
+A secondary writer at `0x800140B0` has caller `0x80091AC4`.
+
+The next boundary to reconstruct is therefore above the prebuilt world-packet
+list, not the frame driver or `DrawOTag` wrapper itself.

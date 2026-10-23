@@ -20,6 +20,8 @@ executable and live overlay content.
 7. [DRAW_BRIDGE_EVIDENCE.md](DRAW_BRIDGE_EVIDENCE.md) records the guarded
    overlay draw bridge and the boundary between renderer output and camera
    ownership.
+8. [STEREO_OT_EVIDENCE.md](STEREO_OT_EVIDENCE.md) records the corrected frame
+   entry, OT controls, and rejected eye-replay experiments.
 
 The latest machine-ranked function candidates are in
 [ENGINE_EQUIVALENCE_REPORT.md](ENGINE_EQUIVALENCE_REPORT.md). They are
@@ -46,8 +48,9 @@ headset or VR environment variable.
 ## Current state
 
 The framework and UI gitlinks match the reference. Underground now has a
-fail-closed engine map under `vr/underground/` with live-confirmed entity,
-scene-transform, level-projection, and render-wait mappings. The default flat
-build does not include them. `MOHU_VR_DIAGNOSTICS=ON` builds a read-only
-diagnostic plugin that verifies function bytes before logging entry registers.
-No OpenXR mode, launcher, or state-changing VR hook is active yet.
+fail-closed engine map under `vr/underground/` with seventeen live or
+statically confirmed mappings, including the natural frame entry, PutDrawEnv,
+the scene draw bridge, and the render wait. The default flat build does not
+include them. `MOHU_VR_DIAGNOSTICS=ON` builds the opt-in diagnostic plugin;
+stereo replay and OT-only controls remain experimental and rejected as parallax
+evidence. No OpenXR mode, launcher, or production VR hook is active yet.
