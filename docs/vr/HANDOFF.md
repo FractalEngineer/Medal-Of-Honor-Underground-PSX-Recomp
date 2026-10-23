@@ -20,8 +20,15 @@ it before ending every implementation session.
 | Underground version | `0.1.0` |
 | Game ID | `SLUS-01270` |
 
+The worktree currently contains the uncommitted diagnostic, evidence, and proof
+changes from this session; `7278a7f` remains the last implementation commit.
 The only unrelated untracked workspace entry is `.commandcode/`. Do not add or
 modify it as part of VR work.
+
+The verified PGXP fixture is isolated slot `1` under
+`analysis/vr-baseline/saves/`. It was created by the operator with the PGXP
+build and copied from the default save root; the base-flavor `slot00` files
+remain untouched.
 
 ## Non-negotiable invariants
 
@@ -37,6 +44,10 @@ modify it as part of VR work.
   signature, container identity, and call contract.
 - Do not enable a state-changing hook before flat behavior and the relevant VR
   transaction tests have been rechecked.
+- A PGXP diagnostic build uses boot-state ABI `131106`; the base flavor uses
+  `34`. If a load reports `abi_tag=34(want 131106)`, ask the operator to create
+  a fresh PGXP save slot. Never patch the ABI field or rewrite the original
+  state, and copy only the completed `.pst` and `.thumb` into the isolated tree.
 
 ## Current implementation
 
@@ -80,6 +91,9 @@ The diagnostic target reports seventeen active bindings and thirteen overlay hoo
 The isolated slot-0 scene verifies the render chain through the frame driver.
 The true natural frame entry is `0x8006D65C`: it loads the frame context and
 status words, then falls into the previously recorded prologue at `0x8006D66C`.
+Its observed caller is `0x80070444`; the call at `0x800705E4` returns to
+`0x800705EC`. That caller is not registered as a hook because it also contains
+simulation and device-state work.
 
 The single-player scene roots are measured:
 
@@ -155,8 +169,16 @@ The diagnostic build contains environment-gated stereo controls:
 ```powershell
 $env:MOHU_VR_STEREO_PROOF = '1'
 $env:MOHU_VR_EYE_OFFSET = '24'
-$env:MOHU_VR_REPLAY_FRAME_DRIVER = '1'
+$env:MOHU_VR_EYE_RENDER_VIEW = '1'
+$env:MOHU_VR_EYE_GUEST_SUBMIT = '1'
 ```
+
+This is the accepted frame-render replay path. It uses a complete
+`PSXModRenderView` and submits the regenerated OT through guest `DrawOTag`, so
+PGXP sees the packet source addresses. The older
+`MOHU_VR_REPLAY_FRAME_DRIVER=1` experiment remains available but rejected.
+`MOHU_VR_EYE_VIEW_OFFSET=1` remains a compatibility alias for the render-view
+switch.
 
 The OT-only control renders the already-built scene without regenerating it:
 
@@ -177,14 +199,20 @@ Confirmed replay facts:
    It renders the complete courtyard, HUD, and weapon and publishes an identical
    zero-offset pair. This proves the OT head, packet tags, clear, and capture.
 4. The clear is effective: a clear-only run produced two pure-black images.
-5. The driver and frame-render replays can submit the full prebuilt scene, but
-   neither rewrites the projected world vertices used by that list.
-6. Applying the host render-view offset produced an identical full-scene pair.
-   Applying signed `TRX` offsets at the level transform under the driver path
-   produced a black pair at the post-driver OT base.
+5. Frame-render replay with `MOHU_VR_EYE_RENDER_VIEW=1` regenerates a
+   full-scene pair. The full render-view path has a byte-identical zero control,
+   a 93,376-pixel lateral pair, and a 91,984-pixel forward/downward near-plane
+   pair.
+6. The frame-driver replay still does not reveal the visible geometry
+   transaction. Applying the level-transform TRX offset at every span under
+   that path produced a black pair.
 7. The visible packet list is already present before the natural frame driver
-   entry. The driver toggles OT bases; the new base is not yet proven to own the
-   visible world list.
+   entry. The driver toggles OT bases, but the post-driver base is not the
+   accepted frame-render replay list.
+8. The diagnostic's manual GP0 walker loses source addresses: every packet is
+   reported as `vr.projective.miss0`. Guest `DrawOTag` preserves provenance and
+   produced 1.4M homogeneous projective draws in the accepted zero and lateral
+   runs.
 
 At the tested zero-offset OT-only checkpoint:
 
@@ -197,8 +225,33 @@ The current driver/TRX experiment produced a black pair with matching hash
 `ffc1aaa604e5364b25926033bfdb5b792c1ce06597681358d212c8c386a72aa5`.
 That result is rejected as stereo evidence.
 
-This work is diagnostic only and remains off by default. It is **not** parallax
-proof and is not an OpenXR path.
+Accepted same-checkpoint controls:
+
+| Control | Result |
+| --- | --- |
+| [Zero left](../../vr/proof/stereo-view-zero-left.png) | [Zero right](../../vr/proof/stereo-view-zero-right.png); identical hash `10ad3e8f...`; zero changed pixels |
+| [Offset-24 left](../../vr/proof/stereo-view-offset24-left.png) | [Offset-24 right](../../vr/proof/stereo-view-offset24-right.png); non-identical full-scene pair |
+
+Block matching measured about 5 px of far-scene motion and 8 px of near-floor
+motion. The runtime reported equal eye cycles for both pairs and zero failed
+stereo attempts. Full commands, hashes, pair IDs, and runtime counters are in
+[STEREO_VIEW_EVIDENCE.md](STEREO_VIEW_EVIDENCE.md).
+
+PGXP full-pose controls:
+
+| Pose | Result |
+| --- | --- |
+| [Zero left](../../vr/proof/stereo-pgxp-zero-left.png) | [Zero right](../../vr/proof/stereo-pgxp-zero-right.png); zero changed pixels |
+| [Lateral left](../../vr/proof/stereo-pgxp-lateral24-left.png) | [Lateral right](../../vr/proof/stereo-pgxp-lateral24-right.png); 93,376 changed pixels |
+| [Near-plane left](../../vr/proof/stereo-pgxp-nearplane24-left.png) | [Near-plane right](../../vr/proof/stereo-pgxp-nearplane24-right.png); pitch -15 degrees, forward 250 GTE units, no floor wedge |
+
+The near-plane pair completed 1,544 verified passes with zero mismatches and
+equal per-eye state hashes. Exact counters, image hashes, controls, and the save
+flavor procedure are in
+[PGXP_RENDER_VIEW_EVIDENCE.md](PGXP_RENDER_VIEW_EVIDENCE.md).
+
+This work is diagnostic only and remains off by default. It is not yet an
+OpenXR path; head motion is simulated in GTE units and is not a headset pose.
 
 ## Build and test state
 
@@ -211,18 +264,21 @@ Flat build:
 - Builds and starts headless with the config, OpenBIOS, overlay autocompile, and
   guest execution all initialized.
 
-VR diagnostic build:
+PGXP diagnostic build:
 
-- Directory: `build-vr-diagnostic/`
+- Directory: `build-vr-pgxp/`
 - Release, OpenXR off, debug tools on.
-- `MOHU_VR_DIAGNOSTICS=ON`.
+- `MOHU_VR_DIAGNOSTICS=ON`; PGXP hook flavor `2`, ABI tag `131106`.
 - Seven packages: one game-owned diagnostic plus six framework packages.
-- Slot 0 loads from `analysis/vr-baseline/saves/`.
-- A 512x240 screenshot confirmed the saved state is a playable courtyard scene.
+- PGXP slot 1 loads from `analysis/vr-baseline/saves/`.
+- The saved state thumbnail confirms a playable courtyard scene.
 - Interpreter-only diagnostic captures confirmed the camera roots and the
   `TRX` world-space probe.
-- Hidden-window OpenGL replay confirmed the runtime stereo transaction can
-  publish complete pairs with balanced eye cycles.
+- Hidden-window OpenGL replay confirmed complete pairs, projective draws, and
+  balanced eye cycles.
+
+`build-vr-diagnostic/` is historical. Check its executable flavor and savestate
+ABI before reusing it; a base-flavor executable cannot load the PGXP fixture.
 
 Last checks:
 
@@ -232,8 +288,19 @@ Last checks:
 - All VR documentation links resolve.
 - The diagnostic target builds and activates seventeen guarded bindings.
 - TRX 0/20/200 A/B captures produce the expected depth-dependent world motion.
-- Frame-driver replay completes and balances both eyes, but is rejected as image
-  evidence because the eyes are identical.
+- Frame-render replay with the scoped view offset publishes a byte-identical
+  zero control and a complete depth-parallax pair.
+- A verifier-enabled offset run completed 3,542 eye-transaction checks with
+  zero mismatches and equal per-eye state hashes.
+- The full render-view path completed 1,481 zero-pose checks and 1,544
+  near-plane stereo checks with zero mismatches.
+- Guest `DrawOTag` reports homogeneous projective draws rather than untracked
+  manual-GP0 submissions.
+- The flat target reconfigures with `MOHU_VR_DIAGNOSTICS=OFF`, contains neither
+  the PGXP define nor the VR diagnostic source, and starts headless without VR
+  environment variables.
+- Frame-driver replay and the all-span TRX variant remain rejected image
+  controls.
 - No owned game process remains running.
 
 The first startup smoke used the default memcard directory before isolation and
@@ -247,48 +314,56 @@ restricted:
 
 ```powershell
 $env:PSX_LIBWEBP_SOURCE_DIR = (Resolve-Path 'build-release\_deps\psx_libwebp-src').Path
-cmake -S . -B build-vr-diagnostic `
+cmake -S . -B build-vr-pgxp `
+  -DCMAKE_C_COMPILER=clang `
+  -DCMAKE_CXX_COMPILER=clang++ `
+  -DCMAKE_C_COMPILER_LAUNCHER= `
+  -DCMAKE_CXX_COMPILER_LAUNCHER= `
   -DPSX_DEBUG_TOOLS=ON `
   -DPSX_OPENXR=OFF `
   -DMOHU_VR_DIAGNOSTICS=ON
-cmake --build build-vr-diagnostic --target psx-runtime
+cmake --build build-vr-pgxp --target psx-runtime -- -j 8
 ```
 
 Run from an isolated save copy:
 
 ```powershell
-$env:PSX_LOAD_SLOT = '0'
-.\build-vr-diagnostic\Medal_of_Honor_Underground_Recompiled.exe `
-  --headless --no-launcher --debug-port 4372 `
-  --memcard-dir analysis\vr-baseline\saves
+$env:PSX_LOAD_SLOT = '1'
+$env:MOHU_VR_STEREO_PROOF = '1'
+$env:MOHU_VR_EYE_RENDER_VIEW = '1'
+$env:MOHU_VR_EYE_GUEST_SUBMIT = '1'
+$env:MOHU_VR_EYE_OFFSET = '24'
+$env:PSX_RENDER_PASS_VERIFY = '1'
+$env:PSX_STEREO_SHED = '0'
+.\build-vr-pgxp\Medal_of_Honor_Underground_Recompiled.exe `
+  --game (Resolve-Path 'analysis\vr-baseline\game-interp.toml').Path `
+  --headless-opengl --no-launcher --debug-port 4372 `
+  --memcard-dir (Resolve-Path 'analysis\vr-baseline\saves').Path
 ```
 
 Expected startup:
 
 ```text
-mohu-vr-diag: active bindings=17 overlay_hooks=13 read_only=1 level_offset_x=0 stereo_proof=0 eye_offset=0 replay_driver=0
+mohu-vr-diag: active bindings=17 overlay_hooks=13 read_only=0 level_offset_x=0 stereo_proof=1 eye_offset=24 render_view=1 all_spans=0 replay_driver=0 yaw_mdeg=0 pitch_mdeg=0 head_milli=0,0,0 guest_submit=1
 mohu-vr-diag: single_player_scene=0x800AA174 player=0x800AA17C player_input_offset=0x39C
 ```
 
 ## Open gates
 
-1. Determine why the driver path switches from the visible OT base to the other
-   512-entry buffer without retaining a drawable world list.
-2. Identify the function above `0x8006D65C` that writes the visible packet
-   addresses around `0x0013DFE0..0x0013E030`. The write trace showed producers
-   `0x80090D68`, `0x80090E6C`, `0x8009104C` (caller `0x800908E4`) and
-   `0x800110C8..0x80011334` (caller `0x80011008`).
-3. Replay from that boundary with the verified `TRX` offset and prove a
-   non-identical pair with depth-dependent motion.
-4. Keep the clear, draw-environment, OT walker, wait bypass, and post-render
-   timer skip scoped strictly to eye replay.
-5. Label the actor/camera update function and separate camera motion from player
+1. Add a render-path signed-NCLIP counter. The full pose, precise translation,
+   guest OT submission, and near-plane image path are now verified, but
+   `nclip_stats` currently exposes no hits for this render path.
+2. Record the observed `0x80070444 -> 0x8006D65C` natural caller chain and the
+   world-packet producer contracts before promoting any additional hook.
+3. Keep clear, draw-environment, wait bypass, post-render skip, and transaction
+   selectors scoped strictly to eye replay.
+4. Label the actor/camera update function and separate camera motion from player
    translation over controlled inputs.
-6. Complete interactive flat boot/menu/gameplay validation.
-7. Implement the minimal OpenXR/native-screen startup path without modifying
+5. Complete interactive flat boot/menu/gameplay validation.
+6. Implement the minimal OpenXR/native-screen startup path without modifying
    defaults used by `RunFlat` or the existing flat executable.
-8. Only after a true parallax pair, connect the verified pair to OpenXR
-   presentation and headset pose.
+7. Connect the verified per-eye views to OpenXR presentation and headset pose.
 
-Do not treat the current frame-driver replay as working stereo. The rollback
-transaction is proven; the visible geometry is still outside it.
+Do not treat the frame-driver replay as working stereo. The accepted evidence
+uses the frame-render replay; the driver path still does not own the visible
+world list.

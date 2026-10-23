@@ -50,5 +50,29 @@ level transformer once per draw span. It restores the saved TRX at the verified
 gameplay render-wait entry. With the environment variable unset, the probe does
 not alter GTE state.
 
+The same-checkpoint stereo control supports a complete per-eye render view:
+
+```powershell
+$env:MOHU_VR_STEREO_PROOF = '1'
+$env:MOHU_VR_EYE_RENDER_VIEW = '1'
+$env:MOHU_VR_EYE_GUEST_SUBMIT = '1'
+$env:MOHU_VR_EYE_OFFSET = '24'
+```
+
+It replays the guarded frame render at `0x80053BB4`, builds a full
+`PSXModRenderView` from the guest projection, and submits the regenerated list
+through guarded guest `DrawOTag`. Guest TR registers are not modified. With
+`MOHU_VR_EYE_OFFSET=0` and the same seam enabled, the pair is byte-identical.
+
+`MOHU_VR_EYE_YAW_MDEG`, `MOHU_VR_EYE_PITCH_MDEG`, and
+`MOHU_VR_EYE_HEAD_{X,Y,Z}_MILLI` add diagnostic head rotation and sub-unit
+translation. The manual GP0 walker loses packet provenance and is not valid for
+PGXP projective validation. `MOHU_VR_EYE_OFFSET_ALL_SPANS=1` selects the
+rejected direct-TRX experiment; that variant produced a black pair.
+
+PGXP diagnostic states use ABI `131106`; base-flavor states use `34`. Never
+patch a save header. If the PGXP runtime rejects the fixture, ask the operator
+for a fresh PGXP slot and copy its `.pst` and `.thumb` into the isolated tree.
+
 The default build keeps `MOHU_VR_DIAGNOSTICS=OFF`, uses the existing
 `mods/preloaded` catalog, and does not compile these sources.

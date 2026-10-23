@@ -190,15 +190,59 @@
 - The flat Release target has not been changed to include VR sources or require
   a headset. Its launch path remains the existing executable and configuration.
 
+## 2026-10-24
+
+### Frame caller and stereo view seam
+
+- Identified the natural caller above the frame driver as `0x80070444`; the
+  direct frame-driver call is at `0x800705E4`, returning to `0x800705EC`.
+- Confirmed that replaying the frame driver still does not expose the visible
+  geometry transaction.
+- Added a diagnostic-only scoped view offset for frame-render replay. It uses
+  `psx_mod_render_view_offset()` rather than guest GTE control writes.
+- Confirmed `MOHU_VR_EYE_OFFSET=0` with
+  `MOHU_VR_EYE_VIEW_OFFSET=1` publishes a complete, byte-identical pair
+  (zero differing pixels out of 122,880).
+- Confirmed signed `-24` / `+24` offsets publish a complete courtyard pair with
+  94,282 differing pixels. Block matching measured about 5 px far-scene motion
+  and 8 px near-floor motion, establishing depth-dependent parallax.
+- Repeated the offset pair with `PSX_RENDER_PASS_VERIFY=1`: 3,542 checks, zero
+  mismatches, equal per-eye guest cycles and equal per-eye state hashes.
+- Added a separate `MOHU_VR_EYE_OFFSET_ALL_SPANS=1` negative control. Applying
+  the TRX offset at every level-transformer entry produced a black pair and is
+  rejected.
+- Retained zero and offset image pairs under `vr/proof/` and recorded runtime
+  pair IDs, equal eye cycles, and capture statistics in
+  [STEREO_VIEW_EVIDENCE.md](STEREO_VIEW_EVIDENCE.md).
+
+### Full render view and PGXP near-plane path
+
+- Made the opt-in diagnostic target the framework PGXP hook flavor while
+  leaving the flat target on its base flavor.
+- Replaced the fixed integer eye offset with a complete `PSXModRenderView`
+  built from guest `H`, `OFX`, and `OFY`, with precise translation and
+  diagnostic yaw, pitch, and sub-unit head controls.
+- Added guest `DrawOTag` submission for the regenerated eye list. The manual
+  GP0 walker remains a submission control but loses source provenance and
+  reports every packet as `vr.projective.miss0`.
+- Confirmed the base savestate is not interchangeable with the PGXP build:
+  `slot00` has ABI `34`, while PGXP expects `131106`. The header was not
+  patched. The operator created a fresh PGXP save, and slot `1` was copied into
+  the isolated save tree.
+- Retained a byte-identical PGXP zero pair, a 93,376-pixel lateral pair, and a
+  91,984-pixel forward/downward near-plane pair under `vr/proof/`.
+- Measured 1.4M homogeneous projective draws in the accepted runs. The
+  forward/downward pair completed 1,544 verified passes with zero mismatches,
+  no watchdog, no VRAM leak, and equal per-eye state hashes.
+- `nclip_stats` did not expose hits for the render-projective path
+  (`enabled=0`). A dedicated signed-NCLIP counter remains open.
+- Full receipt:
+  [PGXP_RENDER_VIEW_EVIDENCE.md](PGXP_RENDER_VIEW_EVIDENCE.md).
+
 ## Next work
 
-1. Rebuild the existing flat target and record a launch/boot/gameplay baseline
-   with an isolated memcard path.
-2. Capture Underground overlay generations for the first playable scene and
-   identify stable fingerprints.
-3. Capture the reference region for `0x8006591C`, which the retained overlay
-   bundle does not contain.
-4. Review the highest-ranked render-wait, level-projector, and camera candidates
-   in disassembly and live traces.
-5. Bootstrap only the opt-in plugin registration and native-screen OpenXR path
-   after G1 produces safe, guarded target bindings.
+1. Add a render-path signed-NCLIP counter and record pitch/facing sweeps.
+2. Repeat the PGXP pose pair in additional scenes and near-wall positions.
+3. Rebuild the flat target and repeat interactive boot/menu/gameplay validation.
+4. Label the actor/camera update and separate camera motion from player motion.
+5. Bootstrap the opt-in native-screen OpenXR and per-eye presentation path.

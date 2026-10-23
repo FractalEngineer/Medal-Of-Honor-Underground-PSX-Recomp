@@ -22,6 +22,11 @@ executable and live overlay content.
    ownership.
 8. [STEREO_OT_EVIDENCE.md](STEREO_OT_EVIDENCE.md) records the corrected frame
    entry, OT controls, and rejected eye-replay experiments.
+9. [STEREO_VIEW_EVIDENCE.md](STEREO_VIEW_EVIDENCE.md) records the accepted
+   same-checkpoint zero control and full-scene depth-parallax pair.
+10. [PGXP_RENDER_VIEW_EVIDENCE.md](PGXP_RENDER_VIEW_EVIDENCE.md) records the
+    full render-view, guest OT submission, projective near-plane path, and
+    PGXP save-state flavor requirement.
 
 The latest machine-ranked function candidates are in
 [ENGINE_EQUIVALENCE_REPORT.md](ENGINE_EQUIVALENCE_REPORT.md). They are
@@ -40,10 +45,11 @@ state restoration. Underground owns title-specific addresses, overlay identity,
 player/camera layouts, hooks, input policy, weapon profiles, and HUD content.
 `generated/` is generated output and must not be edited to implement VR.
 
-All VR implementation and diagnostic files live under root `vr/`. No VR source
-is wired into the current `psx-runtime` target yet. The existing flat executable,
-its launcher, config, keys, and save path must remain launchable without a
-headset or VR environment variable.
+All VR implementation and diagnostic files live under root `vr/`. VR sources are
+wired only into opt-in `MOHU_VR_DIAGNOSTICS=ON` builds; the default target stays
+on the base flavor and links no VR source. The existing flat executable, its
+launcher, config, keys, and save path must remain launchable without a headset
+or VR environment variable.
 
 ## Current state
 
@@ -51,6 +57,10 @@ The framework and UI gitlinks match the reference. Underground now has a
 fail-closed engine map under `vr/underground/` with seventeen live or
 statically confirmed mappings, including the natural frame entry, PutDrawEnv,
 the scene draw bridge, and the render wait. The default flat build does not
-include them. `MOHU_VR_DIAGNOSTICS=ON` builds the opt-in diagnostic plugin;
-stereo replay and OT-only controls remain experimental and rejected as parallax
-evidence. No OpenXR mode, launcher, or production VR hook is active yet.
+include them. `MOHU_VR_DIAGNOSTICS=ON` builds the opt-in diagnostic plugin.
+Frame-render replay now produces a byte-identical zero-offset pair and
+full-scene parallax pairs from a complete `PSXModRenderView`. Guest `DrawOTag`
+preserves packet provenance for PGXP homogeneous clipping, including a tested
+forward/downward near-plane pose. The OT-only and frame-driver paths remain
+controls, not stereo evidence. No OpenXR mode, launcher, or production VR hook
+is active yet.
