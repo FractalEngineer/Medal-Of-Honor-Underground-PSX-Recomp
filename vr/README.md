@@ -14,3 +14,5 @@ and the flat launch path has been rechecked.
 
 VR documentation lives under `docs/vr/`, keeping all retained project
 documentation in the documentation tree.
+
+Update `docs/vr/HANDOFF.md` before ending every implementation session.
