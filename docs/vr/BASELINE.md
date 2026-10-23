@@ -72,6 +72,31 @@ The process was then stopped by its owner before gameplay validation. This is
 startup evidence only. Boot, menus, FMVs, first playable scene, and flat rendering
 remain to be validated.
 
+### Isolated slot-0 diagnostic
+
+A separate Release diagnostic build was created at `build-vr-diagnostic/` with
+`PSX_DEBUG_TOOLS=ON` and OpenXR off. It uses an isolated copy of the save tree at
+`analysis/vr-baseline/saves/`.
+
+Slot 0 loaded successfully:
+
+| Field | Result |
+| --- | --- |
+| Savestate generation | `1` |
+| Last operation | `load` |
+| Slot | `0` |
+| Observed frame | `890` |
+| Overlay capture entries | `21` at dump time |
+
+The gameplay capture contains the Underground render wait, level vertex
+transformer, entity transform, and both RTPS-heavy geometry regions. There was
+no observed crash or state-compatibility refusal during the loaded session.
+
+The first startup smoke used the default save directory before the isolated copy
+was created, and refreshed the two memory-card timestamps. Subsequent diagnostic
+runs use only the copied directory. Existing savestate files retained their
+original timestamps and sizes.
+
 ## Reference behavior to preserve
 
 The reference source identifies v0.1.6 as its playable VR baseline:
@@ -94,9 +119,14 @@ the target implements and measures the equivalent paths.
 | Gate | Status | Evidence or blocker |
 | --- | --- | --- |
 | G0 pins and identity | Partial | Exact revisions, headers, and submodule gitlinks recorded. |
-| G0 target flat build | Partial | Release compile and headless startup smoke pass; overlay autocompile hash is corrected. Boot/gameplay preservation is still pending. |
-| G0 isolated saves | Pending | No port-specific memcard directory or copied test save has been created. |
-| G1 engine landmarks | In progress | Matching tooling and overlay-aware evidence format are being added. No target hook is confirmed. |
+| G0 target flat build | Partial | Release compile, corrected overlay autocompile, and isolated slot-0 gameplay boot pass. Interactive flat rendering/audio still need validation. |
+| G0 isolated saves | Pass for diagnostics | Slot-0 tests use `analysis/vr-baseline/saves/`; original personal states were not written. |
+| G1 engine landmarks | Partial | Render wait, level vertex transformer, entity transform, node transform, and RT/TR loading are mapped and observed executing. A named camera source and player roots remain open. |
+
+The flat Release executable was also started after the VR files were added. It
+loaded the game config, initialized overlay autocompile, entered OpenBIOS, and
+began guest execution without a headset. `CMakeLists.txt` and `game.toml` remain
+unchanged, so no VR source is linked into that target.
 
 ## Reproduction commands
 

@@ -22,7 +22,7 @@
 
 ### Engine matching
 
-- Added a dependency-free PS-X EXE and overlay-capture matcher.
+- Added a dependency-free PS-X EXE and overlay-capture matcher under `vr/tools/`.
 - Added landmark reporting with normalized MIPS opcode/token similarity, GTE
   profile matching, overlay identity, and an explicit "candidate only" label.
 - No Underground address has been promoted to a plugin hook.
@@ -32,6 +32,44 @@
   geometry, weapon, and HUD functions remain low-similarity candidates.
 - Unit tests for MIPS decoding, PS-X header parsing, function boundaries, and
   self-similarity pass.
+
+### Gameplay capture and live confirmation
+
+- Built `build-vr-diagnostic/` with debug tools enabled and OpenXR off.
+- Loaded slot 0 from an isolated save copy; load generation 1 completed and the
+  session advanced past frame 890.
+- Captured Underground overlay generation `16fc9e35958b` at `0x80097000` and
+  `91ef75121345` at `0x8008C000`.
+- Confirmed live execution and address-only instruction differences for the
+  entity transform, level vertex transformer, and gameplay render wait.
+- Used the live function ring to select the active duplicate scene-transform
+  branch: `0x80013B40` -> `0x80013EB4`. Both execute during the loaded slot-0
+  scene; the alternate near-identical branch is not mapped.
+- Rotated the camera with debug input: GTE RT changed while TR stayed zero and
+  the scratchpad view matrix changed. The producer PCs are in overlay code near
+  `0x80090B98..0x8009115C`; the matrix owner remains unresolved. See
+  [CAMERA_EVIDENCE.md](CAMERA_EVIDENCE.md).
+- Added the guarded mapping metadata in `vr/underground/engine_map.c`; no hook
+  is compiled or registered.
+
+### Flat-path preservation
+
+- Kept every VR implementation file under root `vr/`.
+- Left `CMakeLists.txt` and `game.toml` unchanged; no VR source is part of the
+  flat runtime target.
+- Rebuilt the flat Release target successfully.
+- Launched the flat executable headless with the isolated memcard directory;
+  config load, OpenBIOS boot, overlay autocompile, and guest execution all
+  started normally. The owned process was closed after the smoke check.
+- The engine map compiles standalone with Clang using
+  `-std=c11 -Wall -Wextra -Werror`.
+
+### VR isolation invariant
+
+- All VR implementation and diagnostic files are kept under the root `vr/`
+  directory. VR documentation remains under `docs/vr/`.
+- The flat Release target has not been changed to include VR sources or require
+  a headset. Its launch path remains the existing executable and configuration.
 
 ## Next work
 

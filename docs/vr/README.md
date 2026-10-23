@@ -14,6 +14,8 @@ executable and live overlay content.
    mappings and the evidence required before a hook can be registered.
 4. [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md) records completed work and
    reproducible checks.
+5. [CAMERA_EVIDENCE.md](CAMERA_EVIDENCE.md) records the current camera-motion
+   probe and its unresolved mapping work.
 
 The latest machine-ranked function candidates are in
 [ENGINE_EQUIVALENCE_REPORT.md](ENGINE_EQUIVALENCE_REPORT.md). They are
@@ -32,9 +34,14 @@ state restoration. Underground owns title-specific addresses, overlay identity,
 player/camera layouts, hooks, input policy, weapon profiles, and HUD content.
 `generated/` is generated output and must not be edited to implement VR.
 
+All VR implementation and diagnostic files live under root `vr/`. No VR source
+is wired into the current `psx-runtime` target yet. The existing flat executable,
+its launcher, config, keys, and save path must remain launchable without a
+headset or VR environment variable.
+
 ## Current state
 
-The framework and UI gitlinks match the reference, but the target has no VR
-sources, plugin package, launcher, or OpenXR build enabled. Engine landmark
-mapping remains gated: no reference overlay address may be copied to Underground
-without disassembly, live invocation evidence, and a runtime signature guard.
+The framework and UI gitlinks match the reference. Underground now has a
+fail-closed engine map under `vr/underground/` with live-confirmed entity,
+level-projection, and render-wait mappings. No VR plugin, hook, launcher, or
+OpenXR build is active yet. Camera and player/scene bindings remain gated.
