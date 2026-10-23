@@ -152,6 +152,37 @@
 - Clarified that the write trace names renderer output, not the camera update
   that originally authored the camera motion.
 
+### Frame entry and OT correction
+
+- Corrected the natural frame driver entry from `0x8006D66C` to
+  `0x8006D65C`. The first four instructions load the frame context and status
+  globals before falling into the old prologue. Updated the guarded binding to
+  1,512 bytes with SHA-256 `bc1f06d6...` and FNV-1a `0x7F07744E`.
+- Added a guarded `PutDrawEnv` binding at `0x80018BB8` (192 bytes, 0.981
+  structural match to reference `0x80017348`). `PutDispEnv` maps to
+  `0x80018C78` at 0.984 similarity.
+- Confirmed the live DRAWENV for the slot-0 scene is `x=0, y=240, 512x240`, and
+  the context OT base is `[0x800A7138 + 0x2218]`.
+- Added a measured GP0 state packet and an eye-rect fill. A clear-only control
+  produced two pure-black images, proving the target and clear path.
+- Added a bounded diagnostic OT walker that feeds the linked packet words to
+  GP0 inside the rollback transaction. The OT-only control
+  (`MOHU_VR_STEREO_OT_ONLY=1`, zero offset) rendered the complete courtyard,
+  weapon, and HUD, with OT base `0x800A72E0` and head `0x800A7ADC`.
+- The OT-only left/right PNGs were byte-identical as expected for zero offset.
+  Retained both images and the side-by-side control under `vr/proof/`.
+- Confirmed the driver toggles the OT base from `0x800A72E0` to
+  `0x800A82E0`. A full-scene pair can be obtained from the prebuilt list, but
+  this does not prove fresh eye geometry.
+- Rejected two offset experiments: the host render-view seam left the full scene
+  byte-identical, while direct per-eye `TRX` injection under the driver path
+  produced a black pair at the post-driver OT base.
+- Armed `wtrace` over `0x0013DFE0..0x0013E030`. The visible packet writes came
+  from `0x80090D68..0x8009104C` (`ra=0x800908E4`, scene draw bridge) and
+  `0x800110C4..0x80011334` (`ra=0x80011008`, packet command writer).
+- Rechecked the flat Release target: six framework packages, no VR diagnostic
+  plugin, and a successful headless start.
+
 ### VR isolation invariant
 
 - All VR implementation and diagnostic files are kept under the root `vr/`

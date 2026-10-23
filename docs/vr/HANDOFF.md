@@ -10,7 +10,7 @@ it before ending every implementation session.
 | Item | Value |
 | --- | --- |
 | Target branch | `feature/vr-port` |
-| Last implementation commit | `70ddb90` |
+| Last implementation commit | pending this checkpoint |
 | Target base | `7fcb0ca35af683ac38c4c501347d59916a924aa4` |
 | Reference branch | `master` |
 | Reference commit | `b33a7d96d596214233d3aef5ecacbf3736ad29e3` |
@@ -40,7 +40,7 @@ modify it as part of VR work.
 
 ## Current implementation
 
-The engine map is in `vr/underground/engine_map.c`. Sixteen mappings are recorded
+The engine map is in `vr/underground/engine_map.c`. Seventeen mappings are recorded
 with function SHA-256 and FNV-1a guards:
 
 | Role | Reference | Underground | Evidence |
@@ -58,8 +58,9 @@ with function SHA-256 and FNV-1a guards:
 | Player render entry | undiscovered | `0x8008AB84` | 352 bytes; live execution |
 | Actor update dispatcher | undiscovered | `0x80078E08` | object vtable dispatch; live execution |
 | Frame render | undiscovered | `0x80053BB4` | 240 bytes; live execution |
-| Frame driver | undiscovered | `0x8006D66C` | 1,496 bytes; replay execution |
+| Frame driver | undiscovered | `0x8006D65C` | 1,512 bytes; natural entry and replay execution |
 | DrawOTag | `0x800172D8` | `0x80018B50` | 26 instructions; live submission |
+| PutDrawEnv | `0x80017348` | `0x80018BB8` | 48 instructions; 0.981 structural match |
 | Post-render update | undiscovered | `0x8004356C` | 1,588 bytes; live execution |
 
 The live-confirmed entity transform calls `0x80013B40`, not the near-identical
@@ -75,8 +76,10 @@ The opt-in diagnostic plugin is:
   environment-gated replay experiments. Canonical execution is unchanged unless
   `MOHU_VR_STEREO_PROOF=1`.
 
-The diagnostic target reports sixteen active bindings and thirteen overlay hooks.
+The diagnostic target reports seventeen active bindings and thirteen overlay hooks.
 The isolated slot-0 scene verifies the render chain through the frame driver.
+The true natural frame entry is `0x8006D65C`: it loads the frame context and
+status words, then falls into the previously recorded prologue at `0x8006D66C`.
 
 The single-player scene roots are measured:
 
@@ -147,7 +150,7 @@ world-space parallax for the future eye-replay path.
 
 ## Stereo replay probe
 
-The diagnostic build contains an environment-gated stereo experiment:
+The diagnostic build contains environment-gated stereo controls:
 
 ```powershell
 $env:MOHU_VR_STEREO_PROOF = '1'
@@ -155,28 +158,46 @@ $env:MOHU_VR_EYE_OFFSET = '24'
 $env:MOHU_VR_REPLAY_FRAME_DRIVER = '1'
 ```
 
-The replay path:
+The OT-only control renders the already-built scene without regenerating it:
 
-1. Starts from `0x8006D66C` in a rollback-safe `psx_mod_render_stereo`
-   transaction.
-2. Applies signed `TRX` offsets at the verified level transformer.
-3. Finishes `0x8009D828` early inside the transaction so the emulated wait cannot
-   block replay.
-4. Skips the post-render timer update at `0x8004356C`, which otherwise reads
-   uncheckpointed device `0x1F801C0C`.
-5. Submits the ordering table through guarded `DrawOTag` at `0x80018B50`.
+```powershell
+$env:MOHU_VR_STEREO_PROOF = '1'
+$env:MOHU_VR_EYE_OFFSET = '0'
+$env:MOHU_VR_STEREO_OT_ONLY = '1'
+```
 
-Measured result:
+Confirmed replay facts:
 
-- Zero-offset frame-render replay published pairs successfully.
-- Full-driver replay published 180 pairs in the sampled run with four
-  level-transformer entries per eye and no watchdog abort.
-- `DrawOTag` submission produced roughly 1,000 GPU primitives per eye.
-- The resulting left and right PNGs were still byte-identical.
+1. `0x80018C78` is the main-EXE `PutDispEnv` match and `0x80018BB8` is
+   `PutDrawEnv`.
+2. The frame context at `0x800A7138` points at a 512-entry OT through
+   `[ctx + 0x2218]`. At the frame-render entry used by this scene that value was
+   `0x800A72E0`; after the driver it toggled to `0x800A82E0`.
+3. The OT-only control submits the prebuilt list with a bounded direct GP0 walk.
+   It renders the complete courtyard, HUD, and weapon and publishes an identical
+   zero-offset pair. This proves the OT head, packet tags, clear, and capture.
+4. The clear is effective: a clear-only run produced two pure-black images.
+5. The driver and frame-render replays can submit the full prebuilt scene, but
+   neither rewrites the projected world vertices used by that list.
+6. Applying the host render-view offset produced an identical full-scene pair.
+   Applying signed `TRX` offsets at the level transform under the driver path
+   produced a black pair at the post-driver OT base.
+7. The visible packet list is already present before the natural frame driver
+   entry. The driver toggles OT bases; the new base is not yet proven to own the
+   visible world list.
 
-Conclusion: rollback, wait bypass, submission, and per-eye CPU/GTE balance work,
-but the visible level ordering table is generated before `0x8006D66C`. This
-replay is diagnostic only and remains off by default. It is **not** parallax
+At the tested zero-offset OT-only checkpoint:
+
+| File | SHA-256 |
+| --- | --- |
+| [stereo-otonly-zero-left.png](../../vr/proof/stereo-otonly-zero-left.png) | `10ad3e8fbebe500c0d665b2eab2d509ecd012d44c96e4a6ab6d009ecbb11ebd1` |
+| [stereo-otonly-zero-right.png](../../vr/proof/stereo-otonly-zero-right.png) | `10ad3e8fbebe500c0d665b2eab2d509ecd012d44c96e4a6ab6d009ecbb11ebd1` |
+
+The current driver/TRX experiment produced a black pair with matching hash
+`ffc1aaa604e5364b25926033bfdb5b792c1ce06597681358d212c8c386a72aa5`.
+That result is rejected as stereo evidence.
+
+This work is diagnostic only and remains off by default. It is **not** parallax
 proof and is not an OpenXR path.
 
 ## Build and test state
@@ -209,7 +230,7 @@ Last checks:
 - Engine-map and diagnostic-plugin C files compile with
   `-Wall -Wextra -Werror`.
 - All VR documentation links resolve.
-- The diagnostic target builds and activates sixteen guarded bindings.
+- The diagnostic target builds and activates seventeen guarded bindings.
 - TRX 0/20/200 A/B captures produce the expected depth-dependent world motion.
 - Frame-driver replay completes and balances both eyes, but is rejected as image
   evidence because the eyes are identical.
@@ -245,23 +266,28 @@ $env:PSX_LOAD_SLOT = '0'
 Expected startup:
 
 ```text
-mohu-vr-diag: active bindings=16 overlay_hooks=13 read_only=1 level_offset_x=0 stereo_proof=0 eye_offset=0 replay_driver=0
+mohu-vr-diag: active bindings=17 overlay_hooks=13 read_only=1 level_offset_x=0 stereo_proof=0 eye_offset=0 replay_driver=0
 mohu-vr-diag: single_player_scene=0x800AA174 player=0x800AA17C player_input_offset=0x39C
 ```
 
 ## Open gates
 
-1. Find the geometry-generation boundary before `0x8006D66C` that builds the
-   visible level ordering table.
-2. Replay from that boundary with the verified `TRX` eye offset and prove a
+1. Determine why the driver path switches from the visible OT base to the other
+   512-entry buffer without retaining a drawable world list.
+2. Identify the function above `0x8006D65C` that writes the visible packet
+   addresses around `0x0013DFE0..0x0013E030`. The write trace showed producers
+   `0x80090D68`, `0x80090E6C`, `0x8009104C` (caller `0x800908E4`) and
+   `0x800110C8..0x80011334` (caller `0x80011008`).
+3. Replay from that boundary with the verified `TRX` offset and prove a
    non-identical pair with depth-dependent motion.
-3. Keep the wait bypass and post-render timer skip scoped strictly to eye replay.
-4. Label the actor/camera update function and separate camera motion from player
+4. Keep the clear, draw-environment, OT walker, wait bypass, and post-render
+   timer skip scoped strictly to eye replay.
+5. Label the actor/camera update function and separate camera motion from player
    translation over controlled inputs.
-5. Complete interactive flat boot/menu/gameplay validation.
-6. Implement the minimal OpenXR/native-screen startup path without modifying
+6. Complete interactive flat boot/menu/gameplay validation.
+7. Implement the minimal OpenXR/native-screen startup path without modifying
    defaults used by `RunFlat` or the existing flat executable.
-7. Only after a true parallax pair, connect the verified pair to OpenXR
+8. Only after a true parallax pair, connect the verified pair to OpenXR
    presentation and headset pose.
 
 Do not treat the current frame-driver replay as working stereo. The rollback

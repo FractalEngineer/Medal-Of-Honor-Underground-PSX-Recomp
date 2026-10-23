@@ -16,6 +16,7 @@
 #define MOHU_VR_STEREO_PROOF_ENV "MOHU_VR_STEREO_PROOF"
 #define MOHU_VR_EYE_OFFSET_ENV "MOHU_VR_EYE_OFFSET"
 #define MOHU_VR_REPLAY_DRIVER_ENV "MOHU_VR_REPLAY_FRAME_DRIVER"
+#define MOHU_VR_OT_ONLY_ENV "MOHU_VR_STEREO_OT_ONLY"
 #define MOHU_VR_EYE_OFFSET_LIMIT 256
 
 #define MOHU_VR_FRAME_CONTEXT_ADDR 0x800A7138u
@@ -37,13 +38,22 @@ static uint32_t g_stereo_current_eye;
 static bool g_stereo_base_valid;
 static uint32_t g_stereo_base_trx;
 static uint32_t g_stereo_level_hits[2];
-static uint32_t g_stereo_trx_apps[2];
+static uint32_t g_stereo_view_apps[2];
 static uint32_t g_stereo_waits_skipped;
+static uint32_t g_stereo_ot_words;
 static uint32_t g_stereo_attempts;
 static uint32_t g_stereo_pairs;
+static uint32_t g_stereo_frame_x;
+static uint32_t g_stereo_frame_y;
+static uint32_t g_stereo_frame_w;
+static uint32_t g_stereo_frame_h;
+static bool g_stereo_ot_reported;
 static bool g_replay_frame_driver;
+static bool g_stereo_ot_only;
 static bool g_frame_driver_args_valid;
 static uint32_t g_frame_driver_args[4];
+static bool g_frame_render_args_valid;
+static uint32_t g_frame_render_args[4];
 
 static bool parse_bounded_int(const char* value, int32_t limit,
                               int32_t* result) {
@@ -135,6 +145,78 @@ static void stereo_guest_call(CPUState* cpu, uint32_t entry, uint32_t a0,
     psx_dispatch_call(cpu, entry, ra);
 }
 
+static void clear_stereo_rect(void) {
+    static const uint32_t k_state_packet[] = {
+        0xE3000000u, 0xE403BDFFu, 0xE5000000u,
+        0xE100060Au, 0xE2000000u, 0xE6000000u,
+    };
+    for (size_t i = 0; i < sizeof(k_state_packet) / sizeof(k_state_packet[0]);
+         ++i) {
+        psx_mod_write_word(0x1F801810u, k_state_packet[i]);
+    }
+    psx_mod_write_word(0x1F801810u, 0x02000000u);
+    psx_mod_write_word(0x1F801810u,
+                       (g_stereo_frame_y << 16) | g_stereo_frame_x);
+    psx_mod_write_word(0x1F801810u,
+                       (g_stereo_frame_h << 16) | g_stereo_frame_w);
+}
+
+static uint32_t stereo_ot_base(void) {
+    return psx_mod_read_word(MOHU_VR_FRAME_CONTEXT_ADDR + 0x2218u);
+}
+
+static void report_stereo_ot(uint32_t base) {
+    if (g_stereo_ot_reported) {
+        return;
+    }
+    g_stereo_ot_reported = true;
+    uint32_t head = base + 511u * 4u;
+    uint32_t tag = head >= 0x80000000u && head < 0x80200000u
+                       ? psx_mod_read_word(head)
+                       : 0u;
+    fprintf(stdout,
+            "mohu-vr-diag: stereo_ot base=0x%08X head=0x%08X tag=0x%08X\n",
+            base, head, tag);
+    fflush(stdout);
+}
+
+static bool submit_stereo_ot(uint32_t base) {
+    uint32_t node = base + 511u * 4u;
+    for (uint32_t nodes = 0; nodes < 8192u; ++nodes) {
+        if (node < 0x80000000u || node >= 0x80200000u) {
+            return false;
+        }
+        uint32_t tag = psx_mod_read_word(node);
+        uint32_t words = tag >> 24;
+        uint32_t next = tag & 0x00FFFFFFu;
+        if (words > 64u || node + 4u + words * 4u > 0x80200000u) {
+            return false;
+        }
+        for (uint32_t i = 0; i < words; ++i) {
+            psx_mod_write_word(0x1F801810u,
+                               psx_mod_read_word(node + 4u + i * 4u));
+            g_stereo_ot_words++;
+        }
+        if (next == 0x00FFFFFFu) {
+            return true;
+        }
+        node = 0x80000000u | next;
+    }
+    return false;
+}
+
+static bool prepare_stereo_draw_env(CPUState* cpu, uint32_t ra) {
+    const MohuVrEngineBinding* put_draw_env =
+        mohu_vr_engine_map_find(MOHU_VR_ROLE_PUT_DRAW_ENV);
+    uint32_t index = psx_mod_read_word(MOHU_VR_FRAME_CONTEXT_ADDR + 0x2204u);
+    if (!put_draw_env || index > 1u || !ensure_binding_verified(put_draw_env)) {
+        return false;
+    }
+    uint32_t env = MOHU_VR_FRAME_CONTEXT_ADDR + 16u + 184u * index;
+    stereo_guest_call(cpu, put_draw_env->target_address, env, 0u, 0u, ra);
+    return true;
+}
+
 static int vr_stereo_eye_draw(CPUState* cpu, void* user, uint32_t eye) {
     (void)user;
     if (!g_stereo_proof || !g_stereo_active || eye > 1u) {
@@ -145,6 +227,19 @@ static int vr_stereo_eye_draw(CPUState* cpu, void* user, uint32_t eye) {
 
     uint32_t ra = cpu->gpr[31];
     uint32_t ctx = MOHU_VR_FRAME_CONTEXT_ADDR;
+    if (!prepare_stereo_draw_env(cpu, ra)) {
+        return 0;
+    }
+    clear_stereo_rect();
+
+    uint32_t ot = stereo_ot_base();
+    if (ot < 0x80000000u || ot >= 0x80200000u) {
+        return 0;
+    }
+    report_stereo_ot(ot);
+    if (g_stereo_ot_only) {
+        return submit_stereo_ot(ot);
+    }
 
     if (g_replay_frame_driver) {
         const MohuVrEngineBinding* driver =
@@ -158,45 +253,31 @@ static int vr_stereo_eye_draw(CPUState* cpu, void* user, uint32_t eye) {
         }
         cpu->gpr[31] = ra;
         psx_dispatch_call(cpu, driver->target_address, ra);
-        return 1;
+        uint32_t after = stereo_ot_base();
+        fprintf(stdout,
+                "mohu-vr-diag: stereo_driver_ot before=0x%08X after=0x%08X\n",
+                ot, after);
+        fflush(stdout);
+        if (after >= 0x80000000u && after < 0x80200000u) {
+            ot = after;
+        }
+        return submit_stereo_ot(ot);
     }
 
-    uint32_t world = psx_mod_read_word(MOHU_VR_WORLD_POINTER_ADDR);
-    uint32_t scene = psx_mod_read_word(MOHU_VR_SP_SCENE_POINTER_ADDR);
-    uint32_t player = psx_mod_read_word(MOHU_VR_SP_PLAYER_POINTER_ADDR);
-    if (world < 0x80000000u || world >= 0x80200000u ||
-        scene < 0x80000000u || scene >= 0x80200000u ||
-        player < 0x80000000u || player >= 0x80200000u) {
+    if (!g_frame_render_args_valid) {
         return 0;
     }
-
-    stereo_guest_call(cpu, 0x80053D4Cu, psx_mod_read_word(0x800AA160u), 0u, 0u,
-                      ra);
-    if (psx_mod_read_byte(world + 1423u) != 0u &&
-        psx_mod_read_word(MOHU_VR_WORLD_READY_ADDR) != 0u) {
-        stereo_guest_call(cpu, 0x800976D0u, ctx, 0u, 0u, ra);
+    for (size_t i = 0; i < 4u; ++i) {
+        cpu->gpr[4u + i] = g_frame_render_args[i];
     }
-    if ((psx_mod_read_word(world + 1420u) & 0x00FFFFFFu) != 0u &&
-        psx_mod_read_word(MOHU_VR_WORLD_READY_ADDR) != 0u) {
-        stereo_guest_call(cpu, 0x8009865Cu, ctx, 0u, 0u, ra);
-    }
-    stereo_guest_call(cpu, 0x80070898u, 0u, 0u, 0u, ra);
-    stereo_guest_call(cpu, 0x8006B64Cu,
-                      psx_mod_read_word(ctx + 0x2218u),
-                      psx_mod_read_word(ctx + 0x221Cu), 0u, ra);
-    stereo_guest_call(cpu, 0x80078E08u, ctx, scene, 0u, ra);
-    stereo_guest_call(cpu, 0x8008F9F4u, player, ctx, 0u, ra);
+    cpu->gpr[31] = ra;
+    psx_dispatch_call(cpu, 0x80053BB4u, ra);
 
-    const MohuVrEngineBinding* draw_otag =
-        mohu_vr_engine_map_find(MOHU_VR_ROLE_DRAW_OTAG);
-    uint32_t ot = psx_mod_read_word(ctx + 0x2218u);
-    if (!draw_otag || !ensure_binding_verified(draw_otag) ||
-        ot < 0x80000000u || ot >= 0x80200000u) {
+    ot = stereo_ot_base();
+    if (ot < 0x80000000u || ot >= 0x80200000u) {
         return 0;
     }
-    stereo_guest_call(cpu, draw_otag->target_address, ot + 511u * 4u, 0u, 0u,
-                      ra);
-    return 1;
+    return submit_stereo_ot(ot);
 }
 
 static void run_stereo_proof(CPUState* cpu) {
@@ -216,6 +297,10 @@ static void run_stereo_proof(CPUState* cpu) {
     frame.y = index == 0u ? 240u : 0u;
     frame.w = 512u;
     frame.h = 240u;
+    g_stereo_frame_x = frame.x;
+    g_stereo_frame_y = frame.y;
+    g_stereo_frame_w = frame.w;
+    g_stereo_frame_h = frame.h;
 
     g_stereo_attempts++;
     g_stereo_active = true;
@@ -227,11 +312,13 @@ static void run_stereo_proof(CPUState* cpu) {
     if (g_stereo_attempts <= 3u || (g_stereo_attempts % 60u) == 0u) {
         fprintf(stdout,
                 "mohu-vr-diag: stereo_proof attempt=%u pairs=%u rendered=%d "
-                "status=%u y=%u offset=%d level_hits=%u/%u trx_apps=%u/%u\n",
+                "status=%u y=%u offset=%d level_hits=%u/%u view_apps=%u/%u "
+                "ot_words=%u\n",
                 g_stereo_attempts, g_stereo_pairs, rendered,
                 psx_mod_render_stereo_status(), frame.y, g_stereo_eye_offset,
                 g_stereo_level_hits[0], g_stereo_level_hits[1],
-                g_stereo_trx_apps[0], g_stereo_trx_apps[1]);
+                g_stereo_view_apps[0], g_stereo_view_apps[1],
+                g_stereo_ot_words);
         fflush(stdout);
         if (g_replay_frame_driver) {
             fprintf(stdout, "mohu-vr-diag: stereo waits_skipped=%u\n",
@@ -273,7 +360,7 @@ static void vr_diagnostic_entry(CPUState* cpu, uint32_t address) {
                                               : g_stereo_eye_offset;
                 cpu->gte_ctrl[5] =
                     (uint32_t)((int32_t)cpu->gte_ctrl[5] + signed_offset);
-                g_stereo_trx_apps[eye]++;
+                g_stereo_view_apps[eye]++;
             }
         } else if (!g_stereo_active && g_level_offset_x != 0 &&
                    !g_level_offset_applied) {
@@ -303,6 +390,10 @@ static void vr_diagnostic_entry(CPUState* cpu, uint32_t address) {
         g_frame_driver_args_valid = true;
     }
     if (role == MOHU_VR_ROLE_FRAME_RENDER) {
+        for (size_t i = 0; i < 4u; ++i) {
+            g_frame_render_args[i] = cpu->gpr[4u + i];
+        }
+        g_frame_render_args_valid = true;
         run_stereo_proof(cpu);
     }
     if (g_reported[index]) {
@@ -337,6 +428,8 @@ static void vr_diagnostic_activate(void) {
     const char* replay_driver = getenv(MOHU_VR_REPLAY_DRIVER_ENV);
     g_replay_frame_driver = replay_driver && *replay_driver &&
                             *replay_driver != '0';
+    const char* ot_only = getenv(MOHU_VR_OT_ONLY_ENV);
+    g_stereo_ot_only = ot_only && *ot_only && *ot_only != '0';
     if (g_replay_frame_driver) {
         g_frame_driver_args[0] = MOHU_VR_FRAME_CONTEXT_ADDR;
         g_frame_driver_args_valid = true;
@@ -381,9 +474,7 @@ PSX_MOD_CONSTRUCTOR(psx_register_mohu_vr_diagnostic_plugin) {
         MOHU_VR_DIAG_PLUGIN_ID, vr_diagnostic_activate);
     for (size_t i = 0; i < mohu_vr_engine_map_count(); ++i) {
         const MohuVrEngineBinding* binding = mohu_vr_engine_map_at(i);
-        if (binding &&
-            binding->container_kind == MOHU_VR_CONTAINER_OVERLAY &&
-            binding->status >= MOHU_VR_STATUS_STATIC_CONFIRMED) {
+        if (binding && binding->status >= MOHU_VR_STATUS_STATIC_CONFIRMED) {
             (void)psx_mod_register_function_entry_plugin(
                 MOHU_VR_DIAG_PLUGIN_ID, binding->target_address,
                 vr_diagnostic_entry);
