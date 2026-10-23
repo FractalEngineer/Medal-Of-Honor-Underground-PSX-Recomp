@@ -67,6 +67,18 @@ The diagnostic target reports five active bindings, three overlay hooks, and
 successfully verifies the entity, level-transform, and render-wait functions in
 the isolated slot-0 scene.
 
+The single-player scene roots are measured:
+
+| Root | Global | Live value at slot 0 |
+| --- | --- | --- |
+| Scene pointer | `0x800AA174` | `0x800F2180` |
+| Player pointer | `0x800AA17C` | `0x800F0BE0` |
+| Player input | `player + 0x39C` | `0x800F0FDC` |
+
+Read the pointer globals at use time; the heap addresses themselves are not
+stable across level loads. A right-stick camera turn changed GTE RT and the
+rendered world while GTE TR stayed zero and the player pointer stayed fixed.
+
 Whole overlay-window hashes change between diagnostic runs even when function
 bytes remain identical. They are observations only. The stable runtime guard is
 the function-byte hash.
@@ -80,9 +92,38 @@ the function-byte hash.
 - Scratch writes were produced by overlay code near
   `0x80090B98..0x8009115C`, with return address `0x800908E4` at base
   `0x8008C000`.
-- The named camera owner and stable player/scene roots are still unresolved.
+- The level transformer consumes the camera's rotation in GTE RT and projects
+  camera-relative coordinates with TR zero.
+- The stable scene/player pointer globals are now mapped (see above). The exact
+  actor/camera update function that owns the RT load remains to be labelled.
 
 See `CAMERA_EVIDENCE.md` for measurements.
+
+## Transform probe
+
+`MOHU_VR_DIAGNOSTICS=ON` now includes a diagnostic-only offset at the level
+transformer. Setting `MOHU_VR_LEVEL_OFFSET_X=N` adds N to GTE TRX once per draw
+span and restores the original TRX at the verified gameplay render-wait boundary:
+
+```powershell
+$env:MOHU_VR_LEVEL_OFFSET_X = '200'
+```
+
+The probe is inert without the environment variable. It verifies both boundary
+functions before touching or restoring GTE state. It is not part of the flat
+build and does not yet provide two-eye replay or OpenXR.
+
+The current A/B receipt uses the same slot-0 scene:
+
+| Probe | Result |
+| --- | --- |
+| `TRX = 0` | [Control](../../vr/proof/level-probe-control.png) |
+| `TRX = 20` | [Depth-dependent world shift](../../vr/proof/level-probe-offset20.png) |
+| `TRX = 200` | [Large world shift](../../vr/proof/level-probe-offset200.png) |
+
+At `TRX + 20`, far rows aligned at +2 px, mid rows at +5 px, and near rows at
++6 px. The HUD and first-person weapon remained fixed. This establishes true
+world-space parallax for the future eye-replay path.
 
 ## Build and test state
 
@@ -103,6 +144,8 @@ VR diagnostic build:
 - Seven packages: one game-owned diagnostic plus six framework packages.
 - Slot 0 loads from `analysis/vr-baseline/saves/`.
 - A 512x240 screenshot confirmed the saved state is a playable courtyard scene.
+- Interpreter-only diagnostic captures confirmed the camera roots and the
+  `TRX` world-space probe.
 
 Last checks:
 
@@ -110,6 +153,8 @@ Last checks:
 - Engine-map and diagnostic-plugin C files compile with
   `-Wall -Wextra -Werror`.
 - All VR documentation links resolve.
+- The diagnostic target builds and activates five guarded bindings.
+- TRX 0/20/200 A/B captures produce the expected depth-dependent world motion.
 - No owned game process remains running.
 
 The first startup smoke used the default memcard directory before isolation and
@@ -142,12 +187,13 @@ $env:PSX_LOAD_SLOT = '0'
 Expected startup:
 
 ```text
-mohu-vr-diag: active bindings=5 overlay_hooks=3 read_only=1
+mohu-vr-diag: active bindings=5 overlay_hooks=3 read_only=1 level_offset_x=0
+mohu-vr-diag: single_player_scene=0x800AA174 player=0x800AA17C player_input_offset=0x39C
 ```
 
 ## Open gates
 
-1. Identify the stable camera matrix owner and player/scene roots.
+1. Label the actor/camera update function that owns the RT load.
 2. Separate camera motion from player translation over controlled inputs.
 3. Add guarded entry instrumentation for the main-EXE node/loader path only
    through the supported recompiler hook process if it becomes necessary.

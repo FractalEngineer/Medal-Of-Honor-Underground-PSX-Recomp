@@ -1,4 +1,5 @@
 #include "cpu_state.h"
+#include "camera_map.h"
 #include "engine_map.h"
 #include "mod_plugins.h"
 
@@ -6,13 +7,20 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #define MOHU_VR_DIAG_PLUGIN_ID "mohu.vr.diagnostic"
+#define MOHU_VR_LEVEL_OFFSET_ENV "MOHU_VR_LEVEL_OFFSET_X"
+#define MOHU_VR_LEVEL_OFFSET_LIMIT 2048
 
 static bool g_active;
 static bool g_checked[MOHU_VR_ROLE_COUNT];
 static bool g_mismatch[MOHU_VR_ROLE_COUNT];
 static bool g_reported[MOHU_VR_ROLE_COUNT];
+static bool g_camera_reported;
+static bool g_level_offset_applied;
+static uint32_t g_saved_trx;
+static int32_t g_level_offset_x;
 
 static uint32_t guest_function_fnv1a(const MohuVrEngineBinding* binding) {
     uint32_t hash = 2166136261u;
@@ -40,21 +48,11 @@ static bool binding_for_address(uint32_t address, MohuVrEngineRole* role_out,
     return false;
 }
 
-static void vr_diagnostic_entry(CPUState* cpu, uint32_t address) {
-    if (!g_active) {
-        return;
-    }
-
-    MohuVrEngineRole role;
-    const MohuVrEngineBinding* binding;
-    if (!binding_for_address(address, &role, &binding) ||
+static bool ensure_binding_verified(const MohuVrEngineBinding* binding) {
+    size_t index = (size_t)binding->role;
+    if (index >= MOHU_VR_ROLE_COUNT ||
         binding->status != MOHU_VR_STATUS_LIVE_CONFIRMED) {
-        return;
-    }
-
-    size_t index = (size_t)role;
-    if (index >= MOHU_VR_ROLE_COUNT) {
-        return;
+        return false;
     }
     if (!g_checked[index]) {
         g_checked[index] = true;
@@ -69,7 +67,58 @@ static void vr_diagnostic_entry(CPUState* cpu, uint32_t address) {
             fflush(stdout);
         }
     }
-    if (g_mismatch[index] || g_reported[index]) {
+    return !g_mismatch[index];
+}
+
+static void report_scene_roots(CPUState* cpu) {
+    if (g_camera_reported) {
+        return;
+    }
+    g_camera_reported = true;
+
+    uint32_t scene = psx_mod_read_word(MOHU_VR_SP_SCENE_POINTER_ADDR);
+    uint32_t player = psx_mod_read_word(MOHU_VR_SP_PLAYER_POINTER_ADDR);
+    uint32_t input = 0;
+    if (player >= 0x80000000u && player < 0x80200000u) {
+        input = psx_mod_read_word(player + MOHU_VR_PLAYER_INPUT_OFFSET);
+    }
+    fprintf(stdout,
+            "mohu-vr-diag: scene_roots scene=0x%08X player=0x%08X "
+            "input=0x%08X level_root=0x%08X\n",
+            scene, player, input, cpu->gpr[4]);
+    fflush(stdout);
+}
+
+static void vr_diagnostic_entry(CPUState* cpu, uint32_t address) {
+    if (!g_active) {
+        return;
+    }
+
+    MohuVrEngineRole role;
+    const MohuVrEngineBinding* binding;
+    if (!binding_for_address(address, &role, &binding) ||
+        !ensure_binding_verified(binding)) {
+        return;
+    }
+
+    size_t index = (size_t)role;
+    if (index >= MOHU_VR_ROLE_COUNT) {
+        return;
+    }
+    if (role == MOHU_VR_ROLE_LEVEL_VERTEX_TRANSFORMER) {
+        report_scene_roots(cpu);
+        if (g_level_offset_x != 0 && !g_level_offset_applied) {
+            g_saved_trx = cpu->gte_ctrl[5];
+            cpu->gte_ctrl[5] =
+                (uint32_t)((int32_t)g_saved_trx + g_level_offset_x);
+            g_level_offset_applied = true;
+        }
+    } else if (role == MOHU_VR_ROLE_GAMEPLAY_RENDER_WAIT &&
+               g_level_offset_applied) {
+        cpu->gte_ctrl[5] = g_saved_trx;
+        g_level_offset_applied = false;
+    }
+    if (g_reported[index]) {
         return;
     }
 
@@ -84,6 +133,22 @@ static void vr_diagnostic_entry(CPUState* cpu, uint32_t address) {
 
 static void vr_diagnostic_activate(void) {
     g_active = true;
+    const char* offset = getenv(MOHU_VR_LEVEL_OFFSET_ENV);
+    if (offset && *offset) {
+        char* end = NULL;
+        long parsed = strtol(offset, &end, 0);
+        if (end && !*end && parsed >= -MOHU_VR_LEVEL_OFFSET_LIMIT &&
+            parsed <= MOHU_VR_LEVEL_OFFSET_LIMIT) {
+            g_level_offset_x = (int32_t)parsed;
+        } else {
+            fprintf(stdout,
+                    "mohu-vr-diag: ignored invalid %s=%s "
+                    "(range -%d..%d)\n",
+                    MOHU_VR_LEVEL_OFFSET_ENV, offset,
+                    MOHU_VR_LEVEL_OFFSET_LIMIT,
+                    MOHU_VR_LEVEL_OFFSET_LIMIT);
+        }
+    }
     size_t hooks = 0;
     for (size_t i = 0; i < mohu_vr_engine_map_count(); ++i) {
         const MohuVrEngineBinding* binding = mohu_vr_engine_map_at(i);
@@ -93,8 +158,14 @@ static void vr_diagnostic_activate(void) {
         }
     }
     fprintf(stdout,
-            "mohu-vr-diag: active bindings=%zu overlay_hooks=%zu read_only=1\n",
-            mohu_vr_engine_map_count(), hooks);
+            "mohu-vr-diag: active bindings=%zu overlay_hooks=%zu read_only=1 "
+            "level_offset_x=%d\n",
+            mohu_vr_engine_map_count(), hooks, g_level_offset_x);
+    fprintf(stdout,
+            "mohu-vr-diag: single_player_scene=0x%08X player=0x%08X "
+            "player_input_offset=0x%X\n",
+            MOHU_VR_SP_SCENE_POINTER_ADDR, MOHU_VR_SP_PLAYER_POINTER_ADDR,
+            MOHU_VR_PLAYER_INPUT_OFFSET);
     fflush(stdout);
 }
 
