@@ -10,7 +10,7 @@ it before ending every implementation session.
 | Item | Value |
 | --- | --- |
 | Target branch | `feature/vr-port` |
-| Last game-tree checkpoint | `946f952` |
+| Last game-tree checkpoint | `0d9d22c` |
 | Current framework implementation | `d9b0f382` |
 | Target base | `7fcb0ca35af683ac38c4c501347d59916a924aa4` |
 | Reference branch | `master` |
