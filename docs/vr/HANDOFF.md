@@ -264,10 +264,23 @@ remains disabled (`enabled=0`) and is not the receipt for this path.
 The diagnostic plugin now has an opt-in OpenXR path. `MOHU_VR_OPENXR=1` enables
 the backend, presents a native head-relative surface until the first gameplay
 frame, obtains the two headset `PSXModRenderView` values, and submits the
-verified complete pair. The default world scale is 716.4179 GTE units per
-metre. This remains diagnostic and off by default. No headset acceptance run
-has been completed yet; the current receipt is compile plus fail-closed
-no-runtime fallback.
+verified complete pair. The launcher defaults to `WorldScale=3` with a 67 mm
+user-IPD calibration, producing the reference profile's effective 238.806 GTE
+units per metre. This remains diagnostic and off by default.
+
+The launcher can now test OpenXR without a physical headset through SteamVR's
+null HMD:
+
+```powershell
+.\RunVR-SteamVR.bat -Headless -Seconds 10
+```
+
+The mode starts the selected runtime, waits for complete stereo pairs, records
+the startup and smoke receipts, then stops SteamVR and restores its original
+settings. A failed headset run using the previous unscaled profile reported
+correct head tracking but an oversized world and black flashing. The corrected
+profile has passed null-HMD submission testing; it still needs one physical
+headset visual retest.
 
 ## Build and test state
 
@@ -316,6 +329,9 @@ Last checks:
   `-Wall -Wextra -Werror`.
 - All VR documentation links resolve.
 - The diagnostic target builds and activates seventeen guarded bindings.
+- A SteamVR null-HMD run loaded PGXP slot `2`, submitted fresh stereo pairs at
+  the corrected 238.806 units-per-metre profile, and recorded zero XR begin or
+  eye-view failures.
 - TRX 0/20/200 A/B captures produce the expected depth-dependent world motion.
 - Frame-render replay with the scoped view offset publishes a byte-identical
   zero control and a complete depth-parallax pair.
@@ -375,6 +391,12 @@ $env:PSX_STEREO_SHED = '0'
   --memcard-dir (Resolve-Path 'analysis\vr-baseline\saves').Path
 ```
 
+The no-headset OpenXR acceptance path uses the same isolated slot:
+
+```powershell
+.\RunVR-SteamVR.bat -Headless -Seconds 10
+```
+
 Expected startup:
 
 ```text
@@ -393,8 +415,8 @@ mohu-vr-diag: single_player_scene=0x800AA174 player=0x800AA17C player_input_offs
 4. Label the actor/camera update function and separate camera motion from player
    translation over controlled inputs.
 5. Complete interactive flat boot/menu/gameplay validation.
-6. Accept the opt-in OpenXR native surface and per-eye presentation on a
-   headset, then add input and HUD policy.
+6. Retest the corrected `WorldScale=3` / VSync-off profile on a physical
+   headset for world size and black flashing, then add input and HUD policy.
 
 Do not treat the frame-driver replay as working stereo. The accepted evidence
 uses the frame-render replay; the driver path still does not own the visible

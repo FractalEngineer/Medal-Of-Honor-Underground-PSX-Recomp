@@ -5,8 +5,11 @@ param(
     [string]$BuildDirectory = 'build-release',
     [ValidateRange(-1, 99)]
     [int]$Slot = 2,
-    [ValidateRange(1, 65536)]
-    [double]$UnitsPerMeter = (48.0 / 0.067),
+    [ValidateRange(40, 80)]
+    [double]$IpdMm = 67,
+    [ValidateRange(0.05, 20)]
+    [double]$WorldScale = 3,
+    [double]$UnitsPerMeter = 0,
     [ValidateRange(0.25, 20)]
     [double]$MenuDistance = 2,
     [ValidateRange(0.25, 10)]
@@ -17,6 +20,7 @@ param(
     [int]$Seconds = 0,
     [ValidateRange(1, 120)]
     [int]$StartupTimeoutSeconds = 30,
+    [switch]$Headless,
     [switch]$Build
 )
 
@@ -30,6 +34,55 @@ $stderrLog = Join-Path $logPath 'vr-launch.stderr.log'
 $readyPath = Join-Path ([IO.Path]::GetTempPath()) ('mohu-vr-ready-' + [guid]::NewGuid().ToString('N') + '.json')
 $process = $null
 $savedEnvironment = @{}
+$steamVrSettings = $null
+$steamVrOriginal = $null
+$steamVrStarted = $false
+
+function Get-StereoProof {
+    param([string]$Path)
+
+    if (-not (Test-Path -LiteralPath $Path)) {
+        return $null
+    }
+    $line = Get-Content -LiteralPath $Path -Tail 200 |
+        Where-Object { $_ -match '^mohu-vr-diag: stereo_proof ' } |
+        Select-Object -Last 1
+    if (-not $line) {
+        return $null
+    }
+    $pattern = 'attempt=(?<attempt>\d+) pairs=(?<pairs>\d+) ' +
+        'rendered=(?<rendered>\d+).*xr_begin_failures=(?<begin>\d+) ' +
+        'xr_view_failures=(?<view>\d+) xr_ends=(?<ends>\d+)'
+    $match = [regex]::Match([string]$line, $pattern)
+    if (-not $match.Success) {
+        return $null
+    }
+    [pscustomobject]@{
+        attempt = [int]$match.Groups['attempt'].Value
+        pairs = [int]$match.Groups['pairs'].Value
+        rendered = [int]$match.Groups['rendered'].Value
+        begin_failures = [int]$match.Groups['begin'].Value
+        view_failures = [int]$match.Groups['view'].Value
+        ends = [int]$match.Groups['ends'].Value
+        line = [string]$line
+    }
+}
+
+function Wait-StereoProof {
+    param([string]$Path, [int]$TimeoutSeconds = 30)
+
+    $deadline = [DateTime]::UtcNow.AddSeconds($TimeoutSeconds)
+    while ([DateTime]::UtcNow -lt $deadline) {
+        $proof = Get-StereoProof -Path $Path
+        if ($proof -and $proof.attempt -gt 0 -and $proof.pairs -gt 0 -and
+            $proof.rendered -eq 1 -and $proof.pairs -eq $proof.attempt -and
+            $proof.begin_failures -eq 0 -and $proof.view_failures -eq 0) {
+            return $proof
+        }
+        Start-Sleep -Milliseconds 250
+    }
+    throw "No complete OpenXR stereo pair appeared within $TimeoutSeconds seconds."
+}
 
 function Resolve-RuntimeManifest {
     param([string]$Name, [string]$ExplicitPath)
@@ -94,6 +147,27 @@ function Resolve-OpenXrSource {
     return $null
 }
 
+function Resolve-SteamRoot {
+    $candidates = @()
+    $registered = (Get-ItemProperty -Path 'HKCU:\SOFTWARE\Valve\Steam' `
+        -Name SteamPath -ErrorAction SilentlyContinue).SteamPath
+    if ($registered) {
+        $candidates += $registered
+    }
+    if (${env:ProgramFiles(x86)}) {
+        $candidates += Join-Path ${env:ProgramFiles(x86)} 'Steam'
+    }
+    if ($env:ProgramFiles) {
+        $candidates += Join-Path $env:ProgramFiles 'Steam'
+    }
+    foreach ($candidate in $candidates) {
+        if (Test-Path -LiteralPath (Join-Path $candidate 'steamapps\common\SteamVR')) {
+            return (Resolve-Path -LiteralPath $candidate).Path
+        }
+    }
+    throw 'Steam installation with SteamVR was not found.'
+}
+
 function Build-Release {
     $webpSource = Join-Path $buildPath '_deps\psx_libwebp-src'
     if (-not (Test-Path -LiteralPath $webpSource)) {
@@ -128,6 +202,24 @@ function Build-Release {
 if ($Seconds -lt 0) {
     throw '-Seconds must be zero or positive.'
 }
+$baseUnitsPerMeter = if ($UnitsPerMeter -gt 0) {
+    $UnitsPerMeter
+} else {
+    48.0 / ($IpdMm / 1000.0)
+}
+if ($baseUnitsPerMeter -lt 1 -or $baseUnitsPerMeter -gt 65536) {
+    throw 'Base units per meter must be between 1 and 65536.'
+}
+$effectiveUnitsPerMeter = $baseUnitsPerMeter / $WorldScale
+if ($effectiveUnitsPerMeter -lt 1 -or $effectiveUnitsPerMeter -gt 65536) {
+    throw 'World scale produced units per meter outside 1..65536.'
+}
+if ($Headless -and $RuntimeJson) {
+    throw '-Headless drives SteamVR; do not also pass -RuntimeJson.'
+}
+if ($Headless) {
+    $Runtime = 'steamvr'
+}
 if (-not $GameConfig) {
     $diagnosticConfig = Join-Path $repoRoot 'analysis\vr-baseline\game-interp.toml'
     $GameConfig = if (Test-Path -LiteralPath $diagnosticConfig) { $diagnosticConfig } else { Join-Path $repoRoot 'game.toml' }
@@ -153,15 +245,66 @@ try {
     if (-not (Test-Path -LiteralPath $exePath)) {
         throw "Game executable missing: $exePath. Run this launcher with -Build first."
     }
+    Write-Host (
+        'VR profile: IPD={0}mm world_scale={1} units_per_meter={2}' -f
+        $IpdMm,
+        $WorldScale,
+        $effectiveUnitsPerMeter.ToString([Globalization.CultureInfo]::InvariantCulture)
+    )
+
+    if ($Headless) {
+        $steamRoot = Resolve-SteamRoot
+        $steamVrRoot = Join-Path $steamRoot 'steamapps\common\SteamVR'
+        $steamVrStartup = Join-Path $steamVrRoot 'bin\win64\vrstartup.exe'
+        $steamVrSettings = Join-Path $steamRoot 'config\steamvr.vrsettings'
+        if (-not (Test-Path -LiteralPath $steamVrStartup)) {
+            throw "SteamVR startup executable not found: $steamVrStartup"
+        }
+        if (-not (Test-Path -LiteralPath $steamVrSettings)) {
+            throw "SteamVR settings not found: $steamVrSettings"
+        }
+        if (Get-Process vrserver,vrcompositor,vrmonitor,vrdashboard,vrwebhelper `
+                -ErrorAction SilentlyContinue) {
+            throw 'SteamVR is already running. Close it before -Headless.'
+        }
+
+        $steamVrOriginal = [IO.File]::ReadAllText($steamVrSettings)
+        $steamVrNullSettings = python (Join-Path $PSScriptRoot 'headless_steamvr.py') `
+            --settings $steamVrSettings
+        if ($LASTEXITCODE -ne 0) {
+            throw 'Cannot prepare SteamVR null-HMD settings.'
+        }
+        [IO.File]::WriteAllText(
+            $steamVrSettings,
+            (($steamVrNullSettings -join "`n") + "`n"),
+            (New-Object Text.UTF8Encoding($false))
+        )
+        Start-Process -FilePath $steamVrStartup -WindowStyle Hidden | Out-Null
+        $steamVrStarted = $true
+        $steamVrDeadline = (Get-Date).AddSeconds(60)
+        while ((Get-Date) -lt $steamVrDeadline) {
+            if ((Get-Process vrserver -ErrorAction SilentlyContinue) -and
+                (Get-Process vrcompositor -ErrorAction SilentlyContinue)) {
+                break
+            }
+            Start-Sleep -Milliseconds 500
+        }
+        if (-not (Get-Process vrcompositor -ErrorAction SilentlyContinue)) {
+            throw 'SteamVR did not start with the null HMD. Check SteamVR logs.'
+        }
+        Write-Host 'SteamVR is up on the null HMD (no headset required).'
+    }
 
     $environment = @{
         PSX_OPENXR = $null
         PSX_OPENXR_ENABLE = '1'
         MOHU_VR_OPENXR = '1'
-        MOHU_VR_UNITS_PER_METER = $UnitsPerMeter.ToString([Globalization.CultureInfo]::InvariantCulture)
+        MOHU_VR_UNITS_PER_METER = $effectiveUnitsPerMeter.ToString([Globalization.CultureInfo]::InvariantCulture)
         MOHU_VR_MENU_DISTANCE = $MenuDistance.ToString([Globalization.CultureInfo]::InvariantCulture)
         MOHU_VR_MENU_WIDTH = $MenuWidth.ToString([Globalization.CultureInfo]::InvariantCulture)
+        PSX_FRAME_REPORT_MS = '1000'
         PSX_STEREO_SHED = '0'
+        PSX_VSYNC = '0'
         PSX_DITHERING = '0'
         PSX_INTERNAL_RESOLUTION = 'native'
         PSX_OPENXR_READY_FILE = $readyPath
@@ -209,7 +352,27 @@ try {
     if (-not $receipt -or -not $receipt.openxr.running -or $receipt.openxr.submitted -le 0) {
         throw 'VR startup did not submit a headset frame. Start the selected OpenXR runtime first.'
     }
-    Write-Host "VR active. Runtime: $Runtime; submitted frames: $($receipt.openxr.submitted)"
+    Copy-Item -LiteralPath $readyPath -Destination (Join-Path $logPath 'startup.json') -Force
+    $proofFirst = Wait-StereoProof -Path $stdoutLog
+    Start-Sleep -Seconds 2
+    $proofSecond = Wait-StereoProof -Path $stdoutLog -TimeoutSeconds 5
+    if ($proofSecond.pairs -le $proofFirst.pairs) {
+        throw 'Stereo proof counters did not advance during the smoke interval.'
+    }
+    [pscustomobject]@{
+        receipt = $receipt
+        first = $proofFirst
+        second = $proofSecond
+        new_pairs = $proofSecond.pairs - $proofFirst.pairs
+    } | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (
+        Join-Path $logPath 'openxr-smoke.json'
+    ) -Encoding utf8
+    Write-Host (
+        'VR active. Runtime: {0}; complete pairs in 2s: {1}; xr failures: {2}' -f
+        $Runtime,
+        ($proofSecond.pairs - $proofFirst.pairs),
+        ($proofSecond.begin_failures + $proofSecond.view_failures)
+    )
 
     if ($Seconds -gt 0) {
         $null = $process.WaitForExit($Seconds * 1000)
@@ -230,6 +393,46 @@ try {
     if ($process -and -not $process.HasExited) {
         Stop-Process -Id $process.Id -Force -ErrorAction SilentlyContinue
         $process.WaitForExit()
+    }
+    if ($Headless -and $steamVrStarted) {
+        Get-Process vrserver,vrcompositor,vrmonitor,vrdashboard,vrwebhelper `
+            -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+        $steamVrDeadline = (Get-Date).AddSeconds(15)
+        while ((Get-Date) -lt $steamVrDeadline -and
+            (Get-Process vrserver,vrcompositor,vrmonitor,vrdashboard,vrwebhelper `
+                -ErrorAction SilentlyContinue)) {
+            Start-Sleep -Milliseconds 500
+        }
+    }
+    if ($steamVrSettings -and $steamVrOriginal) {
+        $restored = $false
+        $restoreDeadline = (Get-Date).AddSeconds(15)
+        $restoreError = $null
+        while ((Get-Date) -lt $restoreDeadline -and -not $restored) {
+            try {
+                [IO.File]::WriteAllText(
+                    $steamVrSettings,
+                    $steamVrOriginal,
+                    (New-Object Text.UTF8Encoding($false))
+                )
+                $restored = $true
+            } catch {
+                $restoreError = $_.Exception.Message
+                Start-Sleep -Milliseconds 500
+            }
+        }
+        if (-not $restored) {
+            $backupPath = Join-Path $logPath 'steamvr.vrsettings.pre-headless'
+            [IO.File]::WriteAllText(
+                $backupPath,
+                $steamVrOriginal,
+                (New-Object Text.UTF8Encoding($false))
+            )
+            Write-Warning (
+                "Could not restore SteamVR settings ($restoreError). " +
+                "Original settings saved at $backupPath."
+            )
+        }
     }
     foreach ($key in $savedEnvironment.Keys) {
         [Environment]::SetEnvironmentVariable($key, $savedEnvironment[$key], 'Process')
