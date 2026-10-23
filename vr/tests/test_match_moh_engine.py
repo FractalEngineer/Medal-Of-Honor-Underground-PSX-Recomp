@@ -9,7 +9,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(ROOT / "tools"))
+sys.path.insert(0, str(ROOT / "vr" / "tools"))
 
 import match_moh_engine as engine  # noqa: E402
 
@@ -32,9 +32,12 @@ class DecodeTests(unittest.TestCase):
     def test_decodes_gte_projection_ops(self) -> None:
         rtps = engine.decode_instruction(0x4A180001, 0x80010000)
         rtpt = engine.decode_instruction(0x4A180030, 0x80010004)
+        mvmva = engine.decode_instruction(0x4A486012, 0x80010008)
         self.assertEqual(rtps.gte_op, "RTPS")
         self.assertEqual(rtpt.gte_op, "RTPT")
+        self.assertEqual(mvmva.gte_op, "MVMVA")
         self.assertEqual(rtps.kind, "gte")
+        self.assertEqual(mvmva.kind, "gte")
 
     def test_decodes_memory_offset(self) -> None:
         instruction = engine.decode_instruction(0x8C280098, 0x80010000)
@@ -118,6 +121,46 @@ class ImageTests(unittest.TestCase):
         self.assertEqual(images[0].load_addr, 0x80090000)
         self.assertEqual(images[0].seeds, (0x80090000,))
         self.assertTrue(images[0].identity.startswith("overlay-"))
+
+    def test_discovers_stack_frame_prologue(self) -> None:
+        words = [
+            0x27BDFEE0,  # addiu sp, sp, -288
+            0xAFBF001C,
+            0x03E00008,
+            0x27BD0120,
+        ]
+        image = engine.MemoryImage(
+            label="fixture",
+            path=Path("fixture.bin"),
+            load_addr=0x80010000,
+            data=b"".join(word.to_bytes(4, "little") for word in words),
+            kind="overlay",
+            identity="fixture",
+            sha256="fixture",
+        )
+        self.assertEqual(
+            engine.discover_prologue_addresses(image),
+            (0x80010000,),
+        )
+
+    def test_does_not_split_an_existing_function_at_its_stack_setup(self) -> None:
+        words = [
+            0x3C028003,  # lui v0, 0x8003
+            0x9042DF1A,  # lbu v0, -8422(v0)
+            0x27BDFFE8,  # addiu sp, sp, -24
+            0x03E00008,
+            0x27BD0018,
+        ]
+        image = engine.MemoryImage(
+            label="fixture",
+            path=Path("fixture.bin"),
+            load_addr=0x80010000,
+            data=b"".join(word.to_bytes(4, "little") for word in words),
+            kind="overlay",
+            identity="fixture",
+            sha256="fixture",
+        )
+        self.assertEqual(engine.discover_prologue_addresses(image), ())
 
 
 if __name__ == "__main__":

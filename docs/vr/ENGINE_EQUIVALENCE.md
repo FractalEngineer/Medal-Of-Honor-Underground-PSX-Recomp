@@ -43,7 +43,7 @@ describe Medal of Honor, not Underground.
 Run the matcher from the Underground repository:
 
 ```powershell
-python tools/match_moh_engine.py `
+python vr\tools\match_moh_engine.py `
   --source-exe 'C:\Users\titan\Desktop\Github_Projects\Mine\Medal-Of-Honor-PSX-Recomp\disc\SLUS_009.74' `
   --source-seeds 'C:\Users\titan\Desktop\Github_Projects\Mine\Medal-Of-Honor-PSX-Recomp\seeds\ghidra_funcs.txt' `
   --source-overlays 'C:\Users\titan\Desktop\Github_Projects\Mine\Medal-Of-Honor-PSX-Recomp\analysis\vr-proof\overlay_captures.mods.json' `
@@ -60,22 +60,43 @@ The current output is
 machine-readable result in
 [ENGINE_EQUIVALENCE_REPORT.json](ENGINE_EQUIVALENCE_REPORT.json).
 
-Preliminary result: the PsyQ `VSync` wrapper is a near-identical static match
-(`0x80016E38` -> `0x800186A8`, 26 instructions, only absolute RAM references
-changed). It remains a broad library wrapper and is not the gameplay replay
-boundary. Every render, geometry, weapon, and HUD candidate still has low
-similarity and no live evidence.
+The slot-0 gameplay capture produced high-confidence matches for three core
+paths. All three source and target functions were observed executing in their
+captured overlay generation:
+
+| Reference | Role | Underground | Evidence |
+| --- | --- | --- | --- |
+| `0x80084718` | Entity transform | `0x80093830` | 41/41 mnemonics; 7 token differences, all absolute RAM references |
+| `0x80013AE4` | Entity node transformer | `0x80013B40` | 221/221 mnemonics; live call ring, caller/callee pair matches |
+| `0x80013E58` | GTE RT/TR loader | `0x80013EB4` | Byte-identical function; live call ring |
+| `0x8008B3E8` | Level vertex transformer | `0x80099960` | 710/710 mnemonics; 12 RTPS on both sides; 9 address-only differences |
+| `0x80090B80` | Gameplay render wait | `0x8009D828` | 110/110 mnemonics; 10 calls and 8 branches on both sides; 29 address-only differences |
+
+The confirmed target functions live in overlay capture `16fc9e35958b` at base
+`0x80097000`, except the entity transform, which lives in capture
+`91ef75121345` at base `0x8008C000`. Exact overlay and function hashes are in
+`vr/underground/engine_map.c`.
+
+The PsyQ `VSync` wrapper is also a near-identical static match
+(`0x80016E38` -> `0x800186A8`). It remains a broad library wrapper and is not the
+gameplay replay boundary.
+
+The live call ring disambiguates duplicated main-EXE code. The confirmed
+Underground entity transform calls `0x80013B40`, not its near-identical twin
+`0x80014184`; `0x80013B40` in turn calls `0x80013EB4`, not `0x800144F8`.
+This establishes the active scene-transform chain, but the camera itself is
+still represented through matrices read by this chain rather than a named
+camera object.
 
 Current best candidates from the report:
 
 | Reference | Role | Target candidate | Score | Status |
 | --- | --- | --- | ---: | --- |
-| `0x80016E38` | PsyQ `VSync` | `0x800186A8` main EXE | 0.948 | Static library match; do not use as gameplay boundary |
+| `0x8008B3E8` | Level vertex transformer | `0x80099960` overlay | 0.994 | Confirmed static and live; 12 RTPS |
+| `0x80090B80` | Gameplay render wait | `0x8009D828` overlay | 0.880 | Confirmed static and live |
+| `0x80084718` | Entity transform | `0x80093830` overlay | 0.920 | Confirmed static and live |
 | `0x800824D0` | Per-model render entry | `0x800914EC` overlay | 0.660 | Weak candidate; needs disassembly |
-| `0x800836C0` | Weapon vertex filter | `0x800188BC` main EXE | 0.499 | Weak candidate; likely false positive |
-| `0x80084718` | Entity transform | `0x8006E100` overlay | 0.436 | Low similarity; not usable |
-| `0x80090B80` | Gameplay render wait | `0x8006E170` overlay | 0.413 | Low similarity; not usable |
-| `0x8008B3E8` | Level vertex transformer | `0x8008DE88` overlay | 0.287 | Low similarity; not usable |
+| `0x80016E38` | PsyQ `VSync` | `0x800186A8` main EXE | 0.948 | Static library match; not a gameplay boundary |
 
 The reference capture used for this report does not cover `0x8006591C`, so that
 landmark has no source function yet. All overlay candidates must be rechecked
@@ -85,9 +106,11 @@ against the specific capture generation that will run in Underground.
 
 | Reference | Target address | Overlay identity | Signature | Contract | Live evidence | Confidence | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Entity transform | TBD | TBD | TBD | TBD | TBD | None | Disabled |
-| Level vertex transformer | TBD | TBD | TBD | TBD | TBD | None | Disabled |
-| Gameplay render wait | TBD | TBD | TBD | TBD | TBD | None | Disabled |
+| Entity transform | `0x80093830` | `91ef75121345` @ `0x8008C000` | 41 instructions | `$a0` entity, position fields still unverified | Capture execution | High | Mapped, no hook |
+| Entity node transformer | `0x80013B40` | Main EXE | 221 instructions | Recursive node walk; caller chain confirmed | Live call ring | High | Mapped, no hook |
+| GTE RT/TR loader | `0x80013EB4` | Main EXE | 79 instructions | Loads view/model matrix and translation into GTE | Live call ring | High | Mapped, no hook |
+| Level vertex transformer | `0x80099960` | `16fc9e35958b` @ `0x80097000` | 710 instructions, 12 RTPS | Register/contract still being decoded | Capture execution | High | Mapped, no hook |
+| Gameplay render wait | `0x8009D828` | `16fc9e35958b` @ `0x80097000` | 110 instructions, 10 calls | Replay seam still being decoded | Capture execution | High | Mapped, no hook |
 | Camera source | TBD | TBD | TBD | TBD | TBD | None | Disabled |
 | Player/scene roots | TBD | TBD | TBD | TBD | TBD | None | Disabled |
 | Weapon geometry | TBD | TBD | TBD | TBD | TBD | None | Disabled |

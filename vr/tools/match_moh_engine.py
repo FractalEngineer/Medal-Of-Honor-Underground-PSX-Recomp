@@ -32,12 +32,15 @@ MAX_FUNCTION_INSTRUCTIONS = 2048
 
 DEFAULT_LANDMARKS = (
     (0x80084718, "entity transform"),
+    (0x80013AE4, "entity node transformer"),
+    (0x80013E58, "GTE RT/TR loader"),
     (0x800814C4, "geometry entry"),
     (0x80080DD4, "geometry filter"),
     (0x800824D0, "per-model render entry"),
     (0x8008B3E8, "level vertex transformer"),
     (0x80016E38, "VSync wrapper"),
     (0x80090B80, "gameplay render wait"),
+    (0x80013698, "RTPS projection loop"),
     (0x8007E414, "multiplayer weapon geometry"),
     (0x800836C0, "weapon vertex filter"),
     (0x8006591C, "multiplayer shot basis"),
@@ -392,7 +395,9 @@ def decode_instruction(word: int, address: int) -> Instruction:
         return Instruction(address, word, mnemonic, token, "cop0")
 
     if op == 0x12:
-        if rs == 0x10:
+        # COP2 commands are selected by bit 25. The matrix/vector selector
+        # occupies the other rs bits and changes for MVMVA and related ops.
+        if rs & 0x10:
             gte_name = GTE_OPS.get(funct, f"GTE_{funct:02X}")
             return Instruction(
                 address,
@@ -519,6 +524,36 @@ def read_word(image: MemoryImage, address: int) -> int | None:
     return struct.unpack_from("<I", image.data, offset)[0]
 
 
+def discover_prologue_addresses(image: MemoryImage) -> tuple[int, ...]:
+    """Find stack-frame prologues, including indirectly reached functions."""
+
+    addresses: list[int] = []
+    for offset in range(0, len(image.data) - 3, 4):
+        address = image.load_addr + offset
+        word = struct.unpack_from("<I", image.data, offset)[0]
+        op = (word >> 26) & 0x3F
+        rs = (word >> 21) & 0x1F
+        rt = (word >> 16) & 0x1F
+        signed_imm = _sign16(word & 0xFFFF)
+        if not (op in {0x08, 0x09} and rs == 29 and rt == 29 and signed_imm < 0):
+            continue
+        if address == image.load_addr:
+            addresses.append(address)
+            continue
+        lookback = image.data[max(0, offset - 16) : offset]
+        has_boundary = False
+        for back_offset in range(0, len(lookback) - 3, 4):
+            back_address = address - len(lookback) + back_offset
+            back_word = struct.unpack_from("<I", lookback, back_offset)[0]
+            back_kind = decode_instruction(back_word, back_address).kind
+            if back_kind in {"jump", "return"}:
+                has_boundary = True
+                break
+        if has_boundary:
+            addresses.append(address)
+    return tuple(addresses)
+
+
 def decode_function(
     image: MemoryImage,
     address: int,
@@ -579,15 +614,31 @@ def bound_for_seed(
     return min(higher) if higher else None
 
 
+def candidate_starts(
+    image: MemoryImage,
+    main_seeds: Sequence[int],
+    discover_starts: bool,
+) -> set[int]:
+    seeds = set(image.seeds)
+    if image.kind == "main-exe":
+        seeds.update(main_seeds)
+    if discover_starts:
+        for address in discover_prologue_addresses(image):
+            if any(0 < address - seed <= 16 for seed in seeds):
+                continue
+            seeds.add(address)
+    return seeds
+
+
 def inventory_functions(
     images: Sequence[MemoryImage],
     main_seeds: Sequence[int],
+    *,
+    discover_starts: bool = False,
 ) -> list[Function]:
     functions: list[Function] = []
     for image in images:
-        seeds = set(image.seeds)
-        if image.kind == "main-exe":
-            seeds.update(main_seeds)
+        seeds = candidate_starts(image, main_seeds, discover_starts)
         for address in sorted(seeds):
             if not image.contains(address):
                 continue
@@ -608,14 +659,14 @@ def source_functions_at(
     images: Sequence[MemoryImage],
     main_seeds: Sequence[int],
     address: int,
+    *,
+    discover_starts: bool = False,
 ) -> list[Function]:
     functions: list[Function] = []
     for image in images:
         if not image.contains(address):
             continue
-        seeds = set(image.seeds)
-        if image.kind == "main-exe":
-            seeds.update(main_seeds)
+        seeds = candidate_starts(image, main_seeds, discover_starts)
         seeds.add(address)
         try:
             functions.append(
@@ -736,6 +787,7 @@ def build_report(
     top: int,
     source_overlays: Sequence[Path],
     target_overlays: Sequence[Path],
+    discover_starts: bool,
     cwd: Path,
 ) -> tuple[str, dict]:
     lines = [
@@ -776,6 +828,12 @@ def build_report(
             "Overlay captures are separate code generations. A target address is",
             "meaningful only together with the capture identity shown below.",
             "",
+        (
+            "Function starts include stack-frame prologue discovery."
+            if discover_starts
+            else "Function starts come only from seed lists and capture metadata."
+        ),
+        "",
             "## Landmarks",
             "",
         ]
@@ -784,6 +842,7 @@ def build_report(
     result: dict = {
         "generated_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "notice": "Candidates only; no mapping is confirmed.",
+        "discover_prologues": discover_starts,
         "source": {
             "path": str(source_exe.path),
             "sha256": source_exe.file_sha256,
@@ -965,6 +1024,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="Override built-in landmarks; may be repeated",
     )
     parser.add_argument("--top", type=int, default=5)
+    parser.add_argument(
+        "--no-discover-prologues",
+        action="store_true",
+        help="Use only seed/capture entry addresses as function starts",
+    )
     parser.add_argument("--output", type=Path)
     parser.add_argument("--json", type=Path)
     parser.add_argument(
@@ -1003,13 +1067,23 @@ def main(argv: Sequence[str] | None = None) -> int:
         return 0
 
     landmarks = parse_landmark_arguments(args.landmark)
-    source_inventory = inventory_functions(source_images, source_seeds)
-    target_inventory = inventory_functions(target_images, target_seeds)
+    discover_starts = not args.no_discover_prologues
+    source_inventory = inventory_functions(
+        source_images, source_seeds, discover_starts=discover_starts
+    )
+    target_inventory = inventory_functions(
+        target_images, target_seeds, discover_starts=discover_starts
+    )
     source_keys = {
         (function.image.identity, function.address) for function in source_inventory
     }
     for address, _role in landmarks:
-        for function in source_functions_at(source_images, source_seeds, address):
+        for function in source_functions_at(
+            source_images,
+            source_seeds,
+            address,
+            discover_starts=discover_starts,
+        ):
             key = (function.image.identity, function.address)
             if key not in source_keys:
                 source_inventory.append(function)
@@ -1028,6 +1102,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         top=args.top,
         source_overlays=args.source_overlays,
         target_overlays=args.target_overlays,
+        discover_starts=discover_starts,
         cwd=Path.cwd(),
     )
     if args.output:

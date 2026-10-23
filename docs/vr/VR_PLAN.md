@@ -91,7 +91,7 @@ Inspect the **current plugin registration** because addresses/guards/entry hooks
 
 ### 3.2 Efficient comparison method
 
-Use Ghidra on both PSX EXEs plus representative active overlay dumps. Implement optional `tools/match_moh_engine.py` to propose matches by normalized MIPS instruction sequence, GTE opcode pattern (e.g. repeated RTPS), control-flow graph, constants, callees and live invocation. Normalize relocation/jump destinations rather than using raw address equality. Automatically rank matches but require disassembly and live-trace confirmation for any hook that writes guest state or skips original execution.
+Use Ghidra on both PSX EXEs plus representative active overlay dumps. Implement optional `vr/tools/match_moh_engine.py` to propose matches by normalized MIPS instruction sequence, GTE opcode pattern (e.g. repeated RTPS), control-flow graph, constants, callees and live invocation. Normalize relocation/jump destinations rather than using raw address equality. Automatically rank matches but require disassembly and live-trace confirmation for any hook that writes guest state or skips original execution.
 
 Store `docs/vr/ENGINE_EQUIVALENCE.md` and `vr/underground/engine_map.[ch]` with fields: reference address, target address, binary/overlay signature, calling convention, RAM dependencies, diagnostic evidence, confidence, status. Use `unknown`/disabled rather than fabricated addresses. Treat same-offset player structs and same weapon IDs as **hypotheses**, not facts.
 
