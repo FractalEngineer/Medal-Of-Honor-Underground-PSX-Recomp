@@ -10,7 +10,7 @@ it before ending every implementation session.
 | Item | Value |
 | --- | --- |
 | Target branch | `feature/vr-port` |
-| Last implementation commit | `10b401d` |
+| Last implementation commit | `3ea600b` |
 | Target base | `7fcb0ca35af683ac38c4c501347d59916a924aa4` |
 | Reference branch | `master` |
 | Reference commit | `b33a7d96d596214233d3aef5ecacbf3736ad29e3` |
