@@ -23,6 +23,7 @@ project(Medal_of_Honor_Underground_Recomp LANGUAGES C CXX)
 # endif()
 set(PSX_SETUP_WIZARD ON CACHE BOOL
     "Advertise first-run setup wizard + Generate & rebuild in recomp-ui" FORCE)
+option(MOHU_VR_DIAGNOSTICS "Build the guarded Underground VR diagnostic plugin" OFF)
 include("${PSXRECOMP_ROOT}/runtime/runtime.cmake")
 
 # This project's own mod catalog. The FRAMEWORK stages it -- together with its
@@ -30,7 +31,11 @@ include("${PSXRECOMP_ROOT}/runtime/runtime.cmake")
 # configure if a catalog exists here but is not declared. Never copy it by
 # hand: five titles did, and framework 4cc04be3's rename of the staged
 # directory broke all five silently (bead beads-eio.3.101).
-set(PSX_PRELOADED_MODS "${CMAKE_CURRENT_SOURCE_DIR}/mods/preloaded")
+if(MOHU_VR_DIAGNOSTICS)
+    set(PSX_PRELOADED_MODS "${CMAKE_CURRENT_SOURCE_DIR}/vr/preloaded")
+else()
+    set(PSX_PRELOADED_MODS "${CMAKE_CURRENT_SOURCE_DIR}/mods/preloaded")
+endif()
 if(NOT IS_DIRECTORY "${PSX_PRELOADED_MODS}")
     set(PSX_PRELOADED_MODS "NONE")
 endif()
@@ -52,6 +57,12 @@ psxrecomp_add_game_runtime(psx-runtime
     GEN_FULL_GLOB "generated/SLUS_012.70_full_*.c"
     CODEGEN_SETUP_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/codegen_setup.c"
 )
+
+if(MOHU_VR_DIAGNOSTICS)
+    target_sources(psx-runtime PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/vr/underground/engine_map.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/vr/underground/vr_diagnostic.c")
+endif()
 
 # Current psxrecomp embeds its UTF-8 manifest as an object library. recomp-ui
 # cannot detect that when adding its older fallback manifest, so keep the

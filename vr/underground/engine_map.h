@@ -34,9 +34,9 @@ typedef enum {
 } MohuVrConfidence;
 
 /*
- * The target hashes identify the exact executable or overlay generation and
- * function bytes used for validation. They are guards, not permission to
- * register hooks.
+ * Main-EXE container hashes identify exact executables. Whole window-capture
+ * hashes are advisory because the capture index changes between runs; function
+ * byte hashes identify overlay bindings and are the runtime guard.
  */
 typedef struct {
     MohuVrEngineRole role;
@@ -51,6 +51,7 @@ typedef struct {
     const char* target_container_sha256;
     const char* reference_function_sha256;
     const char* target_function_sha256;
+    uint32_t target_function_fnv1a;
     bool observed_executing;
     MohuVrEvidenceStatus status;
     MohuVrConfidence confidence;

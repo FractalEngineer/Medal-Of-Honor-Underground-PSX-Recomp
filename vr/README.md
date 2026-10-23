@@ -4,6 +4,7 @@ All VR-specific implementation, tools, tests, and captured-function metadata
 live under this directory.
 
 - `underground/` contains Underground-specific mappings and future adapters.
+- `preloaded/` contains the opt-in VR diagnostic mod catalog.
 - `tools/` contains offline analysis utilities.
 - `tests/` contains source-owned tests for those tools.
 

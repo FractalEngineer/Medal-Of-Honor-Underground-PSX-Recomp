@@ -46,9 +46,11 @@ The existing `build-release/` executable was configured as:
 | Debug tools | `PSX_DEBUG_TOOLS=OFF` |
 | OpenXR | `PSX_OPENXR=OFF` |
 
-The target `CMakeLists.txt` does not currently pass the framework `PGXP` option,
-add the reference VR sources, or register a VR plugin package. The existing
-binary is therefore a flat-build candidate, not a VR baseline.
+The default target does not pass the framework `PGXP` option, add VR sources, or
+stage the VR diagnostic package. The existing binary is therefore a flat-build
+candidate, not a VR baseline. `MOHU_VR_DIAGNOSTICS` can opt a separate build
+into the Underground diagnostic plugin, but that path remains OpenXR-off and
+does not change the default product.
 
 ### Build and startup check
 
@@ -122,6 +124,7 @@ the target implements and measures the equivalent paths.
 | G0 target flat build | Partial | Release compile, corrected overlay autocompile, and isolated slot-0 gameplay boot pass. Interactive flat rendering/audio still need validation. |
 | G0 isolated saves | Pass for diagnostics | Slot-0 tests use `analysis/vr-baseline/saves/`; original personal states were not written. |
 | G1 engine landmarks | Partial | Render wait, level vertex transformer, entity transform, node transform, and RT/TR loading are mapped and observed executing. A named camera source and player roots remain open. |
+| G2 plugin activation | Partial | Opt-in diagnostic package activates and verifies three overlay functions. OpenXR/native-screen launch is not implemented. |
 
 The flat Release executable was also started after the VR files were added. It
 loaded the game config, initialized overlay autocompile, entered OpenBIOS, and

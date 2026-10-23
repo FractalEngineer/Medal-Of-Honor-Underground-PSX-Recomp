@@ -43,5 +43,7 @@ headset or VR environment variable.
 
 The framework and UI gitlinks match the reference. Underground now has a
 fail-closed engine map under `vr/underground/` with live-confirmed entity,
-level-projection, and render-wait mappings. No VR plugin, hook, launcher, or
-OpenXR build is active yet. Camera and player/scene bindings remain gated.
+scene-transform, level-projection, and render-wait mappings. The default flat
+build does not include them. `MOHU_VR_DIAGNOSTICS=ON` builds a read-only
+diagnostic plugin that verifies function bytes before logging entry registers.
+No OpenXR mode, launcher, or state-changing VR hook is active yet.

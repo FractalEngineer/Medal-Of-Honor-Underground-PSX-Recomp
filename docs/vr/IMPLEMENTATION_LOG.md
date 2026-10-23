@@ -25,7 +25,7 @@
 - Added a dependency-free PS-X EXE and overlay-capture matcher under `vr/tools/`.
 - Added landmark reporting with normalized MIPS opcode/token similarity, GTE
   profile matching, overlay identity, and an explicit "candidate only" label.
-- No Underground address has been promoted to a plugin hook.
+- No state-changing Underground hook has been promoted.
 - Generated the current
   [candidate report](ENGINE_EQUIVALENCE_REPORT.md). Only the PsyQ `VSync`
   wrapper formed a near-identical static match (`0x800186A8`). Gameplay,
@@ -38,8 +38,9 @@
 - Built `build-vr-diagnostic/` with debug tools enabled and OpenXR off.
 - Loaded slot 0 from an isolated save copy; load generation 1 completed and the
   session advanced past frame 890.
-- Captured Underground overlay generation `16fc9e35958b` at `0x80097000` and
-  `91ef75121345` at `0x8008C000`.
+- Captured Underground overlays at `0x80097000` and `0x8008C000`. Whole-window
+  capture hashes changed between runs while function bytes stayed identical, so
+  the function SHA-256 and FNV-1a values are treated as the stable guards.
 - Confirmed live execution and address-only instruction differences for the
   entity transform, level vertex transformer, and gameplay render wait.
 - Used the live function ring to select the active duplicate scene-transform
@@ -49,14 +50,29 @@
   the scratchpad view matrix changed. The producer PCs are in overlay code near
   `0x80090B98..0x8009115C`; the matrix owner remains unresolved. See
   [CAMERA_EVIDENCE.md](CAMERA_EVIDENCE.md).
-- Added the guarded mapping metadata in `vr/underground/engine_map.c`; no hook
-  is compiled or registered.
+- Added the guarded mapping metadata in `vr/underground/engine_map.c`. The map
+  itself registers no hooks.
+
+### Opt-in diagnostic plugin
+
+- Added `MOHU_VR_DIAGNOSTICS`, default `OFF`, plus the separate
+  `vr/preloaded/packages/mohu.vr.diagnostic` catalog.
+- Added read-only function-entry shadow hooks that verify each target function's
+  FNV-1a bytes before logging registers.
+- Built the diagnostic target with `MOHU_VR_DIAGNOSTICS=ON`. The package
+  activated and verified the entity transform, level vertex transformer, and
+  gameplay render wait in the isolated slot-0 scene.
+- The diagnostic build staged seven packages (one VR diagnostic package plus six
+  framework packages). The default build still stages only the original six and
+  does not load the plugin.
+- Captured a 512x240 screenshot of the loaded courtyard to confirm the save is
+  an actual playable scene rather than a menu or paused placeholder.
 
 ### Flat-path preservation
 
 - Kept every VR implementation file under root `vr/`.
-- Left `CMakeLists.txt` and `game.toml` unchanged; no VR source is part of the
-  flat runtime target.
+- Added a default-off `MOHU_VR_DIAGNOSTICS` CMake option; the default catalog,
+  generated game code, and runtime sources remain unchanged when it is off.
 - Rebuilt the flat Release target successfully.
 - Launched the flat executable headless with the isolated memcard directory;
   config load, OpenBIOS boot, overlay autocompile, and guest execution all
