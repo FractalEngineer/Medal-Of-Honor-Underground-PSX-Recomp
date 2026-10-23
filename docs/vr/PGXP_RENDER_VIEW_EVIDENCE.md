@@ -13,6 +13,12 @@ The PGXP diagnostic runtime is the framework's overlay flavor `2`. Its boot
 state ABI tag is `131106`; the previous base-flavor slot has tag `34`.
 The framework correctly rejects a base slot before applying any state.
 
+The saved state also carries the framework's execution identity. Rebuilding a
+runtime from changed implementation sources can therefore invalidate an
+otherwise valid PGXP slot, even when the ABI tag still matches. A failed startup
+load reports `state_load_failed` or `last_ok=0`; do not patch the stored
+identity.
+
 Do not patch the ABI field and do not rewrite the original save. If a run
 reports:
 
@@ -23,17 +29,19 @@ boot_state: reject - abi_tag=34(want 131106)
 ask the operator to launch the PGXP-flavored diagnostic build, save a new slot
 outside slot `0`, and report the slot number. Copy the resulting `.pst` and
 `.thumb` into the isolated save tree. This request is expected whenever only a
-base-flavor fixture is present.
+base-flavor fixture is present or a source change has invalidated the execution
+identity.
 
-For this checkpoint, the operator created PGXP slot `1` in the default save
-root. Its two files were copied to:
+The operator originally created PGXP slot `1`, then created slot `2` after the
+render-NCLIP instrumentation changed the execution identity. Slot `2` is the
+current fixture. Its two files were copied to:
 
 ```text
-analysis/vr-baseline/saves/openbios/state_8001F844_slot01.pst
-analysis/vr-baseline/saves/openbios/state_8001F844_slot01.thumb
+analysis/vr-baseline/saves/openbios/state_8001F844_slot02.pst
+analysis/vr-baseline/saves/openbios/state_8001F844_slot02.thumb
 ```
 
-The base `slot00` files were not modified.
+The old `slot01` and base `slot00` files were not modified.
 
 ## Implementation
 
@@ -55,7 +63,7 @@ flavor and does not link this plugin.
 ## Controls
 
 ```powershell
-$env:PSX_LOAD_SLOT = '1'
+$env:PSX_LOAD_SLOT = '2'
 $env:MOHU_VR_STEREO_PROOF = '1'
 $env:MOHU_VR_EYE_RENDER_VIEW = '1'
 $env:MOHU_VR_EYE_GUEST_SUBMIT = '1'
@@ -96,6 +104,46 @@ Every measured pair used one guest cycle and equal state hashes for both eyes.
 The verified runs also reported zero aborts, watchdogs, dropped device stores,
 VRAM leaks, and nesting repairs.
 
+## Render-path NCLIP receipt
+
+The PGXP runtime now increments render-scoped counters at the signed
+homogeneous-winding decision in `gte_nclip`:
+
+```text
+vr.nclip.render.total
+vr.nclip.render.precise
+vr.nclip.render.miss
+vr.nclip.render.corrected
+vr.nclip.render.positive
+vr.nclip.render.negative
+vr.nclip.render.zero
+```
+
+`precise` counts NCLIPs whose three PGXP projections were available; `miss`
+counts the remainder. `corrected` counts nonzero precise signs that replaced a
+different native sign. `positive`, `negative`, and `zero` describe the
+final sign used by the render path. Query them through the debug server:
+
+```text
+{"cmd":"mod_counters"}
+```
+
+The following snapshots each followed 60 completed stereo attempts on slot `2`.
+The counters continued for one or two host frames while the query was serviced,
+so the snapshot frame is recorded with the totals.
+
+| Pose | Frame | NCLIPs | Precise | Miss | Corrected | Positive | Negative | Zero |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Zero | 124 | 186,157 | 186,157 | 0 | 15,243 | 98,604 | 87,309 | 244 |
+| Lateral `+/-24` | 131 | 197,080 | 197,080 | 0 | 16,055 | 104,520 | 92,300 | 260 |
+| Pitch `-15 deg`, forward `250` | 128 | 182,912 | 182,912 | 0 | 17,344 | 97,472 | 85,248 | 192 |
+| Yaw `+15 deg` | 127 | 192,780 | 192,780 | 0 | 18,396 | 101,997 | 90,531 | 252 |
+| Yaw `-15 deg` | 130 | 186,485 | 186,485 | 0 | 14,950 | 99,255 | 86,970 | 260 |
+
+All five snapshots report zero projective-lookup misses. The changing correction
+and facing totals confirm that the render path observes pose-dependent signed
+winding rather than a fixed counter.
+
 Lateral pose:
 
 ```text
@@ -116,10 +164,10 @@ The near-plane image keeps the floor, foreground weapon, and nearby steps
 present without the black wedge seen in the earlier integer-only failures. The
 `vr.projective.draw` counter proves the homogeneous draw path is active.
 
-The framework's `nclip_stats` command reported `enabled=0` and no NCLIP hits for
-this render path. Therefore this note does not claim a separately measured
-precise-NCLIP correction count. Adding that receipt remains an open gate; the
-image and projective-draw counters are the accepted evidence here.
+The framework's widescreen-oriented `nclip_stats` command still reports
+`enabled=0` because this title does not arm `[widescreen] precise_nclip`.
+The render-scoped `vr.nclip.render.*` counters above are independent of that
+option and provide the accepted signed-NCLIP receipt for this path.
 
 ## Retained images
 

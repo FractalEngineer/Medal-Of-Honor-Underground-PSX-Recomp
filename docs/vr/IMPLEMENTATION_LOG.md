@@ -234,15 +234,19 @@
 - Measured 1.4M homogeneous projective draws in the accepted runs. The
   forward/downward pair completed 1,544 verified passes with zero mismatches,
   no watchdog, no VRAM leak, and equal per-eye state hashes.
-- `nclip_stats` did not expose hits for the render-projective path
-  (`enabled=0`). A dedicated signed-NCLIP counter remains open.
+- Added render-scoped signed-NCLIP counters at the homogeneous winding decision.
+  They report total/precise/miss, final positive/negative/zero sign, and
+  corrections without requiring widescreen `precise_nclip`.
+- Recorded five 60-pair snapshots after the operator created fresh PGXP slot 2:
+  zero, lateral, pitch, yaw-positive, and yaw-negative. Every snapshot had zero
+  precise-projection misses, and corrections ranged from 14,950 to 18,396.
+- Added unit coverage for the counter transitions in both GTE contract targets.
 - Full receipt:
   [PGXP_RENDER_VIEW_EVIDENCE.md](PGXP_RENDER_VIEW_EVIDENCE.md).
 
 ## Next work
 
-1. Add a render-path signed-NCLIP counter and record pitch/facing sweeps.
-2. Repeat the PGXP pose pair in additional scenes and near-wall positions.
-3. Rebuild the flat target and repeat interactive boot/menu/gameplay validation.
-4. Label the actor/camera update and separate camera motion from player motion.
-5. Bootstrap the opt-in native-screen OpenXR and per-eye presentation path.
+1. Repeat the PGXP pose sweep in additional scenes and near-wall positions.
+2. Rebuild the flat target and repeat interactive boot/menu/gameplay validation.
+3. Label the actor/camera update and separate camera motion from player motion.
+4. Bootstrap the opt-in native-screen OpenXR and per-eye presentation path.

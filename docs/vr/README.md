@@ -61,6 +61,7 @@ include them. `MOHU_VR_DIAGNOSTICS=ON` builds the opt-in diagnostic plugin.
 Frame-render replay now produces a byte-identical zero-offset pair and
 full-scene parallax pairs from a complete `PSXModRenderView`. Guest `DrawOTag`
 preserves packet provenance for PGXP homogeneous clipping, including a tested
-forward/downward near-plane pose. The OT-only and frame-driver paths remain
-controls, not stereo evidence. No OpenXR mode, launcher, or production VR hook
-is active yet.
+forward/downward near-plane pose. Render-scoped signed-NCLIP counters now
+receipt zero, lateral, pitch, and yaw poses with no precise-projection misses.
+The OT-only and frame-driver paths remain controls, not stereo evidence. No
+OpenXR mode, launcher, or production VR hook is active yet.

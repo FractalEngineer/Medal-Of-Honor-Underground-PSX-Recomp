@@ -10,25 +10,26 @@ it before ending every implementation session.
 | Item | Value |
 | --- | --- |
 | Target branch | `feature/vr-port` |
-| Last implementation commit | `7278a7f` |
+| Last game-tree checkpoint | `ddb431e` |
+| Current framework implementation | `d9b0f382` |
 | Target base | `7fcb0ca35af683ac38c4c501347d59916a924aa4` |
 | Reference branch | `master` |
 | Reference commit | `b33a7d96d596214233d3aef5ecacbf3736ad29e3` |
-| `psxrecomp` gitlink | `31df2e1e0e0a6525733e68ff70e72ecbef84bb09` |
+| `psxrecomp` gitlink | `d9b0f382` |
 | `recomp-ui` gitlink | `7c635c6b366a6e0d5d3c913a7fce6ec04dd9f256` |
 | Reference version | `0.1.6` |
 | Underground version | `0.1.0` |
 | Game ID | `SLUS-01270` |
 
-The worktree currently contains the uncommitted diagnostic, evidence, and proof
-changes from this session; `7278a7f` remains the last implementation commit.
-The only unrelated untracked workspace entry is `.commandcode/`. Do not add or
-modify it as part of VR work.
+Framework `d9b0f382` adds render-scoped signed-NCLIP counters and their GTE
+contract coverage. This game-tree checkpoint retains the five-pose PGXP counter
+receipt in the linked evidence. The only unrelated untracked workspace entry is
+`.commandcode/`. Do not add or modify it as part of VR work.
 
-The verified PGXP fixture is isolated slot `1` under
+The verified PGXP fixture is isolated slot `2` under
 `analysis/vr-baseline/saves/`. It was created by the operator with the PGXP
 build and copied from the default save root; the base-flavor `slot00` files
-remain untouched.
+remain untouched. Slot `1` is retained as a stale-identity control.
 
 ## Non-negotiable invariants
 
@@ -45,9 +46,12 @@ remain untouched.
 - Do not enable a state-changing hook before flat behavior and the relevant VR
   transaction tests have been rechecked.
 - A PGXP diagnostic build uses boot-state ABI `131106`; the base flavor uses
-  `34`. If a load reports `abi_tag=34(want 131106)`, ask the operator to create
-  a fresh PGXP save slot. Never patch the ABI field or rewrite the original
-  state, and copy only the completed `.pst` and `.thumb` into the isolated tree.
+  `34`. Savestates also carry the framework execution identity, so a source
+  change can invalidate a fixture without changing the ABI. If a load reports
+  `abi_tag=34(want 131106)`, `state_load_failed`, or `last_ok=0`, ask the
+  operator to create a fresh PGXP save slot. Never patch the ABI, identity, or
+  original state, and copy only the completed `.pst` and `.thumb` into the
+  isolated tree.
 
 ## Current implementation
 
@@ -250,6 +254,12 @@ equal per-eye state hashes. Exact counters, image hashes, controls, and the save
 flavor procedure are in
 [PGXP_RENDER_VIEW_EVIDENCE.md](PGXP_RENDER_VIEW_EVIDENCE.md).
 
+The render path now publishes `vr.nclip.render.*` through `mod_counters`.
+Five 60-pair snapshots cover zero, lateral, pitch, yaw-left, and yaw-right
+poses. All had zero precise-projection misses; final sign distributions and
+corrections were pose-dependent. The old widescreen `nclip_stats` command
+remains disabled (`enabled=0`) and is not the receipt for this path.
+
 This work is diagnostic only and remains off by default. It is not yet an
 OpenXR path; head motion is simulated in GTE units and is not a headset pose.
 
@@ -270,7 +280,7 @@ PGXP diagnostic build:
 - Release, OpenXR off, debug tools on.
 - `MOHU_VR_DIAGNOSTICS=ON`; PGXP hook flavor `2`, ABI tag `131106`.
 - Seven packages: one game-owned diagnostic plus six framework packages.
-- PGXP slot 1 loads from `analysis/vr-baseline/saves/`.
+- PGXP slot 2 loads from `analysis/vr-baseline/saves/`.
 - The saved state thumbnail confirms a playable courtyard scene.
 - Interpreter-only diagnostic captures confirmed the camera roots and the
   `TRX` world-space probe.
@@ -283,6 +293,8 @@ ABI before reusing it; a base-flavor executable cannot load the PGXP fixture.
 Last checks:
 
 - Nine Python tests pass.
+- Both GTE transfer/contract tests pass, including render-NCLIP counter
+  transitions for positive, negative, and zero outcomes.
 - Engine-map and diagnostic-plugin C files compile with
   `-Wall -Wextra -Werror`.
 - All VR documentation links resolve.
@@ -294,6 +306,8 @@ Last checks:
   zero mismatches and equal per-eye state hashes.
 - The full render-view path completed 1,481 zero-pose checks and 1,544
   near-plane stereo checks with zero mismatches.
+- The signed-NCLIP sweep completed zero, lateral, pitch, and both yaw poses;
+  every sampled NCLIP had a precise projection and pose-dependent final sign.
 - Guest `DrawOTag` reports homogeneous projective draws rather than untracked
   manual-GP0 submissions.
 - The flat target reconfigures with `MOHU_VR_DIAGNOSTICS=OFF`, contains neither
@@ -328,7 +342,7 @@ cmake --build build-vr-pgxp --target psx-runtime -- -j 8
 Run from an isolated save copy:
 
 ```powershell
-$env:PSX_LOAD_SLOT = '1'
+$env:PSX_LOAD_SLOT = '2'
 $env:MOHU_VR_STEREO_PROOF = '1'
 $env:MOHU_VR_EYE_RENDER_VIEW = '1'
 $env:MOHU_VR_EYE_GUEST_SUBMIT = '1'
@@ -350,9 +364,8 @@ mohu-vr-diag: single_player_scene=0x800AA174 player=0x800AA17C player_input_offs
 
 ## Open gates
 
-1. Add a render-path signed-NCLIP counter. The full pose, precise translation,
-   guest OT submission, and near-plane image path are now verified, but
-   `nclip_stats` currently exposes no hits for this render path.
+1. Repeat the signed-NCLIP pose sweep in additional scenes and at near-wall
+   positions.
 2. Record the observed `0x80070444 -> 0x8006D65C` natural caller chain and the
    world-packet producer contracts before promoting any additional hook.
 3. Keep clear, draw-environment, wait bypass, post-render skip, and transaction
