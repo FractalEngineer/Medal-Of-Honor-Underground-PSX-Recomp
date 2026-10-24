@@ -67,6 +67,7 @@ if(MOHU_VR_DIAGNOSTICS)
     target_sources(psx-runtime PRIVATE
         "${CMAKE_CURRENT_SOURCE_DIR}/vr/underground/engine_map.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/vr/underground/input.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/vr/underground/weapon.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/vr/underground/vr_diagnostic.c")
 endif()
 

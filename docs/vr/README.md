@@ -70,10 +70,11 @@ or VR environment variable.
 ## Current state
 
 The framework and UI gitlinks match the reference. Underground now has a
-fail-closed engine map under `vr/underground/` with seventeen live or
+fail-closed engine map under `vr/underground/` with twenty live or
 statically confirmed mappings, including the natural frame entry, PutDrawEnv,
-the scene draw bridge, and the render wait. The default flat build does not
-include them. `MOHU_VR_DIAGNOSTICS=ON` builds the opt-in diagnostic plugin.
+the scene draw bridge, the render wait, and the first-person draw path. The
+default flat build does not include them. `MOHU_VR_DIAGNOSTICS=ON` builds the
+opt-in diagnostic plugin.
 Frame-render replay now produces a byte-identical zero-offset pair and
 full-scene parallax pairs from a complete `PSXModRenderView`. Guest `DrawOTag`
 preserves packet provenance for PGXP homogeneous clipping, including a tested
