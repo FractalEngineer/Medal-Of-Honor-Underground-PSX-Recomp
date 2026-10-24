@@ -3,6 +3,7 @@
 #include "engine_map.h"
 #include "frustum.h"
 #include "hud_packets.h"
+#include "input.h"
 #include "gpu_gl_renderer.h"
 #include "mod_plugins.h"
 #include "vr_pose_math.h"
@@ -155,6 +156,74 @@ static uint32_t g_openxr_begin_failures;
 static uint32_t g_openxr_view_failures;
 static uint32_t g_openxr_ends;
 static bool g_openxr_failure_reported;
+static bool g_movement;
+static double g_move_deadzone = 0.2;
+static double g_turn_gain = 0.65;
+static bool g_input_guard_reported;
+
+/* The game rebuilds the selected calibration after DualShock presentation.
+ * Measured boot/load layouts swap entries 1/3; native LX/LY/RX retain their
+ * turn/forward/strafe roles. Never force a guest configuration or table. */
+static int vr_controller_source(PSXModControllerState* pad) {
+    PSXModOpenXRInput input = {0};
+    input.struct_size = sizeof input;
+    if (g_stereo_active || !psx_mod_openxr_input(&input)) return 0;
+    uint32_t player = psx_mod_read_word(MOHU_VR_SP_PLAYER_POINTER_ADDR);
+    if (g_openxr_native_surface == 1 ||
+        player < 0x80000000u || player >= 0x801FFC00u)
+        return mohu_vr_menu_input_map(&input, g_move_deadzone, pad);
+    bool analog_layout = psx_mod_read_word(0x800C47F0u) == 0;
+    const unsigned entry[3] = {analog_layout ? 3u : 1u, 0,
+                               analog_layout ? 1u : 3u};
+    const unsigned native_axis[3] = {2, 3, 0};
+    const uint32_t actions[9] = {0x40,0x10,0x20,1,0x80,0x80,0x800,3,2};
+    bool valid = true;
+    uint32_t hash = 2166136261u;
+    for (uint32_t i = 0; i < 324u; ++i)
+        hash = (hash ^ psx_mod_read_byte(0x80083C6Cu + i)) * 16777619u;
+    valid = hash == 0x9CA131D0u;
+    hash = 2166136261u;
+    for (uint32_t i = 0; i < 84u; ++i)
+        hash = (hash ^ psx_mod_read_byte(0x80083DB0u + i)) * 16777619u;
+    valid = valid && hash == 0x2D93CB1Cu;
+    for (unsigned i = 0; i < 9; ++i) {
+        uint32_t action = psx_mod_read_word(0x800C4AA8u + i * 4);
+        valid = valid && (i == 7 ? action == (analog_layout ? 0x200u : 3u) :
+                         action == actions[i]) &&
+                !psx_mod_read_word(0x800C4AD0u + i * 4);
+    }
+    MohuVRAnalogResponse response;
+    for (unsigned i = 0; i < 3; ++i) {
+        uint32_t base = 0x800C47C8u + entry[i] * 40;
+        valid = valid && psx_mod_read_word(base) == native_axis[i] &&
+                !psx_mod_read_word(base + 36);
+        response.axis[i].center = psx_mod_read_byte(base + 14);
+        response.axis[i].negative_factor = psx_mod_read_word(base + 20);
+        response.axis[i].positive_factor = psx_mod_read_word(base + 24);
+        response.axis[i].scale = psx_mod_read_word(base + 32) >> 8;
+    }
+    for (unsigned i = 0; i < sizeof response.curve; ++i)
+        response.curve[i] = psx_mod_read_byte(0x800AB12Cu + i);
+    if (!valid) {
+        if (!g_input_guard_reported) {
+            fprintf(stdout, "mohu-vr-input: unsupported code/control layout; "
+                    "gameplay source neutral (select native Config. 2)\n");
+            fflush(stdout);
+            g_input_guard_reported = true;
+        }
+        return 0;
+    }
+    g_input_guard_reported = false;
+    int merged = input.squeeze_active[0] && isfinite(input.squeeze[0]) &&
+                 input.squeeze[0] >= .55f && input.squeeze[0] <= 1;
+    return mohu_vr_input_map(&input, g_move_deadzone, g_turn_gain,
+                             &response, merged, pad);
+}
+
+static uint32_t vr_controller_mode(const PSXModControllerInput* input) {
+    (void)input;
+    return PSX_MOD_CONTROLLER_ANALOG;
+}
 
 static void vr_diagnostic_entry(CPUState* cpu, uint32_t address);
 
@@ -1125,6 +1194,25 @@ static void vr_diagnostic_activate(void) {
         g_frame_driver_args[0] = MOHU_VR_FRAME_CONTEXT_ADDR;
         g_frame_driver_args_valid = true;
     }
+    const char* movement = getenv("PSX_VR_MOVEMENT");
+    /* Explicit opt-in also supports synthetic actions without an XR session.
+     * Flat launch remains inert even if movement was inherited. */
+    g_movement = g_stereo_proof && (movement && *movement ?
+                                   *movement != '0' : g_openxr);
+    parse_optional_double("PSX_VR_MOVE_DEADZONE", 0.0, 0.9, &g_move_deadzone);
+    parse_optional_double("PSX_VR_TURN_GAIN", 0.0, 2.0, &g_turn_gain);
+    if (g_movement) {
+        int mode = psx_mod_set_controller_mode_override(0, PSX_MOD_CONTROLLER_ANALOG);
+        int policy = psx_mod_set_controller_presentation_policy(
+            0, vr_controller_mode, PSX_MOD_CONTROLLER_ANALOG, 1);
+        int source = psx_mod_set_controller_source(0, vr_controller_source);
+        if (!mode || !policy || !source) {
+            (void)psx_mod_set_controller_source(0, NULL);
+            g_movement = false;
+        }
+    }
+    fprintf(stdout, "mohu-vr-input: enabled=%d deadzone=%.3f turn_gain=%.3f "
+            "config=2 sample=offline\n", g_movement, g_move_deadzone, g_turn_gain);
     if (g_stereo_proof) {
         const char* eye_offset = getenv(MOHU_VR_EYE_OFFSET_ENV);
         if (eye_offset && *eye_offset &&

@@ -1,0 +1,475 @@
+{
+  "starting_revision": "627b31d561209d499b03525a5a29d61ac49ee220",
+  "operator_sky_acceptance": true,
+  "operator_creates_saves": true,
+  "savestates_created_or_migrated": false,
+  "reference_mappings_reused": true,
+  "physical_movement_acceptance": "pending",
+  "multiplayer_coverage": "pending operator fixtures",
+  "synthetic_actions": true,
+  "atomic_queries": false,
+  "diagnostic_executable_sha256": "3231aeedce07cac4844bf353d636cf55a626aed410127f13c5fcde114d7714d2",
+  "production_executable_sha256": "922a2c3e50cc485dca1b929c85db52ed5944b7e0714783c5619a86f96cad7601",
+  "defaults": {
+    "deadzone": 0.2,
+    "turn_gain": 0.65,
+    "internal_resolution": "1080p",
+    "ipd_calibration_mm": 67,
+    "world_scale": 3
+  },
+  "samples": [
+    {
+      "name": "neutral",
+      "buttons": "0xFFFF",
+      "sticks": [
+        128,
+        128,
+        128,
+        128
+      ],
+      "position_fields_before": [
+        1190920192,
+        -520486912
+      ],
+      "position_fields_after": [
+        1190920192,
+        -520486912
+      ],
+      "rotation_fields_before": [
+        -16384,
+        1,
+        0
+      ],
+      "rotation_fields_after": [
+        -16384,
+        1,
+        0
+      ]
+    },
+    {
+      "name": "forward",
+      "buttons": "0xFFFF",
+      "sticks": [
+        128,
+        1,
+        128,
+        128
+      ],
+      "position_fields_before": [
+        1190920192,
+        -520486912
+      ],
+      "position_fields_after": [
+        1188139008,
+        -504774656
+      ],
+      "rotation_fields_before": [
+        -16384,
+        1,
+        0
+      ],
+      "rotation_fields_after": [
+        24576,
+        4,
+        0
+      ]
+    },
+    {
+      "name": "back",
+      "buttons": "0xFFFF",
+      "sticks": [
+        128,
+        254,
+        128,
+        128
+      ],
+      "position_fields_before": [
+        1187741696,
+        -502530048
+      ],
+      "position_fields_after": [
+        1190125568,
+        -516046848
+      ],
+      "rotation_fields_before": [
+        16384,
+        5,
+        0
+      ],
+      "rotation_fields_after": [
+        16384,
+        5,
+        0
+      ]
+    },
+    {
+      "name": "strafe-right",
+      "buttons": "0xFFFF",
+      "sticks": [
+        128,
+        128,
+        254,
+        128
+      ],
+      "position_fields_before": [
+        1190125568,
+        -516046848
+      ],
+      "position_fields_after": [
+        1201745920,
+        -516333568
+      ],
+      "rotation_fields_before": [
+        16384,
+        5,
+        0
+      ],
+      "rotation_fields_after": [
+        -32768,
+        17,
+        0
+      ]
+    },
+    {
+      "name": "strafe-left",
+      "buttons": "0xFFFF",
+      "sticks": [
+        128,
+        128,
+        1,
+        128
+      ],
+      "position_fields_before": [
+        1203990528,
+        -515940352
+      ],
+      "position_fields_after": [
+        1190473728,
+        -518348800
+      ],
+      "rotation_fields_before": [
+        -32768,
+        17,
+        0
+      ],
+      "rotation_fields_after": [
+        0,
+        14,
+        0
+      ]
+    },
+    {
+      "name": "turn-right",
+      "buttons": "0xFFFF",
+      "sticks": [
+        245,
+        128,
+        128,
+        128
+      ],
+      "position_fields_before": [
+        1190473728,
+        -518348800
+      ],
+      "position_fields_after": [
+        1190473728,
+        -518348800
+      ],
+      "rotation_fields_before": [
+        0,
+        14,
+        0
+      ],
+      "rotation_fields_after": [
+        -8192,
+        21,
+        0
+      ]
+    },
+    {
+      "name": "turn-left",
+      "buttons": "0xFFFF",
+      "sticks": [
+        10,
+        128,
+        128,
+        128
+      ],
+      "position_fields_before": [
+        1190473728,
+        -518348800
+      ],
+      "position_fields_after": [
+        1190473728,
+        -518348800
+      ],
+      "rotation_fields_before": [
+        -8192,
+        21,
+        0
+      ],
+      "rotation_fields_after": [
+        -16384,
+        15,
+        0
+      ]
+    },
+    {
+      "name": "half-turn",
+      "buttons": "0xFFFF",
+      "sticks": [
+        224,
+        128,
+        128,
+        128
+      ],
+      "position_fields_before": [
+        1190473728,
+        -518348800
+      ],
+      "position_fields_after": [
+        1190473728,
+        -518348800
+      ],
+      "rotation_fields_before": [
+        -8192,
+        14,
+        0
+      ],
+      "rotation_fields_after": [
+        8192,
+        6,
+        0
+      ]
+    },
+    {
+      "name": "diagonal",
+      "buttons": "0xFFFF",
+      "sticks": [
+        128,
+        9,
+        246,
+        128
+      ],
+      "position_fields_before": [
+        1190473728,
+        -518348800
+      ],
+      "position_fields_after": [
+        1198522368,
+        -510320640
+      ],
+      "rotation_fields_before": [
+        8192,
+        6,
+        0
+      ],
+      "rotation_fields_after": [
+        0,
+        7,
+        0
+      ]
+    },
+    {
+      "name": "focus-lost",
+      "buttons": "0xFFFF",
+      "sticks": [
+        128,
+        128,
+        128,
+        128
+      ],
+      "position_fields_before": [
+        1198522368,
+        -510320640
+      ],
+      "position_fields_after": [
+        1198522368,
+        -510320640
+      ],
+      "rotation_fields_before": [
+        0,
+        14,
+        0
+      ],
+      "rotation_fields_after": [
+        24576,
+        11,
+        0
+      ]
+    },
+    {
+      "name": "inactive",
+      "buttons": "0xFFFF",
+      "sticks": [
+        128,
+        128,
+        128,
+        128
+      ],
+      "position_fields_before": [
+        1198522368,
+        -510320640
+      ],
+      "position_fields_after": [
+        1198522368,
+        -510320640
+      ],
+      "rotation_fields_before": [
+        24576,
+        11,
+        0
+      ],
+      "rotation_fields_after": [
+        24576,
+        11,
+        0
+      ]
+    },
+    {
+      "name": "fire-use-next",
+      "buttons": "0x1FFF",
+      "sticks": [
+        128,
+        128,
+        128,
+        128
+      ],
+      "position_fields_before": [
+        1198522368,
+        -510320640
+      ],
+      "position_fields_after": [
+        1198522368,
+        -510320640
+      ],
+      "rotation_fields_before": [
+        24576,
+        11,
+        0
+      ],
+      "rotation_fields_after": [
+        24576,
+        11,
+        0
+      ]
+    },
+    {
+      "name": "release",
+      "buttons": "0xFFFF",
+      "sticks": [
+        128,
+        128,
+        128,
+        128
+      ],
+      "position_fields_before": [
+        1198522368,
+        -510320640
+      ],
+      "position_fields_after": [
+        1198522368,
+        -510320640
+      ],
+      "rotation_fields_before": [
+        24576,
+        11,
+        0
+      ],
+      "rotation_fields_after": [
+        24576,
+        11,
+        0
+      ]
+    }
+  ],
+  "menu_pad_delivery_passed": true,
+  "visual_regressions": {
+    "zero": {
+      "hashes": [
+        "687c6df68728130d10c7852808a145c4895ba067e9c98e0f982ad3447fccd919",
+        "b18bb378517233af48c2fec01536d6fd66eb74127f65ce0f8df54459ab1cf651",
+        "687c6df68728130d10c7852808a145c4895ba067e9c98e0f982ad3447fccd919",
+        "b18bb378517233af48c2fec01536d6fd66eb74127f65ce0f8df54459ab1cf651"
+      ],
+      "settings_restored": true,
+      "rollback_checks": 40
+    },
+    "positive": {
+      "hashes": [
+        "ee2d20b31315d7823f3a7ca9d4b33f23af8c80a8addea330b817981878ee38b6",
+        "ee2d20b31315d7823f3a7ca9d4b33f23af8c80a8addea330b817981878ee38b6",
+        "84f9af0f1800b2bbf1440a8a7ad66549fefb19ad878112243d4652a0d03461a6",
+        "84f9af0f1800b2bbf1440a8a7ad66549fefb19ad878112243d4652a0d03461a6"
+      ],
+      "settings_restored": true,
+      "rollback_checks": 44
+    },
+    "negative": {
+      "hashes": [
+        "d848446bceaf739dc1b3de330f5ebcdb5034cc286c44d05b9922eaade1f19938",
+        "d848446bceaf739dc1b3de330f5ebcdb5034cc286c44d05b9922eaade1f19938",
+        "658f6883d8a79a882c2d923ba309ee5b09c7538933eb8cee37d9c3c277db2cf6",
+        "658f6883d8a79a882c2d923ba309ee5b09c7538933eb8cee37d9c3c277db2cf6"
+      ],
+      "settings_restored": true,
+      "rollback_checks": 50
+    },
+    "xr": {
+      "hashes": [
+        "cf8ea40767f1360efe81de474b901826294856375f6dbc339d3810e5f65138bf",
+        "cf8ea40767f1360efe81de474b901826294856375f6dbc339d3810e5f65138bf",
+        "6b8bf284540a8fc41596fea46b438d3513397962028ba0d8239e5aa695e23381",
+        "6b8bf284540a8fc41596fea46b438d3513397962028ba0d8239e5aa695e23381"
+      ],
+      "settings_restored": true,
+      "rollback_checks": 166
+    }
+  },
+  "diagnostic_checks": {
+    "verify_checks": 272,
+    "verify_mismatch": 0,
+    "vram_leaks": 0,
+    "watchdog": 0,
+    "nesting_repairs": 0
+  },
+  "diagnostic_xr": {
+    "submitted": 137,
+    "empty": 0,
+    "failures": 0,
+    "submitted_layer": 1,
+    "submitted_source": 1
+  },
+  "diagnostic_stereo": {
+    "pairs": 136,
+    "failed": 0,
+    "eye_hashes": [
+      "232b2084d518fba5",
+      "232b2084d518fba5"
+    ],
+    "eye_cycles": [
+      1379698201,
+      1379698201
+    ],
+    "retained_pair_id": 0,
+    "stale_frames": 0
+  },
+  "production": {
+    "debug_tools": false,
+    "proof_line": "mohu-vr-diag: stereo_proof attempt=360 pairs=360 rendered=1 status=0 y=0 offset=0 level_hits=1440/1440 pose_apps=360/360 guest_submits=720 ot_words=0 openxr=1 xr_begin_failures=0 xr_view_failures=0 xr_ends=360 frustum=1440/1440 fallback=0/0 hud_skips=360/360 hud_unlinked=6480/6480 replay_submits_skipped=360/360",
+    "flat_source_inert": true,
+    "settings_restored": true,
+    "steamvr_settings_sha256": "bc4b95d242547c552e4e6f672ad3c3284d357cd37249069fd643522473323f10",
+    "remaining_game_pids": []
+  },
+  "tests": {
+    "python_tests": 13,
+    "strict_c_fixtures": [
+      "input",
+      "frustum",
+      "hud_packets"
+    ],
+    "diagnostic_c_syntax": true
+  },
+  "passed": true
+}

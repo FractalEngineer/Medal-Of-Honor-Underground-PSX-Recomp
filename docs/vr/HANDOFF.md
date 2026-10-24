@@ -11,6 +11,7 @@ it before ending every implementation session.
 | --- | --- |
 | Target branch | `feature/vr-port` |
 | Starting game-tree checkpoint for sky-ghost correction | `4dbe4cd` (local and live remote matched) |
+| Starting game-tree checkpoint for movement | `627b31d` (local and live remote matched) |
 | Current framework implementation | `d9b0f382` |
 | Target base | `7fcb0ca35af683ac38c4c501347d59916a924aa4` |
 | Reference branch | `master` |
@@ -341,13 +342,52 @@ previous single-buffer "bar" rule. All guest changes remain rollback-scoped.
 The same executable restores the ghost when `MOHU_VR_KEEP_REPLAY_SUBMIT=1`.
 The fix removes it from both raw eyes and the submitted application layer,
 with 100% identical measured static foreground pixels. The default debug-off
-build is restored after diagnostic capture. Physical-headset confirmation is
-the next operator gate; do not claim additional-level or transition coverage.
+build is restored after diagnostic capture. The operator confirmed the sky
+ghost fixed in the physical headset on 2026-10-24. Additional-level and
+transition coverage remain open.
 
 Full controls, rejected attempts, commands and limitations:
 [SKY_GHOST_EVIDENCE.md](SKY_GHOST_EVIDENCE.md),
 [proof](../../vr/proof/sky-ghost-fix.png), and
 [receipt](../../vr/proof/sky-ghost-receipt.json).
+
+## Movement and operator-owned save preparation
+
+The operator confirmed the sky correction, then requested movement to prepare
+multiplayer weapon-set saves. The operator will create those saves; none were
+created or migrated by the agent.
+
+Movement and buttons reuse the solved reference game's mappings: left stick
+moves/strafes, right X turns, right trigger fires, A/X uses/reloads, B changes
+weapon, stick clicks jump/crouch, and left Menu pauses. Default deadzone is
+0.2 and turn gain 0.65. Left grip optionally merges right Y into native LY.
+Menu left stick sends D-pad, A/trigger confirms, B goes back.
+
+The pure mapper lives in `vr/underground/input.c`. One-time activation installs
+the offline controller source/presentation policy. Underground's complete
+converter/dispatcher signatures and live calibration tables are guarded and
+read without guest writes. Its center +/-37 and saturated lookup differ from
+the reference; both measured post-load/DualShock table layouts are supported.
+The source is inactive during eye replay and in normal flat mode.
+
+Normal VR enables movement. `-NoMovement`, `-MoveDeadzone`, and `-TurnGain` are
+launch controls. `-Slot -1` starts native menus without requiring a gameplay
+pair and clears an inherited auto-load slot. The operator can use desktop F7
+to save new unused slots, keeping slot 2 as the SP regression fixture.
+
+Synthetic actions verified movement, strafing, turning, partial/diagonal input,
+button delivery, focus/inactivity release, and raw actor-field changes with
+zero rollback mismatches/leaks/watchdogs. Fresh zero and both 90-degree views
+passed; raw eyes/application layer retained the clean sky. Release was rebuilt
+in the same `build-release` with debug tools OFF; the normal null-HMD run
+completed 360 logged pairs with zero XR failures. Flat activation stayed inert
+with inherited movement/VR flags. SteamVR settings restored and owned game
+processes were closed. Thirteen Python tests and all three strict C fixtures
+pass. Physical movement, pause/menu transitions and multiplayer control/overlay
+coverage await operator testing and the new fixtures.
+
+See [MOVEMENT_EVIDENCE.md](MOVEMENT_EVIDENCE.md) and the
+[compact receipt](../../vr/proof/movement-receipt.json).
 
 ## Build and test state
 
@@ -497,7 +537,7 @@ The no-headset OpenXR acceptance path uses the same isolated slot:
 Expected startup:
 
 ```text
-mohu-vr-diag: active bindings=17 overlay_hooks=13 read_only=0 level_offset_x=0 stereo_proof=1 eye_offset=0 render_view=1 all_spans=0 replay_driver=0 yaw_mdeg=0 pitch_mdeg=0 head_milli=0,0,0 guest_submit=1 head_frustum=1 openxr=1 flat_hud=1 units_per_meter=238.806
+mohu-vr-diag: active bindings=17 overlay_hooks=14 read_only=0 level_offset_x=0 stereo_proof=1 eye_offset=0 render_view=1 all_spans=0 replay_driver=0 yaw_mdeg=0 pitch_mdeg=0 head_milli=0,0,0 guest_submit=1 head_frustum=1 openxr=1 flat_hud=1 units_per_meter=238.806
 mohu-vr-diag: single_player_scene=0x800AA174 player=0x800AA17C player_input_offset=0x39C
 ```
 
@@ -513,11 +553,11 @@ mohu-vr-diag: single_player_scene=0x800AA174 player=0x800AA17C player_input_offs
    translation over controlled inputs.
 5. Complete interactive flat boot/menu/gameplay validation.
 6. Extend the pair-sequence and compositor checks to motion, wall proximity,
-   menus, transitions, and additional levels, then add input and HUD policy.
-7. Confirm the headlessly isolated sky-ghost correction in the physical headset:
-   look up and turn both ways; verify no flat courtyard, ammo icon, or compass
-   remains in the sky. The instrumented source fix and A/B proof are complete;
-   physical-headset acceptance remains pending.
+   menus, transitions, and additional levels, then extend input and HUD policy.
+7. Operator: verify the reference stick/button mappings in the headset,
+   including pause/resume and release; create multiplayer saves for each weapon
+   set in new slots. Map multiplayer-specific guards from those valid fixtures.
+   Sky-ghost physical-headset acceptance is complete.
 
 Do not treat the frame-driver replay as working stereo. The accepted evidence
 uses the frame-render replay; the driver path still does not own the visible

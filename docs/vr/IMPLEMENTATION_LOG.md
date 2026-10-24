@@ -368,10 +368,41 @@
   and one [proof image](../../vr/proof/sky-ghost-fix.png); bulk captures are ignored.
 - Physical-headset acceptance of this correction remains pending.
 
+### Reference input mappings and operator save preparation
+
+- The operator confirmed the sky ghost fixed and requested movement, then
+  clarified that they will create the saves and want the previous game's maps.
+  Started with local/live remote `627b31d` matching; no save was created,
+  migrated, patched, or copied by the agent.
+- Reused the reference input mapper and offline source/presentation seam.
+  Left stick moves/strafes, right X turns, with the same combat/menu buttons
+  and optional left-grip axis merge. Flat mode stays inert. Deadzone 0.2,
+  turn gain 0.65; 1080p, 67 mm and WorldScale=3 remain unchanged.
+- Mapped Underground converter `80083C6C`, dispatcher `80083DB0`, calibration
+  `800C47C8`, actions `800C4AA8`, and curve `800AB12C` from native code and live
+  pad controls. Full function guards and live records protect input routing.
+  Adapted center +/-37/clamping and both measured DualShock table layouts;
+  reusing reference guest addresses or threshold math would be incorrect.
+- Synthetic XR actions verified native pad delivery and actor-field changes for
+  forward/back, strafing, turning, partial/diagonal input, button/release and
+  focus/inactivity controls. Rollback checks had zero errors; boot menu pad
+  mappings worked without loading a slot. Multiplayer gameplay remains untested.
+- Added `-NoMovement`, `-MoveDeadzone`, `-TurnGain`, and a working `-Slot -1`
+  native-menu startup path. All process environment values restore on exit.
+- Passed 13 Python tests, strict input/frustum/HUD C fixtures, diagnostic C,
+  zero identity, populated +/-90-degree views and raw/app-layer clear-sky checks.
+  Restored debug-off Release in the one `build-release`; the normal null-HMD
+  smoke completed 360 logged pairs with zero XR failures. Flat inherited-flag
+  startup was inert, SteamVR settings restored, and owned processes closed.
+- Rejected registration/calibration harness runs and a missing relative save
+  path are documented in [MOVEMENT_EVIDENCE.md](MOVEMENT_EVIDENCE.md). No save
+  migration failed. Any future invalid slot means ask for a fresh PGXP slot.
+
 ## Next work
 
 1. Repeat the PGXP pose sweep in additional scenes and near-wall positions.
 2. Rebuild the flat target and repeat interactive boot/menu/gameplay validation.
-3. Label the actor/camera update and separate camera motion from player motion.
+3. Operator tests movement and creates multiplayer weapon-set save fixtures;
+   then map their player/control/render guards.
 4. Extend the pair-sequence and compositor checks to motion, wall proximity,
    menus, transitions, and additional levels.
