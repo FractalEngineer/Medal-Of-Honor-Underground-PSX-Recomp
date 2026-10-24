@@ -95,9 +95,31 @@ The 1080p capture image size is `2560x1200` per eye. Left/right differences at
 the side poses remained large (2,163,070 and 2,714,982 changed pixels), so the
 HUD policy did not collapse the two eye images.
 
+## Residual ghost observed after the HUD fix
+
+After the operator tested this checkpoint in the headset, the dominant fixed
+HUD ghost was gone. The operator then reported a smaller residual ghost visible
+only in the sky. Their description is a headset-indexed flat render of the
+whole scene: the stereo world appears to occlude it, leaving it visible only
+where the sky is otherwise unobstructed.
+
+This is an operator observation and a working hypothesis, not a confirmed
+cause. The next investigation must distinguish at least these cases:
+
+- a stale native/menu OpenXR quad or retained native surface;
+- a flat full-scene packet or texture used behind the stereo world;
+- a stale eye texture reused by the clear/background path;
+- compositor reprojection of an old pair rather than application content.
+
+Useful controls are the submitted OpenXR layer/source counters, a clear-only
+frame, an app-layer versus eye-texture comparison, and a distinctive clear
+colour to show whether the ghost is behind world geometry. Do not label this as
+a native-layer defect or a game-packet defect until one control separates them.
+
 ## Remaining limits
 
-- The physical headset has not been rechecked after this checkpoint.
+- The operator checked the image in the headset, but no instrumented headset
+  motion capture or root-cause receipt exists for the residual sky-only ghost.
 - The HUD is hidden in stereo until its hand/wrist implementation is ported.
 - Additional scenes, pitch/translation sweeps, transitions, and near-wall
   positions still need the same coverage.
