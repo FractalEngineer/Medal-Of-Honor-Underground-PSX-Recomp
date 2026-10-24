@@ -115,6 +115,24 @@ reference game's accepted provisional profile and produces
 available as a base-mapping override; `WorldScale` is applied after it.
 Headset IPD positions still come from the OpenXR runtime.
 
+Normal VR launch also uses `-InternalResolution 1080p`, enables
+`PSX_VR_HEAD_FRUSTUM=1`, and enables `PSX_VR_SUPPRESS_FLAT_HUD=1`. The
+frustum selector is a guarded host-side queue builder over Underground's
+visibility tree. Flat-HUD suppression skips the guarded HUD text producer and
+unlinks the measured head-locked bar/compass packet block only inside the eye
+transaction. It does not alter native play.
+
+Diagnostic opt-outs remain available:
+
+```powershell
+.\RunVR-VDXR.bat -InternalResolution native -NoHeadFrustumDiagnostic -KeepFlatHud
+```
+
+Use `-KeepFlatHud` to compare the old head-locked HUD, `-NoHeadFrustumDiagnostic`
+to restore native body-camera culling, and `-DebugPort 4372` when a debug-tools
+build is present. `MOHU_VR_STEREO_DUMP_PAIRS` limits pair dumps (default 60);
+`MOHU_VR_HUD_TRACE=1` emits one OT trace for packet mapping.
+
 PGXP diagnostic states use ABI `131106`; base-flavor states use `34`. Savestates
 also carry the framework execution identity, so runtime source changes can
 invalidate an older slot. Never patch a save header. If the PGXP runtime rejects

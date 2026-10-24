@@ -9,6 +9,8 @@ param(
     [double]$IpdMm = 67,
     [ValidateRange(0.05, 20)]
     [double]$WorldScale = 3,
+    [ValidateSet('native', '720p', '1080p', '1440p', '4k', '5k', '8k', 'display')]
+    [string]$InternalResolution = '1080p',
     [double]$UnitsPerMeter = 0,
     [ValidateRange(0.25, 20)]
     [double]$MenuDistance = 2,
@@ -17,10 +19,14 @@ param(
     [string]$GameConfig = '',
     [string]$MemcardDirectory = '',
     [string]$LogDirectory = 'analysis\vr-baseline',
+    [ValidateRange(0, 65535)]
+    [int]$DebugPort = 0,
     [int]$Seconds = 0,
     [ValidateRange(1, 120)]
     [int]$StartupTimeoutSeconds = 30,
     [switch]$Headless,
+    [switch]$NoHeadFrustumDiagnostic,
+    [switch]$KeepFlatHud,
     [switch]$Build
 )
 
@@ -246,10 +252,13 @@ try {
         throw "Game executable missing: $exePath. Run this launcher with -Build first."
     }
     Write-Host (
-        'VR profile: IPD={0}mm world_scale={1} units_per_meter={2}' -f
+        'VR profile: IPD={0}mm world_scale={1} units_per_meter={2} resolution={3} head_frustum={4} flat_hud={5}' -f
         $IpdMm,
         $WorldScale,
-        $effectiveUnitsPerMeter.ToString([Globalization.CultureInfo]::InvariantCulture)
+        $effectiveUnitsPerMeter.ToString([Globalization.CultureInfo]::InvariantCulture),
+        $InternalResolution,
+        $environment.PSX_VR_HEAD_FRUSTUM,
+        $environment.PSX_VR_SUPPRESS_FLAT_HUD
     )
 
     if ($Headless) {
@@ -306,7 +315,9 @@ try {
         PSX_STEREO_SHED = '0'
         PSX_VSYNC = '0'
         PSX_DITHERING = '0'
-        PSX_INTERNAL_RESOLUTION = 'native'
+        PSX_INTERNAL_RESOLUTION = $InternalResolution
+        PSX_VR_HEAD_FRUSTUM = $(if ($NoHeadFrustumDiagnostic) { '0' } else { '1' })
+        PSX_VR_SUPPRESS_FLAT_HUD = $(if ($KeepFlatHud) { '0' } else { '1' })
         PSX_OPENXR_READY_FILE = $readyPath
     }
     if ($null -ne $runtimeManifest) {
@@ -323,6 +334,9 @@ try {
     $arguments = '--game "{0}" --no-launcher' -f $GameConfig
     if ($MemcardDirectory) {
         $arguments += ' --memcard-dir "{0}"' -f $MemcardDirectory
+    }
+    if ($DebugPort -gt 0) {
+        $arguments += ' --debug-port {0}' -f $DebugPort
     }
     $process = Start-Process -FilePath $exePath -ArgumentList $arguments `
         -WorkingDirectory $repoRoot -WindowStyle Hidden -PassThru `

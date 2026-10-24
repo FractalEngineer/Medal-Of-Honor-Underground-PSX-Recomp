@@ -32,6 +32,9 @@ executable and live overlay content.
 12. [OPENXR_EVIDENCE.md](OPENXR_EVIDENCE.md) records the opt-in headset frame
     lifecycle, native menu surface, headless pair checks, and timed compositor
     capture.
+13. [HEAD_TURN_HUD_EVIDENCE.md](HEAD_TURN_HUD_EVIDENCE.md) records the 1080p
+    default, per-eye level visibility, side-view coverage, and rollback-scoped
+    removal of the flat HUD projection.
 
 The latest machine-ranked function candidates are in
 [ENGINE_EQUIVALENCE_REPORT.md](ENGINE_EQUIVALENCE_REPORT.md). They are
@@ -70,5 +73,7 @@ forward/downward near-plane pose. Render-scoped signed-NCLIP counters now
 receipt zero, lateral, pitch, and yaw poses with no precise-projection misses.
 The OT-only and frame-driver paths remain controls, not stereo evidence. The
 diagnostic plugin can now opt into OpenXR, obtain headset eye views, and submit
-the verified pair. Headset acceptance, production input, and HUD policy remain
+the verified pair. Normal VR launch now uses 1080p internal rendering, per-eye
+world selection, and a temporary stereo-only suppression of the head-locked
+flat HUD. Headset acceptance, production input, and the hand/wrist HUD remain
 active work.

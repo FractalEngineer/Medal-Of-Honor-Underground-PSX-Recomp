@@ -13,6 +13,7 @@ This directory is the home for retained project documentation.
 - [Stereo view evidence](vr/STEREO_VIEW_EVIDENCE.md)
 - [PGXP render-view evidence](vr/PGXP_RENDER_VIEW_EVIDENCE.md)
 - [Alternating black-pair evidence](vr/FLICKER_EVIDENCE.md)
+- [Head-turn, resolution, and flat-HUD evidence](vr/HEAD_TURN_HUD_EVIDENCE.md)
 - [OpenXR bootstrap evidence](vr/OPENXR_EVIDENCE.md)
 - [Generated candidate report](vr/ENGINE_EQUIVALENCE_REPORT.md)
 - [Implementation log](vr/IMPLEMENTATION_LOG.md)

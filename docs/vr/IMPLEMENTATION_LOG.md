@@ -299,6 +299,34 @@
   nonblank in both the compositor and application layer.
 - The operator confirmed the corrected image no longer flashes.
 
+### Head-turn visibility, resolution, and flat HUD
+
+- Changed the shared VR launcher from native 240-line rendering to the
+  reference game's `1080p` default. The runtime now reports 5x internal scale;
+  `-InternalResolution native` remains available as a control.
+- Ported the reference per-eye level-tree selector to Underground's
+  `0x80099960` transformer. It validates the complete 710-instruction function
+  on every override, builds the full AABB/PVS queue before writing guest RAM,
+  and falls back to the native selector on malformed trees or overflow.
+- Recorded the Underground visibility-tree mapping: masks `0x800B7490` and
+  `0x800B7494`, bypass `0x800B7498`, queue `0x800B74B8`, count
+  `0x800B74B4`, and sentinel `0x800C8458`.
+- Added a guard for the flat HUD text producer at `0x8006B64C`. It is skipped
+  only during eye replay, using the full 692-byte FNV-1a guard.
+- Traced the regenerated OT and removed the health/bar/compass packet block at
+  `0x800B8C88..0x800BA4B0` plus the small HUD bar node at `0x800F109C`. This
+  removes the stale fixed overlay that remained after suppressing text.
+- Added `MOHU_VR_STEREO_DUMP_PAIRS` for bounded evidence captures and an
+  opt-in `MOHU_VR_HUD_TRACE=1` OT trace for future packet mapping.
+- Verified zero-offset left/right hashes are identical
+  (`AEECA835133FAE5DADF3047D28D612AA0258FE087098BEE04EAFB46E3C23735B`), both
+  90-degree side poses remain populated, and stereo differences remain large.
+- A final null-HMD run completed 30 pairs with `frustum=120/120`,
+  `fallback=0/0`, `hud_skips=30/30`, `hud_unlinked=525/525`, and zero XR
+  begin/view failures. SteamVR settings matched the pre-run backup afterward.
+- Evidence: [HEAD_TURN_HUD_EVIDENCE.md](HEAD_TURN_HUD_EVIDENCE.md) and
+  [head-turn-hud-fix.png](../../vr/proof/head-turn-hud-fix.png).
+
 ## Next work
 
 1. Repeat the PGXP pose sweep in additional scenes and near-wall positions.
