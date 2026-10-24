@@ -66,6 +66,14 @@ It replays the guarded frame render at `0x80053BB4`, builds a full
 through guarded guest `DrawOTag`. Guest TR registers are not modified. With
 `MOHU_VR_EYE_OFFSET=0` and the same seam enabled, the pair is byte-identical.
 
+Both eye replays target the rollback-protected `y=0` VRAM scratch buffer. The
+native game alternates its display origin between `y=0` and `y=240`, but the eye
+packet coordinates are rooted at `y=0`; following the native origin produced
+alternating pure-black pairs. The render transaction backs up and restores the
+scratch rectangle, so this does not change guest VRAM. Set
+`MOHU_VR_STEREO_DUMP_DIR` to an existing directory to write the first 60
+submitted pairs when diagnosing a recurrence.
+
 `MOHU_VR_EYE_YAW_MDEG`, `MOHU_VR_EYE_PITCH_MDEG`, and
 `MOHU_VR_EYE_HEAD_{X,Y,Z}_MILLI` add diagnostic head rotation and sub-unit
 translation. The manual GP0 walker loses packet provenance and is not valid for

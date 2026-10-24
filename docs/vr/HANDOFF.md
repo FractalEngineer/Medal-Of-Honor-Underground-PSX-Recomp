@@ -218,6 +218,11 @@ Confirmed replay facts:
    reported as `vr.projective.miss0`. Guest `DrawOTag` preserves provenance and
    produced 1.4M homogeneous projective draws in the accepted zero and lateral
    runs.
+9. Eye replay always targets the rollback-protected `y=0` VRAM scratch buffer.
+   Following the native display flip to `y=240` cleared a rectangle that the
+   y-rooted eye geometry did not draw, producing alternating complete black
+   pairs. `MOHU_VR_STEREO_DUMP_DIR` records the first 60 pairs for recurrence
+   checks. See [FLICKER_EVIDENCE.md](FLICKER_EVIDENCE.md).
 
 At the tested zero-offset OT-only checkpoint:
 
@@ -278,9 +283,10 @@ null HMD:
 The mode starts the selected runtime, waits for complete stereo pairs, records
 the startup and smoke receipts, then stops SteamVR and restores its original
 settings. A failed headset run using the previous unscaled profile reported
-correct head tracking but an oversized world and black flashing. The corrected
-profile has passed null-HMD submission testing; it still needs one physical
-headset visual retest.
+correct head tracking but an oversized world and black flashing. World scale was
+corrected to the reference profile. The remaining flash was reproduced
+headlessly as alternating pure-black complete pairs and fixed by the `y=0`
+scratch-buffer replay. The operator confirmed the corrected scale and image.
 
 ## Build and test state
 
@@ -322,7 +328,7 @@ Current `build-release/` state:
 
 Last checks:
 
-- Nine Python tests pass.
+- Thirteen Python tests pass.
 - Both GTE transfer/contract tests pass, including render-NCLIP counter
   transitions for positive, negative, and zero outcomes.
 - Engine-map and diagnostic-plugin C files compile with
@@ -344,6 +350,8 @@ Last checks:
 - Guest `DrawOTag` reports homogeneous projective draws rather than untracked
   manual-GP0 submissions.
 - `RunFlat.bat` starts the shared release executable without activating VR.
+- A final 60-pair null-HMD sequence had zero black left or right images.
+- Eight consecutive compositor and application-layer captures were nonblank.
 - Frame-driver replay and the all-span TRX variant remain rejected image
   controls.
 - No owned game process remains running.
@@ -415,8 +423,8 @@ mohu-vr-diag: single_player_scene=0x800AA174 player=0x800AA17C player_input_offs
 4. Label the actor/camera update function and separate camera motion from player
    translation over controlled inputs.
 5. Complete interactive flat boot/menu/gameplay validation.
-6. Retest the corrected `WorldScale=3` / VSync-off profile on a physical
-   headset for world size and black flashing, then add input and HUD policy.
+6. Extend the pair-sequence and compositor checks to motion, wall proximity,
+   menus, transitions, and additional levels, then add input and HUD policy.
 
 Do not treat the frame-driver replay as working stereo. The accepted evidence
 uses the frame-render replay; the driver path still does not own the visible

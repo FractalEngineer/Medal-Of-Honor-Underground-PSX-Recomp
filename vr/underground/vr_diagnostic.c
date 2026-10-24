@@ -1,6 +1,7 @@
 #include "cpu_state.h"
 #include "camera_map.h"
 #include "engine_map.h"
+#include "gpu_gl_renderer.h"
 #include "mod_plugins.h"
 #include "vr_pose_math.h"
 
@@ -28,6 +29,7 @@
 #define MOHU_VR_EYE_GUEST_SUBMIT_ENV "MOHU_VR_EYE_GUEST_SUBMIT"
 #define MOHU_VR_REPLAY_DRIVER_ENV "MOHU_VR_REPLAY_FRAME_DRIVER"
 #define MOHU_VR_OT_ONLY_ENV "MOHU_VR_STEREO_OT_ONLY"
+#define MOHU_VR_STEREO_DUMP_ENV "MOHU_VR_STEREO_DUMP_DIR"
 #define MOHU_VR_OPENXR_ENV "MOHU_VR_OPENXR"
 #define MOHU_VR_UNITS_PER_METER_ENV "MOHU_VR_UNITS_PER_METER"
 #define MOHU_VR_MENU_DISTANCE_ENV "MOHU_VR_MENU_DISTANCE"
@@ -531,7 +533,10 @@ static void run_stereo_proof(CPUState* cpu) {
     frame.struct_size = (uint32_t)sizeof(frame);
     frame.period_vblanks = 1u;
     frame.x = 0u;
-    frame.y = index == 0u ? 240u : 0u;
+    /* Replay into one scratch buffer. The guest render's packet coordinates
+     * are rooted at y=0; following the native display flip to y=240 clears a
+     * buffer the frame does not draw, producing an alternating black pair. */
+    frame.y = 0u;
     frame.w = 512u;
     frame.h = 240u;
     g_stereo_frame_x = frame.x;
@@ -583,7 +588,7 @@ static void run_stereo_proof(CPUState* cpu) {
     if (rendered) {
         g_stereo_pairs++;
     }
-    if (g_stereo_attempts <= 3u || (g_stereo_attempts % 60u) == 0u) {
+    if (g_stereo_attempts <= 3u || (g_stereo_attempts % 30u) == 0u) {
         fprintf(stdout,
                 "mohu-vr-diag: stereo_proof attempt=%u pairs=%u rendered=%d "
                 "status=%u y=%u offset=%d level_hits=%u/%u pose_apps=%u/%u "
@@ -773,6 +778,13 @@ static void vr_diagnostic_activate(void) {
         }
         if (g_openxr) {
             set_openxr_native_surface(true);
+        }
+        const char* dump_dir = getenv(MOHU_VR_STEREO_DUMP_ENV);
+        if (dump_dir && *dump_dir) {
+            gl_renderer_stereo_dump_arm(dump_dir, 60);
+            fprintf(stdout, "mohu-vr-diag: stereo pair dump armed dir=%s\n",
+                    dump_dir);
+            fflush(stdout);
         }
     }
     size_t hooks = 0;

@@ -27,8 +27,11 @@ executable and live overlay content.
 10. [PGXP_RENDER_VIEW_EVIDENCE.md](PGXP_RENDER_VIEW_EVIDENCE.md) records the
     full render-view, guest OT submission, projective near-plane path, and
     PGXP save-state flavor requirement.
-11. [OPENXR_EVIDENCE.md](OPENXR_EVIDENCE.md) records the opt-in headset frame
-    lifecycle, native menu surface, and the current fallback-only validation.
+11. [FLICKER_EVIDENCE.md](FLICKER_EVIDENCE.md) records the alternating
+    black-pair cause and corrective scratch-buffer replay.
+12. [OPENXR_EVIDENCE.md](OPENXR_EVIDENCE.md) records the opt-in headset frame
+    lifecycle, native menu surface, headless pair checks, and timed compositor
+    capture.
 
 The latest machine-ranked function candidates are in
 [ENGINE_EQUIVALENCE_REPORT.md](ENGINE_EQUIVALENCE_REPORT.md). They are

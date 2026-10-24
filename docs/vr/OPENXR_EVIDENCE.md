@@ -93,19 +93,20 @@ TCP `openxr_stats` reported `compiled=1`, `runtime=VirtualDesktopXR`,
 `result=-35`, `stage=system`, and zero submitted layers. This is the expected
 no-active-headset control, not evidence of a presented stereo pair.
 
-## Acceptance still required
+## Remaining acceptance scope
 
-With an active headset runtime, require:
+The corrected lifecycle has reached the operator's headset with stable tracking,
+correct scale, and no observed black flashing. Broader acceptance still needs:
 
 1. `openxr_stats.running=1`, `submitted>0`, and `submitted_source=1`;
 2. a native menu submission before the first gameplay stereo submission;
 3. stable head tracking and correct upright scene presentation;
 4. clear image and near-wall sweeps without floor holes or stale-eye frames;
-5. interaction, HUD, controller, and performance validation beyond this
-   bootstrap.
+5. interaction, HUD, controller, performance, and mission-transition coverage
+   beyond this bootstrap.
 
-The current native surface and per-eye path have not been accepted on a
-headset, and the existing controller and HUD work remains future scope.
+The controller and HUD work remains future scope. The current acceptance is
+limited to the tested gameplay scene and the corrected OpenXR presentation.
 
 ## Headless null-HMD acceptance
 
@@ -131,8 +132,11 @@ The default scale profile now matches the accepted reference profile:
 
 The first headset run used the previous unscaled `716.418` units-per-meter
 profile. It tracked correctly, but the operator reported an oversized world and
-black flashing. The null-HMD run validates the corrected submission profile;
-visual headset acceptance of the scale and flashing fix is still required.
+black flashing. The scale profile was corrected to the reference game's
+`67 mm / WorldScale=3` setting. The remaining flashing was then reproduced
+headlessly as alternating black complete pairs, not empty layers, and fixed by
+using the `y=0` rollback-protected scratch buffer for both eye replays. See
+[FLICKER_EVIDENCE.md](FLICKER_EVIDENCE.md).
 
 On 2026-10-24, a 6-second null-HMD run loaded PGXP slot `2` and produced:
 
@@ -146,5 +150,18 @@ On 2026-10-24, a 6-second null-HMD run loaded PGXP slot `2` and produced:
 
 The retained receipt is generated as `analysis/vr-baseline/startup.json` and
 `analysis/vr-baseline/openxr-smoke.json` for each local run. Null-HMD testing
-verifies runtime submission and cadence; it does not replace visual comfort,
-world-scale, or flicker acceptance on the physical headset.
+verifies runtime submission and cadence. The operator confirmed that the final
+scale and flicker correction looked correct in the headset.
+
+The helper can also retain a timed sequence of compositor and application-layer
+images instead of only one startup proof:
+
+```powershell
+python vr/headless_steamvr.py `
+  --capture analysis/vr-baseline/flicker-check `
+  --steamvr-root 'C:\Program Files (x86)\Steam\steamapps\common\SteamVR' `
+  --pid <game-process-id> --samples 8 --interval 0.25 --require-clean
+```
+
+The final run retained eight nonblank samples in both layers and wrote
+`clean: true` to `capture-series.json`.
