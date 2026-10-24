@@ -17,12 +17,10 @@ static const uint16_t k_expected_nodes[MOHU_VR_WEAPON_NODE_COUNT] = {
     0, 0, 39, 1, 11, 6, 8, 1, 11, 6, 8,
 };
 
-static void identity_view(PSXModRenderView* view) {
-    memset(view, 0, sizeof *view);
-    view->struct_size = sizeof *view;
+static void identity_matrix(double matrix[9]) {
+    memset(matrix, 0, 9u * sizeof matrix[0]);
     for (unsigned i = 0; i < 3u; ++i) {
-        view->rotation_q12[i * 3u + i] = 4096;
-        view->rotation[i * 3u + i] = 1.0;
+        matrix[i * 3u + i] = 1.0;
     }
 }
 
@@ -65,42 +63,88 @@ int main(void) {
     CHECK(!mohu_vr_weapon_node_layout_valid(NULL,
                                             MOHU_VR_WEAPON_NODE_COUNT));
 
-    PSXModRenderView base;
-    PSXModRenderView tracked;
     PSXModOpenXRHands hands;
-    const double pivot[3] = {250.0, -200.0, 100.0};
-    identity_view(&base);
     valid_hands(&hands);
     hands.pose[1][PSX_MOD_XR_GRIP_POSE].position_m[0] = 1.0;
     hands.pose[1][PSX_MOD_XR_GRIP_POSE].position_m[1] = 2.0;
     hands.pose[1][PSX_MOD_XR_GRIP_POSE].position_m[2] = 3.0;
-    CHECK(mohu_vr_weapon_track_view(
-        &hands, &base, 1000.0, pivot, &tracked));
+    double current_rotation[9];
+    double current_translation[3];
+    CHECK(mohu_vr_weapon_track_delta(
+        &hands, 1000.0, current_rotation, current_translation));
     for (unsigned i = 0; i < 3u; ++i) {
-        CHECK(tracked.rotation_q12[i * 3u + i] == 4096);
-        CHECK(fabs(tracked.rotation[i * 3u + i] - 1.0) < 1e-12);
+        CHECK(fabs(current_rotation[i * 3u + i] - 1.0) < 1e-12);
     }
-    CHECK(tracked.precise == 1u);
-    CHECK(tracked.projection == base.projection);
+    CHECK(fabs(current_translation[0] - 1000.0) < 1e-9);
+    CHECK(fabs(current_translation[1] + 2000.0) < 1e-9);
+    CHECK(fabs(current_translation[2] + 3000.0) < 1e-9);
+
+    double base_rotation[9];
+    const double base_translation[3] = {25.0, -50.0, 100.0};
+    identity_matrix(base_rotation);
+    double relative_rotation[9];
+    double relative_translation[3];
+    CHECK(mohu_vr_weapon_relative_delta(
+        current_rotation, current_translation, base_rotation,
+        base_translation, relative_rotation, relative_translation));
+    CHECK(fabs(relative_rotation[0] - 1.0) < 1e-12);
+    CHECK(fabs(relative_translation[0] - 975.0) < 1e-9);
+    CHECK(fabs(relative_translation[1] + 1950.0) < 1e-9);
+    CHECK(fabs(relative_translation[2] + 3100.0) < 1e-9);
+
+    const int16_t native_rotation[9] = {
+        4096, 0, 0, 0, 4096, 0, 0, 0, 4096,
+    };
+    const int32_t native_translation[3] = {100, -200, 300};
+    const int32_t pivot[3] = {100, -200, 300};
+    const double zero_translation[3] = {0.0, 0.0, 0.0};
+    int16_t composed_rotation[9];
+    int32_t composed_translation[3];
+    identity_matrix(current_rotation);
+    CHECK(mohu_vr_weapon_compose_gte(
+        native_rotation, native_translation, current_rotation, pivot,
+        zero_translation, composed_rotation, composed_translation));
+    CHECK(memcmp(composed_rotation, native_rotation,
+                 sizeof native_rotation) == 0);
+    CHECK(memcmp(composed_translation, native_translation,
+                 sizeof native_translation) == 0);
+    current_translation[0] = 12.0;
+    current_translation[1] = -34.0;
+    current_translation[2] = 56.0;
+    CHECK(mohu_vr_weapon_compose_gte(
+        native_rotation, native_translation, current_rotation, pivot,
+        current_translation, composed_rotation, composed_translation));
+    CHECK(composed_translation[0] == 100 + 12 * 4096);
+    CHECK(composed_translation[1] == -200 - 34 * 4096);
+    CHECK(composed_translation[2] == 300 + 56 * 4096);
+
+    int16_t node_quaternion[4] = {0, 0, 0, 4096};
+    const double quarter_y[9] = {
+        0.0, 0.0, 1.0, 0.0, 1.0, 0.0, -1.0, 0.0, 0.0,
+    };
+    CHECK(mohu_vr_weapon_rotate_node_q12(
+        node_quaternion, quarter_y));
+    CHECK(fabs(fabs((double)node_quaternion[1]) - 2896.0) < 2.0);
+    CHECK(fabs(fabs((double)node_quaternion[3]) - 2896.0) < 2.0);
 
     hands.age_ms = 151u;
-    CHECK(!mohu_vr_weapon_track_view(
-        &hands, &base, 1000.0, pivot, &tracked));
+    CHECK(!mohu_vr_weapon_track_delta(
+        &hands, 1000.0, current_rotation, current_translation));
     hands.age_ms = 10u;
     hands.focused = 0u;
-    CHECK(!mohu_vr_weapon_track_view(
-        &hands, &base, 1000.0, pivot, &tracked));
+    CHECK(!mohu_vr_weapon_track_delta(
+        &hands, 1000.0, current_rotation, current_translation));
     hands.focused = 1u;
     hands.pose[1][PSX_MOD_XR_AIM_POSE].flags = 1u;
-    CHECK(!mohu_vr_weapon_track_view(
-        &hands, &base, 1000.0, pivot, &tracked));
+    CHECK(!mohu_vr_weapon_track_delta(
+        &hands, 1000.0, current_rotation, current_translation));
     hands.pose[1][PSX_MOD_XR_AIM_POSE].flags = 3u;
-    CHECK(!mohu_vr_weapon_track_view(
-        &hands, &base, NAN, pivot, &tracked));
+    CHECK(!mohu_vr_weapon_track_delta(
+        &hands, NAN, current_rotation, current_translation));
     hands.pose[1][PSX_MOD_XR_AIM_POSE].orientation_xyzw[3] = 0.0;
-    CHECK(!mohu_vr_weapon_track_view(
-        &hands, &base, 1000.0, pivot, &tracked));
+    CHECK(!mohu_vr_weapon_track_delta(
+        &hands, 1000.0, current_rotation, current_translation));
 
-    puts("PASS: weapon profiles, node guard, pose validity and stale fallback");
+    puts("PASS: weapon profiles, node guard, tracked affine and stale fallback");
     return 0;
 }

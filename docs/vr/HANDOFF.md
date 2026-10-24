@@ -454,6 +454,26 @@ transform or the later vertex projection. The tracked transform must be
 rollback-scoped, preserve native animation, recoil, reload, ammo and fire
 behavior, and leave the world view unchanged.
 
+The current diagnostic hook at `0x8008DB98` is not yet that seam. Its A/B
+captures change P1's world-body representation in the other split view while
+the top-view first-person weapon remains visually unchanged. Keep it
+diagnostic-only and do not claim it owns the visible top-view mesh.
+
+The P1 hit matrix is complete on the copied multiplayer fixtures. Native,
+`x=96`, `yaw=12000 mdeg`, and forced-tracking-loss runs each produced a native
+P2 health-address decrease for all 13 measured IDs. The gate reads the write
+trace, so death followed by respawn remains valid evidence. Weapon cycles close
+on all four slots, source saves and preferences remain unchanged, and each run
+leaves no owned game process. The scoped rifle and explosive controls use the
+measured long/approach variants. See
+[weapon-alignment-receipt.json](../../vr/proof/weapon-alignment-receipt.json).
+
+An opt-in right-grip raycast pointer is implemented at
+`vr/underground/raycast.h` and `vr/underground/vr_diagnostic.c`. With
+`PSX_VR_LASER=1`, holding right squeeze casts through Underground's visibility
+tree and draws the beam plus impact dot. The strict geometry fixture passes.
+Headset visual acceptance is still pending.
+
 The required fixture, guards, implementation order, and acceptance matrix are
 in [WEAPON_MAPPING.md](WEAPON_MAPPING.md). The compact model observations are in
 [weapon-model-receipt.json](../../vr/proof/weapon-model-receipt.json).
@@ -498,11 +518,20 @@ Current `build-release/` state:
 
 Last checks:
 
-- The final debug-off release completed a null-HMD smoke with 360 pairs,
-  zero XR failures, `frustum=1440/1440`, and `weapon_hits=0/0` because the
-  production launcher leaves the experimental weapon pose disabled.
-- Sky-ghost checkpoint: thirteen Python tests, strict frustum and ammo-packet C
-  fixtures, strict diagnostic C compilation, and documentation links pass.
+- The P1 top-view hit matrix now covers all 13 IDs at native, lateral `x=96`,
+  yawed `12 degrees`, and forced-tracking-loss poses. Every case produced a
+  pre-respawn decrease at the exact P2 health address, all weapon cycles closed,
+  and source saves, preferences, and process cleanup checks passed. See
+  [weapon-alignment-receipt.json](../../vr/proof/weapon-alignment-receipt.json).
+- The diagnostic raycast pointer builds with the level visibility tree and has
+  a strict pure-C fixture. Its right-squeeze OpenXR presentation remains
+  unverified because this session could not make the SteamVR null-HMD settings
+  writable; the saved settings hash still matches the pre-run original.
+- The null-HMD diagnostic run completed 360 pairs with zero XR failures and
+  `frustum=1440/1440`. The sandbox later blocked a second null-HMD settings
+  write, so laser presentation is not claimed from that run.
+- Final focused checks: 16 Python tests pass; strict frustum, HUD packet, input,
+  weapon, and raycast C fixtures pass; documentation links resolve.
 - The final diagnostic XR run reached 180 logged pairs, zero XR failures,
   `frustum=720/720 fallback=0/0`, and 180 suppressed native tails per eye.
   At capture, 150 rollback checks had zero mismatches/leaks/watchdogs/repairs.
@@ -514,11 +543,11 @@ Last checks:
   the old full-scene ghost only when the native tail is re-enabled.
 - Every completed null-HMD capture restored SteamVR settings byte-for-byte and
   left no owned game process. Slot 2 remained valid; no save migration occurred.
-- The final normal `build-release` was rebuilt with debug tools OFF. Its null-HMD
-  smoke reached 360 logged pairs, zero XR begin/view failures,
-  `frustum=1440/1440 fallback=0/0`, and 360 native tails skipped per eye.
-  A flat-launcher smoke with inherited VR activation variables still reported
-  `read_only=1 stereo_proof=0 openxr=0`, native resolution, and normal boot.
+- The final normal `build-release` is Release/OpenGL/OpenXR/PGXP with
+  `PSX_DEBUG_TOOLS=OFF` and diagnostics compiled but inert by default. The
+  final flat smoke reported `read_only=1 stereo_proof=0 openxr=0 weapon_pose=0
+  laser=0`, native resolution, and normal boot. SteamVR settings remain at
+  SHA-256 `bc4b95d242547c552e4e6f672ad3c3284d357cd37249069fd643522473323f10`.
 
 Earlier checkpoint checks (historical image hashes/counters):
 
@@ -626,12 +655,12 @@ mohu-vr-diag: single_player_scene=0x800AA174 player=0x800AA17C player_input_offs
 5. Complete interactive flat boot/menu/gameplay validation.
 6. Extend the pair-sequence and compositor checks to motion, wall proximity,
    menus, transitions, and additional levels, then extend input and HUD policy.
-7. Map the multiplayer first-person model affine/node transform with one static
-   fixture and one weapon at a time, then validate every measured weapon ID
-   against native P2 damage. Shot origin and direction remain a separate final
-   aim pass after the visible model transform is stable. Operator: verify the
-   reference stick/button mappings in the headset, including pause/resume and
-   release. Sky-ghost headset acceptance is complete.
+7. Locate the visible top-view first-person mesh seam; the current
+   `actor+0x4AC` affine hook modifies P1's world-body representation. The
+   13-ID native-hit matrix is complete, but muzzle-to-impact visual alignment
+   remains a separate aim pass. Verify the opt-in right-grip laser in a
+   headset. Operator: verify pause/resume and release mappings. Sky-ghost
+   headset acceptance is complete.
 
 Do not treat the frame-driver replay as working stereo. The accepted evidence
 uses the frame-render replay; the driver path still does not own the visible

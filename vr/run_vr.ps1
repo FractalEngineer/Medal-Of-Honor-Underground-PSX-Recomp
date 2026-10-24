@@ -28,6 +28,7 @@ param(
     [switch]$NoHeadFrustumDiagnostic,
     [switch]$KeepFlatHud,
     [switch]$NoMovement,
+    [switch]$Laser,
     [ValidateRange(0, 0.9)]
     [double]$MoveDeadzone = 0.2,
     [ValidateRange(0, 2)]
@@ -326,6 +327,7 @@ try {
         PSX_VR_HEAD_FRUSTUM = $(if ($NoHeadFrustumDiagnostic) { '0' } else { '1' })
         PSX_VR_SUPPRESS_FLAT_HUD = $(if ($KeepFlatHud) { '0' } else { '1' })
         PSX_VR_MOVEMENT = $(if ($NoMovement) { '0' } else { '1' })
+        PSX_VR_LASER = $(if ($Laser) { '1' } else { '0' })
         PSX_VR_MOVE_DEADZONE = $MoveDeadzone.ToString([Globalization.CultureInfo]::InvariantCulture)
         PSX_VR_TURN_GAIN = $TurnGain.ToString([Globalization.CultureInfo]::InvariantCulture)
         PSX_OPENXR_READY_FILE = $readyPath

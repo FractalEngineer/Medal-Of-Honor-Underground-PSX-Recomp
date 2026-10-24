@@ -1,0 +1,161 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "revision": "4bd5ac1f1f42894c3bac9160b0d90c0964f289aa",
+  "fixture": "fresh copied multiplayer slots 1-4 with stationary P2",
+  "player": "P1 top view",
+  "weapon_ids": [
+    0,
+    1,
+    4,
+    5,
+    8,
+    9,
+    10,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17
+  ],
+  "alignments": [
+    {
+      "name": "native",
+      "directory": "analysis\\vr-baseline\\weapon-mesh-mapping\\alignment-native-ok-20261025",
+      "pose_x": 0,
+      "pose_yaw_mdeg": 0,
+      "forced_tracking_loss": false,
+      "complete": true,
+      "p2_damaged_ids": [
+        0,
+        1,
+        4,
+        5,
+        8,
+        9,
+        10,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ],
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "remaining_game_pids": [],
+      "executable_sha256": "f0a7eeee1fe2d39d4d12fd3a57025a138c2c341ac2649f61842c3c566fddebc4"
+    },
+    {
+      "name": "lateral",
+      "directory": "analysis\\vr-baseline\\weapon-mesh-mapping\\alignment-x96-20261025",
+      "pose_x": 96,
+      "pose_yaw_mdeg": 0,
+      "forced_tracking_loss": false,
+      "complete": true,
+      "p2_damaged_ids": [
+        0,
+        1,
+        4,
+        5,
+        8,
+        9,
+        10,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ],
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "remaining_game_pids": [],
+      "executable_sha256": "f0a7eeee1fe2d39d4d12fd3a57025a138c2c341ac2649f61842c3c566fddebc4"
+    },
+    {
+      "name": "yaw",
+      "directory": "analysis\\vr-baseline\\weapon-mesh-mapping\\alignment-yaw12-20261025",
+      "pose_x": 0,
+      "pose_yaw_mdeg": 12000,
+      "forced_tracking_loss": false,
+      "complete": true,
+      "p2_damaged_ids": [
+        0,
+        1,
+        4,
+        5,
+        8,
+        9,
+        10,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ],
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "remaining_game_pids": [],
+      "executable_sha256": "f0a7eeee1fe2d39d4d12fd3a57025a138c2c341ac2649f61842c3c566fddebc4"
+    },
+    {
+      "name": "tracking_loss",
+      "directory": "analysis\\vr-baseline\\weapon-mesh-mapping\\alignment-tracking-loss-20261025",
+      "pose_x": 96,
+      "pose_yaw_mdeg": 0,
+      "forced_tracking_loss": true,
+      "complete": true,
+      "p2_damaged_ids": [
+        0,
+        1,
+        4,
+        5,
+        8,
+        9,
+        10,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ],
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "remaining_game_pids": [],
+      "executable_sha256": "fa341ff576175de49035261fee44561e496172e70f9ae3a296322aef44409c62"
+    }
+  ],
+  "native_special_controls": {
+    "scoped_rifle_fire_frames": 60,
+    "scoped_rifle_release_frames": 720,
+    "stick_grenade_fire_frames": 36,
+    "stick_grenade_release_frames": 720,
+    "petrol_bomb_approach_frames": 180,
+    "petrol_bomb_fire_frames": 60,
+    "petrol_bomb_release_frames": 720
+  },
+  "checks": {
+    "all_weapon_cycles_closed": true,
+    "p2_damage_evidence": "decrease at masked P2 actor+0x108 address in the native write trace; respawn after death is accepted",
+    "source_save_and_preferences_unchanged": true,
+    "owned_processes_closed": true,
+    "headless_openxr_stereo_pairs": 360,
+    "headless_openxr_failures": 0
+  },
+  "laser": {
+    "mode": "right grip aim raycast plus impact dot",
+    "source": "vr/underground/raycast.h",
+    "unit_test": "PASS: raycast box and visibility-tree hit guards",
+    "build": "debug diagnostics rebuilt successfully",
+    "runtime_capture": "not accepted in this receipt; synthetic capture required a writable SteamVR null-HMD settings file and the sandbox denied it"
+  },
+  "limits": [
+    "P2 damage validates native shot reachability and that each pose sweep remains shippable; it does not by itself establish muzzle-to-impact visual alignment.",
+    "The visible top-view first-person model seam remains separate from the P1 world-body instance changed by the current diagnostic affine hook.",
+    "Laser runtime/headset visual acceptance is pending."
+  ]
+}

@@ -82,10 +82,42 @@ Use the stationary P2 target and a fresh copied-save load for every case.
 | Eye replay | Equal eye cycles/hashes after rollback |
 | Tracking loss | Native weapon path restored |
 
+## Current validation
+
+The P1 view is the top view. The accepted hit gate is a decrease at the exact
+P2 health address (`actor + 0x108`) in the native write trace, not merely a
+lower final health sample. This accepts kills that respawn later without
+confusing the intervening restore write for damage.
+
+Four fresh copied-save runs cover all 13 measured IDs:
+
+| Alignment | X | Yaw | P2 damage |
+| --- | ---: | ---: | --- |
+| Native | 0 | 0 | 13/13 |
+| Lateral | 96 | 0 | 13/13 |
+| Yawed | 0 | 12000 mdeg | 13/13 |
+| Forced tracking loss | 96 | 0 | 13/13 native fallback |
+
+Every run used slots 1-4 as one copied fixture set, closed all four-entry weapon
+cycles, kept source saves and preferences unchanged, and left no owned game
+process. The scoped rifle uses its 60/720-frame zoomed control. The stick
+grenade uses a 36/720-frame throw. The petrol bomb uses 180 approach frames and
+60/720 fire/release frames. Exact hashes, paths, and per-ID results are in
+[weapon-alignment-receipt.json](../../vr/proof/weapon-alignment-receipt.json).
+
+The diagnostic also has an opt-in right-grip raycast pointer. Hold the right
+squeeze with `PSX_VR_LASER=1`; the beam ends on the nearest visibility-tree
+surface and draws an impact dot. `PSX_VR_LASER_DOT` sets the dot radius and
+`PSX_VR_LASER_RANGE_M` bounds the cast. Its pure geometry test passes, but
+runtime headset visual acceptance is still pending.
+
 ## Known constraints
 
 - The first-person object uses the shared 22-node layout, but per-weapon
   geometry state must still be validated.
+- The current diagnostic affine at the actor model path changes P1's
+  world-body representation. It is not yet proven to be the visible top-view
+  first-person mesh seam, and the behavior is not promoted to the release path.
 - Native damage writes to P2 prove combat reachability, not barrel alignment.
 - Multiplayer stereo for P1 is not yet accepted. Start with a single-view model
   transform while world stereo remains on its accepted path.
@@ -98,6 +130,7 @@ Use the stationary P2 target and a fresh copied-save load for every case.
 - [WEAPON_SET_EVIDENCE.md](WEAPON_SET_EVIDENCE.md)
 - [weapon-set-receipt.json](../../vr/proof/weapon-set-receipt.json)
 - [weapon-model-receipt.json](../../vr/proof/weapon-model-receipt.json)
+- [weapon-alignment-receipt.json](../../vr/proof/weapon-alignment-receipt.json)
 - `analysis/vr-baseline/weapon-mesh-mapping/models-20261025/`
 - `analysis/vr-baseline/weapon-mesh-mapping/profiles-live.json`
 

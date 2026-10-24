@@ -80,6 +80,20 @@ def read(address, size):
     return bytes.fromhex(command("read_ram", addr=hex(address), len=size)["hex"])
 
 
+def p2_health_address(player):
+    return (int(player["actor"], 16) + 0x108) & 0x1FFFFFFF
+
+
+def p2_damage_in_trace(trace, player):
+    address = p2_health_address(player)
+    for entry in trace.get("entries", []):
+        if (int(entry["addr"], 0) & 0x1FFFFFFF) != address:
+            continue
+        if int(entry["old"], 0) > int(entry["new"], 0):
+            return True
+    return False
+
+
 def players():
     result = []
     for port, glob in ((1, 0x800A3604), (2, 0x800A3608)):
@@ -157,13 +171,29 @@ def main():
     parser.add_argument("--scoped-zoom", action="store_true")
     parser.add_argument("--control", choices=("fire", "idle", "turn-away"), default="fire")
     parser.add_argument("--approach-frames", type=int, default=0)
+    parser.add_argument("--weapon-pose-x", type=int)
+    parser.add_argument("--weapon-pose-yaw-mdeg", type=int)
+    parser.add_argument("--force-weapon-tracking-loss", action="store_true")
+    parser.add_argument("--require-p2-damage", action="store_true")
+    parser.add_argument("--auto-special-controls", action="store_true")
+    parser.add_argument("--damage-retries", type=int, default=3)
     args = parser.parse_args()
     if any(not 0 <= slot <= 99 for slot in args.slots):
         parser.error("Slots must be in 0..99")
     if not 1 <= args.fire_frames <= 600 or not 1 <= args.release_frames <= 1800 or not 0 <= args.approach_frames <= 600:
         parser.error("Frame window exceeds the bounded control limits")
+    if args.weapon_pose_x is not None and not -2048 <= args.weapon_pose_x <= 2048:
+        parser.error("Weapon pose X must be in -2048..2048")
+    if (args.weapon_pose_yaw_mdeg is not None and
+            not -180000 <= args.weapon_pose_yaw_mdeg <= 180000):
+        parser.error("Weapon pose yaw must be in -180000..180000 millidegrees")
     if (args.damage or args.models) and not args.cycle:
         parser.error("--damage and --models require --cycle")
+    if (args.require_p2_damage and
+            (not args.damage or args.control != "fire")):
+        parser.error("--require-p2-damage requires --damage --control fire")
+    if not 1 <= args.damage_retries <= 5:
+        parser.error("Damage retries must be in 1..5")
     with socket.socket() as probe:
         if probe.connect_ex(("127.0.0.1", 4372)) == 0:
             raise RuntimeError("Diagnostic TCP port occupied")
@@ -188,6 +218,17 @@ def main():
     exe = ROOT / "build-release/Medal_of_Honor_Underground_Recompiled.exe"
     env = {k: v for k, v in os.environ.items() if not k.startswith(("PSX_", "MOHU_VR_"))}
     env.update(PSX_DEV_INPUT="0", PSX_VSYNC="0", PSX_OPENXR_ENABLE="0")
+    weapon_pose = args.weapon_pose_x is not None or args.weapon_pose_yaw_mdeg is not None
+    if weapon_pose:
+        env.update(
+            PSX_VR_WEAPON_POSE="1",
+            MOHU_VR_WEAPON_POSE="1",
+            MOHU_VR_WEAPON_FLAT_PROBE="1",
+            MOHU_VR_WEAPON_SYNTHETIC_X=str(args.weapon_pose_x or 0),
+            MOHU_VR_WEAPON_SYNTHETIC_YAW_MDEG=str(args.weapon_pose_yaw_mdeg or 0),
+        )
+    if args.force_weapon_tracking_loss:
+        env["MOHU_VR_WEAPON_FORCE_TRACKING_LOSS"] = "1"
     receipt = {"executable_sha256": digest(exe), "source_saves": hashes,
                "revision": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
                "diagnostic_game_config_sha256": digest(ROOT / "analysis/vr-baseline/game-interp.toml"),
@@ -195,8 +236,13 @@ def main():
                "controls": {"case": args.control, "fire_frames": args.fire_frames,
                             "release_frames": args.release_frames, "scoped_zoom": args.scoped_zoom,
                             "approach_frames": args.approach_frames,
-                            "models": args.models},
-               "slots": [], "complete": False}
+                            "auto_special_controls": args.auto_special_controls,
+                            "force_weapon_tracking_loss": args.force_weapon_tracking_loss,
+                            "models": args.models, "weapon_pose": weapon_pose,
+                            "weapon_pose_x": args.weapon_pose_x or 0,
+                            "weapon_pose_yaw_mdeg": args.weapon_pose_yaw_mdeg or 0},
+               "p2_damaged_ids": [], "slots": [], "complete": False}
+    damaged_ids = set()
     with (out / "stdout.log").open("w") as stdout, (out / "stderr.log").open("w") as stderr:
         process = subprocess.Popen([str(exe), "--headless-opengl", "--no-launcher",
             "--game", str(ROOT / "analysis/vr-baseline/game-interp.toml"),
@@ -258,45 +304,87 @@ def main():
                     if args.cycle:
                         command("screenshot_file", path=str(directory / f"weapon-{index:02}.png"))
                         if args.damage and (not args.only_damage_ids or key[1] in args.only_damage_ids):
-                            load(slot)
-                            for unused in range(index):
-                                switch()
-                            before = players()
-                            if (before[0]["weapon_slot"], before[0]["weapon_id"]) != key:
-                                raise RuntimeError("Fresh-load weapon preparation disagrees")
-                            if args.approach_frames:
-                                command("press", buttons=65535 ^ 0x10, frames=args.approach_frames)
-                                frames(args.approach_frames + 12)
-                                row["captures"][-1]["approach"] = players()
-                                command("screenshot_file", path=str(directory / f"approach-{index:02}.png"))
+                            special = args.auto_special_controls
+                            scoped_zoom = args.scoped_zoom or (special and key[1] == 5)
+                            approach_frames = (
+                                max(args.approach_frames, 180)
+                                if special and key[1] == 15
+                                else args.approach_frames)
+                            fire_frames = (
+                                max(args.fire_frames,
+                                    60 if key[1] in (5, 15) else 36)
+                                if special and key[1] in (5, 10, 15)
+                                else args.fire_frames)
+                            release_frames = (
+                                max(args.release_frames, 720)
+                                if special and key[1] in (5, 10, 15)
+                                else args.release_frames)
+                            attempts = []
+                            p2_damaged = False
+                            for attempt in range(args.damage_retries):
+                                load(slot)
+                                for unused in range(index):
+                                    switch()
                                 before = players()
-                            for player in before:
-                                address = int(player["actor"], 16) + 0x108
-                                command("wtrace_range" if player["port"] == 1 else "wtrace_add",
-                                        lo=hex(address), hi=hex(address + 4))
-                            command("wtrace_clear")
-                            if args.control == "turn-away":
-                                command("press", buttons=65535 ^ 0x20, frames=180)
-                                frames(190)
-                                row["captures"][-1]["turned"] = players()
-                                command("screenshot_file", path=str(directory / f"turned-{index:02}.png"))
-                            if args.scoped_zoom and key[1] == 5:
-                                command("set_input", buttons="0xfdff")
-                                frames(60)
-                            start_frame = command("frame")["frame"]
-                            if args.control != "idle":
-                                command("press", buttons=65535 ^ (0x4200 if args.scoped_zoom and key[1] == 5 else 0x4000), frames=args.fire_frames)
-                            frames(args.fire_frames + args.release_frames)
-                            command("set_input", buttons="0xffff")
-                            after = players()
-                            trace = command("wtrace_dump", count=2048)
-                            if trace["total"] != trace["available"] or trace["emitted"] != trace["total"]:
-                                raise RuntimeError("Health write trace incomplete")
-                            command("wtrace_range", lo="0", hi="0")
-                            row["captures"][-1]["fire"] = {"before": before, "after": after, "health_trace": trace,
-                                "frame_window": [start_frame, command("frame")["frame"]]}
+                                if (before[0]["weapon_slot"], before[0]["weapon_id"]) != key:
+                                    raise RuntimeError("Fresh-load weapon preparation disagrees")
+                                if approach_frames:
+                                    command("press", buttons="0xffff", ly=0,
+                                            frames=approach_frames)
+                                    frames(approach_frames + 12)
+                                    row["captures"][-1]["approach"] = players()
+                                    command("screenshot_file", path=str(directory / f"approach-{index:02}.png"))
+                                    before = players()
+                                for player in before:
+                                    address = int(player["actor"], 16) + 0x108
+                                    command("wtrace_range" if player["port"] == 1 else "wtrace_add",
+                                            lo=hex(address), hi=hex(address + 4))
+                                command("wtrace_clear")
+                                if args.control == "turn-away":
+                                    command("press", buttons=65535 ^ 0x20, frames=180)
+                                    frames(190)
+                                    row["captures"][-1]["turned"] = players()
+                                    command("screenshot_file", path=str(directory / f"turned-{index:02}.png"))
+                                if scoped_zoom and key[1] == 5:
+                                    command("set_input", buttons="0xfdff")
+                                    frames(60)
+                                start_frame = command("frame")["frame"]
+                                if args.control != "idle":
+                                    command("press", buttons=65535 ^ (0x4200 if scoped_zoom and key[1] == 5 else 0x4000), frames=fire_frames)
+                                frames(fire_frames + release_frames)
+                                command("set_input", buttons="0xffff")
+                                after = players()
+                                trace = command("wtrace_dump", count=2048)
+                                if trace["total"] != trace["available"] or trace["emitted"] != trace["total"]:
+                                    raise RuntimeError("Health write trace incomplete")
+                                command("wtrace_range", lo="0", hi="0")
+                                hit = trace["emitted"] > 0 and p2_damage_in_trace(
+                                    trace, before[1])
+                                attempts.append({
+                                    "attempt": attempt + 1,
+                                    "before": before,
+                                    "after": after,
+                                    "health_trace": trace,
+                                    "p2_damaged": hit,
+                                    "frame_window": [start_frame, command("frame")["frame"]],
+                                })
+                                p2_damaged = p2_damaged or hit
+                                if hit:
+                                    break
+                            if args.require_p2_damage and not p2_damaged:
+                                raise RuntimeError(
+                                    f"P2 did not take native damage for weapon {key[1]}")
+                            if p2_damaged:
+                                damaged_ids.add(key[1])
+                                receipt["p2_damaged_ids"] = sorted(damaged_ids)
+                            row["captures"][-1]["fire"] = {
+                                "attempts": attempts, "p2_damaged": p2_damaged}
                             save(out / "inventory.json", receipt)
-                            print("damage", before[1]["health"], after[1]["health"], trace["emitted"], flush=True)
+                            last = attempts[-1]
+                            print("damage", last["before"][1]["health"],
+                                  last["after"][1]["health"],
+                                  last["health_trace"]["emitted"],
+                                  f"attempts={len(attempts)}", flush=True)
                             load(slot)
                             for unused in range(index):
                                 switch()
@@ -305,6 +393,9 @@ def main():
                 if args.cycle and not row.get("cycle_closed"):
                     raise RuntimeError("Weapon cycle did not close within 12 switches")
                 print(f"Slot {slot} loaded", flush=True)
+            if args.require_p2_damage and damaged_ids != set(WEAPONS):
+                missing = sorted(set(WEAPONS) - damaged_ids)
+                raise RuntimeError(f"Missing P2 damage for weapon IDs: {missing}")
             receipt["complete"] = True
         finally:
             if process.poll() is None:

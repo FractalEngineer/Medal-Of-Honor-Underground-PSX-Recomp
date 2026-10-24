@@ -469,13 +469,23 @@
   tools OFF. The flat launch remained inert. The final null-HMD smoke completed
   360 pairs with zero XR failures, `frustum=1440/1440`, and zero weapon-pose
   applications because the production launcher leaves the experiment off.
+- Added a top-view P1 native-hit matrix covering all 13 IDs at native, lateral
+  (`x=96`), yawed (`12000` mdeg), and forced-tracking-loss poses. Damage is
+  accepted from a decrease at the exact P2 health address in the native write
+  trace, including targets that respawn before the final sample.
+- The current `0x8008DB98` affine hook changes P1's world body in the other
+  split view, not the visible top-view first-person mesh. It remains
+  diagnostic-only and is not claimed as the accepted model seam.
+- Added `vr/underground/raycast.h` and a strict visibility-tree fixture for an
+  opt-in right-squeeze aim ray with beam and impact dot. Runtime headset visual
+  acceptance remains pending.
 
 ## Next work
 
 1. Repeat the PGXP pose sweep in additional scenes and near-wall positions.
 2. Rebuild the flat target and repeat interactive boot/menu/gameplay validation.
-3. Use one copied multiplayer fixture and one static P2 target to map P1's
-   first-person model affine/node transform across all 13 weapon IDs. Validate
-   each weapon against native damage before enabling tracked mesh controls.
+3. Locate the visible top-view first-person mesh seam; keep the completed
+   13-ID native-hit matrix as the combat regression gate. Validate the
+   right-grip laser visually in a headset.
 4. Extend the pair-sequence and compositor checks to motion, wall proximity,
    menus, transitions, and additional levels.
