@@ -414,11 +414,40 @@
   resulting physical separation awaits operator testing. Keys/backup paths:
   [FLAT_LOCAL_INPUT.md](FLAT_LOCAL_INPUT.md).
 
+### Multiplayer weapon inventory and native damage
+
+- Operator created source slots 1–4 with P1 facing P2 and authorized native
+  weapon cycling/firing. Started from matching local/live origin `7f2632d`.
+  All saves pass ordinary PGXP ABI/execution-identity checks. No migration,
+  header patch, identity bypass, new save or ammo edit occurred.
+- Adapted the reference copied-save/TCP/native-input inventory procedure in
+  `vr/tools/inspect_weapon_sets.py`. All four cycles close after four switches;
+  13 distinct IDs have inspected first-person images and native P2 damage.
+- Measured Underground P1/P2 roots, input slot/ID, clip/reserve, and current
+  health +108 independently. Guarded the complete 532-byte native damage
+  function at `8004EAB4`; traced subtraction/store `8004EB78/8004EB80`.
+- Idle and turned-away pistol controls record no damage. Longer scoped and
+  grenade controls retain damage/death/respawn writes even when final health
+  returns to 32. Stationary petrol bombs miss; a closer native movement control
+  damages both players. No safe-distance or tracked-aim conclusion is made.
+- Kept source saves separate from diagnostic copies and the existing isolated
+  SP slot 2. Final inventory verifies unchanged save/thumbnail/controller and
+  SteamVR hashes, exit 0 and no owned game. Restored the same `build-release`
+  to debug OFF; 13 Python tests and all three strict C fixtures pass.
+- Rejected discovery field/port/input-mask assumptions are documented in
+  [WEAPON_SET_EVIDENCE.md](WEAPON_SET_EVIDENCE.md). Source-owned evidence is the
+  [compact receipt](../../vr/proof/weapon-set-receipt.json); bulk stays ignored.
+  No VR runtime source, framework, generated output, or game config changed.
+- Debug-off flat startup was inert, but two hidden auto-load smokes staged slot
+  4 without attempting the load before 30-second deadlines. Both owned games
+  were closed; no invalid save was reported. Recorded this production-headless
+  limitation separately from successful diagnostic save/combat evidence.
+
 ## Next work
 
 1. Repeat the PGXP pose sweep in additional scenes and near-wall positions.
 2. Rebuild the flat target and repeat interactive boot/menu/gameplay validation.
-3. Operator tests movement and creates multiplayer weapon-set save fixtures;
-   then map their player/control/render guards.
+3. Operator tests headset movement; use the completed multiplayer weapon
+   inventory to map model/projectile/render seams and guarded tracked weapons.
 4. Extend the pair-sequence and compositor checks to motion, wall proximity,
    menus, transitions, and additional levels.
