@@ -10,7 +10,7 @@ it before ending every implementation session.
 | Item | Value |
 | --- | --- |
 | Target branch | `feature/vr-port` |
-| Last game-tree checkpoint | `437d5d7` |
+| Last game-tree checkpoint | `ab8ce00` |
 | Current framework implementation | `d9b0f382` |
 | Target base | `7fcb0ca35af683ac38c4c501347d59916a924aa4` |
 | Reference branch | `master` |
@@ -288,6 +288,36 @@ corrected to the reference profile. The remaining flash was reproduced
 headlessly as alternating pure-black complete pairs and fixed by the `y=0`
 scratch-buffer replay. The operator confirmed the corrected scale and image.
 
+## Head-turn and flat-HUD correction
+
+The normal VR launcher now renders at `1080p` instead of the native 240-line
+buffer. It also enables `PSX_VR_HEAD_FRUSTUM=1` and
+`PSX_VR_SUPPRESS_FLAT_HUD=1`. `-InternalResolution native`,
+`-NoHeadFrustumDiagnostic`, and `-KeepFlatHud` remain A/B controls.
+
+Underground's `0x80099960` level selector is a 710-instruction match for the
+accepted reference selector and uses the same visibility-tree layout. The
+diagnostic builds a complete 1000-leaf queue from the actual eye view before
+writing guest RAM, verifies the full function bytes on every override, and
+falls back to the native selector on malformed trees or overflow. The mapped
+state is masks `0x800B7490`/`0x800B7494`, bypass `0x800B7498`, count
+`0x800B74B4`, queue `0x800B74B8`, and sentinel `0x800C8458`.
+
+The fixed HUD was content inside each eye image, not an extra OpenXR layer.
+The guarded text producer at `0x8006B64C` is skipped only during eye replay.
+The measured head-locked packet block at `0x800B8C88..0x800BA4B0` and the bar
+node at `0x800F109C` are unlinked from the regenerated OT inside the same
+rollback transaction. This temporarily hides the flat gameplay HUD in stereo;
+the hand/wrist HUD is still future work.
+
+At the final code checkpoint, zero and both 90-degree poses completed with the
+host selector (`frustum=960/960`, zero fallbacks), the fixed compass, ammo text,
+and bar were absent, and side views retained world geometry. The final
+zero-offset eye images were byte-identical
+(`AEECA835133FAE5DADF3047D28D612AA0258FE087098BEE04EAFB46E3C23735B`).
+See [HEAD_TURN_HUD_EVIDENCE.md](HEAD_TURN_HUD_EVIDENCE.md) and
+[head-turn-hud-fix.png](../../vr/proof/head-turn-hud-fix.png).
+
 ## Build and test state
 
 There is one active build directory, matching the reference game repository:
@@ -352,6 +382,13 @@ Last checks:
 - `RunFlat.bat` starts the shared release executable without activating VR.
 - A final 60-pair null-HMD sequence had zero black left or right images.
 - Eight consecutive compositor and application-layer captures were nonblank.
+- Normal VR launch renders at 1080p (5x the 240-line reference).
+- The final zero and 90-degree sweeps used the host visibility queue with zero
+  fallbacks and retained populated world geometry on both sides.
+- The final stereo captures have no head-locked text, compass, or bar packet;
+  zero-offset left/right hashes remain identical.
+- The final null-HMD OpenXR run completed 30 pairs with zero XR failures,
+  `frustum=120/120`, and `hud_unlinked=525/525`.
 - Frame-driver replay and the all-span TRX variant remain rejected image
   controls.
 - No owned game process remains running.
@@ -408,7 +445,7 @@ The no-headset OpenXR acceptance path uses the same isolated slot:
 Expected startup:
 
 ```text
-mohu-vr-diag: active bindings=17 overlay_hooks=13 read_only=0 level_offset_x=0 stereo_proof=1 eye_offset=0 render_view=1 all_spans=0 replay_driver=0 yaw_mdeg=0 pitch_mdeg=0 head_milli=0,0,0 guest_submit=1 openxr=1 units_per_meter=716.418
+mohu-vr-diag: active bindings=17 overlay_hooks=13 read_only=0 level_offset_x=0 stereo_proof=1 eye_offset=0 render_view=1 all_spans=0 replay_driver=0 yaw_mdeg=0 pitch_mdeg=0 head_milli=0,0,0 guest_submit=1 head_frustum=1 openxr=1 flat_hud=1 units_per_meter=238.806
 mohu-vr-diag: single_player_scene=0x800AA174 player=0x800AA17C player_input_offset=0x39C
 ```
 
