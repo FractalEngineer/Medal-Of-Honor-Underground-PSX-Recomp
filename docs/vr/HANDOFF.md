@@ -389,6 +389,25 @@ coverage await operator testing and the new fixtures.
 See [MOVEMENT_EVIDENCE.md](MOVEMENT_EVIDENCE.md) and the
 [compact receipt](../../vr/proof/movement-receipt.json).
 
+## Flat local multiplayer input
+
+The operator requested Steam Controller on P1 and keyboard on P2 and reported
+that controller input also moved P2. Device assignments were already correct;
+P1/P2 keyboard bindings were identical, and the runtime always merges a port's
+keyboard bindings alongside its gamepad. The exact physical controller-to-key
+route was not captured. Steam UI inspection was stopped by the operator and
+Steam settings were left unchanged.
+
+Local preferences now keep P1's Steam Controller/analog assignment with all P1
+keyboard bindings cleared, and P2 keyboard/digital on a separate IJKL/number-row
+layout. Multitap is disabled. `RunFlat.bat` disables diagnostic `PSX_DEV_INPUT`.
+Original local settings/keybinds are backed up under
+`analysis/vr-baseline/flat-local-input-backup/`. No game/framework rebuild or
+savestate changes were needed. Config parsing/assignment checks passed;
+physical input separation awaits the operator's check.
+
+See [FLAT_LOCAL_INPUT.md](FLAT_LOCAL_INPUT.md) for keys and file locations.
+
 ## Build and test state
 
 There is one active build directory, matching the reference game repository:

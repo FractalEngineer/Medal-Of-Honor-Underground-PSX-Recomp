@@ -1,5 +1,7 @@
 @echo off
 setlocal
+rem Local players must not inherit the diagnostic keyboard/all-controller merge.
+set "PSX_DEV_INPUT=0"
 rem Flat launch from the packaged root or the local build-release target.
 for %%V in (
   PSX_OPENXR PSX_OPENXR_ENABLE PSX_LOAD_SLOT PSX_STEREO_SHED

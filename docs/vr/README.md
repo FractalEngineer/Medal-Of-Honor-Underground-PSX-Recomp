@@ -41,6 +41,9 @@ executable and live overlay content.
 15. [MOVEMENT_EVIDENCE.md](MOVEMENT_EVIDENCE.md) records the reference control
     mappings, Underground calibration, input checks, and operator save workflow.
 
+16. [FLAT_LOCAL_INPUT.md](FLAT_LOCAL_INPUT.md) records P1 Steam Controller /
+    separate P2 keyboard setup for operator save preparation.
+
 The latest machine-ranked function candidates are in
 [ENGINE_EQUIVALENCE_REPORT.md](ENGINE_EQUIVALENCE_REPORT.md). They are
 discovery evidence only and must not be registered as hooks.
