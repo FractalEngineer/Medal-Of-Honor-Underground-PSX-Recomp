@@ -438,38 +438,25 @@ verified; production headless flat auto-load remains unverified.
 
 ## Weapon render-path mapping
 
-The first exact hook attempt reached the player update method, but the stereo
-trace showed that call outside the eye transactions. A separate multiplayer
-overlay generation places a different function at the same virtual address, so
-the mode-specific function hashes and instruction words are required guards.
-The multiplayer function is `0x800892E8` (0xA70 bytes, FNV `0x39E56A35`);
-the single-player method is `0x800892C8` (0xF20 bytes, FNV `0xF4D6C439`).
+Weapon-position work is multiplayer-first. The four copied multiplayer fixtures
+contain a stationary P2 target, all 13 measured weapon IDs, closed native
+inventory cycles, and native damage receipts. Use one copied slot and one weapon
+at a time; no single-player fixture is required for this phase.
 
-The real single-player first-person draw is `0x8007A554`, called from
-`0x8008AB84` with `a0 = input + 0x1E0` and return address `0x8008AC54`.
-It executes once per eye inside the rollback transaction. Its full 0x2B4-byte
-guard is FNV `0x4672B937`; the shared epilogue begins at `0x8007A7F0`.
-The earlier player-update hook is retained only as mapped evidence and does not
-arm a pose hook.
+P1's first-person object is `actor + 0x4AC`. It has magic `0x00160024` and a
+shared 22-node table with SHA-256 `9f8c7275...`. Object fields around
+`+0x5C/+0x64` are animation state, not a stable weapon identity. The multiplayer
+player update is `0x800892E8` (0xA70 bytes, FNV `0x39E56A35`); the separate
+single-player update is `0x800892C8` (0xF20 bytes, FNV `0xF4D6C439`).
 
-All 13 multiplayer IDs were captured after native Circle switches using copied
-saves. P1's weapon object is `actor + 0x4AC`, has magic `0x00160024`, and shared
-a byte-identical 22-node table (`9f8c7275...`) in all four fixtures. Per-slot
-object state around `+0x5C/+0x64` changed even when cycling back to the same
-weapon, so it is not yet a stable mesh identity. `inspect_weapon_sets.py
---models` now records this state; the compact observations are in
+The next implementation seam is the first-person model's own affine/node
+transform or the later vertex projection. The tracked transform must be
+rollback-scoped, preserve native animation, recoil, reload, ammo and fire
+behavior, and leave the world view unchanged.
+
+The required fixture, guards, implementation order, and acceptance matrix are
+in [WEAPON_MAPPING.md](WEAPON_MAPPING.md). The compact model observations are in
 [weapon-model-receipt.json](../../vr/proof/weapon-model-receipt.json).
-
-A synthetic 20-unit view offset applied around `0x8007A554` entered both eyes
-but produced byte-identical pairs. The function prepares model-space data and
-projection occurs after its epilogue, so replacing the host render view there is
-rejected. Controller tracking remains disabled; the next seam is the model's
-own affine/node transform or its later vertex projection, not this draw wrapper.
-
-With render-pass verification enabled, the synthetic hook reached `90/90`
-logged eyes with `0/0` fallbacks across 107 complete pairs; all eyes restored
-to equal cycles and equal state hashes, with zero failed or shed pairs. This
-proves the hook/rollback contract only, not weapon motion or shot alignment.
 
 ## Build and test state
 
@@ -639,10 +626,12 @@ mohu-vr-diag: single_player_scene=0x800AA174 player=0x800AA17C player_input_offs
 5. Complete interactive flat boot/menu/gameplay validation.
 6. Extend the pair-sequence and compositor checks to motion, wall proximity,
    menus, transitions, and additional levels, then extend input and HUD policy.
-7. Operator: verify the reference stick/button mappings in the headset,
-   including pause/resume and release. Multiplayer weapon fixtures and native
-   damage inventory are complete; map their model, projectile and render seams
-   before implementing tracked weapons. Sky-ghost headset acceptance is complete.
+7. Map the multiplayer first-person model affine/node transform with one static
+   fixture and one weapon at a time, then validate every measured weapon ID
+   against native P2 damage. Shot origin and direction remain a separate final
+   aim pass after the visible model transform is stable. Operator: verify the
+   reference stick/button mappings in the headset, including pause/resume and
+   release. Sky-ghost headset acceptance is complete.
 
 Do not treat the frame-driver replay as working stereo. The accepted evidence
 uses the frame-render replay; the driver path still does not own the visible

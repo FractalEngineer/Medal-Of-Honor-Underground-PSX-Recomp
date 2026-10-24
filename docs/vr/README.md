@@ -44,6 +44,9 @@ executable and live overlay content.
 16. [FLAT_LOCAL_INPUT.md](FLAT_LOCAL_INPUT.md) records P1 Steam Controller /
     separate P2 keyboard setup for operator save preparation.
 
+17. [WEAPON_MAPPING.md](WEAPON_MAPPING.md) is the current working handoff for
+    multiplayer-first weapon pose mapping and its validation matrix.
+
 The latest machine-ranked function candidates are in
 [ENGINE_EQUIVALENCE_REPORT.md](ENGINE_EQUIVALENCE_REPORT.md). They are
 discovery evidence only and must not be registered as hooks.
@@ -88,4 +91,7 @@ flat HUD. The operator confirmed the sky fix. Reference movement/button maps
 now run through the offline input source; headset movement, multiplayer
 transitions, and the hand/wrist HUD remain active work. The operator's four
 multiplayer fixtures now have closed native inventory cycles and damage
-receipts for 13 weapons; see [WEAPON_SET_EVIDENCE.md](WEAPON_SET_EVIDENCE.md).
+receipts for 13 weapons. Weapon-position work uses those fixtures and the
+stationary P2 target one weapon at a time; see
+[WEAPON_MAPPING.md](WEAPON_MAPPING.md) and
+[WEAPON_SET_EVIDENCE.md](WEAPON_SET_EVIDENCE.md).

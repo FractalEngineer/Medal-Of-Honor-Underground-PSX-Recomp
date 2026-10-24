@@ -132,26 +132,18 @@ also change after cycling back to the same weapon. The tool retains those
 bounded state words for later correlation rather than treating them as a
 profile.
 
-Single-player rendering was traced through
-`0x8008AB84 -> 0x8007A554(input+0x1E0)`. The latter runs once for each eye
-inside the rollback transaction. Applying a synthetic host `PSXModRenderView`
-translation around this function produced the identical image pair:
+Weapon-position work is multiplayer-first. The fixed P2 target and all measured
+weapon IDs make the same shot repeatable without target movement. Start from one
+copied slot, one weapon, and one frame-local object snapshot.
 
-| Control | SHA-256 of 512x240 eye image |
-| --- | --- |
-| Zero offset, left/right | `33ee7970ffc30fc3023041c0dcab369195b26dc98deb339712d422115ee1fa96` |
-| Weapon offset +20, left/right | `33ee7970ffc30fc3023041c0dcab369195b26dc98deb339712d422115ee1fa96` |
+The missing seam is the multiplayer first-person model affine/node transform or
+the later vertex projection. Tracked controls must be applied inside the
+rollback-scoped model path while preserving native animation, recoil, reload,
+ammo and fire behavior.
 
-This is a rejection, not tracking acceptance. `0x8007A554` prepares
-model-space data and the projection/view lookup happens after its epilogue.
-The next implementation hook must alter the model's own affine/node transform
-or the later vertex projection while preserving native animation and rollback.
-The compact mapping receipt is
+The full implementation order, guards, and acceptance matrix are in
+[WEAPON_MAPPING.md](WEAPON_MAPPING.md). The compact mapping receipt is
 [weapon-model-receipt.json](../../vr/proof/weapon-model-receipt.json).
-The guarded hook was nevertheless exercised with render-pass verification:
-107 complete pairs had equal eye cycles/hashes, zero failed or shed pairs, and
-90/90 sampled eyes reached the pose path with zero fallbacks. That validates the
-transaction and cleanup contract, not tracked-weapon behavior.
 
 ## Verification and limits
 

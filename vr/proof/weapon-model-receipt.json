@@ -36,38 +36,7 @@
       "size": "0xA70",
       "fnv1a": "0x39E56A35",
       "weapon_object_owner_ra": "0x8008A7C8"
-    },
-    "single_player_first_person_draw": {
-      "address": "0x8007A554",
-      "size": "0x2B4",
-      "fnv1a": "0x4672B937",
-      "caller": "0x8008AB84",
-      "return_address": "0x8008AC54",
-      "object_argument": "input + 0x1E0",
-      "epilogue": "0x8007A7F0",
-      "eye_entries": "one per eye"
     }
-  },
-  "synthetic_view_ab": {
-    "executable_sha256": "bde0cdd81d5d87ec4ab6d5c7ef6ecc9c812e01b7c04bd01a6d89e9b3002e0f84",
-    "zero_left_sha256": "33ee7970ffc30fc3023041c0dcab369195b26dc98deb339712d422115ee1fa96",
-    "zero_right_sha256": "33ee7970ffc30fc3023041c0dcab369195b26dc98deb339712d422115ee1fa96",
-    "offset20_left_sha256": "33ee7970ffc30fc3023041c0dcab369195b26dc98deb339712d422115ee1fa96",
-    "offset20_right_sha256": "33ee7970ffc30fc3023041c0dcab369195b26dc98deb339712d422115ee1fa96",
-    "changed_pixels": 0,
-    "result": "rejected",
-    "reason": "The host render view override is scoped to the function but the function prepares model-space data; projection occurs after its epilogue."
-  },
-  "rollback_check": {
-    "verification_enabled": true,
-    "attempts": 107,
-    "complete_pairs": 107,
-    "failed": 0,
-    "equal_eye_cycles": true,
-    "equal_eye_hashes": true,
-    "logged_weapon_hits": "90/90",
-    "logged_weapon_fallbacks": "0/0",
-    "result": "The pose call and epilogue were reached in every sampled eye, and the render transaction restored before the next eye."
   },
   "production_smoke": {
     "build": "Release/OpenGL/OpenXR/PGXP",
@@ -84,7 +53,8 @@
   "limits": [
     "No controller-tracked visual or shot alignment is established.",
     "No per-weapon face/mesh signature is established from the common node table.",
+    "The multiplayer first-person model affine/node transform is not mapped.",
     "The multiplayer first-person object path is not yet proven inside multiplayer stereo replay.",
-    "A visible-enemy single-player PGXP save is still needed for later shot-origin and trajectory mapping."
+    "Shot origin and direction remain a separate final aim pass after the visible model transform is stable."
   ]
 }

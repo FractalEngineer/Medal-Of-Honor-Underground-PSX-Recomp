@@ -445,36 +445,26 @@
 
 ## 2026-10-25
 
-### First-person render seam and weapon model observations
+### Multiplayer-first weapon mapping
 
-- Corrected the earlier stop diagnosis. Hook registration returned success, but
-  the old trace used a single-player overlay while the guard/hash belonged to
-  the multiplayer overlay. A 64-bit VP/VR instruction hook now reports actual
-  post-activation counts and fires in both modes.
 - Mapped the multiplayer player update at `0x800892E8` (0xA70, FNV
   `0x39E56A35`) and the single-player update at `0x800892C8` (0xF20, FNV
-  `0xF4D6C439`) as separate overlay-generation functions at the same address
-  family. The per-mode function hash and complete instruction word fail closed
-  across mismatches.
-- Traced the accepted single-player stereo replay. `0x8008AB84` calls
-  `0x8007A554(input+0x1E0)` once per eye with return address `0x8008AC54`.
-  The 0x2B4-byte renderer guard is FNV `0x4672B937`; the shared epilogue begins
-  at `0x8007A7F0` and returns at delay slot `0x27BD0098`.
-- Rejected a host `PSXModRenderView` override around that function. It enters
-  both eyes and is restored, but a synthetic +20 view unit pair is byte-exact
-  with the zero control. The renderer prepares model-space data; projection
-  happens after its epilogue. Do not enable this as weapon tracking.
-- With `PSX_RENDER_PASS_VERIFY=1`, the synthetic hook reached 90/90 logged eyes
-  with 0/0 fallbacks across 107 complete pairs. Eye cycles and hashes matched,
-  with zero failed or shed pairs. This proves the scoped rollback contract, not
-  visual tracking because the captured image pairs remained identical.
-- Extended the copied-save inventory to record P1's `actor+0x4AC` weapon object.
-  All 13 IDs share the 22-node table
+  `0xF4D6C439`) as separate overlay generations. Every title hook must match the
+  mode-specific function bytes and caller instruction word.
+- The multiplayer fixtures provide one stationary P2 target, all 13 measured
+  weapon IDs, closed native inventory cycles, and native damage writes. This is
+  the working fixture for weapon-position and mesh-transform mapping.
+- P1's first-person object is `actor+0x4AC`; it has magic `0x00160024` and a
+  shared 22-node table
   `9f8c7275b3e8a1d6c7765da25a02d78b23f0c3fa4b67483f28865191d2805e4f`.
-  Object fields at `+0x5C/+0x64` change during cycling and on return to the same
-  weapon, so they are retained as state, not treated as a stable mesh identity.
+  Object fields at `+0x5C/+0x64` change during cycling and are animation state,
+  not a stable mesh identity.
 - Added `vr/tests/test_weapon.c`, covering the 13 unique ID table, exact node
   guard, stale/unfocused/bad-pose fallback, and render-view output.
+- The current implementation target is the first-person model's affine/node
+  transform or later vertex projection. The accepted path must preserve native
+  animation, recoil, reload, ammo and fire behavior while leaving the world view
+  unchanged.
 - Restored the single `build-release` to Release/OpenGL/OpenXR/PGXP with debug
   tools OFF. The flat launch remained inert. The final null-HMD smoke completed
   360 pairs with zero XR failures, `frustum=1440/1440`, and zero weapon-pose
@@ -484,8 +474,8 @@
 
 1. Repeat the PGXP pose sweep in additional scenes and near-wall positions.
 2. Rebuild the flat target and repeat interactive boot/menu/gameplay validation.
-3. Map the first-person model's own affine/node transform or later vertex
-   projection, then add guarded tracked mesh controls without changing native
-   animation. Operator tests headset movement in parallel.
+3. Use one copied multiplayer fixture and one static P2 target to map P1's
+   first-person model affine/node transform across all 13 weapon IDs. Validate
+   each weapon against native damage before enabling tracked mesh controls.
 4. Extend the pair-sequence and compositor checks to motion, wall proximity,
    menus, transitions, and additional levels.
