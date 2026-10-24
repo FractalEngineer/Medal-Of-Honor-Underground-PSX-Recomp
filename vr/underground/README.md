@@ -100,6 +100,11 @@ with a 67 mm IPD calibration, leaving 238.80597 effective GTE units per metre.
 `MOHU_VR_MENU_WIDTH` remain the underlying runtime controls. Start the headset
 runtime before a physical launch.
 
+Gameplay disables the native surface at its first stereo frame. When scene
+frames stop for four VBlanks, the pause/menu path restores the native
+head-relative surface; the next gameplay frame disables it again. This matches
+the reference game's two-missed-30-Hz-interval policy.
+
 The right-grip pointer uses the same per-eye render pose and is enabled by
 default in VR:
 

@@ -4,6 +4,7 @@
 #include "frustum.h"
 #include "hud_packets.h"
 #include "input.h"
+#include "menu_surface.h"
 #include "raycast.h"
 #include "weapon.h"
 #include "gpu_gl_renderer.h"
@@ -162,6 +163,9 @@ static bool g_native_tail_mismatch;
 static int32_t g_clear_rgb;
 static bool g_no_native_surface;
 static int g_openxr_native_surface = -1;
+static uint32_t g_native_surface_seen_attempts;
+static uint32_t g_native_surface_idle_vblanks =
+    MOHU_VR_NATIVE_SURFACE_IDLE_VBLANKS;
 static double g_openxr_units_per_meter = MOHU_VR_DEFAULT_UNITS_PER_METER;
 static double g_openxr_menu_distance = MOHU_VR_DEFAULT_MENU_DISTANCE;
 static double g_openxr_menu_width = MOHU_VR_DEFAULT_MENU_WIDTH;
@@ -222,6 +226,8 @@ static uint32_t g_laser_projection_h;
 static uint32_t g_laser_projection_h_ref;
 static uint32_t g_laser_hits[2];
 static uint32_t g_laser_misses[2];
+
+static void set_openxr_native_surface(bool enabled);
 
 /* The game rebuilds the selected calibration after DualShock presentation.
  * Measured boot/load layouts swap entries 1/3; native LX/LY/RX retain their
@@ -805,6 +811,15 @@ static void vr_laser_draw(void) {
 
 static void vr_diagnostic_vblank(void) {
     report_runtime_hook_counts();
+    if (g_openxr && !g_stereo_active &&
+        mohu_vr_native_surface_due(
+            g_stereo_attempts, &g_native_surface_seen_attempts,
+            &g_native_surface_idle_vblanks, g_openxr_native_surface)) {
+        set_openxr_native_surface(true);
+        if (g_openxr_native_surface == 1) {
+            psx_mod_counter_add("mohu.vr.native_surface.resume", 1);
+        }
+    }
     if (g_laser && (g_openxr || g_stereo_proof)) {
         PSXModOpenXRInput input = {0};
         input.struct_size = sizeof input;
@@ -1347,6 +1362,7 @@ static void run_stereo_proof(CPUState* cpu) {
     g_stereo_frame_w = frame.w;
     g_stereo_frame_h = frame.h;
 
+    g_native_surface_idle_vblanks = 0u;
     if (g_openxr) {
         set_openxr_native_surface(false);
         if (!psx_mod_openxr_begin(frame.w, frame.h,

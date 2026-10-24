@@ -451,6 +451,11 @@
   VR launches now reach the native boot/menu path and clear an inherited
   `PSX_LOAD_SLOT`; loading a savestate requires an explicit `-Slot N`. Added a
   focused launcher-default regression test.
+- Restored the native flat menu surface after stereo gameplay stops. The
+  state now mirrors the reference game's four-VBlank scene-idle threshold, so
+  pause menus return to the head-relative surface and the next gameplay frame
+  resumes stereo. Added a strict helper fixture and retained an isolated
+  null-HMD boot receipt.
 
 - Mapped the multiplayer player update at `0x800892E8` (0xA70, FNV
   `0x39E56A35`) and the single-player update at `0x800892C8` (0xF20, FNV

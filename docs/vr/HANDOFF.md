@@ -379,6 +379,12 @@ menus without requiring a gameplay pair and clears an inherited auto-load slot.
 Pass `-Slot N` explicitly to load a state. The operator can use desktop F7 to
 save new unused slots, keeping slot 2 as the SP regression fixture.
 
+The native menu surface now follows the reference game's scene-idle policy.
+Gameplay disables it on the first stereo frame. If no scene frame is claimed for
+four VBlanks, the pause/menu path restores the flat head-relative surface; the
+next gameplay frame disables it again. Boot and pause return are both flat
+surfaces, not stereo menu quads.
+
 Synthetic actions verified movement, strafing, turning, partial/diagonal input,
 button delivery, focus/inactivity release, and raw actor-field changes with
 zero rollback mismatches/leaks/watchdogs. Fresh zero and both 90-degree views
