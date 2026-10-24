@@ -93,6 +93,8 @@ VR launches:
 - VR launchers default to PGXP slot `2`; pass `-Slot -1` for a normal boot or
   `-Build` to rebuild `build-release` before launch. The default visual-scale
   profile is `-IPDmm 67 -WorldScale 3`.
+- Eye replay uses a rollback-protected `y=0` scratch buffer so the game's
+  double-buffered display origin cannot produce alternating black frames.
 - Additional PowerShell options such as `-Seconds`, `-GameConfig`, and
   `-MemcardDirectory` can be passed through the `.bat` wrappers.
 

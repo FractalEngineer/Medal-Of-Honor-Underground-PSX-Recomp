@@ -83,8 +83,13 @@ class Compositor:
     def close(self):
         self.dll.VR_ShutdownInternal()
 
-    def capture(self, destination, expected_pid, require_projection=True):
-        """Collect new compositor backbuffer AND app-layer images, never old PNGs."""
+    def capture(self, destination, expected_pid, require_projection=True,
+                reject_blank=True):
+        """Collect new compositor backbuffer AND app-layer images, never old PNGs.
+
+        reject_blank=False retains flat/black samples for temporal diagnosis
+        instead of retrying until a nonblank frame hides a flicker.
+        """
         from PIL import Image, ImageStat
 
         destination = Path(destination)
@@ -108,12 +113,18 @@ class Compositor:
                 for p in source.glob("*.png")
                 if before.get(p.name) != (p.stat().st_mtime_ns, p.stat().st_size)
             ]
-            pairs = [
-                (p, p.with_name(p.stem + suffix + ".png"))
-                for p in changed
-                if not p.stem.endswith(("-Layer", "-raw"))
-                for suffix in ("-raw", "-Layer")
-            ]
+            changed_set = set(changed)
+            pairs = []
+            for backbuffer in changed:
+                if backbuffer.stem.endswith(("-Layer", "-raw")):
+                    continue
+                # SteamVR versions differ: newer dumps use "-Layer", older
+                # dumps expose the submitted projection as "-raw".
+                for suffix in ("-Layer", "-raw"):
+                    layer = backbuffer.with_name(backbuffer.stem + suffix + ".png")
+                    if layer in changed_set:
+                        pairs.append((backbuffer, layer))
+                        break
             for backbuffer, layer in pairs:
                 if layer not in changed:
                     continue
@@ -129,7 +140,7 @@ class Compositor:
                             rgb.load()
                             extrema = rgb.getextrema()
                             flat = max(hi - lo for lo, hi in extrema) < 8
-                            if flat and (label == "compositor" or require_projection):
+                            if reject_blank and flat:
                                 raise RuntimeError(f"Blank/flat {label} capture")
                             dimensions = rgb.size
                             mean = ImageStat.Stat(rgb).mean
@@ -156,6 +167,7 @@ class Compositor:
                         "images": records,
                         "atomic_guest_pair": False,
                         "projection_required": require_projection,
+                        "blank_rejected": reject_blank,
                         "rejected_dumps": rejected,
                     }
                 except RuntimeError as exc:
@@ -177,10 +189,79 @@ class Compositor:
         raise TimeoutError("No fresh compositor backbuffer/application-layer PNG pair")
 
 
+def capture_series(compositor, destination, expected_pid, samples, interval,
+                   reject_blank=True, require_clean=False):
+    """Capture consecutive compositor/app-layer frames into one fresh tree."""
+    if samples < 1:
+        raise ValueError("samples must be at least 1")
+    if interval < 0:
+        raise ValueError("interval must be non-negative")
+    destination = Path(destination)
+    destination.mkdir(parents=True, exist_ok=False)
+    records = []
+    for sample in range(samples):
+        receipt = compositor.capture(
+            destination / f"sample-{sample:03d}",
+            expected_pid,
+            require_projection=not reject_blank,
+            reject_blank=reject_blank,
+        )
+        records.append({"sample": sample, "receipt": receipt})
+        if sample + 1 < samples:
+            time.sleep(interval)
+    series = {
+        "schema": 1,
+        "interface": "IVRCompositor_029",
+        "renderer_pid": expected_pid,
+        "samples": records,
+    }
+    flat = [
+        {"sample": record["sample"], "kind": image["kind"]}
+        for record in records
+        for image in record["receipt"]["images"]
+        if image["flat"]
+    ]
+    series["clean"] = not flat
+    (destination / "capture-series.json").write_text(
+        json.dumps(series, indent=2) + "\n", encoding="utf-8"
+    )
+    if require_clean and flat:
+        raise RuntimeError(f"Flat/black compositor frames detected: {flat}")
+    return series
+
+
 if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--settings", type=Path, required=True)
+    mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument("--settings", type=Path)
+    mode.add_argument("--capture", type=Path)
+    parser.add_argument("--steamvr-root", type=Path)
+    parser.add_argument("--pid", type=int)
+    parser.add_argument("--samples", type=int, default=1)
+    parser.add_argument("--interval", type=float, default=0.25)
+    parser.add_argument("--allow-flat", action="store_true")
+    parser.add_argument("--require-clean", action="store_true")
     args = parser.parse_args()
-    print(null_settings(args.settings.read_text(encoding="utf-8-sig")), end="")
+    if args.settings:
+        print(null_settings(args.settings.read_text(encoding="utf-8-sig")), end="")
+    else:
+        if args.steamvr_root is None or args.pid is None:
+            parser.error("--capture requires --steamvr-root and --pid")
+        compositor = Compositor(args.steamvr_root)
+        try:
+            series = capture_series(
+                compositor,
+                args.capture,
+                args.pid,
+                args.samples,
+                args.interval,
+                # A cleanliness check must retain every sample; retrying a
+                # blank frame would hide the flicker it is meant to detect.
+                reject_blank=not (args.allow_flat or args.require_clean),
+                require_clean=args.require_clean,
+            )
+        finally:
+            compositor.close()
+        print(json.dumps(series))

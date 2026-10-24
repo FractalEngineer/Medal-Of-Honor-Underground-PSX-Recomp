@@ -285,12 +285,24 @@
   startup frames, zero XR begin/view failures, and clean SteamVR settings
   restoration.
 - The earlier physical-headset run used the unscaled profile and reported an
-  oversized world plus black flashing. Visual retest of the corrected profile
-  remains the next gate.
+  oversized world plus black flashing.
+- Reproduced the remaining flashing headlessly despite zero empty XR
+  submissions. A 60-pair sequence showed every even pair was pure black.
+- Proved with the OT-only control and non-empty alternating OT lists that
+  replay regeneration was not the cause. The replay was following the native
+  display origin to `y=240`, while eye packet coordinates were rooted at the
+  rollback-protected `y=0` scratch surface.
+- Changed both eye replays to use the `y=0` scratch buffer. The final 60-pair
+  sequence had zero black left or right images, and a verification run reached
+  241 pairs and 482 checks with zero mismatches or empty submissions.
+- Added timed null-HMD compositor capture. Eight consecutive samples were
+  nonblank in both the compositor and application layer.
+- The operator confirmed the corrected image no longer flashes.
 
 ## Next work
 
 1. Repeat the PGXP pose sweep in additional scenes and near-wall positions.
 2. Rebuild the flat target and repeat interactive boot/menu/gameplay validation.
 3. Label the actor/camera update and separate camera motion from player motion.
-4. Retest the corrected scale and VSync profile on the physical headset.
+4. Extend the pair-sequence and compositor checks to motion, wall proximity,
+   menus, transitions, and additional levels.

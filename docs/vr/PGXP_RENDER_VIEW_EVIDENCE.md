@@ -54,6 +54,9 @@ The old `slot01` and base `slot00` files were not modified.
 - exposes yaw, pitch, and sub-unit head translation in GTE camera units;
 - submits the regenerated OT through the guarded guest `DrawOTag` at
   `0x80018B50`, preserving GP0 packet source addresses for PGXP;
+- replays both guest buffers into the rollback-protected `y=0` VRAM scratch
+  surface. Following the native `y=240` display origin produced an alternating
+  black pair even though every transaction reported success;
 - keeps the old manual GP0 walker only as an OT control. It loses provenance and
   therefore reports every projective lookup as `vr.projective.miss0`.
 
@@ -214,8 +217,14 @@ provenance. If testing the autocompile path instead, stage an overlay toolchain
 and capture history with codegen hash `0x115b1739`; the manual GP0 walker is not
 valid projective evidence.
 
-Capture after the mapped frame-render hook appears:
+Capture a bounded pair sequence after the mapped frame-render hook appears:
 
-```text
-stereo_dump path=analysis\vr-baseline\pgxp-pose-nearplane-stereo count=1
+```powershell
+$env:MOHU_VR_STEREO_DUMP_DIR = (
+  Resolve-Path 'analysis\vr-baseline\pgxp-pose-nearplane-stereo'
+).Path
 ```
+
+The diagnostic writes the first 60 pairs and caps the sequence at the
+framework's capture limit. See [FLICKER_EVIDENCE.md](FLICKER_EVIDENCE.md) for
+the alternating-buffer regression and its final zero-black receipt.
