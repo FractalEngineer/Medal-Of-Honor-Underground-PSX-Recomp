@@ -318,6 +318,20 @@ zero-offset eye images were byte-identical
 See [HEAD_TURN_HUD_EVIDENCE.md](HEAD_TURN_HUD_EVIDENCE.md) and
 [head-turn-hud-fix.png](../../vr/proof/head-turn-hud-fix.png).
 
+### Latest operator observation
+
+After the final headset test, the operator reported that the dominant flat HUD
+ghost was gone, but a smaller residual ghost remains and is visible only in the
+sky. They described it as a headset-indexed flat render of the whole scene. The
+world appears to occlude it, leaving it visible only where the sky is clear.
+
+This is an observation, not a confirmed cause. The next checkpoint must
+separate a stale OpenXR/native quad, a flat background/background packet, a
+stale eye texture used by clear/present, and compositor reprojection before
+changing any hook or layer policy. The suggested first controls are a
+clear-only capture, a distinctive clear colour, app-layer versus eye-texture
+comparison, and `openxr_stats` layer/source/freshness sampling.
+
 ## Build and test state
 
 There is one active build directory, matching the reference game repository:
@@ -462,6 +476,9 @@ mohu-vr-diag: single_player_scene=0x800AA174 player=0x800AA17C player_input_offs
 5. Complete interactive flat boot/menu/gameplay validation.
 6. Extend the pair-sequence and compositor checks to motion, wall proximity,
    menus, transitions, and additional levels, then add input and HUD policy.
+7. Investigate the operator-reported sky-only full-scene ghost. First identify
+   whether it exists in the eye texture or only in the compositor/app layer;
+   then distinguish a stale flat background from retained native/XRR content.
 
 Do not treat the frame-driver replay as working stereo. The accepted evidence
 uses the frame-render replay; the driver path still does not own the visible
