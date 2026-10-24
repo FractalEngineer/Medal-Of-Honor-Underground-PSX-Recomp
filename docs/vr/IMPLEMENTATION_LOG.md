@@ -398,6 +398,22 @@
   path are documented in [MOVEMENT_EVIDENCE.md](MOVEMENT_EVIDENCE.md). No save
   migration failed. Any future invalid slot means ask for a fresh PGXP slot.
 
+### Flat P1 controller / P2 keyboard setup
+
+- Operator reported Steam Controller input also moving P2 and requested a
+  separate P2 layout on the keyboard. Existing device assignments were correct;
+  both players shared default keyboard keys, always merged by the runtime.
+- Backed up local `build-release/settings.toml` and `keybinds.ini`, cleared all
+  P1 keyboard binds, preserved its Steam Controller/analog assignment, set P2
+  keyboard/digital to IJKL, U/O, number-row buttons, P/M, and disabled multitap.
+- `RunFlat.bat` now disables inherited diagnostic `PSX_DEV_INPUT`. TOML/INI
+  parsing and exact assignments/bindings passed. No framework, generated code,
+  game config or savestates were changed; no rebuild was needed.
+- The operator stopped Steam UI inspection; no Steam settings changed. The
+  physical-event source of controller-to-P2 input remains unconfirmed and the
+  resulting physical separation awaits operator testing. Keys/backup paths:
+  [FLAT_LOCAL_INPUT.md](FLAT_LOCAL_INPUT.md).
+
 ## Next work
 
 1. Repeat the PGXP pose sweep in additional scenes and near-wall positions.
