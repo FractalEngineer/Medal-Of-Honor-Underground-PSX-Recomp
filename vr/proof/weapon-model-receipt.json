@@ -1,0 +1,90 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "scope": "Read-only first-person model and render-path mapping",
+  "model_inventory": {
+    "source": "analysis/vr-baseline/weapon-mesh-mapping/models-20261025/inventory.json",
+    "complete": true,
+    "source_saves_unchanged": true,
+    "preferences_unchanged": true,
+    "remaining_game_pids": [],
+    "executable_sha256": "f9156240029be295614442ebcb830ae6c6c218513ff7feff0f0d5ae836092b1d",
+    "revision": "a9faf46ffc1faaf455400d7e6385253fc06a9cc9",
+    "game_config_sha256": "21f53483e71f38e2f28dd649a8b9f6ab7a1ae804be954e07db6a92ccfb9b9b3e"
+  },
+  "multiplayer_model": {
+    "player_root": "0x800A3604",
+    "object_offset": "0x4AC",
+    "magic": "0x00160024",
+    "node_count": 22,
+    "node_table_sha256": "9f8c7275b3e8a1d6c7765da25a02d78b23f0c3fa4b67483f28865191d2805e4f",
+    "weapon_ids": [0, 1, 4, 5, 8, 9, 10, 12, 13, 14, 15, 16, 17],
+    "weapon_count": 13,
+    "stable_common_node_layout": true,
+    "per_weapon_state_fields_stable": false,
+    "state_field_note": "Object words around +0x5C/+0x64 changed with switching and on returning to the same weapon; they are not a mesh ID."
+  },
+  "render_path": {
+    "single_player_player_update": {
+      "address": "0x800892C8",
+      "size": "0xF20",
+      "fnv1a": "0xF4D6C439",
+      "stereo_eye_entries": 0
+    },
+    "multiplayer_player_update": {
+      "address": "0x800892E8",
+      "size": "0xA70",
+      "fnv1a": "0x39E56A35",
+      "weapon_object_owner_ra": "0x8008A7C8"
+    },
+    "single_player_first_person_draw": {
+      "address": "0x8007A554",
+      "size": "0x2B4",
+      "fnv1a": "0x4672B937",
+      "caller": "0x8008AB84",
+      "return_address": "0x8008AC54",
+      "object_argument": "input + 0x1E0",
+      "epilogue": "0x8007A7F0",
+      "eye_entries": "one per eye"
+    }
+  },
+  "synthetic_view_ab": {
+    "executable_sha256": "bde0cdd81d5d87ec4ab6d5c7ef6ecc9c812e01b7c04bd01a6d89e9b3002e0f84",
+    "zero_left_sha256": "33ee7970ffc30fc3023041c0dcab369195b26dc98deb339712d422115ee1fa96",
+    "zero_right_sha256": "33ee7970ffc30fc3023041c0dcab369195b26dc98deb339712d422115ee1fa96",
+    "offset20_left_sha256": "33ee7970ffc30fc3023041c0dcab369195b26dc98deb339712d422115ee1fa96",
+    "offset20_right_sha256": "33ee7970ffc30fc3023041c0dcab369195b26dc98deb339712d422115ee1fa96",
+    "changed_pixels": 0,
+    "result": "rejected",
+    "reason": "The host render view override is scoped to the function but the function prepares model-space data; projection occurs after its epilogue."
+  },
+  "rollback_check": {
+    "verification_enabled": true,
+    "attempts": 107,
+    "complete_pairs": 107,
+    "failed": 0,
+    "equal_eye_cycles": true,
+    "equal_eye_hashes": true,
+    "logged_weapon_hits": "90/90",
+    "logged_weapon_fallbacks": "0/0",
+    "result": "The pose call and epilogue were reached in every sampled eye, and the render transaction restored before the next eye."
+  },
+  "production_smoke": {
+    "build": "Release/OpenGL/OpenXR/PGXP",
+    "debug_tools": false,
+    "flat_launch_inert": true,
+    "flat_weapon_pose": 0,
+    "null_hmd_pairs": 360,
+    "null_hmd_xr_failures": 0,
+    "null_hmd_frustum": "1440/1440",
+    "null_hmd_weapon_hits": "0/0",
+    "steamvr_settings_restored_sha256": "bc4b95d242547c552e4e6f672ad3c3284d357cd37249069fd643522473323f10",
+    "remaining_game_pids": []
+  },
+  "limits": [
+    "No controller-tracked visual or shot alignment is established.",
+    "No per-weapon face/mesh signature is established from the common node table.",
+    "The multiplayer first-person object path is not yet proven inside multiplayer stereo replay.",
+    "A visible-enemy single-player PGXP save is still needed for later shot-origin and trajectory mapping."
+  ]
+}

@@ -1,6 +1,6 @@
 # VR Port Handoff
 
-Last updated: 2026-10-24
+Last updated: 2026-10-25
 
 This is the canonical current-state handoff for the Underground VR port. Update
 it before ending every implementation session.
@@ -57,7 +57,7 @@ remain untouched. Slot `1` is retained as a stale-identity control.
 
 ## Current implementation
 
-The engine map is in `vr/underground/engine_map.c`. Seventeen mappings are recorded
+The engine map is in `vr/underground/engine_map.c`. Twenty mappings are recorded
 with function SHA-256 and FNV-1a guards:
 
 | Role | Reference | Underground | Evidence |
@@ -79,6 +79,9 @@ with function SHA-256 and FNV-1a guards:
 | DrawOTag | `0x800172D8` | `0x80018B48` | Complete 112-byte function, including two-instruction prefix |
 | PutDrawEnv | `0x80017348` | `0x80018BB8` | 48 instructions; 0.981 structural match |
 | Post-render update | undiscovered | `0x8004356C` | 1,588 bytes; live execution |
+| Multiplayer player update | undiscovered | `0x800892E8` | Multiplayer overlay; live vtable call |
+| Single-player player update | undiscovered | `0x800892C8` | Single-player overlay; live vtable call |
+| First-person model draw | undiscovered | `0x8007A554` | `input+0x1E0`; called inside both eye replays |
 
 The live-confirmed entity transform calls `0x80013B40`, not the near-identical
 duplicate at `0x80014184`. The node transformer calls `0x80013EB4`, not
@@ -93,7 +96,7 @@ The opt-in diagnostic plugin is:
   environment-gated replay experiments. Canonical execution is unchanged unless
   `MOHU_VR_STEREO_PROOF=1`.
 
-The diagnostic target reports seventeen active bindings and fourteen overlay hooks,
+The diagnostic target reports twenty active bindings and seventeen overlay hooks,
 including the independently guarded native submission tail at `0x80053CFC`.
 The isolated slot-0 scene verifies the render chain through the frame driver.
 The true natural frame entry is `0x8006D65C`: it loads the frame context and
@@ -433,6 +436,41 @@ auto-load controls staged slot 4 without attempting it before their deadlines.
 They reported no invalid save and were closed. Diagnostic loads/combat are
 verified; production headless flat auto-load remains unverified.
 
+## Weapon render-path mapping
+
+The first exact hook attempt reached the player update method, but the stereo
+trace showed that call outside the eye transactions. A separate multiplayer
+overlay generation places a different function at the same virtual address, so
+the mode-specific function hashes and instruction words are required guards.
+The multiplayer function is `0x800892E8` (0xA70 bytes, FNV `0x39E56A35`);
+the single-player method is `0x800892C8` (0xF20 bytes, FNV `0xF4D6C439`).
+
+The real single-player first-person draw is `0x8007A554`, called from
+`0x8008AB84` with `a0 = input + 0x1E0` and return address `0x8008AC54`.
+It executes once per eye inside the rollback transaction. Its full 0x2B4-byte
+guard is FNV `0x4672B937`; the shared epilogue begins at `0x8007A7F0`.
+The earlier player-update hook is retained only as mapped evidence and does not
+arm a pose hook.
+
+All 13 multiplayer IDs were captured after native Circle switches using copied
+saves. P1's weapon object is `actor + 0x4AC`, has magic `0x00160024`, and shared
+a byte-identical 22-node table (`9f8c7275...`) in all four fixtures. Per-slot
+object state around `+0x5C/+0x64` changed even when cycling back to the same
+weapon, so it is not yet a stable mesh identity. `inspect_weapon_sets.py
+--models` now records this state; the compact observations are in
+[weapon-model-receipt.json](../../vr/proof/weapon-model-receipt.json).
+
+A synthetic 20-unit view offset applied around `0x8007A554` entered both eyes
+but produced byte-identical pairs. The function prepares model-space data and
+projection occurs after its epilogue, so replacing the host render view there is
+rejected. Controller tracking remains disabled; the next seam is the model's
+own affine/node transform or its later vertex projection, not this draw wrapper.
+
+With render-pass verification enabled, the synthetic hook reached `90/90`
+logged eyes with `0/0` fallbacks across 107 complete pairs; all eyes restored
+to equal cycles and equal state hashes, with zero failed or shed pairs. This
+proves the hook/rollback contract only, not weapon motion or shot alignment.
+
 ## Build and test state
 
 There is one active build directory, matching the reference game repository:
@@ -473,6 +511,9 @@ Current `build-release/` state:
 
 Last checks:
 
+- The final debug-off release completed a null-HMD smoke with 360 pairs,
+  zero XR failures, `frustum=1440/1440`, and `weapon_hits=0/0` because the
+  production launcher leaves the experimental weapon pose disabled.
 - Sky-ghost checkpoint: thirteen Python tests, strict frustum and ammo-packet C
   fixtures, strict diagnostic C compilation, and documentation links pass.
 - The final diagnostic XR run reached 180 logged pairs, zero XR failures,

@@ -116,9 +116,47 @@ python vr/tools/inspect_weapon_sets.py analysis/vr-baseline/weapon-sets/new-petr
 Use a fresh output directory. Restore debug tools OFF and rebuild the same
 directory afterward; the handoff contains the configure/build commands.
 
+## First-person model mapping
+
+The read-only mapping pass used the same copied slots and native Circle input:
+
+```powershell
+python vr/tools/inspect_weapon_sets.py analysis/vr-baseline/weapon-mesh-mapping/models-new --slots 1 2 3 4 --cycle --models
+```
+
+For P1, the weapon object is `actor + 0x4AC`. Every one of the 13 weapon IDs
+returned magic `0x00160024`, a 22-node table, and the same node-table SHA-256
+`9f8c7275b3e8a1d6c7765da25a02d78b23f0c3fa4b67483f28865191d2805e4f`.
+The object's per-frame fields at `+0x5C/+0x64` are not a stable mesh ID: they
+also change after cycling back to the same weapon. The tool retains those
+bounded state words for later correlation rather than treating them as a
+profile.
+
+Single-player rendering was traced through
+`0x8008AB84 -> 0x8007A554(input+0x1E0)`. The latter runs once for each eye
+inside the rollback transaction. Applying a synthetic host `PSXModRenderView`
+translation around this function produced the identical image pair:
+
+| Control | SHA-256 of 512x240 eye image |
+| --- | --- |
+| Zero offset, left/right | `33ee7970ffc30fc3023041c0dcab369195b26dc98deb339712d422115ee1fa96` |
+| Weapon offset +20, left/right | `33ee7970ffc30fc3023041c0dcab369195b26dc98deb339712d422115ee1fa96` |
+
+This is a rejection, not tracking acceptance. `0x8007A554` prepares
+model-space data and the projection/view lookup happens after its epilogue.
+The next implementation hook must alter the model's own affine/node transform
+or the later vertex projection while preserving native animation and rollback.
+The compact mapping receipt is
+[weapon-model-receipt.json](../../vr/proof/weapon-model-receipt.json).
+The guarded hook was nevertheless exercised with render-pass verification:
+107 complete pairs had equal eye cycles/hashes, zero failed or shed pairs, and
+90/90 sampled eyes reached the pose path with zero fallbacks. That validates the
+transaction and cleanup contract, not tracked-weapon behavior.
+
 ## Verification and limits
 
-Thirteen Python tests and strict frustum, HUD-packet and input C fixtures pass.
+Thirteen Python tests and strict frustum, HUD-packet, input, and weapon C
+fixtures pass.
 The shared release target compiles; the normal debug-off profile is restored.
 Two bounded hidden flat auto-load smokes staged slot 4 but did not attempt the
 load within 30 seconds. One used the interpreter config; the second used normal
@@ -141,6 +179,7 @@ compile invocation were corrected before accepting the strict C results.
 
 No save migration failed or was attempted. Any future invalid ABI or execution
 identity means **ask the operator for a fresh PGXP slot**; never edit headers.
-Next work is mapping native first-person model/geometry and projectile
-constructor/motion seams, then guarded tracked mesh/aim controls using these
-recipes. Multiplayer rendering/visibility needs its own measured contract.
+Next work is locating the model affine/node transform inside the verified
+first-person draw, then mapping projectile constructor/motion seams and adding
+guarded tracked mesh/aim controls. Multiplayer rendering/visibility needs its
+own measured contract.

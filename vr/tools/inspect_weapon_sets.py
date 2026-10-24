@@ -23,6 +23,8 @@ WEAPONS = {0: "P38 pistol", 1: "MP40", 4: "Shotgun", 5: "Scoped rifle",
            8: "Colt .45", 9: "Silenced pistol", 10: "Stick grenade",
            12: "M1 Garand", 13: "Panzerfaust", 14: "Crossbow",
            15: "Petrol bomb", 16: "Sten", 17: "StG44"}
+MODEL_OBJECT_OFFSET = 0x4AC
+MODEL_MAGIC = 0x00160024
 
 
 def digest(path):
@@ -104,6 +106,37 @@ def players():
     return result
 
 
+def weapon_model():
+    actor = int.from_bytes(read(0x800A3604, 4), "little")
+    if not 0x800B0000 <= actor < 0x801FC000:
+        raise RuntimeError("Unrecognized player-one root")
+    inp = int.from_bytes(read(actor + 0x39C, 4), "little")
+    obj = actor + MODEL_OBJECT_OFFSET
+    header = int.from_bytes(read(obj + 0x80, 4), "little")
+    if not 0x800B0000 <= header < 0x801FFFF8:
+        raise RuntimeError("Unrecognized weapon node header")
+    nodes = int.from_bytes(read(header, 4), "little")
+    count = int.from_bytes(read(header + 4, 4), "little")
+    if not 0x800B0000 <= nodes < 0x801FFFC0 or not 1 <= count <= 64:
+        raise RuntimeError("Unrecognized weapon node table")
+    table = read(nodes, count * 8)
+    state = read(obj, 0x200)
+    return {
+        "actor": hex(actor),
+        "input": hex(inp),
+        "object": hex(obj),
+        "magic": hex(int.from_bytes(state[0x70:0x74], "little")),
+        "node_header": hex(header),
+        "nodes": hex(nodes),
+        "node_count": count,
+        "node_counts": [struct.unpack_from("<H", table, i * 8 + 4)[0]
+                        for i in range(count)],
+        "node_table_sha256": hashlib.sha256(table).hexdigest(),
+        "state_words": [state[i:i + 4].hex() for i in range(0x48, 0x94, 4)],
+        "state_sha256": hashlib.sha256(state).hexdigest(),
+    }
+
+
 def switch():
     command("press", buttons=65535 ^ 0x2000, frames=12)
     frames(90)
@@ -116,6 +149,7 @@ def main():
     parser.add_argument("--slots", type=int, nargs="+", default=[1, 2, 3, 4])
     parser.add_argument("--cycle", action="store_true")
     parser.add_argument("--damage", action="store_true")
+    parser.add_argument("--models", action="store_true")
     parser.add_argument("--discover-damage", action="store_true")
     parser.add_argument("--only-damage-ids", type=int, nargs="+")
     parser.add_argument("--fire-frames", type=int, default=24)
@@ -128,8 +162,8 @@ def main():
         parser.error("Slots must be in 0..99")
     if not 1 <= args.fire_frames <= 600 or not 1 <= args.release_frames <= 1800 or not 0 <= args.approach_frames <= 600:
         parser.error("Frame window exceeds the bounded control limits")
-    if args.damage and not args.cycle:
-        parser.error("--damage requires --cycle")
+    if (args.damage or args.models) and not args.cycle:
+        parser.error("--damage and --models require --cycle")
     with socket.socket() as probe:
         if probe.connect_ex(("127.0.0.1", 4372)) == 0:
             raise RuntimeError("Diagnostic TCP port occupied")
@@ -160,7 +194,8 @@ def main():
                "preference_hashes": preference_hashes,
                "controls": {"case": args.control, "fire_frames": args.fire_frames,
                             "release_frames": args.release_frames, "scoped_zoom": args.scoped_zoom,
-                            "approach_frames": args.approach_frames},
+                            "approach_frames": args.approach_frames,
+                            "models": args.models},
                "slots": [], "complete": False}
     with (out / "stdout.log").open("w") as stdout, (out / "stderr.log").open("w") as stderr:
         process = subprocess.Popen([str(exe), "--headless-opengl", "--no-launcher",
@@ -194,7 +229,12 @@ def main():
                 seen = set()
                 for index in range(13 if args.cycle else 1):
                     current = players()
-                    row["captures"].append({"switches": index, "players": current})
+                    capture = {"switches": index, "players": current}
+                    if args.models:
+                        capture["weapon_model"] = weapon_model()
+                        if int(capture["weapon_model"]["magic"], 16) != MODEL_MAGIC:
+                            raise RuntimeError("Unrecognized weapon object")
+                    row["captures"].append(capture)
                     save(out / "inventory.json", receipt)
                     key = (current[0]["weapon_slot"], current[0]["weapon_id"])
                     print(slot, index, key, flush=True)
