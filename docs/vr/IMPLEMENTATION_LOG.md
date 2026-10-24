@@ -476,9 +476,10 @@
 - The current `0x8008DB98` affine hook changes P1's world body in the other
   split view, not the visible top-view first-person mesh. It remains
   diagnostic-only and is not claimed as the accepted model seam.
-- Added `vr/underground/raycast.h` and a strict visibility-tree fixture for an
-  opt-in right-squeeze aim ray with beam and impact dot. Runtime headset visual
-  acceptance remains pending.
+- Added `vr/underground/raycast.h` and a strict visibility-tree fixture for a
+  default-on right-squeeze aim ray with beam and impact dot. `-NoLaser` and
+  `PSX_VR_LASER=0` are explicit opt-outs. Runtime headset visual acceptance
+  remains pending.
 
 ## Next work
 

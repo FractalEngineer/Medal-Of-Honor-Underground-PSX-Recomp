@@ -468,11 +468,14 @@ leaves no owned game process. The scoped rifle and explosive controls use the
 measured long/approach variants. See
 [weapon-alignment-receipt.json](../../vr/proof/weapon-alignment-receipt.json).
 
-An opt-in right-grip raycast pointer is implemented at
+The default-on right-grip raycast pointer is implemented at
 `vr/underground/raycast.h` and `vr/underground/vr_diagnostic.c`. With
-`PSX_VR_LASER=1`, holding right squeeze casts through Underground's visibility
-tree and draws the beam plus impact dot. The strict geometry fixture passes.
-Headset visual acceptance is still pending.
+normal VR, holding right squeeze casts through Underground's visibility tree
+and draws the beam plus impact dot. `-NoLaser` or `PSX_VR_LASER=0` disables it.
+The strict geometry fixture passes. Headset visual acceptance is still pending.
+This first pass uses the right-aim pose and visibility-node extents. The
+previous game uses the rendered weapon affine and exact level triangles; that
+seam alignment remains future work.
 
 The required fixture, guards, implementation order, and acceptance matrix are
 in [WEAPON_MAPPING.md](WEAPON_MAPPING.md). The compact model observations are in
@@ -658,7 +661,7 @@ mohu-vr-diag: single_player_scene=0x800AA174 player=0x800AA17C player_input_offs
 7. Locate the visible top-view first-person mesh seam; the current
    `actor+0x4AC` affine hook modifies P1's world-body representation. The
    13-ID native-hit matrix is complete, but muzzle-to-impact visual alignment
-   remains a separate aim pass. Verify the opt-in right-grip laser in a
+   remains a separate aim pass. Verify the default-on right-grip laser in a
    headset. Operator: verify pause/resume and release mappings. Sky-ghost
    headset acceptance is complete.
 

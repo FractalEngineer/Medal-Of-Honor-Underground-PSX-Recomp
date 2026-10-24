@@ -105,11 +105,17 @@ grenade uses a 36/720-frame throw. The petrol bomb uses 180 approach frames and
 60/720 fire/release frames. Exact hashes, paths, and per-ID results are in
 [weapon-alignment-receipt.json](../../vr/proof/weapon-alignment-receipt.json).
 
-The diagnostic also has an opt-in right-grip raycast pointer. Hold the right
-squeeze with `PSX_VR_LASER=1`; the beam ends on the nearest visibility-tree
-surface and draws an impact dot. `PSX_VR_LASER_DOT` sets the dot radius and
-`PSX_VR_LASER_RANGE_M` bounds the cast. Its pure geometry test passes, but
-runtime headset visual acceptance is still pending.
+The right-grip raycast pointer is enabled by default in VR. Hold the right
+squeeze; the beam ends on the nearest visibility-tree surface and draws an
+impact dot. Use `-NoLaser` or `PSX_VR_LASER=0` to disable it.
+`PSX_VR_LASER_DOT` sets the dot radius and `PSX_VR_LASER_RANGE_M` bounds the
+cast. Its pure geometry test passes, but runtime headset visual acceptance is
+still pending.
+
+The current beam originates from the OpenXR right-aim pose and uses the level
+visibility-tree node extents. The previous game instead derives the beam from
+the rendered weapon mesh's camera affine and uses its exact triangle tables.
+Those two Underground seams still need mapping before the ports are equivalent.
 
 ## Known constraints
 

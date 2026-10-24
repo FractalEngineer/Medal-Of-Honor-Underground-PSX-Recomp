@@ -148,9 +148,11 @@
   },
   "laser": {
     "mode": "right grip aim raycast plus impact dot",
+    "default_enabled_in_vr": true,
     "source": "vr/underground/raycast.h",
     "unit_test": "PASS: raycast box and visibility-tree hit guards",
     "build": "debug diagnostics rebuilt successfully",
+    "known_difference": "Underground currently uses the OpenXR right-aim pose and visibility-node extents; the reference game uses the rendered weapon affine and exact level triangles.",
     "runtime_capture": "not accepted in this receipt; synthetic capture required a writable SteamVR null-HMD settings file and the sandbox denied it"
   },
   "limits": [

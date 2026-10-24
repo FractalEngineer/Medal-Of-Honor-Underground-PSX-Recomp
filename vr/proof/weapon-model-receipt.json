@@ -68,7 +68,7 @@
   "laser_pointer": {
     "status": "implemented diagnostic; runtime visual capture pending",
     "source": "vr/underground/raycast.h",
-    "activation": "PSX_VR_LASER=1, right squeeze held",
+    "activation": "enabled by default in VR, right squeeze held; PSX_VR_LASER=0 disables",
     "endpoint": "first hit in the Underground level visibility tree with an impact dot",
     "unit_test": "PASS: raycast box and visibility-tree hit guards"
   },

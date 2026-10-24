@@ -805,7 +805,7 @@ static void vr_laser_draw(void) {
 
 static void vr_diagnostic_vblank(void) {
     report_runtime_hook_counts();
-    if (g_laser) {
+    if (g_laser && (g_openxr || g_stereo_proof)) {
         PSXModOpenXRInput input = {0};
         input.struct_size = sizeof input;
         g_laser_grip =
@@ -2086,9 +2086,7 @@ static void vr_diagnostic_activate(void) {
     if (!laser) {
         laser = getenv(MOHU_VR_LASER_LEGACY_ENV);
     }
-    g_laser = laser && *laser
-        ? *laser != '0'
-        : (g_openxr && g_weapon_pose);
+    g_laser = !laser || !*laser || *laser != '0';
     const char* laser_synthetic = getenv(MOHU_VR_LASER_SYNTHETIC_ENV);
     g_laser_synthetic = laser_synthetic && *laser_synthetic &&
                         *laser_synthetic != '0';

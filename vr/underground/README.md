@@ -100,17 +100,19 @@ with a 67 mm IPD calibration, leaving 238.80597 effective GTE units per metre.
 `MOHU_VR_MENU_WIDTH` remain the underlying runtime controls. Start the headset
 runtime before a physical launch.
 
-The opt-in right-grip pointer uses the same per-eye render pose:
+The right-grip pointer uses the same per-eye render pose and is enabled by
+default in VR:
 
 ```powershell
-$env:PSX_VR_LASER = '1'
+.\RunVR-SteamVR.bat
 ```
 
 Holding right squeeze casts the OpenXR aim ray through the level visibility
 tree. The beam ends at the nearest tree node and draws an impact dot. The
 fixed-range fallback is controlled by `MOHU_VR_LASER_RANGE_M`; dot radius is
 `MOHU_VR_LASER_DOT`. `MOHU_VR_LASER_SYNTHETIC=1` provides a deterministic
-camera-space ray for diagnostics. The geometry fixture is
+camera-space ray for diagnostics. Pass `-NoLaser` or set `PSX_VR_LASER=0` to
+disable it. The geometry fixture is
 `vr/tests/test_raycast.c`.
 
 For no-headset OpenXR validation, use SteamVR's null driver through the shared
