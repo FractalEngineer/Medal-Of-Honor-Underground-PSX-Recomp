@@ -1,0 +1,764 @@
+{
+  "date": "2026-10-24",
+  "starting_revision": "7f2632d8ca5c9c14254d910ebfe03e7874275902",
+  "framework": "d9b0f382",
+  "execution_identity": "8174a988661560c5297b4579eb11a9577ccd80a03ea5dfa794a84e21ca3c4361",
+  "diagnostic_executable_sha256": "2a2d11abee70e30e8b353ea591b5b02f9b13046a4bc6af681937cd04b87718b1",
+  "source_saves": {
+    "saves\\openbios\\state_8001F844_slot01.pst": "b248dfa247b45a41906beea3aa829cff79b39d863e425211e5c0651e853a7f5d",
+    "saves\\openbios\\state_8001F844_slot01.thumb": "008eb36b216f802cc54b8911eed2201b28b5167830ac4cfeaf4bfff5aab3543c",
+    "saves\\openbios\\state_8001F844_slot02.pst": "d849f30c217e31ef05a0508f98c10a0ffbc2e03260bebf8ae13bf975745223b0",
+    "saves\\openbios\\state_8001F844_slot02.thumb": "3062f96294604ea6c16ce2560780338908145cb0b59709f83bbc95279f61533e",
+    "saves\\openbios\\state_8001F844_slot03.pst": "ac6a5e3f85a8a12a0c312d95682b74a26109a5c651e3ada39f50a986e9242e9d",
+    "saves\\openbios\\state_8001F844_slot03.thumb": "17b69f2729f3cbc9dc0c470e7eaf0cdcb479fc3a2afe2a51516e5e21546d12d5",
+    "saves\\openbios\\state_8001F844_slot04.pst": "5beb061c29120eb61a0d9fe2df1a73a6329ca465a24c67b4ca9c3fa0ca8cd0e6",
+    "saves\\openbios\\state_8001F844_slot04.thumb": "ce4d5a2cbccbb79bb74856cfbb4d534f3b6c4625c8b760ceaccc854c3a5bba9d"
+  },
+  "slots": [
+    {
+      "slot": 1,
+      "mode": "two-player multiplayer",
+      "weapon_cycle": [
+        {
+          "switches": 0,
+          "id": 0,
+          "name": "P38 pistol"
+        },
+        {
+          "switches": 1,
+          "id": 1,
+          "name": "MP40"
+        },
+        {
+          "switches": 2,
+          "id": 17,
+          "name": "StG44"
+        },
+        {
+          "switches": 3,
+          "id": 10,
+          "name": "Stick grenade"
+        }
+      ],
+      "cycle_closed": true
+    },
+    {
+      "slot": 2,
+      "mode": "two-player multiplayer",
+      "weapon_cycle": [
+        {
+          "switches": 0,
+          "id": 8,
+          "name": "Colt .45"
+        },
+        {
+          "switches": 1,
+          "id": 16,
+          "name": "Sten"
+        },
+        {
+          "switches": 2,
+          "id": 4,
+          "name": "Shotgun"
+        },
+        {
+          "switches": 3,
+          "id": 15,
+          "name": "Petrol bomb"
+        }
+      ],
+      "cycle_closed": true
+    },
+    {
+      "slot": 3,
+      "mode": "two-player multiplayer",
+      "weapon_cycle": [
+        {
+          "switches": 0,
+          "id": 9,
+          "name": "Silenced pistol"
+        },
+        {
+          "switches": 1,
+          "id": 14,
+          "name": "Crossbow"
+        },
+        {
+          "switches": 2,
+          "id": 5,
+          "name": "Scoped rifle"
+        },
+        {
+          "switches": 3,
+          "id": 10,
+          "name": "Stick grenade"
+        }
+      ],
+      "cycle_closed": true
+    },
+    {
+      "slot": 4,
+      "mode": "two-player multiplayer",
+      "weapon_cycle": [
+        {
+          "switches": 0,
+          "id": 12,
+          "name": "M1 Garand"
+        },
+        {
+          "switches": 1,
+          "id": 17,
+          "name": "StG44"
+        },
+        {
+          "switches": 2,
+          "id": 13,
+          "name": "Panzerfaust"
+        },
+        {
+          "switches": 3,
+          "id": 15,
+          "name": "Petrol bomb"
+        }
+      ],
+      "cycle_closed": true
+    }
+  ],
+  "native_damage": [
+    {
+      "weapon_id": 0,
+      "weapon": "P38 pistol",
+      "slot": 1,
+      "switches": 0,
+      "control": "native-damage",
+      "fire_frames": 24,
+      "release_frames": 240,
+      "scoped_zoom": false,
+      "approach_frames": 0,
+      "p1_clip_before": 8,
+      "p1_clip_after": 7,
+      "target": "0x80145810",
+      "target_health_before": 32.0,
+      "target_health_after": 31.25,
+      "damage_writes": [
+        {
+          "addr": "0x00145918",
+          "old": "0x00200000",
+          "new": "0x001F4000",
+          "pc": "0x8004EB80",
+          "a1": "0x0000C000",
+          "a2": "0x801103C0",
+          "s0": "0x80145810",
+          "s1": "0x801103C0",
+          "frame": 108
+        }
+      ],
+      "p1_equipped_id_after": 0
+    },
+    {
+      "weapon_id": 1,
+      "weapon": "MP40",
+      "slot": 1,
+      "switches": 1,
+      "control": "native-damage",
+      "fire_frames": 24,
+      "release_frames": 240,
+      "scoped_zoom": false,
+      "approach_frames": 0,
+      "p1_clip_before": 32,
+      "p1_clip_after": 29,
+      "target": "0x80145810",
+      "target_health_before": 32.0,
+      "target_health_after": 30.200027465820312,
+      "damage_writes": [
+        {
+          "addr": "0x00145918",
+          "old": "0x00200000",
+          "new": "0x001F6667",
+          "pc": "0x8004EB80",
+          "a1": "0x00009999",
+          "a2": "0x80128430",
+          "s0": "0x80145810",
+          "s1": "0x80128430",
+          "frame": 634
+        },
+        {
+          "addr": "0x00145918",
+          "old": "0x001F6667",
+          "new": "0x001ECCCE",
+          "pc": "0x8004EB80",
+          "a1": "0x00009999",
+          "a2": "0x801103C0",
+          "s0": "0x80145810",
+          "s1": "0x801103C0",
+          "frame": 645
+        },
+        {
+          "addr": "0x00145918",
+          "old": "0x001ECCCE",
+          "new": "0x001E3335",
+          "pc": "0x8004EB80",
+          "a1": "0x00009999",
+          "a2": "0x80128430",
+          "s0": "0x80145810",
+          "s1": "0x80128430",
+          "frame": 654
+        }
+      ],
+      "p1_equipped_id_after": 1
+    },
+    {
+      "weapon_id": 17,
+      "weapon": "StG44",
+      "slot": 1,
+      "switches": 2,
+      "control": "native-damage",
+      "fire_frames": 24,
+      "release_frames": 240,
+      "scoped_zoom": false,
+      "approach_frames": 0,
+      "p1_clip_before": 30,
+      "p1_clip_after": 27,
+      "target": "0x80145810",
+      "target_health_before": 32.0,
+      "target_health_after": 30.200027465820312,
+      "damage_writes": [
+        {
+          "addr": "0x00145918",
+          "old": "0x00200000",
+          "new": "0x001F6667",
+          "pc": "0x8004EB80",
+          "a1": "0x00009999",
+          "a2": "0x801103C0",
+          "s0": "0x80145810",
+          "s1": "0x801103C0",
+          "frame": 1349
+        },
+        {
+          "addr": "0x00145918",
+          "old": "0x001F6667",
+          "new": "0x001ECCCE",
+          "pc": "0x8004EB80",
+          "a1": "0x00009999",
+          "a2": "0x8010FE80",
+          "s0": "0x80145810",
+          "s1": "0x8010FE80",
+          "frame": 1355
+        },
+        {
+          "addr": "0x00145918",
+          "old": "0x001ECCCE",
+          "new": "0x001E3335",
+          "pc": "0x8004EB80",
+          "a1": "0x00009999",
+          "a2": "0x801283B0",
+          "s0": "0x80145810",
+          "s1": "0x801283B0",
+          "frame": 1364
+        }
+      ],
+      "p1_equipped_id_after": 17
+    },
+    {
+      "weapon_id": 10,
+      "weapon": "Stick grenade",
+      "slot": 1,
+      "switches": 3,
+      "control": "native-damage",
+      "fire_frames": 24,
+      "release_frames": 240,
+      "scoped_zoom": false,
+      "approach_frames": 0,
+      "p1_clip_before": 1,
+      "p1_clip_after": 8,
+      "target": "0x80145810",
+      "target_health_before": 32.0,
+      "target_health_after": 0.0,
+      "damage_writes": [
+        {
+          "addr": "0x00145918",
+          "old": "0x00200000",
+          "new": "0x00070000",
+          "pc": "0x8004EB80",
+          "a1": "0x00190000",
+          "a2": "0x8010F960",
+          "s0": "0x80145810",
+          "s1": "0x8010F960",
+          "frame": 2471
+        },
+        {
+          "addr": "0x00145918",
+          "old": "0x00070000",
+          "new": "0xFFF22556",
+          "pc": "0x8004EB80",
+          "a1": "0x0014DAAA",
+          "a2": "0x8010F960",
+          "s0": "0x80145810",
+          "s1": "0x8010F960",
+          "frame": 2474
+        }
+      ],
+      "p1_equipped_id_after": 0
+    },
+    {
+      "weapon_id": 8,
+      "weapon": "Colt .45",
+      "slot": 2,
+      "switches": 0,
+      "control": "native-damage",
+      "fire_frames": 24,
+      "release_frames": 240,
+      "scoped_zoom": false,
+      "approach_frames": 0,
+      "p1_clip_before": 7,
+      "p1_clip_after": 6,
+      "target": "0x801487d0",
+      "target_health_before": 32.0,
+      "target_health_after": 31.25,
+      "damage_writes": [
+        {
+          "addr": "0x001488D8",
+          "old": "0x00200000",
+          "new": "0x001F4000",
+          "pc": "0x8004EB80",
+          "a1": "0x0000C000",
+          "a2": "0x80115DF0",
+          "s0": "0x801487D0",
+          "s1": "0x80115DF0",
+          "frame": 3008
+        }
+      ],
+      "p1_equipped_id_after": 8
+    },
+    {
+      "weapon_id": 16,
+      "weapon": "Sten",
+      "slot": 2,
+      "switches": 1,
+      "control": "native-damage",
+      "fire_frames": 24,
+      "release_frames": 240,
+      "scoped_zoom": false,
+      "approach_frames": 0,
+      "p1_clip_before": 32,
+      "p1_clip_after": 28,
+      "target": "0x801487d0",
+      "target_health_before": 32.0,
+      "target_health_after": 29.60003662109375,
+      "damage_writes": [
+        {
+          "addr": "0x001488D8",
+          "old": "0x00200000",
+          "new": "0x001F6667",
+          "pc": "0x8004EB80",
+          "a1": "0x00009999",
+          "a2": "0x8012DE60",
+          "s0": "0x801487D0",
+          "s1": "0x8012DE60",
+          "frame": 3533
+        },
+        {
+          "addr": "0x001488D8",
+          "old": "0x001F6667",
+          "new": "0x001ECCCE",
+          "pc": "0x8004EB80",
+          "a1": "0x00009999",
+          "a2": "0x8012D920",
+          "s0": "0x801487D0",
+          "s1": "0x8012D920",
+          "frame": 3541
+        },
+        {
+          "addr": "0x001488D8",
+          "old": "0x001ECCCE",
+          "new": "0x001E3335",
+          "pc": "0x8004EB80",
+          "a1": "0x00009999",
+          "a2": "0x8012DE60",
+          "s0": "0x801487D0",
+          "s1": "0x8012DE60",
+          "frame": 3547
+        },
+        {
+          "addr": "0x001488D8",
+          "old": "0x001E3335",
+          "new": "0x001D999C",
+          "pc": "0x8004EB80",
+          "a1": "0x00009999",
+          "a2": "0x80115D50",
+          "s0": "0x801487D0",
+          "s1": "0x80115D50",
+          "frame": 3553
+        }
+      ],
+      "p1_equipped_id_after": 16
+    },
+    {
+      "weapon_id": 4,
+      "weapon": "Shotgun",
+      "slot": 2,
+      "switches": 2,
+      "control": "native-damage",
+      "fire_frames": 24,
+      "release_frames": 240,
+      "scoped_zoom": false,
+      "approach_frames": 0,
+      "p1_clip_before": 8,
+      "p1_clip_after": 7,
+      "target": "0x801487d0",
+      "target_health_before": 32.0,
+      "target_health_after": 18.0,
+      "damage_writes": [
+        {
+          "addr": "0x001488D8",
+          "old": "0x00200000",
+          "new": "0x001C0000",
+          "pc": "0x8004EB80",
+          "a1": "0x00040000",
+          "a2": "0x8012D380",
+          "s0": "0x801487D0",
+          "s1": "0x8012D380",
+          "frame": 4243
+        },
+        {
+          "addr": "0x001488D8",
+          "old": "0x001C0000",
+          "new": "0x001B0000",
+          "pc": "0x8004EB80",
+          "a1": "0x00010000",
+          "a2": "0x8012CE40",
+          "s0": "0x801487D0",
+          "s1": "0x8012CE40",
+          "frame": 4243
+        },
+        {
+          "addr": "0x001488D8",
+          "old": "0x001B0000",
+          "new": "0x00170000",
+          "pc": "0x8004EB80",
+          "a1": "0x00040000",
+          "a2": "0x8012C900",
+          "s0": "0x801487D0",
+          "s1": "0x8012C900",
+          "frame": 4244
+        },
+        {
+          "addr": "0x001488D8",
+          "old": "0x00170000",
+          "new": "0x00160000",
+          "pc": "0x8004EB80",
+          "a1": "0x00010000",
+          "a2": "0x8012D8C0",
+          "s0": "0x801487D0",
+          "s1": "0x8012D8C0",
+          "frame": 4246
+        },
+        {
+          "addr": "0x001488D8",
+          "old": "0x00160000",
+          "new": "0x00120000",
+          "pc": "0x8004EB80",
+          "a1": "0x00040000",
+          "a2": "0x8012DE00",
+          "s0": "0x801487D0",
+          "s1": "0x8012DE00",
+          "frame": 4249
+        }
+      ],
+      "p1_equipped_id_after": 4
+    },
+    {
+      "weapon_id": 15,
+      "weapon": "Petrol bomb",
+      "slot": 2,
+      "switches": 3,
+      "control": "petrol-near",
+      "fire_frames": 60,
+      "release_frames": 720,
+      "scoped_zoom": false,
+      "approach_frames": 180,
+      "p1_clip_before": 1,
+      "p1_clip_after": 7,
+      "target": "0x801487d0",
+      "target_health_before": 32.0,
+      "target_health_after": 32.0,
+      "damage_writes": [
+        {
+          "addr": "0x001488D8",
+          "old": "0x00200000",
+          "new": "0x00138000",
+          "pc": "0x8004EB80",
+          "a1": "0x000C8000",
+          "a2": "0x801150A0",
+          "s0": "0x801487D0",
+          "s1": "0x801150A0",
+          "frame": 958
+        },
+        {
+          "addr": "0x001488D8",
+          "old": "0x00138000",
+          "new": "0x000912AB",
+          "pc": "0x8004EB80",
+          "a1": "0x000A6D55",
+          "a2": "0x801150A0",
+          "s0": "0x801487D0",
+          "s1": "0x801150A0",
+          "frame": 960
+        },
+        {
+          "addr": "0x001488D8",
+          "old": "0x000912AB",
+          "new": "0x0000B801",
+          "pc": "0x8004EB80",
+          "a1": "0x00085AAA",
+          "a2": "0x801150A0",
+          "s0": "0x801487D0",
+          "s1": "0x801150A0",
+          "frame": 961
+        },
+        {
+          "addr": "0x001488D8",
+          "old": "0x0000B801",
+          "new": "0xFFFD9401",
+          "pc": "0x8004EB80",
+          "a1": "0x00032400",
+          "a2": "0x801150A0",
+          "s0": "0x801487D0",
+          "s1": "0x801150A0",
+          "frame": 963
+        }
+      ],
+      "p1_equipped_id_after": 8
+    },
+    {
+      "weapon_id": 9,
+      "weapon": "Silenced pistol",
+      "slot": 3,
+      "switches": 0,
+      "control": "native-damage",
+      "fire_frames": 24,
+      "release_frames": 240,
+      "scoped_zoom": false,
+      "approach_frames": 0,
+      "p1_clip_before": 7,
+      "p1_clip_after": 6,
+      "target": "0x80144100",
+      "target_health_before": 32.0,
+      "target_health_after": 31.25,
+      "damage_writes": [
+        {
+          "addr": "0x00144208",
+          "old": "0x00200000",
+          "new": "0x001F4000",
+          "pc": "0x8004EB80",
+          "a1": "0x0000C000",
+          "a2": "0x80116B60",
+          "s0": "0x80144100",
+          "s1": "0x80116B60",
+          "frame": 5908
+        }
+      ],
+      "p1_equipped_id_after": 9
+    },
+    {
+      "weapon_id": 14,
+      "weapon": "Crossbow",
+      "slot": 3,
+      "switches": 1,
+      "control": "native-damage",
+      "fire_frames": 24,
+      "release_frames": 240,
+      "scoped_zoom": false,
+      "approach_frames": 0,
+      "p1_clip_before": 1,
+      "p1_clip_after": 5,
+      "target": "0x80144100",
+      "target_health_before": 32.0,
+      "target_health_after": 0.0,
+      "damage_writes": [
+        {
+          "addr": "0x00144208",
+          "old": "0x00200000",
+          "new": "0x00000000",
+          "pc": "0x8004EB80",
+          "a1": "0x00200000",
+          "a2": "0x8012EB00",
+          "s0": "0x80144100",
+          "s1": "0x8012EB00",
+          "frame": 6445
+        }
+      ],
+      "p1_equipped_id_after": 5
+    },
+    {
+      "weapon_id": 5,
+      "weapon": "Scoped rifle",
+      "slot": 3,
+      "switches": 2,
+      "control": "special-controls",
+      "fire_frames": 60,
+      "release_frames": 720,
+      "scoped_zoom": true,
+      "approach_frames": 0,
+      "p1_clip_before": 5,
+      "p1_clip_after": 3,
+      "target": "0x80144100",
+      "target_health_before": 32.0,
+      "target_health_after": 32.0,
+      "damage_writes": [
+        {
+          "addr": "0x00144208",
+          "old": "0x00200000",
+          "new": "0x00000000",
+          "pc": "0x8004EB80",
+          "a1": "0x00200000",
+          "a2": "0x8012EB60",
+          "s0": "0x80144100",
+          "s1": "0x8012EB60",
+          "frame": 2453
+        }
+      ],
+      "p1_equipped_id_after": 5
+    },
+    {
+      "weapon_id": 12,
+      "weapon": "M1 Garand",
+      "slot": 4,
+      "switches": 0,
+      "control": "native-damage",
+      "fire_frames": 24,
+      "release_frames": 240,
+      "scoped_zoom": false,
+      "approach_frames": 0,
+      "p1_clip_before": 8,
+      "p1_clip_after": 7,
+      "target": "0x801453f0",
+      "target_health_before": 32.0,
+      "target_health_after": 27.0,
+      "damage_writes": [
+        {
+          "addr": "0x001454F8",
+          "old": "0x00200000",
+          "new": "0x001B0000",
+          "pc": "0x8004EB80",
+          "a1": "0x00050000",
+          "a2": "0x80111450",
+          "s0": "0x801453F0",
+          "s1": "0x80111450",
+          "frame": 8800
+        }
+      ],
+      "p1_equipped_id_after": 12
+    },
+    {
+      "weapon_id": 13,
+      "weapon": "Panzerfaust",
+      "slot": 4,
+      "switches": 2,
+      "control": "native-damage",
+      "fire_frames": 24,
+      "release_frames": 240,
+      "scoped_zoom": false,
+      "approach_frames": 0,
+      "p1_clip_before": 1,
+      "p1_clip_after": 1,
+      "target": "0x801453f0",
+      "target_health_before": 32.0,
+      "target_health_after": 0.0,
+      "damage_writes": [
+        {
+          "addr": "0x001454F8",
+          "old": "0x00200000",
+          "new": "0x001E0000",
+          "pc": "0x8004EB80",
+          "a1": "0x00020000",
+          "a2": "0x80129100",
+          "s0": "0x801453F0",
+          "s1": "0x80129100",
+          "frame": 10059
+        },
+        {
+          "addr": "0x001454F8",
+          "old": "0x001E0000",
+          "new": "0xFFCA9555",
+          "pc": "0x8004EB80",
+          "a1": "0x00536AAB",
+          "a2": "0x80128920",
+          "s0": "0x801453F0",
+          "s1": "0x80128920",
+          "frame": 10060
+        }
+      ],
+      "p1_equipped_id_after": 13
+    }
+  ],
+  "negative_controls": [
+    {
+      "control": "idle-control",
+      "slot": 1,
+      "weapon_id": 0,
+      "target_health_before": 32.0,
+      "target_health_after": 32.0,
+      "native_damage_writes": 0
+    },
+    {
+      "control": "away-control",
+      "slot": 1,
+      "weapon_id": 0,
+      "target_health_before": 32.0,
+      "target_health_after": 32.0,
+      "native_damage_writes": 0
+    }
+  ],
+  "source_saves_unchanged": true,
+  "preferences_unchanged": true,
+  "preference_hashes": {
+    "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\build-release\\settings.toml": "5ba64573bb6ec0f437f64384a79fb1e8f8149ab90c88a4404e81d565227364d4",
+    "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\build-release\\keybinds.ini": "55a6baab11a9a36b64d3f92908b9fc7a6fec657e73b3d287784b1de60715008b",
+    "C:\\Program Files (x86)\\Steam\\config\\steamvr.vrsettings": "bc4b95d242547c552e4e6f672ad3c3284d357cd37249069fd643522473323f10"
+  },
+  "remaining_game_pids": [],
+  "runtime_hooks_added": false,
+  "native_layout": {
+    "p1_root": "0x800A3604",
+    "p2_root": "0x800A3608",
+    "actor_input_offset": "0x39C",
+    "input_weapon_slot_offset": 92,
+    "input_weapon_id_offset": 93,
+    "reserve_offset": "94 + 2 * slot",
+    "clip_offset": "110 + 2 * slot",
+    "health_offset": "0x108",
+    "damage_function": "0x8004EAB4",
+    "damage_function_bytes": 532,
+    "damage_function_sha256": "5ee9683eb0646d46a39e0b552f214fe90be010d2d41cebbe45fadc2db2a1b9e5",
+    "health_subtract_pc": "0x8004EB78",
+    "health_write_pc": "0x8004EB80",
+    "death_clamp_pc": "0x8004EC44",
+    "respawn_pc": "0x80063E8C"
+  },
+  "limits": [
+    "Native flat combat only; no tracked mesh, controller aim or multiplayer stereo acceptance.",
+    "Frame polling windows are not exact deterministic replays or per-bullet damage measurements.",
+    "Petrol-bomb stationary-distance runs had zero target writes; native forward movement control hit both players at closer range.",
+    "Scoped rifle needed the longer zoomed control; grenade/scoped late health returned to 32 after native respawn.",
+    "Native model geometry/node signatures and projectile constructor/motion seams remain unmapped.",
+    "No save creation, migration, ammo replenishment, header edit or identity bypass."
+  ],
+  "direct_guest_ram_writes": false,
+  "production_smoke": {
+    "executable_sha256": "ec7ed6dd4a926bdd5ba2302fbcfd47bdc135f1aa73e3c07582568faa4e45e34b",
+    "debug_tools": false,
+    "build_passed": true,
+    "flat_startup_plugin_inert": true,
+    "source_slot_requested": 4,
+    "auto_load_staged": true,
+    "auto_load_attempt_observed": false,
+    "bounded_autoload_timed_out": true,
+    "invalid_save_reported": false,
+    "source_saves_unchanged": true,
+    "preferences_unchanged": true,
+    "remaining_game_pids": [],
+    "attempts": 2,
+    "cleanup": "Both owned hidden processes terminated after their 30-second startup deadlines."
+  }
+}

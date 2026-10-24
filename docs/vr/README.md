@@ -85,4 +85,6 @@ the verified pair. Normal VR launch now uses 1080p internal rendering, per-eye
 world selection, and a temporary stereo-only suppression of the head-locked
 flat HUD. The operator confirmed the sky fix. Reference movement/button maps
 now run through the offline input source; headset movement, multiplayer
-fixtures, transitions, and the hand/wrist HUD remain active work.
+transitions, and the hand/wrist HUD remain active work. The operator's four
+multiplayer fixtures now have closed native inventory cycles and damage
+receipts for 13 weapons; see [WEAPON_SET_EVIDENCE.md](WEAPON_SET_EVIDENCE.md).

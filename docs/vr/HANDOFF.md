@@ -408,6 +408,31 @@ physical input separation awaits the operator's check.
 
 See [FLAT_LOCAL_INPUT.md](FLAT_LOCAL_INPUT.md) for keys and file locations.
 
+## Multiplayer weapon fixtures and native damage
+
+The operator completed source slots 1–4. All four pass normal PGXP load checks,
+have closed four-entry weapon cycles, and cover 13 distinct weapons. Every
+distinct weapon now has a native P2 damage receipt. The scoped rifle uses a
+longer zoomed control; petrol-bomb damage needs a closer-range native movement
+control and damages both players. Idle and turned-away pistol controls have
+zero damage writes. Save/thumbnail hashes are unchanged; the isolated SP slot 2
+remains separate from source multiplayer slot 2.
+
+Measured MP roots are P1 `800A3604`, P2 `800A3608`; input is at actor+39C,
+equipped slot/ID at input+92/+93, ammo at +94/+110 plus twice slot, and health
+at actor+108. Native damage `8004EAB4` (532 bytes) subtracts/stores health at
+`8004EB78/8004EB80`; death/respawn can restore the final sample to full health.
+No guest hook, direct RAM/ammo write, or production VR behavior was added.
+The copied-save tool follows the reference game's inventory process. Thirteen
+Python tests and all strict C fixtures pass; the same release build is restored
+to debug OFF. Final inventory preserves saves/preferences/SteamVR settings and
+leaves no owned game. See [WEAPON_SET_EVIDENCE.md](WEAPON_SET_EVIDENCE.md) and
+the [compact receipt](../../vr/proof/weapon-set-receipt.json).
+The restored production binary logs inert flat startup, but two hidden flat
+auto-load controls staged slot 4 without attempting it before their deadlines.
+They reported no invalid save and were closed. Diagnostic loads/combat are
+verified; production headless flat auto-load remains unverified.
+
 ## Build and test state
 
 There is one active build directory, matching the reference game repository:
@@ -574,9 +599,9 @@ mohu-vr-diag: single_player_scene=0x800AA174 player=0x800AA17C player_input_offs
 6. Extend the pair-sequence and compositor checks to motion, wall proximity,
    menus, transitions, and additional levels, then extend input and HUD policy.
 7. Operator: verify the reference stick/button mappings in the headset,
-   including pause/resume and release; create multiplayer saves for each weapon
-   set in new slots. Map multiplayer-specific guards from those valid fixtures.
-   Sky-ghost physical-headset acceptance is complete.
+   including pause/resume and release. Multiplayer weapon fixtures and native
+   damage inventory are complete; map their model, projectile and render seams
+   before implementing tracked weapons. Sky-ghost headset acceptance is complete.
 
 Do not treat the frame-driver replay as working stereo. The accepted evidence
 uses the frame-render replay; the driver path still does not own the visible
