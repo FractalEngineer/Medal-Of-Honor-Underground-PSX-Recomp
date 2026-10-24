@@ -4,7 +4,7 @@ param(
     [string]$RuntimeJson = '',
     [string]$BuildDirectory = 'build-release',
     [ValidateRange(-1, 99)]
-    [int]$Slot = 2,
+    [int]$Slot = -1,
     [ValidateRange(40, 80)]
     [double]$IpdMm = 67,
     [ValidateRange(0.05, 20)]

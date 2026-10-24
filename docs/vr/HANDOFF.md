@@ -374,9 +374,10 @@ the reference; both measured post-load/DualShock table layouts are supported.
 The source is inactive during eye replay and in normal flat mode.
 
 Normal VR enables movement. `-NoMovement`, `-MoveDeadzone`, and `-TurnGain` are
-launch controls. `-Slot -1` starts native menus without requiring a gameplay
-pair and clears an inherited auto-load slot. The operator can use desktop F7
-to save new unused slots, keeping slot 2 as the SP regression fixture.
+launch controls. The launchers now default to `-Slot -1`, which starts native
+menus without requiring a gameplay pair and clears an inherited auto-load slot.
+Pass `-Slot N` explicitly to load a state. The operator can use desktop F7 to
+save new unused slots, keeping slot 2 as the SP regression fixture.
 
 Synthetic actions verified movement, strafing, turning, partial/diagonal input,
 button delivery, focus/inactivity release, and raw actor-field changes with

@@ -31,18 +31,20 @@ the native surface/player-pointer routing. Unsupported gameplay code/control
 tables deliver neutral. Multiplayer routing and overlay guards need the new
 fixtures; the SP receipt does not establish full multiplayer stereo support.
 
-Start at boot instead of loading slot 2 with your usual runtime launcher:
+The runtime launchers start at boot and do not load a savestate unless one is
+requested explicitly:
 
 ```powershell
-.\RunVR-VDXR.bat -Slot -1
+.\RunVR-VDXR.bat
 ```
 
-`-Slot -1` clears inherited `PSX_LOAD_SLOT` and accepts native menu presentation
-without waiting for a gameplay stereo pair. Enter multiplayer and select a
-weapon set in the game's menus. Open the desktop savestate panel with **F7**,
-select an unused slot, and save after the level and desired inventory load.
-Repeat for each set; record each slot's map, weapon set, equipped weapon, and
-player count. Preserve slot 2 as the SP regression fixture.
+The default `-Slot -1` clears inherited `PSX_LOAD_SLOT` and accepts native menu
+presentation without waiting for a gameplay stereo pair. Use `-Slot 2` only
+when intentionally loading the isolated SP regression state. To create a new
+fixture, enter multiplayer and select a weapon set in the game's menus. Open
+the desktop savestate panel with **F7**, select an unused slot, and save after
+the level and desired inventory load. Repeat for each set; record each slot's
+map, weapon set, equipped weapon, and player count.
 
 The launcher defaults to the isolated `analysis/vr-baseline/saves/` tree;
 confirm the printed writable-state directory. For fixtures created elsewhere,

@@ -447,6 +447,11 @@
 
 ### Multiplayer-first weapon mapping
 
+- Changed the shared VR launcher default from slot `2` to `-Slot -1`. Normal
+  VR launches now reach the native boot/menu path and clear an inherited
+  `PSX_LOAD_SLOT`; loading a savestate requires an explicit `-Slot N`. Added a
+  focused launcher-default regression test.
+
 - Mapped the multiplayer player update at `0x800892E8` (0xA70, FNV
   `0x39E56A35`) and the single-player update at `0x800892C8` (0xF20, FNV
   `0xF4D6C439`) as separate overlay generations. Every title hook must match the

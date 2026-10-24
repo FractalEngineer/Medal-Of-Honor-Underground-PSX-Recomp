@@ -90,9 +90,9 @@ VR launches:
   the corresponding OpenXR runtime.
 - `RunVR-SteamVR.bat -Headless` uses SteamVR's null HMD for no-headset OpenXR
   acceptance, then restores SteamVR's settings and stops the runtime.
-- VR launchers default to PGXP slot `2`; pass `-Slot -1` for a normal boot or
-  `-Build` to rebuild `build-release` before launch. The default visual-scale
-  profile is `-IPDmm 67 -WorldScale 3`.
+- VR launchers default to a normal boot (`-Slot -1`); pass an explicit
+  `-Slot N` to load a savestate or `-Build` to rebuild `build-release` before
+  launch. The default visual-scale profile is `-IPDmm 67 -WorldScale 3`.
 - Eye replay uses a rollback-protected `y=0` scratch buffer so the game's
   double-buffered display origin cannot produce alternating black frames.
 - Additional PowerShell options such as `-Seconds`, `-GameConfig`, and
