@@ -327,6 +327,47 @@
 - Evidence: [HEAD_TURN_HUD_EVIDENCE.md](HEAD_TURN_HUD_EVIDENCE.md) and
   [head-turn-hud-fix.png](../../vr/proof/head-turn-hud-fix.png).
 
+### Sky-only ghost isolation and correction
+
+- Started only after local HEAD and live `origin/feature/vr-port` both matched
+  `4dbe4cd`. The reference port's explicit scene build/submit sequence omits
+  the native wait/submission/display tail.
+- Added bounded controls under `vr/`: raw eyes plus SteamVR application layer,
+  clear-only black/magenta, native surfaces disabled, HUD/frustum opt-outs,
+  and replay-only/final-clear controls. Uniform clear captures and zero native
+  submission counters excluded retained native surfaces for the reproduced
+  defect; replay-only still drew the flat courtyard.
+- Isolated the native tail at `0x80053CFC`, called inside frame-render replay.
+  Its native OT draw/display selection ran before our final projected submit.
+  Added a full 80-byte guard and skipped it only inside the eye transaction.
+- Corrected `DrawOTag` to the complete `0x80018B48` entry, including its initial
+  library-state loads. A trial main-function hook recorded no callbacks in
+  existing generated code and was rejected; the accepted filter is at the
+  overlay tail. No generated source or game configuration changed.
+- Traced the last gold ammo icon to two alternating 40-byte FT4 packets.
+  The old single-buffer rule missed `0x800F10C4`. Both buffers now require
+  exact captured payloads, covered by a strict C fixture.
+- Same-binary synthetic look-up A/B restores the flat ghost with
+  `MOHU_VR_KEEP_REPLAY_SUBMIT=1`. The fix removes 1,294,352/1,289,357 background
+  pixels with 100% agreement in the measured static foreground in both eyes.
+  Both raw eyes and both application-layer halves were inspected.
+- Rechecked 13 Python tests, strict frustum/ammo C fixtures, diagnostic C,
+  zero-offset hashes, ±90-degree world coverage, and documentation links.
+  The diagnostic XR run reached 180 logged pairs; the capture had 150 rollback
+  checks, zero mismatches/leaks/watchdogs, fresh projection/source `1/1`, and
+  zero empty submissions or XR failures.
+- Rebuilt the same `build-release` with debug tools OFF. The normal null-HMD
+  smoke reached 360 pairs with zero XR failures and frustum fallbacks. The flat
+  launcher remained inert even with inherited VR activation variables.
+- SteamVR settings restored byte-for-byte; no owned game/runtime process was
+  left running. Slot 2 stayed valid; no save-slot migration was attempted or
+  failed. A future invalid slot must result in asking the operator for a fresh
+  PGXP slot, without header or identity changes.
+- Rejected harness attempts and their cleanup are recorded in
+  [SKY_GHOST_EVIDENCE.md](SKY_GHOST_EVIDENCE.md). Retained only a compact receipt
+  and one [proof image](../../vr/proof/sky-ghost-fix.png); bulk captures are ignored.
+- Physical-headset acceptance of this correction remains pending.
+
 ## Next work
 
 1. Repeat the PGXP pose sweep in additional scenes and near-wall positions.

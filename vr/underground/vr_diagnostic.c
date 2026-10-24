@@ -2,6 +2,7 @@
 #include "camera_map.h"
 #include "engine_map.h"
 #include "frustum.h"
+#include "hud_packets.h"
 #include "gpu_gl_renderer.h"
 #include "mod_plugins.h"
 #include "vr_pose_math.h"
@@ -66,8 +67,10 @@
 #define MOHU_VR_HUD_COMPASS_BUFFER_ADDR 0x800BA488u
 #define MOHU_VR_HUD_COMPASS_BLOCK_LO 0x800B8C88u
 #define MOHU_VR_HUD_COMPASS_BLOCK_HI 0x800BA4B0u
-#define MOHU_VR_HUD_BAR_NODE 0x800F109Cu
 #define MOHU_VR_HUD_BUFFER_INDEX_ADDR 0x800A9354u
+#define MOHU_VR_NATIVE_SUBMIT_TAIL_ADDR 0x80053CFCu
+#define MOHU_VR_NATIVE_SUBMIT_TAIL_SIZE 80u
+#define MOHU_VR_NATIVE_SUBMIT_TAIL_FNV 0xA7A38EA0u
 
 typedef struct {
     const char* name;
@@ -134,6 +137,15 @@ static uint32_t g_frame_driver_args[4];
 static bool g_frame_render_args_valid;
 static uint32_t g_frame_render_args[4];
 static bool g_openxr;
+static bool g_clear_only;
+static bool g_skip_final_submit;
+static bool g_clear_before_submit;
+static bool g_replaying_frame;
+static bool g_keep_replay_submit;
+static uint32_t g_replay_submits_skipped[2];
+static bool g_native_tail_mismatch;
+static int32_t g_clear_rgb;
+static bool g_no_native_surface;
 static int g_openxr_native_surface = -1;
 static double g_openxr_units_per_meter = MOHU_VR_DEFAULT_UNITS_PER_METER;
 static double g_openxr_menu_distance = MOHU_VR_DEFAULT_MENU_DISTANCE;
@@ -300,7 +312,7 @@ static void clear_stereo_rect(void) {
          ++i) {
         psx_mod_write_word(0x1F801810u, k_state_packet[i]);
     }
-    psx_mod_write_word(0x1F801810u, 0x02000000u);
+    psx_mod_write_word(0x1F801810u, 0x02000000u | (uint32_t)g_clear_rgb);
     psx_mod_write_word(0x1F801810u,
                        (g_stereo_frame_y << 16) | g_stereo_frame_x);
     psx_mod_write_word(0x1F801810u,
@@ -353,9 +365,7 @@ static void unlink_flat_hud_packets(uint32_t ot_base, uint32_t buffer) {
               node <= MOHU_VR_HUD_COMPASS_BLOCK_HI)) &&
             ((tag >> 24) == 9u || (tag >> 24) == 11u) &&
             ((opcode & 0xFCu) == 0x28u || (opcode & 0xFCu) == 0x2Cu);
-        const int hud_bar =
-            node == MOHU_VR_HUD_BAR_NODE && (tag >> 24) == 9u &&
-            (opcode & 0xFCu) == 0x2Cu;
+        const int hud_bar = mohu_vr_ammo_icon_packet(node, tag, buffer);
         if (health || compass || hud_bar) {
             psx_mod_write_word(
                 previous,
@@ -399,6 +409,19 @@ static void trace_stereo_ot(uint32_t base) {
                     top_left = 1;
                     break;
                 }
+            }
+            const uint32_t xy = psx_mod_read_word(node + 8u);
+            const int16_t x = (int16_t)xy;
+            const int16_t y = (int16_t)(xy >> 16);
+            if (x >= 360 && x <= 480 && y >= 0 && y <= 60 &&
+                (tag >> 24) <= 12u) {
+                fprintf(stdout, "mohu-vr-diag: hud_candidate node=0x%08X tag=0x%08X words=",
+                        node, tag);
+                for (unsigned i = 0; i < (tag >> 24); ++i) {
+                    fprintf(stdout, "%s%08X", i ? "," : "",
+                            psx_mod_read_word(node + 4u + i * 4u));
+                }
+                fprintf(stdout, "\n");
             }
         }
         if (count < 24u || count >= 1500u || top_left ||
@@ -454,6 +477,9 @@ static bool prepare_stereo_draw_env(CPUState* cpu, uint32_t ra) {
 }
 
 static void set_openxr_native_surface(bool enabled) {
+    if (g_no_native_surface) {
+        enabled = false;
+    }
     if (!g_openxr || g_openxr_native_surface == (enabled ? 1 : 0)) {
         return;
     }
@@ -621,6 +647,9 @@ static int vr_stereo_eye_draw(CPUState* cpu, void* user, uint32_t eye) {
         return 0;
     }
     clear_stereo_rect();
+    if (g_clear_only) {
+        return 1;
+    }
 
     uint32_t ot = stereo_ot_base();
     if (ot < 0x80000000u || ot >= 0x80200000u) {
@@ -661,7 +690,15 @@ static int vr_stereo_eye_draw(CPUState* cpu, void* user, uint32_t eye) {
         cpu->gpr[4u + i] = g_frame_render_args[i];
     }
     cpu->gpr[31] = ra;
+    g_replaying_frame = true;
     psx_dispatch_call(cpu, 0x80053BB4u, ra);
+    g_replaying_frame = false;
+    if (g_skip_final_submit) {
+        return 1;
+    }
+    if (g_clear_before_submit) {
+        clear_stereo_rect();
+    }
 
     ot = stereo_ot_base();
     if (ot < 0x80000000u || ot >= 0x80200000u) {
@@ -748,6 +785,7 @@ static void run_stereo_proof(CPUState* cpu) {
     g_stereo_attempts++;
     g_stereo_active = true;
     int rendered = psx_mod_render_stereo(cpu, &frame, vr_stereo_eye_draw, NULL);
+    g_replaying_frame = false;
     g_stereo_active = false;
     if (g_openxr) {
         (void)psx_mod_openxr_end(rendered);
@@ -763,7 +801,7 @@ static void run_stereo_proof(CPUState* cpu) {
                 "guest_submits=%u ot_words=%u openxr=%d "
                 "xr_begin_failures=%u xr_view_failures=%u xr_ends=%u "
                 "frustum=%u/%u fallback=%u/%u hud_skips=%u/%u "
-                "hud_unlinked=%u/%u\n",
+                "hud_unlinked=%u/%u replay_submits_skipped=%u/%u\n",
                 g_stereo_attempts, g_stereo_pairs, rendered,
                 psx_mod_render_stereo_status(), frame.y, g_stereo_eye_offset,
                 g_stereo_level_hits[0], g_stereo_level_hits[1],
@@ -774,7 +812,8 @@ static void run_stereo_proof(CPUState* cpu) {
                 g_head_frustum_collects[1], g_head_frustum_fallbacks[0],
                 g_head_frustum_fallbacks[1], g_flat_hud_skips[0],
                 g_flat_hud_skips[1], g_flat_hud_unlinked[0],
-                g_flat_hud_unlinked[1]);
+                g_flat_hud_unlinked[1], g_replay_submits_skipped[0],
+                g_replay_submits_skipped[1]);
         fflush(stdout);
         if (g_replay_frame_driver) {
             fprintf(stdout, "mohu-vr-diag: stereo waits_skipped=%u\n",
@@ -872,6 +911,30 @@ static int vr_flat_hud_filter(CPUState* cpu, uint32_t address) {
     return 0;
 }
 
+static int vr_native_submit_tail_filter(CPUState* cpu, uint32_t address) {
+    (void)cpu;
+    (void)address;
+    if (!g_active || !g_stereo_active || !g_replaying_frame ||
+        g_keep_replay_submit || g_stereo_current_eye > 1u) {
+        return 0;
+    }
+    if (guest_range_fnv1a(MOHU_VR_NATIVE_SUBMIT_TAIL_ADDR,
+                          MOHU_VR_NATIVE_SUBMIT_TAIL_SIZE) !=
+        MOHU_VR_NATIVE_SUBMIT_TAIL_FNV) {
+        if (!g_native_tail_mismatch) {
+            g_native_tail_mismatch = true;
+            fprintf(stdout, "mohu-vr-diag: native submit tail signature mismatch\n");
+            fflush(stdout);
+        }
+        return 0;
+    }
+    /* The native tail submits before HUD unlink and before our explicit
+     * projective DrawOTag. Its flat raster survives wherever that final draw
+     * has no geometry (the sky). Let only the final cleaned eye OT submit. */
+    g_replay_submits_skipped[g_stereo_current_eye]++;
+    return 1;
+}
+
 static void vr_diagnostic_entry(CPUState* cpu, uint32_t address) {
     if (!g_active) {
         return;
@@ -956,6 +1019,26 @@ static void vr_diagnostic_entry(CPUState* cpu, uint32_t address) {
 
 static void vr_diagnostic_activate(void) {
     g_active = true;
+    const char* clear_only = getenv("MOHU_VR_CLEAR_ONLY");
+    g_clear_only = clear_only && *clear_only && *clear_only != '0';
+    const char* skip_submit = getenv("MOHU_VR_SKIP_FINAL_SUBMIT");
+    g_skip_final_submit = skip_submit && *skip_submit && *skip_submit != '0';
+    const char* clear_before = getenv("MOHU_VR_CLEAR_BEFORE_SUBMIT");
+    g_clear_before_submit = clear_before && *clear_before && *clear_before != '0';
+    const char* keep_submit = getenv("MOHU_VR_KEEP_REPLAY_SUBMIT");
+    g_keep_replay_submit = keep_submit && *keep_submit && *keep_submit != '0';
+    parse_optional_int("MOHU_VR_CLEAR_RGB", 0xFFFFFF, &g_clear_rgb);
+    if (g_clear_rgb < 0) {
+        g_clear_rgb = 0;
+    }
+    const char* no_native = getenv("MOHU_VR_NO_NATIVE_SURFACE");
+    g_no_native_surface = no_native && *no_native && *no_native != '0';
+    fprintf(stdout,
+            "mohu-vr-diag: controls clear_only=%d clear_rgb=0x%06X "
+            "no_native=%d skip_final_submit=%d clear_before_submit=%d "
+            "keep_replay_submit=%d\n",
+            g_clear_only, (unsigned)g_clear_rgb, g_no_native_surface,
+            g_skip_final_submit, g_clear_before_submit, g_keep_replay_submit);
     const char* offset = getenv(MOHU_VR_LEVEL_OFFSET_ENV);
     if (offset && *offset) {
         if (!parse_bounded_int(offset, MOHU_VR_LEVEL_OFFSET_LIMIT,
@@ -1083,7 +1166,7 @@ static void vr_diagnostic_activate(void) {
             "all_spans=%d replay_driver=%d yaw_mdeg=%d pitch_mdeg=%d "
             "head_milli=%d,%d,%d guest_submit=%d head_frustum=%d openxr=%d "
             "flat_hud=%d units_per_meter=%.3f\n",
-            mohu_vr_engine_map_count(), hooks, g_stereo_proof ? 0 : 1,
+            mohu_vr_engine_map_count(), hooks + 1u, g_stereo_proof ? 0 : 1,
             g_level_offset_x, g_stereo_proof ? 1 : 0, g_stereo_eye_offset,
             g_stereo_render_view ? 1 : 0, g_stereo_apply_all_spans ? 1 : 0,
             g_replay_frame_driver ? 1 : 0, g_stereo_yaw_mdeg,
@@ -1117,6 +1200,9 @@ PSX_MOD_CONSTRUCTOR(psx_register_mohu_vr_diagnostic_plugin) {
             }
         }
     }
+    (void)psx_mod_register_function_filter_plugin(
+        MOHU_VR_DIAG_PLUGIN_ID, MOHU_VR_NATIVE_SUBMIT_TAIL_ADDR,
+        vr_native_submit_tail_filter);
     for (size_t i = 0;
          i < sizeof(k_flat_hud_bindings) / sizeof(k_flat_hud_bindings[0]);
          ++i) {

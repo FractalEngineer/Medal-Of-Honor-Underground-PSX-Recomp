@@ -34,7 +34,7 @@ $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path $PSScriptRoot -Parent
 $buildPath = Join-Path $repoRoot $BuildDirectory
 $exePath = Join-Path $buildPath 'Medal_of_Honor_Underground_Recompiled.exe'
-$logPath = Join-Path $repoRoot $LogDirectory
+$logPath = if ([IO.Path]::IsPathRooted($LogDirectory)) { $LogDirectory } else { Join-Path $repoRoot $LogDirectory }
 $stdoutLog = Join-Path $logPath 'vr-launch.stdout.log'
 $stderrLog = Join-Path $logPath 'vr-launch.stderr.log'
 $readyPath = Join-Path ([IO.Path]::GetTempPath()) ('mohu-vr-ready-' + [guid]::NewGuid().ToString('N') + '.json')
@@ -75,14 +75,15 @@ function Get-StereoProof {
 }
 
 function Wait-StereoProof {
-    param([string]$Path, [int]$TimeoutSeconds = 30)
+    param([string]$Path, [int]$TimeoutSeconds = 30, [int]$AfterPairs = 0)
 
     $deadline = [DateTime]::UtcNow.AddSeconds($TimeoutSeconds)
     while ([DateTime]::UtcNow -lt $deadline) {
         $proof = Get-StereoProof -Path $Path
         if ($proof -and $proof.attempt -gt 0 -and $proof.pairs -gt 0 -and
             $proof.rendered -eq 1 -and $proof.pairs -eq $proof.attempt -and
-            $proof.begin_failures -eq 0 -and $proof.view_failures -eq 0) {
+            $proof.begin_failures -eq 0 -and $proof.view_failures -eq 0 -and
+            $proof.pairs -gt $AfterPairs) {
             return $proof
         }
         Start-Sleep -Milliseconds 250
@@ -257,8 +258,8 @@ try {
         $WorldScale,
         $effectiveUnitsPerMeter.ToString([Globalization.CultureInfo]::InvariantCulture),
         $InternalResolution,
-        $environment.PSX_VR_HEAD_FRUSTUM,
-        $environment.PSX_VR_SUPPRESS_FLAT_HUD
+        $(if ($NoHeadFrustumDiagnostic) { '0' } else { '1' }),
+        $(if ($KeepFlatHud) { '0' } else { '1' })
     )
 
     if ($Headless) {
@@ -369,7 +370,7 @@ try {
     Copy-Item -LiteralPath $readyPath -Destination (Join-Path $logPath 'startup.json') -Force
     $proofFirst = Wait-StereoProof -Path $stdoutLog
     Start-Sleep -Seconds 2
-    $proofSecond = Wait-StereoProof -Path $stdoutLog -TimeoutSeconds 5
+    $proofSecond = Wait-StereoProof -Path $stdoutLog -TimeoutSeconds 5 -AfterPairs $proofFirst.pairs
     if ($proofSecond.pairs -le $proofFirst.pairs) {
         throw 'Stereo proof counters did not advance during the smoke interval.'
     }

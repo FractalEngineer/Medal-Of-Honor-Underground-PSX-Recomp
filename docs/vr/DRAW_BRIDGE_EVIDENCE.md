@@ -154,6 +154,12 @@ sha256   = 748ee5eec31244e850fb16fc7e893a00ef7a8213e83af433fc93ad782f8ca12c
 fnv1a    = 0x4DDF2EE0
 ```
 
+Correction in the sky-ghost checkpoint: that historical match starts eight
+bytes inside the function. The complete entry is `0x80018B48`, size 112 bytes,
+FNV-1a `0x8A6D3CE2`. Current code uses the full entry and suppresses the native
+submission/display tail during eye replay. See
+[SKY_GHOST_EVIDENCE.md](SKY_GHOST_EVIDENCE.md) for the complete guard and A/B proof.
+
 Without this call the replay executed about 500k guest cycles per eye but
 submitted zero GPU primitives, so the captured eyes were identical.
 

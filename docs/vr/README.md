@@ -35,6 +35,9 @@ executable and live overlay content.
 13. [HEAD_TURN_HUD_EVIDENCE.md](HEAD_TURN_HUD_EVIDENCE.md) records the 1080p
     default, per-eye level visibility, side-view coverage, and rollback-scoped
     removal of the flat HUD projection.
+14. [SKY_GHOST_EVIDENCE.md](SKY_GHOST_EVIDENCE.md) isolates the extra native
+    OT submission inside eye replay and records the same-binary correction,
+    both HUD packet buffers, and submitted application-layer proof.
 
 The latest machine-ranked function candidates are in
 [ENGINE_EQUIVALENCE_REPORT.md](ENGINE_EQUIVALENCE_REPORT.md). They are

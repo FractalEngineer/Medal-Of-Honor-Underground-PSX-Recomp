@@ -287,9 +287,9 @@ static const MohuVrEngineBinding k_bindings[MOHU_VR_ROLE_COUNT] = {
         .container_kind = MOHU_VR_CONTAINER_MAIN_EXE,
         .name = "DrawOTag",
         .reference_address = 0x800172D8u,
-        .target_address = 0x80018B50u,
+        .target_address = 0x80018B48u,
         .target_load_base = 0x80010000u,
-        .function_size = 104u,
+        .function_size = 112u,
         .gte_rtps_count = 0u,
         .reference_container_sha256 =
             "19215344b0031358a6f628cbee0bd124f23275d4621aa16ada8f959cfa0792e3",
@@ -297,8 +297,8 @@ static const MohuVrEngineBinding k_bindings[MOHU_VR_ROLE_COUNT] = {
             "5c4566b7264a29554abb9d868f23cc40e99ebf3b58b9776dfe2f4ae465bbd641",
         .reference_function_sha256 = "",
         .target_function_sha256 =
-            "748ee5eec31244e850fb16fc7e893a00ef7a8213e83af433fc93ad782f8ca12c",
-        .target_function_fnv1a = 0x4DDF2EE0u,
+            "172bd5d3777d5854d2095f7c35beb84a8d5b36de7cd06663ac79effad359678a",
+        .target_function_fnv1a = 0x8A6D3CE2u,
         .observed_executing = true,
         .status = MOHU_VR_STATUS_LIVE_CONFIRMED,
         .confidence = MOHU_VR_CONFIDENCE_HIGH,

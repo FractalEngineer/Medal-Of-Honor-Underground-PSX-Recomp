@@ -10,7 +10,7 @@ it before ending every implementation session.
 | Item | Value |
 | --- | --- |
 | Target branch | `feature/vr-port` |
-| Last game-tree checkpoint | `ab8ce00` |
+| Starting game-tree checkpoint for sky-ghost correction | `4dbe4cd` (local and live remote matched) |
 | Current framework implementation | `d9b0f382` |
 | Target base | `7fcb0ca35af683ac38c4c501347d59916a924aa4` |
 | Reference branch | `master` |
@@ -75,7 +75,7 @@ with function SHA-256 and FNV-1a guards:
 | Actor update dispatcher | undiscovered | `0x80078E08` | object vtable dispatch; live execution |
 | Frame render | undiscovered | `0x80053BB4` | 240 bytes; live execution |
 | Frame driver | undiscovered | `0x8006D65C` | 1,512 bytes; natural entry and replay execution |
-| DrawOTag | `0x800172D8` | `0x80018B50` | 26 instructions; live submission |
+| DrawOTag | `0x800172D8` | `0x80018B48` | Complete 112-byte function, including two-instruction prefix |
 | PutDrawEnv | `0x80017348` | `0x80018BB8` | 48 instructions; 0.981 structural match |
 | Post-render update | undiscovered | `0x8004356C` | 1,588 bytes; live execution |
 
@@ -92,7 +92,8 @@ The opt-in diagnostic plugin is:
   environment-gated replay experiments. Canonical execution is unchanged unless
   `MOHU_VR_STEREO_PROOF=1`.
 
-The diagnostic target reports seventeen active bindings and thirteen overlay hooks.
+The diagnostic target reports seventeen active bindings and fourteen overlay hooks,
+including the independently guarded native submission tail at `0x80053CFC`.
 The isolated slot-0 scene verifies the render chain through the frame driver.
 The true natural frame entry is `0x8006D65C`: it loads the frame context and
 status words, then falls into the previously recorded prologue at `0x8006D66C`.
@@ -318,19 +319,35 @@ zero-offset eye images were byte-identical
 See [HEAD_TURN_HUD_EVIDENCE.md](HEAD_TURN_HUD_EVIDENCE.md) and
 [head-turn-hud-fix.png](../../vr/proof/head-turn-hud-fix.png).
 
-### Latest operator observation
+### Operator observation and isolated cause
 
 After the final headset test, the operator reported that the dominant flat HUD
 ghost was gone, but a smaller residual ghost remains and is visible only in the
 sky. They described it as a headset-indexed flat render of the whole scene. The
 world appears to occlude it, leaving it visible only where the sky is clear.
 
-This is an observation, not a confirmed cause. The next checkpoint must
-separate a stale OpenXR/native quad, a flat background/background packet, a
-stale eye texture used by clear/present, and compositor reprojection before
-changing any hook or layer policy. The suggested first controls are a
-clear-only capture, a distinctive clear colour, app-layer versus eye-texture
-comparison, and `openxr_stats` layer/source/freshness sampling.
+That observation was initially a hypothesis. The completed headless controls
+now isolate an extra native OT submission/display tail inside eye replay.
+Clear-only eyes/application layers are uniform black or magenta; disabling
+native OpenXR surfaces does not remove the scene. Omitting the final eye submit
+still produces the flat courtyard, proving that frame replay itself draws it.
+
+The corrected path skips the full 80-byte-guarded tail at `0x80053CFC` only
+during frame-render eye replay, then submits the cleaned projected OT once.
+It also uses the complete `DrawOTag` entry at `0x80018B48`. The ammo artwork's
+second 40-byte buffer is now removed with a full-payload guard, correcting the
+previous single-buffer "bar" rule. All guest changes remain rollback-scoped.
+
+The same executable restores the ghost when `MOHU_VR_KEEP_REPLAY_SUBMIT=1`.
+The fix removes it from both raw eyes and the submitted application layer,
+with 100% identical measured static foreground pixels. The default debug-off
+build is restored after diagnostic capture. Physical-headset confirmation is
+the next operator gate; do not claim additional-level or transition coverage.
+
+Full controls, rejected attempts, commands and limitations:
+[SKY_GHOST_EVIDENCE.md](SKY_GHOST_EVIDENCE.md),
+[proof](../../vr/proof/sky-ghost-fix.png), and
+[receipt](../../vr/proof/sky-ghost-receipt.json).
 
 ## Build and test state
 
@@ -371,6 +388,27 @@ Current `build-release/` state:
   place.
 
 Last checks:
+
+- Sky-ghost checkpoint: thirteen Python tests, strict frustum and ammo-packet C
+  fixtures, strict diagnostic C compilation, and documentation links pass.
+- The final diagnostic XR run reached 180 logged pairs, zero XR failures,
+  `frustum=720/720 fallback=0/0`, and 180 suppressed native tails per eye.
+  At capture, 150 rollback checks had zero mismatches/leaks/watchdogs/repairs.
+- Both 90-degree views remain populated; both zero-offset captured pairs have
+  identical left/right hashes. Pair 10 SHA-256 is
+  `49c4cf094ca0fc587d10091be29219742e9036d9f99e91a16803858b02117c7e`.
+- Raw eyes and the submitted application layer have clear sky and no residual
+  head-locked HUD in both captured buffer phases. Same-binary A/B reproduces
+  the old full-scene ghost only when the native tail is re-enabled.
+- Every completed null-HMD capture restored SteamVR settings byte-for-byte and
+  left no owned game process. Slot 2 remained valid; no save migration occurred.
+- The final normal `build-release` was rebuilt with debug tools OFF. Its null-HMD
+  smoke reached 360 logged pairs, zero XR begin/view failures,
+  `frustum=1440/1440 fallback=0/0`, and 360 native tails skipped per eye.
+  A flat-launcher smoke with inherited VR activation variables still reported
+  `read_only=1 stereo_proof=0 openxr=0`, native resolution, and normal boot.
+
+Earlier checkpoint checks (historical image hashes/counters):
 
 - Thirteen Python tests pass.
 - Both GTE transfer/contract tests pass, including render-NCLIP counter
@@ -476,9 +514,10 @@ mohu-vr-diag: single_player_scene=0x800AA174 player=0x800AA17C player_input_offs
 5. Complete interactive flat boot/menu/gameplay validation.
 6. Extend the pair-sequence and compositor checks to motion, wall proximity,
    menus, transitions, and additional levels, then add input and HUD policy.
-7. Investigate the operator-reported sky-only full-scene ghost. First identify
-   whether it exists in the eye texture or only in the compositor/app layer;
-   then distinguish a stale flat background from retained native/XRR content.
+7. Confirm the headlessly isolated sky-ghost correction in the physical headset:
+   look up and turn both ways; verify no flat courtyard, ammo icon, or compass
+   remains in the sky. The instrumented source fix and A/B proof are complete;
+   physical-headset acceptance remains pending.
 
 Do not treat the frame-driver replay as working stereo. The accepted evidence
 uses the frame-render replay; the driver path still does not own the visible
