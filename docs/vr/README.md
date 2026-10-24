@@ -38,6 +38,8 @@ executable and live overlay content.
 14. [SKY_GHOST_EVIDENCE.md](SKY_GHOST_EVIDENCE.md) isolates the extra native
     OT submission inside eye replay and records the same-binary correction,
     both HUD packet buffers, and submitted application-layer proof.
+15. [MOVEMENT_EVIDENCE.md](MOVEMENT_EVIDENCE.md) records the reference control
+    mappings, Underground calibration, input checks, and operator save workflow.
 
 The latest machine-ranked function candidates are in
 [ENGINE_EQUIVALENCE_REPORT.md](ENGINE_EQUIVALENCE_REPORT.md). They are
@@ -78,5 +80,6 @@ The OT-only and frame-driver paths remain controls, not stereo evidence. The
 diagnostic plugin can now opt into OpenXR, obtain headset eye views, and submit
 the verified pair. Normal VR launch now uses 1080p internal rendering, per-eye
 world selection, and a temporary stereo-only suppression of the head-locked
-flat HUD. Headset acceptance, production input, and the hand/wrist HUD remain
-active work.
+flat HUD. The operator confirmed the sky fix. Reference movement/button maps
+now run through the offline input source; headset movement, multiplayer
+fixtures, transitions, and the hand/wrist HUD remain active work.

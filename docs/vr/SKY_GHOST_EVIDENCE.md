@@ -6,8 +6,8 @@ The operator's description is reproduced headlessly: a flat courtyard remains
 behind the rotated world and shows through its open sky. The source is the
 native submission/display tail inside frame-render replay. It is present in
 the raw eye textures, before OpenXR. The corrected captures remove it from both
-eyes and the submitted SteamVR application layer. Physical-headset confirmation
-of this checkpoint remains pending.
+eyes and the submitted SteamVR application layer. The operator confirmed the
+sky ghost fixed in the physical headset on 2026-10-24.
 
 Retained proof: [before/after image](../../vr/proof/sky-ghost-fix.png) and
 [machine receipt](../../vr/proof/sky-ghost-receipt.json). Bulk captures stay in
@@ -147,3 +147,6 @@ matching eye-state snapshot. Settings and owned-process cleanup succeeded in
 these attempts. There were **no failed save-slot migrations** in this session;
 slot 2 remained valid throughout. On any future failure: ask the operator for a
 fresh PGXP slot; never alter save headers or execution identity.
+
+Operator acceptance: sky confirmed fixed. Subsequent movement work rechecked
+raw eyes and the application layer; see [MOVEMENT_EVIDENCE.md](MOVEMENT_EVIDENCE.md).

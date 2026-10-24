@@ -140,3 +140,7 @@ buffer, 40 bytes after the first, was missing from the old rule. Both captured
 payloads are now guarded and removed. This follow-up has zero-offset identity,
 populated ±90-degree views, rollback checks, and null-HMD application-layer
 evidence. Physical-headset confirmation of the follow-up remains pending.
+
+The operator confirmed the sky ghost fixed on 2026-10-24. The subsequent
+reference-control movement port preserves the zero/side/raw/app-layer checks;
+see [MOVEMENT_EVIDENCE.md](MOVEMENT_EVIDENCE.md).

@@ -27,6 +27,11 @@ param(
     [switch]$Headless,
     [switch]$NoHeadFrustumDiagnostic,
     [switch]$KeepFlatHud,
+    [switch]$NoMovement,
+    [ValidateRange(0, 0.9)]
+    [double]$MoveDeadzone = 0.2,
+    [ValidateRange(0, 2)]
+    [double]$TurnGain = 0.65,
     [switch]$Build
 )
 
@@ -306,6 +311,7 @@ try {
     }
 
     $environment = @{
+        PSX_LOAD_SLOT = $(if ($Slot -ge 0) { [string]$Slot } else { $null })
         PSX_OPENXR = $null
         PSX_OPENXR_ENABLE = '1'
         MOHU_VR_OPENXR = '1'
@@ -319,13 +325,13 @@ try {
         PSX_INTERNAL_RESOLUTION = $InternalResolution
         PSX_VR_HEAD_FRUSTUM = $(if ($NoHeadFrustumDiagnostic) { '0' } else { '1' })
         PSX_VR_SUPPRESS_FLAT_HUD = $(if ($KeepFlatHud) { '0' } else { '1' })
+        PSX_VR_MOVEMENT = $(if ($NoMovement) { '0' } else { '1' })
+        PSX_VR_MOVE_DEADZONE = $MoveDeadzone.ToString([Globalization.CultureInfo]::InvariantCulture)
+        PSX_VR_TURN_GAIN = $TurnGain.ToString([Globalization.CultureInfo]::InvariantCulture)
         PSX_OPENXR_READY_FILE = $readyPath
     }
     if ($null -ne $runtimeManifest) {
         $environment.XR_RUNTIME_JSON = $runtimeManifest
-    }
-    if ($Slot -ge 0) {
-        $environment.PSX_LOAD_SLOT = [string]$Slot
     }
     foreach ($key in $environment.Keys) {
         $savedEnvironment[$key] = [Environment]::GetEnvironmentVariable($key, 'Process')
@@ -368,26 +374,30 @@ try {
         throw 'VR startup did not submit a headset frame. Start the selected OpenXR runtime first.'
     }
     Copy-Item -LiteralPath $readyPath -Destination (Join-Path $logPath 'startup.json') -Force
-    $proofFirst = Wait-StereoProof -Path $stdoutLog
-    Start-Sleep -Seconds 2
-    $proofSecond = Wait-StereoProof -Path $stdoutLog -TimeoutSeconds 5 -AfterPairs $proofFirst.pairs
-    if ($proofSecond.pairs -le $proofFirst.pairs) {
-        throw 'Stereo proof counters did not advance during the smoke interval.'
+    if ($Slot -ge 0) {
+        $proofFirst = Wait-StereoProof -Path $stdoutLog
+        Start-Sleep -Seconds 2
+        $proofSecond = Wait-StereoProof -Path $stdoutLog -TimeoutSeconds 5 -AfterPairs $proofFirst.pairs
+        if ($proofSecond.pairs -le $proofFirst.pairs) {
+            throw 'Stereo proof counters did not advance during the smoke interval.'
+        }
+        [pscustomobject]@{
+            receipt = $receipt
+            first = $proofFirst
+            second = $proofSecond
+            new_pairs = $proofSecond.pairs - $proofFirst.pairs
+        } | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (
+            Join-Path $logPath 'openxr-smoke.json'
+        ) -Encoding utf8
+        Write-Host (
+            'VR active. Runtime: {0}; complete pairs in 2s: {1}; xr failures: {2}' -f
+            $Runtime,
+            ($proofSecond.pairs - $proofFirst.pairs),
+            ($proofSecond.begin_failures + $proofSecond.view_failures)
+        )
+    } else {
+        Write-Host 'VR native menu active. No save slot loaded; stereo starts on a supported gameplay frame.'
     }
-    [pscustomobject]@{
-        receipt = $receipt
-        first = $proofFirst
-        second = $proofSecond
-        new_pairs = $proofSecond.pairs - $proofFirst.pairs
-    } | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (
-        Join-Path $logPath 'openxr-smoke.json'
-    ) -Encoding utf8
-    Write-Host (
-        'VR active. Runtime: {0}; complete pairs in 2s: {1}; xr failures: {2}' -f
-        $Runtime,
-        ($proofSecond.pairs - $proofFirst.pairs),
-        ($proofSecond.begin_failures + $proofSecond.view_failures)
-    )
 
     if ($Seconds -gt 0) {
         $null = $process.WaitForExit($Seconds * 1000)
