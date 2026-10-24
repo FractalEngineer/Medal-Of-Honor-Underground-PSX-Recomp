@@ -125,3 +125,18 @@ a native-layer defect or a game-packet defect until one control separates them.
   positions still need the same coverage.
 - The flat HUD packet addresses are generation-specific and fail closed when
   their guarded function bytes do not match.
+
+## Follow-up: residual sky ghost isolated
+
+The follow-up [SKY_GHOST_EVIDENCE.md](SKY_GHOST_EVIDENCE.md) reproduces the
+operator observation in raw eyes and the submitted application layer. A native
+OT submission/display tail was still running inside frame replay before the
+cleaned per-eye OT was submitted. Skipping that fully guarded tail removes the
+flat courtyard behind the rotating world. Re-enabling it in the same executable
+restores the defect, with the measured foreground pixels unchanged.
+
+The small gold packet previously called a "bar" is the ammo artwork. Its second
+buffer, 40 bytes after the first, was missing from the old rule. Both captured
+payloads are now guarded and removed. This follow-up has zero-offset identity,
+populated ±90-degree views, rollback checks, and null-HMD application-layer
+evidence. Physical-headset confirmation of the follow-up remains pending.
