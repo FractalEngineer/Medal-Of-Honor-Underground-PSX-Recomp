@@ -8,17 +8,23 @@ executable and live overlay content.
 ## Start here
 
 1. [HANDOFF.md](HANDOFF.md) is the current execution contract: exact next task
-   W2.3, fixtures, seams, commands, acceptance and stop/recovery rules.
+   C1 consistency pass, then W2.3; fixtures, commands and stop/recovery rules.
 2. [VR_PLAN.md](VR_PLAN.md) is the checkbox/status list and dependency order.
    Do not restart checked foundation/renderer work without a demonstrated regression.
+   [REFERENCE_REUSE_AUDIT.md](REFERENCE_REUSE_AUDIT.md) maps every workstream
+   to reusable first-game code and local counterparts; consult it before adding
+   a new implementation. Hardware acceptance does not block isolated desktop work.
+   [CONSISTENCY_HANDOFF.md](CONSISTENCY_HANDOFF.md) specifies the requested
+   three-operation shared-math pass and both-game parity/regression gates.
 3. [BASELINE.md](BASELINE.md) records the historical 2026-10-23 starting tree.
    Its old framework pin and no-VR state do not override the current handoff.
 4. [ENGINE_EQUIVALENCE.md](ENGINE_EQUIVALENCE.md) tracks candidate function
    mappings and the evidence required before a hook can be registered.
 5. [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md) records completed work and
    reproducible checks.
-6. [CAMERA_EVIDENCE.md](CAMERA_EVIDENCE.md) records the current camera-motion
-   probe and its unresolved mapping work.
+6. [CAMERA_EVIDENCE.md](CAMERA_EVIDENCE.md) records the historical camera-motion
+   probe. Use the current handoff/calibration documents for completed mappings;
+   its earlier unresolved notes do not reopen those tasks.
 7. [DRAW_BRIDGE_EVIDENCE.md](DRAW_BRIDGE_EVIDENCE.md) records the guarded
    overlay draw bridge and the boundary between renderer output and camera
    ownership.
@@ -103,8 +109,9 @@ The real first-person seam and P1-only MP desktop eye renderer are verified for
 all 13 measured IDs. W1 is complete for the P38 absolute synthetic head/hand
 coordinate contract and is not a mesh-hook search. W2.1 measured the native MP
 flat scene-list selector. W2.2 added its measured, separately guarded
-eye-frustum override and passed a zero-angle both-eye control; the next task is
-W2.3 head-turn and near-wall validation. Physical calibration, broader MP
+eye-frustum override and passed a zero-angle both-eye control; the next feature is
+W2.3 head-turn and near-wall validation after the bounded C1-C4 consistency pass.
+Physical calibration, broader MP
 visibility and controls, tracked shot alignment, exact barrel laser and wrist
 HUD remain open under the ordered plan. See
 [WEAPON_CALIBRATION.md](WEAPON_CALIBRATION.md),

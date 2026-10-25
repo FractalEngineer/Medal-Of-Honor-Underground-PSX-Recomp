@@ -3,8 +3,9 @@
 Last updated: 2026-10-26
 
 Execution order and stop/recovery rules are in [HANDOFF.md](HANDOFF.md).
-Checkbox status is in [VR_PLAN.md](VR_PLAN.md). **The next task is W2.3:
-validate MP zero, +/-90-degree and near-wall visibility.** This file records
+Checkbox status is in [VR_PLAN.md](VR_PLAN.md). **The next task is C1:
+cross-game parity fixtures under [CONSISTENCY_HANDOFF.md](CONSISTENCY_HANDOFF.md).**
+W2.3 MP zero/side/near-wall visibility is the next feature after C1-C4. This file records
 measurements; it does not reopen completed renderer/mesh discovery or override
 the ordered plan.
 
@@ -204,7 +205,9 @@ eyes matched at SHA-256
 `de83c69d0a08f5933805c07dc86ac27f2310df3ef8eb1e920b12d0608d9b3c9e`;
 the retained both-eye image is
 [weapon-mp-frustum-controls.png](../../vr/proof/weapon-mp-frustum-controls.png).
-Head turns, near walls and native/override selector equality remain W2.3.
+Head turns, near walls and native/override selector comparison remain W2.3.
+Turned eye views may correctly select a different set from the native body view;
+equality at every pose is not the acceptance criterion.
 
 Evidence:
 [MP_EYE_FRUSTUM_EVIDENCE.md](MP_EYE_FRUSTUM_EVIDENCE.md),
@@ -338,11 +341,13 @@ The same diagnostic binary's SP zero-eye control has 18 complete pairs, equal
 eye state/cycles and 37 rollback checks with zero mismatches, leaks, watchdogs
 or repairs. This validates the existing SP path, not MP weapon stereo.
 
-Remaining work is ordered by IDs in [VR_PLAN.md](VR_PLAN.md): W2.3-W2.5 MP
-visibility/input; W3 per-weapon physical calibration; W4 read-only MP shot
-mapping; W5 tracked native aim; W6 rendered-mesh/exact-triangle laser. Use the
-dependency/exit gates in [HANDOFF.md](HANDOFF.md), not a new parallel discovery
-effort.
+After C1-C4, the next feature remains W2.3 in [VR_PLAN.md](VR_PLAN.md). Follow its corrected
+dependencies: W3 desktop profile preparation and W4 native MP shot binding can
+progress without physical acceptance; W5/W6 diagnostic candidates follow their
+measured contracts. Normal default enablement and physical accuracy claims
+remain gated by hardware acceptance. Use [HANDOFF.md](HANDOFF.md) and the
+[reference reuse audit](REFERENCE_REUSE_AUDIT.md) for exact code/tool entry points;
+do not create another discovery effort or reimplement the reference algorithms.
 
 The earlier `actor+0x4AC` affine and `0x80088C08` experiments moved the wrong
 split-panel rendering and are superseded. Their dead runtime hooks/address
@@ -391,17 +396,14 @@ interactive gameplay or new OpenXR acceptance.
 ## Resume prompt
 
 ```text
-Read docs/vr/HANDOFF.md sections 1-5 and docs/vr/VR_PLAN.md. Continue at W2.3:
-validate the guarded MP eye-frustum override at zero, +/-90 degrees and near
-walls, comparing native and overridden selector output with populated geometry
-and zero rollback errors. Use copied root MP slot 1 and preserve the W2.1/W2.2
-selector contract.
+Read docs/vr/CONSISTENCY_HANDOFF.md, REFERENCE_REUSE_AUDIT.md, HANDOFF.md and
+VR_PLAN.md. Execute C1-C4 in order: characterize both games, share the three
+specified pure operations through the framework with title adapters, and
+verify both consumers. Preserve current W1/W2.1/W2.2 results and native policy
+differences. Do not rewrite renderers, hooks, input mapping or calibration.
 
-Do not rediscover actor/input/viewmodel, P1 eye replay, the completed W1 P38
-contract, the W2.1 scene-list path or the W2.2 guarded frustum override. Do not transplant the SP PVS
-selector or queue. Do not use actor+4AC, 80088C08, a new SP target, old
-reference addresses/calibration, new build folders, or patched saves. Follow
-the handoff's exact dependency, acceptance, recovery, regression and
-session-close rules. Update the next task ID and retain evidence; leave
-physical and tracked-shot gates unchecked until actually validated.
+Keep source saves and historical receipts unchanged. Retain new parity and
+affected-runtime evidence for both games. Mark only proven C items complete,
+then set NEXT=W2.3 and stop before implementing that feature. If blocked, record
+the exact case, missing fact and one next action; never repeat unchanged failures.
 ```

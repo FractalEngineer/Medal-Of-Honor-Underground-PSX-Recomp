@@ -8,9 +8,18 @@ scope has evidence; it never implies broader headset or gameplay acceptance.
 Historical design and prior attempts belong in
 [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md) and the evidence documents.
 
-**NEXT IMPLEMENTATION TASK: W2.3 - validate MP head-turn and near-wall visibility.**
+**NEXT IMPLEMENTATION TASK: C1 - characterize cross-game helper parity.**
+The requested bounded C1-C4 consistency pass precedes W2.3, which remains the
+next feature task. See [CONSISTENCY_HANDOFF.md](CONSISTENCY_HANDOFF.md).
 Do not restart engine, mesh, pose-space or eye-renderer discovery. Advance by
 task ID only when its exit gate passes.
+
+The [reference reuse audit](REFERENCE_REUSE_AUDIT.md) names existing first-game
+code and local equivalents for every workstream. Port/adapt those implementations;
+measure only the target-specific bindings and data. Desktop diagnostic candidates
+do not require physical acceptance first. Hardware acceptance gates physical
+claims and normal default enablement. The dependencies below override the earlier
+strict W1->W6/hardware-first sequence.
 
 ## Rules for using these checkboxes
 
@@ -21,9 +30,28 @@ task ID only when its exit gate passes.
 - Reopen a checked item only for a reproducible regression, changed guarded
   function/asset, or changed code on that item's execution path. Record why.
 - Rerun the affected checks once after a meaningful change. Do not rerun all
-  completed work repeatedly while leaving W1 unchanged.
+  completed work repeatedly while leaving the current task unchanged.
 - Update the handoff's next task ID, last result and next experiment at session
   end. An incomplete task needs a precise continuation, not "continue mapping".
+
+## C - cross-game consistency pass (NEXT; no feature rediscovery)
+
+- [ ] C1. Add host-only cross-game parity fixtures and a behavior/policy difference
+  table for the helpers named in CONSISTENCY_HANDOFF. Preserve current outputs
+  and capture intentional differences before extraction.
+- [ ] C2. Consolidate exactly the 3x3 inverse, conservative box visibility and
+  slab ray/box math in a shared framework implementation consumed by both games.
+  Retain title-specific wrappers, limits, native readers, hooks and calibration.
+- [ ] C3. Build both consumers and pass focused fixtures plus the affected
+  pre/post runtime controls. New receipts identify both games and the shared
+  core revision. One game's passing result does not close this gate.
+- [ ] C4. Document common ownership, retained differences and a repeatable parity
+  check in both projects; update provenance and resume NEXT=W2.3.
+
+Exit gate: shared calculation for these three operations, explicit game adapters,
+both consumers validated, no behavioral/default change concealed as cleanup.
+Input response rules, GTE weapon hook/storage and MP selectors are valid title
+differences. Projection/HUD/aim/triangle features stay outside this first batch.
 
 ## Established foundation - preserve, do not rediscover
 
@@ -76,7 +104,7 @@ Evidence: [HANDOFF.md](HANDOFF.md), [MOVEMENT_EVIDENCE.md](MOVEMENT_EVIDENCE.md)
 - [x] M11. Existing flat-pose and SP stereo regressions pass after MP work;
   debug-off build restored and inherited-flag flat startup is inert.
 - [ ] M12. Physical hand attachment, head/hand independence and barrel/shot
-  alignment. The present neutral-relative visual delta does not prove these.
+  alignment. W1 now proves synthetic independence, not physical acceptance.
 
 Evidence: [WEAPON_MAPPING.md](WEAPON_MAPPING.md),
 [flat receipt](../../vr/proof/weapon-viewmodel-receipt.json),
@@ -124,9 +152,11 @@ Dependency: W1. Do not apply SP addresses to the MP overlay.
 - [x] W2.2. Add a separately guarded MP eye-frustum override only after measuring
   its actual layout; preserve native fallback on malformed/overflow input.
 - [ ] W2.3. Pass zero, +/-90-degree head turns and near-wall controls with populated
-  geometry, native selector comparison and zero rollback errors.
+  geometry, native selector comparison and zero rollback errors. Extend the
+  existing MP/head-pose/eye-capture helpers; do not build another selector.
 - [ ] W2.4. Verify MP controller converter/dispatcher and native action tables;
-  reuse the existing input mapper only where its MP guards/contracts match.
+  add a measured MP binding to the existing controller source and pure mapper.
+  Reuse the reference mode-adapter pattern, not its addresses/threshold math.
 - [ ] W2.5. Verify native movement/buttons, no render-time input sampling,
   focus release, pause/resume, and SP/flat fallback. Record remaining hardware gates.
 
@@ -157,17 +187,22 @@ physical test. SP visibility and SP movement receipts do not close this gate.
 
 ## W3 - Per-weapon calibration and physical acceptance
 
-Dependencies: W1 and W2. Start with P38; expand only after its desktop controls.
+Desktop profile/calibration preparation needs W1 and a usable copied fixture;
+movement-enabled hardware testing also needs W2. Start with P38; expand after
+its desktop controls. W3.1/W3.2/W3.4 are preparation; W3.3/W3.5 are hardware
+gates. Do not wait for W3.3 before preparing the remaining desktop profiles.
 
 - [ ] W3.1. Measure model-local grip pivot, axes, scale and muzzle/forward markers
-  for P38. Save native asset identity and explicit units with the profile.
+  for P38. Save native asset identity and explicit units with the profile. Reuse
+  reference calibration/profile tooling; label initial physical values provisional.
 - [ ] W3.2. Prepare a movement-enabled bounded headset comparison with fresh copied
   slot 1; keep source saves/settings untouched. Do not invent a new user save.
 - [ ] W3.3. Operator accepts P38 size/attachment, head/hand independence, recoil,
   reload/switch, wall proximity, recenter, focus/loss recovery and both eyes.
 - [ ] W3.4. Expand captured profiles and desktop controls to all 13 IDs, including
-  native gun subparts and special animations. Arms filtering is a separate
-  asset decision, not a prerequisite for the existing full-model path.
+  native gun subparts and special animations, using the existing inventory and
+  reference profile/batch validators. Do not rediscover the measured meshes.
+  Arms filtering is a separate asset decision, not a full-model prerequisite.
 - [ ] W3.5. Operator accepts each designated weapon; retain a per-ID result table.
 
 Exit gate: per-weapon physical observations, not copied reference numbers or a
@@ -176,26 +211,35 @@ preparation, leave physical boxes open, and report exactly what is needed.
 
 ## W4 - Native MP shot mapping, read-only before any override
 
-Dependencies: W1-W2; read-only mapping may proceed while W3 awaits hardware.
-No tracked-shot writes may be enabled until the visual calibration gate passes.
+Dependencies: existing native MP fixture/damage evidence and W1. Read-only
+mapping does not require W2 input/visibility completion or a headset. If W2 is
+blocked, record its exact continuation before using this independent workstream.
 
 - [ ] W4.1. From fresh copied slot 1, trace native P38 idle/fire/turned-away cases.
-  Identify projectile/hitscan constructor, P1 ownership, origin/direction fields,
+  Match the reference MP constructor-to-basis call-chain pattern first, then
+  verify Underground's constructor type, P1 ownership, origin/direction fields,
   basis/history initialization, first motion/collision and native damage writer.
 - [ ] W4.2. Record complete Underground MP function bytes, caller words, live
   arguments and field units in a new native-shot contract. Mark unknowns unknown.
 - [ ] W4.3. Verify P2/NPC shots and render replay cannot enter a P1 shot override;
-  validate current native camera producer and freshness separately from eye views.
+  adapt the reference ownership/freshness checks and streaming trace controls.
+  Validate the canonical native camera separately from eye/render-only caches.
 
 Exit gate: a complete native construction-to-motion-to-hit chain for one P38
 shot, including negative controls. Old SP scripts/first-game shot IDs are leads.
 
 ## W5 - Tracked native aim and all-weapon combat
 
-Dependencies: W3 physical calibration and W4 measured shot contract.
+Desktop dependencies: W4 measured shot contract and W3.1's declared mesh/muzzle
+contract, which may still be physically provisional. Reuse reference aim math,
+basis-hook guards and trace checks. Candidate writes require a separate opt-in
+diagnostic flag and stay off in normal launches. Physical calibration/impact
+acceptance is required for physical claims and normal default promotion.
 
 - [ ] W5.1. Transform the same calibrated rendered weapon origin/forward axis to
-  native world shot pose at the verified seam, outside eye replay only.
+  native world shot pose at the verified seam, outside eye replay only. Adapt
+  reference inverse/angle conversion; do not substitute aim-space origin for
+  the declared rendered-muzzle contract.
 - [ ] W5.2. Pass P38 near/far, translated/rotated hand, head/body independence,
   loss/stale/unfocused/unknown-ID, P2/NPC isolation and real impact controls.
 - [ ] W5.3. Expand measured constructor families to all 13 IDs; preserve shotgun
@@ -208,10 +252,15 @@ barrel within a stated tested tolerance. Native hits alone are insufficient.
 
 ## W6 - Mesh-derived exact-triangle laser
 
-Dependencies: W3 calibration; shared aim contract with W5 must agree.
+Desktop dependencies: declared W3.1 rendered-muzzle contract and verified target
+geometry layout. Reuse reference ray/triangle math, bounded traversal, beam/dot
+projection and tests; port target data readers. Hardware acceptance is W6.4.
+The shared aim contract with W5 must agree; physical testing need not block code.
 
 - [ ] W6.1. Capture the actual rendered weapon affine plus calibrated muzzle/axis.
-- [ ] W6.2. Independently map Underground level triangle tables and bounded traversal.
+- [ ] W6.2. Locate and verify Underground triangle/vertex table bindings, comparing
+  the reference drawer/record pattern first. Adapt its existing triangle raycast
+  and fixtures; local MP scene bounds are not proof of SP triangle layout.
 - [ ] W6.3. Beam origin/direction agrees with the rendered mesh; first triangle hit
   gets the dot; native misses/range limit, weapon eligibility and rollback pass.
 - [ ] W6.4. Operator accepts alignment in both eyes. Clearly distinguish this from
@@ -220,12 +269,15 @@ Dependencies: W3 calibration; shared aim contract with W5 must agree.
 ## Remaining port gates - after the weapon sequence, not alternate rabbit holes
 
 - [ ] H1. Capture native HUD producers for wrist/hand surfaces; current suppression
-  and native menu surface are not a completed wrist HUD.
+  and native menu surface are not a completed wrist HUD. Adapt reference native
+  dual-matte capture, per-hand fallback and FACE_HEAD surface code through the
+  already available framework APIs; measure target ownership/ROIs/mode support.
 - [ ] H2. Native HUD values/artwork/fallback and menu/briefing/movie transitions pass.
 - [ ] Q1. Multiple scenes, near walls, streaming areas, death/load, runtime recenter,
   headset disconnect/focus, dynamic effects and long-session gameplay pass.
 - [ ] Q2. Profile unique guest/world-pair cadence separately from XR refresh;
-  record bottlenecks without sacrificing PGXP, rollback or image correctness.
+  adapt reference trace/hitch-report tools and record target bottlenecks without
+  sacrificing PGXP, rollback or image correctness. No new scheduler by default.
 - [ ] Q3. Debug-off reproducible package, supported-runtime matrix, release
   provenance and regression receipts; no copyrighted disc/BIOS/save artifacts.
 - [ ] Q4. Promote experimental defaults only after relevant physical and combat

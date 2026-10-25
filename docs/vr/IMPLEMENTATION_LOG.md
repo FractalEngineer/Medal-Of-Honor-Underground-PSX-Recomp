@@ -782,12 +782,57 @@
   [build receipt](../../vr/proof/weapon-mp-frustum-build-receipt.json). W2.3
   zero/side/near-wall visibility and native/override equality remain open.
 
+### Reference-game reuse audit (2026-10-26)
+
+- Compared the current plan and feature documentation with the adjacent first
+  game's documentation and implementation. The full findings and source/tool
+  entry points are in [REFERENCE_REUSE_AUDIT.md](REFERENCE_REUSE_AUDIT.md).
+- Confirmed framework pose math and the mod API header are byte-identical;
+  input mapping, frustum math, headless ownership and copied-fixture controls
+  are already partly ported. Identified reusable native-shot guards/trace
+  analysis, triangle raycast, profile/batch checks and native dual-matte HUD
+  extraction/surface submission. Target code/asset/layout validation remains.
+- Removed the unnecessary physical-acceptance prerequisite for opt-in desktop
+  tracked-aim/laser candidates and the XR-input prerequisite for read-only
+  native-shot mapping. Physical accuracy and normal enablement remain gated.
+- Kept all acceptance states and NEXT=W2.3. Corrected stale W1 API/preflight
+  guidance and early equivalence-table status, and clarified that frustum
+  plane crossing and turned native/override sets are not equality failures.
+  This supersedes earlier prospective hardware-first dependency wording.
+- Documentation-only review: no runtime source, framework pins, binaries,
+  original saves, settings or historical receipts changed; no game/build ran.
+- Validation: local and cross-repository links resolve; all 54 task IDs and
+  acceptance states are unchanged; six PowerShell blocks parse without being
+  executed. Latest receipt source hashes and release binary still match,
+  debug tools remain OFF, and whitespace checks pass with CRLF recognized.
+
+### Cross-game consistency handover (2026-10-26)
+
+- Follow-up source comparison identified duplicate inverse/frustum/slab and
+  laser projection/clipping calculations, with meaningful validation-policy
+  differences. Input is an intentional reference port with native converter
+  differences; the tested GTE weapon adapter must not be replaced just to
+  match the reference's vertex-hook implementation.
+- Added [CONSISTENCY_HANDOFF.md](CONSISTENCY_HANDOFF.md): C1 characterization,
+  C2 extraction of exactly three pure operations, C3 both-consumer regression
+  gates and C4 ownership/parity documentation. Projection/input/tooling remain
+  characterized or deferred, not a mandate for a broad rewrite.
+- NEXT becomes C1 for this requested pass; W2.3 stays the next feature after
+  C4. Added four unchecked C items without changing any existing feature
+  acceptance. No refactor, runtime test, source/build/save/settings change or
+  edit to the first-game checkout was performed by this documentation turn.
+- Handover checks passed: nine documentation files' links resolve, original
+  54 task states are preserved, four C items are unchecked, current pointers
+  agree on C1, and the six PowerShell blocks parse without execution. Latest
+  runtime source and release-executable hashes still match the retained receipt.
+
 ## Next work
 
-**W2.3: validate zero, +/-90-degree and near-wall MP visibility.** Compare the
-guarded eye-frustum result with native selector output and require populated
-both-eye geometry plus clean rollback. Do not transplant the SP PVS selector or
-queue. Use
+**C1: characterize cross-game helper parity.** Execute the bounded C1-C4 pass
+in [CONSISTENCY_HANDOFF.md](CONSISTENCY_HANDOFF.md), then resume W2.3 visibility
+validation without reopening completed engine/mesh/pose work. Use
 [HANDOFF.md](HANDOFF.md) as the execution contract and
 [VR_PLAN.md](VR_PLAN.md) as the only checkbox/status list. Prior log entries are
 historical results and rejected attempts, not instructions to repeat them.
+Consult the reuse audit before adding code; extend existing helpers and follow
+the corrected desktop/hardware dependencies instead of rediscovering systems.

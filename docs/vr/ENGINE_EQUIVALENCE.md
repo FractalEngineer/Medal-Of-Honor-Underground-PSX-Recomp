@@ -4,6 +4,15 @@ This file is the human-reviewed hook map. A candidate is not a confirmed target
 address, and no candidate may be registered until its signature, calling
 contract, overlay identity, and live invocation have been checked.
 
+The initial discovery tables below retain historical candidates. They are not
+the current work queue: SP replay/visibility, first-person meshes, P1 MP eye
+replay and W1/W2.1/W2.2 are implemented. Use [HANDOFF.md](HANDOFF.md),
+[WEAPON_MAPPING.md](WEAPON_MAPPING.md), the MP selector/frustum evidence and
+current guarded source for those contracts. Do not restart a completed mapping
+because an early table still says Unknown or read-only. For reusable code and
+the remaining target-specific bindings, see
+[REFERENCE_REUSE_AUDIT.md](REFERENCE_REUSE_AUDIT.md).
+
 ## Required evidence
 
 | Evidence | Purpose |
@@ -113,7 +122,7 @@ against the specific capture generation that will run in Underground.
 | Gameplay render wait | `0x8009D828` | Overlay @ `0x80097000` | 110 instructions, 10 calls | Replay seam still being decoded | Capture execution | High | Read-only diagnostic hook |
 | Camera source | GTE RT at level transform | GTE RT at `0x80099960` | 12-RTPS camera-relative projector | Read per draw; TR remains zero | Live turn trace | High | Read-only |
 | Player/scene roots | `0x8009D64C` / `0x8009D654` | `0x800AA174` / `0x800AA17C` | Pointer globals | Read pointer, then actor fields | Live root/input trace | High | Read-only |
-| Weapon geometry | TBD | TBD | TBD | TBD | TBD | None | Disabled |
+| MP first-person geometry | `0x800892E8` | MP caller RA `0x8008A544` | Complete function/producer guards in `weapon.h` | `[actor+0x114] == input+0x9F0`; animated producer `0x8008DB98` | 13-ID flat and both-eye controls; WEAPON_MAPPING | High | Guarded opt-in implementation; not an open hook search |
 | Shot basis | TBD | TBD | TBD | TBD | TBD | None | Disabled |
 | Native HUD producers | TBD | TBD | TBD | TBD | TBD | None | Disabled |
 | PsyQ `VSync` wrapper | `0x800186A8` | Main EXE, `main-6ea5e7d0c719` | 26 instructions; `VSync` mode gate and BIOS vector calls | Static disassembly matches; broad call sites | No gameplay use | High | Static only |

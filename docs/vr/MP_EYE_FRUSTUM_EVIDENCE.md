@@ -59,7 +59,7 @@ an existing P1 eye replay is active. It uses:
 ```text
 world_point = native_tr + native_rt_q12 * animated_or_world_point
 eye_point   = eye_view.translation + eye_view.rotation * world_point
-visible     = all eight cube corners pass the eye near and screen planes
+visible     = no eye near/screen plane has all eight cube corners outside it
 ```
 
 RT coefficients are Q12; TR is integer camera units. The eye view is the
