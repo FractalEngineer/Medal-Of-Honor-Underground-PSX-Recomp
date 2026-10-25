@@ -3,8 +3,8 @@
 Last updated: 2026-10-25
 
 Execution order and stop/recovery rules are in [HANDOFF.md](HANDOFF.md).
-Checkbox status is in [VR_PLAN.md](VR_PLAN.md). **The next task is W1.1: P38
-coordinate-space capture.** This file records measurements; it does not reopen
+Checkbox status is in [VR_PLAN.md](VR_PLAN.md). **The next task is W2.2: measure
+the MP eye-frustum layout.** This file records measurements; it does not reopen
 completed renderer/mesh discovery or override the ordered plan.
 
 ## Current result
@@ -15,6 +15,16 @@ vertices with a temporary GTE rotation/translation, then restores all eight
 RT/TR words before returning. It does not change native shots or the world view.
 The production launcher still leaves `PSX_VR_WEAPON_POSE` and the separate
 `MOHU_VR_MP_CONTROL` bench off.
+
+W1 is also complete for the P38 synthetic spatial contract. The real right-hand
+path now supplies absolute placement for ID 0 only; the first-accepted neutral
+pose and direct x/yaw controls are not used as acceptance. Independent head and
+hand cases pass numerically and visibly in both eyes. This remains a desktop
+coordinate test, not W3 physical grip or size calibration.
+
+W2.1 is complete for the native MP selector trace. It is a flat scene-list and
+per-object visibility path, not the SP `80099960` PVS queue. No MP frustum
+override has been implemented yet.
 
 Use the four copied multiplayer saves and stationary P2 target for this work.
 Do not create, migrate, patch, or overwrite the operator's saves. Reload a copied
@@ -127,6 +137,85 @@ this fixture; physical headset tracking, independent head/hand calibration,
 head-turn visibility and broad MP gameplay are still open. The native MP level
 selector remains in use; the SP head-frustum hook is not an MP visibility fix.
 
+## MP native level selection
+
+The W2.1 capture used copied root MP slot 1, P38, zero switches, stationary P2
+and no firing. Both natural scene callers executed: `80054CD4` and `80054D54`
+call `8006E9D8(context,list)` with return addresses `80054CDC`/`80054D5C`.
+The final frame had 592 scene calls across 296 frame-function samples.
+
+Complete live function guards were captured for:
+
+| Contract | Address | Bytes | FNV32 |
+| --- | --- | ---: | --- |
+| Native frame | `80054BC4` | `0x200` | `6CDFBB75` |
+| Scene dispatch | `8006E9D8` | `0x180` | `04C21F46` |
+| Level-node callback | `8006C61C` | `0x290` | `A2AAC71B` |
+| Visibility selector | `80096EF4` | `0x90` | `273C8059` |
+| Visibility helper | `80096AC8` | `0x428` | `77C2060F` |
+
+`8006E9D8` walks the list at `[800A35CC]`. The fixture had 26 nodes: two
+headers, 21 level nodes with callback `8006C61C`, one special node and two
+player nodes. The 21 level nodes are the flat queue in traversal order. Every
+level node had visibility mask `0x07020200` at `+0x0C`, render flags
+`0x00400211` at `+0x10` and auxiliary flags `0x08000001` at `+0x14`.
+
+The complete callback reads the `+0x0C` mask and invokes `80096EF4` from
+`8006C664`/`8006C688`. The selector constructs the object AABB and calls
+`80096AC8` from `80096F70` for the camera-space visibility result. There is no
+separate PVS leaf queue write in the complete MP callback. The earlier SP
+selector `80099960` and its `800B74B8` queue are not resident or executed in
+this MP fixture and must not be transplanted.
+
+The detailed contract is
+[MP_LEVEL_SELECTOR_EVIDENCE.md](MP_LEVEL_SELECTOR_EVIDENCE.md); the compact
+receipt is
+[weapon-mp-level-selector-receipt.json](../../vr/proof/weapon-mp-level-selector-receipt.json).
+The ignored raw receipt retains complete disassembly, both player snapshots,
+source references and cleanup evidence.
+
+## W1 P38 absolute synthetic pose contract
+
+The measured coordinate contract is
+[WEAPON_CALIBRATION.md](WEAPON_CALIBRATION.md). The capture used the existing
+guarded seam, not a mesh scan: copied root MP slot 1, P38 ID 0, zero switches,
+stationary P2 and no firing. It records source and native animated vertices,
+the 8-word GTE RT/TR, the P1 eye view, axes, handedness, authored placement and
+every unit boundary.
+
+The native model-to-camera affine is deliberately scaled and sheared: at the
+capture its column scales were approximately `6.002`, `3.753` and `2.006`, and
+its full 3x3 inverse exists. Code preserves the whole affine as
+`hand_from_model`; it does not transpose it or treat it as orthonormal. The W1
+synthetic hand transform uses the right grip and aim pose in tracking-origin
+space, `48 / 0.067 = 716.4179104477612` game units/metre, and the provisional
+native-camera marker `(98, 296, 193)`. The marker is a spatial-control pivot,
+not a P38 grip or muzzle measurement. The desktop head path uses 1000
+diagnostic units/metre, and the existing eye view is applied once after the
+guest affine.
+
+The runtime path is P38-only. Other real-hand weapon IDs stay native until the
+per-ID calibration gates; direct `mohu.vr.weapon.pose x=/yaw=` controls remain
+separate and are not evidence for the hand path. Native animation, recoil,
+arms and mesh identity remain inputs, and invalid focus/activity/validity/age/
+quaternion samples fall back without retaining a neutral anchor.
+
+The independent harness ran 29 cases: both-eye controls, two fresh-load
+absolute starts, hand-only translation and rotation, 10 head-only cases, a
+combined pose, origin change, and five invalid controls followed by a fresh
+valid recovery. Expected and observed GTE controls differed by zero RT/TR
+steps. Recovered-hand maxima were `6.185436e-05` rotation and `0.492537`
+translation unit; origin-anchor and translation limits were one integer GTE
+unit. Both eye meshes were populated, zero-IPD eyes matched, and the sampled
+world ROI stayed unchanged for hand-only motion. No shot was fired.
+
+Evidence: [pose-space receipt](../../vr/proof/weapon-pose-space-receipt.json),
+[both-eye proof](../../vr/proof/weapon-pose-space-controls.png) and
+[build receipt](../../vr/proof/weapon-pose-build-receipt.json). The build
+receipt also records the affected MP/flat/SP regressions, source hashes,
+unchanged saves/preferences and the final debug-OFF release hash. Physical
+recenter, MP visibility, grip/scale and tracked aim remain open.
+
 ## Captured first-person profiles
 
 | ID | Weapon | Nodes | Native faces | Geometry FNV32 |
@@ -212,11 +301,11 @@ The same diagnostic binary's SP zero-eye control has 18 complete pairs, equal
 eye state/cycles and 37 rollback checks with zero mismatches, leaks, watchdogs
 or repairs. This validates the existing SP path, not MP weapon stereo.
 
-Remaining work is ordered by IDs in [VR_PLAN.md](VR_PLAN.md):
-W1 absolute pose/head-hand contract; W2 MP visibility/input; W3 per-weapon
-physical calibration; W4 read-only MP shot mapping; W5 tracked native aim;
-W6 rendered-mesh/exact-triangle laser. Use the dependency/exit gates in
-[HANDOFF.md](HANDOFF.md), not a new parallel discovery effort.
+Remaining work is ordered by IDs in [VR_PLAN.md](VR_PLAN.md): W2.2-W2.5 MP
+visibility/input; W3 per-weapon physical calibration; W4 read-only MP shot
+mapping; W5 tracked native aim; W6 rendered-mesh/exact-triangle laser. Use the
+dependency/exit gates in [HANDOFF.md](HANDOFF.md), not a new parallel discovery
+effort.
 
 The earlier `actor+0x4AC` affine and `0x80088C08` experiments moved the wrong
 split-panel rendering and are superseded. Their dead runtime hooks/address
@@ -239,6 +328,13 @@ interactive gameplay or new OpenXR acceptance. Changes remain uncommitted.
 - [P1-only MP eye receipt](../../vr/proof/weapon-mp-eye-receipt.json)
 - [MP build and regressions](../../vr/proof/weapon-mp-build-receipt.json)
 - [MP native / translation / yaw eyes](../../vr/proof/weapon-mp-eyes.png)
+- [P38 coordinate contract](WEAPON_CALIBRATION.md)
+- [P38 absolute spatial controls](../../vr/proof/weapon-pose-space-receipt.json)
+- [P38 both-eye control sheet](../../vr/proof/weapon-pose-space-controls.png)
+- [W1 build and regressions](../../vr/proof/weapon-pose-build-receipt.json)
+- [MP selector receipt](../../vr/proof/weapon-mp-level-selector-receipt.json)
+- [MP selector build receipt](../../vr/proof/weapon-mp-level-selector-build-receipt.json)
+- [MP selector evidence](MP_LEVEL_SELECTOR_EVIDENCE.md)
 - [First-person flat control receipt](../../vr/proof/weapon-viewmodel-receipt.json)
 - [Final build and flat isolation](../../vr/proof/weapon-viewmodel-build-receipt.json)
 - [Native / translation / yaw proof](../../vr/proof/weapon-viewmodel-controls.png)
@@ -253,16 +349,16 @@ interactive gameplay or new OpenXR acceptance. Changes remain uncommitted.
 ## Resume prompt
 
 ```text
-Read docs/vr/HANDOFF.md sections 1-5 and docs/vr/VR_PLAN.md. Continue at W1.1:
-P38 (ID 0), copied root MP slot 1, zero switches, stationary P2, no firing.
-Capture the named coordinate-space/units/native-animation contract at the
-already verified first-person seam, then implement the planned independent
-head/hand pose harness. Both are new work; current direct-delta controls are
-not absolute physical tracking acceptance.
+Read docs/vr/HANDOFF.md sections 1-5 and docs/vr/VR_PLAN.md. Continue at W2.2:
+measure the flat MP scene-list visibility layout and implement a separately
+guarded eye-frustum override only after verifying its actual fields and native
+fallback. Use copied root MP slot 1 and preserve the W2.1 selector contract.
 
-Do not rediscover actor/input/viewmodel or P1 eye replay. Do not use actor+4AC,
-80088C08, a new SP target, old reference addresses/calibration, new build folders,
-or patched saves. Follow the handoff's exact dependency, acceptance, recovery,
-regression and session-close rules. Update the next task ID and retain evidence;
-leave physical and tracked-shot gates unchecked until actually validated.
+Do not rediscover actor/input/viewmodel, P1 eye replay, the completed W1 P38
+contract or the W2.1 scene-list/selector path. Do not transplant the SP PVS
+selector or queue. Do not use actor+4AC, 80088C08, a new SP target, old
+reference addresses/calibration, new build folders, or patched saves. Follow
+the handoff's exact dependency, acceptance, recovery, regression and
+session-close rules. Update the next task ID and retain evidence; leave
+physical and tracked-shot gates unchecked until actually validated.
 ```

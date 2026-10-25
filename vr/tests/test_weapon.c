@@ -159,6 +159,63 @@ int main(void) {
     CHECK(fabs(fabs((double)node_quaternion[1]) - 2896.0) < 2.0);
     CHECK(fabs(fabs((double)node_quaternion[3]) - 2896.0) < 2.0);
 
+    uint32_t absolute_control[8] = {
+        0xFFAE600Au, 0xFFF8F847u, 0xFD323C0Du, 0x017D0294u,
+        0x00001FE8u, 0u, 0u, 0u,
+    };
+    uint32_t absolute_original[8];
+    memcpy(absolute_original, absolute_control, sizeof absolute_control);
+    const double absolute_pivot[3] = {98.0, 296.0, 193.0};
+    const double absolute_zero[3] = {0.0, 0.0, 0.0};
+    identity_matrix(current_rotation);
+    CHECK(mohu_vr_weapon_compose_absolute_gte_control(
+        absolute_control, current_rotation, absolute_zero, absolute_pivot));
+    CHECK(memcmp(absolute_control, absolute_original,
+                 sizeof absolute_control) == 0);
+
+    const double absolute_translation[3] = {12.0, -34.0, 56.0};
+    CHECK(mohu_vr_weapon_compose_absolute_gte_control(
+        absolute_control, quarter_y, absolute_translation, absolute_pivot));
+    int16_t absolute_rt[9];
+    int32_t absolute_tr[3];
+    for (unsigned i = 0; i < 9u; ++i) {
+        absolute_rt[i] =
+            (int16_t)(absolute_control[i / 2u] >> ((i & 1u) * 16u));
+    }
+    for (unsigned i = 0; i < 3u; ++i) {
+        absolute_tr[i] = (int32_t)absolute_control[5u + i];
+    }
+    const double inverse_native[9] = {
+        1.655236093e-01, -1.097802097e-04, 4.005403446e-02,
+        -5.373667671e-04, 2.658623159e-01, 2.324029979e-02,
+        -1.334976070e-02, -1.239239562e-02, 4.971486022e-01,
+    };
+    double model_pivot[3];
+    for (unsigned row = 0; row < 3u; ++row) {
+        model_pivot[row] = 0.0;
+        for (unsigned col = 0; col < 3u; ++col) {
+            model_pivot[row] +=
+                inverse_native[row * 3u + col] * absolute_pivot[col];
+        }
+    }
+    double pivot_camera[3];
+    for (unsigned row = 0; row < 3u; ++row) {
+        pivot_camera[row] = (double)absolute_tr[row];
+        for (unsigned col = 0; col < 3u; ++col) {
+            pivot_camera[row] +=
+                absolute_rt[row * 3u + col] / 4096.0 * model_pivot[col];
+        }
+        CHECK(fabs(pivot_camera[row] -
+                   (absolute_pivot[row] + absolute_translation[row])) < 0.5);
+    }
+    memcpy(absolute_original, absolute_control, sizeof absolute_control);
+    current_rotation[0] = NAN;
+    CHECK(!mohu_vr_weapon_compose_absolute_gte_control(
+        absolute_control, current_rotation, absolute_translation,
+        absolute_pivot));
+    CHECK(memcmp(absolute_control, absolute_original,
+                 sizeof absolute_control) == 0);
+
     hands.age_ms = 151u;
     CHECK(!mohu_vr_weapon_track_delta(
         &hands, 1000.0, current_rotation, current_translation));

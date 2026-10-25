@@ -344,3 +344,71 @@ int mohu_vr_weapon_compose_gte_control(uint32_t control[8],
     }
     return 1;
 }
+
+int mohu_vr_weapon_compose_absolute_gte_control(
+    uint32_t control[8], const double hand_rotation[9],
+    const double hand_translation[3], const double pivot[3]) {
+    if (!control || !hand_rotation || !hand_translation || !pivot) {
+        return 0;
+    }
+    for (unsigned i = 0; i < 9u; ++i) {
+        if (!isfinite(hand_rotation[i])) {
+            return 0;
+        }
+    }
+    for (unsigned i = 0; i < 3u; ++i) {
+        if (!isfinite(hand_translation[i]) || !isfinite(pivot[i])) {
+            return 0;
+        }
+    }
+
+    int16_t native_rotation[9];
+    int32_t native_translation[3];
+    for (unsigned i = 0; i < 9u; ++i) {
+        native_rotation[i] =
+            (int16_t)(control[i / 2u] >> ((i & 1u) * 16u));
+    }
+    for (unsigned i = 0; i < 3u; ++i) {
+        native_translation[i] = (int32_t)control[5u + i];
+    }
+
+    int16_t result_rotation[9];
+    int32_t result_translation[3];
+    for (unsigned row = 0; row < 3u; ++row) {
+        for (unsigned col = 0; col < 3u; ++col) {
+            double value = 0.0;
+            for (unsigned k = 0; k < 3u; ++k) {
+                value += hand_rotation[row * 3u + k] *
+                         (double)native_rotation[k * 3u + col];
+            }
+            const long rounded = lround(value);
+            if (!isfinite(value) || rounded < INT16_MIN ||
+                rounded > INT16_MAX) {
+                return 0;
+            }
+            result_rotation[row * 3u + col] = (int16_t)rounded;
+        }
+
+        double value = pivot[row] + hand_translation[row];
+        for (unsigned k = 0; k < 3u; ++k) {
+            value += hand_rotation[row * 3u + k] *
+                     ((double)native_translation[k] - pivot[k]);
+        }
+        if (!isfinite(value) || value < INT32_MIN || value > INT32_MAX) {
+            return 0;
+        }
+        result_translation[row] = (int32_t)llround(value);
+    }
+
+    for (unsigned i = 0; i < 4u; ++i) {
+        control[i] =
+            (uint32_t)(uint16_t)result_rotation[i * 2u] |
+            ((uint32_t)(uint16_t)result_rotation[i * 2u + 1u] << 16u);
+    }
+    control[4] = (control[4] & 0xFFFF0000u) |
+                 (uint32_t)(uint16_t)result_rotation[8];
+    for (unsigned i = 0; i < 3u; ++i) {
+        control[5u + i] = (uint32_t)result_translation[i];
+    }
+    return 1;
+}

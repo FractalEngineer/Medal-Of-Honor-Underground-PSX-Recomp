@@ -1,0 +1,836 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "fixture": "copied root MP slot 1, P38 ID 0, zero switches, no fire",
+  "executable_sha256": "aa885d40ba8bf4e2ddec5139f0449727e137cb92b9f5d0f516b27900b75cae88",
+  "source_hashes": {
+    "vr/underground/vr_diagnostic.c": "b5c37347d12b1eb9e6b475c2c96913f9b52896c87551c4d08a27815e23d3305b",
+    "vr/underground/weapon.c": "e6fbfc37ba89c79e649c79a3998d35094932974c0f3d4086700a7144f27a0bb9",
+    "vr/underground/weapon.h": "5646faf5819505485ee8f6ef3683a3c625f98edf1cc5771f49a5a8c344ec537a",
+    "vr/tools/check_weapon_pose_spaces.py": "f6d0da60224ee1eabb642f0e13941eac7f202456c32133af8139045a358c960f",
+    "vr/tools/weapon_pose_head_worker.py": "fef1bbd7d4d2445c2261708e23c7535065b7d926f83bf3a6f022e40ad8b4aa49",
+    "psxrecomp/runtime/src/debug_server.c": "0aec20a104c9a5cea132dfb63387ecf92415a0ae00fbadad23b2676d3c6892e1",
+    "psxrecomp/runtime/src/psx_openxr.c": "958d8b5a2f9686c1620928f0ec7da998c5db8a50eee76c4de96c0ecccde73c14"
+  },
+  "input_contract": {
+    "hand_units_per_metre": 716.4179104477612,
+    "head_diagnostic_units_per_metre": 1000.0,
+    "pivot_native_camera": [
+      98.0,
+      296.0,
+      193.0
+    ],
+    "direct_weapon_x_or_yaw": false,
+    "stereo_eye_offset": 0,
+    "rt_tolerance": 1,
+    "tr_tolerance": 1,
+    "visible_pixels_minimum": 64,
+    "visible_colors_minimum": 20
+  },
+  "source_saves": {
+    "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\saves\\openbios\\state_8001F844_slot01.pst": "b248dfa247b45a41906beea3aa829cff79b39d863e425211e5c0651e853a7f5d",
+    "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\saves\\openbios\\state_8001F844_slot01.thumb": "008eb36b216f802cc54b8911eed2201b28b5167830ac4cfeaf4bfff5aab3543c"
+  },
+  "preferences": {
+    "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\build-release\\settings.toml": "5ba64573bb6ec0f437f64384a79fb1e8f8149ab90c88a4404e81d565227364d4",
+    "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\build-release\\keybinds.ini": "55a6baab11a9a36b64d3f92908b9fc7a6fec657e73b3d287784b1de60715008b",
+    "C:\\Program Files (x86)\\Steam\\config\\steamvr.vrsettings": "bc4b95d242547c552e4e6f672ad3c3284d357cd37249069fd643522473323f10"
+  },
+  "complete": true,
+  "source_saves_unchanged": true,
+  "preferences_unchanged": true,
+  "remaining_game_pids": [],
+  "case_summary": [
+    {
+      "case": "head-x--100mm",
+      "rt_max_abs_error": 0,
+      "tr_max_abs_error": 0,
+      "view_rotation_error": 0.0,
+      "view_translation_error": 0.0,
+      "hand_rotation_error": 0.0,
+      "hand_translation_error": 0.0,
+      "weapon_pixels": null,
+      "world_pixels": null,
+      "full_pixels": null,
+      "images": {
+        "p000032_left.png": "c01fce8b36015abf2966b2ddbccd83ed38332043b7dd675023d40d3b92b568d2",
+        "p000032_right.png": "c01fce8b36015abf2966b2ddbccd83ed38332043b7dd675023d40d3b92b568d2"
+      },
+      "eye_hashes": [
+        "37f220eb8bc332f1",
+        "37f220eb8bc332f1"
+      ],
+      "verify_checks": 66,
+      "image_directory": "head-phase/pair-head-x--100mm"
+    },
+    {
+      "case": "head-x-+100mm",
+      "rt_max_abs_error": 0,
+      "tr_max_abs_error": 0,
+      "view_rotation_error": 0.0,
+      "view_translation_error": 0.0,
+      "hand_rotation_error": 0.0,
+      "hand_translation_error": 0.0,
+      "weapon_pixels": null,
+      "world_pixels": null,
+      "full_pixels": null,
+      "images": {
+        "p000038_left.png": "f54be803cd3f35b6d1770682582316af6c240bde56e69c65385a39674bd17c5d",
+        "p000038_right.png": "f54be803cd3f35b6d1770682582316af6c240bde56e69c65385a39674bd17c5d"
+      },
+      "eye_hashes": [
+        "53dcf000191e20fd",
+        "53dcf000191e20fd"
+      ],
+      "verify_checks": 79,
+      "image_directory": "head-phase/pair-head-x-+100mm"
+    },
+    {
+      "case": "head-y--100mm",
+      "rt_max_abs_error": 0,
+      "tr_max_abs_error": 0,
+      "view_rotation_error": 0.0,
+      "view_translation_error": 0.0,
+      "hand_rotation_error": 1.1102230246251565e-16,
+      "hand_translation_error": 0.0,
+      "weapon_pixels": null,
+      "world_pixels": null,
+      "full_pixels": null,
+      "images": {
+        "p000045_left.png": "244b7a3e6df2e2a7cf412694598c84c2dce53e43dbce22fb6af7707c2aad1fd3",
+        "p000045_right.png": "244b7a3e6df2e2a7cf412694598c84c2dce53e43dbce22fb6af7707c2aad1fd3"
+      },
+      "eye_hashes": [
+        "4b0acb8ce3718128",
+        "4b0acb8ce3718128"
+      ],
+      "verify_checks": 93,
+      "image_directory": "head-phase/pair-head-y--100mm"
+    },
+    {
+      "case": "head-y-+100mm",
+      "rt_max_abs_error": 0,
+      "tr_max_abs_error": 0,
+      "view_rotation_error": 0.0,
+      "view_translation_error": 0.0,
+      "hand_rotation_error": 1.3877787807814457e-17,
+      "hand_translation_error": 0.0,
+      "weapon_pixels": null,
+      "world_pixels": null,
+      "full_pixels": null,
+      "images": {
+        "p000052_left.png": "b26219db1dd5440801724ff00b43f524373ba8ee42803d08d8fdd3744010252d",
+        "p000052_right.png": "b26219db1dd5440801724ff00b43f524373ba8ee42803d08d8fdd3744010252d"
+      },
+      "eye_hashes": [
+        "12d610d9ad90e005",
+        "12d610d9ad90e005"
+      ],
+      "verify_checks": 106,
+      "image_directory": "head-phase/pair-head-y-+100mm"
+    },
+    {
+      "case": "head-z--100mm",
+      "rt_max_abs_error": 0,
+      "tr_max_abs_error": 0,
+      "view_rotation_error": 0.0,
+      "view_translation_error": 0.0,
+      "hand_rotation_error": 1.1102230246251565e-16,
+      "hand_translation_error": 0.0,
+      "weapon_pixels": null,
+      "world_pixels": null,
+      "full_pixels": null,
+      "images": {
+        "p000060_left.png": "b651f44a7af2747d1eabdd8539613cd4435ecdc56676685c642adf870fbe7cb7",
+        "p000060_right.png": "b651f44a7af2747d1eabdd8539613cd4435ecdc56676685c642adf870fbe7cb7"
+      },
+      "eye_hashes": [
+        "46537f8397435e5d",
+        "46537f8397435e5d"
+      ],
+      "verify_checks": 120,
+      "image_directory": "head-phase/pair-head-z--100mm"
+    },
+    {
+      "case": "head-z-+100mm",
+      "rt_max_abs_error": 0,
+      "tr_max_abs_error": 0,
+      "view_rotation_error": 0.0,
+      "view_translation_error": 0.0,
+      "hand_rotation_error": 5.551115123125783e-17,
+      "hand_translation_error": 0.0,
+      "weapon_pixels": null,
+      "world_pixels": null,
+      "full_pixels": null,
+      "images": {
+        "p000066_left.png": "c820b4a83195881bb7ed31925c50b7debf8cd5b23e7ff26edc487386521ea58e",
+        "p000066_right.png": "c820b4a83195881bb7ed31925c50b7debf8cd5b23e7ff26edc487386521ea58e"
+      },
+      "eye_hashes": [
+        "939034fbd62b09f4",
+        "939034fbd62b09f4"
+      ],
+      "verify_checks": 134,
+      "image_directory": "head-phase/pair-head-z-+100mm"
+    },
+    {
+      "case": "head-yaw--15deg",
+      "rt_max_abs_error": 0,
+      "tr_max_abs_error": 0,
+      "view_rotation_error": 0.00010551378906831221,
+      "view_translation_error": 0.0,
+      "hand_rotation_error": 5.551115123125783e-17,
+      "hand_translation_error": 0.0,
+      "weapon_pixels": null,
+      "world_pixels": null,
+      "full_pixels": null,
+      "images": {
+        "p000072_left.png": "47d82a7952a35dee37a9218ecc4905001c6d99ba5dd3ba1876a340506cdcde61",
+        "p000072_right.png": "47d82a7952a35dee37a9218ecc4905001c6d99ba5dd3ba1876a340506cdcde61"
+      },
+      "eye_hashes": [
+        "9c2eefd6eee47858",
+        "9c2eefd6eee47858"
+      ],
+      "verify_checks": 146,
+      "image_directory": "head-phase/pair-head-yaw--15deg"
+    },
+    {
+      "case": "head-yaw-+15deg",
+      "rt_max_abs_error": 0,
+      "tr_max_abs_error": 0,
+      "view_rotation_error": 0.00010551378906831221,
+      "view_translation_error": 0.0,
+      "hand_rotation_error": 1.1102230246251565e-16,
+      "hand_translation_error": 0.0,
+      "weapon_pixels": null,
+      "world_pixels": null,
+      "full_pixels": null,
+      "images": {
+        "p000079_left.png": "de7b9750c94a365d89e3990a30179a7d2d289ec1d759e07467a4263824c19a39",
+        "p000079_right.png": "de7b9750c94a365d89e3990a30179a7d2d289ec1d759e07467a4263824c19a39"
+      },
+      "eye_hashes": [
+        "d234e27ed24617e3",
+        "d234e27ed24617e3"
+      ],
+      "verify_checks": 160,
+      "image_directory": "head-phase/pair-head-yaw-+15deg"
+    },
+    {
+      "case": "head-pitch--15deg",
+      "rt_max_abs_error": 0,
+      "tr_max_abs_error": 0,
+      "view_rotation_error": 0.00010551378906831221,
+      "view_translation_error": 0.0,
+      "hand_rotation_error": 1.1102230246251565e-16,
+      "hand_translation_error": 0.0,
+      "weapon_pixels": null,
+      "world_pixels": null,
+      "full_pixels": null,
+      "images": {
+        "p000086_left.png": "b52e16bc474b063bec7b43e58ce084dae524f9faa76b39e90a8aa85b1528849e",
+        "p000086_right.png": "b52e16bc474b063bec7b43e58ce084dae524f9faa76b39e90a8aa85b1528849e"
+      },
+      "eye_hashes": [
+        "4165613760703a7e",
+        "4165613760703a7e"
+      ],
+      "verify_checks": 174,
+      "image_directory": "head-phase/pair-head-pitch--15deg"
+    },
+    {
+      "case": "head-pitch-+15deg",
+      "rt_max_abs_error": 0,
+      "tr_max_abs_error": 0,
+      "view_rotation_error": 0.00010551378906831221,
+      "view_translation_error": 0.0,
+      "hand_rotation_error": 2.7755575615628914e-17,
+      "hand_translation_error": 0.0,
+      "weapon_pixels": null,
+      "world_pixels": null,
+      "full_pixels": null,
+      "images": {
+        "p000092_left.png": "ac31af86d54c108fdbab8396d52a94a0ef1d9f4a01e0db8953e60dece99e33be",
+        "p000092_right.png": "ac31af86d54c108fdbab8396d52a94a0ef1d9f4a01e0db8953e60dece99e33be"
+      },
+      "eye_hashes": [
+        "79fbae01e3b9dc25",
+        "79fbae01e3b9dc25"
+      ],
+      "verify_checks": 186,
+      "image_directory": "head-phase/pair-head-pitch-+15deg"
+    },
+    {
+      "case": "combined-head-hand",
+      "rt_max_abs_error": 0,
+      "tr_max_abs_error": 0,
+      "view_rotation_error": 0.00010551378906831221,
+      "view_translation_error": 4.5341863597059273e-10,
+      "hand_rotation_error": 3.7540892471932263e-05,
+      "hand_translation_error": 0.4595744997200768,
+      "weapon_pixels": null,
+      "world_pixels": null,
+      "full_pixels": null,
+      "images": {
+        "p000099_left.png": "bf6deb3b38f0e9780a19faa4dfdd14f265bf29b1d958c797fd9e7ff1c6edff25",
+        "p000099_right.png": "bf6deb3b38f0e9780a19faa4dfdd14f265bf29b1d958c797fd9e7ff1c6edff25"
+      },
+      "eye_hashes": [
+        "254b876b9055e0ee",
+        "254b876b9055e0ee"
+      ],
+      "verify_checks": 198,
+      "image_directory": "head-phase/pair-combined-head-hand"
+    },
+    {
+      "case": "absolute-start-a",
+      "rt_max_abs_error": 0,
+      "tr_max_abs_error": 0,
+      "view_rotation_error": 0.0,
+      "view_translation_error": 0.0,
+      "hand_rotation_error": 1.3877787807814457e-17,
+      "hand_translation_error": 0.4925365970149187,
+      "weapon_pixels": 456,
+      "world_pixels": 0,
+      "full_pixels": 470,
+      "images": {
+        "p000045_left.png": "7bfa4c9ded1b9e228e32cd6123068e3052daec3d02d0ae8ee572722e280cd3c1",
+        "p000045_right.png": "7bfa4c9ded1b9e228e32cd6123068e3052daec3d02d0ae8ee572722e280cd3c1"
+      },
+      "eye_hashes": [
+        "6d2f81a90add9e49",
+        "6d2f81a90add9e49"
+      ],
+      "verify_checks": 92,
+      "image_directory": "pair-absolute-start-a"
+    },
+    {
+      "case": "absolute-start-b",
+      "rt_max_abs_error": 0,
+      "tr_max_abs_error": 0,
+      "view_rotation_error": 0.0,
+      "view_translation_error": 0.0,
+      "hand_rotation_error": 1.3877787807814457e-17,
+      "hand_translation_error": 0.32835820895525103,
+      "weapon_pixels": 295,
+      "world_pixels": 0,
+      "full_pixels": 309,
+      "images": {
+        "p000064_left.png": "7000372f873ae5dc7971de8a0d4d9c384c2e599a9ead167025e803ae35b4121a",
+        "p000064_right.png": "7000372f873ae5dc7971de8a0d4d9c384c2e599a9ead167025e803ae35b4121a"
+      },
+      "eye_hashes": [
+        "f3a85b6870c7ab51",
+        "f3a85b6870c7ab51"
+      ],
+      "verify_checks": 128,
+      "image_directory": "pair-absolute-start-b"
+    },
+    {
+      "case": "hand-base",
+      "rt_max_abs_error": 0,
+      "tr_max_abs_error": 0,
+      "view_rotation_error": 0.0,
+      "view_translation_error": 0.0,
+      "hand_rotation_error": 1.3877787807814457e-17,
+      "hand_translation_error": 0.0,
+      "weapon_pixels": 13,
+      "world_pixels": 0,
+      "full_pixels": 27,
+      "images": {
+        "p000081_left.png": "a35c5d2ccbd91fc5884a638d6c455e6036838e3a28eab35be4ee8428120eac1d",
+        "p000081_right.png": "a35c5d2ccbd91fc5884a638d6c455e6036838e3a28eab35be4ee8428120eac1d"
+      },
+      "eye_hashes": [
+        "f3a85b6870c7ab51",
+        "f3a85b6870c7ab51"
+      ],
+      "verify_checks": 164,
+      "image_directory": "pair-hand-base"
+    },
+    {
+      "case": "hand-x--1",
+      "rt_max_abs_error": 0,
+      "tr_max_abs_error": 0,
+      "view_rotation_error": 0.0,
+      "view_translation_error": 0.0,
+      "hand_rotation_error": 1.3877787807814457e-17,
+      "hand_translation_error": 0.35820823880597175,
+      "weapon_pixels": 356,
+      "world_pixels": 0,
+      "full_pixels": 356,
+      "images": {
+        "p000087_left.png": "3711124907c544234e0e14781fd70accfe880cebd416d762dfa65818b15f19ad",
+        "p000087_right.png": "3711124907c544234e0e14781fd70accfe880cebd416d762dfa65818b15f19ad"
+      },
+      "eye_hashes": [
+        "452ffa0cdb4b8072",
+        "452ffa0cdb4b8072"
+      ],
+      "verify_checks": 176,
+      "image_directory": "pair-hand-x--1"
+    },
+    {
+      "case": "hand-x-+1",
+      "rt_max_abs_error": 0,
+      "tr_max_abs_error": 0,
+      "view_rotation_error": 0.0,
+      "view_translation_error": 0.0,
+      "hand_rotation_error": 1.3877787807814457e-17,
+      "hand_translation_error": 0.35820823880595754,
+      "weapon_pixels": 370,
+      "world_pixels": 0,
+      "full_pixels": 370,
+      "images": {
+        "p000093_left.png": "e611fbabbc7cab42a13d3f8d400d70f0d8ade257a94eea478e78e9178f8e8da8",
+        "p000093_right.png": "e611fbabbc7cab42a13d3f8d400d70f0d8ade257a94eea478e78e9178f8e8da8"
+      },
+      "eye_hashes": [
+        "08d923608c606757",
+        "08d923608c606757"
+      ],
+      "verify_checks": 188,
+      "image_directory": "pair-hand-x-+1"
+    },
+    {
+      "case": "hand-y--1",
+      "rt_max_abs_error": 0,
+      "tr_max_abs_error": 0,
+      "view_rotation_error": 0.0,
+      "view_translation_error": 0.0,
+      "hand_rotation_error": 1.3877787807814457e-17,
+      "hand_translation_error": 0.35820823880595754,
+      "weapon_pixels": 219,
+      "world_pixels": 0,
+      "full_pixels": 219,
+      "images": {
+        "p000099_left.png": "07137dc85a3da1107d6d4c2b27aa63ac685417e6cd3d2edab31a996c7808bf29",
+        "p000099_right.png": "07137dc85a3da1107d6d4c2b27aa63ac685417e6cd3d2edab31a996c7808bf29"
+      },
+      "eye_hashes": [
+        "3143dd37e055168e",
+        "3143dd37e055168e"
+      ],
+      "verify_checks": 199,
+      "image_directory": "pair-hand-y--1"
+    },
+    {
+      "case": "hand-y-+1",
+      "rt_max_abs_error": 0,
+      "tr_max_abs_error": 0,
+      "view_rotation_error": 0.0,
+      "view_translation_error": 0.0,
+      "hand_rotation_error": 1.3877787807814457e-17,
+      "hand_translation_error": 0.35820823880595754,
+      "weapon_pixels": 705,
+      "world_pixels": 0,
+      "full_pixels": 705,
+      "images": {
+        "p000105_left.png": "aba782c094765f94744e6a06a5db4e66ac6a08da4025d3f29860b85e4680c211",
+        "p000105_right.png": "aba782c094765f94744e6a06a5db4e66ac6a08da4025d3f29860b85e4680c211"
+      },
+      "eye_hashes": [
+        "f38d1d1d9b6366fa",
+        "f38d1d1d9b6366fa"
+      ],
+      "verify_checks": 210,
+      "image_directory": "pair-hand-y-+1"
+    },
+    {
+      "case": "hand-z--1",
+      "rt_max_abs_error": 0,
+      "tr_max_abs_error": 0,
+      "view_rotation_error": 0.0,
+      "view_translation_error": 0.0,
+      "hand_rotation_error": 1.3877787807814457e-17,
+      "hand_translation_error": 0.35820823880595754,
+      "weapon_pixels": 315,
+      "world_pixels": 0,
+      "full_pixels": 315,
+      "images": {
+        "p000111_left.png": "d3ce1f62cdca6cee8e85f84baa8aea143ec55d0c477b78f87651e7a9d26d7dad",
+        "p000111_right.png": "d3ce1f62cdca6cee8e85f84baa8aea143ec55d0c477b78f87651e7a9d26d7dad"
+      },
+      "eye_hashes": [
+        "8548f252e58aee89",
+        "8548f252e58aee89"
+      ],
+      "verify_checks": 224,
+      "image_directory": "pair-hand-z--1"
+    },
+    {
+      "case": "hand-z-+1",
+      "rt_max_abs_error": 0,
+      "tr_max_abs_error": 0,
+      "view_rotation_error": 0.0,
+      "view_translation_error": 0.0,
+      "hand_rotation_error": 1.3877787807814457e-17,
+      "hand_translation_error": 0.35820823880597175,
+      "weapon_pixels": 222,
+      "world_pixels": 0,
+      "full_pixels": 230,
+      "images": {
+        "p000116_left.png": "1f1655248611270da020cc3dcdd25ccb055818d81a7368e3aa0bceb00a666bb5",
+        "p000116_right.png": "1f1655248611270da020cc3dcdd25ccb055818d81a7368e3aa0bceb00a666bb5"
+      },
+      "eye_hashes": [
+        "e1950884ae91c5e5",
+        "e1950884ae91c5e5"
+      ],
+      "verify_checks": 234,
+      "image_directory": "pair-hand-z-+1"
+    },
+    {
+      "case": "hand-yaw--1",
+      "rt_max_abs_error": 0,
+      "tr_max_abs_error": 0,
+      "view_rotation_error": 0.0,
+      "view_translation_error": 0.0,
+      "hand_rotation_error": 5.0993336262294964e-05,
+      "hand_translation_error": 0.3872588294506727,
+      "weapon_pixels": 342,
+      "world_pixels": 0,
+      "full_pixels": 342,
+      "images": {
+        "p000123_left.png": "9be9cea418c5b5c8da2741d1be971ae493dbe37ece0576c52398e04965fadd0b",
+        "p000123_right.png": "9be9cea418c5b5c8da2741d1be971ae493dbe37ece0576c52398e04965fadd0b"
+      },
+      "eye_hashes": [
+        "12809dd6fdbe5d97",
+        "12809dd6fdbe5d97"
+      ],
+      "verify_checks": 246,
+      "image_directory": "pair-hand-yaw--1"
+    },
+    {
+      "case": "hand-yaw-+1",
+      "rt_max_abs_error": 0,
+      "tr_max_abs_error": 0,
+      "view_rotation_error": 0.0,
+      "view_translation_error": 0.0,
+      "hand_rotation_error": 4.579561743017768e-05,
+      "hand_translation_error": 0.2912585841916311,
+      "weapon_pixels": 485,
+      "world_pixels": 0,
+      "full_pixels": 493,
+      "images": {
+        "p000128_left.png": "09e5c81a9a6dca64a1988bea424c0bcb6ed2acc673921adb6b28656b2dd17f12",
+        "p000128_right.png": "09e5c81a9a6dca64a1988bea424c0bcb6ed2acc673921adb6b28656b2dd17f12"
+      },
+      "eye_hashes": [
+        "6115eaa6b1557e0d",
+        "6115eaa6b1557e0d"
+      ],
+      "verify_checks": 258,
+      "image_directory": "pair-hand-yaw-+1"
+    },
+    {
+      "case": "hand-pitch--1",
+      "rt_max_abs_error": 0,
+      "tr_max_abs_error": 0,
+      "view_rotation_error": 0.0,
+      "view_translation_error": 0.0,
+      "hand_rotation_error": 6.185436026262536e-05,
+      "hand_translation_error": 0.18661626378047913,
+      "weapon_pixels": 217,
+      "world_pixels": 0,
+      "full_pixels": 217,
+      "images": {
+        "p000135_left.png": "dc5b437cdfb47696626f85ee2212eb86b58253337da6a9b81e2cdeb2d4cfea6b",
+        "p000135_right.png": "dc5b437cdfb47696626f85ee2212eb86b58253337da6a9b81e2cdeb2d4cfea6b"
+      },
+      "eye_hashes": [
+        "c60013c997e68712",
+        "c60013c997e68712"
+      ],
+      "verify_checks": 271,
+      "image_directory": "pair-hand-pitch--1"
+    },
+    {
+      "case": "hand-pitch-+1",
+      "rt_max_abs_error": 0,
+      "tr_max_abs_error": 0,
+      "view_rotation_error": 0.0,
+      "view_translation_error": 0.0,
+      "hand_rotation_error": 5.470838831861391e-05,
+      "hand_translation_error": 0.03792413470782208,
+      "weapon_pixels": 1193,
+      "world_pixels": 0,
+      "full_pixels": 1329,
+      "images": {
+        "p000141_left.png": "48c0a6f5b4b119d8ee66543b34c8b7bc40ff895b1185c4b8050af903de2a344b",
+        "p000141_right.png": "48c0a6f5b4b119d8ee66543b34c8b7bc40ff895b1185c4b8050af903de2a344b"
+      },
+      "eye_hashes": [
+        "c5acf73518d97c1b",
+        "c5acf73518d97c1b"
+      ],
+      "verify_checks": 284,
+      "image_directory": "pair-hand-pitch-+1"
+    },
+    {
+      "case": "hand-roll--1",
+      "rt_max_abs_error": 0,
+      "tr_max_abs_error": 0,
+      "view_rotation_error": 0.0,
+      "view_translation_error": 0.0,
+      "hand_rotation_error": 3.0894194535169284e-05,
+      "hand_translation_error": 0.2783036596694046,
+      "weapon_pixels": 247,
+      "world_pixels": 0,
+      "full_pixels": 260,
+      "images": {
+        "p000147_left.png": "1729aa7c76fc64f4665599ef9ccec574a964a04eb8ec89b9586e122dad5ba6fe",
+        "p000147_right.png": "1729aa7c76fc64f4665599ef9ccec574a964a04eb8ec89b9586e122dad5ba6fe"
+      },
+      "eye_hashes": [
+        "c98a0feab9c966f0",
+        "c98a0feab9c966f0"
+      ],
+      "verify_checks": 294,
+      "image_directory": "pair-hand-roll--1"
+    },
+    {
+      "case": "hand-roll-+1",
+      "rt_max_abs_error": 0,
+      "tr_max_abs_error": 0,
+      "view_rotation_error": 0.0,
+      "view_translation_error": 0.0,
+      "hand_rotation_error": 5.711663989460547e-05,
+      "hand_translation_error": 0.4501521743441117,
+      "weapon_pixels": 619,
+      "world_pixels": 0,
+      "full_pixels": 627,
+      "images": {
+        "p000153_left.png": "8bdb13630f6ef9b55ac3f29144cf561fc3baaf998b7b6241dacb1adf1f351a80",
+        "p000153_right.png": "8bdb13630f6ef9b55ac3f29144cf561fc3baaf998b7b6241dacb1adf1f351a80"
+      },
+      "eye_hashes": [
+        "f825a7cf50ba3345",
+        "f825a7cf50ba3345"
+      ],
+      "verify_checks": 308,
+      "image_directory": "pair-hand-roll-+1"
+    },
+    {
+      "case": "origin-identity",
+      "rt_max_abs_error": 0,
+      "tr_max_abs_error": 0,
+      "view_rotation_error": 0.0,
+      "view_translation_error": 0.0,
+      "hand_rotation_error": 4.261215667167306e-05,
+      "hand_translation_error": 0.4186080741572482,
+      "weapon_pixels": 391,
+      "world_pixels": 0,
+      "full_pixels": 405,
+      "images": {
+        "p000159_left.png": "2bf085c676ca46f7a9d38142744a5163717b1fc9425adba1c155e498569424dc",
+        "p000159_right.png": "2bf085c676ca46f7a9d38142744a5163717b1fc9425adba1c155e498569424dc"
+      },
+      "eye_hashes": [
+        "a4dc6c85111c4559",
+        "a4dc6c85111c4559"
+      ],
+      "verify_checks": 320,
+      "image_directory": "pair-origin-identity"
+    },
+    {
+      "case": "origin-moved",
+      "rt_max_abs_error": 0,
+      "tr_max_abs_error": 0,
+      "view_rotation_error": 0.0,
+      "view_translation_error": 0.0,
+      "hand_rotation_error": 4.1175277150723444e-05,
+      "hand_translation_error": 0.3294838706837311,
+      "weapon_pixels": 379,
+      "world_pixels": 0,
+      "full_pixels": 387,
+      "images": {
+        "p000165_left.png": "1fcf2b973b206c54476d52d1361081dfd4a4240f8fe89e8c3f51286c07db8fbf",
+        "p000165_right.png": "1fcf2b973b206c54476d52d1361081dfd4a4240f8fe89e8c3f51286c07db8fbf"
+      },
+      "eye_hashes": [
+        "12398ef1030f1d31",
+        "12398ef1030f1d31"
+      ],
+      "verify_checks": 330,
+      "image_directory": "pair-origin-moved"
+    },
+    {
+      "case": "valid-recovery",
+      "rt_max_abs_error": 0,
+      "tr_max_abs_error": 0,
+      "view_rotation_error": 0.0,
+      "view_translation_error": 0.0,
+      "hand_rotation_error": 1.3877787807814457e-17,
+      "hand_translation_error": 0.35820823880595754,
+      "weapon_pixels": 372,
+      "world_pixels": 0,
+      "full_pixels": 372,
+      "images": {
+        "p000188_left.png": "59ed2c7c1d65162cbd7f76864612eb8f586cc7777c5626f6d425e197d7bc9f69",
+        "p000188_right.png": "59ed2c7c1d65162cbd7f76864612eb8f586cc7777c5626f6d425e197d7bc9f69"
+      },
+      "eye_hashes": [
+        "295a873588a11f07",
+        "295a873588a11f07"
+      ],
+      "verify_checks": 377,
+      "image_directory": "pair-valid-recovery"
+    }
+  ],
+  "origin_recenter": {
+    "origin_position_m": [
+      0.12,
+      0.2,
+      -0.3
+    ],
+    "origin_orientation_xyzw": [
+      0.0,
+      0.13052619222005157,
+      0.0,
+      0.9914448613738104
+    ],
+    "anchor_max_abs_error": 1.0,
+    "physical_recenter": "not tested; W1 uses explicit synthetic origin"
+  },
+  "head_test_positioning": {
+    "action": "native forward analog ly=1000 for 30 guest frames",
+    "guest_frames": 30,
+    "fire": false,
+    "weapon_switches": 0,
+    "players": [
+      {
+        "port": 1,
+        "actor": "0x801483d0",
+        "input": "0x801487d0",
+        "weapon_slot": 0,
+        "weapon_id": 0,
+        "weapon": "P38 pistol",
+        "reserve": 20,
+        "clip": 8,
+        "input_fields": "000000000000000010ffffff0c00000000000000000000000000000000000000000014002c015a00010032002c012c010900080000000000000000000000000000000000",
+        "health_raw": 2097152,
+        "health": 32.0,
+        "position": [
+          -93631033,
+          33357824,
+          44287628
+        ],
+        "rotation": [
+          -8192,
+          23,
+          0
+        ]
+      },
+      {
+        "port": 2,
+        "actor": "0x80145810",
+        "input": "0x80145c10",
+        "weapon_slot": 0,
+        "weapon_id": 0,
+        "weapon": "P38 pistol",
+        "reserve": 20,
+        "clip": 8,
+        "input_fields": "000000000000000010ffffff0c000000000000000000000000000000000000000000140020001e00010032002c012c010900080000000000000000000000000000000000",
+        "health_raw": 2097152,
+        "health": 32.0,
+        "position": [
+          -96488943,
+          33357824,
+          -70958831
+        ],
+        "rotation": [
+          8192,
+          20,
+          -32768
+        ]
+      }
+    ]
+  },
+  "head_worker": {
+    "directory": "head-phase",
+    "owned_pid": 110236,
+    "exit_code": 0,
+    "executable_sha256": "aa885d40ba8bf4e2ddec5139f0449727e137cb92b9f5d0f516b27900b75cae88"
+  },
+  "invalid_cases": [
+    {
+      "case": "invalid-unfocused",
+      "weapon_roi_difference": 0,
+      "counter_delta": {
+        "mohu.vr.weapon.tracking_fallback": 6,
+        "mohu.vr.weapon.view_restore": 6,
+        "mohu.vr.weapon.viewmodel_apply": 0,
+        "mohu.vr.weapon.apply.right": 0,
+        "mohu.vr.weapon.viewmodel_restore": 0,
+        "mohu.vr.weapon.apply.left": 0
+      },
+      "error": null
+    },
+    {
+      "case": "invalid-inactive",
+      "weapon_roi_difference": 9,
+      "counter_delta": {
+        "mohu.vr.weapon.tracking_fallback": 8,
+        "mohu.vr.weapon.view_restore": 8,
+        "mohu.vr.weapon.viewmodel_apply": 0,
+        "mohu.vr.weapon.apply.right": 0,
+        "mohu.vr.weapon.viewmodel_restore": 0,
+        "mohu.vr.weapon.apply.left": 0
+      },
+      "error": null
+    },
+    {
+      "case": "invalid-missing-validity",
+      "weapon_roi_difference": 2,
+      "counter_delta": {
+        "mohu.vr.weapon.tracking_fallback": 6,
+        "mohu.vr.weapon.view_restore": 6,
+        "mohu.vr.weapon.viewmodel_apply": 0,
+        "mohu.vr.weapon.apply.right": 0,
+        "mohu.vr.weapon.viewmodel_restore": 0,
+        "mohu.vr.weapon.apply.left": 0
+      },
+      "error": null
+    },
+    {
+      "case": "invalid-stale-151ms",
+      "weapon_roi_difference": 3,
+      "counter_delta": {
+        "mohu.vr.weapon.tracking_fallback": 7,
+        "mohu.vr.weapon.view_restore": 7,
+        "mohu.vr.weapon.viewmodel_apply": 0,
+        "mohu.vr.weapon.apply.right": 0,
+        "mohu.vr.weapon.viewmodel_restore": 0,
+        "mohu.vr.weapon.apply.left": 0
+      },
+      "error": null
+    },
+    {
+      "case": "invalid-bad-quaternion",
+      "weapon_roi_difference": null,
+      "counter_delta": null,
+      "error": "{'id': 0, 'ok': False, 'error': 'invalid synthetic pose numbers'}"
+    }
+  ],
+  "recovery_counter_delta": {
+    "mohu.vr.weapon.tracking_fallback": 0,
+    "mohu.vr.weapon.view_restore": 12,
+    "mohu.vr.weapon.viewmodel_apply": 12,
+    "mohu.vr.weapon.apply.right": 6,
+    "mohu.vr.weapon.viewmodel_restore": 12,
+    "mohu.vr.weapon.apply.left": 6
+  },
+  "limits": [
+    "Synthetic desktop poses, not physical headset acceptance.",
+    "Provisional pivot is not a W3 grip calibration.",
+    "No firing, shot redirection, HUD or performance work.",
+    "Physical recenter is not tested by the synthetic origin control."
+  ],
+  "control_sheet": {
+    "path": "vr\\proof\\weapon-pose-space-controls.png",
+    "sha256": "5542862b61611bb1537985b39e775f319608b62caf721a135198a84234bb9874"
+  }
+}

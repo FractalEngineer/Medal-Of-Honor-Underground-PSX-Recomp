@@ -8,7 +8,7 @@ executable and live overlay content.
 ## Start here
 
 1. [HANDOFF.md](HANDOFF.md) is the current execution contract: exact next task
-   W1.1, fixtures, seams, commands, acceptance and stop/recovery rules.
+   W2.2, fixtures, seams, commands, acceptance and stop/recovery rules.
 2. [VR_PLAN.md](VR_PLAN.md) is the checkbox/status list and dependency order.
    Do not restart checked foundation/renderer work without a demonstrated regression.
 3. [BASELINE.md](BASELINE.md) records the historical 2026-10-23 starting tree.
@@ -100,8 +100,12 @@ stationary P2 target one weapon at a time; see
 [WEAPON_SET_EVIDENCE.md](WEAPON_SET_EVIDENCE.md).
 
 The real first-person seam and P1-only MP desktop eye renderer are verified for
-all 13 measured IDs. The current task is absolute P38 pose/head-hand space
-validation (W1), not finding a new mesh hook. Physical calibration, MP visibility
-and controls, tracked shot alignment, exact barrel laser and wrist HUD remain
-open under the ordered plan. See [MP eye receipt](../../vr/proof/weapon-mp-eye-receipt.json)
-and [MP build receipt](../../vr/proof/weapon-mp-build-receipt.json).
+all 13 measured IDs. W1 is complete for the P38 absolute synthetic head/hand
+coordinate contract and is not a mesh-hook search. W2.1 measured the native MP
+flat scene-list selector; the next task is W2.2, its guarded eye-frustum layout.
+Physical calibration, MP visibility and controls, tracked shot alignment, exact
+barrel laser and wrist HUD remain open under the ordered plan. See
+[WEAPON_CALIBRATION.md](WEAPON_CALIBRATION.md),
+[MP_LEVEL_SELECTOR_EVIDENCE.md](MP_LEVEL_SELECTOR_EVIDENCE.md),
+[P38 pose receipt](../../vr/proof/weapon-pose-space-receipt.json) and
+[MP eye receipt](../../vr/proof/weapon-mp-eye-receipt.json).

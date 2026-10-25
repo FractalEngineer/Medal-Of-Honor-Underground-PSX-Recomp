@@ -1,0 +1,115 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "source_revision": "2667308fe70faab6cc599bcf0758b77e39814ada",
+  "framework_gitlink": "b982e66e2536eaf738fbe3021db4d8f6c0feb90b",
+  "ui_gitlink": "7c635c6b366a6e0d5d3c913a7fce6ec04dd9f256",
+  "build": "build-release",
+  "compile": {
+    "debug_tools": false,
+    "mohu_vr_diagnostics": true,
+    "opengl": true,
+    "openxr": true,
+    "pgxp": true,
+    "release_executable_sha256": "5916470b7058a13624fdd4393921629dea03ea1db209895c81c23e210a52dafb",
+    "tested_diagnostic_executable_sha256": "aa885d40ba8bf4e2ddec5139f0449727e137cb92b9f5d0f516b27900b75cae88"
+  },
+  "w1_pose_space": {
+    "receipt": "vr/proof/weapon-pose-space-receipt.json",
+    "sha256": "bef1ff7e1be5dd9fa9cbe597daec268ed13e5f29166ae624a18a69743ffd41df",
+    "controls_png": "vr/proof/weapon-pose-space-controls.png",
+    "controls_sha256": "5542862b61611bb1537985b39e775f319608b62caf721a135198a84234bb9874",
+    "fixture": "copied root MP slot 1, P38 ID 0, zero switches, no fire",
+    "cases": 29,
+    "head_cases": 10,
+    "invalid_cases": 5,
+    "max_rt_error": 0,
+    "max_tr_error": 0,
+    "max_recovered_hand_rotation_error": 0.00006185436026262536,
+    "max_recovered_hand_translation_error": 0.4925365970149187,
+    "origin_anchor_max_error": 1.0,
+    "zero_ipd_eyes_equal": true,
+    "source_saves_unchanged": true,
+    "preferences_unchanged": true,
+    "remaining_game_pids": []
+  },
+  "checks": {
+    "python_unittest": {
+      "passed": 18,
+      "failed": 0
+    },
+    "strict_c_fixtures": {
+      "weapon_math": "passed",
+      "mp_view_guard": "passed",
+      "openxr_hand_age_override": "passed"
+    },
+    "strict_diagnostic_syntax": "passed",
+    "mp_matrix": {
+      "receipt": "analysis/vr-baseline/weapon-mesh-mapping/w1-regression-20261025/mp-matrix/receipt.json",
+      "sha256": "65103c15ecf9bf9725b0bee3528318dbd2e42719f0b9a53b06186f8747bef58a",
+      "complete": true,
+      "unique_weapon_ids": [0, 1, 4, 5, 8, 9, 10, 12, 13, 14, 15, 16, 17],
+      "rows": 16,
+      "cases": 64,
+      "final_pairs": 1230,
+      "rollback_checks": 79929,
+      "stereo_failures": 0,
+      "cycles_closed": true
+    },
+    "mp_lateral": {
+      "receipt": "analysis/vr-baseline/weapon-mesh-mapping/w1-regression-20261025/mp-lateral/receipt.json",
+      "sha256": "e45994dfa5e5b62fac8497fce22648aac0073cdeb20b814118bdc9bf5c865833",
+      "complete": true,
+      "eye_offset": 24
+    },
+    "mp_refusal_recovery": {
+      "receipt": "analysis/vr-baseline/weapon-mesh-mapping/w1-regression-20261025/mp-reject-recover/receipt.json",
+      "sha256": "0e1ae16a8612ed474e648d70608400653dcb317f57d5b2dcfe116268c9fff712",
+      "complete": true,
+      "refusals": 7,
+      "fresh_recovery_pair_id": 66,
+      "failed_eyes": 0,
+      "rollback_checks": 115,
+      "rollback_errors": 0
+    },
+    "flat_pose_regression": {
+      "receipt": "analysis/vr-baseline/weapon-mesh-mapping/w1-regression-20261025/flat-poses/inventory.json",
+      "sha256": "7fd31720b9fdc6700c358ead1704bd5b5093e0cdf9d757d7d29c51bf05dc1aee",
+      "complete": true,
+      "source_slots": 4,
+      "unique_weapon_ids": [0, 1, 4, 5, 8, 9, 10, 12, 13, 14, 15, 16, 17]
+    },
+    "sp_stereo_zero": {
+      "receipt": "analysis/vr-baseline/weapon-mesh-mapping/w1-regression-20261025/sp-zero/receipt.json",
+      "sha256": "d076e1fa0e65a4686329d26e17ec1df5f07d7c8a282e0bb48a407bb14e8ba1a4",
+      "pairs": 20,
+      "verify_checks": 41,
+      "verify_mismatch": 0,
+      "vram_leaks": 0,
+      "watchdog": 0,
+      "nesting_repairs": 0,
+      "settings_restored": true
+    },
+    "flat_inherited_flag_smoke": {
+      "receipt": "analysis/vr-baseline/weapon-mesh-mapping/w1-flat-smoke-20261025/receipt.json",
+      "sha256": "e37b8b93391c2d8ebc970fc22894bcd992706205a36526fa4c5985e3f2dd5414",
+      "weapon_pose": 0,
+      "stereo_proof": 0,
+      "openxr": 0,
+      "intentional_termination": true,
+      "remaining_game_pids": []
+    }
+  },
+  "source_saves_unchanged": true,
+  "preferences_unchanged": true,
+  "steamvr_settings_unchanged": true,
+  "game_config_generated_framework_ui_unchanged": true,
+  "remaining_game_pids": [],
+  "limits": [
+    "Synthetic desktop W1 poses are not physical headset acceptance.",
+    "The pivot (98,296,193) is provisional and is not W3 grip/size calibration.",
+    "Only P38 uses the real-hand absolute path in W1; other real-hand IDs stay native until calibration.",
+    "The native-fire regression was intentionally not run because the operator required W1 without firing.",
+    "Physical recenter, MP visibility, tracked shots, exact laser, HUD and performance remain open."
+  ]
+}

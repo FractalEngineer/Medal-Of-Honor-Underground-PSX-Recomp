@@ -643,9 +643,103 @@
   all six PowerShell command blocks parsed without execution. Receipt-listed
   source hashes and the release executable still match; debug tools remain OFF.
 
+### W1 P38 absolute synthetic pose contract
+
+- Captured W1.1 at the existing guarded first-person seam from a fresh copy of
+  root MP slot 1: P38 ID 0, zero weapon switches, stationary P2 and no firing.
+  The source record, native animated record, complete P38 mesh bounds, GTE
+  RT/TR, native H/OFX/OFY and the complete P1 eye view were measured in one
+  bounded run. The authored native basis is scaled and sheared, not
+  orthonormal; its measured inverse is retained.
+- Added [WEAPON_CALIBRATION.md](WEAPON_CALIBRATION.md) before implementing
+  absolute placement. It names the XR-local, origin, hand, animated-model,
+  native-camera and eye spaces; defines axes, handedness, matrix storage,
+  source-to-destination transforms, authored placement, native animation and
+  each unit boundary. W1's `(98,296,193)` pivot is explicitly provisional for
+  synthetic-space validation, not physical grip calibration.
+- Added absolute P38 composition that replaces the first-accepted neutral pose
+  while preserving the native model-to-camera affine and animated vertices.
+  Other real-hand weapon IDs remain native. The existing guarded mesh/caller/
+  ownership/profile checks, RT/TR restoration and eye-view restoration remain
+  in place. Invalid focus, activity, validity, age and quaternion paths fall
+  back without retaining an unintended anchor.
+- Extended the diagnostic hand override to carry measured host age and an
+  explicit synthetic origin for this harness. The W1 hand path uses
+  `48 / 0.067 = 716.4179104477612` game units/metre; the independent desktop
+  head path uses 1000 diagnostic units/metre. Direct x/yaw and flat-probe
+  controls were not used as hand-path evidence.
+- Added `vr/tools/check_weapon_pose_spaces.py` and its fresh-process head worker.
+  The retained receipt has 29 cases: two absolute fresh-load starts, hand-only
+  translations and rotations, 10 head-only cases, a combined pose, origin
+  change, invalid controls and valid recovery. GTE RT/TR expected-versus-
+  observed error was zero; recovered-hand maxima were `6.185436e-05` rotation
+  and `0.492537` translation. The origin anchor stayed within one integer GTE
+  unit. Every non-zero hand case changed the visible weapon, the sampled world
+  ROI stayed fixed, and both eye images were populated. Zero-IPD eyes matched.
+- Retained [pose-space receipt](../../vr/proof/weapon-pose-space-receipt.json),
+  [both-eye proof](../../vr/proof/weapon-pose-space-controls.png) and
+  [build receipt](../../vr/proof/weapon-pose-build-receipt.json). The build
+  receipt records the tested diagnostic SHA-256 `aa885d40...`, source hashes,
+  unchanged source saves/preferences/SteamVR settings, 18 Python tests, strict
+  C fixtures, MP matrix/lateral/refusal recovery, flat poses and SP zero stereo.
+  The operator-requested W1 path did not fire.
+- Restored the single `build-release` to debug OFF. Its current executable
+  SHA-256 is `5916470b7058a13624fdd4393921629dea03ea1db209895c81c23e210a52dafb`;
+  the inherited-flag flat smoke remained inert. No owned game or debug listener
+  remains. This continuation rechecked the current source/save/preference
+  hashes and reran 18 Python tests, the weapon and MP guard fixtures, diagnostic
+  strict syntax, and the standalone hand-age fixture. The configured
+  `openxr_input_test` target is not present in this build graph, so that fixture
+  was compiled with the existing toolchain and its non-network code path.
+- W1 is complete for synthetic spatial controls only. Physical grip/size,
+  physical recenter, MP head-turn visibility and tracked shots remain open.
+  Changes remain uncommitted; `.commandcode/` was not touched.
+
+### W2.1 multiplayer level-selector trace
+
+- Used a fresh copy of root MP slot 1 with P38, zero switches, stationary P2
+  and no firing. The final natural two-player frame observed both scene callers:
+  `80054CD4` and `80054D54` call `8006E9D8` with return addresses
+  `80054CDC`/`80054D5C`. The PC probe counted 592 scene calls across 296
+  frame-function hits.
+- Captured complete live code for the frame `80054BC4` (`0x200`, FNV
+  `6CDFBB75`), scene dispatch `8006E9D8` (`0x180`, `04C21F46`), callback
+  `8006C61C` (`0x290`, `A2AAC71B`), selector `80096EF4` (`0x90`,
+  `273C8059`) and selector helper `80096AC8` (`0x428`, `77C2060F`). The raw
+  receipt retains all 690 decoded instructions and complete hashes.
+- Measured the actual MP path as a flat scene list at `[800A35CC]`, not the SP
+  PVS leaf queue. The final list had 26 nodes: two headers, 21 level nodes
+  using callback `8006C61C`, one special callback and two player callbacks.
+  Every level node had visibility mask `0x07020200` at `+0x0C`, render flags
+  `0x00400211` at `+0x10` and auxiliary flags `0x08000001` at `+0x14`.
+- The complete callback invokes `80096EF4` from `8006C664`/`8006C688`; the
+  selector builds the object AABB and calls `80096AC8` from `80096F70`.
+  Neither the SP selector `80099960` nor its `800B74B8` queue is
+  resident/executed in this MP fixture. W2.2 must extend the measured flat
+  list/object path and keep native fallback.
+- Added `vr/tools/probe_mp_level_selector.py`. It owns the copied save and
+  process, records both player snapshots, hashes sources/settings and writes a
+  compact receipt plus ignored raw disassembly. The final run exits 0, leaves no
+  game/debug listener, and confirms saves/preferences unchanged.
+- Rejected attempts included a dirty-break probe that did not fire on this
+  compiled overlay, then a PC-count gate that was too strict before the list
+  could be read. A forced MP replay also returned no rendered pair because the
+  weapon-pose seam was disabled. Those attempts were not repeated unchanged;
+  the accepted run used the natural frame, direct roots and a settled PC probe.
+- Retained [MP_LEVEL_SELECTOR_EVIDENCE.md](MP_LEVEL_SELECTOR_EVIDENCE.md) and
+  [selector receipt](../../vr/proof/weapon-mp-level-selector-receipt.json).
+  The final debug-off executable SHA-256 is
+  `a32125b089d6bea881c40e09a6147f3b18c49727aae6069f63e6a266fc5f1418`;
+  [build receipt](../../vr/proof/weapon-mp-level-selector-build-receipt.json)
+  records the tested diagnostic hash, 18 Python tests, probe compilation,
+  strict diagnostic syntax and cleanup. No MP frustum override, firing change,
+  save edit or physical acceptance was made.
+
 ## Next work
 
-**W1.1: P38 coordinate-space capture, then W1.2 independent synthetic poses.**
-Use [HANDOFF.md](HANDOFF.md) as the execution contract and
+**W2.2: measure and implement the separately guarded MP eye-frustum layout.**
+Use the flat MP scene-list/object selector contract; do not transplant the SP
+PVS selector or queue. Use
+[HANDOFF.md](HANDOFF.md) as the execution contract and
 [VR_PLAN.md](VR_PLAN.md) as the only checkbox/status list. Prior log entries are
 historical results and rejected attempts, not instructions to repeat them.

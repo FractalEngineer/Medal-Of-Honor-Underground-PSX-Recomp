@@ -96,4 +96,15 @@ int mohu_vr_weapon_compose_gte_control(uint32_t control[8],
                                        const int32_t pivot[3],
                                        const double delta_translation[3]);
 
+/*
+ * Replace a camera-relative weapon transform with an absolute hand transform.
+ * hand_rotation/hand_translation are origin_from_native_camera; pivot is the
+ * provisional native-camera rotation marker. The native RT may be scaled and
+ * sheared and is preserved as the full affine hand_from_model basis. Overflow
+ * or malformed input leaves control unchanged.
+ */
+int mohu_vr_weapon_compose_absolute_gte_control(
+    uint32_t control[8], const double hand_rotation[9],
+    const double hand_translation[3], const double pivot[3]);
+
 #endif

@@ -7,27 +7,37 @@ owns history. History is not a queue of tasks to repeat.
 
 ## 1. Start here - one next task
 
-**NEXT: W1.1 - capture the P38 coordinate-space contract, then W1.2 independent
-synthetic head/hand controls.** Follow W1 below before W2-W6 in the plan.
+**NEXT: W2.2 - measure and implement the MP eye-frustum layout.** Start from
+the completed flat MP scene-list/per-object selector contract; do not transplant
+the SP PVS selector or queue.
 
 The visible weapon seam and P1-only MP eye renderer are already found and
-working in desktop controls. Do not rediscover them. The unresolved problem is
-absolute physical placement and head/hand independence, not finding another
-mesh hook. The existing first-accepted-hand neutral delta is not proof of
-absolute hand attachment. Native shots still use native aim.
+working in desktop controls. W1 is complete for the P38 synthetic spatial
+contract: the first-accepted-hand neutral delta has been replaced by an
+absolute hand path, and independent head/hand controls pass in both eyes with
+numeric residual checks. Do not rediscover the seam or rerun unchanged W1
+controls. Physical grip/scale, MP head-turn visibility and tracked shots remain
+open in W2-W5.
 
-For this documentation checkpoint, no runtime code, build or save was changed.
-The next implementation session must record its own experiment and update this
-pointer before ending; do not append a vague alternative "next work" list.
+W2.1 is complete. Copied root MP slot 1 calls the native frame `80054BC4`,
+scene `8006E9D8`, per-node callback `8006C61C`, visibility selector `80096EF4`
+and helper `80096AC8`. The 21 level nodes are a flat scene-list queue gated by
+`+0x0C` visibility masks. No separate MP PVS leaf queue was found at this seam.
+
+This continuation added the W2.1 measurement tool and receipts; it did not
+change the runtime render path. The build was tested and returned to debug OFF
+at the receipted hashes below. The next session must record its own experiment
+and update this pointer before ending; do not append a vague alternative
+"next work" list.
 
 ## 2. Current state - facts, not work to restart
 
 | Item | Current observation |
 | --- | --- |
 | Repository | `C:/Users/titan/Desktop/Github_Projects/Mine/Medal-Of-Honor-Underground-PSX-Recomp` |
-| Branch / pre-checkpoint HEAD | `feature/vr-port` / `3cdbe826790db0f9e1324bec21b7e1c9928e7dbd`; read current HEAD during preflight |
+| Branch / current HEAD | `feature/vr-port` / `2667308fe70faab6cc599bcf0758b77e39814ada`; read current HEAD during preflight |
 | Checkpoint scope | VR implementation, tools, proofs and execution docs; inspect current Git status and preserve any remaining changes |
-| Framework gitlink | `d9b0f382a1613a20dc33704b859c582ef50cc374` |
+| Framework gitlink | `b982e66e2536eaf738fbe3021db4d8f6c0feb90b` |
 | UI gitlink | `7c635c6b366a6e0d5d3c913a7fce6ec04dd9f256` |
 | Title / version | `SLUS-01270` / `0.1.0` |
 | One active build | `build-release`, Release/OpenGL/OpenXR/PGXP |
@@ -51,6 +61,9 @@ Accepted evidence:
 | Flat first-person meshes | [weapon-viewmodel-receipt.json](../../vr/proof/weapon-viewmodel-receipt.json): all 13 IDs; visible pose controls; not physical calibration |
 | P1-only MP eyes | [weapon-mp-eye-receipt.json](../../vr/proof/weapon-mp-eye-receipt.json): 1,215 pairs, 2,430 rollback checks, zero errors; both eyes and all 13 IDs |
 | MP lateral / native fire | Same MP receipt: 52,136 differing pixels; pistol clip 8->7 and P2 health 32->31.25; not tracked-shot alignment |
+| W1 P38 absolute spatial controls | [weapon-pose-space-receipt.json](../../vr/proof/weapon-pose-space-receipt.json): 29 cases, 10 head-only, five invalid; both eyes populated; no fire |
+| W1 build / regressions | [weapon-pose-build-receipt.json](../../vr/proof/weapon-pose-build-receipt.json): source/binary hashes, 18 Python tests, strict fixtures, MP/flat/SP regressions, debug OFF |
+| W2.1 native MP selector | [weapon-mp-level-selector-receipt.json](../../vr/proof/weapon-mp-level-selector-receipt.json) and [build receipt](../../vr/proof/weapon-mp-level-selector-build-receipt.json): five complete functions, both natural callers, 21-node flat queue/masks; no fire |
 | Current build/regressions | [weapon-mp-build-receipt.json](../../vr/proof/weapon-mp-build-receipt.json): debug OFF, 18 Python tests, MP guard/syntax checks, flat isolation, SP 19 pairs / 38 rollback checks |
 | Earlier native damage | [WEAPON_SET_EVIDENCE.md](WEAPON_SET_EVIDENCE.md), [weapon-alignment-receipt.json](../../vr/proof/weapon-alignment-receipt.json): all 13 IDs, damage-only pose reachability |
 | Current eye images | [weapon-mp-eyes.png](../../vr/proof/weapon-mp-eyes.png) |
@@ -58,12 +71,13 @@ Accepted evidence:
 | Native input | [MOVEMENT_EVIDENCE.md](MOVEMENT_EVIDENCE.md): synthetic SP controls; physical/MP coverage remains open |
 
 The current release executable SHA-256 is
-`9439c32c090d9e730820c97f3248a111665cb1f3636e01a756773c24ef7446cb`.
-The tested MP diagnostic executable SHA-256 is
-`0bdaf3835559f31514144ce473186a0765bcba19238f212f32408539e65e43c2`.
-They differ because debug tools differ. Do not swap them or relabel a historical
-receipt. Source hashes are in the build receipt; a new implementation needs
-new provenance and affected checks, not fabricated matching hashes.
+`a32125b089d6bea881c40e09a6147f3b18c49727aae6069f63e6a266fc5f1418`.
+The tested W2.1 diagnostic executable SHA-256 is
+`9b3d32a6a9d162b51df0c854a1bfbf929ae1f6f3d7e48c3f1baba11a47492691`.
+They differ because debug tools differ. Earlier W1 and MP hashes remain
+historical. Do not swap them or relabel a historical receipt. Source hashes are
+in the current build receipt; a new implementation needs new provenance and
+affected checks, not fabricated matching hashes.
 
 ## 3. Fixture selection - slot numbers alone are ambiguous
 
@@ -121,7 +135,7 @@ Source ownership:
 | File / function | Change here for |
 | --- | --- |
 | `vr/underground/weapon.c`: `mohu_vr_weapon_track_delta`, `mohu_vr_weapon_relative_delta`, `mohu_vr_weapon_compose_gte_control` | Pure pose math / captured per-ID profiles |
-| `vr/underground/vr_diagnostic.c`: `vr_weapon_prepare_delta` | Current first-accepted-pose neutral anchoring; W1 must examine/replace its insufficient absolute-placement contract |
+| `vr/underground/vr_diagnostic.c`: `vr_weapon_prepare_delta` | W1 P38 absolute placement; other real-hand IDs remain native until their calibration gates |
 | Same file: `vr_weapon_fp_enter`, `vr_weapon_viewmodel_project`, `vr_weapon_viewmodel_restore` | Existing guarded model scope; keep native animation, caller/mesh guards and common restore |
 | Same file: `vr_mp_snapshot`, `vr_mp_code_valid`, `vr_mp_frame_entry`, MP branch of `vr_stereo_eye_draw` | Existing MP replay; reuse, do not replace to fix a weapon pose |
 | `vr/underground/mp_view.h`, `vr/tests/test_mp_view.c` | MP mode, ownership, input/pointer and 512x120/H=400 guard |
@@ -142,7 +156,7 @@ Do not change this ratio independently of a measured new placement/projection
 contract. A future calibrated placement may justify a different contract, but
 requires a fresh same-run native/changed A/B with a visible gun and fixed world.
 
-## 5. W1 - exact next implementation procedure
+## 5. W1 - completed implementation and reproduction contract
 
 ### W1.1: first bounded experiment - P38 space capture
 
@@ -158,7 +172,7 @@ requires a fresh same-run native/changed A/B with a visible gun and fixed world.
    Take samples before and after application and at restore. Record function
    bytes/caller/ID/object identity with the samples. Do not scan all RAM again
    for an alternative first-person object.
-4. Write `docs/vr/WEAPON_CALIBRATION.md` as the W1 deliverable (not present yet):
+4. The W1 deliverable is `docs/vr/WEAPON_CALIBRATION.md`. It must:
    name model/animated-model, native base-camera, tracking-origin, hand and eye
    spaces. For every transform, specify source->destination, units, axis signs,
    handedness, matrix storage, authored root placement and native animation.
@@ -179,9 +193,9 @@ space or unit is unknown, capture that missing producer/consumer next; do not
 
 ### W1.2: add the missing independent pose harness
 
-Planned file: `vr/tools/check_weapon_pose_spaces.py` (does not exist yet).
-Reuse `check_mp_view.py` process/save/PNG/rollback code; do not create a new
-build, save format, OpenXR backend or renderer to write this test.
+Harness: `vr/tools/check_weapon_pose_spaces.py`. It reuses
+`check_mp_view.py` process/save/PNG/rollback code and must not create a new
+build, save format, OpenXR backend or renderer.
 
 - Feed genuine synthetic right grip and aim samples through the existing
   debug command `openxr_hands_override`. Set both poses, focus, activity and
@@ -247,7 +261,7 @@ section 8. Check W1 boxes only after that evidence passes, then set NEXT=W2.1.
 
 | Task | Prerequisite / first action | Exit / allowed continuation |
 | --- | --- | --- |
-| W2 MP visibility/input | W1 complete; start at the measured MP scene callback and trace its actual level selector and native pad converter | Full MP signatures/layouts plus zero/side/near-wall/input controls; SP addresses are not substitutes |
+| W2 MP visibility/input | W1 and W2.1 complete; use the flat MP scene-list/object selector contract and then trace the native pad converter | Full MP signatures/layouts plus zero/side/near-wall/input controls; SP addresses/queues are not substitutes |
 | W3 calibration/hardware | W1+W2; P38 first, then per-ID pivots/axes/scale/muzzle markers and a bounded copied-save headset comparison | Operator acceptance per weapon; desktop receipts never check physical boxes |
 | W4 native shot discovery | W1+W2; fresh MP P38 idle/fire/turned-away controls; start from P1 fire call chain and exact native P2 damage writer | MP constructor/basis/history/first-motion/ownership/units captured, read-only first |
 | W5 tracked aim | W3 physical visual acceptance + W4 measured MP shot contract | Native trajectory/impact matches calibrated rendered barrel; P2/NPC and invalid tracking remain native |
@@ -330,8 +344,8 @@ if ($LASTEXITCODE -ne 0) { throw 'SP regression failed' }
 ```
 
 The old tool's `--native-projection` is an A/B discovery control; do not use it
-as accepted projected/headset evidence. The future W1 harness must exercise the
-real hand path separately from these existing direct-delta controls.
+as accepted projected/headset evidence. The W1 harness exercises the real hand
+path separately from these existing direct-delta controls.
 
 ## 8. Verification, exit codes, recovery and session close
 
@@ -444,17 +458,23 @@ if ($LASTEXITCODE -ne 0) { throw 'Release build failed' }
 
 ## 10. Continuation record - replace these fields at session end
 
-- Completed through: M11 (flat meshes + desktop MP eyes + native regressions).
-- Current task: W1.1, not started. This turn only rewrote documentation.
-- Last accepted evidence: weapon-mp-eye-receipt.json / weapon-mp-build-receipt.json.
-- Next experiment: copied MP slot 1/P38; capture native affine/animated vertices,
-  GTE RT/TR, eye view and actual units at the existing seam, without firing.
-- Next deliverable: WEAPON_CALIBRATION.md coordinate contract, then the planned
-  independent pose harness; both are new work, not files assumed to exist.
-- Open physical gate: no current grip/scale/head-hand/shot acceptance claimed.
-- Current build: debug OFF; no owned game remains from the prior implementation.
-- Checkpoint: VR implementation/tools/proofs/docs included; unrelated .commandcode/ excluded and untouched. Read current Git status before editing.
+- Completed through: W2.1 (native MP flat scene-list and per-object selector
+  trace); W2.2-W6 and physical acceptance remain open.
+- Current task: W2.1 complete. Stop before W2.2.
+- Last accepted evidence: weapon-mp-level-selector-receipt.json /
+  weapon-mp-level-selector-build-receipt.json /
+  MP_LEVEL_SELECTOR_EVIDENCE.md.
+- Next action: W2.2 - measure the MP selector fields consumed by `80096EF4` /
+  `80096AC8`, then add the separately guarded eye-frustum override with native
+  fallback. Do not transplant the SP PVS selector or queue.
+- Open physical gate: no grip/scale/size, physical recenter or tracked-shot
+  acceptance is claimed. W1 control motion is synthetic.
+- Current build: debug OFF at release SHA `a32125b0...`; selector source/save/
+  preference hashes match the W2.1 build receipt; no owned game or debug
+  listener remains.
+- Checkpoint: VR implementation/tools/proofs/docs included; unrelated
+  `.commandcode/` excluded and untouched. Changes remain uncommitted.
 
-If a session stops mid-W1, replace "not started" with the exact completed
+If a session stops mid-W2, replace the current task with the exact completed
 substep, source diff, failing/passing case, output path, missing fact and one
-next experiment. Do not reset this pointer to M1 or generic discovery.
+next experiment. Do not reset this pointer to M1/W1 or generic discovery.

@@ -8,9 +8,9 @@ scope has evidence; it never implies broader headset or gameplay acceptance.
 Historical design and prior attempts belong in
 [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md) and the evidence documents.
 
-**NEXT IMPLEMENTATION TASK: W1.1 - capture the P38 coordinate-space contract.**
-Do not restart engine discovery, rebuild the MP renderer, or implement shot
-redirection first. Advance by task ID only when its exit gate passes.
+**NEXT IMPLEMENTATION TASK: W2.2 - measure the MP eye-frustum layout.**
+Do not restart engine, mesh, pose-space or eye-renderer discovery. Advance by
+task ID only when its exit gate passes.
 
 ## Rules for using these checkboxes
 
@@ -28,7 +28,7 @@ redirection first. Advance by task ID only when its exit gate passes.
 ## Established foundation - preserve, do not rediscover
 
 - [x] B1. Working branch, title ID, PGXP ABI and current framework/UI pins recorded.
-  Current framework is `d9b0f382`, not the original `31df2e1e` baseline.
+  Current framework is `b982e66e`, not the original `31df2e1e` baseline.
 - [x] B2. Optional Underground plugin, guarded engine map and one shared
   `build-release`; default CMake VR option remains OFF.
 - [x] B3. SP frame-render replay, complete zero/lateral eyes and PGXP projective
@@ -83,34 +83,43 @@ Evidence: [WEAPON_MAPPING.md](WEAPON_MAPPING.md),
 [MP eye receipt](../../vr/proof/weapon-mp-eye-receipt.json),
 [MP build receipt](../../vr/proof/weapon-mp-build-receipt.json).
 
-## W1 - P38 absolute pose contract and independent synthetic controls (NEXT)
+## W1 - P38 absolute pose contract and independent synthetic controls
 
 Dependency: M1-M11. First weapon: **ID 0, source slot 1, zero native switches**.
 No firing changes, laser work, mesh filtering or MP renderer replacement here.
 
-- [ ] W1.1. Capture named coordinate spaces, native affine/animated vertex
+- [x] W1.1. Capture named coordinate spaces, native affine/animated vertex
   samples, GTE RT/TR and eye view at the existing P38 seam. Record units,
   axes, handedness, authored placement and invertibility. See handoff Step W1.
-- [ ] W1.2. Add a copied-fixture head/hand independence harness using real
+- [x] W1.2. Add a copied-fixture head/hand independence harness using real
   synthetic hand samples, not only `mohu.vr.weapon.pose x=/yaw=` deltas.
-- [ ] W1.3. Implement the measured absolute grip/model placement while preserving
+- [x] W1.3. Implement the measured absolute grip/model placement while preserving
   native animation; account for the eye transform exactly once. Full inverse
   where required; do not assume native camera/weapon matrices are orthonormal.
-- [ ] W1.4. Pass independent head-only, hand-only and combined pose controls;
+- [x] W1.4. Pass independent head-only, hand-only and combined pose controls;
   origin/recenter, loss/unfocused/inactive/stale/invalid recovery; both eyes;
   bounded numeric error and visible-mesh controls, with no world/simulation drift.
-- [ ] W1.5. Retain a P38 coordinate-contract receipt, paired PNGs and repeatable
+- [x] W1.5. Retain a P38 coordinate-contract receipt, paired PNGs and repeatable
   test commands; rerun affected baseline checks and update next task to W2.
 
 Exit gate: independently supplied poses predict the measured rendered P38 pose
 in a declared coordinate space. Head motion must not apply twice or drag a
 stationary world-space hand anchor. A gun that merely moves is not a pass.
 
+Evidence: [WEAPON_CALIBRATION.md](WEAPON_CALIBRATION.md),
+[pose-space receipt](../../vr/proof/weapon-pose-space-receipt.json),
+[both-eye controls](../../vr/proof/weapon-pose-space-controls.png),
+[build receipt](../../vr/proof/weapon-pose-build-receipt.json). The receipt
+contains 29 cases, 10 independent head cases, five invalid controls, zero
+RT/TR prediction error, `1e-4` recovered-hand rotation error, `0.493` unit
+translation error and `1.0` origin-anchor error. W1 used no firing. Physical
+grip/scale, MP head-turn visibility and tracked shots remain open in W2-W5.
+
 ## W2 - MP visibility and native input needed for usable hardware testing
 
 Dependency: W1. Do not apply SP addresses to the MP overlay.
 
-- [ ] W2.1. Trace the native MP level selector from the already measured MP
+- [x] W2.1. Trace the native MP level selector from the already measured MP
   scene callback; capture its complete code, tree/masks/queue and caller.
 - [ ] W2.2. Add a separately guarded MP eye-frustum override only after measuring
   its actual layout; preserve native fallback on malformed/overflow input.
@@ -120,6 +129,17 @@ Dependency: W1. Do not apply SP addresses to the MP overlay.
   reuse the existing input mapper only where its MP guards/contracts match.
 - [ ] W2.5. Verify native movement/buttons, no render-time input sampling,
   focus release, pause/resume, and SP/flat fallback. Record remaining hardware gates.
+
+W2.1 evidence: [MP_LEVEL_SELECTOR_EVIDENCE.md](MP_LEVEL_SELECTOR_EVIDENCE.md)
+and [selector receipt](../../vr/proof/weapon-mp-level-selector-receipt.json),
+with the final debug-off binary in
+[build receipt](../../vr/proof/weapon-mp-level-selector-build-receipt.json).
+The native MP path is a flat 26-node scene list with 21 `8006C61C` level nodes,
+not the SP PVS leaf queue. Complete function guards cover frame `80054BC4`,
+scene `8006E9D8`, callback `8006C61C`, selector `80096EF4` and helper
+`80096AC8`; both natural scene callers executed in the copied slot-1 fixture.
+Visibility masks at node `+0x0C`, the ordered queue and all hashes are in the
+receipt. No firing, override or physical acceptance is claimed.
 
 Exit gate: MP head movement and native inputs can support the next bounded
 physical test. SP visibility and SP movement receipts do not close this gate.

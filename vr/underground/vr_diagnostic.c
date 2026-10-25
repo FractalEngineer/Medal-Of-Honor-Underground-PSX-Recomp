@@ -200,13 +200,38 @@ static uint32_t g_weapon_profile_hits[2];
 static uint32_t g_weapon_profile_fallbacks[2];
 static uint32_t g_weapon_profile_last_id;
 static uint32_t g_weapon_profile_last_object;
+static uint32_t g_weapon_capture_sequence;
+static uint32_t g_weapon_capture_node = 11u;
+static bool g_weapon_capture_valid;
+static uint32_t g_weapon_capture_frame;
+static uint32_t g_weapon_capture_node_table;
+static uint32_t g_weapon_capture_output_table;
+static uint32_t g_weapon_capture_node_count;
+static uint32_t g_weapon_capture_local_addr;
+static uint32_t g_weapon_capture_output_addr;
+static int16_t g_weapon_capture_local[MOHU_VR_WEAPON_FP_MAX_NODES][4];
+static int16_t g_weapon_capture_animated[MOHU_VR_WEAPON_FP_MAX_NODES][4];
+static uint32_t g_weapon_capture_local_addrs[MOHU_VR_WEAPON_FP_MAX_NODES];
+static uint32_t g_weapon_capture_output_addrs[MOHU_VR_WEAPON_FP_MAX_NODES];
+static uint32_t g_weapon_capture_native_control[8];
+static uint32_t g_weapon_capture_tracked_control[8];
+static uint32_t g_weapon_capture_restored_control[8];
+static bool g_weapon_capture_tracked_valid;
+static bool g_weapon_capture_restored_valid;
+static bool g_weapon_capture_eye_view_valid;
+static PSXModRenderView g_weapon_capture_eye_view;
+static int32_t g_weapon_capture_ofx_q16;
+static int32_t g_weapon_capture_ofy_q16;
+static bool g_weapon_capture_bounds_valid;
+static double g_weapon_capture_camera_min[3];
+static double g_weapon_capture_camera_max[3];
+static double g_weapon_capture_screen_min[2];
+static double g_weapon_capture_screen_max[2];
 static bool g_weapon_pose_applied_reported;
 static bool g_runtime_hook_counts_reported;
 static double g_weapon_delta_rotation[9];
 static double g_weapon_delta_translation[3];
-static bool g_weapon_neutral_valid;
-static double g_weapon_neutral_rotation[9];
-static double g_weapon_neutral_translation[3];
+static bool g_weapon_absolute;
 static volatile int32_t g_weapon_control_x;
 static volatile int32_t g_weapon_control_yaw_mdeg;
 static volatile int32_t g_weapon_control_loss;
@@ -897,6 +922,204 @@ static int vr_weapon_control_command(const char* args, char* reply, int cap) {
     (void)snprintf(reply, (size_t)cap, "x=%d yaw_mdeg=%d lost=%d",
                    g_weapon_control_x, g_weapon_control_yaw_mdeg,
                    g_weapon_control_loss);
+    return 1;
+}
+
+static int vr_weapon_space_command(const char* args, char* reply, int cap) {
+    if (!args || !reply || cap < 1) {
+        return 0;
+    }
+    if (strncmp(args, "node=", 5u) == 0) {
+        char* end = NULL;
+        const long value = strtol(args + 5, &end, 0);
+        if (end == args + 5 || *end != '\0' || value < 0 ||
+            value >= (long)MOHU_VR_WEAPON_FP_MAX_NODES) {
+            return -1;
+        }
+        g_weapon_capture_node = (uint32_t)value;
+    } else if (strcmp(args, "bounds") == 0) {
+        if (!g_weapon_capture_bounds_valid) {
+            (void)snprintf(reply, (size_t)cap,
+                           "{\"valid\":false,\"sequence\":%u}",
+                           g_weapon_capture_sequence);
+            return 1;
+        }
+        (void)snprintf(
+            reply, (size_t)cap,
+            "{\"valid\":true,\"sequence\":%u,\"camera_min\":[%.9f,%.9f,%.9f],"
+            "\"camera_max\":[%.9f,%.9f,%.9f],"
+            "\"screen_min\":[%.9f,%.9f],\"screen_max\":[%.9f,%.9f]}",
+            g_weapon_capture_sequence, g_weapon_capture_camera_min[0],
+            g_weapon_capture_camera_min[1], g_weapon_capture_camera_min[2],
+            g_weapon_capture_camera_max[0], g_weapon_capture_camera_max[1],
+            g_weapon_capture_camera_max[2], g_weapon_capture_screen_min[0],
+            g_weapon_capture_screen_min[1], g_weapon_capture_screen_max[0],
+            g_weapon_capture_screen_max[1]);
+        return 1;
+    } else if (*args) {
+        return -1;
+    }
+    if (!g_weapon_capture_valid || !g_weapon_capture_tracked_valid) {
+        (void)snprintf(reply, (size_t)cap,
+                       "{\"valid\":false,\"sequence\":%u}",
+                       g_weapon_capture_sequence);
+        return 1;
+    }
+    const uint32_t node = g_weapon_capture_node < g_weapon_capture_node_count
+                              ? g_weapon_capture_node
+                              : 0u;
+    g_weapon_capture_local_addr = g_weapon_capture_local_addrs[node];
+    g_weapon_capture_output_addr = g_weapon_capture_output_addrs[node];
+    const PSXModRenderView* view = &g_weapon_capture_eye_view;
+    (void)snprintf(
+        reply, (size_t)cap,
+        "{\"valid\":true,\"sequence\":%u,\"frame\":%u,\"id\":%u,"
+        "\"object\":\"%08X\",\"node_table\":\"%08X\","
+        "\"output_table\":\"%08X\",\"count\":%u,\"node\":%u,"
+        "\"local_addr\":\"%08X\",\"output_addr\":\"%08X\","
+        "\"local\":[%d,%d,%d,%d],\"animated\":[%d,%d,%d,%d],"
+        "\"native_gte\":[\"%08X\",\"%08X\",\"%08X\",\"%08X\","
+        "\"%08X\",\"%08X\",\"%08X\",\"%08X\"],"
+        "\"tracked_gte\":[\"%08X\",\"%08X\",\"%08X\",\"%08X\","
+        "\"%08X\",\"%08X\",\"%08X\",\"%08X\"],"
+        "\"restored\":%d,"
+        "\"restored_gte\":[\"%08X\",\"%08X\",\"%08X\",\"%08X\","
+        "\"%08X\",\"%08X\",\"%08X\",\"%08X\"],"
+        "\"eye_view\":%d,\"eye\":%u,\"h\":133,\"precise\":%u,"
+        "\"view_rt12\":[%d,%d,%d,%d,%d,%d,%d,%d,%d],"
+        "\"view_t\":[%d,%d,%d],\"view_t_precise\":[%.9f,%.9f,%.9f],"
+        "\"view_h_ref\":%u,"
+        "\"gte_ofx_q16\":%d,\"gte_ofy_q16\":%d,"
+        "\"delta_r\":[%.9f,%.9f,%.9f,%.9f,%.9f,%.9f,%.9f,%.9f,%.9f],"
+        "\"delta_t\":[%.9f,%.9f,%.9f]}",
+        g_weapon_capture_sequence, g_weapon_capture_frame,
+        g_weapon_profile_last_id, g_weapon_profile_last_object,
+        g_weapon_capture_node_table, g_weapon_capture_output_table,
+        g_weapon_capture_node_count, node,
+        g_weapon_capture_local_addr, g_weapon_capture_output_addr,
+        g_weapon_capture_local[node][0], g_weapon_capture_local[node][1],
+        g_weapon_capture_local[node][2], g_weapon_capture_local[node][3],
+        g_weapon_capture_animated[node][0],
+        g_weapon_capture_animated[node][1],
+        g_weapon_capture_animated[node][2],
+        g_weapon_capture_animated[node][3],
+        g_weapon_capture_native_control[0],
+        g_weapon_capture_native_control[1],
+        g_weapon_capture_native_control[2],
+        g_weapon_capture_native_control[3],
+        g_weapon_capture_native_control[4],
+        g_weapon_capture_native_control[5],
+        g_weapon_capture_native_control[6],
+        g_weapon_capture_native_control[7],
+        g_weapon_capture_tracked_control[0],
+        g_weapon_capture_tracked_control[1],
+        g_weapon_capture_tracked_control[2],
+        g_weapon_capture_tracked_control[3],
+        g_weapon_capture_tracked_control[4],
+        g_weapon_capture_tracked_control[5],
+        g_weapon_capture_tracked_control[6],
+        g_weapon_capture_tracked_control[7],
+        g_weapon_capture_restored_valid ? 1 : 0,
+        g_weapon_capture_restored_control[0],
+        g_weapon_capture_restored_control[1],
+        g_weapon_capture_restored_control[2],
+        g_weapon_capture_restored_control[3],
+        g_weapon_capture_restored_control[4],
+        g_weapon_capture_restored_control[5],
+        g_weapon_capture_restored_control[6],
+        g_weapon_capture_restored_control[7],
+        g_weapon_capture_eye_view_valid ? 1 : 0,
+        g_stereo_current_eye, view->precise,
+        view->rotation_q12[0], view->rotation_q12[1],
+        view->rotation_q12[2], view->rotation_q12[3],
+        view->rotation_q12[4], view->rotation_q12[5],
+        view->rotation_q12[6], view->rotation_q12[7],
+        view->rotation_q12[8], view->translation[0],
+        view->translation[1], view->translation[2],
+        view->translation_precise[0], view->translation_precise[1],
+        view->translation_precise[2], view->projection_h_ref,
+        g_weapon_capture_ofx_q16,
+        g_weapon_capture_ofy_q16, g_weapon_delta_rotation[0],
+        g_weapon_delta_rotation[1], g_weapon_delta_rotation[2],
+        g_weapon_delta_rotation[3], g_weapon_delta_rotation[4],
+        g_weapon_delta_rotation[5], g_weapon_delta_rotation[6],
+        g_weapon_delta_rotation[7], g_weapon_delta_rotation[8],
+        g_weapon_delta_translation[0], g_weapon_delta_translation[1],
+        g_weapon_delta_translation[2]);
+    return 1;
+}
+
+static int vr_stereo_pose_command(const char* args, char* reply, int cap) {
+    if (!args || !reply || cap < 1) {
+        return 0;
+    }
+    long yaw = g_stereo_yaw_mdeg;
+    long pitch = g_stereo_pitch_mdeg;
+    long head[3] = {
+        g_stereo_head_milli[0], g_stereo_head_milli[1],
+        g_stereo_head_milli[2],
+    };
+    if (strcmp(args, "reset") == 0) {
+        yaw = 0;
+        pitch = 0;
+        head[0] = head[1] = head[2] = 0;
+    } else {
+        char* end = NULL;
+        unsigned seen = 0u;
+        const char* p = args;
+        while (*p) {
+            while (*p == ' ' || *p == '\t' || *p == ',') {
+                ++p;
+            }
+            if (!*p) break;
+            long* target = NULL;
+            long limit = MOHU_VR_EYE_HEAD_MILLI_LIMIT;
+            if (strncmp(p, "yaw=", 4u) == 0) {
+                target = &yaw;
+                p += 4;
+                limit = MOHU_VR_EYE_ANGLE_LIMIT;
+                seen |= 1u;
+            } else if (strncmp(p, "pitch=", 6u) == 0) {
+                target = &pitch;
+                p += 6;
+                limit = MOHU_VR_EYE_ANGLE_LIMIT;
+                seen |= 2u;
+            } else if (strncmp(p, "x=", 2u) == 0) {
+                target = &head[0];
+                p += 2;
+                seen |= 4u;
+            } else if (strncmp(p, "y=", 2u) == 0) {
+                target = &head[1];
+                p += 2;
+                seen |= 8u;
+            } else if (strncmp(p, "z=", 2u) == 0) {
+                target = &head[2];
+                p += 2;
+                seen |= 16u;
+            } else {
+                return -1;
+            }
+            const long value = strtol(p, &end, 0);
+            if (end == p || value < -limit || value > limit) {
+                return -1;
+            }
+            *target = value;
+            p = end;
+        }
+        if (!seen) {
+            return -1;
+        }
+    }
+    g_stereo_yaw_mdeg = (int32_t)yaw;
+    g_stereo_pitch_mdeg = (int32_t)pitch;
+    for (unsigned i = 0; i < 3u; ++i) {
+        g_stereo_head_milli[i] = (int32_t)head[i];
+    }
+    (void)snprintf(reply, (size_t)cap,
+                   "yaw_mdeg=%d pitch_mdeg=%d head_milli=%d,%d,%d",
+                   g_stereo_yaw_mdeg, g_stereo_pitch_mdeg,
+                   g_stereo_head_milli[0], g_stereo_head_milli[1],
+                   g_stereo_head_milli[2]);
     return 1;
 }
 
@@ -1795,6 +2018,7 @@ static bool vr_weapon_prepare_delta(void) {
     vr_weapon_identity_rotation(g_weapon_delta_rotation);
     memset(g_weapon_delta_translation, 0,
            sizeof g_weapon_delta_translation);
+    g_weapon_absolute = false;
 
     if (g_weapon_force_tracking_loss) {
         return false;
@@ -1821,17 +2045,13 @@ static bool vr_weapon_prepare_delta(void) {
             &hands, g_openxr_units_per_meter, rotation, translation)) {
         return false;
     }
-    if (!g_weapon_neutral_valid) {
-        memcpy(g_weapon_neutral_rotation, rotation, sizeof rotation);
-        memcpy(g_weapon_neutral_translation, translation,
-               sizeof translation);
-        g_weapon_neutral_valid = true;
-        return true;
+    if (g_weapon_profile_last_id != 0u) {
+        return false;
     }
-    return mohu_vr_weapon_relative_delta(
-        rotation, translation, g_weapon_neutral_rotation,
-        g_weapon_neutral_translation, g_weapon_delta_rotation,
-        g_weapon_delta_translation);
+    memcpy(g_weapon_delta_rotation, rotation, sizeof rotation);
+    memcpy(g_weapon_delta_translation, translation, sizeof translation);
+    g_weapon_absolute = true;
+    return true;
 }
 
 static bool vr_weapon_scope(uint32_t* eye_out) {
@@ -1874,6 +2094,144 @@ static void vr_weapon_viewmodel_project(CPUState* cpu, uint32_t address) {
     for (unsigned i = 0; i < 8u; ++i) {
         g_weapon_viewmodel_saved_control[i] = cpu->gte_ctrl[i];
     }
+    g_weapon_capture_valid = false;
+    g_weapon_capture_tracked_valid = false;
+    g_weapon_capture_restored_valid = false;
+    g_weapon_capture_eye_view_valid = false;
+    g_weapon_capture_frame = g_stereo_attempts;
+    memcpy(g_weapon_capture_native_control, g_weapon_viewmodel_saved_control,
+           sizeof g_weapon_capture_native_control);
+    g_weapon_capture_ofx_q16 = (int32_t)cpu->gte_ctrl[24];
+    g_weapon_capture_ofy_q16 = (int32_t)cpu->gte_ctrl[25];
+    g_weapon_capture_bounds_valid = false;
+    const uint32_t output_table = cpu->gpr[19];
+    const uint32_t object = g_weapon_profile_last_object;
+    const uint32_t node_header = psx_mod_read_word(object + 0x80u);
+    const uint32_t node_count = psx_mod_read_word(node_header + 4u);
+    if (node_header >= 0x80000000u && node_header <= 0x801FFFF8u &&
+        output_table >= 0x80000000u && output_table <= 0x801FFFF8u &&
+        node_count && node_count <= MOHU_VR_WEAPON_FP_MAX_NODES) {
+        const uint32_t node_table = psx_mod_read_word(node_header);
+        bool complete = node_table >= 0x80000000u &&
+                        node_table <= 0x80200000u - node_count * 8u &&
+                        output_table >= 0x80000000u &&
+                        output_table <= 0x80200000u - node_count * 4u;
+        memset(g_weapon_capture_local, 0, sizeof g_weapon_capture_local);
+        memset(g_weapon_capture_animated, 0,
+               sizeof g_weapon_capture_animated);
+        memset(g_weapon_capture_local_addrs, 0,
+               sizeof g_weapon_capture_local_addrs);
+        memset(g_weapon_capture_output_addrs, 0,
+               sizeof g_weapon_capture_output_addrs);
+        for (uint32_t node = 0; complete && node < node_count; ++node) {
+            const uint32_t local_addr =
+                psx_mod_read_word(node_table + node * 8u);
+            const uint32_t local_count =
+                psx_mod_read_word(node_table + node * 8u + 4u);
+            const uint32_t output_addr =
+                psx_mod_read_word(output_table + node * 4u);
+            if (local_count) {
+                complete = complete &&
+                           local_addr >= 0x80000000u &&
+                           local_addr <= 0x80200000u - local_count * 8u &&
+                           output_addr >= 0x80000000u &&
+                           output_addr <= 0x801FFFF8u;
+            }
+            if (complete && local_count) {
+                g_weapon_capture_local_addrs[node] = local_addr;
+                g_weapon_capture_output_addrs[node] = output_addr;
+                for (unsigned i = 0; i < 4u; ++i) {
+                    g_weapon_capture_local[node][i] =
+                        (int16_t)psx_mod_read_half(local_addr + i * 2u);
+                    g_weapon_capture_animated[node][i] =
+                        (int16_t)psx_mod_read_half(output_addr + i * 2u);
+                }
+            }
+        }
+        if (complete) {
+            g_weapon_capture_node_table = node_table;
+            g_weapon_capture_output_table = output_table;
+            g_weapon_capture_node_count = node_count;
+            g_weapon_capture_eye_view_valid = g_stereo_eye_view_valid;
+            if (g_weapon_capture_eye_view_valid) {
+                g_weapon_capture_eye_view = g_stereo_eye_view;
+                g_weapon_capture_eye_view.projection_h_ref = 400u;
+            }
+            double rotation[9];
+            for (unsigned i = 0; i < 9u; ++i) {
+                rotation[i] =
+                    (int16_t)(g_weapon_capture_native_control[i / 2u] >>
+                              ((i & 1u) * 16u)) /
+                    4096.0;
+            }
+            bool have_point = false;
+            bool have_screen = false;
+            for (uint32_t node = 0; node < node_count; ++node) {
+                const uint32_t local_count =
+                    psx_mod_read_word(node_table + node * 8u + 4u);
+                const uint32_t output_addr =
+                    g_weapon_capture_output_addrs[node];
+                if (!local_count || !output_addr) {
+                    continue;
+                }
+                for (uint32_t vertex = 0; vertex < local_count; ++vertex) {
+                    int16_t input[3];
+                    for (unsigned axis = 0; axis < 3u; ++axis) {
+                        input[axis] = (int16_t)psx_mod_read_half(
+                            output_addr + vertex * 8u + axis * 2u);
+                    }
+                    double camera[3];
+                    for (unsigned row = 0; row < 3u; ++row) {
+                        camera[row] =
+                            (double)(int32_t)g_weapon_capture_native_control[
+                                5u + row];
+                        for (unsigned col = 0; col < 3u; ++col) {
+                            camera[row] += rotation[row * 3u + col] *
+                                           input[col];
+                        }
+                        if (!have_point) {
+                            g_weapon_capture_camera_min[row] = camera[row];
+                            g_weapon_capture_camera_max[row] = camera[row];
+                        } else {
+                            g_weapon_capture_camera_min[row] =
+                                fmin(g_weapon_capture_camera_min[row],
+                                     camera[row]);
+                            g_weapon_capture_camera_max[row] =
+                                fmax(g_weapon_capture_camera_max[row],
+                                     camera[row]);
+                        }
+                    }
+                    have_point = true;
+                    if (camera[2] > 1.0) {
+                        const double sx =
+                            (double)g_weapon_capture_ofx_q16 / 65536.0 +
+                            133.0 * camera[0] / camera[2];
+                        const double sy =
+                            (double)g_weapon_capture_ofy_q16 / 65536.0 +
+                            133.0 * camera[1] / camera[2];
+                        if (!have_screen) {
+                            g_weapon_capture_screen_min[0] = sx;
+                            g_weapon_capture_screen_min[1] = sy;
+                            g_weapon_capture_screen_max[0] = sx;
+                            g_weapon_capture_screen_max[1] = sy;
+                        } else {
+                            g_weapon_capture_screen_min[0] =
+                                fmin(g_weapon_capture_screen_min[0], sx);
+                            g_weapon_capture_screen_min[1] =
+                                fmin(g_weapon_capture_screen_min[1], sy);
+                            g_weapon_capture_screen_max[0] =
+                                fmax(g_weapon_capture_screen_max[0], sx);
+                            g_weapon_capture_screen_max[1] =
+                                fmax(g_weapon_capture_screen_max[1], sy);
+                        }
+                        have_screen = true;
+                    }
+                }
+            }
+            g_weapon_capture_bounds_valid = have_point && have_screen;
+            g_weapon_capture_valid = true;
+        }
+    }
     const int32_t pivot[3] = {
         (int32_t)g_weapon_viewmodel_saved_control[5],
         (int32_t)g_weapon_viewmodel_saved_control[6],
@@ -1881,9 +2239,15 @@ static void vr_weapon_viewmodel_project(CPUState* cpu, uint32_t address) {
     };
     uint32_t tracked[8];
     memcpy(tracked, g_weapon_viewmodel_saved_control, sizeof tracked);
-    if (!mohu_vr_weapon_compose_gte_control(
-            tracked, g_weapon_delta_rotation, pivot,
-            g_weapon_delta_translation)) {
+    const double absolute_pivot[3] = {98.0, 296.0, 193.0};
+    const int composed = g_weapon_absolute
+        ? mohu_vr_weapon_compose_absolute_gte_control(
+              tracked, g_weapon_delta_rotation, g_weapon_delta_translation,
+              absolute_pivot)
+        : mohu_vr_weapon_compose_gte_control(
+              tracked, g_weapon_delta_rotation, pivot,
+              g_weapon_delta_translation);
+    if (!composed) {
         g_weapon_viewmodel_pending = false;
         psx_mod_counter_add("mohu.vr.weapon.viewmodel_compose_fail", 1);
         return;
@@ -1891,6 +2255,10 @@ static void vr_weapon_viewmodel_project(CPUState* cpu, uint32_t address) {
     for (unsigned i = 0; i < 8u; ++i) {
         cpu->gte_ctrl[i] = tracked[i];
     }
+    memcpy(g_weapon_capture_tracked_control, tracked,
+           sizeof g_weapon_capture_tracked_control);
+    g_weapon_capture_tracked_valid = true;
+    g_weapon_capture_sequence++;
     g_weapon_viewmodel_pending = false;
     g_weapon_viewmodel_applied = true;
     const unsigned eye = g_stereo_active ? g_stereo_current_eye : 0u;
@@ -1907,7 +2275,10 @@ static void vr_weapon_viewmodel_restore(CPUState* cpu) {
     if (g_weapon_viewmodel_applied) {
         for (unsigned i = 0; i < 8u; ++i) {
             cpu->gte_ctrl[i] = g_weapon_viewmodel_saved_control[i];
+            g_weapon_capture_restored_control[i] =
+                g_weapon_viewmodel_saved_control[i];
         }
+        g_weapon_capture_restored_valid = true;
         g_weapon_viewmodel_applied = false;
         psx_mod_counter_add("mohu.vr.weapon.viewmodel_restore", 1);
     }
@@ -2126,7 +2497,7 @@ static void vr_diagnostic_activate(void) {
     const char* flat_probe = getenv(MOHU_VR_WEAPON_FLAT_PROBE_ENV);
     g_weapon_flat_probe =
         flat_probe && *flat_probe && *flat_probe != '0';
-    g_weapon_neutral_valid = false;
+    g_weapon_absolute = false;
     g_weapon_viewmodel_pending = false;
     g_weapon_viewmodel_applied = false;
     g_weapon_control_x = g_weapon_synthetic_x;
@@ -2249,6 +2620,10 @@ PSX_MOD_CONSTRUCTOR(psx_register_mohu_vr_diagnostic_plugin) {
         MOHU_VR_DIAG_PLUGIN_ID, vr_diagnostic_vblank);
     (void)psx_mod_register_command(
         "mohu.vr.weapon.pose", vr_weapon_control_command);
+    (void)psx_mod_register_command(
+        "mohu.vr.weapon.space", vr_weapon_space_command);
+    (void)psx_mod_register_command(
+        "mohu.vr.stereo.pose", vr_stereo_pose_command);
     for (size_t i = 0; i < mohu_vr_engine_map_count(); ++i) {
         const MohuVrEngineBinding* binding = mohu_vr_engine_map_at(i);
         if (binding && binding->status >= MOHU_VR_STATUS_STATIC_CONFIRMED) {
