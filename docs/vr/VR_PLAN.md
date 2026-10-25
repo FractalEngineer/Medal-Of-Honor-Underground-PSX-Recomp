@@ -8,11 +8,15 @@ scope has evidence; it never implies broader headset or gameplay acceptance.
 Historical design and prior attempts belong in
 [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md) and the evidence documents.
 
-**NEXT IMPLEMENTATION TASK: C1 - characterize cross-game helper parity.**
-The requested bounded C1-C4 consistency pass precedes W2.3, which remains the
-next feature task. See [CONSISTENCY_HANDOFF.md](CONSISTENCY_HANDOFF.md).
-Do not restart engine, mesh, pose-space or eye-renderer discovery. Advance by
-task ID only when its exit gate passes.
+**NEXT IMPLEMENTATION TASK: C3 continuation - replace the reference runtime
+fixture.** C1, C2 and the C4 ownership/workflow documentation are complete.
+Underground runtime checks pass. The reference debug diagnostic rejects the
+available normal-build saves with
+`enhancement_memory_layout_or_execution_profile`; the save slots themselves load
+in the normal build. Do not start W2.3 until a debug-profile-compatible copied
+reference fixture closes C3. See
+[CONSISTENCY_HANDOFF.md](CONSISTENCY_HANDOFF.md) and
+[the parity receipt](../../vr/proof/reference-parity-receipt.json).
 
 The [reference reuse audit](REFERENCE_REUSE_AUDIT.md) names existing first-game
 code and local equivalents for every workstream. Port/adapt those implementations;
@@ -34,19 +38,30 @@ strict W1->W6/hardware-first sequence.
 - Update the handoff's next task ID, last result and next experiment at session
   end. An incomplete task needs a precise continuation, not "continue mapping".
 
-## C - cross-game consistency pass (NEXT; no feature rediscovery)
+## C - cross-game consistency pass (C3 blocked; no feature rediscovery)
 
-- [ ] C1. Add host-only cross-game parity fixtures and a behavior/policy difference
+- [x] C1. Add host-only cross-game parity fixtures and a behavior/policy difference
   table for the helpers named in CONSISTENCY_HANDOFF. Preserve current outputs
-  and capture intentional differences before extraction.
-- [ ] C2. Consolidate exactly the 3x3 inverse, conservative box visibility and
+  and capture intentional differences before extraction. Evidence:
+  `vr/tests/reference_parity_vectors.c`, the two title adapters,
+  `vr/tools/check_reference_parity.py`, and the 32-case baseline.
+- [x] C2. Consolidate exactly the 3x3 inverse, conservative box visibility and
   slab ray/box math in a shared framework implementation consumed by both games.
   Retain title-specific wrappers, limits, native readers, hooks and calibration.
+  Both framework copies use `vr_geometry_math.c` SHA-256
+  `9e51708f0f05a16182e4d5893063a06f656d4fc723965f72cea9191632661a23`.
 - [ ] C3. Build both consumers and pass focused fixtures plus the affected
   pre/post runtime controls. New receipts identify both games and the shared
-  core revision. One game's passing result does not close this gate.
-- [ ] C4. Document common ownership, retained differences and a repeatable parity
-  check in both projects; update provenance and resume NEXT=W2.3.
+  core revision. One game's passing result does not close this gate. Both
+  release builds and host fixtures pass. Underground zero, lateral, side/head,
+  native-fire, refusal and recovery controls pass. Reference headless gameplay
+  remains blocked by a diagnostic execution-profile mismatch:
+  `enhancement_memory_layout_or_execution_profile`. The normal-build slots are
+  user-confirmed working; exact status and logs are in the parity receipt.
+- [x] C4. Document common ownership, retained differences and a repeatable parity
+  check in both projects. The ownership rule, command, receipt, source hashes
+  and intentional policy differences are recorded. Resuming W2.3 remains
+  blocked by C3, not a completed feature gate.
 
 Exit gate: shared calculation for these three operations, explicit game adapters,
 both consumers validated, no behavioral/default change concealed as cleanup.
@@ -56,7 +71,8 @@ differences. Projection/HUD/aim/triangle features stay outside this first batch.
 ## Established foundation - preserve, do not rediscover
 
 - [x] B1. Working branch, title ID, PGXP ABI and current framework/UI pins recorded.
-  Current framework is `b982e66e`, not the original `31df2e1e` baseline.
+  Current framework is `555e1eab`; it retains the earlier `b982e66e` work and
+  is not the original `31df2e1e` baseline.
 - [x] B2. Optional Underground plugin, guarded engine map and one shared
   `build-release`; default CMake VR option remains OFF.
 - [x] B3. SP frame-render replay, complete zero/lateral eyes and PGXP projective

@@ -826,13 +826,41 @@
   agree on C1, and the six PowerShell blocks parse without execution. Latest
   runtime source and release-executable hashes still match the retained receipt.
 
+### Shared VR geometry extraction (2026-10-26)
+
+- C1 added the file-local inverse seam, two distinctly named host adapters, one
+  common numeric vector set and
+  [check_reference_parity.py](../../vr/tools/check_reference_parity.py). The
+  baseline exposed the expected inverse policy split and Underground's partial
+  failure write, plus a non-finite ray-origin gap.
+- C2 added `psxrecomp/runtime/include/vr_geometry_math.h` and
+  `psxrecomp/runtime/src/vr_geometry_math.c`. Both game framework copies now
+  contain the same source hash
+  `9e51708f0f05a16182e4d5893063a06f656d4fc723965f72cea9191632661a23`.
+  The shared framework commit is `555e1eab`.
+  Inverse wrappers retain separate limits; MP expansion/view validation and all
+  tree layouts, masks, hooks, projection, input and weapon behavior stayed local.
+- The 32-case parity run passes after extraction. Inverse rejection now leaves
+  the caller's output untouched in both consumers. The shared ray test rejects
+  malformed inputs instead of inheriting either wrapper's weaker checks.
+- C3 release builds pass in both checkouts. Underground's existing controls pass
+  at zero/lateral/side head poses, with native/translated/yawed/lost weapon
+  cases, native pistol fire, refusal and fresh-pair recovery. Reference host
+  aim/frustum/raycast fixtures pass, but the debug-profile diagnostic rejects
+  normal-build savestates with
+  `enhancement_memory_layout_or_execution_profile`. The user confirmed the save
+  slots load in the normal build, so this remains a fixture-profile blocker, not
+  a save corruption finding.
+- C4 added the same ownership rule to both game handoffs, a shared-policy test
+  to both VR test workflows, and
+  [reference-parity-receipt.json](../../vr/proof/reference-parity-receipt.json).
+  Historical receipts and source saves were not changed. Both builds were
+  restored to debug OFF; no game or VR process remains.
+
 ## Next work
 
-**C1: characterize cross-game helper parity.** Execute the bounded C1-C4 pass
-in [CONSISTENCY_HANDOFF.md](CONSISTENCY_HANDOFF.md), then resume W2.3 visibility
-validation without reopening completed engine/mesh/pose work. Use
-[HANDOFF.md](HANDOFF.md) as the execution contract and
-[VR_PLAN.md](VR_PLAN.md) as the only checkbox/status list. Prior log entries are
-historical results and rejected attempts, not instructions to repeat them.
-Consult the reuse audit before adding code; extend existing helpers and follow
-the corrected desktop/hardware dependencies instead of rediscovering systems.
+**C3 continuation: reference debug-profile fixture.** Run the reference
+diagnostic with a copied PGXP slot made by the same debug execution profile,
+then rerun the existing headless world-stability batch. Do not patch a save
+header, describe the working normal-build slots as bad, or claim C3 from the
+Underground pass. Resume W2.3 only after that reference runtime gate passes.

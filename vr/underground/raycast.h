@@ -1,6 +1,7 @@
 #pragma once
 
 #include "mod_plugins.h"
+#include "vr_geometry_math.h"
 
 #include <math.h>
 #include <stdint.h>
@@ -15,44 +16,7 @@ static inline int mohu_vr_ray_box(const double origin[3],
                                   const int16_t bounds[6],
                                   double tmin, double tmax,
                                   double* t_enter) {
-    if (!origin || !direction || !bounds || !t_enter ||
-        !isfinite(tmin) || !isfinite(tmax) || tmin > tmax) {
-        return 0;
-    }
-    double lo_t = tmin;
-    double hi_t = tmax;
-    for (int axis = 0; axis < 3; ++axis) {
-        const double lo = bounds[axis];
-        const double hi = bounds[axis + 3];
-        if (lo > hi) {
-            return 0;
-        }
-        if (fabs(direction[axis]) < 1e-9) {
-            if (origin[axis] < lo || origin[axis] > hi) {
-                return 0;
-            }
-            continue;
-        }
-        const double inverse = 1.0 / direction[axis];
-        double a = (lo - origin[axis]) * inverse;
-        double b = (hi - origin[axis]) * inverse;
-        if (a > b) {
-            const double swap = a;
-            a = b;
-            b = swap;
-        }
-        if (a > lo_t) {
-            lo_t = a;
-        }
-        if (b < hi_t) {
-            hi_t = b;
-        }
-        if (lo_t > hi_t) {
-            return 0;
-        }
-    }
-    *t_enter = lo_t;
-    return 1;
+    return psx_vr_ray_box(origin, direction, bounds, tmin, tmax, t_enter);
 }
 static inline int mohu_vr_ray_tree(uint32_t root,
                                    const double origin[3],

@@ -1,10 +1,23 @@
 # Cross-game VR consistency pass
 
 Updated: 2026-10-26. Requested after the
-[reference reuse audit](REFERENCE_REUSE_AUDIT.md). This file specifies the next
-implementation handover; this documentation session does not implement the
-refactor. [VR_PLAN.md](VR_PLAN.md) owns C1-C4 status. W2.3 remains the next
-feature task after this bounded pass. Completed W1/W2.1/W2.2 stay closed.
+[reference reuse audit](REFERENCE_REUSE_AUDIT.md). [VR_PLAN.md](VR_PLAN.md)
+owns C1-C4 status. Completed W1/W2.1/W2.2 stay closed.
+
+## Execution status
+
+C1, C2 and the C4 ownership/workflow documentation are complete. The 32-case
+host parity harness passes, both Release consumers build, and Underground's
+zero, lateral, head-yaw, weapon-control, refusal and recovery diagnostics pass.
+The shared implementation is on the framework fork at commit `555e1eab`.
+C3 remains open because the reference debug diagnostic executable rejects the
+available normal-build copied savestates with
+`enhancement_memory_layout_or_execution_profile`. The user confirmed the save
+slots load in the normal build; this is a diagnostic-profile fixture mismatch,
+not a bad-save conclusion.
+The exact status, hashes, intentional policy differences and next action are in
+[reference-parity-receipt.json](../../vr/proof/reference-parity-receipt.json).
+W2.3 remains unstarted.
 
 ## Answer: what was duplicated, and what was a valid port?
 
@@ -163,9 +176,11 @@ once in the framework; keep measured bindings in title adapters; label a copied
 tool with its origin and meaningful local differences. A later generic fix must
 reach both consumers or explicitly record which consumer remains pending.
 
-Then update C1-C4 evidence/status and set NEXT back to **W2.3**. No feature gate
-was completed by the consistency pass. No commit/push is implied by this
-documentation handover; obey the user's current authorization at execution time.
+Update C1-C4 evidence/status. Set NEXT back to **W2.3** only after both
+consumers' C3 runtime gates pass; while C3 is blocked, keep its exact fixture
+failure and next action as NEXT. No feature gate was completed by the
+consistency pass. No commit/push is implied by this handover; obey the user's
+current authorization at execution time.
 
 ## Limits and recovery
 
@@ -182,5 +197,7 @@ documentation handover; obey the user's current authorization at execution time.
 - Same failed hypothesis twice: retain evidence and choose the missing fact;
   no repeated rebuild/test loop with unchanged inputs.
 
-Current continuation: **C1 not started**. Documentation only. W2.3 remains the
-next feature task; all runtime sources, builds and existing receipts are unchanged.
+Current continuation: **C3 blocked on the reference debug-profile fixture**.
+Run the reference diagnostic with a copied save produced by the same debug
+execution profile, then rerun the existing headless world-stability batch. Never
+patch a save header or replace the user's source save.

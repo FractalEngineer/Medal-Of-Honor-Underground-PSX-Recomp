@@ -7,15 +7,16 @@ executable and live overlay content.
 
 ## Start here
 
-1. [HANDOFF.md](HANDOFF.md) is the current execution contract: exact next task
-   C1 consistency pass, then W2.3; fixtures, commands and stop/recovery rules.
+1. [HANDOFF.md](HANDOFF.md) is the current execution contract: C3's reference
+   runtime-fixture continuation, then W2.3; fixtures, commands and recovery rules.
 2. [VR_PLAN.md](VR_PLAN.md) is the checkbox/status list and dependency order.
    Do not restart checked foundation/renderer work without a demonstrated regression.
    [REFERENCE_REUSE_AUDIT.md](REFERENCE_REUSE_AUDIT.md) maps every workstream
    to reusable first-game code and local counterparts; consult it before adding
    a new implementation. Hardware acceptance does not block isolated desktop work.
-   [CONSISTENCY_HANDOFF.md](CONSISTENCY_HANDOFF.md) specifies the requested
-   three-operation shared-math pass and both-game parity/regression gates.
+   [CONSISTENCY_HANDOFF.md](CONSISTENCY_HANDOFF.md) records the completed
+   three-operation shared math, both-game parity status and the reference
+   runtime fixture blocker.
 3. [BASELINE.md](BASELINE.md) records the historical 2026-10-23 starting tree.
    Its old framework pin and no-VR state do not override the current handoff.
 4. [ENGINE_EQUIVALENCE.md](ENGINE_EQUIVALENCE.md) tracks candidate function
@@ -109,8 +110,9 @@ The real first-person seam and P1-only MP desktop eye renderer are verified for
 all 13 measured IDs. W1 is complete for the P38 absolute synthetic head/hand
 coordinate contract and is not a mesh-hook search. W2.1 measured the native MP
 flat scene-list selector. W2.2 added its measured, separately guarded
-eye-frustum override and passed a zero-angle both-eye control; the next feature is
-W2.3 head-turn and near-wall validation after the bounded C1-C4 consistency pass.
+eye-frustum override and passed a zero-angle both-eye control. C1-C2 and the
+shared ownership/test workflow are complete; C3's reference runtime fixture
+remains blocked, so W2.3 head-turn and near-wall validation has not started.
 Physical calibration, broader MP
 visibility and controls, tracked shot alignment, exact barrel laser and wrist
 HUD remain open under the ordered plan. See

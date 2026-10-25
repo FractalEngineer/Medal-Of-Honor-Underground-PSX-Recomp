@@ -1,0 +1,134 @@
+{
+  "schema": 1,
+  "date": "2026-10-26",
+  "kind": "shared-vr-helper-reconciliation",
+  "status": {
+    "c1": "complete",
+    "c2": "complete",
+    "c3": "blocked-on-reference-debug-profile-fixture",
+    "c4": "complete",
+    "next": "Use a copied reference save fixture produced by the same debug diagnostic execution profile, or run the reference diagnostic under the normal release profile, then rerun the headless zero/lateral/side world-stability batch. Do not patch save headers. W2.3 remains unstarted."
+  },
+  "source_revisions": {
+    "underground": {
+      "head": "6b6e8c825f570b17c9890d497e586c4a369b2893",
+      "framework_gitlink": "555e1eabccc59b9b6ff0d9fca48aca783513dc86",
+      "framework_geometry_sha256": "9e51708f0f05a16182e4d5893063a06f656d4fc723965f72cea9191632661a23"
+    },
+    "reference": {
+      "head": "b33a7d96d596214233d3aef5ecacbf3736ad29e3",
+      "framework_gitlink": "555e1eabccc59b9b6ff0d9fca48aca783513dc86",
+      "framework_geometry_sha256": "9e51708f0f05a16182e4d5893063a06f656d4fc723965f72cea9191632661a23"
+    },
+    "note": "The shared framework commit is 555e1eabccc59b9b6ff0d9fca48aca783513dc86. Both consumers use that exact revision and the same geometry source hash."
+  },
+  "shared_operations": {
+    "inverse_3x3": {
+      "source": "psxrecomp/runtime/src/vr_geometry_math.c",
+      "wrapper_reference": "vr/moh_vr_aim.c:moh_vr_matrix_inverse",
+      "wrapper_underground": "vr/underground/inverse.h:mohu_vr_laser_inverse",
+      "contract": "Finite 3x3 input; parameterized determinant and coefficient limits; complete inverse published only on success."
+    },
+    "conservative_box_visibility": {
+      "source": "psxrecomp/runtime/src/vr_geometry_math.c",
+      "wrapper_reference": "vr/moh_vr_frustum.h:moh_vr_box_visible",
+      "wrapper_underground": "vr/underground/frustum.h:mohu_vr_box_visible",
+      "contract": "Eight corners through model and eye transforms; reject only when all corners are outside one plane; unknown or saturated input maps to the caller's conservative keep policy."
+    },
+    "slab_ray_box": {
+      "source": "psxrecomp/runtime/src/vr_geometry_math.c",
+      "wrapper_reference": "vr/moh_vr_raycast.h:moh_vr_ray_box",
+      "wrapper_underground": "vr/underground/raycast.h:mohu_vr_ray_box",
+      "contract": "Positive/negative/parallel rays, clamped range and entry distance; null, non-finite, reversed range or reversed bounds rejected without output writes."
+    }
+  },
+  "retained_title_differences": [
+    "Reference inverse rejects determinant magnitudes above 64 and coefficients above 8.",
+    "Underground inverse has no upper determinant bound and accepts coefficients through 64.",
+    "Underground MP visibility retains center/radius expansion, overflow rejection, view validation, P1 ownership and native fallback.",
+    "Title tree layouts, masks, traversal limits, hooks, projection parameters and weapon behavior remain local.",
+    "Laser projection/clipping remains deferred; input mapping and W1/W2 weapon hooks were not moved or rewritten."
+  ],
+  "host_parity": {
+    "command": "python vr/tools/check_reference_parity.py --reference-root <reference-root> --out-dir <fresh-ignored-dir>",
+    "result": "pass",
+    "cases": 32,
+    "baseline_receipt": "analysis/reference-parity/c2-shared-20261026d/baseline.json",
+    "baseline_sha256": "1c83281d32e00b523de614d5e8d350fffed5e051b7210bde9352bbbc1cd6a170",
+    "fixture_sha256": "01713aefcaca701fbab560c695c9920180d8a5c2444be56267dccb5a54c8d761",
+    "covered": [
+      "identity, scaled/sheared and translation reconstruction",
+      "singular, near-singular, threshold, high-determinant, coefficient and non-finite inverse policies",
+      "forward, behind, side and plane-crossing boxes",
+      "Q12 and precise view paths, eye rotation/translation, asymmetric projection and 512x240/540x120 bounds",
+      "MP sphere expansion and fallback",
+      "positive, negative and parallel slab rays, range clamping, reversed inputs and malformed values"
+    ]
+  },
+  "consumer_verification": {
+    "underground": {
+      "build": "Release, OpenGL, OpenXR, PGXP, VR diagnostics ON, debug tools OFF",
+      "executable_sha256": "01f2f64be61b7a2d8156e0ed8bcf6c94d0fbe5a994f8335111b383c433a78df7",
+      "python_tests": "19 passed",
+      "strict_host_fixtures": "frustum, raycast, MP view and weapon passed",
+      "runtime": {
+        "zero_fire_recovery_receipt": "analysis/reference-parity/runtime-ug-zero-fire-recovery-20261026/receipt.json",
+        "zero_fire_recovery_sha256": "fc8a84e1a5768bb972c6c7c3793670e8884fe559cc2dfad52f79c04650435d85",
+        "lateral_receipt": "analysis/reference-parity/runtime-ug-lateral-20261026/receipt.json",
+        "lateral_sha256": "741cc55d161fb0f11c8cd7688b70bf83126155721c6093f7b1d5050e7a194443",
+        "head_visibility_receipt": "analysis/reference-parity/runtime-ug-head-visibility-20261026/receipt.json",
+        "head_visibility_sha256": "fe1b2d9dd0c85d1401919ec6668f46feeda56f4dd579459c194e5e010a3ddf81",
+        "result": "zero, translated, yawed and lost controls; lateral eye offset; native pistol fire; refusal and fresh-pair recovery; clean rollback and no remaining owned process"
+      }
+    },
+    "reference": {
+      "build": "Release, OpenGL, OpenXR, PGXP, debug tools restored OFF",
+      "executable_sha256": "12de170cbd304a0ccb55024ded267d017fea6d09cf504291e972c01f1d25143f",
+      "windows_build_integration": "Removed the duplicate recomp-ui UTF-8 manifest source when the framework already embeds one; the same workaround already exists in Underground.",
+      "python_tests": "1 shared-policy test passed",
+      "strict_host_fixtures": "aim, frustum and raycast passed",
+      "runtime": {
+        "result": "blocked before dependent gameplay by a diagnostic execution-profile mismatch",
+        "fixture": "normal-build slots copied into isolated directories, then loaded by the temporary debug diagnostic executable",
+        "observed_status": {
+          "generation": 1,
+          "pending": 0,
+          "last_ok": 0,
+          "last_op": "load",
+          "last_slot": 1
+        },
+        "exact_error": "boot_state: reject - enhancement_memory_layout_or_execution_profile",
+        "observed_wrapper_status": "VR slot load failed: {\"generation\":1,\"pending\":0,\"last_ok\":0,\"last_op\":\"load\",\"last_slot\":1}",
+        "user_manual_check": "The normal-build save slots load successfully; the harness did not establish that the save files are invalid.",
+        "source_slots_checked": [0, 1, 2],
+        "source_slot_sha256": {
+          "0": "92dcd77a1580bc328c82935b36dd60a6599c9a2757a56eeb4d7e32ba5ea53254",
+          "1": "09cdf940cddf8055a0cc09e368255fb8881a0889df23a1c5ea6dfcf187b78595",
+          "2": "96ad21a05a0e03c1b6923012e650957d0381b92420074be0eeb3e3fb5d1bb11e"
+        },
+        "log": "analysis/reference-parity/ref-runtime-20261026/launch-sync/runtime.stdout.log",
+        "log_sha256": "95cc725f8f1d2c0dca2f875f81e154264043dde8a53c6f686a633a830600a6c4",
+        "next_action": "Provide or select one copied PGXP slot produced by the debug diagnostic execution profile, then rerun the headless world-stability batch; never patch the save header or treat the working normal-build slots as bad."
+      }
+    }
+  },
+  "repeatable_checks": [
+    "python -m unittest discover -s vr/tests -p 'test_*.py'",
+    "python vr/tools/check_reference_parity.py --reference-root <reference-root> --out-dir <fresh-ignored-dir>",
+    "cmake --build build-release --target psx-runtime --parallel 2"
+  ],
+  "cleanup": {
+    "debug_tools_restored_off": true,
+    "remaining_game_or_vr_pids": [],
+    "source_saves_modified": false,
+    "historical_receipts_modified": false,
+    "normal_feature_defaults_changed": false,
+    "committed_or_pushed": false
+  },
+  "limits": [
+    "C3 remains open for the reference runtime because the available normal-build savestates do not match the temporary debug execution profile.",
+    "The host parity pass is not a substitute for the reference runtime image or rollback path.",
+    "No physical headset, renderer, input, weapon hook or W2.3 behavior was accepted by this pass.",
+    "The shared framework commit is pushed; consumer commits contain the updated gitlinks."
+  ]
+}

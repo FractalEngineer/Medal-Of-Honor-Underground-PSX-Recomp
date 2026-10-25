@@ -4,6 +4,7 @@
 #include "frustum.h"
 #include "hud_packets.h"
 #include "input.h"
+#include "inverse.h"
 #include "menu_surface.h"
 #include "mp_view.h"
 #include "raycast.h"
@@ -477,36 +478,6 @@ static void report_runtime_hook_counts(void) {
     fflush(stdout);
 }
 
-static bool vr_laser_inverse(const double matrix[9], double inverse[9]) {
-    if (!matrix || !inverse) {
-        return false;
-    }
-    const double cofactor[9] = {
-        matrix[4] * matrix[8] - matrix[5] * matrix[7],
-        matrix[2] * matrix[7] - matrix[1] * matrix[8],
-        matrix[1] * matrix[5] - matrix[2] * matrix[4],
-        matrix[5] * matrix[6] - matrix[3] * matrix[8],
-        matrix[0] * matrix[8] - matrix[2] * matrix[6],
-        matrix[2] * matrix[3] - matrix[0] * matrix[5],
-        matrix[3] * matrix[7] - matrix[4] * matrix[6],
-        matrix[1] * matrix[6] - matrix[0] * matrix[7],
-        matrix[0] * matrix[4] - matrix[1] * matrix[3],
-    };
-    const double determinant =
-        matrix[0] * cofactor[0] + matrix[1] * cofactor[3] +
-        matrix[2] * cofactor[6];
-    if (!isfinite(determinant) || fabs(determinant) < 0.01) {
-        return false;
-    }
-    for (unsigned i = 0; i < 9u; ++i) {
-        inverse[i] = cofactor[i] / determinant;
-        if (!isfinite(inverse[i]) || fabs(inverse[i]) > 64.0) {
-            return false;
-        }
-    }
-    return true;
-}
-
 static void vr_laser_mul3(const double matrix[9], const double vector[3],
                           double out[3]) {
     const double input[3] = {vector[0], vector[1], vector[2]};
@@ -543,8 +514,8 @@ static bool vr_laser_capture_level(CPUState* cpu) {
         g_laser_camera_translation[i] =
             (int32_t)cpu->gte_ctrl[5u + i];
     }
-    if (!vr_laser_inverse(g_laser_camera_rotation,
-                          g_laser_camera_inverse)) {
+    if (!mohu_vr_laser_inverse(g_laser_camera_rotation,
+                               g_laser_camera_inverse)) {
         return false;
     }
     g_laser_offset_x = (int32_t)cpu->gte_ctrl[24];
