@@ -2,163 +2,267 @@
 
 Last updated: 2026-10-25
 
-## Current source of truth
+Execution order and stop/recovery rules are in [HANDOFF.md](HANDOFF.md).
+Checkbox status is in [VR_PLAN.md](VR_PLAN.md). **The next task is W1.1: P38
+coordinate-space capture.** This file records measurements; it does not reopen
+completed renderer/mesh discovery or override the ordered plan.
 
-Weapon-position work uses one copied multiplayer fixture. The fixture already
-contains a stationary P2 target, all 13 measured weapon IDs across source slots
-1-4, and verified native damage writes. No single-player fixture is required
-for the current weapon-pose or weapon-damage work.
+## Current result
 
-Use one enemy and test one weapon at a time. Reload the copied slot after a kill
-instead of chasing a moving target.
+The visible **top-view P1 first-person mesh seam is now located**. The guarded,
+opt-in implementation projects the real first-person object's native animated
+vertices with a temporary GTE rotation/translation, then restores all eight
+RT/TR words before returning. It does not change native shots or the world view.
+The production launcher still leaves `PSX_VR_WEAPON_POSE` and the separate
+`MOHU_VR_MP_CONTROL` bench off.
 
-Single-player and multiplayer do not share one safe update hook:
+Use the four copied multiplayer saves and stationary P2 target for this work.
+Do not create, migrate, patch, or overwrite the operator's saves. Reload a copied
+slot after a kill. No single-player target is needed for MP model mapping.
 
-| Mode | Player update | Size | FNV-1a |
-| --- | --- | ---: | --- |
-| Multiplayer | `0x800892E8` | `0xA70` | `0x39E56A35` |
-| Single-player | `0x800892C8` | `0xF20` | `0xF4D6C439` |
+The adjacent reference game's `VR_WEAPON_TRACKING.md`, `VR_WEAPON_AIM_PLAN.md`,
+and `VR_WEAPON_BATCH.md` distinguish first-person geometry from the held/body
+object. Following that contract exposed Underground's separate viewmodel. The
+reference's offsets, calibration, mesh profiles, and shot hooks were not copied.
 
-The current task is the multiplayer first-person weapon transform. The
-single-player shot-origin path is a later aim-validation task and must not block
-the multiplayer model mapping.
+## Measured native contract
 
-## Measured multiplayer fixture
-
-| Item | Value |
+| Item | Underground multiplayer |
 | --- | --- |
-| P1 / P2 roots | `0x800A3604` / `0x800A3608` |
-| Player input | `actor + 0x39C` |
+| P1 / P2 actor roots | `0x800A3604` / `0x800A3608` |
+| Input pointer field | `[actor + 0x39C]`, measured value `actor + 0x400` |
 | Inventory slot / weapon ID | `input + 92` / `input + 93` |
-| First-person weapon object | `actor + 0x4AC` |
-| Object magic | `0x00160024` |
-| Node count | 22 |
-| Common node-table SHA-256 | `9f8c7275b3e8a1d6c7765da25a02d78b23f0c3fa4b67483f28865191d2805e4f` |
-| Weapon IDs | `0, 1, 4, 5, 8, 9, 10, 12, 13, 14, 15, 16, 17` |
+| First-person object | `[actor + 0x114] == input + 0x9F0 == actor + 0xDF0` |
+| Third-person body object | `actor + 0x4AC`; 22 nodes, magic `0x00160024` |
+| First-person caller | `0x8008A3DC`, call `0x8008A53C`, return `0x8008A544` |
+| Animated model geometry | `0x800892E8`, 0xA70 bytes, FNV32 `0x39E56A35` |
+| Native animated vertex producer | `0x8008DB98`, 0xB4 bytes, FNV32 `0xFAE3646E` |
+| Pose application | `0x800894DC`, after native vertices and RT/TR restoration |
+| Scope restoration | `0x80089D30`, common epilogue for normal and early returns |
+| Native weapon projection | `H = 133` |
+| Mesh fields | magic `+0x70`, node header `+0x80`, face count `+0xB6`, faces `+0xB8` |
 
-The object fields around `+0x5C` and `+0x64` are animation/frame state, not a
-stable weapon identity. Do not select a mesh from those words.
+`0x800892E8` was historically labeled a multiplayer player update. Its captured
+code and the measured `0x8008A544` call show that this instance is an animated
+model geometry method: `a0` is a model object, not the actor. The engine-map name
+is corrected; its historical role enum is retained. The single-player overlay
+at `0x800892C8` (0xF20, FNV32 `0xF4D6C439`) is a separate generation and is not
+covered by this MP hook.
 
-The source slots are:
+Read actor globals at use time. The sample pistol object `0x801491C0` is a heap
+observation, not a fixed address. Object `+0x5C/+0x64` fields are animation state.
 
-| Slot | Starting weapon and native cycle |
+The hook requires the exact caller instruction and return address, P1 identity,
+input/object pointer relationship, H=133, full geometry/vertex-producer function
+hashes, known weapon ID, exact magic, native face count, node counts, and a hash
+of every source vertex record. Vertex hashes include counts and data, not heap
+pointers, so repeated IDs in different source slots retain the same guard.
+Unknown layouts, code, projection, or tracking return to native rendering.
+
+## P1-only multiplayer eye replay
+
+The opt-in `MOHU_VR_MP_CONTROL=1` bench now reconstructs the native P1 view
+inside each existing stereo rollback transaction. It uses the same real
+first-person mesh hook in both eyes. Canonical two-player simulation continues
+outside replay; source saves and native shot logic remain unchanged.
+
+| Contract | Underground MP |
 | --- | --- |
-| 1 | P38 pistol (0), MP40 (1), StG44 (17), stick grenade (10) |
-| 2 | Colt .45 (8), Sten (16), shotgun (4), petrol bomb (15) |
-| 3 | Silenced pistol (9), crossbow (14), scoped rifle (5), stick grenade (10) |
-| 4 | M1 Garand (12), StG44 (17), Panzerfaust (13), petrol bomb (15) |
+| Frame context | `0x800A0B08`, native source view 512x120, world H=400 |
+| Natural frame entry / caller | `0x80054BC4` / `0x80063CF8` |
+| P1 camera root | `0x800A35B0` |
+| Current selected player | `0x800A35C4` |
+| Scene-list root | `0x800A35CC` |
+| Camera selector | `0x80054E68(camera, 0)` |
+| Scene draw | `0x8006E9D8(context, list)` |
+| OT | `[context+0x2218]`, 512 entries, native guest `DrawOTag` |
 
-## Required mapping work
+Full function guards cover frame entry (512 bytes, FNV `6CDFBB75`), camera
+selection (332, `2BE15194`), scene draw (384, `04C21F46`), and native player
+render callback (580, `8B9E349D`). The exact natural caller, 512x120/H=400
+context, actor classes, input pointers, and camera handle resolving to P1 are
+required before replay. Mode/ownership/pointer failures decline the bench.
+The camera selector must actually select P1 before the scene is drawn.
 
-1. Copy source slot 1 into a fresh analysis directory and load it through the
-   diagnostic build. Keep the source save and thumbnail unchanged.
-2. Capture the complete `actor + 0x4AC` object, its 22-node table, and the
-   per-node geometry data for each weapon after a native weapon switch.
-3. Find the model affine or node transform consumed by the first-person vertex
-   path. The transform must affect model geometry without changing the world
-   camera.
-4. Record the model-local axes, pivot, scale, and sign conventions for each
-   weapon. Keep the shared node table as a layout guard, not as a mesh profile.
-5. Add a tracked transform only at the measured model geometry seam. Preserve
-   native animation, recoil, reload, muzzle handling, ammo, and fire logic.
-6. Fail closed unless the full overlay function, P1 actor identity, weapon
-   object magic, node-table hash, current weapon ID, and caller contract match.
-7. Apply the transform inside each verified eye transaction and restore it
-   before the next eye. The world view must remain unchanged.
+Replay omits the enclosing two-view renderer, its waits, flip and P2 submission.
+It rebuilds one native P1 OT per eye, uses the rollback-protected y=0 buffer,
+and submits it once through guest `DrawOTag`. This retains PGXP packet source
+addresses. It also omits the native split HUD; the MP laser is not drawn yet.
 
-## Acceptance matrix
+The eye view uses H=400 for the world. The native weapon uses H=133. Its
+scoped `projection_h_ref=400` preserves the native 133/400 focal ratio while
+retaining eye rotation/translation; the world view is restored at the common
+geometry epilogue even for lost tracking. Using absolute world focal length,
+or setting the reference to 133 without a calibrated replacement mesh pose,
+makes the native gun too large and clips it out of the view. Those first trials
+are rejected. This differs deliberately from the reference game's calibrated
+mesh transform and does not copy its calibration.
 
-Use the stationary P2 target and a fresh copied-save load for every case.
+The final desktop matrix covers all 13 IDs and closes all four native cycles.
+Native, +24 translation, +12-degree yaw and lost tracking have complete 512x120
+eye pairs. Zero eyes match byte-for-byte; both eyes apply the tracked transform
+and both decline it during loss. Sampled world pixels stay fixed while the
+visible gun moves. The last matrix snapshot has 1,215 pairs and 2,430 rollback
+checks, zero mismatches/leaks/watchdogs/repairs, and matching eye state/cycles.
+A lateral +/-24 eye control changes 52,136 pixels between complete eyes.
 
-| Case | Required result |
+A native pistol shot while MP replay and +24 weapon pose are active reduces
+P2 health from 32 to 31.25 and the clip from 8 to 7, with the native health-write
+trace retained. Deliberately refusing render passes then clearing the refusal
+recovers fresh pairs. Refusal/stale counters are historical: recovery is judged
+by a newly captured pair ID after the last failed attempt, not by erasing those
+counters. The accepted control has seven admission refusals and no failed eye.
+
+Reproduce with the diagnostic build (debug tools ON):
+
+```powershell
+python vr/tools/check_mp_view.py analysis/vr-baseline/weapon-mesh-mapping/new-mp-eyes --all-weapons
+python vr/tools/check_mp_view.py analysis/vr-baseline/weapon-mesh-mapping/new-mp-lateral --eye-offset 24
+python vr/tools/check_mp_view.py analysis/vr-baseline/weapon-mesh-mapping/new-mp-fire --fire-pistol --reject-recover
+```
+
+Use `vr/tools/summarize_mp_view.py` to verify those three directories and retain
+the compact receipt and proof sheet. Desktop MP eye rendering is accepted at
+this fixture; physical headset tracking, independent head/hand calibration,
+head-turn visibility and broad MP gameplay are still open. The native MP level
+selector remains in use; the SP head-frustum hook is not an MP visibility fix.
+
+## Captured first-person profiles
+
+| ID | Weapon | Nodes | Native faces | Geometry FNV32 |
+| ---: | --- | ---: | ---: | --- |
+| 0 | P38 pistol | 14 | 354 | `8544F8B9` |
+| 1 | MP40 | 32 | 316 | `8095CAFB` |
+| 4 | Shotgun | 21 | 306 | `805BD649` |
+| 5 | Scoped rifle | 26 | 383 | `9F7ADA24` |
+| 8 | Colt .45 | 14 | 303 | `267E86AA` |
+| 9 | Silenced pistol | 14 | 310 | `65F76C5D` |
+| 10 | Stick grenade | 24 | 341 | `DDCE0989` |
+| 12 | M1 Garand | 23 | 280 | `450F78DC` |
+| 13 | Panzerfaust | 31 | 333 | `068CBD37` |
+| 14 | Crossbow | 29 | 290 | `DFF185CA` |
+| 15 | Petrol bomb | 28 | 397 | `7CA0DBEC` |
+| 16 | Sten | 31 | 354 | `29D5BC18` |
+| 17 | StG44 | 32 | 352 | `F467028B` |
+
+All native nodes, arms, animation, recoil, reload, and muzzle handling remain
+inputs to the projection. No gun-only mesh extraction or per-weapon physical
+grip calibration is claimed. The current rotation pivot is the saved GTE TR;
+it is a diagnostic pivot, not a measured grip point.
+
+GTE TR registers use **integer camera units**. The older affine-composition
+helper packs translation in Q12. `mohu_vr_weapon_compose_gte_control` cancels that
+packing scale before using it for TR. Applying the affine's `*4096` unchanged
+pushed the entire weapon offscreen; those early controls are rejected.
+
+## Validation and reproduction
+
+The flat mapping control matrix uses all four source-slot cycles:
+
+| Slot | Native ID cycle |
 | --- | --- |
-| Native idle | First-person weapon remains native |
-| Synthetic model translation | Weapon moves; world and HUD do not |
-| Synthetic model rotation | Weapon rotates around one guarded pivot |
-| Each weapon ID | Correct mesh and node guard |
-| Fire and recoil | Native animation and ammo behavior remain |
-| Reload/switch | No stale transform or mesh identity |
-| P2 damage | Native health writer remains reachable |
-| Eye replay | Equal eye cycles/hashes after rollback |
-| Tracking loss | Native weapon path restored |
+| 1 | 0, 1, 17, 10 |
+| 2 | 8, 16, 4, 15 |
+| 3 | 9, 14, 5, 10 |
+| 4 | 12, 17, 13, 15 |
 
-## Current validation
+Each equipped weapon receives native identity, lateral +24 integer units,
+yaw +12 degrees, forced tracking loss, and identity-restored controls. The tool
+checks nonzero apply/restore counters, zero pose applications during loss, native
+fallback during loss, and exact apply/restore equality after the active calls
+drain. A running-guest snapshot may catch one call between apply and restore;
+that is not accepted as a persistent leak.
 
-The P1 view is the top view. The accepted hit gate is a decrease at the exact
-P2 health address (`actor + 0x108`) in the native write trace, not merely a
-lower final health sample. This accepts kills that respawn later without
-confusing the intervening restore write for damage.
+The proof compares explicitly named world, ammo-HUD, and other-panel-weapon
+rectangles. All of those rectangles must be byte-identical to each weapon's
+native image. Native target movement, timed weapon-name text, and weapon idle
+animation continue between captures; no whole-image identity claim is made.
+Inspect the top-panel native/translated/yawed proof sheet as well as counters.
 
-Four fresh copied-save runs cover all 13 measured IDs:
+With `build-release` configured for debug tools, reproduce with:
 
-| Alignment | X | Yaw | P2 damage |
-| --- | ---: | ---: | --- |
-| Native | 0 | 0 | 13/13 |
-| Lateral | 96 | 0 | 13/13 |
-| Yawed | 0 | 12000 mdeg | 13/13 |
-| Forced tracking loss | 96 | 0 | 13/13 native fallback |
+```powershell
+python vr/tools/inspect_weapon_sets.py analysis/vr-baseline/weapon-mesh-mapping/new-fp-controls --cycle --first-person-models --pose-controls
+python vr/tools/summarize_weapon_viewmodels.py analysis/vr-baseline/weapon-mesh-mapping/new-fp-controls vr/proof/weapon-viewmodel-receipt.json vr/proof/weapon-viewmodel-controls.png
+```
 
-Every run used slots 1-4 as one copied fixture set, closed all four-entry weapon
-cycles, kept source saves and preferences unchanged, and left no owned game
-process. The scoped rifle uses its 60/720-frame zoomed control. The stick
-grenade uses a 36/720-frame throw. The petrol bomb uses 180 approach frames and
-60/720 fire/release frames. Exact hashes, paths, and per-ID results are in
-[weapon-alignment-receipt.json](../../vr/proof/weapon-alignment-receipt.json).
+The helper owns one hidden game on TCP 4372, copies source slots and thumbnails
+into a fresh directory, uses ordinary PGXP load/identity checks, hashes source
+saves and preferences, and closes its owned process. An invalid save requires
+asking the operator for a fresh PGXP slot; never patch its ABI or identity.
 
-The right-grip raycast pointer is enabled by default in VR. Hold the right
-squeeze; the beam ends on the nearest visibility-tree surface and draws an
-impact dot. Use `-NoLaser` or `PSX_VR_LASER=0` to disable it.
-`PSX_VR_LASER_DOT` sets the dot radius and `PSX_VR_LASER_RANGE_M` bounds the
-cast. Its pure geometry test passes, but runtime headset visual acceptance is
-still pending.
+Runtime code is `vr/underground/weapon.c`, `weapon.h`, and `vr_diagnostic.c`.
+The pure C fixture covers known/incorrect mesh layouts, body/viewmodel
+separation, Q12-affine versus integer-TR units, preserved control padding,
+overflow with no writes, and stale/unfocused/bad tracking fallback.
 
-The current beam originates from the OpenXR right-aim pose and uses the level
-visibility-tree node extents. The previous game instead derives the beam from
-the rendered weapon mesh's camera affine and uses its exact triangle tables.
-Those two Underground seams still need mapping before the ports are equivalent.
+## Combat and remaining work
 
-## Known constraints
+The pre-existing native-hit matrices cover all 13 IDs, including delayed kills
+followed by respawn. Accept damage only from a decrease at P2 `actor+0x108` in
+the complete native write trace. A lower final sample is insufficient. The scoped
+rifle, stick grenade, and petrol bomb require the recorded longer/approach
+controls. A visible model delta does **not** redirect native shots.
 
-- The first-person object uses the shared 22-node layout, but per-weapon
-  geometry state must still be validated.
-- The current diagnostic affine at the actor model path changes P1's
-  world-body representation. It is not yet proven to be the visible top-view
-  first-person mesh seam, and the behavior is not promoted to the release path.
-- Native damage writes to P2 prove combat reachability, not barrel alignment.
-- Multiplayer stereo for P1 is not yet accepted. Start with a single-view model
-  transform while world stereo remains on its accepted path.
-- Shot origin and direction are separate from the visible model transform.
-  Validate them in the final aim pass after the multiplayer weapon pose is
-  stable.
+The final +24 geometry build repeats the native P2-damage gate for all 13 IDs:
+`fp-combat-final-20261025/inventory.json` under the same analysis tree. All four
+cycles close, exit 0, source saves/preferences unchanged, and no owned process
+remains. The compact receipt includes per-ID native health-decrease summaries.
+The same diagnostic binary's SP zero-eye control has 18 complete pairs, equal
+eye state/cycles and 37 rollback checks with zero mismatches, leaks, watchdogs
+or repairs. This validates the existing SP path, not MP weapon stereo.
+
+Remaining work is ordered by IDs in [VR_PLAN.md](VR_PLAN.md):
+W1 absolute pose/head-hand contract; W2 MP visibility/input; W3 per-weapon
+physical calibration; W4 read-only MP shot mapping; W5 tracked native aim;
+W6 rendered-mesh/exact-triangle laser. Use the dependency/exit gates in
+[HANDOFF.md](HANDOFF.md), not a new parallel discovery effort.
+
+The earlier `actor+0x4AC` affine and `0x80088C08` experiments moved the wrong
+split-panel rendering and are superseded. Their dead runtime hooks/address
+selector are removed. The session-start diff is retained locally under
+`analysis/vr-baseline/weapon-mesh-mapping/session-start-20261025.patch`.
+
+## Final build state
+
+The one `build-release` is restored to Release/OpenGL/OpenXR/PGXP with
+`PSX_DEBUG_TOOLS=OFF`. Flat startup is inert even with weapon-pose, flat-probe,
+synthetic-pose and stereo flags inherited. Eighteen Python tests, all six strict
+C fixtures from the flat checkpoint remain valid; the new strict MP guard
+fixture and diagnostic syntax check also pass. Saves, controller
+preferences and SteamVR settings are unchanged; no owned game remains.
+The flat smoke intentionally closes its hidden process and does not establish
+interactive gameplay or new OpenXR acceptance. Changes remain uncommitted.
 
 ## Evidence
 
-- [WEAPON_SET_EVIDENCE.md](WEAPON_SET_EVIDENCE.md)
-- [weapon-set-receipt.json](../../vr/proof/weapon-set-receipt.json)
-- [weapon-model-receipt.json](../../vr/proof/weapon-model-receipt.json)
-- [weapon-alignment-receipt.json](../../vr/proof/weapon-alignment-receipt.json)
-- `analysis/vr-baseline/weapon-mesh-mapping/models-20261025/`
-- `analysis/vr-baseline/weapon-mesh-mapping/profiles-live.json`
+- [P1-only MP eye receipt](../../vr/proof/weapon-mp-eye-receipt.json)
+- [MP build and regressions](../../vr/proof/weapon-mp-build-receipt.json)
+- [MP native / translation / yaw eyes](../../vr/proof/weapon-mp-eyes.png)
+- [First-person flat control receipt](../../vr/proof/weapon-viewmodel-receipt.json)
+- [Final build and flat isolation](../../vr/proof/weapon-viewmodel-build-receipt.json)
+- [Native / translation / yaw proof](../../vr/proof/weapon-viewmodel-controls.png)
+- [Native inventory and damage](WEAPON_SET_EVIDENCE.md)
+- [Historical body-object observations](../../vr/proof/weapon-model-receipt.json)
+- [Historical damage-only pose matrix](../../vr/proof/weapon-alignment-receipt.json)
+- `analysis/vr-baseline/weapon-mesh-mapping/first-person-geometry-20261025/inventory.json`
+- `analysis/vr-baseline/weapon-mesh-mapping/fp-controls-final-20261025/inventory.json`
+- `analysis/vr-baseline/weapon-mesh-mapping/fp-combat-final-20261025/inventory.json`
+- `analysis/vr-baseline/weapon-mesh-mapping/fp-stereo-final-20261025/receipt.json`
 
 ## Resume prompt
 
 ```text
-Continue the Medal of Honor Underground PSX Recomp VR port from
-`docs/vr/WEAPON_MAPPING.md`.
+Read docs/vr/HANDOFF.md sections 1-5 and docs/vr/VR_PLAN.md. Continue at W1.1:
+P38 (ID 0), copied root MP slot 1, zero switches, stationary P2, no firing.
+Capture the named coordinate-space/units/native-animation contract at the
+already verified first-person seam, then implement the planned independent
+head/hand pose harness. Both are new work; current direct-delta controls are
+not absolute physical tracking acceptance.
 
-Use one copied multiplayer fixture and the stationary P2 target. Do not use a
-moving single-player target for weapon-position mapping. Start with one weapon,
-capture P1's `actor + 0x4AC` object and 22-node geometry state across native
-weapon switches, and identify the model affine/node transform or vertex
-projection that owns the visible first-person weapon.
-
-Implement a fail-closed, rollback-scoped tracked transform at that measured
-model seam. Preserve native animation, recoil, reload, ammo, firing, HUD and the
-world view. Validate native idle, synthetic translation, synthetic rotation,
-fire/recoil, reload/switch, tracking loss, stereo restore, and native P2 damage
-for all 13 measured weapon IDs.
-
-Keep source saves unchanged, use fresh copied-save directories, close owned
-processes, restore SteamVR preferences and the debug-off release build, update
-the handoff and receipts, run the focused tests, commit, and push.
+Do not rediscover actor/input/viewmodel or P1 eye replay. Do not use actor+4AC,
+80088C08, a new SP target, old reference addresses/calibration, new build folders,
+or patched saves. Follow the handoff's exact dependency, acceptance, recovery,
+regression and session-close rules. Update the next task ID and retain evidence;
+leave physical and tracked-shot gates unchecked until actually validated.
 ```

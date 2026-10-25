@@ -7,19 +7,32 @@
 #include <string.h>
 
 static const MohuVrWeaponProfile k_weapon_profiles[] = {
-    {0u, 1u, 0u, "P38 pistol"},
-    {1u, 1u, 1u, "MP40"},
-    {4u, 2u, 2u, "shotgun"},
-    {5u, 3u, 2u, "scoped rifle"},
-    {8u, 2u, 0u, "Colt .45"},
-    {9u, 3u, 0u, "silenced pistol"},
-    {10u, 1u, 3u, "stick grenade"},
-    {12u, 4u, 0u, "M1 Garand"},
-    {13u, 4u, 2u, "Panzerfaust"},
-    {14u, 3u, 1u, "crossbow"},
-    {15u, 2u, 3u, "petrol bomb"},
-    {16u, 2u, 1u, "Sten"},
-    {17u, 1u, 2u, "StG44"},
+    {0u, 1u, 0u, "P38 pistol", 0xe0007u, 0x8544f8b9u, 354u, 14u,
+     {0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 0, 149, 0, 69}},
+    {1u, 1u, 1u, "MP40", 0x200007u, 0x8095cafbu, 316u, 32u,
+     {0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 21, 5, 4, 4, 4, 0, 4, 4, 0, 3, 2, 0, 1, 0, 0, 0, 102, 0, 0, 6, 0, 16}},
+    {4u, 2u, 2u, "Shotgun", 0x150007u, 0x805bd649u, 306u, 21u,
+     {0, 0, 0, 0, 0, 0, 0, 0, 14, 21, 14, 0, 5, 8, 0, 0, 0, 0, 99, 0, 38}},
+    {5u, 3u, 2u, "Scoped rifle", 0x1a0007u, 0x9f7ada24u, 383u, 26u,
+     {0, 0, 0, 0, 0, 0, 0, 0, 14, 21, 22, 4, 4, 4, 4, 4, 0, 1, 0, 0, 0, 0, 145, 0, 0, 14}},
+    {8u, 2u, 0u, "Colt .45", 0xe0007u, 0x267e86aau, 303u, 14u,
+     {0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 0, 92, 0, 68}},
+    {9u, 3u, 0u, "Silenced pistol", 0xe0007u, 0x65f76c5du, 310u, 14u,
+     {0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 0, 122, 0, 57}},
+    {10u, 1u, 3u, "Stick grenade", 0x180007u, 0xddce0989u, 341u, 24u,
+     {0, 0, 0, 0, 0, 0, 0, 0, 19, 16, 21, 7, 4, 4, 5, 8, 3, 5, 4, 8, 1, 0, 0, 58}},
+    {12u, 4u, 0u, "M1 Garand", 0x170007u, 0x450f78dcu, 280u, 23u,
+     {0, 0, 0, 0, 0, 0, 0, 0, 12, 16, 17, 5, 4, 4, 4, 2, 0, 3, 0, 0, 0, 0, 136}},
+    {13u, 4u, 2u, "Panzerfaust", 0x1f0007u, 0x68cbd37u, 333u, 31u,
+     {0, 0, 0, 0, 0, 0, 0, 0, 14, 21, 21, 5, 4, 4, 4, 0, 4, 4, 0, 3, 0, 1, 2, 0, 0, 0, 0, 70, 10, 0, 36}},
+    {14u, 3u, 1u, "Crossbow", 0x1d0007u, 0xdff185cau, 290u, 29u,
+     {0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 40, 0, 0, 0, 20, 0, 0, 18, 14, 21, 0, 14, 0, 45, 0, 19, 6, 0, 21}},
+    {15u, 2u, 3u, "Petrol bomb", 0x1c0007u, 0x7ca0dbecu, 397u, 28u,
+     {0, 0, 0, 0, 0, 0, 0, 0, 21, 14, 23, 8, 5, 8, 0, 8, 4, 0, 3, 1, 0, 2, 0, 0, 0, 92, 5, 2}},
+    {16u, 2u, 1u, "Sten", 0x1f0007u, 0x29d5bc18u, 354u, 31u,
+     {0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 21, 5, 4, 4, 4, 0, 4, 4, 0, 3, 2, 0, 1, 0, 0, 0, 135, 0, 0, 17, 14}},
+    {17u, 1u, 2u, "StG44", 0x200007u, 0xf467028bu, 352u, 32u,
+     {0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 21, 5, 4, 4, 4, 0, 4, 4, 0, 3, 0, 1, 2, 0, 0, 0, 0, 132, 0, 16, 0, 13}},
 };
 
 static const uint16_t k_node_counts[MOHU_VR_WEAPON_NODE_COUNT] = {
@@ -43,6 +56,15 @@ const MohuVrWeaponProfile* mohu_vr_weapon_profile_find(uint8_t id) {
         }
     }
     return NULL;
+}
+
+int mohu_vr_weapon_mesh_layout_valid(const MohuVrWeaponProfile* profile,
+                                     uint32_t magic, unsigned faces,
+                                     const uint16_t* vertices, unsigned nodes) {
+    return profile && vertices && nodes <= MOHU_VR_WEAPON_FP_MAX_NODES &&
+           nodes == profile->node_count && magic == profile->mesh_magic &&
+           faces == profile->face_count &&
+           memcmp(vertices, profile->vertices, nodes * sizeof *vertices) == 0;
 }
 
 int mohu_vr_weapon_node_layout_valid(const uint16_t counts[22],
@@ -274,6 +296,51 @@ int mohu_vr_weapon_rotate_node_q12(int16_t quaternion[4],
             return 0;
         }
         quaternion[i] = (int16_t)rounded;
+    }
+    return 1;
+}
+
+int mohu_vr_weapon_compose_gte_control(uint32_t control[8],
+                                       const double delta_rotation[9],
+                                       const int32_t pivot[3],
+                                       const double delta_translation[3]) {
+    if (!control || !delta_rotation || !pivot || !delta_translation) {
+        return 0;
+    }
+    int16_t native_rotation[9];
+    int32_t native_translation[3];
+    for (unsigned i = 0; i < 9u; ++i) {
+        native_rotation[i] =
+            (int16_t)(control[i / 2u] >> ((i & 1u) * 16u));
+    }
+    for (unsigned i = 0; i < 3u; ++i) {
+        native_translation[i] = (int32_t)control[5u + i];
+    }
+
+    int16_t tracked_rotation[9];
+    int32_t tracked_translation[3];
+    /* The affine builder stores translation in Q12. GTE TR registers instead
+     * consume integer camera units, so cancel that packing scale here. */
+    const double control_delta[3] = {
+        delta_translation[0] / 4096.0,
+        delta_translation[1] / 4096.0,
+        delta_translation[2] / 4096.0,
+    };
+    if (!mohu_vr_weapon_compose_gte(
+            native_rotation, native_translation, delta_rotation, pivot,
+            control_delta, tracked_rotation, tracked_translation)) {
+        return 0;
+    }
+
+    for (unsigned i = 0; i < 4u; ++i) {
+        control[i] =
+            (uint32_t)(uint16_t)tracked_rotation[i * 2u] |
+            ((uint32_t)(uint16_t)tracked_rotation[i * 2u + 1u] << 16u);
+    }
+    control[4] = (control[4] & 0xFFFF0000u) |
+                 (uint32_t)(uint16_t)tracked_rotation[8];
+    for (unsigned i = 0; i < 3u; ++i) {
+        control[5u + i] = (uint32_t)tracked_translation[i];
     }
     return 1;
 }

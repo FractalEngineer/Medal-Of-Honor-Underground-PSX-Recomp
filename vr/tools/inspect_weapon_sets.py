@@ -42,9 +42,9 @@ def save(path, value):
     path.write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8")
 
 
-def command(name, **values):
+def command(cmd, **values):
     with connect(port=4372, timeout=25) as sock:
-        result = send_cmd(sock, {"cmd": name, **values})
+        result = send_cmd(sock, {"cmd": cmd, **values})
     if not result.get("ok"):
         raise RuntimeError(result)
     return result
@@ -157,6 +157,45 @@ def switch():
     command("set_input", buttons="0xffff")
 
 
+def first_person_model():
+    """Read the native MP viewmodel pointer, independently of the body object."""
+    actor = int(players()[0]["actor"], 16)
+    inp = int.from_bytes(read(actor + 0x39C, 4), "little")
+    obj = int.from_bytes(read(actor + 0x114, 4), "little")
+    if obj != inp + 0x9F0:
+        raise RuntimeError("Unrecognized first-person object contract")
+    state = read(obj, 0xC0)
+    header = struct.unpack_from("<I", state, 0x80)[0]
+    if not 0x80000000 <= header <= 0x801FFFF8:
+        raise RuntimeError("Invalid first-person node header")
+    nodes, count = struct.unpack("<II", read(header, 8))
+    if not 1 <= count <= 64 or not 0x80000000 <= nodes <= 0x80200000 - count * 8:
+        raise RuntimeError("Invalid first-person node table")
+    table = read(nodes, count * 8)
+    geometry = []
+    geometry_hash = 2166136261
+    for index in range(count):
+        address, vertices = struct.unpack_from("<II", table, index * 8)
+        if vertices > 2048 or (vertices and not 0x80000000 <= address <= 0x80200000 - vertices * 8):
+            raise RuntimeError("Invalid first-person vertex range")
+        data = read(address, vertices * 8) if vertices else b""
+        for value in struct.pack("<I", vertices) + data:
+            geometry_hash = ((geometry_hash ^ value) * 16777619) & 0xFFFFFFFF
+        geometry.append({"node": index, "address": hex(address),
+                         "vertices": vertices, "sha256": hashlib.sha256(data).hexdigest()})
+    fnv = 1469598103934665603  # Existing title helper's historical seed.
+    for value in table:
+        fnv = ((fnv ^ value) * 1099511628211) & 0xFFFFFFFFFFFFFFFF
+    return {"actor": hex(actor), "input": hex(inp), "object": hex(obj),
+            "magic": hex(struct.unpack_from("<I", state, 0x70)[0]),
+            "node_count": count, "nodes": geometry,
+            "node_table_sha256": hashlib.sha256(table).hexdigest(),
+            "node_table_fnv64": hex(fnv),
+            "geometry_fnv32": hex(geometry_hash),
+            "face_count": struct.unpack_from("<H", state, 0xB6)[0],
+            "faces": hex(struct.unpack_from("<I", state, 0xB8)[0])}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("directory", type=Path)
@@ -164,6 +203,9 @@ def main():
     parser.add_argument("--cycle", action="store_true")
     parser.add_argument("--damage", action="store_true")
     parser.add_argument("--models", action="store_true")
+    parser.add_argument("--first-person-models", action="store_true")
+    parser.add_argument("--pose-controls", action="store_true",
+                        help="Capture native/translated/yawed/lost/restored top-view controls")
     parser.add_argument("--discover-damage", action="store_true")
     parser.add_argument("--only-damage-ids", type=int, nargs="+")
     parser.add_argument("--fire-frames", type=int, default=24)
@@ -219,6 +261,7 @@ def main():
     env = {k: v for k, v in os.environ.items() if not k.startswith(("PSX_", "MOHU_VR_"))}
     env.update(PSX_DEV_INPUT="0", PSX_VSYNC="0", PSX_OPENXR_ENABLE="0")
     weapon_pose = args.weapon_pose_x is not None or args.weapon_pose_yaw_mdeg is not None
+    weapon_pose = weapon_pose or args.pose_controls
     if weapon_pose:
         env.update(
             PSX_VR_WEAPON_POSE="1",
@@ -230,6 +273,9 @@ def main():
     if args.force_weapon_tracking_loss:
         env["MOHU_VR_WEAPON_FORCE_TRACKING_LOSS"] = "1"
     receipt = {"executable_sha256": digest(exe), "source_saves": hashes,
+               "vr_sources": {name: digest(ROOT / name) for name in (
+                   "vr/underground/vr_diagnostic.c", "vr/underground/weapon.c",
+                   "vr/underground/weapon.h", "vr/tools/inspect_weapon_sets.py")},
                "revision": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
                "diagnostic_game_config_sha256": digest(ROOT / "analysis/vr-baseline/game-interp.toml"),
                "preference_hashes": preference_hashes,
@@ -239,6 +285,8 @@ def main():
                             "auto_special_controls": args.auto_special_controls,
                             "force_weapon_tracking_loss": args.force_weapon_tracking_loss,
                             "models": args.models, "weapon_pose": weapon_pose,
+                            "first_person_models": args.first_person_models,
+                            "pose_controls": args.pose_controls,
                             "weapon_pose_x": args.weapon_pose_x or 0,
                             "weapon_pose_yaw_mdeg": args.weapon_pose_yaw_mdeg or 0},
                "p2_damaged_ids": [], "slots": [], "complete": False}
@@ -280,6 +328,9 @@ def main():
                         capture["weapon_model"] = weapon_model()
                         if int(capture["weapon_model"]["magic"], 16) != MODEL_MAGIC:
                             raise RuntimeError("Unrecognized weapon object")
+                    if args.first_person_models:
+                        capture["first_person_model"] = first_person_model()
+                        capture["mod_counters"] = command("mod_counters")
                     row["captures"].append(capture)
                     save(out / "inventory.json", receipt)
                     key = (current[0]["weapon_slot"], current[0]["weapon_id"])
@@ -288,6 +339,49 @@ def main():
                         row["cycle_closed"] = True
                         break
                     seen.add(key)
+                    if args.pose_controls:
+                        controls = []
+                        capture["pose_controls"] = controls
+                        for label, x, yaw, lost in (
+                                ("native", 0, 0, 0), ("translated", 24, 0, 0),
+                                ("yawed", 0, 12000, 0), ("lost", 24, 0, 1),
+                                ("restored", 0, 0, 0)):
+                            command("mod_cmd", name="mohu.vr.weapon.pose",
+                                    args=f"x={x} yaw={yaw} lost={lost}")
+                            frames(6)  # The diagnostic command latches at VBlank.
+                            before_counters = command("mod_counters")
+                            frames(12)
+                            image = directory / f"pose-{index:02}-{label}.png"
+                            command("screenshot_file", path=str(image))
+                            counters = command("mod_counters")
+                            before_counts = {c["name"]: c["count"] for c in before_counters["counters"]}
+                            counts = {c["name"]: c["count"] for c in counters["counters"]}
+                            delta = {name: value - before_counts.get(name, 0)
+                                     for name, value in counts.items() if "mohu.vr.weapon." in name}
+                            prefix = "mohu.vr.weapon."
+                            if lost:
+                                if delta.get(prefix + "viewmodel_apply", 0) or not delta.get(prefix + "tracking_fallback", 0):
+                                    raise RuntimeError("Tracking-loss fallback failed")
+                            elif not delta.get(prefix + "viewmodel_apply", 0):
+                                raise RuntimeError(f"Viewmodel did not apply for ID {key[1]} {label}")
+                            # Counters are sampled from a running guest. One
+                            # active call may be between apply and restore;
+                            # loss intervals must drain to exact equality.
+                            skew = counts.get(prefix + "viewmodel_apply", 0) - counts.get(prefix + "viewmodel_restore", 0)
+                            if abs(skew) > (0 if lost else 1):
+                                raise RuntimeError("Viewmodel control scope leaked")
+                            controls.append({"case": label, "x": x, "yaw_mdeg": yaw,
+                                             "lost": lost, "sha256": digest(image),
+                                             "image": str(image.relative_to(out)),
+                                             "counter_delta": delta})
+                        command("mod_cmd", name="mohu.vr.weapon.pose", args="lost=1")
+                        frames(12)
+                        drained = {c["name"]: c["count"] for c in command("mod_counters")["counters"]}
+                        if drained.get(prefix + "viewmodel_apply", 0) != drained.get(prefix + "viewmodel_restore", 0):
+                            raise RuntimeError("Viewmodel restore did not drain after tracking loss")
+                        capture["pose_scope_drained"] = True
+                        command("mod_cmd", name="mohu.vr.weapon.pose", args="reset")
+                        save(out / "inventory.json", receipt)
                     if args.discover_damage:
                         before = read(0x80000000, 0x200000)
                         (directory / "before-fire.bin").write_bytes(before)

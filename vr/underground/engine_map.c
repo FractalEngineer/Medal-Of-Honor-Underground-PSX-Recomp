@@ -346,7 +346,7 @@ static const MohuVrEngineBinding k_bindings[MOHU_VR_ROLE_COUNT] = {
     {
         .role = MOHU_VR_ROLE_PLAYER_OBJECT_UPDATE,
         .container_kind = MOHU_VR_CONTAINER_OVERLAY,
-        .name = "multiplayer player object update",
+        .name = "multiplayer animated model geometry",
         .reference_address = 0u,
         .target_address = 0x800892E8u,
         .target_load_base = 0x80089000u,

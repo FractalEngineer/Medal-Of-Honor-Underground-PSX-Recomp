@@ -1,0 +1,77 @@
+{
+  "date": "2026-10-25",
+  "build": "build-release",
+  "debug_tools": false,
+  "opengl": true,
+  "openxr_compiled": true,
+  "pgxp": true,
+  "mp_bench_default": false,
+  "weapon_tracking_default": false,
+  "release_executable_sha256": "9439c32c090d9e730820c97f3248a111665cb1f3636e01a756773c24ef7446cb",
+  "tested_diagnostic_executable_sha256": "0bdaf3835559f31514144ce473186a0765bcba19238f212f32408539e65e43c2",
+  "python_tests_passed": 18,
+  "strict_mp_guard_fixture": "passed",
+  "strict_diagnostic_syntax": "passed",
+  "flat_pose_regression": {
+    "receipt": "analysis/vr-baseline/weapon-mesh-mapping/mp-flat-pose-regression-20261025/inventory.json",
+    "sha256": "7879c07fa9493053761cf51d7acd8a10b1c18cbef976fe9d31af304adb0a7b4c",
+    "unique_ids": [
+      0,
+      1,
+      4,
+      5,
+      8,
+      9,
+      10,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17
+    ],
+    "complete": true
+  },
+  "sp_stereo_regression": {
+    "receipt": "analysis/vr-baseline/weapon-mesh-mapping/mp-sp-regression-20261025/receipt.json",
+    "sha256": "d156a6327d592f706a58336050e10659185e3e9a76a04d119dbc8f66f174befe",
+    "pairs": 19,
+    "verify_checks": 38,
+    "verify_mismatch": 0,
+    "vram_leaks": 0,
+    "watchdog": 0,
+    "nesting_repairs": 0,
+    "intentional_smoke_termination": true
+  },
+  "flat_startup": {
+    "date": "2026-10-25",
+    "executable_sha256": "9439c32c090d9e730820c97f3248a111665cb1f3636e01a756773c24ef7446cb",
+    "debug_tools": false,
+    "inherited_mp_and_weapon_flags": true,
+    "owned_pid": 68928,
+    "verified_parent_pid": 36216,
+    "passed": true,
+    "intentional_smoke_termination": true,
+    "launcher_exit_code": 4294967295,
+    "source_saves_and_preferences_unchanged": true,
+    "remaining_game_pids": []
+  },
+  "source_saves_unchanged": true,
+  "preferences_unchanged": true,
+  "remaining_game_pids": [],
+  "game_config_generated_framework_ui_unchanged": true,
+  "source_hashes": {
+    "RunFlat.bat": "d2ef9e2aa6f44671cc5b20e62d51d75f7203f41b794396fd868aa2cfd0a70540",
+    "vr/underground/vr_diagnostic.c": "10dab5c2cf2bd1f52c1e2fca0f77222c77e7bbd06f00133f1e822c9b795578e2",
+    "vr/underground/mp_view.h": "d640d9e76cf2384b64a6b858209977447e3d25c130b7f7f6df923bc8c3532d4a",
+    "vr/tools/check_mp_view.py": "c8b3910f375e0df1b38366a90107e371918bb3de7a624db15ce1f3af76138e4d",
+    "vr/tools/summarize_mp_view.py": "2771665f4e608dd137bff61b08bcebcfeba4dff758b8ef33e927d0d171a8ed51",
+    "vr/tests/test_mp_view.c": "622bc1cd3249826a611dfc63c170ddaa20ca54d40eeee0f51f4d570f91530b63"
+  },
+  "uncommitted": true,
+  "limits": [
+    "No physical headset or new OpenXR submission acceptance.",
+    "MP bench retains native visibility selection and omits HUD/laser.",
+    "Physical grip/scale, head/hand independence and tracked shot alignment remain open."
+  ]
+}

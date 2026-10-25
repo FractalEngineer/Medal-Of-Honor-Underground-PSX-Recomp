@@ -44,12 +44,25 @@ int main(void) {
     for (size_t i = 0; i < mohu_vr_weapon_profile_count(); ++i) {
         const MohuVrWeaponProfile* profile = mohu_vr_weapon_profile_at(i);
         CHECK(profile && profile->name && mohu_vr_weapon_profile_find(profile->id));
+        CHECK(profile->geometry_fnv32 && profile->node_count <= 32u);
+        CHECK(mohu_vr_weapon_mesh_layout_valid(profile, profile->mesh_magic,
+            profile->face_count, profile->vertices, profile->node_count));
+        CHECK(!mohu_vr_weapon_mesh_layout_valid(profile, 0x00160024u,
+            profile->face_count, k_expected_nodes, MOHU_VR_WEAPON_NODE_COUNT));
+        uint16_t vertices[MOHU_VR_WEAPON_FP_MAX_NODES];
+        memcpy(vertices, profile->vertices, sizeof vertices);
+        ++vertices[profile->node_count - 1u];
+        CHECK(!mohu_vr_weapon_mesh_layout_valid(profile, profile->mesh_magic,
+            profile->face_count, vertices, profile->node_count));
+        CHECK(!mohu_vr_weapon_mesh_layout_valid(profile, profile->mesh_magic,
+            profile->face_count + 1u, profile->vertices, profile->node_count));
         for (size_t j = 0; j < i; ++j) {
             CHECK(mohu_vr_weapon_profile_at(j)->id != profile->id);
         }
     }
     CHECK(!mohu_vr_weapon_profile_at(mohu_vr_weapon_profile_count()));
     CHECK(!mohu_vr_weapon_profile_find(2u));
+    CHECK(!mohu_vr_weapon_mesh_layout_valid(NULL, 0, 0, NULL, 0));
     CHECK(mohu_vr_weapon_node_layout_valid(
         k_expected_nodes, MOHU_VR_WEAPON_NODE_COUNT));
 
@@ -117,6 +130,25 @@ int main(void) {
     CHECK(composed_translation[0] == 100 + 12 * 4096);
     CHECK(composed_translation[1] == -200 - 34 * 4096);
     CHECK(composed_translation[2] == 300 + 56 * 4096);
+
+    uint32_t control[8] = {4096u, 0u, 4096u, 0u, 0xABCD1000u, 100u,
+                           (uint32_t)-200, 300u};
+    uint32_t original_control[8];
+    memcpy(original_control, control, sizeof control);
+    CHECK(mohu_vr_weapon_compose_gte_control(control, current_rotation,
+                                             pivot, zero_translation));
+    CHECK(memcmp(control, original_control, sizeof control) == 0);
+    CHECK(mohu_vr_weapon_compose_gte_control(control, current_rotation,
+                                             pivot, current_translation));
+    CHECK(control[4] == 0xABCD1000u);
+    CHECK((int32_t)control[5] == 112);
+    CHECK((int32_t)control[6] == -234);
+    CHECK((int32_t)control[7] == 356);
+    memcpy(original_control, control, sizeof control);
+    current_translation[0] = 1e12;
+    CHECK(!mohu_vr_weapon_compose_gte_control(control, current_rotation,
+                                              pivot, current_translation));
+    CHECK(memcmp(control, original_control, sizeof control) == 0);
 
     int16_t node_quaternion[4] = {0, 0, 0, 4096};
     const double quarter_y[9] = {

@@ -1,677 +1,460 @@
-# VR Port Handoff
+# Underground VR implementation handoff
 
-Last updated: 2026-10-25
+Updated: 2026-10-25. This file is the execution contract for the next session.
+[VR_PLAN.md](VR_PLAN.md) owns checkbox status. [WEAPON_MAPPING.md](WEAPON_MAPPING.md)
+owns the detailed measured weapon layout. [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md)
+owns history. History is not a queue of tasks to repeat.
 
-This is the canonical current-state handoff for the Underground VR port. Update
-it before ending every implementation session.
+## 1. Start here - one next task
 
-## Repository state
+**NEXT: W1.1 - capture the P38 coordinate-space contract, then W1.2 independent
+synthetic head/hand controls.** Follow W1 below before W2-W6 in the plan.
 
-| Item | Value |
+The visible weapon seam and P1-only MP eye renderer are already found and
+working in desktop controls. Do not rediscover them. The unresolved problem is
+absolute physical placement and head/hand independence, not finding another
+mesh hook. The existing first-accepted-hand neutral delta is not proof of
+absolute hand attachment. Native shots still use native aim.
+
+For this documentation checkpoint, no runtime code, build or save was changed.
+The next implementation session must record its own experiment and update this
+pointer before ending; do not append a vague alternative "next work" list.
+
+## 2. Current state - facts, not work to restart
+
+| Item | Current observation |
 | --- | --- |
-| Target branch | `feature/vr-port` |
-| Starting game-tree checkpoint for sky-ghost correction | `4dbe4cd` (local and live remote matched) |
-| Starting game-tree checkpoint for movement | `627b31d` (local and live remote matched) |
-| Current framework implementation | `d9b0f382` |
-| Target base | `7fcb0ca35af683ac38c4c501347d59916a924aa4` |
-| Reference branch | `master` |
-| Reference commit | `b33a7d96d596214233d3aef5ecacbf3736ad29e3` |
-| `psxrecomp` gitlink | `d9b0f382` |
-| `recomp-ui` gitlink | `7c635c6b366a6e0d5d3c913a7fce6ec04dd9f256` |
-| Reference version | `0.1.6` |
-| Underground version | `0.1.0` |
-| Game ID | `SLUS-01270` |
+| Repository | `C:/Users/titan/Desktop/Github_Projects/Mine/Medal-Of-Honor-Underground-PSX-Recomp` |
+| Branch / pre-checkpoint HEAD | `feature/vr-port` / `3cdbe826790db0f9e1324bec21b7e1c9928e7dbd`; read current HEAD during preflight |
+| Checkpoint scope | VR implementation, tools, proofs and execution docs; inspect current Git status and preserve any remaining changes |
+| Framework gitlink | `d9b0f382a1613a20dc33704b859c582ef50cc374` |
+| UI gitlink | `7c635c6b366a6e0d5d3c913a7fce6ec04dd9f256` |
+| Title / version | `SLUS-01270` / `0.1.0` |
+| One active build | `build-release`, Release/OpenGL/OpenXR/PGXP |
+| Game executable | `build-release/Medal_of_Honor_Underground_Recompiled.exe`; `psx-runtime` is the CMake target, not the executable filename |
+| Current debug tools | OFF; TCP tools require an explicit diagnostic rebuild ON |
+| CMake VR option | `MOHU_VR_DIAGNOSTICS` defaults OFF; local build currently ON |
+| Normal launcher | Native menus, `-Slot -1`; no implicit savestate load |
+| Experimental defaults | `PSX_VR_WEAPON_POSE` and `MOHU_VR_MP_CONTROL` remain off |
+| PGXP save ABI | `131106`; base flavor ABI `34` is incompatible |
+| Unrelated work | `.commandcode/` is unrelated; do not add, change or clean it |
 
-Framework `d9b0f382` adds render-scoped signed-NCLIP counters and their GTE
-contract coverage. This game-tree checkpoint retains the five-pose PGXP counter
-receipt in the linked evidence. The only unrelated untracked workspace entry is
-`.commandcode/`. Do not add or modify it as part of VR work.
+Read current Git state at session start. These are observations, not instructions
+to reset HEAD, switch to master, restore an old binary or force old gitlinks.
+`BASELINE.md` records the 2026-10-23 starting tree, including old `31df2e1e`;
+it is historical and must not override the current framework pin above.
 
-The verified PGXP fixture is isolated slot `2` under
-`analysis/vr-baseline/saves/`. It was created by the operator with the PGXP
-build and copied from the default save root; the base-flavor `slot00` files
-remain untouched. Slot `1` is retained as a stale-identity control.
+Accepted evidence:
 
-## Non-negotiable invariants
+| Scope | Receipt / practical limit |
+| --- | --- |
+| Flat first-person meshes | [weapon-viewmodel-receipt.json](../../vr/proof/weapon-viewmodel-receipt.json): all 13 IDs; visible pose controls; not physical calibration |
+| P1-only MP eyes | [weapon-mp-eye-receipt.json](../../vr/proof/weapon-mp-eye-receipt.json): 1,215 pairs, 2,430 rollback checks, zero errors; both eyes and all 13 IDs |
+| MP lateral / native fire | Same MP receipt: 52,136 differing pixels; pistol clip 8->7 and P2 health 32->31.25; not tracked-shot alignment |
+| Current build/regressions | [weapon-mp-build-receipt.json](../../vr/proof/weapon-mp-build-receipt.json): debug OFF, 18 Python tests, MP guard/syntax checks, flat isolation, SP 19 pairs / 38 rollback checks |
+| Earlier native damage | [WEAPON_SET_EVIDENCE.md](WEAPON_SET_EVIDENCE.md), [weapon-alignment-receipt.json](../../vr/proof/weapon-alignment-receipt.json): all 13 IDs, damage-only pose reachability |
+| Current eye images | [weapon-mp-eyes.png](../../vr/proof/weapon-mp-eyes.png) |
+| SP world / visibility | [PGXP_RENDER_VIEW_EVIDENCE.md](PGXP_RENDER_VIEW_EVIDENCE.md), [HEAD_TURN_HUD_EVIDENCE.md](HEAD_TURN_HUD_EVIDENCE.md), [SKY_GHOST_EVIDENCE.md](SKY_GHOST_EVIDENCE.md) |
+| Native input | [MOVEMENT_EVIDENCE.md](MOVEMENT_EVIDENCE.md): synthetic SP controls; physical/MP coverage remains open |
 
-- All VR implementation, tools, tests, and integration files live under root
-  `vr/`.
-- All retained VR documentation lives under `docs/vr/`.
-- The flat launcher must start without a headset or VR environment variable.
-  `build-release` may contain the inert diagnostic plugin for development.
-- `MOHU_VR_DIAGNOSTICS` defaults to `OFF`. With it off, the original
-  `mods/preloaded` catalog is used and no VR source is compiled.
-- `game.toml` and `generated/` remain unchanged by the current VR checkpoint.
-- Never transplant a reference-game address without its Underground function
-  signature, container identity, and call contract.
-- Do not enable a state-changing hook before flat behavior and the relevant VR
-  transaction tests have been rechecked.
-- The active development build uses the PGXP flavor and boot-state ABI `131106`;
-  the base flavor uses `34`. Savestates also carry the framework execution
-  identity, so a source
-  change can invalidate a fixture without changing the ABI. If a load reports
-  `abi_tag=34(want 131106)`, `state_load_failed`, or `last_ok=0`, ask the
-  operator to create a fresh PGXP save slot. Never patch the ABI, identity, or
-  original state, and copy only the completed `.pst` and `.thumb` into the
-  isolated tree.
+The current release executable SHA-256 is
+`9439c32c090d9e730820c97f3248a111665cb1f3636e01a756773c24ef7446cb`.
+The tested MP diagnostic executable SHA-256 is
+`0bdaf3835559f31514144ce473186a0765bcba19238f212f32408539e65e43c2`.
+They differ because debug tools differ. Do not swap them or relabel a historical
+receipt. Source hashes are in the build receipt; a new implementation needs
+new provenance and affected checks, not fabricated matching hashes.
 
-## Current implementation
+## 3. Fixture selection - slot numbers alone are ambiguous
 
-The engine map is in `vr/underground/engine_map.c`. Twenty mappings are recorded
-with function SHA-256 and FNV-1a guards:
-
-| Role | Reference | Underground | Evidence |
-| --- | --- | --- | --- |
-| Entity transform | `0x80084718` | `0x80093830` | 41/41 opcodes; live execution |
-| Entity node transformer | `0x80013AE4` | `0x80013B40` | 221/221 opcodes; live function ring |
-| GTE RT/TR loader | `0x80013E58` | `0x80013EB4` | Byte-identical; live function ring |
-| Level vertex transformer | `0x8008B3E8` | `0x80099960` | 710/710 opcodes; 12 RTPS; live execution |
-| Gameplay render wait | `0x80090B80` | `0x8009D828` | 110/110 opcodes; live execution |
-| Scene draw bridge | undiscovered | `0x80090760` | 669 instructions; live caller chain |
-| Scene draw dispatcher | undiscovered | `0x80091854` | 840 bytes; live execution |
-| Entity render entry | `0x800824D0` | `0x800913A0` | 1,204 bytes; live execution |
-| Render-list wrapper | undiscovered | `0x80079AF8` | 180 bytes; live execution |
-| Actor render entry | undiscovered | `0x80076A50` | 472 bytes; live execution |
-| Player render entry | undiscovered | `0x8008AB84` | 352 bytes; live execution |
-| Actor update dispatcher | undiscovered | `0x80078E08` | object vtable dispatch; live execution |
-| Frame render | undiscovered | `0x80053BB4` | 240 bytes; live execution |
-| Frame driver | undiscovered | `0x8006D65C` | 1,512 bytes; natural entry and replay execution |
-| DrawOTag | `0x800172D8` | `0x80018B48` | Complete 112-byte function, including two-instruction prefix |
-| PutDrawEnv | `0x80017348` | `0x80018BB8` | 48 instructions; 0.981 structural match |
-| Post-render update | undiscovered | `0x8004356C` | 1,588 bytes; live execution |
-| Multiplayer player update | undiscovered | `0x800892E8` | Multiplayer overlay; live vtable call |
-| Single-player player update | undiscovered | `0x800892C8` | Single-player overlay; live vtable call |
-| First-person model draw | undiscovered | `0x8007A554` | `input+0x1E0`; called inside both eye replays |
-
-The live-confirmed entity transform calls `0x80013B40`, not the near-identical
-duplicate at `0x80014184`. The node transformer calls `0x80013EB4`, not
-`0x800144F8`.
-
-The opt-in diagnostic plugin is:
-
-- Source: `vr/underground/vr_diagnostic.c`
-- Package: `vr/preloaded/packages/mohu.vr.diagnostic/0.1.0/manifest.toml`
-- Plugin ID: `mohu.vr.diagnostic`
-- Behavior: function-entry logging after exact function-byte verification, plus
-  environment-gated replay experiments. Canonical execution is unchanged unless
-  `MOHU_VR_STEREO_PROOF=1`.
-
-The diagnostic target reports twenty active bindings and seventeen overlay hooks,
-including the independently guarded native submission tail at `0x80053CFC`.
-The isolated slot-0 scene verifies the render chain through the frame driver.
-The true natural frame entry is `0x8006D65C`: it loads the frame context and
-status words, then falls into the previously recorded prologue at `0x8006D66C`.
-Its observed caller is `0x80070444`; the call at `0x800705E4` returns to
-`0x800705EC`. That caller is not registered as a hook because it also contains
-simulation and device-state work.
-
-The single-player scene roots are measured:
-
-| Root | Global | Live value at slot 0 |
+| Purpose | Source | Selection |
 | --- | --- | --- |
-| Scene pointer | `0x800AA174` | `0x800F2180` |
-| Player pointer | `0x800AA17C` | `0x800F0BE0` |
-| Player input | `player + 0x39C` | `0x800F0FDC` |
+| W1 P38 / stationary P2 | `saves/openbios/state_8001F844_slot01.pst` plus `.thumb` | MP slot 1, weapon ID 0, zero switches |
+| Full MP matrix | Root `saves/openbios/`, slots 1-4 plus thumbnails | 13 unique IDs across four native cycles |
+| SP regression only | `analysis/vr-baseline/saves/openbios/state_8001F844_slot02.pst` plus `.thumb` | Isolated SP slot 2 |
+| Stale-identity control | Slot 1 in that isolated SP tree | Not the valid root MP slot 1; do not use as W1 fixture |
 
-Read the pointer globals at use time; the heap addresses themselves are not
-stable across level loads. A right-stick camera turn changed GTE RT and the
-rendered world while GTE TR stayed zero and the player pointer stayed fixed.
+**Root slot 2 is MP; isolated slot 2 is SP. Never choose by slot number without
+its save root.** A new empty analysis directory is not a new compatible save.
 
-Whole overlay-window hashes change between diagnostic runs even when function
-bytes remain identical. They are observations only. The stable runtime guard is
-the function-byte hash.
+The existing tools copy the selected `.pst` and `.thumb` into a fresh output
+subtree and pass its absolute `--memcard-dir`. Use that ownership/cleanup pattern.
+Never save into, overwrite, migrate, patch or replace an operator source slot.
+Do not change clip/reserve, health or enemy placement to make a test pass.
+Do not chase a moving SP enemy for weapon-position work. Reload the MP copy.
 
-## Camera findings
+Cycles: slot 1 = `0,1,17,10`; slot 2 = `8,16,4,15`;
+slot 3 = `9,14,5,10`; slot 4 = `12,17,13,15`.
+Unique IDs: `0,1,4,5,8,9,10,12,13,14,15,16,17`.
 
-- Right-stick rotation changes GTE RT while TR remains zero.
-- OFX/OFY/H were `256/120/400` in 16.16/integer form at the sampled gameplay
-  point.
-- Scratchpad matrix bytes around `0x1F800014` changed with camera rotation.
-- Scratch writes were produced by overlay code near
-  `0x80090B98..0x8009115C`, with return address `0x800908E4` at base
-  `0x8008C000`.
-- The level transformer consumes the camera's rotation in GTE RT and projects
-  camera-relative coordinates with TR zero.
-- The stable scene/player pointer globals are mapped (see above). The frame
-  render chain is mapped, but the high-level actor/camera update that originates
-  camera motion remains unresolved.
-- `0x80090760` is a render bridge, not the camera updater. It saves GTE state,
-  calls `0x80093830`, projects three RTPS groups, builds packets, and restores
-  state.
-- The render call chain is
-  `0x80053BB4 -> 0x80078E08 -> object+0x384 -> 0x8008AB84 -> ... ->
-  0x80090760`.
-- `0x80053BB4` is followed by the verified wait helper `0x80053CFC`, which calls
-  `0x8009D828`.
+## 4. Locked native contracts - use these exact seams
 
-See `CAMERA_EVIDENCE.md` for measurements.
-
-## Transform probe
-
-`MOHU_VR_DIAGNOSTICS=ON` now includes a diagnostic-only offset at the level
-transformer. Setting `MOHU_VR_LEVEL_OFFSET_X=N` adds N to GTE TRX once per draw
-span and restores the original TRX at the verified gameplay render-wait boundary:
-
-```powershell
-$env:MOHU_VR_LEVEL_OFFSET_X = '200'
-```
-
-The probe is inert without the environment variable. It verifies both boundary
-functions before touching or restoring GTE state. It is not part of the flat
-build and does not yet provide two-eye replay or OpenXR.
-
-The current A/B receipt uses the same slot-0 scene:
-
-| Probe | Result |
+| Meaning | Underground MP contract |
 | --- | --- |
-| `TRX = 0` | [Control](../../vr/proof/level-probe-control.png) |
-| `TRX = 20` | [Depth-dependent world shift](../../vr/proof/level-probe-offset20.png) |
-| `TRX = 200` | [Large world shift](../../vr/proof/level-probe-offset200.png) |
+| P1 / P2 roots | `[800A3604]` / `[800A3608]`; read at use time |
+| Input | `[actor+39C] == actor+400` |
+| Slot / weapon ID | `input+92` / `input+93` (decimal offsets) |
+| Current health | `actor+108` (hex offset); trace the exact P2 address |
+| Native damage function | `8004EAB4`, 532 bytes, SHA-256 `5ee9683eb0646d46a39e0b552f214fe90be010d2d41cebbe45fadc2db2a1b9e5` |
+| Native health subtract / store | `8004EB78` / `8004EB80`; damage evidence, not a shot-constructor seam |
+| Real first-person object | `[actor+114] == input+9F0 == actor+DF0` (hex offsets) |
+| Body object - rejected as viewmodel | `actor+4AC`, magic `00160024`, 22 nodes |
+| First-person entry | `800892E8`, 0xA70 bytes, FNV32 `39E56A35` |
+| Required first-person caller | Call `8008A53C`, return `8008A544` |
+| Native animated vertex producer | `8008DB98`, 0xB4 bytes, FNV32 `FAE3646E` |
+| Pose application | `800894DC`, after native animated vertices / RT/TR restoration |
+| Shared epilogue / restore | `80089D30`; eight RT/TR words plus world render view |
+| Native world / weapon focal | H=400 / H=133 |
+| MP eye context | `800A0B08`, 512x120 P1 source view |
+| Natural MP frame / caller | `80054BC4` / `80063CF8`; call word guarded at `80063CF0` |
+| P1 camera / selected player / scene list roots | `800A35B0` / `800A35C4` / `800A35CC` |
+| Native MP camera / scene calls | `80054E68(camera,0)` / `8006E9D8(context,list)` |
+| Submission | `[context+2218]` OT, 512 buckets, guest DrawOTag `80018B48` |
 
-At `TRX + 20`, far rows aligned at +2 px, mid rows at +5 px, and near rows at
-+6 px. The HUD and first-person weapon remained fixed. This establishes true
-world-space parallax for the future eye-replay path.
+Addresses in this table are hex guest addresses, usually shown without `0x`.
+Offsets explicitly labeled decimal are decimal. Heap sample `801491C0` is not
+an address to hardcode. Function hashes identify the overlay generation; the
+same address in SP is not the same method. Full guards live in source.
 
-## Stereo replay probe
+Source ownership:
 
-The diagnostic build contains environment-gated stereo controls:
-
-```powershell
-$env:MOHU_VR_STEREO_PROOF = '1'
-$env:MOHU_VR_EYE_OFFSET = '24'
-$env:MOHU_VR_EYE_RENDER_VIEW = '1'
-$env:MOHU_VR_EYE_GUEST_SUBMIT = '1'
-```
-
-This is the accepted frame-render replay path. It uses a complete
-`PSXModRenderView` and submits the regenerated OT through guest `DrawOTag`, so
-PGXP sees the packet source addresses. The older
-`MOHU_VR_REPLAY_FRAME_DRIVER=1` experiment remains available but rejected.
-`MOHU_VR_EYE_VIEW_OFFSET=1` remains a compatibility alias for the render-view
-switch.
-
-The OT-only control renders the already-built scene without regenerating it:
-
-```powershell
-$env:MOHU_VR_STEREO_PROOF = '1'
-$env:MOHU_VR_EYE_OFFSET = '0'
-$env:MOHU_VR_STEREO_OT_ONLY = '1'
-```
-
-Confirmed replay facts:
-
-1. `0x80018C78` is the main-EXE `PutDispEnv` match and `0x80018BB8` is
-   `PutDrawEnv`.
-2. The frame context at `0x800A7138` points at a 512-entry OT through
-   `[ctx + 0x2218]`. At the frame-render entry used by this scene that value was
-   `0x800A72E0`; after the driver it toggled to `0x800A82E0`.
-3. The OT-only control submits the prebuilt list with a bounded direct GP0 walk.
-   It renders the complete courtyard, HUD, and weapon and publishes an identical
-   zero-offset pair. This proves the OT head, packet tags, clear, and capture.
-4. The clear is effective: a clear-only run produced two pure-black images.
-5. Frame-render replay with `MOHU_VR_EYE_RENDER_VIEW=1` regenerates a
-   full-scene pair. The full render-view path has a byte-identical zero control,
-   a 93,376-pixel lateral pair, and a 91,984-pixel forward/downward near-plane
-   pair.
-6. The frame-driver replay still does not reveal the visible geometry
-   transaction. Applying the level-transform TRX offset at every span under
-   that path produced a black pair.
-7. The visible packet list is already present before the natural frame driver
-   entry. The driver toggles OT bases, but the post-driver base is not the
-   accepted frame-render replay list.
-8. The diagnostic's manual GP0 walker loses source addresses: every packet is
-   reported as `vr.projective.miss0`. Guest `DrawOTag` preserves provenance and
-   produced 1.4M homogeneous projective draws in the accepted zero and lateral
-   runs.
-9. Eye replay always targets the rollback-protected `y=0` VRAM scratch buffer.
-   Following the native display flip to `y=240` cleared a rectangle that the
-   y-rooted eye geometry did not draw, producing alternating complete black
-   pairs. `MOHU_VR_STEREO_DUMP_DIR` records the first 60 pairs for recurrence
-   checks. See [FLICKER_EVIDENCE.md](FLICKER_EVIDENCE.md).
-
-At the tested zero-offset OT-only checkpoint:
-
-| File | SHA-256 |
+| File / function | Change here for |
 | --- | --- |
-| [stereo-otonly-zero-left.png](../../vr/proof/stereo-otonly-zero-left.png) | `10ad3e8fbebe500c0d665b2eab2d509ecd012d44c96e4a6ab6d009ecbb11ebd1` |
-| [stereo-otonly-zero-right.png](../../vr/proof/stereo-otonly-zero-right.png) | `10ad3e8fbebe500c0d665b2eab2d509ecd012d44c96e4a6ab6d009ecbb11ebd1` |
+| `vr/underground/weapon.c`: `mohu_vr_weapon_track_delta`, `mohu_vr_weapon_relative_delta`, `mohu_vr_weapon_compose_gte_control` | Pure pose math / captured per-ID profiles |
+| `vr/underground/vr_diagnostic.c`: `vr_weapon_prepare_delta` | Current first-accepted-pose neutral anchoring; W1 must examine/replace its insufficient absolute-placement contract |
+| Same file: `vr_weapon_fp_enter`, `vr_weapon_viewmodel_project`, `vr_weapon_viewmodel_restore` | Existing guarded model scope; keep native animation, caller/mesh guards and common restore |
+| Same file: `vr_mp_snapshot`, `vr_mp_code_valid`, `vr_mp_frame_entry`, MP branch of `vr_stereo_eye_draw` | Existing MP replay; reuse, do not replace to fix a weapon pose |
+| `vr/underground/mp_view.h`, `vr/tests/test_mp_view.c` | MP mode, ownership, input/pointer and 512x120/H=400 guard |
+| `vr/tools/check_mp_view.py` | Owned copied-save process, both-eye controls, native pistol fire, refusal/recovery |
+| `vr/tools/inspect_weapon_sets.py` | Native inventory, actual first-person mesh capture, exact native damage trace |
+| `vr/underground/input.c` | Existing mapper; MP converter/dispatcher still needs independent validation |
+| `vr/underground/raycast.h` | Current visibility-node-extents pointer, not an exact triangle/barrel solution |
 
-The current driver/TRX experiment produced a black pair with matching hash
-`ffc1aaa604e5364b25926033bfdb5b792c1ce06597681358d212c8c386a72aa5`.
-That result is rejected as stereo evidence.
+GTE TR uses integer camera units. The old affine helper packs translation in
+Q12; `compose_gte_control` cancels that packing. Do not reintroduce `*4096` for
+TR. RT coefficients are Q12; translation and rotation do not share units.
 
-Accepted same-checkpoint controls:
+For the current authored mesh pose, temporarily use
+`weapon_view.projection_h_ref=400`, preserving 133/400 of the world focal.
+Restore the world view even for native/lost tracking. Absolute H=400 projection
+or ref=133 without replacing the authored pose clipped the gun out of view.
+Do not change this ratio independently of a measured new placement/projection
+contract. A future calibrated placement may justify a different contract, but
+requires a fresh same-run native/changed A/B with a visible gun and fixed world.
 
-| Control | Result |
+## 5. W1 - exact next implementation procedure
+
+### W1.1: first bounded experiment - P38 space capture
+
+1. Perform the read-only session preflight in section 7. Open these functions:
+   `vr_weapon_prepare_delta`, `mohu_vr_weapon_track_delta`,
+   `mohu_vr_weapon_relative_delta`, `vr_weapon_viewmodel_project`,
+   `build_stereo_render_view`, and the native producer at `8008DB98`.
+2. Use copied root MP slot 1, ID 0, zero switches. Keep P2 stationary; do not
+   fire. Run a single-weapon MP control only if the preflight or new change
+   needs a fresh baseline; an intact prior receipt is not a reason to rerun it.
+3. Capture the native animated affine/vertex representation, GTE RT/TR,
+   selected P1 camera and complete eye view at the already measured seam.
+   Take samples before and after application and at restore. Record function
+   bytes/caller/ID/object identity with the samples. Do not scan all RAM again
+   for an alternative first-person object.
+4. Write `docs/vr/WEAPON_CALIBRATION.md` as the W1 deliverable (not present yet):
+   name model/animated-model, native base-camera, tracking-origin, hand and eye
+   spaces. For every transform, specify source->destination, units, axis signs,
+   handedness, matrix storage, authored root placement and native animation.
+   Measure whether the native basis is scaled; use its full inverse if needed.
+5. State the intended composed result in named spaces. The target relation is
+   `point_eye = eye_from_origin * origin_from_hand * hand_from_model * point_animated`.
+   Define all scale/conversion factors and where native authored placement is
+   removed. Derive how this fits the existing guest GTE plus host eye transform;
+   never apply the eye transform twice or assume it has already been removed.
+   W1 may use explicitly labeled provisional test pivot/scale and analytic
+   markers to validate spaces. Physical grip/size acceptance is W3; do not
+   block W1 by trying to calibrate all 13 weapons or requiring a headset first.
+
+**W1.1 exit:** a captured P38 contract sufficient to compute an expected point
+and forward axis, with one explicit unit conversion at each boundary. If a
+space or unit is unknown, capture that missing producer/consumer next; do not
+"tune until it looks right" or move to another weapon.
+
+### W1.2: add the missing independent pose harness
+
+Planned file: `vr/tools/check_weapon_pose_spaces.py` (does not exist yet).
+Reuse `check_mp_view.py` process/save/PNG/rollback code; do not create a new
+build, save format, OpenXR backend or renderer to write this test.
+
+- Feed genuine synthetic right grip and aim samples through the existing
+  debug command `openxr_hands_override`. Set both poses, focus, activity and
+  validity. Its positions are `px_mm/py_mm/pz_mm`; quaternion components
+  `qx/qy/qz/qw` are integer millionths, not floats. Clear overrides afterward.
+- Refresh samples during a valid control so age stays <=150 ms. Test staleness
+  by deliberately stopping refresh using host time; guest frame count is not
+  a host pose age. Record `openxr_hands` output with each case.
+- Do not leave `MOHU_VR_WEAPON_SYNTHETIC_X/YAW_MDEG` or the flat-probe flag
+  active: those select direct deltas and bypass the real hand-pose path.
+  Existing `mohu.vr.weapon.pose x=/yaw=` controls prove only direct deltas.
+- Independently vary the existing eye-view head pose. The debug head override
+  currently exposes translation and pitch, not a generic yaw argument. For a
+  desktop-only yaw control, deliberately expose/use the existing diagnostic
+  view yaw path; do not invent an unsupported debug command or require a new
+  headset just to test the math. The current hand override also does not expose
+  arbitrary origin-pose fields. Cover origin changes with explicit pure-math
+  inputs or a narrowly scoped test extension, then verify physical recenter
+  later; unsupported JSON fields are not a recenter test.
+- Record effective units/metre for both hand conversion and eye view. The
+  desktop view helper uses 1000 diagnostic units/metre; the hand converter
+  currently uses `g_openxr_units_per_meter` (default `48/0.067`, and normally
+  `238.806` with launcher WorldScale=3). Its environment override is parsed in
+  the OpenXR activation branch, so setting that variable in a non-XR process
+  does not prove it took effect. Make test units explicit and measured.
+- `MOHU_VR_EYE_HEAD_*_MILLI` means milli-GTE camera units, not millimetres.
+  Convert a requested physical pose using the declared unit scale; retain
+  requested and effective values. Do not conflate diagnostic and headset scale.
+
+Required independent cases, all with source slot 1 / P38:
+
+| Case | What changes | Required invariant |
+| --- | --- | --- |
+| Absolute starts | Two different valid hand poses on fresh loads | First pose must affect placement; both must not silently become the same neutral/native placement |
+| Hand only | +/-100 mm on each axis; +/-15-degree yaw/pitch/roll | Measured points/axis follow the composed transform; world ROI unchanged |
+| Head only | Hand fixed in tracking-origin space; head +/-100 mm and +/-15-degree yaw/pitch | Reconstruct weapon anchor in origin space: it stays fixed; eye-space/screen motion agrees with head motion, not frozen pixels |
+| Combined | Independently chosen head and hand changes | Same composed result, not the sum of two head transforms |
+| Origin/recenter | Transform origin, head and hand consistently | Physical relation preserved; no retained stale neutral basis |
+| Invalid/recovery | Unfocused, inactive, missing validity, stale and bad quaternion, then valid | Native fallback/no pose write on invalid samples; no jump from an old unintended anchor on recovery |
+
+Use declared analytic points/axis in addition to images. Set tolerances before
+judging output: float math <=1e-6 in its declared units, using recorded effective
+inputs after SDK float conversion; final storage error no
+more than one documented quantization step; zero-pose eyes identical; fixed
+world ROI unchanged for hand-only cases. If the measured representation needs
+a different tolerance, derive and record it before the run, not after a failure.
+A clipped/disappearing gun is not a successful visible translation control.
+
+### W1.3-W1.5: implement and close only this gate
+
+Change the pure pose math and existing guarded geometry scope to meet the
+captured contract. Preserve native animation/recoil/reload as input. Keep
+unknown-ID, code/mesh/caller/ownership/focus/age failure paths native, and restore
+RT/TR plus render view before another draw/eye. Do not hook firing or remove
+arms as a shortcut. Per-weapon physical calibration comes later.
+
+Save a compact pose-space receipt under `vr/proof/`, raw captures under a fresh
+ignored analysis subtree, paired PNG IDs/hashes, effective parameters and
+numeric expected/observed residuals. Run only the affected regression tier in
+section 8. Check W1 boxes only after that evidence passes, then set NEXT=W2.1.
+
+## 6. Later gates - deterministic order, not interchangeable experiments
+
+| Task | Prerequisite / first action | Exit / allowed continuation |
+| --- | --- | --- |
+| W2 MP visibility/input | W1 complete; start at the measured MP scene callback and trace its actual level selector and native pad converter | Full MP signatures/layouts plus zero/side/near-wall/input controls; SP addresses are not substitutes |
+| W3 calibration/hardware | W1+W2; P38 first, then per-ID pivots/axes/scale/muzzle markers and a bounded copied-save headset comparison | Operator acceptance per weapon; desktop receipts never check physical boxes |
+| W4 native shot discovery | W1+W2; fresh MP P38 idle/fire/turned-away controls; start from P1 fire call chain and exact native P2 damage writer | MP constructor/basis/history/first-motion/ownership/units captured, read-only first |
+| W5 tracked aim | W3 physical visual acceptance + W4 measured MP shot contract | Native trajectory/impact matches calibrated rendered barrel; P2/NPC and invalid tracking remain native |
+| W6 exact laser | Calibrated rendered affine/muzzle/axis and independently mapped Underground triangles | First exact triangle hit, matching both-eye beam/dot; no node-box shortcut claim |
+| H/Q HUD/coverage/performance/release | Relevant weapon gates pass | See explicit remaining boxes in VR_PLAN; do not substitute these for blocked W1 work |
+
+If hardware is unavailable at W3, complete test preparation and leave physical
+boxes open. After W1+W2, **read-only W4 mapping** may proceed while waiting;
+tracked-shot writes/default promotion may not. This is the only planned branch
+around the physical gate. Do not silently jump to HUD, optimization, SP targets
+or remapping a completed renderer because a calibration experiment failed.
+
+For W4, the original game's `VR_WEAPON_AIM_PLAN.md` is methodology, not a list
+of Underground addresses or shot IDs. Local `analysis/vr-baseline/weapon-shot-mapping/`
+contains historical SP scripts with hardcoded slot 0/run names: read them as
+leads, do not execute them unchanged for MP or adopt their fields as measured MP.
+Keep native speed/spread/ammo/reload/collision/damage/throw behavior.
+
+## 7. Session preflight and bounded diagnostic commands
+
+Read only, before editing:
+
+```powershell
+git status --short
+git branch --show-current
+git rev-parse HEAD
+git submodule status
+Get-Content vr/proof/weapon-mp-build-receipt.json -Encoding utf8
+Get-FileHash -LiteralPath build-release/Medal_of_Honor_Underground_Recompiled.exe -Algorithm SHA256
+Select-String -LiteralPath build-release/CMakeCache.txt -Pattern '^(PSX_DEBUG_TOOLS|MOHU_VR_DIAGNOSTICS|PSX_OPENXR):'
+```
+
+Compare the current source/build flags to that receipt. Differences require
+inspecting the current diff, not resetting it. Do not create a branch/worktree,
+change framework pins, regenerate C or launch a game merely to redo preflight.
+All implementation/tools/tests remain under `vr/`; retained docs under
+`docs/vr/`. Existing launcher/CMake integration may be narrowly edited when
+required, with flat-mode checks. `game.toml`, `generated/`, framework/UI source
+and original saves remain unchanged unless a separately justified task needs
+it. Do not use broad `git add -A` with unrelated `.commandcode/` present.
+
+Use the current CMake dependency cache; do not invent a new build directory.
+Only when TCP/live diagnostics are needed:
+
+```powershell
+cmake -S . -B build-release -DCMAKE_BUILD_TYPE=Release -DMOHU_VR_DIAGNOSTICS=ON -DPSX_OPENXR=ON -DPSXRECOMP_REQUIRE_GAME_C=ON -DPSX_DEBUG_TOOLS=ON
+if ($LASTEXITCODE -ne 0) { throw 'Diagnostic configure failed' }
+cmake --build build-release --target psx-runtime --parallel 2
+if ($LASTEXITCODE -ne 0) { throw 'Diagnostic build failed' }
+$runRoot = Join-Path 'analysis/vr-baseline/weapon-mesh-mapping' ('resume-' + [guid]::NewGuid().ToString('N'))
+New-Item -ItemType Directory -Path $runRoot | Out-Null
+```
+
+The parent `$runRoot` may exist; **each tool's output child must not exist**.
+Do not pre-create the child paths below. The tools own copying and cleanup.
+Run one game at a time. Refuse occupied TCP 4372/existing games; do not attach
+these controls to or terminate an operator's game. Do not pass `-Build` to a
+VR launcher during a TCP run: it configures debug tools OFF.
+
+Small existing control, if needed for W1:
+
+```powershell
+python vr/tools/check_mp_view.py (Join-Path $runRoot 'p38')
+if ($LASTEXITCODE -ne 0) { throw 'P38 MP eye control failed' }
+```
+
+Full affected-path regression, once after a meaningful pose/replay change:
+
+```powershell
+python vr/tools/check_mp_view.py (Join-Path $runRoot 'mp-matrix') --all-weapons
+if ($LASTEXITCODE -ne 0) { throw 'MP matrix failed' }
+python vr/tools/check_mp_view.py (Join-Path $runRoot 'mp-lateral') --eye-offset 24
+if ($LASTEXITCODE -ne 0) { throw 'MP lateral control failed' }
+python vr/tools/check_mp_view.py (Join-Path $runRoot 'mp-fire') --fire-pistol --reject-recover
+if ($LASTEXITCODE -ne 0) { throw 'MP native fire/recovery failed' }
+python vr/tools/inspect_weapon_sets.py (Join-Path $runRoot 'flat-poses') --cycle --first-person-models --pose-controls
+if ($LASTEXITCODE -ne 0) { throw 'Flat pose regression failed' }
+python vr/tools/sky_ghost_control.py (Join-Path $runRoot 'sp-zero') --case zero
+if ($LASTEXITCODE -ne 0) { throw 'SP regression failed' }
+```
+
+The old tool's `--native-projection` is an A/B discovery control; do not use it
+as accepted projected/headset evidence. The future W1 harness must exercise the
+real hand path separately from these existing direct-delta controls.
+
+## 8. Verification, exit codes, recovery and session close
+
+| Change | Required checks |
 | --- | --- |
-| [Zero left](../../vr/proof/stereo-view-zero-left.png) | [Zero right](../../vr/proof/stereo-view-zero-right.png); identical hash `10ad3e8f...`; zero changed pixels |
-| [Offset-24 left](../../vr/proof/stereo-view-offset24-left.png) | [Offset-24 right](../../vr/proof/stereo-view-offset24-right.png); non-identical full-scene pair |
+| Documentation only | Link/checkbox/task-ID consistency, source/receipt facts, diff whitespace; no game/build required |
+| Pure weapon math / new spaces | Weapon fixture + new analytic space tests, P38 independent both-eye cases; then full affected pose/MP/flat/SP suite before accepting the implementation |
+| MP mode/view/projection code | MP guard fixture, full MP matrix/lateral/fire/recovery, flat pose and SP zero regression |
+| Shot state writes | New native/redirected shot traces + negative ownership/focus/ID cases, native damage suite, frame-state rollback and native fire/animation regressions |
+| Launcher/input changes | Launcher tests, inherited-flag flat startup, relevant native input/boot/menu controls |
 
-Block matching measured about 5 px of far-scene motion and 8 px of near-floor
-motion. The runtime reported equal eye cycles for both pairs and zero failed
-stereo attempts. Full commands, hashes, pair IDs, and runtime counters are in
-[STEREO_VIEW_EVIDENCE.md](STEREO_VIEW_EVIDENCE.md).
+Existing focused commands (run once when affected):
 
-PGXP full-pose controls:
+```powershell
+python -m unittest discover -s vr/tests -p 'test_*.py'
+if ($LASTEXITCODE -ne 0) { throw 'Python tests failed' }
+$cc = ((Select-String -LiteralPath build-release/CMakeCache.txt -Pattern '^CMAKE_C_COMPILER:.*=').Line -split '=',2)[1]
+& $cc -std=c11 -Wall -Wextra -Werror -Ivr/underground vr/tests/test_mp_view.c -o (Join-Path $runRoot 'test_mp_view.exe')
+if ($LASTEXITCODE -ne 0) { throw 'MP guard compile failed' }
+& (Join-Path $runRoot 'test_mp_view.exe')
+if ($LASTEXITCODE -ne 0) { throw 'MP guard fixture failed' }
+& $cc -std=c11 -Wall -Wextra -Werror -Ivr/underground -Ipsxrecomp/runtime/include vr/tests/test_weapon.c vr/underground/weapon.c psxrecomp/runtime/src/vr_pose_math.c -o (Join-Path $runRoot 'test_weapon.exe')
+if ($LASTEXITCODE -ne 0) { throw 'Weapon fixture compile failed' }
+& (Join-Path $runRoot 'test_weapon.exe')
+if ($LASTEXITCODE -ne 0) { throw 'Weapon fixture failed' }
+& $cc -std=c11 -Wall -Wextra -Werror -fsyntax-only -Ivr/underground -Ipsxrecomp/runtime/include vr/underground/vr_diagnostic.c
+if ($LASTEXITCODE -ne 0) { throw 'Diagnostic syntax failed' }
+```
 
-| Pose | Result |
+Interpret results correctly:
+
+- MP/flat weapon inventories need `complete=true`, exit 0, unchanged sources/
+  preferences and no remaining owned game. A receipt written during failure
+  is not accepted just because some early cases passed.
+- Both zero eye images must finish decoding, be populated and have identical
+  hashes. Counters without a visible weapon do not prove a model seam.
+- Native damage means a decrease in the complete trace at the exact current
+  P2 health address. A kill can respawn to 32; final health alone is insufficient.
+- A live counter read may catch one apply between restore calls. Verify exact
+  equality after loss/drain; do not weaken the no-persistent-leak gate.
+- Backend admission refusal increments `refused`; an interrupted eye may also
+  increment `failed`. Retained/stale/last-failure fields are historical. For an
+  intentional refusal control, require newer published/captured pair IDs after
+  the last failed attempt, no new failures after recovery and zero state errors.
+  Do not erase counters or accept a frozen retained picture as recovery.
+- The established SP `sky_ghost_control.py` intentionally terminates its hidden
+  child and may record child exit 1 with `intentional_termination=true`; its own
+  command exits 0 when accepted. This exception does not excuse a crashed MP
+  matrix or a save-load failure. The production flat startup smoke is also an
+  explicit intentional termination, not interactive gameplay acceptance.
+
+Failure handling is deterministic:
+
+| Observation | Next action / stop condition |
 | --- | --- |
-| [Zero left](../../vr/proof/stereo-pgxp-zero-left.png) | [Zero right](../../vr/proof/stereo-pgxp-zero-right.png); zero changed pixels |
-| [Lateral left](../../vr/proof/stereo-pgxp-lateral24-left.png) | [Lateral right](../../vr/proof/stereo-pgxp-lateral24-right.png); 93,376 changed pixels |
-| [Near-plane left](../../vr/proof/stereo-pgxp-nearplane24-left.png) | [Near-plane right](../../vr/proof/stereo-pgxp-nearplane24-right.png); pitch -15 degrees, forward 250 GTE units, no floor wedge |
+| Debug port absent | Check build has debug tools ON, exact exe path, startup stderr and port 4372; no second game/build directory |
+| `last_ok=0`, `state_load_failed`, ABI/identity mismatch | Stop dependent gameplay; ask operator for a fresh compatible PGXP source slot. Never patch ABI/identity or create a replacement save yourself |
+| Occupied port / existing game | Recover/close it only if this session has a recorded ownership chain. Otherwise leave it alone; ask the operator only when it blocks dependent work, and continue independent code/docs |
+| `emu busy or frozen` | Existing MP helper retries bounded busy responses; inspect advancing frames/logs after the bound. Do not invent pause/step/continue/run-to: removed APIs |
+| Guard mismatch | Record actual bytes/contract and stay native. Do not weaken guards or reinterpret another overlay as the same function |
+| Gun missing but apply counters rise | Compare the known native-projection control and focal/pose/near clipping at the same seam; do not reopen body-object discovery |
+| World changes in hand-only control | Inspect eye/view restoration, transform order and double application; do not fix it with world offsets or widened FOV |
+| Shutdown hangs | Stop admitting new eye transactions before TCP quit, as current MP helper does. Use bounded wait, then terminate only the recorded owned child; record forced cleanup as a limitation/failure, not exit 0 |
+| Same hypothesis fails twice | Record both parameter sets and evidence; do not rerun it unchanged. Identify the missing fact or change one measured hypothesis; remain on this task |
+| Hardware absent | Leave physical acceptance open, finish bounded batch preparation; only the explicitly allowed read-only W4 branch may advance |
 
-The near-plane pair completed 1,544 verified passes with zero mismatches and
-equal per-eye state hashes. Exact counters, image hashes, controls, and the save
-flavor procedure are in
-[PGXP_RENDER_VIEW_EVIDENCE.md](PGXP_RENDER_VIEW_EVIDENCE.md).
+Before ending an implementation session:
 
-The render path now publishes `vr.nclip.render.*` through `mod_counters`.
-Five 60-pair snapshots cover zero, lateral, pitch, yaw-left, and yaw-right
-poses. All had zero precise-projection misses; final sign distributions and
-corrections were pose-dependent. The old widescreen `nclip_stats` command
-remains disabled (`enabled=0`) and is not the receipt for this path.
-
-The diagnostic plugin now has an opt-in OpenXR path. `MOHU_VR_OPENXR=1` enables
-the backend, presents a native head-relative surface until the first gameplay
-frame, obtains the two headset `PSXModRenderView` values, and submits the
-verified complete pair. The launcher defaults to `WorldScale=3` with a 67 mm
-user-IPD calibration, producing the reference profile's effective 238.806 GTE
-units per metre. This remains diagnostic and off by default.
-
-The launcher can now test OpenXR without a physical headset through SteamVR's
-null HMD:
+- [ ] Restore the same build to debug OFF and build successfully:
 
 ```powershell
-.\RunVR-SteamVR.bat -Headless -Seconds 10
+cmake -S . -B build-release -DPSX_DEBUG_TOOLS=OFF
+if ($LASTEXITCODE -ne 0) { throw 'Release configure failed' }
+cmake --build build-release --target psx-runtime --parallel 2
+if ($LASTEXITCODE -ne 0) { throw 'Release build failed' }
 ```
 
-The mode starts the selected runtime, waits for complete stereo pairs, records
-the startup and smoke receipts, then stops SteamVR and restores its original
-settings. A failed headset run using the previous unscaled profile reported
-correct head tracking but an oversized world and black flashing. World scale was
-corrected to the reference profile. The remaining flash was reproduced
-headlessly as alternating pure-black complete pairs and fixed by the `y=0`
-scratch-buffer replay. The operator confirmed the corrected scale and image.
+- [ ] If runtime/launcher changed, check hidden flat startup through RunFlat with
+  inherited VR/weapon/MP flags; require pose/probe/stereo/OpenXR inactive and
+  no MP frame replay. Do not require TCP from this debug-off smoke.
+- [ ] Recheck source-save/thumbnail, settings/keybind and SteamVR hashes against
+  this session's recorded baseline. Clear synthetic overrides and close only
+  owned processes. No headset/runtime settings should silently remain changed.
+- [ ] Keep bulk RAM/assets/images in ignored `analysis/`; retain compact receipts
+  and selected proof under `vr/proof/`, with actual source/binary hashes.
+- [ ] Check `git diff --check` and affected doc links. Review the diff; preserve
+  unrelated work. No commit/push is implied unless the user requests it.
+- [ ] Update checkbox IDs in VR_PLAN and the continuation record below; do not
+  change earlier receipts to claim a new binary was tested.
 
-## Head-turn and flat-HUD correction
+## 9. Dead ends - do not repeat without new contrary evidence
 
-The normal VR launcher now renders at `1080p` instead of the native 240-line
-buffer. It also enables `PSX_VR_HEAD_FRUSTUM=1` and
-`PSX_VR_SUPPRESS_FLAT_HUD=1`. `-InternalResolution native`,
-`-NoHeadFrustumDiagnostic`, and `-KeepFlatHud` remain A/B controls.
+| Rejected path / mistaken claim | Use instead / evidence needed to reopen |
+| --- | --- |
+| `actor+4AC` / shared 22-node table as first-person mesh | Measured `[actor+114] == input+9F0`; old candidate moved another panel |
+| `80088C08` as the top-view weapon | Existing `800892E8` from `8008A544`; new viewport-specific evidence required to reopen |
+| `8008DB98` is always the wrong function | It is the real native vertex producer when owned by the measured first-person caller; the old wrong body ownership was the error |
+| `800892E8` as a simulation/player-update hook | This MP generation is animated model geometry; use measured mode-specific contracts |
+| Generic frame-driver replay / all-span TRX experiments | Accepted SP frame-render slice and separate MP P1 reconstruction; black pairs were rejected |
+| Manual GP0 OT walk as PGXP proof | Guest DrawOTag preserves packet source addresses |
+| Following native y=240 flip for eye scratch | Accepted rollback-protected y=0 buffer; alternating black pairs were measured |
+| Affine `*4096` applied to GTE TR | Integer TR helper and Q12 RT are deliberately different |
+| Reference `ref=133`, pivot `(80,150,100)` or scale 850 copied as calibration | Existing authored pose uses ref=400; measure Underground spaces/mesh before changing placement |
+| Native P2 hits prove tracked aim | Native shots are still native; require construction, trajectory and calibrated barrel-to-impact evidence |
+| SP frustum/movement addresses applied to MP | MP selector/converter contracts still need measurement in W2 |
+| Current right-aim/node-box laser called exact barrel/triangle laser | W6 rendered affine/muzzle plus independently mapped exact triangles |
+| New build folder or patched state header repairs a save | Ordinary PGXP checks and operator-provided compatible slot only |
+| Historical run-11 SP script executed for MP | Read it as a lead; use root MP copied slot 1 and current ownership/layout |
+| Old plan says create branch, align `31df2e1e`, scaffold VR | Completed; current branch/pins/receipts above are authoritative |
 
-Underground's `0x80099960` level selector is a 710-instruction match for the
-accepted reference selector and uses the same visibility-tree layout. The
-diagnostic builds a complete 1000-leaf queue from the actual eye view before
-writing guest RAM, verifies the full function bytes on every override, and
-falls back to the native selector on malformed trees or overflow. The mapped
-state is masks `0x800B7490`/`0x800B7494`, bypass `0x800B7498`, count
-`0x800B74B4`, queue `0x800B74B8`, and sentinel `0x800C8458`.
+## 10. Continuation record - replace these fields at session end
 
-The fixed HUD was content inside each eye image, not an extra OpenXR layer.
-The guarded text producer at `0x8006B64C` is skipped only during eye replay.
-The measured head-locked packet block at `0x800B8C88..0x800BA4B0` and the bar
-node at `0x800F109C` are unlinked from the regenerated OT inside the same
-rollback transaction. This temporarily hides the flat gameplay HUD in stereo;
-the hand/wrist HUD is still future work.
+- Completed through: M11 (flat meshes + desktop MP eyes + native regressions).
+- Current task: W1.1, not started. This turn only rewrote documentation.
+- Last accepted evidence: weapon-mp-eye-receipt.json / weapon-mp-build-receipt.json.
+- Next experiment: copied MP slot 1/P38; capture native affine/animated vertices,
+  GTE RT/TR, eye view and actual units at the existing seam, without firing.
+- Next deliverable: WEAPON_CALIBRATION.md coordinate contract, then the planned
+  independent pose harness; both are new work, not files assumed to exist.
+- Open physical gate: no current grip/scale/head-hand/shot acceptance claimed.
+- Current build: debug OFF; no owned game remains from the prior implementation.
+- Checkpoint: VR implementation/tools/proofs/docs included; unrelated .commandcode/ excluded and untouched. Read current Git status before editing.
 
-At the final code checkpoint, zero and both 90-degree poses completed with the
-host selector (`frustum=960/960`, zero fallbacks), the fixed compass, ammo text,
-and bar were absent, and side views retained world geometry. The final
-zero-offset eye images were byte-identical
-(`AEECA835133FAE5DADF3047D28D612AA0258FE087098BEE04EAFB46E3C23735B`).
-See [HEAD_TURN_HUD_EVIDENCE.md](HEAD_TURN_HUD_EVIDENCE.md) and
-[head-turn-hud-fix.png](../../vr/proof/head-turn-hud-fix.png).
-
-### Operator observation and isolated cause
-
-After the final headset test, the operator reported that the dominant flat HUD
-ghost was gone, but a smaller residual ghost remains and is visible only in the
-sky. They described it as a headset-indexed flat render of the whole scene. The
-world appears to occlude it, leaving it visible only where the sky is clear.
-
-That observation was initially a hypothesis. The completed headless controls
-now isolate an extra native OT submission/display tail inside eye replay.
-Clear-only eyes/application layers are uniform black or magenta; disabling
-native OpenXR surfaces does not remove the scene. Omitting the final eye submit
-still produces the flat courtyard, proving that frame replay itself draws it.
-
-The corrected path skips the full 80-byte-guarded tail at `0x80053CFC` only
-during frame-render eye replay, then submits the cleaned projected OT once.
-It also uses the complete `DrawOTag` entry at `0x80018B48`. The ammo artwork's
-second 40-byte buffer is now removed with a full-payload guard, correcting the
-previous single-buffer "bar" rule. All guest changes remain rollback-scoped.
-
-The same executable restores the ghost when `MOHU_VR_KEEP_REPLAY_SUBMIT=1`.
-The fix removes it from both raw eyes and the submitted application layer,
-with 100% identical measured static foreground pixels. The default debug-off
-build is restored after diagnostic capture. The operator confirmed the sky
-ghost fixed in the physical headset on 2026-10-24. Additional-level and
-transition coverage remain open.
-
-Full controls, rejected attempts, commands and limitations:
-[SKY_GHOST_EVIDENCE.md](SKY_GHOST_EVIDENCE.md),
-[proof](../../vr/proof/sky-ghost-fix.png), and
-[receipt](../../vr/proof/sky-ghost-receipt.json).
-
-## Movement and operator-owned save preparation
-
-The operator confirmed the sky correction, then requested movement to prepare
-multiplayer weapon-set saves. The operator will create those saves; none were
-created or migrated by the agent.
-
-Movement and buttons reuse the solved reference game's mappings: left stick
-moves/strafes, right X turns, right trigger fires, A/X uses/reloads, B changes
-weapon, stick clicks jump/crouch, and left Menu pauses. Default deadzone is
-0.2 and turn gain 0.65. Left grip optionally merges right Y into native LY.
-Menu left stick sends D-pad, A/trigger confirms, B goes back.
-
-The pure mapper lives in `vr/underground/input.c`. One-time activation installs
-the offline controller source/presentation policy. Underground's complete
-converter/dispatcher signatures and live calibration tables are guarded and
-read without guest writes. Its center +/-37 and saturated lookup differ from
-the reference; both measured post-load/DualShock table layouts are supported.
-The source is inactive during eye replay and in normal flat mode.
-
-Normal VR enables movement. `-NoMovement`, `-MoveDeadzone`, and `-TurnGain` are
-launch controls. The launchers now default to `-Slot -1`, which starts native
-menus without requiring a gameplay pair and clears an inherited auto-load slot.
-Pass `-Slot N` explicitly to load a state. The operator can use desktop F7 to
-save new unused slots, keeping slot 2 as the SP regression fixture.
-
-The native menu surface now follows the reference game's scene-idle policy.
-Gameplay disables it on the first stereo frame. If no scene frame is claimed for
-four VBlanks, the pause/menu path restores the flat head-relative surface; the
-next gameplay frame disables it again. Boot and pause return are both flat
-surfaces, not stereo menu quads.
-
-Synthetic actions verified movement, strafing, turning, partial/diagonal input,
-button delivery, focus/inactivity release, and raw actor-field changes with
-zero rollback mismatches/leaks/watchdogs. Fresh zero and both 90-degree views
-passed; raw eyes/application layer retained the clean sky. Release was rebuilt
-in the same `build-release` with debug tools OFF; the normal null-HMD run
-completed 360 logged pairs with zero XR failures. Flat activation stayed inert
-with inherited movement/VR flags. SteamVR settings restored and owned game
-processes were closed. Thirteen Python tests and all three strict C fixtures
-pass. Physical movement, pause/menu transitions and multiplayer control/overlay
-coverage await operator testing and the new fixtures.
-
-See [MOVEMENT_EVIDENCE.md](MOVEMENT_EVIDENCE.md) and the
-[compact receipt](../../vr/proof/movement-receipt.json).
-
-## Flat local multiplayer input
-
-The operator requested Steam Controller on P1 and keyboard on P2 and reported
-that controller input also moved P2. Device assignments were already correct;
-P1/P2 keyboard bindings were identical, and the runtime always merges a port's
-keyboard bindings alongside its gamepad. The exact physical controller-to-key
-route was not captured. Steam UI inspection was stopped by the operator and
-Steam settings were left unchanged.
-
-Local preferences now keep P1's Steam Controller/analog assignment with all P1
-keyboard bindings cleared, and P2 keyboard/digital on a separate IJKL/number-row
-layout. Multitap is disabled. `RunFlat.bat` disables diagnostic `PSX_DEV_INPUT`.
-Original local settings/keybinds are backed up under
-`analysis/vr-baseline/flat-local-input-backup/`. No game/framework rebuild or
-savestate changes were needed. Config parsing/assignment checks passed;
-physical input separation awaits the operator's check.
-
-See [FLAT_LOCAL_INPUT.md](FLAT_LOCAL_INPUT.md) for keys and file locations.
-
-## Multiplayer weapon fixtures and native damage
-
-The operator completed source slots 1–4. All four pass normal PGXP load checks,
-have closed four-entry weapon cycles, and cover 13 distinct weapons. Every
-distinct weapon now has a native P2 damage receipt. The scoped rifle uses a
-longer zoomed control; petrol-bomb damage needs a closer-range native movement
-control and damages both players. Idle and turned-away pistol controls have
-zero damage writes. Save/thumbnail hashes are unchanged; the isolated SP slot 2
-remains separate from source multiplayer slot 2.
-
-Measured MP roots are P1 `800A3604`, P2 `800A3608`; input is at actor+39C,
-equipped slot/ID at input+92/+93, ammo at +94/+110 plus twice slot, and health
-at actor+108. Native damage `8004EAB4` (532 bytes) subtracts/stores health at
-`8004EB78/8004EB80`; death/respawn can restore the final sample to full health.
-No guest hook, direct RAM/ammo write, or production VR behavior was added.
-The copied-save tool follows the reference game's inventory process. Thirteen
-Python tests and all strict C fixtures pass; the same release build is restored
-to debug OFF. Final inventory preserves saves/preferences/SteamVR settings and
-leaves no owned game. See [WEAPON_SET_EVIDENCE.md](WEAPON_SET_EVIDENCE.md) and
-the [compact receipt](../../vr/proof/weapon-set-receipt.json).
-The restored production binary logs inert flat startup, but two hidden flat
-auto-load controls staged slot 4 without attempting it before their deadlines.
-They reported no invalid save and were closed. Diagnostic loads/combat are
-verified; production headless flat auto-load remains unverified.
-
-## Weapon render-path mapping
-
-Weapon-position work is multiplayer-first. The four copied multiplayer fixtures
-contain a stationary P2 target, all 13 measured weapon IDs, closed native
-inventory cycles, and native damage receipts. Use one copied slot and one weapon
-at a time; no single-player fixture is required for this phase.
-
-P1's first-person object is `actor + 0x4AC`. It has magic `0x00160024` and a
-shared 22-node table with SHA-256 `9f8c7275...`. Object fields around
-`+0x5C/+0x64` are animation state, not a stable weapon identity. The multiplayer
-player update is `0x800892E8` (0xA70 bytes, FNV `0x39E56A35`); the separate
-single-player update is `0x800892C8` (0xF20 bytes, FNV `0xF4D6C439`).
-
-The next implementation seam is the first-person model's own affine/node
-transform or the later vertex projection. The tracked transform must be
-rollback-scoped, preserve native animation, recoil, reload, ammo and fire
-behavior, and leave the world view unchanged.
-
-The current diagnostic hook at `0x8008DB98` is not yet that seam. Its A/B
-captures change P1's world-body representation in the other split view while
-the top-view first-person weapon remains visually unchanged. Keep it
-diagnostic-only and do not claim it owns the visible top-view mesh.
-
-The P1 hit matrix is complete on the copied multiplayer fixtures. Native,
-`x=96`, `yaw=12000 mdeg`, and forced-tracking-loss runs each produced a native
-P2 health-address decrease for all 13 measured IDs. The gate reads the write
-trace, so death followed by respawn remains valid evidence. Weapon cycles close
-on all four slots, source saves and preferences remain unchanged, and each run
-leaves no owned game process. The scoped rifle and explosive controls use the
-measured long/approach variants. See
-[weapon-alignment-receipt.json](../../vr/proof/weapon-alignment-receipt.json).
-
-The default-on right-grip raycast pointer is implemented at
-`vr/underground/raycast.h` and `vr/underground/vr_diagnostic.c`. With
-normal VR, holding right squeeze casts through Underground's visibility tree
-and draws the beam plus impact dot. `-NoLaser` or `PSX_VR_LASER=0` disables it.
-The strict geometry fixture passes. Headset visual acceptance is still pending.
-This first pass uses the right-aim pose and visibility-node extents. The
-previous game uses the rendered weapon affine and exact level triangles; that
-seam alignment remains future work.
-
-The required fixture, guards, implementation order, and acceptance matrix are
-in [WEAPON_MAPPING.md](WEAPON_MAPPING.md). The compact model observations are in
-[weapon-model-receipt.json](../../vr/proof/weapon-model-receipt.json).
-
-## Build and test state
-
-There is one active build directory, matching the reference game repository:
-
-- Directory: `build-release/`
-- Release, OpenGL, OpenXR on, debug tools off.
-- `MOHU_VR_DIAGNOSTICS=ON`; PGXP hook flavor `2`, ABI tag `131106`.
-- Seven packages: one game-owned diagnostic plus six framework packages.
-- `RunFlat.bat`, `RunVR-VDXR.bat`, `RunVR-Oculus.bat`, and
-  `RunVR-SteamVR.bat` all launch this same executable.
-- The flat launcher clears VR environment variables. The diagnostic plugin
-  remains loaded but inert in that mode.
-
-Creating another build directory does not repair an invalid savestate. A fresh
-folder can contain the same runtime identity and the same ABI mismatch. A
-source-level runtime change can still invalidate the PGXP fixture, so ask the
-operator for a fresh PGXP save whenever the runtime reports
-`state_load_failed`, `last_ok=0`, or an ABI mismatch.
-
-The reusable `build-vr-pgxp/`, `build-vr-diagnostic/`, `build-vr-pose/`,
-`build-fw-tests/`, and `build-recompiler/` directories were deleted on
-2026-10-24. Only `build-release/` remains.
-
-Current `build-release/` state:
-
-- PGXP slot 2 loads from `analysis/vr-baseline/saves/`.
-- The saved state thumbnail confirms a playable courtyard scene.
-- Interpreter-only diagnostic captures confirmed the camera roots and the
-  `TRX` world-space probe.
-- Hidden-window OpenGL replay confirmed complete pairs, projective draws, and
-  balanced eye cycles.
-- OpenXR lifecycle compiles and loads the headless fallback with PGXP slot 2.
-  Without an active headset runtime, `openxr_stats` reports `result=-35`,
-  `stage=system`, and zero submitted layers.
-- `RunFlat.bat` starts the same executable with no VR activation.
-- Pass `-Build` to any VR launcher to reconfigure and build `build-release` in
-  place.
-
-Last checks:
-
-- The P1 top-view hit matrix now covers all 13 IDs at native, lateral `x=96`,
-  yawed `12 degrees`, and forced-tracking-loss poses. Every case produced a
-  pre-respawn decrease at the exact P2 health address, all weapon cycles closed,
-  and source saves, preferences, and process cleanup checks passed. See
-  [weapon-alignment-receipt.json](../../vr/proof/weapon-alignment-receipt.json).
-- The diagnostic raycast pointer builds with the level visibility tree and has
-  a strict pure-C fixture. Its right-squeeze OpenXR presentation remains
-  unverified because this session could not make the SteamVR null-HMD settings
-  writable; the saved settings hash still matches the pre-run original.
-- The null-HMD diagnostic run completed 360 pairs with zero XR failures and
-  `frustum=1440/1440`. The sandbox later blocked a second null-HMD settings
-  write, so laser presentation is not claimed from that run.
-- Final focused checks: 16 Python tests pass; strict frustum, HUD packet, input,
-  weapon, and raycast C fixtures pass; documentation links resolve.
-- The final diagnostic XR run reached 180 logged pairs, zero XR failures,
-  `frustum=720/720 fallback=0/0`, and 180 suppressed native tails per eye.
-  At capture, 150 rollback checks had zero mismatches/leaks/watchdogs/repairs.
-- Both 90-degree views remain populated; both zero-offset captured pairs have
-  identical left/right hashes. Pair 10 SHA-256 is
-  `49c4cf094ca0fc587d10091be29219742e9036d9f99e91a16803858b02117c7e`.
-- Raw eyes and the submitted application layer have clear sky and no residual
-  head-locked HUD in both captured buffer phases. Same-binary A/B reproduces
-  the old full-scene ghost only when the native tail is re-enabled.
-- Every completed null-HMD capture restored SteamVR settings byte-for-byte and
-  left no owned game process. Slot 2 remained valid; no save migration occurred.
-- The final normal `build-release` is Release/OpenGL/OpenXR/PGXP with
-  `PSX_DEBUG_TOOLS=OFF` and diagnostics compiled but inert by default. The
-  final flat smoke reported `read_only=1 stereo_proof=0 openxr=0 weapon_pose=0
-  laser=0`, native resolution, and normal boot. SteamVR settings remain at
-  SHA-256 `bc4b95d242547c552e4e6f672ad3c3284d357cd37249069fd643522473323f10`.
-
-Earlier checkpoint checks (historical image hashes/counters):
-
-- Thirteen Python tests pass.
-- Both GTE transfer/contract tests pass, including render-NCLIP counter
-  transitions for positive, negative, and zero outcomes.
-- Engine-map and diagnostic-plugin C files compile with
-  `-Wall -Wextra -Werror`.
-- All VR documentation links resolve.
-- The diagnostic target builds and activates seventeen guarded bindings.
-- A SteamVR null-HMD run loaded PGXP slot `2`, submitted fresh stereo pairs at
-  the corrected 238.806 units-per-metre profile, and recorded zero XR begin or
-  eye-view failures.
-- TRX 0/20/200 A/B captures produce the expected depth-dependent world motion.
-- Frame-render replay with the scoped view offset publishes a byte-identical
-  zero control and a complete depth-parallax pair.
-- A verifier-enabled offset run completed 3,542 eye-transaction checks with
-  zero mismatches and equal per-eye state hashes.
-- The full render-view path completed 1,481 zero-pose checks and 1,544
-  near-plane stereo checks with zero mismatches.
-- The signed-NCLIP sweep completed zero, lateral, pitch, and both yaw poses;
-  every sampled NCLIP had a precise projection and pose-dependent final sign.
-- Guest `DrawOTag` reports homogeneous projective draws rather than untracked
-  manual-GP0 submissions.
-- `RunFlat.bat` starts the shared release executable without activating VR.
-- A final 60-pair null-HMD sequence had zero black left or right images.
-- Eight consecutive compositor and application-layer captures were nonblank.
-- Normal VR launch renders at 1080p (5x the 240-line reference).
-- The final zero and 90-degree sweeps used the host visibility queue with zero
-  fallbacks and retained populated world geometry on both sides.
-- The final stereo captures have no head-locked text, compass, or bar packet;
-  zero-offset left/right hashes remain identical.
-- The final null-HMD OpenXR run completed 30 pairs with zero XR failures,
-  `frustum=120/120`, and `hud_unlinked=525/525`.
-- Frame-driver replay and the all-span TRX variant remain rejected image
-  controls.
-- No owned game process remains running.
-
-The first startup smoke used the default memcard directory before isolation and
-refreshed two card timestamps. All later diagnostics use the copied directory.
-Existing savestate files retained their original sizes and timestamps.
-
-## Reproduce the diagnostic checkpoint
-
-The shared release build needs local dependency sources when network fetches are
-restricted:
-
-```powershell
-$env:PSX_LIBWEBP_SOURCE_DIR = (Resolve-Path 'build-release\_deps\psx_libwebp-src').Path
-$env:PSX_OPENXR_SDK_SOURCE_DIR = (Resolve-Path 'build-release\_deps\psx_openxr_sdk-src').Path
-cmake -S . -B build-release `
-  -DCMAKE_BUILD_TYPE=Release `
-  -DPSX_DEBUG_TOOLS=OFF `
-  -DPSX_OPENXR=ON `
-  -DMOHU_VR_DIAGNOSTICS=ON `
-  -DPSXRECOMP_REQUIRE_GAME_C=ON
-cmake --build build-release --target psx-runtime -- -j 8
-```
-
-The clickable VR launchers build the same target when passed `-Build`:
-
-```powershell
-.\RunVR-VDXR.bat -Build
-.\RunVR-Oculus.bat
-.\RunVR-SteamVR.bat
-```
-
-Run the headless proof from the isolated save copy:
-
-```powershell
-$env:PSX_OPENXR_ENABLE = '1'
-$env:MOHU_VR_OPENXR = '1'
-$env:PSX_LOAD_SLOT = '2'
-$env:PSX_RENDER_PASS_VERIFY = '1'
-$env:PSX_STEREO_SHED = '0'
-.\build-release\Medal_of_Honor_Underground_Recompiled.exe `
-  --game (Resolve-Path 'analysis\vr-baseline\game-interp.toml').Path `
-  --headless-opengl --no-launcher --debug-port 4372 `
-  --memcard-dir (Resolve-Path 'analysis\vr-baseline\saves').Path
-```
-
-The no-headset OpenXR acceptance path uses the same isolated slot:
-
-```powershell
-.\RunVR-SteamVR.bat -Headless -Seconds 10
-```
-
-Expected startup:
-
-```text
-mohu-vr-diag: active bindings=17 overlay_hooks=14 read_only=0 level_offset_x=0 stereo_proof=1 eye_offset=0 render_view=1 all_spans=0 replay_driver=0 yaw_mdeg=0 pitch_mdeg=0 head_milli=0,0,0 guest_submit=1 head_frustum=1 openxr=1 flat_hud=1 units_per_meter=238.806
-mohu-vr-diag: single_player_scene=0x800AA174 player=0x800AA17C player_input_offset=0x39C
-```
-
-## Open gates
-
-1. Repeat the signed-NCLIP pose sweep in additional scenes and at near-wall
-   positions.
-2. Record the observed `0x80070444 -> 0x8006D65C` natural caller chain and the
-   world-packet producer contracts before promoting any additional hook.
-3. Keep clear, draw-environment, wait bypass, post-render skip, and transaction
-   selectors scoped strictly to eye replay.
-4. Label the actor/camera update function and separate camera motion from player
-   translation over controlled inputs.
-5. Complete interactive flat boot/menu/gameplay validation.
-6. Extend the pair-sequence and compositor checks to motion, wall proximity,
-   menus, transitions, and additional levels, then extend input and HUD policy.
-7. Locate the visible top-view first-person mesh seam; the current
-   `actor+0x4AC` affine hook modifies P1's world-body representation. The
-   13-ID native-hit matrix is complete, but muzzle-to-impact visual alignment
-   remains a separate aim pass. Verify the default-on right-grip laser in a
-   headset. Operator: verify pause/resume and release mappings. Sky-ghost
-   headset acceptance is complete.
-
-Do not treat the frame-driver replay as working stereo. The accepted evidence
-uses the frame-render replay; the driver path still does not own the visible
-world list.
+If a session stops mid-W1, replace "not started" with the exact completed
+substep, source diff, failing/passing case, output path, missing fact and one
+next experiment. Do not reset this pointer to M1 or generic discovery.

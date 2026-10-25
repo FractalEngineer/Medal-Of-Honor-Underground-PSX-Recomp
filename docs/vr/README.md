@@ -7,10 +7,12 @@ executable and live overlay content.
 
 ## Start here
 
-1. [HANDOFF.md](HANDOFF.md) is the canonical current state and next-action file.
-2. [VR_PLAN.md](VR_PLAN.md) defines scope, gates, and implementation order.
-3. [BASELINE.md](BASELINE.md) records the exact source and target revisions,
-   build configuration, and current verification status.
+1. [HANDOFF.md](HANDOFF.md) is the current execution contract: exact next task
+   W1.1, fixtures, seams, commands, acceptance and stop/recovery rules.
+2. [VR_PLAN.md](VR_PLAN.md) is the checkbox/status list and dependency order.
+   Do not restart checked foundation/renderer work without a demonstrated regression.
+3. [BASELINE.md](BASELINE.md) records the historical 2026-10-23 starting tree.
+   Its old framework pin and no-VR state do not override the current handoff.
 4. [ENGINE_EQUIVALENCE.md](ENGINE_EQUIVALENCE.md) tracks candidate function
    mappings and the evidence required before a hook can be registered.
 5. [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md) records completed work and
@@ -72,7 +74,8 @@ or VR environment variable.
 
 ## Current state
 
-The framework and UI gitlinks match the reference. Underground now has a
+Use the current framework/UI pins in HANDOFF, not the historical baseline.
+Underground now has a
 fail-closed engine map under `vr/underground/` with twenty live or
 statically confirmed mappings, including the natural frame entry, PutDrawEnv,
 the scene draw bridge, the render wait, and the first-person draw path. The
@@ -95,3 +98,10 @@ receipts for 13 weapons. Weapon-position work uses those fixtures and the
 stationary P2 target one weapon at a time; see
 [WEAPON_MAPPING.md](WEAPON_MAPPING.md) and
 [WEAPON_SET_EVIDENCE.md](WEAPON_SET_EVIDENCE.md).
+
+The real first-person seam and P1-only MP desktop eye renderer are verified for
+all 13 measured IDs. The current task is absolute P38 pose/head-hand space
+validation (W1), not finding a new mesh hook. Physical calibration, MP visibility
+and controls, tracked shot alignment, exact barrel laser and wrist HUD remain
+open under the ordered plan. See [MP eye receipt](../../vr/proof/weapon-mp-eye-receipt.json)
+and [MP build receipt](../../vr/proof/weapon-mp-build-receipt.json).

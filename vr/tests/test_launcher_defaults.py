@@ -15,6 +15,16 @@ class LauncherDefaultsTest(unittest.TestCase):
         self.assertEqual(int(match.group(1)), -1)
         self.assertIn("PSX_LOAD_SLOT = $(if ($Slot -ge 0)", script)
 
+    def test_flat_launch_clears_weapon_experiment_activation(self) -> None:
+        script = (ROOT / "RunFlat.bat").read_text(encoding="utf-8")
+        cleared = re.search(r"for %%V in \((.*?)\) do set", script, re.S)
+        self.assertIsNotNone(cleared)
+        variables = set(cleared.group(1).split())
+        self.assertTrue({"PSX_VR_WEAPON_POSE", "MOHU_VR_WEAPON_FLAT_PROBE",
+                         "MOHU_VR_MP_CONTROL",
+                         "MOHU_VR_WEAPON_SYNTHETIC_X",
+                         "MOHU_VR_WEAPON_SYNTHETIC_YAW_MDEG"} <= variables)
+
 
 if __name__ == "__main__":
     unittest.main()
