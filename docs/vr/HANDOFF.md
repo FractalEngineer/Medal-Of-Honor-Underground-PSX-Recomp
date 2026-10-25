@@ -13,19 +13,15 @@ the earlier hardware-first sequence; no completed box is reopened.
 
 ## 1. Start here - one next task
 
-**NEXT: C3 continuation - replace the reference runtime fixture.** C1, C2 and
-the C4 documentation/workflow work are complete. Both release targets and all
-host parity/fixture checks pass. The reference headless run cannot load copied
-slots from the normal build because the temporary diagnostic executable uses a
-different execution layout (`enhancement_memory_layout_or_execution_profile`).
-The slots themselves load normally; this is a fixture-profile mismatch. Use one
-copied reference PGXP slot produced by the debug profile, then rerun the
-existing world-stability batch; do not patch save headers and do not start W2.3.
-Evidence is in [reference-parity-receipt.json](../../vr/proof/reference-parity-receipt.json).
+**NEXT: W2.3 - zero, +/-90-degree and near-wall MP controls.** C1-C4 are
+complete. Both release targets and host fixtures pass. The reference also
+passed a fresh diagnostic-profile gameplay slot captured by cold boot, five
+world-stability views, eight weapon controls, and a watchdog abort/recovery.
+Evidence is in
+[reference-parity-receipt.json](../../vr/proof/reference-parity-receipt.json).
 
-**Next feature after C3: W2.3 - zero, +/-90-degree and near-wall MP controls.**
 Use the completed flat scene-list/per-object selector and the opt-in eye-frustum
-override; do not transplant the SP PVS selector or queue.
+override for W2.3; do not transplant the SP PVS selector or queue.
 
 Shared VR matrix, conservative visibility and slab math has one source of truth:
 `psxrecomp/runtime/src/vr_geometry_math.c` and its public header. Fix shared math
@@ -543,23 +539,21 @@ if ($LASTEXITCODE -ne 0) { throw 'Release build failed' }
 
 - Completed through: W2.2 (native MP selector layout plus guarded eye-frustum
   override and zero-angle control); W2.3-W6 and physical acceptance remain open.
-- Current task: C3 is blocked on a reference debug-profile fixture. C1, C2 and
-  C4 documentation/workflow are complete; W2.3 remains unstarted.
+- Current task: C1-C4 are complete; W2.3 remains unstarted.
 - Last accepted evidence: `vr/proof/reference-parity-receipt.json`,
-  `analysis/reference-parity/c2-shared-20261026d/baseline.json`, Underground
-  zero/fire/recovery and lateral receipts, and the head-visibility control.
-- Next action: supply the reference diagnostic with one copied PGXP slot made by
-  the same debug execution profile, launch headless, and run the
-  zero/lateral/side world-stability batch. Do not patch a save header, copy a
-  save from the other game, or describe the working normal-build slots as bad.
-  Resume W2.3 only after the reference runtime gate passes.
+  `analysis/reference-parity/c2-final-20261026/baseline.json`, Underground
+  zero/fire/recovery and lateral receipts, and reference runtime receipt
+  `analysis/reference-parity/c3-runtime-20261026/receipt.json`.
+- Next action: begin W2.3 only after loading the current handoff and rechecking
+  the measured MP selector/override contract. The consistency refactor and
+  runtime checks are closed.
 - Open physical gate: no grip/scale/size, physical recenter or tracked-shot
   acceptance is claimed. W1 control motion is synthetic.
 - Current build: Underground and reference `build-release` are rebuilt debug OFF.
   Underground executable SHA-256 is
   `01f2f64be61b7a2d8156e0ed8bcf6c94d0fbe5a994f8335111b383c433a78df7`;
   reference SHA-256 is
-  `12de170cbd304a0ccb55024ded267d017fea6d09cf504291e972c01f1d25143f`.
+  `d878c555ea2d5c034bda20d1b89dde2a98d5a7a31c0f8c85a218ca38d6b14726`.
   No owned game/debug listener or smoke wrapper remains.
 - Checkpoint: W2.2 implementation is committed at `2b3cbd8`. The reference-reuse
   audit and plan/handoff corrections are a later documentation-only change;

@@ -846,11 +846,14 @@
 - C3 release builds pass in both checkouts. Underground's existing controls pass
   at zero/lateral/side head poses, with native/translated/yawed/lost weapon
   cases, native pistol fire, refusal and fresh-pair recovery. Reference host
-  aim/frustum/raycast fixtures pass, but the debug-profile diagnostic rejects
-  normal-build savestates with
-  `enhancement_memory_layout_or_execution_profile`. The user confirmed the save
-  slots load in the normal build, so this remains a fixture-profile blocker, not
-  a save corruption finding.
+  aim/frustum/raycast fixtures pass. A headless cold boot reached Mission 1 and
+  captured a fresh slot 9 under the diagnostic execution identity, leaving all
+  source `.pst` files unchanged. Five world-stability views had unique per-eye
+  crops and 1,546 rollback checks with zero mismatches. All eight weapon-aim
+  controls passed. A tracked-weapon watchdog aborted one right eye, retained
+  pair 1065 and later published complete pair 1163; its run had one watchdog,
+  one nesting repair, 2,328 verification checks and zero mismatches.
+  Release builds with OpenXR OFF also link in both repositories.
 - C4 added the same ownership rule to both game handoffs, a shared-policy test
   to both VR test workflows, and
   [reference-parity-receipt.json](../../vr/proof/reference-parity-receipt.json).
@@ -859,8 +862,7 @@
 
 ## Next work
 
-**C3 continuation: reference debug-profile fixture.** Run the reference
-diagnostic with a copied PGXP slot made by the same debug execution profile,
-then rerun the existing headless world-stability batch. Do not patch a save
-header, describe the working normal-build slots as bad, or claim C3 from the
-Underground pass. Resume W2.3 only after that reference runtime gate passes.
+**W2.3: zero, +/-90-degree and near-wall MP controls.** C1-C4 are complete and
+the prior feature gates remain closed. Use the measured flat MP selector and
+opt-in eye-frustum override; do not reopen renderer discovery or transplant the
+SP PVS selector.

@@ -8,13 +8,10 @@ scope has evidence; it never implies broader headset or gameplay acceptance.
 Historical design and prior attempts belong in
 [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md) and the evidence documents.
 
-**NEXT IMPLEMENTATION TASK: C3 continuation - replace the reference runtime
-fixture.** C1, C2 and the C4 ownership/workflow documentation are complete.
-Underground runtime checks pass. The reference debug diagnostic rejects the
-available normal-build saves with
-`enhancement_memory_layout_or_execution_profile`; the save slots themselves load
-in the normal build. Do not start W2.3 until a debug-profile-compatible copied
-reference fixture closes C3. See
+**NEXT IMPLEMENTATION TASK: W2.3 - zero, +/-90-degree and near-wall MP
+controls.** C1-C4 are complete. The reference runtime gate now uses a fresh
+cold-boot gameplay slot captured by the diagnostic build and passes world
+stability, weapon controls and watchdog recovery. See
 [CONSISTENCY_HANDOFF.md](CONSISTENCY_HANDOFF.md) and
 [the parity receipt](../../vr/proof/reference-parity-receipt.json).
 
@@ -38,7 +35,7 @@ strict W1->W6/hardware-first sequence.
 - Update the handoff's next task ID, last result and next experiment at session
   end. An incomplete task needs a precise continuation, not "continue mapping".
 
-## C - cross-game consistency pass (C3 blocked; no feature rediscovery)
+## C - cross-game consistency pass (complete; no feature rediscovery)
 
 - [x] C1. Add host-only cross-game parity fixtures and a behavior/policy difference
   table for the helpers named in CONSISTENCY_HANDOFF. Preserve current outputs
@@ -50,18 +47,19 @@ strict W1->W6/hardware-first sequence.
   Retain title-specific wrappers, limits, native readers, hooks and calibration.
   Both framework copies use `vr_geometry_math.c` SHA-256
   `9e51708f0f05a16182e4d5893063a06f656d4fc723965f72cea9191632661a23`.
-- [ ] C3. Build both consumers and pass focused fixtures plus the affected
+- [x] C3. Build both consumers and pass focused fixtures plus the affected
   pre/post runtime controls. New receipts identify both games and the shared
   core revision. One game's passing result does not close this gate. Both
   release builds and host fixtures pass. Underground zero, lateral, side/head,
-  native-fire, refusal and recovery controls pass. Reference headless gameplay
-  remains blocked by a diagnostic execution-profile mismatch:
-  `enhancement_memory_layout_or_execution_profile`. The normal-build slots are
-  user-confirmed working; exact status and logs are in the parity receipt.
+  native-fire, refusal and recovery controls pass. Reference cold boot supplied
+  a fresh slot 9; five world views produced unique per-eye crops with 1,546
+  rollback checks and zero mismatches; eight weapon controls passed; a real
+  tracked-weapon watchdog aborted one eye, retained pair 1065 and published
+  later complete pairs. Both flat configurations link with OpenXR OFF. See the
+  parity receipt.
 - [x] C4. Document common ownership, retained differences and a repeatable parity
   check in both projects. The ownership rule, command, receipt, source hashes
-  and intentional policy differences are recorded. Resuming W2.3 remains
-  blocked by C3, not a completed feature gate.
+  and intentional policy differences are recorded. NEXT is W2.3.
 
 Exit gate: shared calculation for these three operations, explicit game adapters,
 both consumers validated, no behavioral/default change concealed as cleanup.

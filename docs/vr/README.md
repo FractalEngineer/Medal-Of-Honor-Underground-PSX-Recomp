@@ -7,16 +7,15 @@ executable and live overlay content.
 
 ## Start here
 
-1. [HANDOFF.md](HANDOFF.md) is the current execution contract: C3's reference
-   runtime-fixture continuation, then W2.3; fixtures, commands and recovery rules.
+1. [HANDOFF.md](HANDOFF.md) is the current execution contract: W2.3 MP controls;
+   fixtures, commands and recovery rules.
 2. [VR_PLAN.md](VR_PLAN.md) is the checkbox/status list and dependency order.
    Do not restart checked foundation/renderer work without a demonstrated regression.
    [REFERENCE_REUSE_AUDIT.md](REFERENCE_REUSE_AUDIT.md) maps every workstream
    to reusable first-game code and local counterparts; consult it before adding
    a new implementation. Hardware acceptance does not block isolated desktop work.
    [CONSISTENCY_HANDOFF.md](CONSISTENCY_HANDOFF.md) records the completed
-   three-operation shared math, both-game parity status and the reference
-   runtime fixture blocker.
+   three-operation shared math and both-game runtime evidence.
 3. [BASELINE.md](BASELINE.md) records the historical 2026-10-23 starting tree.
    Its old framework pin and no-VR state do not override the current handoff.
 4. [ENGINE_EQUIVALENCE.md](ENGINE_EQUIVALENCE.md) tracks candidate function

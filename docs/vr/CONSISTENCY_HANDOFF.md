@@ -6,17 +6,21 @@ owns C1-C4 status. Completed W1/W2.1/W2.2 stay closed.
 
 ## Execution status
 
-C1, C2 and the C4 ownership/workflow documentation are complete. The 32-case
-host parity harness passes, both Release consumers build, and Underground's
-zero, lateral, head-yaw, weapon-control, refusal and recovery diagnostics pass.
-The shared implementation is on the framework fork at commit `555e1eab`.
-C3 remains open because the reference debug diagnostic executable rejects the
-available normal-build copied savestates with
-`enhancement_memory_layout_or_execution_profile`. The user confirmed the save
-slots load in the normal build; this is a diagnostic-profile fixture mismatch,
-not a bad-save conclusion.
-The exact status, hashes, intentional policy differences and next action are in
+C1-C4 are complete. The 32-case host parity harness passes, both Release
+consumers build with OpenXR ON and with OpenXR/VR diagnostics OFF, and each
+title's affected runtime path has a retained receipt.
+Underground passes zero, lateral, head-yaw, weapon-control, refusal and recovery
+checks. The reference passes a fresh same-profile slot captured by cold boot,
+five world-stability views, all eight weapon-aim controls, 1,546 world rollback
+checks with zero mismatches, and a deliberate tracked-weapon watchdog abort that
+retains its prior pair and resumes publishing complete pairs.
+
+The old source `.pst` snapshots are not reused as reference runtime acceptance
+because their execution/PGXP cookies differ from the current build. The fresh
+slot, source-save hashes, normal and diagnostic executable hashes, and fault
+recovery are recorded in
 [reference-parity-receipt.json](../../vr/proof/reference-parity-receipt.json).
+The shared implementation is on the framework fork at commit `555e1eab`.
 W2.3 remains unstarted.
 
 ## Answer: what was duplicated, and what was a valid port?
@@ -52,7 +56,7 @@ The input port's history explicitly says "Add reference VR movement" at
 at `a5185d1`. Current production comparisons must use the latest sources, not
 those historical commits as a reset target.
 
-## C1 - characterize before replacing anything (NEXT)
+## C1 - characterize before replacing anything (complete)
 
 1. Read this file, the reuse audit and current handoff. Read applicable rules in
    both repositories, and framework `AGENTS.md`/`CLAUDE.md` before framework edits.
@@ -176,11 +180,9 @@ once in the framework; keep measured bindings in title adapters; label a copied
 tool with its origin and meaningful local differences. A later generic fix must
 reach both consumers or explicitly record which consumer remains pending.
 
-Update C1-C4 evidence/status. Set NEXT back to **W2.3** only after both
-consumers' C3 runtime gates pass; while C3 is blocked, keep its exact fixture
-failure and next action as NEXT. No feature gate was completed by the
-consistency pass. No commit/push is implied by this handover; obey the user's
-current authorization at execution time.
+C1-C4 evidence/status are complete, so **NEXT is W2.3**. No feature gate was
+completed by the consistency pass. Commit/push follows the latest user
+authorization at execution time.
 
 ## Limits and recovery
 
@@ -197,7 +199,7 @@ current authorization at execution time.
 - Same failed hypothesis twice: retain evidence and choose the missing fact;
   no repeated rebuild/test loop with unchanged inputs.
 
-Current continuation: **C3 blocked on the reference debug-profile fixture**.
-Run the reference diagnostic with a copied save produced by the same debug
-execution profile, then rerun the existing headless world-stability batch. Never
-patch a save header or replace the user's source save.
+Current continuation: **W2.3**, after this completed consistency pass. Preserve
+the fresh slot 9 diagnostic fixture and its receipt. Do not treat the older
+source `.pst` snapshots as compatible with a new execution identity, and do not
+patch their headers.
