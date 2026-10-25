@@ -29,13 +29,19 @@ MP_CAMERA_ROOT = 0x800A35B0
 MP_CURRENT_PLAYER = 0x800A35C4
 MP_SCENE_ROOT = 0x800A35CC
 MP_P1_ROOT = 0x800A3604
+MP_CAMERA_VIEW_ROOT = 0x800A35C0
+MP_SCREEN_WIDTH = 0x800A2D10
+MP_SCREEN_HEIGHT = 0x800A2D14
+MP_NODE_CENTER = 0x2F4
+MP_NODE_RADIUS = 0x2FC
+MP_CAMERA_VIEW_POINTER = 0xC8
 
 
-def command(name, **values):
+def command(cmd, **values):
     deadline = time.monotonic() + 15.0
     while True:
         try:
-            return native.command(name, **values)
+            return native.command(cmd, **values)
         except (OSError, RuntimeError) as error:
             if "busy or frozen" not in str(error) or time.monotonic() > deadline:
                 raise
@@ -44,6 +50,10 @@ def command(name, **values):
 
 def guest_valid(address):
     return 0x80000000 <= address < 0x80200000 and not (address & 3)
+
+
+def guest_address(value):
+    return int(value, 16) if not value.lower().startswith("0x") else int(value, 0)
 
 
 def read(address, size):
@@ -117,6 +127,74 @@ def capture_scene_pc_counts():
         for row in probe["slots"]
     }
     return probe
+
+
+def parse_fields(value):
+    fields = {}
+    for item in value.split():
+        key, separator, raw = item.partition("=")
+        if separator:
+            fields[key] = raw
+    return fields
+
+
+def capture_frustum_layout():
+    command("mod_cmd", name="mohu.vr.mp.frustum", args="start")
+    native.frames(6)
+    stopped = parse_fields(
+        command("mod_cmd", name="mohu.vr.mp.frustum", args="stop")["reply"]
+    )
+    count = int(stopped.get("count", "-1"))
+    if count <= 0:
+        raise RuntimeError("MP frustum capture returned no selector samples")
+
+    samples = []
+    for index in range(count):
+        fields = parse_fields(
+            command(
+                "mod_cmd",
+                name="mohu.vr.mp.frustum",
+                args=f"read={index}",
+            )["reply"]
+        )
+        if int(fields.get("result_valid", "0")) != 1:
+            raise RuntimeError(f"MP frustum sample {index} has no native result")
+        view = int(fields["view"], 16)
+        if not guest_valid(view):
+            raise RuntimeError(f"MP frustum sample {index} view is invalid")
+        view_bytes = read(view, 0xD0)
+        camera = int(fields["camera"], 16)
+        camera_input = int(fields["input"], 16)
+        center = [int(value) for value in fields["center"].split(",")]
+        radius = int(fields["radius"])
+        samples.append(
+            {
+                "node": fields["node"],
+                "return_address": fields["ra"],
+                "center": center,
+                "radius": radius,
+                "aabb": [center[i] - radius for i in range(3)]
+                + [center[i] + radius for i in range(3)],
+                "control": fields["control"].split(","),
+                "screen": [int(value) for value in fields["screen"].split(",")],
+                "projection": [
+                    int(value) for value in fields["projection"].split(",")
+                ],
+                "camera": fields["camera"],
+                "input": fields["input"],
+                "view": fields["view"],
+                "native_result": int(fields["native_result"]),
+                "camera_0x39c": f"0x{read_word(camera + 0x39C):08X}",
+                "input_0xc8": (
+                    f"0x{read_word(camera_input + MP_CAMERA_VIEW_POINTER):08X}"
+                ),
+                "view_words_0x40_to_0xcc": [
+                    f"0x{struct.unpack_from('<I', view_bytes, offset)[0]:08X}"
+                    for offset in range(0x40, 0xD0, 4)
+                ],
+            }
+        )
+    return samples
 
 
 def collect_scene_list(head):
@@ -208,6 +286,7 @@ def main():
         PSX_STEREO_SHED="0",
         MOHU_VR_MP_CONTROL="0",
         MOHU_VR_STEREO_PROOF="0",
+        MOHU_VR_MP_FRUSTUM_CAPTURE="1",
     )
     receipt = {
         "schema": 1,
@@ -374,6 +453,27 @@ def main():
                     "order and 80096EF4 gates each object."
                 ),
             }
+            receipt["mp_eye_frustum"] = {
+                "selector": f"0x{VISIBILITY_SELECTOR:08X}",
+                "helper": f"0x{VISIBILITY_HELPER:08X}",
+                "node_center_fields": ["+0x2F4", "+0x2F6", "+0x2F8"],
+                "node_radius_field": "+0x2FC",
+                "camera_owner_root": f"0x{MP_CAMERA_VIEW_ROOT:08X}",
+                "camera_input_view_pointer": (
+                    f"+0x{MP_CAMERA_VIEW_POINTER:X}"
+                ),
+                "samples": capture_frustum_layout(),
+            }
+            sample_nodes = [
+                row["node"] for row in receipt["mp_eye_frustum"]["samples"]
+            ]
+            if len(sample_nodes) != len(set(sample_nodes)):
+                raise RuntimeError("MP frustum capture had duplicate nodes")
+            level_addresses = {int(row["address"], 0) for row in level_nodes}
+            if not {guest_address(node) for node in sample_nodes}.issubset(
+                level_addresses
+            ):
+                raise RuntimeError("MP frustum capture included a non-level node")
 
             receipt["players_after"] = native.players()
             if any(
@@ -437,6 +537,8 @@ def main():
         proof = {
             "schema": 1,
             "date": "2026-10-26",
+            "complete": True,
+            "kind": "W2.2 native MP eye-frustum layout measurement",
             "source_revision": revision,
             "fixture": receipt["fixture"],
             "executable_sha256": receipt["executable_sha256"],
@@ -447,6 +549,9 @@ def main():
                 ),
                 "vr/underground/vr_diagnostic.c": native.digest(
                     native.ROOT / "vr/underground/vr_diagnostic.c"
+                ),
+                "vr/underground/frustum.h": native.digest(
+                    native.ROOT / "vr/underground/frustum.h"
                 ),
             },
             "code_contracts": {
@@ -467,6 +572,7 @@ def main():
                 },
             },
             "mp_level_selection": receipt["mp_level_selection"],
+            "mp_eye_frustum": receipt["mp_eye_frustum"],
             "source_saves_unchanged": receipt["source_saves_unchanged"],
             "preferences_unchanged": receipt["preferences_unchanged"],
             "remaining_game_pids": receipt["remaining_game_pids"],
@@ -478,7 +584,7 @@ def main():
             ),
             "raw_receipt_sha256": native.digest(out / "receipt.json"),
             "limits": [
-                "No MP frustum/render override was added in W2.1.",
+                "This capture measures the MP selector; it does not claim W2.3 head-turn coverage.",
                 "No weapon switch or firing occurred in this fixture.",
                 "The measured MP path is a flat native scene list; W2.2 must not assume the SP PVS leaf queue.",
             ],

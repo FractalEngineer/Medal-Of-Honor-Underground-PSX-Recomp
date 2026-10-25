@@ -1,6 +1,6 @@
 # Underground VR execution plan
 
-Updated: 2026-10-25. Working branch: `feature/vr-port`.
+Updated: 2026-10-26. Working branch: `feature/vr-port`.
 
 This is the current checkbox plan, not the original proposal. Start with
 [HANDOFF.md](HANDOFF.md) for exact instructions. Checked means the stated
@@ -8,7 +8,7 @@ scope has evidence; it never implies broader headset or gameplay acceptance.
 Historical design and prior attempts belong in
 [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md) and the evidence documents.
 
-**NEXT IMPLEMENTATION TASK: W2.2 - measure the MP eye-frustum layout.**
+**NEXT IMPLEMENTATION TASK: W2.3 - validate MP head-turn and near-wall visibility.**
 Do not restart engine, mesh, pose-space or eye-renderer discovery. Advance by
 task ID only when its exit gate passes.
 
@@ -121,7 +121,7 @@ Dependency: W1. Do not apply SP addresses to the MP overlay.
 
 - [x] W2.1. Trace the native MP level selector from the already measured MP
   scene callback; capture its complete code, tree/masks/queue and caller.
-- [ ] W2.2. Add a separately guarded MP eye-frustum override only after measuring
+- [x] W2.2. Add a separately guarded MP eye-frustum override only after measuring
   its actual layout; preserve native fallback on malformed/overflow input.
 - [ ] W2.3. Pass zero, +/-90-degree head turns and near-wall controls with populated
   geometry, native selector comparison and zero rollback errors.
@@ -140,6 +140,17 @@ scene `8006E9D8`, callback `8006C61C`, selector `80096EF4` and helper
 `80096AC8`; both natural scene callers executed in the copied slot-1 fixture.
 Visibility masks at node `+0x0C`, the ordered queue and all hashes are in the
 receipt. No firing, override or physical acceptance is claimed.
+
+W2.2 evidence: [MP_EYE_FRUSTUM_EVIDENCE.md](MP_EYE_FRUSTUM_EVIDENCE.md),
+[measurement receipt](../../vr/proof/weapon-mp-frustum-measurement.json),
+[zero-angle both-eye control](../../vr/proof/weapon-mp-frustum-controls.png) and
+[build receipt](../../vr/proof/weapon-mp-frustum-build-receipt.json). The live
+selector uses node center `+0x2F4..+0x2F8` and radius `+0x2FC`, current GTE
+RT/TR, a heap view descriptor and a measured 540x120 screen rectangle.
+`MOHU_VR_MP_FRUSTUM=1` covered every level node in each eye in the zero-angle
+P38 control, left non-level nodes native, had no fallback or rollback errors,
+and retained populated matching zero-IPD eyes. Head turns and near walls remain
+W2.3.
 
 Exit gate: MP head movement and native inputs can support the next bounded
 physical test. SP visibility and SP movement receipts do not close this gate.

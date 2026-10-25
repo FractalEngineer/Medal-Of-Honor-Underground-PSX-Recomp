@@ -78,6 +78,64 @@ static inline int mohu_vr_box_visible(const int16_t bounds[6],
 }
 
 /*
+ * The MP selector expands each node's short center and radius into a cube.
+ * Reject wrapped or negative input so the caller can execute the untouched
+ * native selector instead of testing a different object.
+ */
+static inline int mohu_vr_mp_aabb_from_sphere(
+    const int16_t center[3], int16_t radius, int16_t bounds[6]) {
+    if (!center || !bounds || radius < 0) {
+        return 0;
+    }
+    for (int axis = 0; axis < 3; ++axis) {
+        const int32_t low = (int32_t)center[axis] - radius;
+        const int32_t high = (int32_t)center[axis] + radius;
+        if (low < INT16_MIN || low > INT16_MAX ||
+            high < INT16_MIN || high > INT16_MAX) {
+            return 0;
+        }
+        bounds[axis] = (int16_t)low;
+        bounds[axis + 3] = (int16_t)high;
+    }
+    return 1;
+}
+
+/* -1 means malformed input; 0/1 are the normal invisible/visible results. */
+static inline int mohu_vr_mp_box_visible(
+    const int16_t center[3], int16_t radius, const double matrix[9],
+    const double tr[3], const PSXModRenderView* view, double cx, double cy,
+    int width, int height) {
+    int16_t bounds[6];
+    if (!mohu_vr_mp_aabb_from_sphere(center, radius, bounds)) {
+        return -1;
+    }
+    return mohu_vr_box_visible(
+        bounds, matrix, tr, view, cx, cy, width, height);
+}
+
+static inline int mohu_vr_mp_view_valid(const PSXModRenderView* view,
+                                        int width, int height) {
+    if (!view || width <= 0 || height <= 0 || width > 2048 ||
+        height > 512 || !view->projection || view->fx_q16 <= 0 ||
+        view->fy_q16 <= 0) {
+        return 0;
+    }
+    if (view->precise) {
+        for (int i = 0; i < 9; ++i) {
+            if (!isfinite(view->rotation[i])) {
+                return 0;
+            }
+        }
+        for (int i = 0; i < 3; ++i) {
+            if (!isfinite(view->translation_precise[i])) {
+                return 0;
+            }
+        }
+    }
+    return 1;
+}
+
+/*
  * Collect a complete queue before the caller writes guest RAM. Any malformed
  * node, cycle/visit overflow or full output queue rejects the override so the
  * native selector can run unchanged.

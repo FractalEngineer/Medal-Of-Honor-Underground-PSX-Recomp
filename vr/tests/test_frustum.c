@@ -47,6 +47,26 @@ int main(void) {
     assert(!mohu_vr_box_visible(side, matrix, tr, &view, 256, 120, 512, 240));
     assert(mohu_vr_box_visible(crossing, matrix, tr, &view, 256, 120, 512, 240));
 
+    const int16_t center[3] = {100, 0, 100};
+    int16_t bounds[6];
+    assert(mohu_vr_mp_aabb_from_sphere(center, 10, bounds));
+    assert(bounds[0] == 90 && bounds[3] == 110);
+    assert(bounds[1] == -10 && bounds[4] == 10);
+    assert(bounds[2] == 90 && bounds[5] == 110);
+    assert(mohu_vr_mp_box_visible(
+        center, 10, matrix, tr, &view, 256, 120, 512, 240));
+    const int16_t extreme[3] = {32760, 0, 100};
+    assert(!mohu_vr_mp_aabb_from_sphere(extreme, 10, bounds));
+    assert(mohu_vr_mp_box_visible(
+        extreme, 10, matrix, tr, &view, 256, 120, 512, 240) == -1);
+    assert(mohu_vr_mp_box_visible(
+        center, -1, matrix, tr, &view, 256, 120, 512, 240) == -1);
+    assert(mohu_vr_mp_view_valid(&view, 540, 120));
+    assert(!mohu_vr_mp_view_valid(&view, 0, 120));
+    view.projection = 0;
+    assert(!mohu_vr_mp_view_valid(&view, 540, 120));
+    view.projection = 1;
+
     view.rotation_q12[0] = view.rotation_q12[8] = -4096;
     assert(mohu_vr_box_visible(behind, matrix, tr, &view, 256, 120, 512, 240));
     assert(!mohu_vr_box_visible(forward, matrix, tr, &view, 256, 120, 512, 240));

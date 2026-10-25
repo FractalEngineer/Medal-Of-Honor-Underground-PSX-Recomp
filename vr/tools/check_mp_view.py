@@ -52,6 +52,7 @@ def main():
     parser.add_argument("--native-projection", action="store_true")
     parser.add_argument("--reject-recover", action="store_true")
     parser.add_argument("--fire-pistol", action="store_true")
+    parser.add_argument("--frustum", action="store_true")
     args = parser.parse_args()
     if native.game_pids():
         raise RuntimeError("Close the existing game before this owned control")
@@ -83,11 +84,13 @@ def main():
                MOHU_VR_EYE_RENDER_VIEW="0" if args.native_projection else "1",
                MOHU_VR_EYE_GUEST_SUBMIT="1",
                MOHU_VR_EYE_OFFSET=str(args.eye_offset), PSX_VR_WEAPON_POSE="1",
-               MOHU_VR_WEAPON_SYNTHETIC_X="1")
+               MOHU_VR_WEAPON_SYNTHETIC_X="1",
+               MOHU_VR_MP_FRUSTUM="1" if args.frustum else "0")
     # A nonzero synthetic pose selects the diagnostic tracking source. Identity
     # controls are selected through the command after loading the fixture.
     exe = native.ROOT / "build-release/Medal_of_Honor_Underground_Recompiled.exe"
     receipt = {"complete": False, "eye_offset": args.eye_offset,
+               "mp_frustum": args.frustum,
                "executable_sha256": native.digest(exe), "source_saves": hashes,
                "preferences": preference_hashes, "weapons": [], "cycles": {},
                "sources": {str(p.relative_to(native.ROOT)): native.digest(p) for p in
@@ -156,6 +159,22 @@ def main():
                             applications = delta.get("mohu.vr.weapon.apply." + eye, 0)
                             if (lost and applications) or (not lost and not applications):
                                 raise RuntimeError("Weapon tracking/fallback failed in one eye")
+                            if args.frustum:
+                                if not delta.get(
+                                        "mohu.vr.mp.frustum.override." + eye, 0):
+                                    raise RuntimeError(
+                                        "MP eye frustum did not cover one eye")
+                                if delta.get(
+                                        "mohu.vr.mp.frustum.fallback." + eye, 0):
+                                    raise RuntimeError(
+                                        "MP eye frustum fell back in guarded fixture: " +
+                                        str({key: value for key, value in delta.items()
+                                             if key.startswith("mohu.vr.mp.frustum.")}))
+                            elif any(value for key, value in delta.items()
+                                     if key.startswith(
+                                         "mohu.vr.mp.frustum.override.")):
+                                raise RuntimeError(
+                                    "MP eye frustum ran with its guard disabled")
                         if lost and after_counts.get("mohu.vr.weapon.viewmodel_apply", 0) != after_counts.get("mohu.vr.weapon.viewmodel_restore", 0):
                             raise RuntimeError("Weapon control scope did not drain")
                         if (not checks["verify_checks"] or any(checks[k] for k in

@@ -735,11 +735,59 @@
   strict diagnostic syntax and cleanup. No MP frustum override, firing change,
   save edit or physical acceptance was made.
 
+### W2.2 multiplayer eye-frustum measurement and guarded override
+
+- Extended the W2.1 probe to capture the live selector inputs before changing
+  selection. A fresh copied root MP slot 1, P38 ID 0, zero switches and no fire
+  produced 21 unique level-node samples. Each sample retained signed-short
+  center `+0x2F4..+0x2F8`, radius `+0x2FC`, GTE RT/TR, projection, screen
+  bounds, camera/input/view pointers and the native selector result.
+- Measured screen bounds `540x120`, H 400, OFX `256.0`, OFY `60.0`, and a heap
+  view descriptor at `camera_input+0xC8`. The retained run selected three of the
+  21 level nodes. The visible set is live; no node or heap address is treated as
+  a static allowlist.
+- Added `MOHU_VR_MP_FRUSTUM=1` as a separate guarded MP selector path. A
+  function filter consumes only level-node calls from return addresses
+  `8006C66C`/`8006C690` during valid P1 eye replay. It composes the measured
+  center/radius cube with live RT/TR and the existing eye render view. Other
+  callers and the P2 player node stay native. Complete function/callback
+  hashes, P1 ownership, finite view values and non-wrapping short AABBs are
+  required; failures execute the original selector.
+- The first capture attempt hit a Python wrapper argument collision before
+  sampling. A later capture was rejected only because one side of the node
+  comparison retained `0x`; the third exposed the P2 player node as a
+  legitimate non-level selector caller. Each failure identified and fixed one
+  contract fact; none was repeated unchanged.
+- Added `mohu_vr_mp_aabb_from_sphere`, overflow/view validation in
+  `frustum.h`, and `--frustum` coverage in the existing copied-save MP harness.
+  `RunFlat.bat` now clears `MOHU_VR_MP_FRUSTUM` and
+  `MOHU_VR_MP_FRUSTUM_CAPTURE`.
+- The final zero-angle P38 run applied 126-147 override decisions per eye across
+  native/translated/yawed/lost weapon cases with zero fallback and zero
+  rollback errors. Both eyes remained populated and byte-identical at zero IPD;
+  pair 22 SHA-256 was
+  `de83c69d0a08f5933805c07dc86ac27f2310df3ef8eb1e920b12d0608d9b3c9e`.
+- Regressions against diagnostic SHA-256 `5fe5c4dd...` covered 13 IDs, 64 MP
+  matrix cases, 1,282 final pairs, lateral eyes, native pistol clip 8->7 and
+  P2 health decrease, six refusal/recovery, flat pose cycles and SP zero eyes.
+  All saves/preferences stayed unchanged and all rollback counters were clean.
+  The final release is debug OFF at
+  `d13aa6496ea4a690e2018cf8ed5e44668ad4c47e4af9919342ea2ce9deca955a`;
+  the inherited-flag flat smoke cleared both new variables and left no game or
+  debug listener. Its hidden wrapper needed forced cleanup after the intentional
+  game termination, recorded in the smoke receipt.
+- Retained [MP_EYE_FRUSTUM_EVIDENCE.md](MP_EYE_FRUSTUM_EVIDENCE.md),
+  [measurement receipt](../../vr/proof/weapon-mp-frustum-measurement.json),
+  [both-eye control](../../vr/proof/weapon-mp-frustum-controls.png) and
+  [build receipt](../../vr/proof/weapon-mp-frustum-build-receipt.json). W2.3
+  zero/side/near-wall visibility and native/override equality remain open.
+
 ## Next work
 
-**W2.2: measure and implement the separately guarded MP eye-frustum layout.**
-Use the flat MP scene-list/object selector contract; do not transplant the SP
-PVS selector or queue. Use
+**W2.3: validate zero, +/-90-degree and near-wall MP visibility.** Compare the
+guarded eye-frustum result with native selector output and require populated
+both-eye geometry plus clean rollback. Do not transplant the SP PVS selector or
+queue. Use
 [HANDOFF.md](HANDOFF.md) as the execution contract and
 [VR_PLAN.md](VR_PLAN.md) as the only checkbox/status list. Prior log entries are
 historical results and rejected attempts, not instructions to repeat them.

@@ -1,11 +1,12 @@
 # Weapon Mapping Handoff
 
-Last updated: 2026-10-25
+Last updated: 2026-10-26
 
 Execution order and stop/recovery rules are in [HANDOFF.md](HANDOFF.md).
-Checkbox status is in [VR_PLAN.md](VR_PLAN.md). **The next task is W2.2: measure
-the MP eye-frustum layout.** This file records measurements; it does not reopen
-completed renderer/mesh discovery or override the ordered plan.
+Checkbox status is in [VR_PLAN.md](VR_PLAN.md). **The next task is W2.3:
+validate MP zero, +/-90-degree and near-wall visibility.** This file records
+measurements; it does not reopen completed renderer/mesh discovery or override
+the ordered plan.
 
 ## Current result
 
@@ -24,7 +25,7 @@ coordinate test, not W3 physical grip or size calibration.
 
 W2.1 is complete for the native MP selector trace. It is a flat scene-list and
 per-object visibility path, not the SP `80099960` PVS queue. No MP frustum
-override has been implemented yet.
+override existed at W2.1; W2.2 now adds one behind `MOHU_VR_MP_FRUSTUM=1`.
 
 Use the four copied multiplayer saves and stationary P2 target for this work.
 Do not create, migrate, patch, or overwrite the operator's saves. Reload a copied
@@ -174,6 +175,42 @@ receipt is
 The ignored raw receipt retains complete disassembly, both player snapshots,
 source references and cleanup evidence.
 
+## MP eye-frustum override
+
+W2.2 measured the fields consumed by the native selector before enabling the
+override. For each level node, `80096EF4` reads signed-short center coordinates
+at `+0x2F4`, `+0x2F6`, `+0x2F8` and radius at `+0x2FC`, then forms a
+center-minus/plus-radius cube. `80096AC8` transforms it using the live GTE
+RT/TR, the camera input pointer at `+0x39C`, the view descriptor at
+`input+0xC8`, and screen bounds `800A2D10/800A2D14`.
+
+The retained 21-node capture measured screen bounds **540 x 120**, world H 400,
+OFX 256.0 and OFY 60.0. The view descriptor was heap memory and is never
+hardcoded. In that run three level nodes passed native P1 selection; the visible
+set is live and is not a static allowlist.
+
+The override replaces only `80096EF4` results while a valid P1 eye replay is
+active. It composes the same node cube and RT/TR with the existing eye
+`PSXModRenderView`, uses the measured 540x120 screen rectangle, and leaves every
+non-level selector caller and malformed layout on the native path. Complete
+frame/selector/callback/helper hashes, natural return addresses, selected P1
+ownership, finite view values and non-wrapping short AABBs are required.
+`MOHU_VR_MP_FRUSTUM=1` is explicit; the control defaults off.
+
+The zero-angle P38 control used a fresh copied root MP slot 1 with zero
+switches and no firing. Each eye applied 126-147 override decisions across its
+four pose cases with zero fallback and zero rollback errors. Native zero-IPD
+eyes matched at SHA-256
+`de83c69d0a08f5933805c07dc86ac27f2310df3ef8eb1e920b12d0608d9b3c9e`;
+the retained both-eye image is
+[weapon-mp-frustum-controls.png](../../vr/proof/weapon-mp-frustum-controls.png).
+Head turns, near walls and native/override selector equality remain W2.3.
+
+Evidence:
+[MP_EYE_FRUSTUM_EVIDENCE.md](MP_EYE_FRUSTUM_EVIDENCE.md),
+[measurement receipt](../../vr/proof/weapon-mp-frustum-measurement.json) and
+[build receipt](../../vr/proof/weapon-mp-frustum-build-receipt.json).
+
 ## W1 P38 absolute synthetic pose contract
 
 The measured coordinate contract is
@@ -301,7 +338,7 @@ The same diagnostic binary's SP zero-eye control has 18 complete pairs, equal
 eye state/cycles and 37 rollback checks with zero mismatches, leaks, watchdogs
 or repairs. This validates the existing SP path, not MP weapon stereo.
 
-Remaining work is ordered by IDs in [VR_PLAN.md](VR_PLAN.md): W2.2-W2.5 MP
+Remaining work is ordered by IDs in [VR_PLAN.md](VR_PLAN.md): W2.3-W2.5 MP
 visibility/input; W3 per-weapon physical calibration; W4 read-only MP shot
 mapping; W5 tracked native aim; W6 rendered-mesh/exact-triangle laser. Use the
 dependency/exit gates in [HANDOFF.md](HANDOFF.md), not a new parallel discovery
@@ -315,13 +352,15 @@ selector are removed. The session-start diff is retained locally under
 ## Final build state
 
 The one `build-release` is restored to Release/OpenGL/OpenXR/PGXP with
-`PSX_DEBUG_TOOLS=OFF`. Flat startup is inert even with weapon-pose, flat-probe,
-synthetic-pose and stereo flags inherited. Eighteen Python tests, all six strict
-C fixtures from the flat checkpoint remain valid; the new strict MP guard
-fixture and diagnostic syntax check also pass. Saves, controller
-preferences and SteamVR settings are unchanged; no owned game remains.
+`PSX_DEBUG_TOOLS=OFF` at SHA-256
+`d13aa6496ea4a690e2018cf8ed5e44668ad4c47e4af9919342ea2ce9deca955a`.
+Flat startup is inert even with weapon-pose, flat-probe, synthetic-pose, MP
+control and the two new frustum flags inherited. Eighteen Python tests and the
+strict C fixtures pass, including the new AABB overflow/view guards. Saves,
+controller preferences and SteamVR settings are unchanged; no owned game or
+debug listener remains.
 The flat smoke intentionally closes its hidden process and does not establish
-interactive gameplay or new OpenXR acceptance. Changes remain uncommitted.
+interactive gameplay or new OpenXR acceptance.
 
 ## Evidence
 
@@ -335,6 +374,9 @@ interactive gameplay or new OpenXR acceptance. Changes remain uncommitted.
 - [MP selector receipt](../../vr/proof/weapon-mp-level-selector-receipt.json)
 - [MP selector build receipt](../../vr/proof/weapon-mp-level-selector-build-receipt.json)
 - [MP selector evidence](MP_LEVEL_SELECTOR_EVIDENCE.md)
+- [MP eye-frustum evidence](MP_EYE_FRUSTUM_EVIDENCE.md)
+- [MP eye-frustum measurement](../../vr/proof/weapon-mp-frustum-measurement.json)
+- [MP eye-frustum build receipt](../../vr/proof/weapon-mp-frustum-build-receipt.json)
 - [First-person flat control receipt](../../vr/proof/weapon-viewmodel-receipt.json)
 - [Final build and flat isolation](../../vr/proof/weapon-viewmodel-build-receipt.json)
 - [Native / translation / yaw proof](../../vr/proof/weapon-viewmodel-controls.png)
@@ -349,13 +391,14 @@ interactive gameplay or new OpenXR acceptance. Changes remain uncommitted.
 ## Resume prompt
 
 ```text
-Read docs/vr/HANDOFF.md sections 1-5 and docs/vr/VR_PLAN.md. Continue at W2.2:
-measure the flat MP scene-list visibility layout and implement a separately
-guarded eye-frustum override only after verifying its actual fields and native
-fallback. Use copied root MP slot 1 and preserve the W2.1 selector contract.
+Read docs/vr/HANDOFF.md sections 1-5 and docs/vr/VR_PLAN.md. Continue at W2.3:
+validate the guarded MP eye-frustum override at zero, +/-90 degrees and near
+walls, comparing native and overridden selector output with populated geometry
+and zero rollback errors. Use copied root MP slot 1 and preserve the W2.1/W2.2
+selector contract.
 
 Do not rediscover actor/input/viewmodel, P1 eye replay, the completed W1 P38
-contract or the W2.1 scene-list/selector path. Do not transplant the SP PVS
+contract, the W2.1 scene-list path or the W2.2 guarded frustum override. Do not transplant the SP PVS
 selector or queue. Do not use actor+4AC, 80088C08, a new SP target, old
 reference addresses/calibration, new build folders, or patched saves. Follow
 the handoff's exact dependency, acceptance, recovery, regression and

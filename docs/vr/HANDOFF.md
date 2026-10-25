@@ -1,15 +1,15 @@
 # Underground VR implementation handoff
 
-Updated: 2026-10-25. This file is the execution contract for the next session.
+Updated: 2026-10-26. This file is the execution contract for the next session.
 [VR_PLAN.md](VR_PLAN.md) owns checkbox status. [WEAPON_MAPPING.md](WEAPON_MAPPING.md)
 owns the detailed measured weapon layout. [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md)
 owns history. History is not a queue of tasks to repeat.
 
 ## 1. Start here - one next task
 
-**NEXT: W2.2 - measure and implement the MP eye-frustum layout.** Start from
-the completed flat MP scene-list/per-object selector contract; do not transplant
-the SP PVS selector or queue.
+**NEXT: W2.3 - pass zero, +/-90-degree and near-wall MP visibility controls.**
+Use the completed flat scene-list/per-object selector and the opt-in eye-frustum
+override; do not transplant the SP PVS selector or queue.
 
 The visible weapon seam and P1-only MP eye renderer are already found and
 working in desktop controls. W1 is complete for the P38 synthetic spatial
@@ -24,19 +24,21 @@ scene `8006E9D8`, per-node callback `8006C61C`, visibility selector `80096EF4`
 and helper `80096AC8`. The 21 level nodes are a flat scene-list queue gated by
 `+0x0C` visibility masks. No separate MP PVS leaf queue was found at this seam.
 
-This continuation added the W2.1 measurement tool and receipts; it did not
-change the runtime render path. The build was tested and returned to debug OFF
-at the receipted hashes below. The next session must record its own experiment
-and update this pointer before ending; do not append a vague alternative
-"next work" list.
+W2.2 is also complete for its guarded override. The selector consumes node
+center `+0x2F4..+0x2F8`, radius `+0x2FC`, the live GTE RT/TR, a heap view
+descriptor at `camera_input+0xC8`, and an observed 540x120 screen rectangle.
+`MOHU_VR_MP_FRUSTUM=1` replaces only level-node selection inside a valid P1 eye
+replay; non-level nodes and every malformed or unknown path remain native. The
+zero-angle P38 control passed in both eyes with zero fallbacks and clean
+rollback. Head-turn and near-wall acceptance is W2.3 and is not claimed here.
 
 ## 2. Current state - facts, not work to restart
 
 | Item | Current observation |
 | --- | --- |
 | Repository | `C:/Users/titan/Desktop/Github_Projects/Mine/Medal-Of-Honor-Underground-PSX-Recomp` |
-| Branch / current HEAD | `feature/vr-port` / `2667308fe70faab6cc599bcf0758b77e39814ada`; read current HEAD during preflight |
-| Checkpoint scope | VR implementation, tools, proofs and execution docs; inspect current Git status and preserve any remaining changes |
+| Branch / current HEAD | `feature/vr-port`; read current HEAD during preflight. W1/W2.1 predecessor is `afda5082...` |
+| Checkpoint scope | W2.2 VR implementation, tools, proofs and execution docs; inspect current Git status and preserve `.commandcode/` |
 | Framework gitlink | `b982e66e2536eaf738fbe3021db4d8f6c0feb90b` |
 | UI gitlink | `7c635c6b366a6e0d5d3c913a7fce6ec04dd9f256` |
 | Title / version | `SLUS-01270` / `0.1.0` |
@@ -45,7 +47,7 @@ and update this pointer before ending; do not append a vague alternative
 | Current debug tools | OFF; TCP tools require an explicit diagnostic rebuild ON |
 | CMake VR option | `MOHU_VR_DIAGNOSTICS` defaults OFF; local build currently ON |
 | Normal launcher | Native menus, `-Slot -1`; no implicit savestate load |
-| Experimental defaults | `PSX_VR_WEAPON_POSE` and `MOHU_VR_MP_CONTROL` remain off |
+| Experimental defaults | `PSX_VR_WEAPON_POSE`, `MOHU_VR_MP_CONTROL` and `MOHU_VR_MP_FRUSTUM` remain off |
 | PGXP save ABI | `131106`; base flavor ABI `34` is incompatible |
 | Unrelated work | `.commandcode/` is unrelated; do not add, change or clean it |
 
@@ -64,6 +66,7 @@ Accepted evidence:
 | W1 P38 absolute spatial controls | [weapon-pose-space-receipt.json](../../vr/proof/weapon-pose-space-receipt.json): 29 cases, 10 head-only, five invalid; both eyes populated; no fire |
 | W1 build / regressions | [weapon-pose-build-receipt.json](../../vr/proof/weapon-pose-build-receipt.json): source/binary hashes, 18 Python tests, strict fixtures, MP/flat/SP regressions, debug OFF |
 | W2.1 native MP selector | [weapon-mp-level-selector-receipt.json](../../vr/proof/weapon-mp-level-selector-receipt.json) and [build receipt](../../vr/proof/weapon-mp-level-selector-build-receipt.json): five complete functions, both natural callers, 21-node flat queue/masks; no fire |
+| W2.2 MP eye frustum | [frustum measurement](../../vr/proof/weapon-mp-frustum-measurement.json), [zero control](../../vr/proof/weapon-mp-frustum-controls.png) and [build receipt](../../vr/proof/weapon-mp-frustum-build-receipt.json): 21 live samples, guarded both-eye override, zero fallback/rollback errors; W2.3 controls remain open |
 | Current build/regressions | [weapon-mp-build-receipt.json](../../vr/proof/weapon-mp-build-receipt.json): debug OFF, 18 Python tests, MP guard/syntax checks, flat isolation, SP 19 pairs / 38 rollback checks |
 | Earlier native damage | [WEAPON_SET_EVIDENCE.md](WEAPON_SET_EVIDENCE.md), [weapon-alignment-receipt.json](../../vr/proof/weapon-alignment-receipt.json): all 13 IDs, damage-only pose reachability |
 | Current eye images | [weapon-mp-eyes.png](../../vr/proof/weapon-mp-eyes.png) |
@@ -71,9 +74,9 @@ Accepted evidence:
 | Native input | [MOVEMENT_EVIDENCE.md](MOVEMENT_EVIDENCE.md): synthetic SP controls; physical/MP coverage remains open |
 
 The current release executable SHA-256 is
-`a32125b089d6bea881c40e09a6147f3b18c49727aae6069f63e6a266fc5f1418`.
-The tested W2.1 diagnostic executable SHA-256 is
-`9b3d32a6a9d162b51df0c854a1bfbf929ae1f6f3d7e48c3f1baba11a47492691`.
+`d13aa6496ea4a690e2018cf8ed5e44668ad4c47e4af9919342ea2ce9deca955a`.
+The tested W2.2 diagnostic executable SHA-256 is
+`5fe5c4dd1c7b52ffa552b0ec6af662ea51efbff9441666da791a7402aec68984`.
 They differ because debug tools differ. Earlier W1 and MP hashes remain
 historical. Do not swap them or relabel a historical receipt. Source hashes are
 in the current build receipt; a new implementation needs new provenance and
@@ -139,7 +142,9 @@ Source ownership:
 | Same file: `vr_weapon_fp_enter`, `vr_weapon_viewmodel_project`, `vr_weapon_viewmodel_restore` | Existing guarded model scope; keep native animation, caller/mesh guards and common restore |
 | Same file: `vr_mp_snapshot`, `vr_mp_code_valid`, `vr_mp_frame_entry`, MP branch of `vr_stereo_eye_draw` | Existing MP replay; reuse, do not replace to fix a weapon pose |
 | `vr/underground/mp_view.h`, `vr/tests/test_mp_view.c` | MP mode, ownership, input/pointer and 512x120/H=400 guard |
+| `vr/underground/frustum.h`, `vr/tests/test_frustum.c` | Host AABB/tree fixture plus the W2.2 center/radius cube and render-view overflow guards |
 | `vr/tools/check_mp_view.py` | Owned copied-save process, both-eye controls, native pistol fire, refusal/recovery |
+| `vr/tools/probe_mp_level_selector.py` | W2.1 selector trace plus W2.2 live AABB/RT/TR/view measurement |
 | `vr/tools/inspect_weapon_sets.py` | Native inventory, actual first-person mesh capture, exact native damage trace |
 | `vr/underground/input.c` | Existing mapper; MP converter/dispatcher still needs independent validation |
 | `vr/underground/raycast.h` | Current visibility-node-extents pointer, not an exact triangle/barrel solution |
@@ -261,7 +266,7 @@ section 8. Check W1 boxes only after that evidence passes, then set NEXT=W2.1.
 
 | Task | Prerequisite / first action | Exit / allowed continuation |
 | --- | --- | --- |
-| W2 MP visibility/input | W1 and W2.1 complete; use the flat MP scene-list/object selector contract and then trace the native pad converter | Full MP signatures/layouts plus zero/side/near-wall/input controls; SP addresses/queues are not substitutes |
+| W2 MP visibility/input | W1-W2.2 complete; validate the eye-frustum override, then trace the native pad converter | Full MP signatures/layouts plus zero/side/near-wall/input controls; SP addresses/queues are not substitutes |
 | W3 calibration/hardware | W1+W2; P38 first, then per-ID pivots/axes/scale/muzzle markers and a bounded copied-save headset comparison | Operator acceptance per weapon; desktop receipts never check physical boxes |
 | W4 native shot discovery | W1+W2; fresh MP P38 idle/fire/turned-away controls; start from P1 fire call chain and exact native P2 damage writer | MP constructor/basis/history/first-motion/ownership/units captured, read-only first |
 | W5 tracked aim | W3 physical visual acceptance + W4 measured MP shot contract | Native trajectory/impact matches calibrated rendered barrel; P2/NPC and invalid tracking remain native |
@@ -450,7 +455,7 @@ if ($LASTEXITCODE -ne 0) { throw 'Release build failed' }
 | Affine `*4096` applied to GTE TR | Integer TR helper and Q12 RT are deliberately different |
 | Reference `ref=133`, pivot `(80,150,100)` or scale 850 copied as calibration | Existing authored pose uses ref=400; measure Underground spaces/mesh before changing placement |
 | Native P2 hits prove tracked aim | Native shots are still native; require construction, trajectory and calibrated barrel-to-impact evidence |
-| SP frustum/movement addresses applied to MP | MP selector/converter contracts still need measurement in W2 |
+| SP frustum/movement addresses applied to MP | W2.1/W2.2 measured the flat MP selector and eye frustum; MP converter remains W2.4 |
 | Current right-aim/node-box laser called exact barrel/triangle laser | W6 rendered affine/muzzle plus independently mapped exact triangles |
 | New build folder or patched state header repairs a save | Ordinary PGXP checks and operator-provided compatible slot only |
 | Historical run-11 SP script executed for MP | Read it as a lead; use root MP copied slot 1 and current ownership/layout |
@@ -458,22 +463,22 @@ if ($LASTEXITCODE -ne 0) { throw 'Release build failed' }
 
 ## 10. Continuation record - replace these fields at session end
 
-- Completed through: W2.1 (native MP flat scene-list and per-object selector
-  trace); W2.2-W6 and physical acceptance remain open.
-- Current task: W2.1 complete. Stop before W2.2.
-- Last accepted evidence: weapon-mp-level-selector-receipt.json /
-  weapon-mp-level-selector-build-receipt.json /
-  MP_LEVEL_SELECTOR_EVIDENCE.md.
-- Next action: W2.2 - measure the MP selector fields consumed by `80096EF4` /
-  `80096AC8`, then add the separately guarded eye-frustum override with native
-  fallback. Do not transplant the SP PVS selector or queue.
+- Completed through: W2.2 (native MP selector layout plus guarded eye-frustum
+  override and zero-angle control); W2.3-W6 and physical acceptance remain open.
+- Current task: W2.2 complete. Stop before W2.3.
+- Last accepted evidence: weapon-mp-frustum-measurement.json /
+  weapon-mp-frustum-build-receipt.json / MP_EYE_FRUSTUM_EVIDENCE.md.
+- Next action: W2.3 - run copied-slot-1 P38 zero, +/-90-degree and near-wall
+  both-eye controls comparing native and overridden selector output with populated
+  geometry and zero rollback errors. Do not reuse SP visibility addresses.
 - Open physical gate: no grip/scale/size, physical recenter or tracked-shot
   acceptance is claimed. W1 control motion is synthetic.
-- Current build: debug OFF at release SHA `a32125b0...`; selector source/save/
-  preference hashes match the W2.1 build receipt; no owned game or debug
-  listener remains.
-- Checkpoint: VR implementation/tools/proofs/docs included; unrelated
-  `.commandcode/` excluded and untouched. Changes remain uncommitted.
+- Current build: debug OFF at release SHA `d13aa649...`; W2.2 source/save/
+  preference hashes match the build receipt; no owned game/debug listener or
+  smoke wrapper remains.
+- Checkpoint: W1/W2.1 predecessor is `afda508`; W2.2 source/tools/proofs/docs are
+  included in this checkpoint. Unrelated `.commandcode/` remains excluded and
+  untouched.
 
 If a session stops mid-W2, replace the current task with the exact completed
 substep, source diff, failing/passing case, output path, missing fact and one

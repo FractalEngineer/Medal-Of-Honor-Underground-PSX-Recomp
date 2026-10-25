@@ -130,6 +130,32 @@ static bool g_stereo_eye_view_valid;
 static PSXModRenderView g_stereo_eye_view;
 static uint32_t g_head_frustum_collects[2];
 static uint32_t g_head_frustum_fallbacks[2];
+typedef struct {
+    uint32_t node;
+    uint32_t return_address;
+    int16_t center[3];
+    int16_t radius;
+    uint32_t control[8];
+    uint32_t screen_width;
+    uint32_t screen_height;
+    uint32_t projection_h;
+    uint32_t ofx_q16;
+    uint32_t ofy_q16;
+    uint32_t camera;
+    uint32_t input;
+    uint32_t view;
+    uint32_t native_result;
+    bool result_valid;
+} MohuVrMpFrustumSample;
+static bool g_mp_frustum_capture;
+static uint32_t g_mp_frustum_capture_count;
+static uint32_t g_mp_frustum_capture_last;
+static MohuVrMpFrustumSample g_mp_frustum_samples[32];
+static bool g_mp_frustum;
+static bool g_mp_replay_guard_valid;
+static uint32_t g_mp_frustum_overrides[2];
+static uint32_t g_mp_frustum_fallbacks[2];
+static bool g_mp_frustum_failure_reported;
 static bool g_suppress_flat_hud;
 static uint32_t g_flat_hud_skips[2];
 static uint32_t g_flat_hud_unlinked[2];
@@ -1170,12 +1196,260 @@ static bool vr_mp_code_valid(void) {
         {MOHU_VR_MP_FRAME, 0x200u, 0x6CDFBB75u},
         {MOHU_VR_MP_SELECT, 0x14Cu, 0x2BE15194u},
         {MOHU_VR_MP_SCENE, 0x180u, 0x04C21F46u},
+        {MOHU_VR_MP_SCENE_CALLBACK, 0x290u, 0xA2AAC71Bu},
+        {MOHU_VR_MP_SELECTOR, 0x90u, 0x273C8059u},
+        {MOHU_VR_MP_SELECTOR_HELPER, 0x428u, 0x77C2060Fu},
         {0x80082598u, 0x244u, 0x8B9E349Du},
     };
     for (unsigned i = 0; i < sizeof code / sizeof code[0]; ++i)
         if (guest_range_fnv1a(code[i].address, code[i].bytes) != code[i].hash)
             return false;
     return psx_mod_read_word(MOHU_VR_MP_FRAME_CALL) == MOHU_VR_MP_FRAME_CALL_WORD;
+}
+
+static int vr_mp_frustum_filter(CPUState* cpu, uint32_t address) {
+    (void)address;
+    if (!cpu) {
+        return 0;
+    }
+    if (g_mp_frustum && !g_mp_frustum_capture) {
+        const uint32_t eye = g_stereo_current_eye;
+        if (!g_stereo_mp || !g_stereo_active || !g_stereo_render_view ||
+            !g_stereo_eye_view_valid || eye > 1u) {
+            return 0;
+        }
+        if (!g_mp_replay_guard_valid) {
+            g_mp_frustum_fallbacks[eye]++;
+            psx_mod_counter_add(
+                eye ? "mohu.vr.mp.frustum.fallback.right"
+                    : "mohu.vr.mp.frustum.fallback.left", 1);
+            psx_mod_counter_add(
+                eye ? "mohu.vr.mp.frustum.replay_guard.right"
+                    : "mohu.vr.mp.frustum.replay_guard.left", 1);
+            return 0;
+        }
+        const uint32_t ra = cpu->gpr[31];
+        const uint32_t node = cpu->gpr[4];
+        if (ra != 0x8006C66Cu && ra != 0x8006C690u) {
+            psx_mod_counter_add(
+                eye ? "mohu.vr.mp.frustum.skip_caller.right"
+                    : "mohu.vr.mp.frustum.skip_caller.left", 1);
+            return 0;
+        }
+        if (!mohu_vr_mp_actor_address(node)) {
+            if (!g_mp_frustum_failure_reported) {
+                g_mp_frustum_failure_reported = true;
+                fprintf(stdout,
+                        "mohu-vr-mp: frustum caller fallback eye=%u "
+                        "ra=0x%08X node=0x%08X callback=0x%08X\n",
+                        eye, ra, node, 0u);
+                fflush(stdout);
+            }
+            g_mp_frustum_fallbacks[eye]++;
+            psx_mod_counter_add(
+                eye ? "mohu.vr.mp.frustum.fallback.right"
+                    : "mohu.vr.mp.frustum.fallback.left", 1);
+            psx_mod_counter_add(
+                eye ? "mohu.vr.mp.frustum.caller.right"
+                    : "mohu.vr.mp.frustum.caller.left", 1);
+            return 0;
+        }
+        if (psx_mod_read_word(node + MOHU_VR_MP_NODE_CALLBACK) !=
+            MOHU_VR_MP_SCENE_CALLBACK) {
+            psx_mod_counter_add(
+                eye ? "mohu.vr.mp.frustum.skip_node.right"
+                    : "mohu.vr.mp.frustum.skip_node.left", 1);
+            return 0;
+        }
+        const uint32_t width = psx_mod_read_word(0x800A2D10u);
+        const uint32_t height = psx_mod_read_word(0x800A2D14u);
+        if (!mohu_vr_mp_view_valid(
+                &g_stereo_eye_view, (int)width, (int)height)) {
+            g_mp_frustum_fallbacks[eye]++;
+            psx_mod_counter_add(
+                eye ? "mohu.vr.mp.frustum.fallback.right"
+                    : "mohu.vr.mp.frustum.fallback.left", 1);
+            psx_mod_counter_add(
+                eye ? "mohu.vr.mp.frustum.view.right"
+                    : "mohu.vr.mp.frustum.view.left", 1);
+            return 0;
+        }
+        const double cx = (int32_t)cpu->gte_ctrl[24] / 65536.0;
+        const double cy = (int32_t)cpu->gte_ctrl[25] / 65536.0;
+        if (!isfinite(cx) || !isfinite(cy) || cx <= 0.0 ||
+            cx >= (double)width || cy <= 0.0 || cy >= (double)height) {
+            g_mp_frustum_fallbacks[eye]++;
+            psx_mod_counter_add(
+                eye ? "mohu.vr.mp.frustum.fallback.right"
+                    : "mohu.vr.mp.frustum.fallback.left", 1);
+            psx_mod_counter_add(
+                eye ? "mohu.vr.mp.frustum.projection.right"
+                    : "mohu.vr.mp.frustum.projection.left", 1);
+            return 0;
+        }
+        double matrix[9];
+        double tr[3];
+        for (unsigned i = 0; i < 9u; ++i) {
+            matrix[i] = (int16_t)(cpu->gte_ctrl[i / 2u] >>
+                                  ((i & 1u) * 16u)) /
+                        4096.0;
+        }
+        for (unsigned i = 0; i < 3u; ++i) {
+            tr[i] = (int32_t)cpu->gte_ctrl[5u + i];
+        }
+        int16_t center[3];
+        for (unsigned axis = 0; axis < 3u; ++axis) {
+            center[axis] = (int16_t)psx_mod_read_half(
+                node + MOHU_VR_MP_NODE_CENTER + axis * 2u);
+        }
+        const int16_t radius =
+            (int16_t)psx_mod_read_half(node + MOHU_VR_MP_NODE_RADIUS);
+        const int visible = mohu_vr_mp_box_visible(
+            center, radius, matrix, tr, &g_stereo_eye_view, cx, cy,
+            (int)width, (int)height);
+        if (visible < 0) {
+            g_mp_frustum_fallbacks[eye]++;
+            psx_mod_counter_add(
+                eye ? "mohu.vr.mp.frustum.fallback.right"
+                    : "mohu.vr.mp.frustum.fallback.left", 1);
+            psx_mod_counter_add(
+                eye ? "mohu.vr.mp.frustum.bounds.right"
+                    : "mohu.vr.mp.frustum.bounds.left", 1);
+            return 0;
+        }
+        cpu->gpr[2] = visible ? 1u : 0u;
+        g_mp_frustum_overrides[eye]++;
+        psx_mod_counter_add(
+            eye ? "mohu.vr.mp.frustum.override.right"
+                : "mohu.vr.mp.frustum.override.left", 1);
+        return 1;
+    }
+    if (!g_mp_frustum_capture || !cpu ||
+        g_mp_frustum_capture_count >=
+            sizeof g_mp_frustum_samples / sizeof g_mp_frustum_samples[0]) {
+        return 0;
+    }
+    const uint32_t ra = cpu->gpr[31];
+    if (ra != 0x8006C66Cu && ra != 0x8006C690u) {
+        return 0;
+    }
+    const uint32_t node = cpu->gpr[4];
+    if (!mohu_vr_mp_actor_address(node) ||
+        psx_mod_read_word(node + MOHU_VR_MP_NODE_CALLBACK) !=
+            MOHU_VR_MP_SCENE_CALLBACK) {
+        return 0;
+    }
+    for (uint32_t i = 0; i < g_mp_frustum_capture_count; ++i) {
+        if (g_mp_frustum_samples[i].node == node) {
+            return 0;
+        }
+    }
+    MohuVrMpState state;
+    if (!vr_mp_snapshot(&state)) {
+        return 0;
+    }
+    const uint32_t camera = psx_mod_read_word(MOHU_VR_MP_CAMERA_VIEW_ROOT);
+    if (!mohu_vr_mp_actor_address(camera)) {
+        return 0;
+    }
+    const uint32_t input = psx_mod_read_word(camera + 0x39Cu);
+    if (input != camera + 0x400u) {
+        return 0;
+    }
+    const uint32_t view =
+        psx_mod_read_word(input + MOHU_VR_MP_CAMERA_VIEW_POINTER);
+    if (!mohu_vr_mp_actor_address(view)) {
+        return 0;
+    }
+
+    MohuVrMpFrustumSample* sample =
+        &g_mp_frustum_samples[g_mp_frustum_capture_count];
+    memset(sample, 0, sizeof *sample);
+    sample->node = node;
+    sample->return_address = ra;
+    for (unsigned axis = 0; axis < 3u; ++axis) {
+        sample->center[axis] = (int16_t)psx_mod_read_half(
+            node + MOHU_VR_MP_NODE_CENTER + axis * 2u);
+    }
+    sample->radius =
+        (int16_t)psx_mod_read_half(node + MOHU_VR_MP_NODE_RADIUS);
+    for (unsigned i = 0; i < 8u; ++i) {
+        sample->control[i] = cpu->gte_ctrl[i];
+    }
+    sample->screen_width = psx_mod_read_word(0x800A2D10u);
+    sample->screen_height = psx_mod_read_word(0x800A2D14u);
+    sample->projection_h = (uint16_t)cpu->gte_ctrl[26];
+    sample->ofx_q16 = cpu->gte_ctrl[24];
+    sample->ofy_q16 = cpu->gte_ctrl[25];
+    sample->camera = camera;
+    sample->input = input;
+    sample->view = view;
+    g_mp_frustum_capture_last = g_mp_frustum_capture_count++;
+    return 0;
+}
+
+static void vr_mp_frustum_result_capture(CPUState* cpu, uint32_t address) {
+    (void)address;
+    if (!g_mp_frustum_capture || !cpu || !g_mp_frustum_capture_count) {
+        return;
+    }
+    MohuVrMpFrustumSample* sample =
+        &g_mp_frustum_samples[g_mp_frustum_capture_last];
+    if (!sample->result_valid) {
+        sample->native_result = cpu->gpr[2] ? 1u : 0u;
+        sample->result_valid = true;
+    }
+}
+
+static int vr_mp_frustum_command(const char* args, char* reply, int cap) {
+    if (!args || !reply || cap < 1) {
+        return -1;
+    }
+    unsigned index = 0u;
+    if (strcmp(args, "start") == 0) {
+        memset(g_mp_frustum_samples, 0, sizeof g_mp_frustum_samples);
+        g_mp_frustum_capture_count = 0u;
+        g_mp_frustum_capture_last = 0u;
+        g_mp_frustum_capture = true;
+        (void)snprintf(reply, (size_t)cap, "capture=1");
+        return 1;
+    }
+    if (strcmp(args, "stop") == 0) {
+        g_mp_frustum_capture = false;
+        (void)snprintf(reply, (size_t)cap, "capture=0 count=%u",
+                       g_mp_frustum_capture_count);
+        return 1;
+    }
+    if (strcmp(args, "count") == 0) {
+        (void)snprintf(reply, (size_t)cap, "capture=%u count=%u",
+                       g_mp_frustum_capture ? 1u : 0u,
+                       g_mp_frustum_capture_count);
+        return 1;
+    }
+    if (sscanf(args, "read=%u", &index) != 1 ||
+        index >= g_mp_frustum_capture_count) {
+        return -1;
+    }
+    const MohuVrMpFrustumSample* sample = &g_mp_frustum_samples[index];
+    int used = snprintf(
+        reply, (size_t)cap,
+        "node=%08X ra=%08X center=%d,%d,%d radius=%d "
+        "control=%08X,%08X,%08X,%08X,%08X,%08X,%08X,%08X "
+        "screen=%u,%u projection=%u,%u,%u "
+        "camera=%08X input=%08X view=%08X "
+        "native_result=%u result_valid=%u",
+        sample->node, sample->return_address, sample->center[0],
+        sample->center[1], sample->center[2], sample->radius,
+        sample->control[0], sample->control[1], sample->control[2],
+        sample->control[3], sample->control[4], sample->control[5],
+        sample->control[6], sample->control[7], sample->screen_width,
+        sample->screen_height, sample->projection_h, sample->ofx_q16,
+        sample->ofy_q16, sample->camera, sample->input, sample->view,
+        sample->native_result, sample->result_valid ? 1u : 0u);
+    if (used < 0 || used >= cap) {
+        return -1;
+    }
+    return 1;
 }
 
 static void vr_mp_frame_entry(CPUState* cpu, uint32_t address) {
@@ -1525,6 +1799,7 @@ static int vr_stereo_eye_draw(CPUState* cpu, void* user, uint32_t eye) {
     g_stereo_current_eye = eye;
     g_stereo_base_valid = false;
     g_stereo_eye_view_valid = false;
+    g_mp_replay_guard_valid = false;
     g_laser_level_valid = false;
     g_laser_level_root = 0u;
 
@@ -1616,6 +1891,7 @@ static int vr_stereo_eye_draw(CPUState* cpu, void* user, uint32_t eye) {
             !ensure_binding_verified(draw)) return 0;
         stereo_guest_call(cpu, MOHU_VR_MP_SELECT, state.camera, 0u, 0u, ra);
         if (psx_mod_read_word(MOHU_VR_MP_CURRENT_PLAYER) != state.player) return 0;
+        g_mp_replay_guard_valid = true;
         cpu->gte_ctrl[24] = 256u << 16;
         cpu->gte_ctrl[25] = 60u << 16;
         stereo_guest_call(cpu, MOHU_VR_MP_SCENE, MOHU_VR_MP_CONTEXT, state.scene, 0u, ra);
@@ -2411,6 +2687,13 @@ static void vr_diagnostic_activate(void) {
     }
     const char* mp = getenv("MOHU_VR_MP_CONTROL");
     g_mp_control = mp && *mp == '1';
+    const char* mp_frustum_capture =
+        getenv("MOHU_VR_MP_FRUSTUM_CAPTURE");
+    g_mp_frustum_capture = mp_frustum_capture && *mp_frustum_capture &&
+                           *mp_frustum_capture != '0';
+    const char* mp_frustum = getenv("MOHU_VR_MP_FRUSTUM");
+    g_mp_frustum = mp_frustum && *mp_frustum && *mp_frustum != '0';
+    g_mp_frustum_failure_reported = false;
     const char* stereo = getenv(MOHU_VR_STEREO_PROOF_ENV);
     g_stereo_proof = stereo && *stereo && *stereo != '0';
     const char* replay_driver = getenv(MOHU_VR_REPLAY_DRIVER_ENV);
@@ -2583,7 +2866,8 @@ static void vr_diagnostic_activate(void) {
             "level_offset_x=%d stereo_proof=%d eye_offset=%d render_view=%d "
             "all_spans=%d replay_driver=%d yaw_mdeg=%d pitch_mdeg=%d "
             "head_milli=%d,%d,%d guest_submit=%d head_frustum=%d openxr=%d "
-            "flat_hud=%d weapon_pose=%d units_per_meter=%.3f\n",
+            "mp_frustum=%d mp_frustum_capture=%d flat_hud=%d weapon_pose=%d "
+            "units_per_meter=%.3f\n",
             mohu_vr_engine_map_count(), hooks + 1u, g_stereo_proof ? 0 : 1,
             g_level_offset_x, g_stereo_proof ? 1 : 0, g_stereo_eye_offset,
             g_stereo_render_view ? 1 : 0, g_stereo_apply_all_spans ? 1 : 0,
@@ -2591,7 +2875,8 @@ static void vr_diagnostic_activate(void) {
             g_stereo_pitch_mdeg, g_stereo_head_milli[0],
             g_stereo_head_milli[1], g_stereo_head_milli[2],
             g_stereo_guest_submit ? 1 : 0, g_head_frustum ? 1 : 0,
-            g_openxr ? 1 : 0, g_suppress_flat_hud ? 1 : 0,
+            g_openxr ? 1 : 0, g_mp_frustum ? 1 : 0,
+            g_mp_frustum_capture ? 1 : 0, g_suppress_flat_hud ? 1 : 0,
             g_weapon_pose ? 1 : 0,
             g_openxr_units_per_meter);
     fprintf(stdout,
@@ -2624,6 +2909,8 @@ PSX_MOD_CONSTRUCTOR(psx_register_mohu_vr_diagnostic_plugin) {
         "mohu.vr.weapon.space", vr_weapon_space_command);
     (void)psx_mod_register_command(
         "mohu.vr.stereo.pose", vr_stereo_pose_command);
+    (void)psx_mod_register_command(
+        "mohu.vr.mp.frustum", vr_mp_frustum_command);
     for (size_t i = 0; i < mohu_vr_engine_map_count(); ++i) {
         const MohuVrEngineBinding* binding = mohu_vr_engine_map_at(i);
         if (binding && binding->status >= MOHU_VR_STATUS_STATIC_CONFIRMED) {
@@ -2646,6 +2933,12 @@ PSX_MOD_CONSTRUCTOR(psx_register_mohu_vr_diagnostic_plugin) {
     }
     (void)psx_mod_register_function_entry_plugin(
         MOHU_VR_DIAG_PLUGIN_ID, MOHU_VR_MP_FRAME, vr_mp_frame_entry);
+    (void)psx_mod_register_function_filter_plugin(
+        MOHU_VR_DIAG_PLUGIN_ID, MOHU_VR_MP_SELECTOR,
+        vr_mp_frustum_filter);
+    (void)psx_mod_register_instruction_plugin(
+        MOHU_VR_DIAG_PLUGIN_ID, MOHU_VR_MP_SELECTOR_RESULT,
+        MOHU_VR_MP_SELECTOR_RESULT_WORD, vr_mp_frustum_result_capture);
     const int weapon_enter = psx_mod_register_instruction_plugin(
         MOHU_VR_DIAG_PLUGIN_ID, MOHU_VR_WEAPON_FP_RENDER_ADDR,
         MOHU_VR_WEAPON_FP_RENDER_WORD, vr_weapon_fp_enter);
