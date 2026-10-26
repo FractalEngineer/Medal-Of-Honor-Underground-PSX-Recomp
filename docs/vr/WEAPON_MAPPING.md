@@ -3,18 +3,21 @@
 Last updated: 2026-10-26
 
 Execution order and stop/recovery rules are in [HANDOFF.md](HANDOFF.md).
-Checkbox status is in [VR_PLAN.md](VR_PLAN.md). **The next task is W3.2,
-preparing the bounded movement-enabled P38 headset comparison.** C1-C4 and
-W1-W3.1 are complete. This file records
-measurements; it does not reopen
-completed renderer/mesh discovery or override the ordered plan.
+Checkbox status is in [VR_PLAN.md](VR_PLAN.md). **NEXT desktop: W3.4 remaining
+complete-gun profiles.** W4 P38 native mapping and W5.1 opt-in rendered-muzzle
+shots are complete; physical acceptance and other-weapon calibration stay open.
+Read [P38_NATIVE_AIM_EVIDENCE.md](P38_NATIVE_AIM_EVIDENCE.md) for current
+bindings and the corrected mixed-node barrel. Historical sections below remain
+measurement history, not instructions to repeat completed gates.
 
 ## Current result
 
 The visible **top-view P1 first-person mesh seam is now located**. The guarded,
 opt-in implementation projects the real first-person object's native animated
 vertices with a temporary GTE rotation/translation, then restores all eight
-RT/TR words before returning. It does not change native shots or the world view.
+RT/TR words before returning. The default path keeps native shots. The separate P38 diagnostic candidate
+now uses a calibrated grip and rendered-muzzle native-shot override; see the
+current evidence linked above. The world view remains independent.
 The production launcher still leaves `PSX_VR_WEAPON_POSE` and the separate
 `MOHU_VR_MP_CONTROL` bench off.
 
@@ -383,9 +386,9 @@ separate checked path. W2.5 is also complete: both directions of every movement
 axis, seven button masks, focus recovery and native Start pause/resume pass,
 with zero render-time input samples. Isolated SP and OpenXR-off flat fallback
 pass in their own fixtures. Follow the corrected dependencies: W3 desktop
-profile preparation and W4 native MP shot binding can
-progress without physical acceptance; W5/W6 diagnostic candidates follow their
-measured contracts. Normal default enablement and physical accuracy claims
+profile preparation can progress without physical acceptance. W4 MP P38
+shot binding and the W5.1 diagnostic candidate are now complete; remaining
+W5/W6 work follows the measured contracts. Normal default enablement and physical accuracy claims
 remain gated by hardware acceptance. Use [HANDOFF.md](HANDOFF.md) and the
 [reference reuse audit](REFERENCE_REUSE_AUDIT.md) for exact code/tool entry points;
 do not create another discovery effort or reimplement the reference algorithms.
@@ -398,8 +401,9 @@ selector are removed. The session-start diff is retained locally under
 ## Final build state
 
 The active `build-release` is Release/OpenGL/OpenXR/PGXP with
-`PSX_DEBUG_TOOLS=ON` while W3.3 work is active, at SHA-256
-`93499991a088650770b12a4a4bc3d01433e36b479087efbd96a84da072486db2`.
+`PSX_DEBUG_TOOLS=ON` for active desktop work, at SHA-256
+`f32bb4226313d26f7fb0816df2d8148c5764d512ed33ec107713da279ffbc572`. The [current build receipt](../../vr/proof/weapon-p38-native-aim-build-receipt.json)
+records the complete P38 model, native combat and affected regressions.
 The last debug-off release was
 `bae4f60f02f4bf70ce86ea85d201674df7157bafa4d6bea20c3086972f2ab71d`.
 The OpenXR-off flat executable is
@@ -445,14 +449,13 @@ interactive gameplay or new OpenXR acceptance.
 ## Resume prompt
 
 ```text
-Read HANDOFF.md, VR_PLAN.md, REFERENCE_REUSE_AUDIT.md and the P38 calibration
-sources. W3.2 completed on Quest 3/VDXR with native and tracked 30-second passes.
-Continue with W3.3 only: prepare and record the P38 operator acceptance matrix.
-Preserve W1-W3.2
-behavior, native thresholds, calibration and unrelated work.
-
-Keep source saves and historical receipts unchanged. Retain the new comparison
-evidence and rebuild with debug OFF. Mark W3.2 complete only if the affected
-checks pass. If blocked, record the exact comparison case, missing fact and one
-next action; never repeat unchanged failures.
+Read HANDOFF.md, VR_PLAN.md and P38_NATIVE_AIM_EVIDENCE.md.
+Continue W3.4 remaining desktop complete-gun profile preparation without a headset.
+W4 P38 mapping and W5.1 pass; W5.2 has 14 desktop controls. Do not repeat them.
+Use existing 13-ID saves/inventory and the bounded native strip reader. Capture
+complete gun assemblies including mixed-node islands, then grip/barrel/scale and
+pose/animation controls. P38 includes node11 vertices6..32 plus all node13;
+its true muzzle is node11 tip, not the old receiver cap.
+Preserve native fallback, normal defaults, source saves, historical proofs and
+unrelated work. Leave physical W3.3/W3.5 open. No commit/push unless asked.
 ```

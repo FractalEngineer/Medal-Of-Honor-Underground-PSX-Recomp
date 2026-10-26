@@ -1,5 +1,6 @@
 import sys
 import unittest
+from unittest.mock import patch, call
 from pathlib import Path
 
 
@@ -35,6 +36,25 @@ def sample(index):
 
 
 class P38HeadsetTests(unittest.TestCase):
+    def test_loaded_pad_does_not_mask_xr_actions(self):
+        with patch.object(tool.native, "command") as command:
+            tool.release_load_override()
+        self.assertEqual(command.call_args_list, [
+            call("clear_input"),
+            call("set_input", layer="host", buttons=65535),
+        ])
+
+    def test_comparison_disables_dithering(self):
+        for mode in tool.MODES:
+            self.assertEqual(tool.environment(mode, True)["PSX_DITHERING"], "0")
+
+    def test_tracked_comparison_explicitly_selects_calibrated_combat_candidate(self):
+        for mode in tool.MODES:
+            env = tool.environment(mode, True)
+            expected = str(int(mode == "tracked"))
+            self.assertEqual(env["MOHU_VR_P38_CALIBRATED"], expected)
+            self.assertEqual(env["MOHU_VR_P38_AIM"], expected)
+
     def test_compare_runs_native_before_tracked(self):
         self.assertEqual(tool.comparison_modes("compare"), ("native", "tracked"))
         self.assertEqual(tool.comparison_modes("tracked"), ("tracked",))

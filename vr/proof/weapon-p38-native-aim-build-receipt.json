@@ -1,0 +1,115 @@
+{
+  "schema": 1,
+  "date": "2026-10-26",
+  "kind": "W4 and W5.1 P38 complete-gun desktop validation",
+  "headset_used": false,
+  "revision": "4ffb037d7d50ba7858799fc726f73670b9e4d734",
+  "working_tree_sources": {
+    "RunFlat.bat": "efaa36d0777ea5884330b3cae23ce4ef0513490c9ed66773377ffa7a91f74591",
+    "vr/underground/vr_diagnostic.c": "5161a85c260eda160f06c6b9654c9eb94b507f186d077ae601ddaddb22a37a5f",
+    "vr/underground/weapon.c": "84030b919838be45d02a915fb15f19e282264d5263c8c294853bcf5ac6c3d278",
+    "vr/underground/weapon.h": "7094e69416aff9831933bed477579b1dd1d595d1da27c8229f0cc87dd9b8499c",
+    "vr/underground/shot.h": "4cdeb48bd216f71e6e7545b18a823eb5597bb95f1e30d0fd93d0b67c2b180723",
+    "vr/tools/probe_native_shot.py": "911372df50621c7eff33d78a05ed7e829c2fe47e928077a66b391043b90a40b3",
+    "vr/tools/check_p38_mesh.py": "e78f0c205124dc4b30c7d5d35dbeb29c4b650a29c5fedf0cdb2834002c225a9f",
+    "vr/tools/probe_p38_headset.py": "2d7df01a3555283b21dfad435d4924b4e7c403db6a03c318c36b525474dacd3f",
+    "vr/tools/check_flat_fallback.py": "266dc0f3f6330651e97244ed9d1529426843be7d37f1db2330bf8e71f186b57f",
+    "vr/tests/test_shot.c": "73b96864f8c4b0c2b273ce5f21d8a6d99ed2a6f942889e55b78a13fe49ae880d",
+    "vr/tests/test_calibrated_weapon.c": "1252d95eace773bf492afbf8519537a1db5a80011508c665f462997a9a26c851",
+    "vr/tests/test_weapon.c": "4a33a9033c55f15cab5873f8fc42904071764bab974482916bd93658a5718141",
+    "vr/tests/test_p38_mesh.py": "9c739c100eb7b6e88fb04bc166754a0f862ae2315ce8189abfe4c2a6684cfe51",
+    "vr/tests/test_native_shot_probe.py": "3f65039e525109b343878d2d28f56ed461d2235684af40bb722039c1ac989510",
+    "vr/tests/test_p38_headset.py": "5a495a95ba1e2abee0f58072185c47d1615c8a9bbbd3d29ddc9bf402b4e2c285",
+    "vr/tests/test_launcher_defaults.py": "5b1d96af1d324c7413238de16ad7c0dc69bfae331f8be765e16e143b5976eef5"
+  },
+  "executable_sha256": "f32bb4226313d26f7fb0816df2d8148c5764d512ed33ec107713da279ffbc572",
+  "build": {
+    "PSX_DEBUG_TOOLS": "ON",
+    "MOHU_VR_DIAGNOSTICS": "ON",
+    "PSX_OPENXR": "ON",
+    "configuration": "Release"
+  },
+  "flat_executable_sha256": "18f4328bc9085f0a6a2322f940eea63516f07e93698010853cf3474cad94636c",
+  "framework_revision": "555e1eabccc59b9b6ff0d9fca48aca783513dc86",
+  "receipts": {
+    "native_p38": {
+      "path": "vr/proof/weapon-native-shot-receipt.json",
+      "sha256": "2aaacb2a37ce1de46f710d3c90a4d90e190219dcd733a0062d75fa566e931b1f"
+    },
+    "tracked_p38": {
+      "path": "vr/proof/weapon-p38-aim-receipt.json",
+      "sha256": "f4f5ee0a32f21e2b831a90bd1cca311afbdbf8e1ad883b05fa53b6d0ed5a7ccc"
+    },
+    "complete_mesh": {
+      "path": "vr/proof/weapon-p38-complete-calibration-receipt.json",
+      "sha256": "6879f8126f7dcd968eb604e63a94cfe0df78a90f16f7bae7eecea22907dda730"
+    },
+    "host_fixtures": {
+      "path": "analysis/vr-baseline/p38-final-host-20261026/validation.json",
+      "sha256": "20edf474ab4cec1a24648169b6df529d01ab52b5aceb579124e2bb5e470176c2"
+    },
+    "mp_13_ids": {
+      "path": "analysis/vr-baseline/p38-final-mp-matrix-20261026/receipt.json",
+      "sha256": "19d31d2df88a7dbbbdcbeb2bd8f03567f2da5913c01e0ec2dd2ecaf8afb2f94b"
+    },
+    "mp_lateral_native_fire_recovery": {
+      "path": "analysis/vr-baseline/p38-final-mp-fire-lateral-20261026/receipt.json",
+      "sha256": "9b61a7267983adcb51c1afb8ae75ba386c8602a900331e9c85ef1dbb8c2d8abc"
+    },
+    "w1_spatial_contract": {
+      "path": "analysis/vr-baseline/p38-final-w1-20261026/receipt.json",
+      "sha256": "deb2cd469a5dc8ecbcfbe08c34fe8a475421f09ceba5578493dae5a25fbc73c0"
+    },
+    "sp_zero": {
+      "path": "analysis/vr-baseline/p38-final-sp-zero-20261026/receipt.json",
+      "sha256": "f717a9e57a4f13979eaeb6ea0886280d2fde4280b70d33d3d337a308f04d37c5"
+    },
+    "flat_inherited_flags": {
+      "path": "analysis/vr-baseline/p38-final-flat-20261026/receipt.json",
+      "sha256": "6e75b49c1252ef62422d81a0236c73fa7d9fbf5ff5ce25507b5bcda8cc990322"
+    },
+    "shared_parity": {
+      "path": "analysis/reference-parity/w5-p38-20261026/baseline.json",
+      "sha256": "5afdd3f8b4ff842607365e0a176f10af7216928bf2652ebc3d058844e2d2e243"
+    }
+  },
+  "checks": {
+    "python_tests": 38,
+    "strict_c": "PASS: weapon, calibrated grip/muzzle, 17 ownership/freshness controls, plugin syntax",
+    "shared_math_parity_cases": 33,
+    "native_cases": 5,
+    "tracked_cases": 14,
+    "tracked_stereo_pairs": 679,
+    "tracked_rollback_checks": 1358,
+    "tracked_rollback_mismatches": 0,
+    "rendered_muzzle_max_origin_error_world_units": 7.438728971465025e-06,
+    "rendered_muzzle_min_motion_axis_cosine": 0.9999989403676074,
+    "retained_gun_vertices_per_eye": 96,
+    "masked_non_gun_vertices_per_eye": 142,
+    "gun_triangles": 128,
+    "barrel_triangles": 37,
+    "mp_pose_cases": 64,
+    "mp_unique_weapon_ids": 13,
+    "mp_cycles_closed": 4,
+    "native_fire_clip": "8 -> 7",
+    "native_fire_p2_health": "32 -> 31.25",
+    "w1_cases": 29,
+    "sp_zero": "PASS; intentional owned shutdown, source settings restored",
+    "flat": "PASS; rebuilt OpenXR/diagnostics/debug OFF, inherited candidate flags inert",
+    "source_saves_preferences_unchanged": true,
+    "remaining_owned_game_processes": []
+  },
+  "calibration_capture": {
+    "path": "analysis/vr-baseline/p38-barrel-20261026a/capture/receipt.json",
+    "sha256": "7dd91579350812f90a14f951452cf51ab7d69bc9c80bce761f64bd6090644112",
+    "scope": "native node9/11/13 vertex capture only; topology from owned w4-native-20261026b RAM capture; full asset FNV verified again by final runtime guards"
+  },
+  "limits": [
+    "No physical size/grip/recenter acceptance.",
+    "No live NPC/SP shot override; P1 ownership/replay rejection has host tests plus live P2/MP40 controls.",
+    "Animated recoil/reload muzzle calibration and remaining 12 weapon calibrations are open.",
+    "64-case regression was rerun separately: combining --all-weapons and --fire-pistol leaves a non-P38 selected; no failed run is promoted."
+  ],
+  "next_desktop": "W3.4 remaining complete-gun profile/animation preparation; preserve P38 proofs and native fallback",
+  "normal_defaults": "candidate flags OFF; debug remains ON for active work per existing operator direction"
+}

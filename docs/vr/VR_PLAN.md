@@ -8,18 +8,17 @@ scope has evidence; it never implies broader headset or gameplay acceptance.
 Historical design and prior attempts belong in
 [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md) and the evidence documents.
 
-**NEXT IMPLEMENTATION TASK: W3.3 - P38 operator acceptance.** W3.2 completed
-the 30-second native and right-hand-tracked P38 comparison through VDXR with
-live focused hand samples and zero final XR/stereo failures. W3.1 measured the
-P38 model-local grip, axes, provisional scale and muzzle markers. W2.5 completed the MP movement/button,
-focus, pause/resume, SP and flat controls. See
-[weapon-mp-lifecycle-receipt.json](../../vr/proof/weapon-mp-lifecycle-receipt.json)
-and [its build receipt](../../vr/proof/weapon-mp-lifecycle-build-receipt.json).
-C1-C4 and W1-W3.2 remain complete. The reference runtime gate uses a fresh cold-boot
-gameplay slot captured by the diagnostic build and passes world stability,
-weapon controls and watchdog recovery. See
-[CONSISTENCY_HANDOFF.md](CONSISTENCY_HANDOFF.md) and
-[the parity receipt](../../vr/proof/reference-parity-receipt.json).
+**NEXT DESKTOP TASK: W3.4 - remaining complete-gun profiles and controls.**
+W4 native P38 mapping and W5.1 opt-in rendered-muzzle shot conversion are now
+complete. The corrected P38 candidate retains its barrel, follows the measured
+grip, and passes native P2 damage/miss and tracking-fallback controls without a
+headset. W5.2 has a 14-case desktop subset; live NPC/SP isolation is still open.
+W3.3/W3.5 remain physical acceptance gates. Do not request another headset run
+before completing ready desktop work. Current evidence and exact continuation:
+[P38_NATIVE_AIM_EVIDENCE.md](P38_NATIVE_AIM_EVIDENCE.md),
+[combat receipt](../../vr/proof/weapon-p38-aim-receipt.json),
+[complete-gun calibration](../../vr/proof/weapon-p38-complete-calibration-receipt.json).
+C1-C4 and W1-W3.2 remain complete; their historical receipts are retained.
 
 The [reference reuse audit](REFERENCE_REUSE_AUDIT.md) names existing first-game
 code and local equivalents for every workstream. Port/adapt those implementations;
@@ -270,14 +269,21 @@ gates. Do not wait for W3.3 before preparing the remaining desktop profiles.
   reload/switch, wall proximity, recenter, focus/loss recovery and both eyes.
   Initial headset feedback failed the gate: no working controls, a noise filter
   remained active, and hand motion pivoted rather than tracking the controller.
-  No acceptance is claimed.
+  No acceptance is claimed. Desktop fixes now release the load-time pad override,
+  disable dithering and use a calibrated complete-gun grip; hardware recheck remains open.
 - [ ] W3.4. Expand captured profiles and desktop controls to all 13 IDs, including
   native gun subparts and special animations, using the existing inventory and
   reference profile/batch validators. Do not rediscover the measured meshes.
   Arms filtering is a separate asset decision, not a full-model prerequisite.
   Operator requirement is explicit: render the gun model alone with no attached
-  arms.
+  arms. P38 now retains 128 triangles/96 vertices, including the 27-vertex
+  mixed-node barrel, and masks 142 arm/hand vertices. The other 12 IDs remain open.
 - [ ] W3.5. Operator accepts each designated weapon; retain a per-ID result table.
+
+The original W3.1 markers below describe the receiver alone. The current
+candidate uses [complete-gun calibration](../../vr/proof/weapon-p38-complete-calibration-receipt.json)
+with the node-11 barrel; its true tip, barrel axis and 760.489674616524 scale
+supersede the original receiver-cap marker and 530.210564041902 scale.
 
 W3.1 evidence: [P38 calibration](../../vr/proof/weapon-p38-calibration-receipt.json),
 [atomic vertex capture](../../vr/proof/weapon-p38-calibration-capture-receipt.json)
@@ -301,15 +307,20 @@ Dependencies: existing native MP fixture/damage evidence and W1. Read-only
 mapping does not require W2 input/visibility completion or a headset. If W2 is
 blocked, record its exact continuation before using this independent workstream.
 
-- [ ] W4.1. From fresh copied slot 1, trace native P38 idle/fire/turned-away cases.
+- [x] W4.1. From fresh copied slot 1, trace native P38 idle/fire/turned-away cases.
   Match the reference MP constructor-to-basis call-chain pattern first, then
   verify Underground's constructor type, P1 ownership, origin/direction fields,
   basis/history initialization, first motion/collision and native damage writer.
-- [ ] W4.2. Record complete Underground MP function bytes, caller words, live
+- [x] W4.2. Record complete Underground MP function bytes, caller words, live
   arguments and field units in a new native-shot contract. Mark unknowns unknown.
-- [ ] W4.3. Verify P2/NPC shots and render replay cannot enter a P1 shot override;
+- [x] W4.3. Verify P2/NPC shots and render replay cannot enter a P1 shot override;
   adapt the reference ownership/freshness checks and streaming trace controls.
   Validate the canonical native camera separately from eye/render-only caches.
+
+Evidence: [native-shot receipt](../../vr/proof/weapon-native-shot-receipt.json)
+and [measured contract](P38_NATIVE_AIM_EVIDENCE.md). Complete code/callers,
+P1/P2 ownership, 16.16 fields, canonical camera and linked P2 health writes are
+recorded. NPC/replay rejection is fixture-tested; no live NPC/SP run is claimed.
 
 Exit gate: a complete native construction-to-motion-to-hit chain for one P38
 shot, including negative controls. Old SP scripts/first-game shot IDs are leads.
@@ -322,16 +333,26 @@ basis-hook guards and trace checks. Candidate writes require a separate opt-in
 diagnostic flag and stay off in normal launches. Physical calibration/impact
 acceptance is required for physical claims and normal default promotion.
 
-- [ ] W5.1. Transform the same calibrated rendered weapon origin/forward axis to
+- [x] W5.1. Transform the same calibrated rendered weapon origin/forward axis to
   native world shot pose at the verified seam, outside eye replay only. Adapt
   reference inverse/angle conversion; do not substitute aim-space origin for
   the declared rendered-muzzle contract.
 - [ ] W5.2. Pass P38 near/far, translated/rotated hand, head/body independence,
   loss/stale/unfocused/unknown-ID, P2/NPC isolation and real impact controls.
+  Fourteen desktop controls pass for P38/P2, including complete-gun images,
+  near/far native hits, translated/rotated hands, independent head/body turns,
+  MP40 rejection and invalid/recovered hands. Live NPC/SP isolation is still open;
+  this box is not closed by the MP fixture or pure ownership tests.
 - [ ] W5.3. Expand measured constructor families to all 13 IDs; preserve shotgun
   spread/pellets, rocket collision and both native throw/release/flight paths.
 - [ ] W5.4. Complete reload/empty/switch/scoped/recoil/death/load matrix and the
   13-ID native damage gate; operator confirms barrel-to-impact alignment.
+
+W5.1 evidence: [tracked combat receipt](../../vr/proof/weapon-p38-aim-receipt.json)
+and [complete-gun controls](../../vr/proof/weapon-p38-aim-controls.png). The
+candidate uses the corrected node-11 barrel tip and one quantized render/shot
+affine. New flags are explicit and normal defaults remain native. The W3.1
+node-13-only receiver marker/scale are historical, superseded for this candidate.
 
 Exit gate: real native trajectory/collision/damage agrees with the rendered
 barrel within a stated tested tolerance. Native hits alone are insufficient.

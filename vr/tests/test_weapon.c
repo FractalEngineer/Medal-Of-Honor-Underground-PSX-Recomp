@@ -68,15 +68,15 @@ int main(void) {
         const double grip[3] = {
             76.555555555556, 100.777777777778, 287.888888888889,
         };
-        const double muzzle[3] = {76.2, 109.8, 396.8};
+        const double muzzle[3] = {81.8, 110.6, 447.6};
         const double right[3] = {
-            0.999994671106, 0.0, 0.003264622472,
+            0.999745337201, 0.0, -0.022566806250,
         };
         const double up[3] = {
-            -0.000269517466, -0.996586343637, 0.082556568708,
+            0.000331387923, -0.999892173236, 0.014681010987,
         };
         const double forward[3] = {
-            -0.003253478173, 0.082557008645, 0.996581032934,
+            0.022564372944, 0.014684750646, 0.999637537897,
         };
         CHECK(calibration && calibration->provisional == 1u);
         for (unsigned axis = 0; axis < 3u; ++axis) {
@@ -87,10 +87,10 @@ int main(void) {
             CHECK(fabs(calibration->forward[axis] - forward[axis]) < 1e-12);
         }
         CHECK(fabs(calibration->model_units_per_metre -
-                   530.210564041902) < 1e-11);
+                   760.489674616524) < 1e-11);
         CHECK(fabs(calibration->reference_length_m - 0.216) < 1e-12);
         CHECK(fabs(calibration->forward_span_units -
-                   114.525481833051) < 1e-11);
+                   164.265769717169) < 1e-11);
         const double axes[3][3] = {
             {calibration->right[0], calibration->right[1],
              calibration->right[2]},

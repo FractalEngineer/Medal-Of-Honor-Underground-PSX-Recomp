@@ -8,13 +8,13 @@
 
 static const MohuVrWeaponCalibration k_p38_calibration = {
     {76.555555555556, 100.777777777778, 287.888888888889},
-    {76.200000000000, 109.800000000000, 396.800000000000},
-    {0.999994671106, 0.000000000000, 0.003264622472},
-    {-0.000269517466, -0.996586343637, 0.082556568708},
-    {-0.003253478173, 0.082557008645, 0.996581032934},
-    530.210564041902,
+    {81.800000000000, 110.600000000000, 447.600000000000},
+    {0.999745337201, 0.000000000000, -0.022566806250},
+    {0.000331387923, -0.999892173236, 0.014681010987},
+    {0.022564372944, 0.014684750646, 0.999637537897},
+    760.489674616524,
     0.216000000000,
-    114.525481833051,
+    164.265769717169,
     1u,
 };
 
@@ -64,6 +64,88 @@ static const uint16_t k_node_counts[MOHU_VR_WEAPON_NODE_COUNT] = {
     0u, 2u, 13u, 11u, 6u, 12u, 12u, 6u, 5u, 0u, 4u,
     0u, 0u, 39u, 1u, 11u, 6u, 8u, 1u, 11u, 6u, 8u,
 };
+
+int mohu_vr_weapon_calibrated_control(
+    uint32_t control[8], const double hand_rotation[9],
+    const double hand_translation[3], double units_per_metre,
+    const MohuVrWeaponCalibration* c) {
+    if (!control || !hand_rotation || !hand_translation || !c ||
+        !isfinite(units_per_metre) || units_per_metre < 1 ||
+        units_per_metre > 65536 || !isfinite(c->model_units_per_metre) ||
+        c->model_units_per_metre < 1) return 0;
+    const double scale = units_per_metre / c->model_units_per_metre;
+    uint32_t result[8];
+    memcpy(result, control, sizeof result);
+    int16_t rt[9];
+    /* Measured +up is -Y in PSX camera coordinates. Use right/down/forward
+     * rows to keep the model-to-hand basis right handed. */
+    for (unsigned row=0; row<3; ++row) {
+        for (unsigned col=0; col<3; ++col) {
+            const double value = scale * 4096.0 *
+                (hand_rotation[row*3] * c->right[col] -
+                 hand_rotation[row*3+1] * c->up[col] +
+                 hand_rotation[row*3+2] * c->forward[col]);
+            if (!isfinite(value) || value < INT16_MIN || value > INT16_MAX) return 0;
+            rt[row*3+col] = (int16_t)lround(value);
+        }
+        double value = hand_translation[row];
+        for (unsigned k=0; k<3; ++k)
+            value -= (double)rt[row*3+k] / 4096.0 * c->grip_pivot[k];
+        if (!isfinite(value) || value < INT32_MIN || value > INT32_MAX) return 0;
+        result[row+5] = (uint32_t)(int32_t)llround(value);
+    }
+    for (unsigned i=0; i<4; ++i)
+        result[i] = (uint16_t)rt[2*i] | ((uint32_t)(uint16_t)rt[2*i+1] << 16);
+    result[4] = (control[4] & 0xFFFF0000u) | (uint16_t)rt[8];
+    memcpy(control, result, sizeof result);
+    return 1;
+}
+
+int mohu_vr_weapon_muzzle_shot(
+    const uint32_t control[8], const MohuVrWeaponCalibration* c,
+    const double inverse[9], const double camera_translation[3],
+    int32_t position[3], int32_t angles[3]) {
+    if (!control || !c || !inverse || !camera_translation || !position || !angles)
+        return 0;
+    double muzzle[3], axis[3];
+    for (unsigned row=0; row<3; ++row) {
+        muzzle[row] = (int32_t)control[5+row];
+        axis[row] = 0;
+        for (unsigned col=0; col<3; ++col) {
+            const unsigned i=row*3+col;
+            const double r = (int16_t)(control[i/2] >> ((i&1u)*16u)) / 4096.0;
+            muzzle[row] += r * c->muzzle[col];
+            axis[row] += r * c->forward[col];
+        }
+    }
+    int32_t p[3];
+    double d[3] = {0};
+    for (unsigned row=0; row<3; ++row) {
+        double value=0;
+        for (unsigned col=0; col<3; ++col) {
+            if (!isfinite(inverse[row*3+col]) || !isfinite(camera_translation[col]))
+                return 0;
+            value += inverse[row*3+col] * (muzzle[col] - camera_translation[col]);
+            d[row] += inverse[row*3+col] * axis[col];
+        }
+        if (!isfinite(value) || fabs(value) > 32767) return 0;
+        p[row] = (int32_t)llround(value*65536.0);
+    }
+    const double length = sqrt(d[0]*d[0]+d[1]*d[1]+d[2]*d[2]);
+    if (!isfinite(length) || length < .01) return 0;
+    /* Same native angle conversion as the reference aim helper; Underground
+     * stores these 16.16 turns at +23C/+240/+244. Native basis/history follows. */
+    const double turns = 4096.0 / (2.0 * 3.14159265358979323846);
+    double yaw=atan2(d[0], d[2])*turns;
+    if (yaw < 0) yaw += 4096.0;
+    const int32_t a[3] = {
+        (int32_t)llround(atan2(-d[1], hypot(d[0],d[2]))*turns*65536.0),
+        (int32_t)llround(yaw*65536.0), 0,
+    };
+    memcpy(position, p, sizeof p);
+    memcpy(angles, a, sizeof a);
+    return 1;
+}
 
 size_t mohu_vr_weapon_profile_count(void) {
     return sizeof k_weapon_profiles / sizeof k_weapon_profiles[0];

@@ -13,39 +13,39 @@ the earlier hardware-first sequence; no completed box is reopened.
 
 ## 1. Start here - one next task
 
-**NEXT: W3.3 - P38 operator acceptance.** W3.2 is complete; W3.3 has started
-with operator findings and is not accepted. Quest 3 through
-VirtualDesktopXR completed separate 30-second native and right-hand-tracked
-P38 passes from fresh copies of root multiplayer slot 1. Every sampled hand
-pose was focused and live in both modes, stereo pairs and XR submissions
-advanced continuously, and the final sample reported zero XR/stereo failures
-and no process left behind. The comparison enabled movement and the MP
-controller path but disables the diagnostic laser; it does not infer operator
-acceptance, and measured user stick/button input was not required for this
-transport gate. Evidence is in
-[the headset comparison](../../vr/proof/weapon-p38-headset-receipt.json) and
-[the completed W3.2 build receipt](../../vr/proof/weapon-p38-headset-complete-build-receipt.json).
-The earlier launcher/sandbox mismatch and its
-[blocked attempt](../../vr/proof/weapon-p38-headset-blocked-receipt.json) remain
-historical. C1-C4 and W1-W3.2 remain complete.
+**NEXT DESKTOP: W3.4 - remaining complete-gun profiles and controls.**
+The user explicitly requested desktop progress without another headset session.
+W4 and W5.1 are complete. The P38 candidate now follows the measured grip,
+retains its barrel and fires native shots from its declared true muzzle. Its
+14-case desktop matrix passes native hit/miss, head/body/hand controls, P2/MP40
+isolation and tracking fallback. W5.2 remains open for live NPC/SP isolation;
+W3.3/W3.5 remain physical gates. Do not repeat completed P38 discovery.
 
-Operator observation from the completed comparison:
+Read [P38_NATIVE_AIM_EVIDENCE.md](P38_NATIVE_AIM_EVIDENCE.md) first for current
+bindings, flags, complete-gun calibration, receipts and exact next steps.
 
-- No working gameplay controls were delivered.
-- A noise filter remained active.
-- Right-hand tracking did not carry the P38 with the controller; motion read as
-  rotation around a pivot.
-- The native attached arms were visible. The required target is the gun model
-  alone, without arms.
+The earlier operator findings now have desktop corrections:
 
-These are W3.3 acceptance failures, not W3.2 transport failures. Attached-arm
-removal is a W3.4 asset/filtering requirement. Do not mark either gate complete
-from the successful XR transport receipt.
+- Missing controls: `load()` armed an absolute neutral debug-pad override. The
+  comparison now clears it and supplies only a neutral host-layer pad.
+- Noise: the comparison now sets and verifies dithering OFF.
+- Pivot-like motion: `MOHU_VR_P38_CALIBRATED=1` uses the measured model grip and
+  physical scale rather than the W1 camera-space pivot.
+- Arms and missing barrel: preserve all 69 node-13 receiver/grip vertices **plus
+  node-11 vertices 6..32**, a 27-vertex/37-triangle barrel/sight island. The
+  resulting gun is 128 triangles/96 vertices; hide 142 other vertices.
+
+The original W3.1 receiver-only supposed muzzle was a receiver cap. Current
+candidate calibration is in
+[the complete-gun receipt](../../vr/proof/weapon-p38-complete-calibration-receipt.json):
+true tip `(81.8,110.6,447.6)`, barrel axis from node-11 rings, provisional
+`760.489674616524` units/metre. Preserve historical W3.1/W3.2 receipts. No new
+physical acceptance is claimed; no headset/runtime was launched for this work.
 
 Shared VR matrix, conservative visibility and slab math has one source of truth:
 `psxrecomp/runtime/src/vr_geometry_math.c` and its public header. Fix shared math
 once there; keep measured bindings, rejection policy, native layouts, hooks,
-weapon behavior and calibration in title adapters. Run the 29-test local VR
+weapon behavior and calibration in title adapters. Run the current local VR
 workflow and the explicit cross-game parity harness before
 changing wrappers:
 
@@ -95,8 +95,9 @@ forward span is `114.525481833051` model units. The orthonormal right/up/forward
 basis and provisional nominal-length scale (`530.210564041902` model units per
 metre for a 216 mm P38 reference) are stored with the title profile. The prior
 camera-space marker `(98,296,193)` remains only the W1 diagnostic pivot and is
-not promoted to a grip. This is one idle desktop fixture, not headset size or
-attachment acceptance, and no renderer or shot path consumes the new data yet.
+not promoted to a grip. Those original node-13-only markers are historical;
+the current opt-in candidate consumes the corrected complete-gun calibration
+above. Physical size/attachment remain unaccepted.
 
 The visible weapon seam and P1-only MP eye renderer are already found and
 working in desktop controls. W1 is complete for the P38 synthetic spatial
@@ -125,7 +126,7 @@ rollback. W2.3 later added the accepted heading and near-wall controls.
 | --- | --- |
 | Repository | `C:/Users/titan/Desktop/Github_Projects/Mine/Medal-Of-Honor-Underground-PSX-Recomp` |
 | Branch / current HEAD | `feature/vr-port`; read current HEAD during preflight. W1/W2.1 predecessor is `afda5082...` |
-| Checkpoint scope | W3.2 P38 comparison runner, synthetic dry run, blocked OpenXR transport receipt, restored debug-off build, proofs and execution docs; inspect current Git status and preserve `.commandcode/` |
+| Checkpoint scope | W4 native P38 contract, opt-in complete-gun grip/muzzle candidate, barrel correction and automated combat evidence; inspect Git status and preserve `.commandcode/` |
 | Framework gitlink | `555e1eabccc59b9b6ff0d9fca48aca783513dc86` |
 | UI gitlink | `7c635c6b366a6e0d5d3c913a7fce6ec04dd9f256` |
 | Title / version | `SLUS-01270` / `0.1.0` |
@@ -134,7 +135,7 @@ rollback. W2.3 later added the accepted heading and near-wall controls.
 | Current debug tools | `PSX_DEBUG_TOOLS=ON` for the active W3.2/W3.3 work by operator direction; restore OFF only for a public release |
 | CMake VR option | `MOHU_VR_DIAGNOSTICS` defaults OFF; current `build-release` has it ON |
 | Normal launcher | Native menus, `-Slot -1`; no implicit savestate load |
-| Experimental defaults | `PSX_VR_WEAPON_POSE`, `MOHU_VR_MP_CONTROL` and `MOHU_VR_MP_FRUSTUM` remain off |
+| Experimental defaults | `PSX_VR_WEAPON_POSE`, `MOHU_VR_MP_CONTROL`, `MOHU_VR_MP_FRUSTUM`, `MOHU_VR_P38_CALIBRATED` and `MOHU_VR_P38_AIM` remain off; the diagnostic runner opts in explicitly |
 | PGXP save ABI | `131106`; base flavor ABI `34` is incompatible |
 | Unrelated work | `.commandcode/` is unrelated; do not add, change or clean it |
 
@@ -159,14 +160,16 @@ Accepted evidence:
 | W2.5 MP lifecycle / recovery | [control receipt](../../vr/proof/weapon-mp-lifecycle-receipt.json) and [build receipt](../../vr/proof/weapon-mp-lifecycle-build-receipt.json): 17 MP input/button cases, native Start pause/resume, zero render-time sampling, 13 SP cases, inherited-flag flat startup |
 | W3.1 P38 calibration | [calibration receipt](../../vr/proof/weapon-p38-calibration-receipt.json), [capture receipt](../../vr/proof/weapon-p38-calibration-capture-receipt.json) and [build receipt](../../vr/proof/weapon-p38-calibration-build-receipt.json): 69 atomic source/animated vertices, orthonormal axes, grip and muzzle markers, nominal-size scale, focused tests and 33-case parity |
 | W3.2 P38 headset comparison | [headset comparison](../../vr/proof/weapon-p38-headset-receipt.json) and [complete build receipt](../../vr/proof/weapon-p38-headset-complete-build-receipt.json): 30 seconds native plus 30 seconds tracked, 30/30 live hand samples per mode, fresh VDXR submissions and stereo pairs, zero final failures; no operator acceptance claim |
-| Current build/regressions | [complete W3.2 receipt](../../vr/proof/weapon-p38-headset-complete-build-receipt.json): 29 Python tests; current `build-release` intentionally keeps `PSX_DEBUG_TOOLS=ON` |
+| Current build/regressions | [P38 native-aim build receipt](../../vr/proof/weapon-p38-native-aim-build-receipt.json): 38 Python tests, strict fixtures, native/tracked combat, W1/13-ID MP/SP/flat; active debug tools ON |
 | Earlier native damage | [WEAPON_SET_EVIDENCE.md](WEAPON_SET_EVIDENCE.md), [weapon-alignment-receipt.json](../../vr/proof/weapon-alignment-receipt.json): all 13 IDs, damage-only pose reachability |
 | Current eye images | [weapon-mp-eyes.png](../../vr/proof/weapon-mp-eyes.png) |
 | SP world / visibility | [PGXP_RENDER_VIEW_EVIDENCE.md](PGXP_RENDER_VIEW_EVIDENCE.md), [HEAD_TURN_HUD_EVIDENCE.md](HEAD_TURN_HUD_EVIDENCE.md), [SKY_GHOST_EVIDENCE.md](SKY_GHOST_EVIDENCE.md) |
 | Native input | [MOVEMENT_EVIDENCE.md](MOVEMENT_EVIDENCE.md): synthetic SP and MP controls; physical acceptance remains open |
 
 The current diagnostic executable SHA-256 is
-`93499991a088650770b12a4a4bc3d01433e36b479087efbd96a84da072486db2`.
+`f32bb4226313d26f7fb0816df2d8148c5764d512ed33ec107713da279ffbc572`.
+See the current [build receipt](../../vr/proof/weapon-p38-native-aim-build-receipt.json)
+for exact source hashes, controls and remaining limits.
 The last debug-off release executable was
 `bae4f60f02f4bf70ce86ea85d201674df7157bafa4d6bea20c3086972f2ab71d`;
 it is not the current working binary.
@@ -243,7 +246,7 @@ Source ownership:
 | `vr/tools/check_mp_view.py` | Owned copied-save process, both-eye controls, native pistol fire, refusal/recovery |
 | `vr/tools/probe_mp_level_selector.py` | W2.1 selector trace plus W2.2 live AABB/RT/TR/view measurement |
 | `vr/tools/inspect_weapon_sets.py` | Native inventory, actual first-person mesh capture, exact native damage trace |
-| `vr/underground/input.c` | Existing mapper; MP converter/dispatcher still needs independent validation |
+| `vr/underground/input.c` | Existing measured SP/MP mapper and converter/dispatcher adapters |
 | `vr/underground/raycast.h` | Current visibility-node-extents pointer, not an exact triangle/barrel solution |
 
 GTE TR uses integer camera units. The old affine helper packs translation in
@@ -370,7 +373,7 @@ section 8. These checks passed and W1 is closed; do not reset NEXT to W2.1.
 | W2 MP visibility/input | W2.1-W2.5 complete | Native/override visibility and desktop input/lifecycle controls are closed; physical acceptance remains in W3 |
 | W3 desktop profiles | W1 and copied fixture; W3.1 P38 contract is measured; reuse reference profile/pose/batch validators with existing local 13-ID inventory | W3.2/W3.4 preparation does not wait for headset acceptance; retain provisional versus physically accepted values |
 | W3 hardware | W2 usable visibility/input and prepared desktop candidate | Batch operator acceptance per weapon in W3.3/W3.5; do not certify physics from desktop images |
-| W4 native shot binding | Existing native MP fire/damage fixture plus W1; compare reference MP constructor/basis structure first | Verify target function bytes, fields, camera freshness, ownership and first motion read-only; XR locomotion is not a prerequisite |
+| W4 native shot binding | Complete for MP P38; read P38_NATIVE_AIM_EVIDENCE | Do not repeat the measured constructor, canonical global camera or linked damage trace |
 | W5 diagnostic tracked aim | W4 plus W3.1 declared rendered-muzzle contract, with provisional physical calibration allowed | Adapt reference math/guards/streaming trace checks behind a new opt-in flag; keep normal defaults native until physical acceptance |
 | W6 desktop exact laser | Declared rendered muzzle/axis plus verified target geometry readers | Port reference ray/triangle and beam/dot code/tests; W6.4 hardware acceptance remains open |
 | H/Q HUD/coverage/performance/release | Relevant weapon gates pass | Reuse reference native HUD and reporting/package tools; these remain later priorities, not substitutes for the current task |
@@ -411,7 +414,7 @@ git status --short
 git branch --show-current
 git rev-parse HEAD
 git submodule status
-Get-Content vr/proof/weapon-mp-frustum-build-receipt.json -Encoding utf8
+Get-Content vr/proof/weapon-p38-native-aim-build-receipt.json -Encoding utf8
 Get-FileHash -LiteralPath build-release/Medal_of_Honor_Underground_Recompiled.exe -Algorithm SHA256
 Select-String -LiteralPath build-release/CMakeCache.txt -Pattern '^(PSX_DEBUG_TOOLS|MOHU_VR_DIAGNOSTICS|PSX_OPENXR):'
 ```
@@ -655,37 +658,25 @@ if ($LASTEXITCODE -ne 0) { throw 'Release build failed' }
 | Historical run-11 SP script executed for MP | Read it as a lead; use root MP copied slot 1 and current ownership/layout |
 | Old plan says create branch, align `31df2e1e`, scaffold VR | Completed; current branch/pins/receipts above are authoritative |
 
-## 10. Continuation record - replace these fields at session end
+## 10. Continuation record
 
-- Completed through: W3.2 (30-second native and tracked P38 headset comparison
-  with live VDXR tracking and clean processes); W3.3-W6 and physical acceptance
-  remain open.
-- Current task: W3.3 P38 operator acceptance. The first headset review failed;
-  no controls, noise filtering, pivot-like hand motion and attached arms are
-  recorded above. C1-C4 and W1-W3.2 remain complete.
-- Last accepted evidence: `vr/proof/weapon-p38-headset-receipt.json` and
-  `vr/proof/weapon-p38-headset-complete-build-receipt.json`. The earlier
-  `weapon-p38-headset-blocked-receipt.json` remains historical.
-- Next action: run one bounded copied-slot W3.3 input diagnostic with live XR
-  counters to determine why no gameplay controls reached the guest. Do not
-  repeat the transport-only W3.2 comparison unchanged.
-- Open physical gate: no grip/scale/size, physical recenter or tracked-shot
-  acceptance is claimed. W3.1 scale and markers are provisional; the observed
-  controls, noise filter and controller-following failures block W3.3, and
-  gun-only arm removal is required in W3.4.
-- Current build: Underground `build-release` intentionally keeps
-  `PSX_DEBUG_TOOLS=ON` with `MOHU_VR_DIAGNOSTICS=ON` while W3.3 work is active.
-  Underground executable SHA-256 is
-  `93499991a088650770b12a4a4bc3d01433e36b479087efbd96a84da072486db2`;
-  flat SHA-256 is
-  `18f4328bc9085f0a6a2322f940eea63516f07e93698010853cf3474cad94636c`;
-  reference SHA-256 is
-  `d878c555ea2d5c034bda20d1b89dde2a98d5a7a31c0f8c85a218ca38d6b14726`.
-  No owned game/debug listener or smoke wrapper remains.
-- Checkpoint: W3.2 runner, completed VDXR evidence and historical blocked
-  transport evidence are included in the current branch checkpoint. Unrelated
-  `.commandcode/` remains excluded and untouched.
-
-If a session stops mid-gate, replace the current task with the exact completed
-substep, source diff, failing/passing case, output path, missing fact and one
-next experiment. Do not reset this pointer to M1/W1 or generic discovery.
+- Complete: C1-C4, W1-W3.2, W4.1-W4.3 and W5.1. W3.3 physical acceptance is
+  open. W3.4 has a complete P38 subset; W5.2 has 14 desktop MP controls.
+- NEXT desktop: W3.4 remaining 12 complete-gun profiles. Start from the existing
+  13-ID inventory and copied slots; extend the bounded native triangle/strip
+  reader and identify mixed-node islands before filtering. Capture each complete
+  gun's grip/barrel/scale, then exercise existing pose and animation controls.
+  Keep unsupported IDs native until their profile passes. Do not rediscover P38.
+- Last evidence: `weapon-native-shot-receipt.json`, `weapon-p38-aim-receipt.json`,
+  `weapon-p38-complete-calibration-receipt.json` and the current build receipt in
+  `vr/proof/`. The control sheet shows the restored barrel in both eyes.
+- Exact W5.2 remainder: a compatible copied live NPC/SP fixture and independently
+  guarded SP shot/camera binding. Pure ownership tests and real P2/MP40 controls
+  pass; they do not claim a live NPC or SP override. No unrelated enemy chase.
+- Hardware: do not put the operator in the headset during this desktop pass.
+  W3.3/W3.5 and release/default promotion still need later physical acceptance.
+- Build: keep the single `build-release`, diagnostics/debug ON while active per
+  operator instruction. Normal candidate defaults remain OFF; no framework pin
+  changed. Source saves/preferences are unchanged and owned processes are closed.
+- Do not commit/push without current authorization. Unrelated `.commandcode/`
+  remains untouched. Update this pointer and the checkbox plan with new evidence.

@@ -7,8 +7,10 @@ executable and live overlay content.
 
 ## Start here
 
-1. [HANDOFF.md](HANDOFF.md) is the current execution contract: W3.3 P38
-   operator acceptance; fixtures, commands and recovery rules.
+1. [HANDOFF.md](HANDOFF.md) is the current execution contract: W3.4 remaining desktop
+   complete-gun profiles; physical P38 acceptance stays open.
+   [P38_NATIVE_AIM_EVIDENCE.md](P38_NATIVE_AIM_EVIDENCE.md) records the
+   restored barrel, complete calibration, W4/W5.1 and automated native damage.
    Headset verification must run under the interactive Windows account; see
    [the mandatory execution-context section](HANDOFF.md#headset-execution-context---mandatory).
 2. [VR_PLAN.md](VR_PLAN.md) is the checkbox/status list and dependency order.

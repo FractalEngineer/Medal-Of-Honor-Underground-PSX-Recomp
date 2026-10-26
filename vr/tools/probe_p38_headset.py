@@ -36,7 +36,7 @@ P38_GEOMETRY_FNV32 = 0x8544F8B9
 DEFAULT_SECONDS = 30
 MAX_SECONDS = 120
 MODES = ("native", "tracked")
-CALIBRATION_PROOF = ROOT / "vr/proof/weapon-p38-calibration-receipt.json"
+CALIBRATION_PROOF = ROOT / "vr/proof/weapon-p38-complete-calibration-receipt.json"
 
 
 def digest(path):
@@ -221,6 +221,7 @@ def environment(mode, desktop, runtime_manifest=None):
     env.update(
         PSX_DEV_INPUT="0",
         PSX_VSYNC="0",
+        PSX_DITHERING="0",
         PSX_STEREO_SHED="0",
         PSX_INTERNAL_RESOLUTION="1080p",
         PSX_RENDER_PASS_VERIFY=str(int(desktop)),
@@ -229,6 +230,8 @@ def environment(mode, desktop, runtime_manifest=None):
         PSX_VR_SUPPRESS_FLAT_HUD="1",
         PSX_VR_LASER="0",
         PSX_VR_WEAPON_POSE=str(int(mode == "tracked")),
+        MOHU_VR_P38_CALIBRATED=str(int(mode == "tracked")),
+        MOHU_VR_P38_AIM=str(int(mode == "tracked")),
         MOHU_VR_MP_CONTROL="1",
         MOHU_VR_STEREO_PROOF="1",
         MOHU_VR_EYE_RENDER_VIEW="1",
@@ -258,6 +261,12 @@ def save_json(path, value):
         encoding="utf-8",
         newline="\n",
     )
+
+
+def release_load_override():
+    """Release load()'s absolute debug pad so the controller source can run."""
+    native.command("clear_input")
+    native.command("set_input", layer="host", buttons=65535)
 
 
 def collect_case_receipts(out, receipt):
@@ -421,6 +430,9 @@ def run_case(out, mode, seconds, desktop, runtime_manifest):
                 "MOHU_VR_MP_CONTROL",
                 "PSX_VR_WEAPON_POSE",
                 "PSX_VR_LASER",
+                "PSX_DITHERING",
+                "MOHU_VR_P38_CALIBRATED",
+                "MOHU_VR_P38_AIM",
             )
             if key in env
         },
@@ -444,6 +456,7 @@ def run_case(out, mode, seconds, desktop, runtime_manifest):
             native.command("openxr_input_override", clear=1)
             native.command("openxr_hands_override", clear=1)
             case["load"] = native.load(1)
+            release_load_override()
             players = native.players()
             if (
                 players[0]["weapon_slot"],

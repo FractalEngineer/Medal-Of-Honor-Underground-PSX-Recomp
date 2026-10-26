@@ -1006,11 +1006,65 @@
   instead of following the controller, and arms remained attached to the gun.
   The transport result remains valid, but acceptance stays open.
 
+### W4 native P38 shot contract and W5.1 desktop combat
+
+- Reviewed advancement through W3.2 and retained the failed W3.3 operator gate.
+  The user's current direction is desktop progress without another headset run.
+  Adapted the reference constructor-to-basis and streaming trace strategy,
+  preserving shared inverse/pose math and title-specific guards.
+- Fixed the comparison runner's absolute neutral load-time pad override; it now
+  releases it and uses a neutral host layer. It also disables dithering. Native
+  and tracked desktop fire now reach the guest through the XR controller source.
+- Measured constructor 800486D0, basis 8006C8B0/caller 800488D8, 16.16 fields,
+  history, first motion and the exact shot-linked P2 health writer. Five native
+  idle/fire/away/P2/head cases pass. Callback-entry GTE was a previous-object
+  matrix; the corrected cache samples the guarded canonical global 800A2CEC
+  outside replay and inverts back to the native camera actor within tolerance.
+- Added separately enabled P38 calibrated rendering and native-shot candidates.
+  Both use the same quantized measured grip/model affine. The native constructor
+  then builds basis/history and owns motion, collision, ammunition and damage.
+  P2, unsupported IDs, replay, stale cameras and invalid tracking are guarded.
+- The initial gun-only candidate wrongly retained node13 alone. Operator review
+  found the missing barrel. Topology/atomic vertex inspection identified the
+  disconnected node11 vertices6..32: 27 vertices and 37 barrel/sight triangles.
+  The corrected complete gun retains 128 triangles/96 vertices and hides 142
+  arm/hand vertices. Native triangle strips and animation data are preserved;
+  full source geometry and the 4,320-byte stream, including final terminator,
+  are hash-guarded. The old node13 muzzle was a receiver cap; the current true
+  tip is (81.8,110.6,447.6), with barrel-ring axis and provisional complete-gun
+  scale 760.489674616524 units/metre. Historical W3.1 receipts remain unchanged.
+- The final 14-case desktop batch passes aim-toward/away, +100 mm hand
+  translation, head/body turns, nearer/farther positions, P2, MP40, unfocused,
+  inactive, partial, stale and recovered hands. Tracked hits reduce P2 health
+  32->29 through native shot-linked damage; aim-away leaves health32. Invalid
+  hands retain native P38 fire (32->31.25), and MP40/P2 remain native.
+- Numerical checks match the rendered barrel tip to native first motion within
+  one 16.16 origin step, with axis cosine >=.999995. Both eyes retain the barrel,
+  hand translation changes gun pixels while the fixed world ROI is identical,
+  and the final batch has 679 pairs / 1,358 rollback checks with zero mismatches.
+- Validation: 38 Python tests, strict weapon/calibrated/shot C fixtures and
+  diagnostic syntax; 33-case shared parity; unchanged W1 spatial controls;
+  all 64 MP pose cases across13 IDs/four closed cycles; lateral eyes, native
+  pistol clip8->7/P2 health32->31.25 and refused-pair recovery; SP zero stereo;
+  rebuilt OpenXR-off flat startup with inherited candidate flags inert.
+  The unsupported combined all-weapons/fire harness invocation was rerun as
+  separate controls; no partial failure is promoted as a complete receipt.
+- Source saves/preferences are unchanged, every owned game closed, framework
+  pins unchanged, and active debug tools remain ON per operator direction.
+  No headset/runtime was launched.
+- Current evidence: [contract](P38_NATIVE_AIM_EVIDENCE.md),
+  [native receipt](../../vr/proof/weapon-native-shot-receipt.json),
+  [combat receipt](../../vr/proof/weapon-p38-aim-receipt.json),
+  [complete calibration](../../vr/proof/weapon-p38-complete-calibration-receipt.json)
+  and [build receipt](../../vr/proof/weapon-p38-native-aim-build-receipt.json).
+
 ## Next work
 
-**W3.3: P38 operator acceptance.** W3.2 is complete; C1-C4 and prior feature
-gates remain closed. Prepare and record the explicit matrix for size/attachment,
-head/hand independence, recoil, reload/switch, wall proximity, recenter,
-focus/loss recovery and both eyes. First reconcile the observed missing controls,
-noise filter and pivot-like hand motion. W3.4 must render the gun alone without
-attached arms. Physical per-weapon acceptance remains W3.3/W3.5.
+**W3.4: remaining complete-gun profiles and controls, without a headset.**
+P38 complete-gun preparation, W4 and W5.1 are done. Use the existing 13-ID
+inventory and bounded strip/topology reader for the remaining 12 profiles;
+identify complete mixed-node assemblies before calibrating or filtering.
+W5.2 has the passing MP desktop subset; live NPC/SP isolation needs its own
+measured binding/copied fixture. W3.3/W3.5 remain physical acceptance gates.
+Do not repeat P38 discovery, W1/W2 or unchanged controls. Preserve source saves,
+normal defaults, historical receipts and unrelated .commandcode work.

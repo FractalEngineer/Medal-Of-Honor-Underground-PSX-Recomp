@@ -5,6 +5,11 @@ Updated: 2026-10-26. Scope: W1 and W3.1 measurements for Underground MP P38
 firing. These are desktop contracts. They are not physical grip, size, shot or
 headset acceptance.
 
+Current candidate: [P38_NATIVE_AIM_EVIDENCE.md](P38_NATIVE_AIM_EVIDENCE.md)
+and the [complete-gun calibration](../../vr/proof/weapon-p38-complete-calibration-receipt.json)
+supersede the node-13-only muzzle/scale below. The complete gun includes the
+mixed-node barrel. W1 and historical W3.1 measurements below are retained.
+
 ## Captured fixture and seams
 
 The capture came from the existing guarded first-person caller and did not
@@ -257,8 +262,8 @@ Dividing by the nominal 216 mm overall length of a P38 gives
 `530.210564041902` model units per metre. This is an explicitly provisional
 desktop estimate, not a headset-accepted size.
 
-The values are stored in `MohuVrWeaponCalibration` with the P38 profile. The
-data is currently inert: W1 still renders with its camera-space diagnostic
+At W3.1 these values were stored in `MohuVrWeaponCalibration` with the P38 profile.
+That historical data was inert: W1 still renders with its camera-space diagnostic
 pivot, and nothing uses the new markers for shots, lasers or input. The
 source-node-local centroids and axes are retained in the proof for audit, but
 only the animated-model values are intended as the later hand-from-model
@@ -305,3 +310,25 @@ The gun-only target is explicit: hide the attached arm geometry while preserving
 the complete P38 model and native animations. Do not call the tracked hand path
 accepted until the controller-following behavior and input path are reproduced
 and corrected.
+
+## Current complete P38 correction and combat candidate
+
+The W3.1 node-13 capture above measures only the receiver/grip. The complete
+P38 also contains a 27-vertex barrel/sight island in node 11, indices 6..32.
+The original alleged muzzle is a receiver cap and the original 530.210564 scale
+omits the barrel. Those historical receipts are retained; do not reuse them as
+current candidate calibration.
+
+The active opt-in profile retains 128 triangles/96 vertices, hides 142 arm/hand
+vertices and uses true barrel tip `(81.8,110.6,447.6)`. Barrel direction comes
+from node-11 rear/front rings, not the grip-to-cap vector. Complete overall
+span is 164.265769717169 model units; nominal 216 mm scale is
+760.489674616524 units/metre, still physically provisional.
+
+See [current evidence](P38_NATIVE_AIM_EVIDENCE.md),
+[complete calibration](../../vr/proof/weapon-p38-complete-calibration-receipt.json)
+and [combat controls](../../vr/proof/weapon-p38-aim-receipt.json). The corrected
+calibrated renderer and shot path consume one quantized affine under separate
+explicit flags. Native fallback and historical W1 controls remain available.
+The original operator findings have desktop fixes; physical acceptance remains
+open and was not requested in this session.

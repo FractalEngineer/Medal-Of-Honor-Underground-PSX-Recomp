@@ -26,6 +26,16 @@
 #define MOHU_VR_WEAPON_FP_MODEL_FNV 0xFAE3646Eu
 #define MOHU_VR_WEAPON_FP_MAX_NODES 32u
 #define MOHU_VR_WEAPON_NODE_COUNT 22u
+#define MOHU_VR_P38_TRIANGLE_STREAM_BYTES 4320u
+#define MOHU_VR_P38_TRIANGLE_STREAM_FNV 0x1F000741u
+
+/* Native 354-triangle stream: node13 receiver/grip (91 triangles) plus the
+ * disconnected node11 barrel/sight island (37 triangles). Other node11 and
+ * node9 vertices skin the hands/arms. Selection is tied to the full asset hash. */
+static inline int mohu_vr_p38_gun_vertex(unsigned node, unsigned vertex) {
+    return (node == 13u && vertex < 69u) ||
+           (node == 11u && vertex >= 6u && vertex <= 32u);
+}
 
 /*
  * W3 calibration is measured in the animated-model output space produced by
@@ -126,5 +136,17 @@ int mohu_vr_weapon_compose_gte_control(uint32_t control[8],
 int mohu_vr_weapon_compose_absolute_gte_control(
     uint32_t control[8], const double hand_rotation[9],
     const double hand_translation[3], const double pivot[3]);
+
+/* Opt-in W3/W5 P38 candidate. Animated vertices remain native. Map the measured
+ * model grip/basis into the hand instead of rotating authored camera placement.
+ * Both render and shot consumers use this same quantized affine. */
+int mohu_vr_weapon_calibrated_control(
+    uint32_t control[8], const double hand_rotation[9],
+    const double hand_translation[3], double units_per_metre,
+    const MohuVrWeaponCalibration* calibration);
+int mohu_vr_weapon_muzzle_shot(
+    const uint32_t control[8], const MohuVrWeaponCalibration* calibration,
+    const double camera_inverse[9], const double camera_translation[3],
+    int32_t position[3], int32_t angles[3]);
 
 #endif
