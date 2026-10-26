@@ -75,11 +75,12 @@ do not change either consumer merely to match a moving master.
   complete, as are its native lifecycle baseline and final projectile origin
   writer measurements. Canonical animated sampling is now complete within its
   [measured timing/ownership contract](CANONICAL_MARKERS_EVIDENCE.md).
-  Family-aware writes and paired preservation/impact controls are complete.
-  W5.4 combat-state controls remain. These
+  Family-aware writes, paired preservation/impact and the W5.4 desktop
+  combat-state controls are complete. W5.4's operator alignment and death
+  transition remain. These
   title-specific samplers add no pending framework PR or master change.
 - W5.2 NPC/SP isolation requires a compatible copied fixture and independent
-  SP bindings. Physical W3.3/W3.5 and W5.4 acceptance remain open. Desktop work
+  SP bindings. Physical W3.3/W3.5 and W5.4 operator acceptance remain open. Desktop work
   continues without treating those gates as implementation prerequisites.
 - Keep game hooks, model masks, moving markers, shot-family policy and native
   layout/calibration in the game. Future generic fixes belong on the shared

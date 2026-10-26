@@ -489,9 +489,10 @@ interactive gameplay or new OpenXR acceptance.
 ```text
 Read HANDOFF.md, VR_PLAN.md, WEAPON_COMPLETE_PROFILES.md,
 P38_NATIVE_AIM_EVIDENCE.md and SHOT_FAMILY_EVIDENCE.md.
-Continue W5.4 combat-state controls without a headset. W3.4 is complete;
+Continue the remaining W5.4 operator/death gate. W3.4 is complete;
 all 13 IDs require a moving marker recomputed after native animation. W4 P38
-mapping, W5.1, W5.3d conversion and W5.3e paired preservation/impact pass. Do not repeat them or
+mapping, W5.1, W5.3d conversion, W5.3e paired preservation/impact and the W5.4
+desktop combat-state pair pass. Do not repeat them or
 the all-ID topology, capture, calibration, 64-case controls or animation matrix.
 Use the W5.3e paired receipt and its stated common-prefix tolerances.
 W5.2 remains

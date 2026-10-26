@@ -1314,5 +1314,36 @@ source saves, defaults, historical receipts and unrelated `.commandcode/`.
 - Evidence: [preservation evidence](WEAPON_PRESERVATION_EVIDENCE.md),
   [paired receipt](../../vr/proof/weapon-preservation-receipt.json) and
   [build/regressions](../../vr/proof/weapon-preservation-build-receipt.json).
-  W5.3 and W5.3e are checked. W5.4 combat states, W5.2 NPC/SP and physical
-  W3.3/W3.5 remain open.
+  W5.3 and W5.3e are checked. At that checkpoint, W5.4 combat states, W5.2
+  NPC/SP and physical W3.3/W3.5 remained open; the W5.4 desktop portion is
+  recorded in the following entry.
+
+## 2026-10-27 - W5.4 paired combat-state desktop matrix
+
+- Added `probe_weapon_combat_states.py` and host fixtures. The probe runs native
+  and tracked modes separately against the same copied MP fixtures, executable,
+  source saves and preferences. It records shot types, ammunition, linked P2
+  damage, marker sequences/generations/ages and first-motion origin errors.
+- Reload tail records an early interlock with no shot/damage, then a post-tail
+  P38 shot with one round consumed and linked damage. Empty fire captures the
+  final round and requires the immediate second press to add no shot; the native
+  auto-reload transition is recorded separately. Switch during reload produces
+  zero shots/damage while changing slot. Load recovery advances tracked marker
+  generation 6->7 and fires one linked-damage shot.
+- Scoped ID 5 uses the measured 60-frame R2 plus 60-frame Cross+R2 control and
+  two shots. It remains a recorded native fallback because the hidden-scope
+  ordinary family guard has no fresh candidate marker. Recoil follow-up turns
+  the native view away so the second shot exposes converted origin and first
+  integration without merging into a P2 hit.
+- The all-13 type/damage gate remains the accepted W5.3e receipt. W5.4 does not
+  repeat its conversion matrix. Non-fallback tracked origins and first-motion
+  origins were zero at recorded precision; normalized axis cosines were `1.0`.
+- Validation: 92 Python tests; the W5.3e pair checker; proof/source/pair-receipt
+  provenance; clean mode exit codes; unchanged source saves/preferences; no
+  remaining owned game. The executable remains `8d0db606...`; no runtime C
+  source changed, so no rebuild or new physical/headset claim is made.
+- Evidence: [combat-state evidence](COMBAT_STATE_EVIDENCE.md),
+  [paired receipt](../../vr/proof/weapon-combat-states-receipt.json) and
+  [build/validations](../../vr/proof/weapon-combat-states-build-receipt.json).
+  W5.4a/b are checked. Operator barrel-to-impact confirmation, the unexercised
+  death transition, W5.2 live NPC/SP and physical W3.3/W3.5 remain open.

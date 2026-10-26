@@ -12,9 +12,10 @@ generic changes are tracked in [FRAMEWORK_UPSTREAM_TRACKER.md](FRAMEWORK_UPSTREA
 Framework development uses `vr/shared-development`; master mirrors upstream.
 
 1. [HANDOFF.md](HANDOFF.md) is the current execution contract: W5.3e paired
-   preservation/impact is complete and the W5.4 combat-state matrix is next;
-   W5.2 remains open for a compatible live NPC/SP fixture, and physical P38
-   acceptance stays open.
+   preservation/impact and the W5.4 desktop state matrix are complete; operator
+   barrel-to-impact confirmation and death coverage remain open. W5.2 remains
+   open for a compatible live NPC/SP fixture, and physical P38 acceptance
+   stays open.
    [P38_NATIVE_AIM_EVIDENCE.md](P38_NATIVE_AIM_EVIDENCE.md) records the
    restored barrel, complete calibration, W4/W5.1 and automated native damage.
    [SHOT_FAMILY_EVIDENCE.md](SHOT_FAMILY_EVIDENCE.md) records the read-only
@@ -28,6 +29,8 @@ Framework development uses `vr/shared-development`; master mirrors upstream.
    [WEAPON_PRESERVATION_EVIDENCE.md](WEAPON_PRESERVATION_EVIDENCE.md) and
    [weapon-preservation-receipt.json](../../vr/proof/weapon-preservation-receipt.json)
    record the paired native/tracked, fallback and impact acceptance.
+   [COMBAT_STATE_EVIDENCE.md](COMBAT_STATE_EVIDENCE.md) records the paired
+   reload/empty/switch/scoped/recoil/load desktop controls.
    [WEAPON_COMPLETE_PROFILES.md](WEAPON_COMPLETE_PROFILES.md) records the
    all-ID topology, provisional calibration, desktop controls and moving-marker
    animation evidence.

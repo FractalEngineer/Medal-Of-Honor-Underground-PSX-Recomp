@@ -23,37 +23,36 @@ the earlier hardware-first sequence; no completed box is reopened.
 
 ## 1. Start here - one next task
 
-**NEXT DESKTOP: W5.4 - combat-state matrix on the accepted W5.3e candidate.**
-W5.3e is complete. Paired native/tracked launches on the copied MP slots passed
-all 13 IDs, common-prefix release/history and family-stage checks, per-shot ammo,
-shotgun RNG/spread/speed, and real P2 impact. The shotgun retained all 21
-construction RNG updates and six pellets; pairwise maximum angles were
-`5.257088` native and `5.259963` tracked. Five P38 fallback controls covered
-missing/stale markers, unfocused hand, P2 ownership and recovery. Read
-[WEAPON_PRESERVATION_EVIDENCE.md](WEAPON_PRESERVATION_EVIDENCE.md),
-[the paired receipt](../../vr/proof/weapon-preservation-receipt.json) and
-[build/regressions](../../vr/proof/weapon-preservation-build-receipt.json).
-Do not repeat the W5.3e pair, all-ID conversion, family map, canonical
-acquisition or animation matrix.
+**W5.4 DESKTOP MATRIX COMPLETE. NEXT GATE: operator confirmation.**
+The paired native/tracked desktop matrix now passes reload tail, empty fire,
+switch during reload, scoped fire on ID 5, recoil follow-up and load recovery.
+It uses the accepted W5.3e all-13 damage/type gate rather than repeating that
+matrix. Read [COMBAT_STATE_EVIDENCE.md](COMBAT_STATE_EVIDENCE.md),
+[the paired receipt](../../vr/proof/weapon-combat-states-receipt.json) and
+[build/validations](../../vr/proof/weapon-combat-states-build-receipt.json).
 
-### W5.4 exact desktop scope and stop rules
+Completed desktop details:
 
-1. Exercise native/tracked reload tails, empty fire, switch during reload,
-   scoped fire on ID 5, recoil follow-up and load/recovery. Reuse the accepted
-   moving-marker, freshness and family-stage contracts; no fixed idle point.
-2. For non-empty shots, require native ammo consumption, the expected native
-   shot type and linked damage where the paired native control has damage.
-   Empty or interrupted states must not construct a candidate shot.
-3. Re-sample the animated tip after every tested native action. Compare the
-   converted origin and first integration with the pair's stated tolerances;
-   record changed marker/load generations explicitly.
-4. P2 MP impact is a desktop gate only. W5.2 live NPC/SP, W3.3/W3.5 physical
-   attachment and operator-confirmed barrel-to-impact alignment remain open.
-5. Two failed runs of the same hypothesis require trace inspection before a
-   third run. Focused runs cannot publish a full W5.4 proof.
+1. Reload-tail and load-recovery shots consumed native ammo and produced linked
+   P2 damage in both modes; the early reload-interlock attempt constructed no
+   shot. Tracked load generation advanced 6->7.
+2. Empty fire and switch-during-reload constructed no additional candidate shot
+   or damage. P38's native auto-reload transition is recorded separately.
+3. Scoped ID 5 produced two `0x13F6` shots, consumed two rounds and damaged P2.
+   The tracked run deliberately stayed native because the hidden-scope family
+   guard has no fresh animated candidate marker.
+4. Recoil follow-up was turned away from P2 so its converted tip and first
+   integration remained observable. All non-fallback converted origins and
+   first-motion origins were zero at recorded precision; normalized axis
+   cosines were `1.0`.
+5. Both modes closed cleanly with source saves and preferences unchanged. The
+   tested executable is `8d0db606...`; no runtime C source changed.
 
-W5.4 desktop work may proceed without a headset. W5.2 NPC/SP and physical
-W3.3/W3.5 remain open independently. All candidate flags remain OFF by default.
+Do not repeat the W5.4 pair, W5.3e pair, all-ID conversion, family map,
+canonical acquisition or W3.4 animation matrix. The remaining W5.4 parent gate
+is operator-confirmed barrel-to-impact alignment. The broader checkbox also
+retains an unexercised death transition. W5.2 live NPC/SP and physical
+W3.3/W3.5 remain independently open. All candidate flags remain OFF by default.
 
 The moving-marker result is not optional: all 13 IDs require a tip recomputed
 from the current marker vertices after native animation. The stored calibration
@@ -815,26 +814,28 @@ if ($LASTEXITCODE -ne 0) { throw 'Release build failed' }
 
 ## 10. Continuation record
 
-- Complete: C1-C4, W1-W3.2, W3.4, W4.1-W4.3, W5.1 and W5.3a/b/c/d/e
-  family/lifecycle, final-origin, canonical-marker, all-family conversion and
-  paired preservation/impact contracts. W3.3 physical acceptance
+- Complete: C1-C4, W1-W3.2, W3.4, W4.1-W4.3, W5.1, W5.3a/b/c/d/e
+  family/lifecycle, final-origin, canonical-marker, all-family conversion,
+  paired preservation/impact, and the W5.4 desktop state matrix. W3.3 physical acceptance
   is open. W3.4 now includes all-ID frozen-frame moving-marker evidence for
   native recoil, reload, switching, scope hiding and prop actions.
 - Moving-marker result: all 13 IDs require recomputation from current marker
   vertices after native animation. The idle stored point remains a reference;
   W5/W6 must not treat it as animation-safe. The crossbow's tested launch sample
   alone was rigid. Sten reload and scoped-shot ammo are `not-observed`.
-- NEXT desktop: W5.4 combat-state matrix (section 1). Reuse the accepted W5.3e
-  pair and moving-marker/family contracts for reload, empty, switch, scoped,
-  recoil and load interactions. W5.2 remains open until a compatible copied
-  live NPC/SP fixture and guarded SP binding are available. Do not repeat the
-  W3.4 matrix, family map, canonical acquisition, W5.3d conversion or W5.3e pair.
+- NEXT gate: operator-confirmed W5.4 barrel-to-impact alignment; the broader
+  W5.4 checkbox also retains an unexercised death transition. W5.2 remains open
+  until a compatible copied live NPC/SP fixture and guarded SP binding are
+  available. Do not repeat the W3.4 matrix, family map, canonical acquisition,
+  W5.3d conversion, W5.3e pair or W5.4 desktop pair.
 - W5.3e result: 22 native / 21 tracked lifetimes, 16 tracked linked damage
   writes, exact shotgun construction-scoped RNG (21 updates), six pellets,
   maximum spread `5.257088` vs `5.259963` degrees and five fallback/recovery
   controls. The one-frame StG44 lifetime difference is recorded; common-prefix
   type, release, history, stage, ammo-per-shot and RNG behavior passed.
-- Last evidence: `weapon-preservation-receipt.json`,
+- Last evidence: `weapon-combat-states-receipt.json`,
+  `weapon-combat-states-build-receipt.json`, `COMBAT_STATE_EVIDENCE.md`,
+  `weapon-preservation-receipt.json`,
   `weapon-preservation-build-receipt.json`, `WEAPON_PRESERVATION_EVIDENCE.md`,
   `weapon-aim-all-receipt.json`,
   `weapon-aim-all-build-receipt.json`, `weapon-shot-lifecycle-receipt.json`,

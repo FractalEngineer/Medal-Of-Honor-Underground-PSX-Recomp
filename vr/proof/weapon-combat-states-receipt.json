@@ -1,0 +1,779 @@
+{
+  "schema": 1,
+  "kind": "W5.4 combat-state paired native/tracked controls",
+  "complete": true,
+  "headset_used": false,
+  "dependencies": {
+    "preservation": {
+      "path": "vr\\proof\\weapon-preservation-receipt.json",
+      "sha256": "24834d92b565b2ca3d6f47e4ed8cb74b993c3df32698ba7ae0d2f33a84913938"
+    },
+    "families": {
+      "path": "vr\\proof\\weapon-shot-families-receipt.json",
+      "sha256": "f30951a07258817cc41f1fabead7305d6340ef7748a393967c5f940a714e860f"
+    }
+  },
+  "native_receipt": "native/receipt.json",
+  "native_receipt_sha256": "2c2ac1b686c890043c7785733c1281ac5b4a3f4fdffeeded19f020d2973e174f",
+  "tracked_receipt": "tracked/receipt.json",
+  "tracked_receipt_sha256": "d5f9b36f6a167c246142749359c2147b01f91f3335fceb5208ea19afbf5daed7",
+  "executable_sha256": "8d0db60626bd516e91a342f648b22579e07b7ad3339ac104637774e1a71bc20d",
+  "revision": "af3a99b5759f64ee20e02f8b91bc7861ba21ed7f",
+  "build": {
+    "PSX_DEBUG_TOOLS": "ON",
+    "MOHU_VR_DIAGNOSTICS": "ON",
+    "PSX_OPENXR": "ON",
+    "configuration": "Release"
+  },
+  "comparison": {
+    "complete": true,
+    "cases": [
+      {
+        "name": "reload-tail",
+        "shots": 1,
+        "types": [
+          5110
+        ],
+        "ammo_delta": {
+          "clip": 1,
+          "reserve": 0
+        },
+        "native_damage": true,
+        "tracked_damage": true,
+        "marker_sequence_changed": true,
+        "tracked_converted": [
+          {
+            "native_fallback": false,
+            "marker": {
+              "enabled": 1,
+              "frozen": 0,
+              "valid": 1,
+              "generation": 1,
+              "expected_generation": 1,
+              "owner": 2148828112,
+              "input": 2148829136,
+              "object": 2148831680,
+              "id": 0,
+              "geometry_fnv32": 2235889849,
+              "sequence": 96,
+              "cycle": 10557022656,
+              "shot_cycle": 10558133589,
+              "vertex_count": 30,
+              "grip": [
+                76.5555555556,
+                100.777777778,
+                287.888888889
+              ],
+              "tip": [
+                81.8,
+                110.6,
+                447.6
+              ],
+              "axis_base": [
+                80,
+                109.428571429,
+                367.857142857
+              ],
+              "axis_kind": "barrel-rings",
+              "event_pc": 0,
+              "event_caller": 2147780824,
+              "event_shot": 2148697136,
+              "captures": 136,
+              "replay_rejected": 0,
+              "p2_rejected": 136,
+              "loads": 1,
+              "load_cycle": 10399810251,
+              "aimed": 1,
+              "aimed_position": [
+                -98332356,
+                18358174,
+                17128011
+              ],
+              "aimed_angles": [
+                -2516984,
+                133317755,
+                0
+              ],
+              "code_valid": 1,
+              "family_eligible": 1,
+              "weapon_control": [
+                3848,
+                327396,
+                4067090,
+                4290904348,
+                3848,
+                56,
+                4294967197,
+                84
+              ]
+            },
+            "marker_generation": 1,
+            "marker_sequence": 96,
+            "marker_age_cycles": 1110933,
+            "origin_error_world_units": 3.3033189765774296e-06,
+            "first_motion_origin_error_world_units": 0.0,
+            "axis_cosine": 0.9999996403530853,
+            "target_ray_miss_world_units": 0.4314873636629659,
+            "first_motion": {
+              "stores": [
+                {
+                  "seq": 60304,
+                  "addr": "0x00128650",
+                  "old": "0xFA23913C",
+                  "new": "0xFA30813C",
+                  "ra": "0x8006F048",
+                  "func": "0x000029CC",
+                  "pc": "0x8006F0CC",
+                  "cpu_pc": "0x8006F048",
+                  "sp": "0x801FFDF0",
+                  "v0": "0xFA30813C",
+                  "v1": "0x000CF000",
+                  "a0": "0x00000000",
+                  "a1": "0x801FFDD0",
+                  "a2": "0x00000000",
+                  "a3": "0x07F2447B",
+                  "t0": "0x00000000",
+                  "t1": "0x00000000",
+                  "s0": "0x80128430",
+                  "s1": "0x800A0000",
+                  "s2": "0x00000000",
+                  "s3": "0x800A0000",
+                  "s4": "0x00000000",
+                  "s5": "0x800B0000",
+                  "frame": 293,
+                  "w": 4,
+                  "dma_ch": -1
+                },
+                {
+                  "seq": 60305,
+                  "addr": "0x00128654",
+                  "old": "0x01181F9E",
+                  "new": "0x013CAF9E",
+                  "ra": "0x8006F048",
+                  "func": "0x000029CC",
+                  "pc": "0x8006F0E8",
+                  "cpu_pc": "0x8006F048",
+                  "sp": "0x801FFDF0",
+                  "v0": "0x013CAF9E",
+                  "v1": "0x00249000",
+                  "a0": "0x00000000",
+                  "a1": "0x801FFDD0",
+                  "a2": "0x00000000",
+                  "a3": "0x07F2447B",
+                  "t0": "0x00000000",
+                  "t1": "0x00000000",
+                  "s0": "0x80128430",
+                  "s1": "0x800A0000",
+                  "s2": "0x00000000",
+                  "s3": "0x800A0000",
+                  "s4": "0x00000000",
+                  "s5": "0x800B0000",
+                  "frame": 293,
+                  "w": 4,
+                  "dma_ch": -1
+                },
+                {
+                  "seq": 60306,
+                  "addr": "0x00128658",
+                  "old": "0x01055A4B",
+                  "new": "0xFEA25A4B",
+                  "ra": "0x8006F048",
+                  "func": "0x000029CC",
+                  "pc": "0x8006F104",
+                  "cpu_pc": "0x8006F048",
+                  "sp": "0x801FFDF0",
+                  "v0": "0xFEA25A4B",
+                  "v1": "0xFD9D0000",
+                  "a0": "0x00000000",
+                  "a1": "0x801FFDD0",
+                  "a2": "0x00000000",
+                  "a3": "0x07F2447B",
+                  "t0": "0x00000000",
+                  "t1": "0x00000000",
+                  "s0": "0x80128430",
+                  "s1": "0x800A0000",
+                  "s2": "0x00000000",
+                  "s3": "0x800A0000",
+                  "s4": "0x00000000",
+                  "s5": "0x800B0000",
+                  "frame": 293,
+                  "w": 4,
+                  "dma_ch": -1
+                }
+              ],
+              "delta_world": [
+                12.9375,
+                36.5625,
+                -611.0
+              ],
+              "direction": [
+                0.021131774850007903,
+                0.059720233271761465,
+                -0.9979914537858805
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "empty-fire",
+        "shots": 0,
+        "types": [],
+        "ammo_delta": {
+          "clip": 0,
+          "reserve": 0
+        },
+        "native_damage": false,
+        "tracked_damage": false,
+        "marker_sequence_changed": true,
+        "tracked_converted": []
+      },
+      {
+        "name": "switch-during-reload",
+        "shots": 0,
+        "types": [],
+        "ammo_delta": {
+          "clip": -25,
+          "reserve": -280
+        },
+        "native_damage": false,
+        "tracked_damage": false,
+        "marker_sequence_changed": true,
+        "tracked_converted": []
+      },
+      {
+        "name": "scoped-fire",
+        "shots": 2,
+        "types": [
+          5110,
+          5110
+        ],
+        "ammo_delta": {
+          "clip": 2,
+          "reserve": 0
+        },
+        "native_damage": true,
+        "tracked_damage": true,
+        "marker_sequence_changed": true,
+        "tracked_converted": [
+          {
+            "native_fallback": true,
+            "fallback_reason": "family-guard-rejected-scoped-shot",
+            "marker": {
+              "enabled": 1,
+              "frozen": 0,
+              "valid": 0,
+              "generation": 4,
+              "expected_generation": 4,
+              "owner": 2148822208,
+              "input": 2148823232,
+              "object": 2148825776,
+              "id": 5,
+              "geometry_fnv32": 2675628580,
+              "sequence": 534,
+              "cycle": 18689510296,
+              "shot_cycle": 18725839552,
+              "vertex_count": 37,
+              "grip": [
+                71.03125,
+                114.875,
+                266.9375
+              ],
+              "tip": [
+                65.8,
+                90.8,
+                764.2
+              ],
+              "axis_base": [
+                71.03125,
+                114.875,
+                266.9375
+              ],
+              "axis_kind": "provisional-grip-tip",
+              "event_pc": 0,
+              "event_caller": 2147780824,
+              "event_shot": 2148723552,
+              "captures": 859,
+              "replay_rejected": 0,
+              "p2_rejected": 614,
+              "loads": 4,
+              "load_cycle": 18540288929,
+              "aimed": 0,
+              "aimed_position": [
+                0,
+                0,
+                0
+              ],
+              "aimed_angles": [
+                0,
+                0,
+                0
+              ],
+              "code_valid": 1,
+              "family_eligible": 0,
+              "weapon_control": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          },
+          {
+            "native_fallback": true,
+            "fallback_reason": "family-guard-rejected-scoped-shot",
+            "marker": {
+              "enabled": 1,
+              "frozen": 0,
+              "valid": 0,
+              "generation": 4,
+              "expected_generation": 4,
+              "owner": 2148822208,
+              "input": 2148823232,
+              "object": 2148825776,
+              "id": 5,
+              "geometry_fnv32": 2675628580,
+              "sequence": 534,
+              "cycle": 18689510296,
+              "shot_cycle": 18749634682,
+              "vertex_count": 37,
+              "grip": [
+                71.03125,
+                114.875,
+                266.9375
+              ],
+              "tip": [
+                65.8,
+                90.8,
+                764.2
+              ],
+              "axis_base": [
+                71.03125,
+                114.875,
+                266.9375
+              ],
+              "axis_kind": "provisional-grip-tip",
+              "event_pc": 0,
+              "event_caller": 2147780824,
+              "event_shot": 2148723552,
+              "captures": 859,
+              "replay_rejected": 0,
+              "p2_rejected": 614,
+              "loads": 4,
+              "load_cycle": 18540288929,
+              "aimed": 0,
+              "aimed_position": [
+                0,
+                0,
+                0
+              ],
+              "aimed_angles": [
+                0,
+                0,
+                0
+              ],
+              "code_valid": 1,
+              "family_eligible": 0,
+              "weapon_control": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "recoil-followup",
+        "shots": 1,
+        "types": [
+          5110
+        ],
+        "ammo_delta": {
+          "clip": 1,
+          "reserve": 0
+        },
+        "native_damage": false,
+        "tracked_damage": false,
+        "marker_sequence_changed": true,
+        "tracked_converted": [
+          {
+            "native_fallback": false,
+            "marker": {
+              "enabled": 1,
+              "frozen": 0,
+              "valid": 1,
+              "generation": 5,
+              "expected_generation": 5,
+              "owner": 2148828112,
+              "input": 2148829136,
+              "object": 2148831680,
+              "id": 0,
+              "geometry_fnv32": 2235889849,
+              "sequence": 913,
+              "cycle": 10487585645,
+              "shot_cycle": 10488706325,
+              "vertex_count": 30,
+              "grip": [
+                76.5555555556,
+                100.777777778,
+                287.888888889
+              ],
+              "tip": [
+                81.8,
+                110.6,
+                447.6
+              ],
+              "axis_base": [
+                80,
+                109.428571429,
+                367.857142857
+              ],
+              "axis_kind": "barrel-rings",
+              "event_pc": 0,
+              "event_caller": 2147780824,
+              "event_shot": 2148697136,
+              "captures": 953,
+              "replay_rejected": 0,
+              "p2_rejected": 709,
+              "loads": 5,
+              "load_cycle": 10399810251,
+              "aimed": 1,
+              "aimed_position": [
+                -105623535,
+                25396109,
+                26598953
+              ],
+              "aimed_angles": [
+                -60421696,
+                165564312,
+                0
+              ],
+              "code_valid": 1,
+              "family_eligible": 1,
+              "weapon_control": [
+                3858,
+                5570473,
+                243205149,
+                4051697688,
+                1053,
+                41,
+                4294967008,
+                375
+              ]
+            },
+            "marker_generation": 5,
+            "marker_sequence": 913,
+            "marker_age_cycles": 1120680,
+            "origin_error_world_units": 4.656301825889386e-06,
+            "first_motion_origin_error_world_units": 0.0,
+            "axis_cosine": 0.9999999977667312,
+            "target_ray_miss_world_units": null,
+            "first_motion": {
+              "stores": [
+                {
+                  "seq": 15711,
+                  "addr": "0x00128650",
+                  "old": "0xF9B45011",
+                  "new": "0xF96F9011",
+                  "ra": "0x8006F048",
+                  "func": "0x000029CC",
+                  "pc": "0x8006F0CC",
+                  "cpu_pc": "0x8006F048",
+                  "sp": "0x801FFDF0",
+                  "v0": "0xF96F9011",
+                  "v1": "0xFFBB4000",
+                  "a0": "0x00000000",
+                  "a1": "0x801FFDD0",
+                  "a2": "0x00000000",
+                  "a3": "0x09DE4F98",
+                  "t0": "0x00000000",
+                  "t1": "0x00000000",
+                  "s0": "0x80128430",
+                  "s1": "0x800A0000",
+                  "s2": "0x00000000",
+                  "s3": "0x800A0000",
+                  "s4": "0x00000000",
+                  "s5": "0x800B0000",
+                  "frame": 2475,
+                  "w": 4,
+                  "dma_ch": -1
+                },
+                {
+                  "seq": 15712,
+                  "addr": "0x00128654",
+                  "old": "0x0183838D",
+                  "new": "0x040E738D",
+                  "ra": "0x8006F048",
+                  "func": "0x000029CC",
+                  "pc": "0x8006F0E8",
+                  "cpu_pc": "0x8006F048",
+                  "sp": "0x801FFDF0",
+                  "v0": "0x040E738D",
+                  "v1": "0x028AF000",
+                  "a0": "0x00000000",
+                  "a1": "0x801FFDD0",
+                  "a2": "0x00000000",
+                  "a3": "0x09DE4F98",
+                  "t0": "0x00000000",
+                  "t1": "0x00000000",
+                  "s0": "0x80128430",
+                  "s1": "0x800A0000",
+                  "s2": "0x00000000",
+                  "s3": "0x800A0000",
+                  "s4": "0x00000000",
+                  "s5": "0x800B0000",
+                  "frame": 2475,
+                  "w": 4,
+                  "dma_ch": -1
+                },
+                {
+                  "seq": 15713,
+                  "addr": "0x00128658",
+                  "old": "0x0195DE29",
+                  "new": "0x01498E29",
+                  "ra": "0x8006F048",
+                  "func": "0x000029CC",
+                  "pc": "0x8006F104",
+                  "cpu_pc": "0x8006F048",
+                  "sp": "0x801FFDF0",
+                  "v0": "0x01498E29",
+                  "v1": "0xFFB3B000",
+                  "a0": "0x00000000",
+                  "a1": "0x801FFDD0",
+                  "a2": "0x00000000",
+                  "a3": "0x09DE4F98",
+                  "t0": "0x00000000",
+                  "t1": "0x00000000",
+                  "s0": "0x80128430",
+                  "s1": "0x800A0000",
+                  "s2": "0x00000000",
+                  "s3": "0x800A0000",
+                  "s4": "0x00000000",
+                  "s5": "0x800B0000",
+                  "frame": 2475,
+                  "w": 4,
+                  "dma_ch": -1
+                }
+              ],
+              "delta_world": [
+                -68.75,
+                650.9375,
+                -76.3125
+              ],
+              "direction": [
+                -0.10432608104052735,
+                0.9877783036700839,
+                -0.11580194995498536
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "load-recovery",
+        "shots": 1,
+        "types": [
+          5110
+        ],
+        "ammo_delta": {
+          "clip": 1,
+          "reserve": 0
+        },
+        "native_damage": true,
+        "tracked_damage": true,
+        "marker_sequence_changed": true,
+        "tracked_converted": [
+          {
+            "native_fallback": false,
+            "marker": {
+              "enabled": 1,
+              "frozen": 0,
+              "valid": 1,
+              "generation": 7,
+              "expected_generation": 7,
+              "owner": 2148828112,
+              "input": 2148829136,
+              "object": 2148831680,
+              "id": 0,
+              "geometry_fnv32": 2235889849,
+              "sequence": 1022,
+              "cycle": 10438452944,
+              "shot_cycle": 10439560659,
+              "vertex_count": 30,
+              "grip": [
+                76.5555555556,
+                100.777777778,
+                287.888888889
+              ],
+              "tip": [
+                81.8,
+                110.6,
+                447.6
+              ],
+              "axis_base": [
+                80,
+                109.428571429,
+                367.857142857
+              ],
+              "axis_kind": "barrel-rings",
+              "event_pc": 0,
+              "event_caller": 2147780824,
+              "event_shot": 2148598720,
+              "captures": 1064,
+              "replay_rejected": 0,
+              "p2_rejected": 819,
+              "loads": 7,
+              "load_cycle": 10399810251,
+              "aimed": 1,
+              "aimed_position": [
+                -98303268,
+                18358176,
+                17127792
+              ],
+              "aimed_angles": [
+                -2517027,
+                133328780,
+                0
+              ],
+              "code_valid": 1,
+              "family_eligible": 1,
+              "weapon_control": [
+                3848,
+                327397,
+                4067090,
+                4290904347,
+                3848,
+                55,
+                4294967197,
+                84
+              ]
+            },
+            "marker_generation": 7,
+            "marker_sequence": 1022,
+            "marker_age_cycles": 1107715,
+            "origin_error_world_units": 7.351811063927016e-06,
+            "first_motion_origin_error_world_units": 0.0,
+            "axis_cosine": 0.999999499022453,
+            "target_ray_miss_world_units": 0.5077172920228893,
+            "first_motion": {
+              "stores": [
+                {
+                  "seq": 162594,
+                  "addr": "0x001105E0",
+                  "old": "0xFA2402DC",
+                  "new": "0xFA3232DC",
+                  "ra": "0x8006F048",
+                  "func": "0x000029CC",
+                  "pc": "0x8006F0CC",
+                  "cpu_pc": "0x8006F048",
+                  "sp": "0x801FFDF0",
+                  "v0": "0xFA3232DC",
+                  "v1": "0x000E3000",
+                  "a0": "0x00000000",
+                  "a1": "0x801FFDD0",
+                  "a2": "0x00000000",
+                  "a3": "0x07F26F8C",
+                  "t0": "0x00000000",
+                  "t1": "0x00000000",
+                  "s0": "0x801103C0",
+                  "s1": "0x800A0000",
+                  "s2": "0x00000000",
+                  "s3": "0x800A0000",
+                  "s4": "0x00000000",
+                  "s5": "0x800B0000",
+                  "frame": 2796,
+                  "w": 4,
+                  "dma_ch": -1
+                },
+                {
+                  "seq": 162595,
+                  "addr": "0x001105E4",
+                  "old": "0x01181FA0",
+                  "new": "0x01400FA0",
+                  "ra": "0x8006F048",
+                  "func": "0x000029CC",
+                  "pc": "0x8006F0E8",
+                  "cpu_pc": "0x8006F048",
+                  "sp": "0x801FFDF0",
+                  "v0": "0x01400FA0",
+                  "v1": "0x0027F000",
+                  "a0": "0x00000000",
+                  "a1": "0x801FFDD0",
+                  "a2": "0x00000000",
+                  "a3": "0x07F26F8C",
+                  "t0": "0x00000000",
+                  "t1": "0x00000000",
+                  "s0": "0x801103C0",
+                  "s1": "0x800A0000",
+                  "s2": "0x00000000",
+                  "s3": "0x800A0000",
+                  "s4": "0x00000000",
+                  "s5": "0x800B0000",
+                  "frame": 2796,
+                  "w": 4,
+                  "dma_ch": -1
+                },
+                {
+                  "seq": 162596,
+                  "addr": "0x001105E8",
+                  "old": "0x01055970",
+                  "new": "0xFE6A7970",
+                  "ra": "0x8006F048",
+                  "func": "0x000029CC",
+                  "pc": "0x8006F104",
+                  "cpu_pc": "0x8006F048",
+                  "sp": "0x801FFDF0",
+                  "v0": "0xFE6A7970",
+                  "v1": "0xFD652000",
+                  "a0": "0x00000000",
+                  "a1": "0x801FFDD0",
+                  "a2": "0x00000000",
+                  "a3": "0x07F26F8C",
+                  "t0": "0x00000000",
+                  "t1": "0x00000000",
+                  "s0": "0x801103C0",
+                  "s1": "0x800A0000",
+                  "s2": "0x00000000",
+                  "s3": "0x800A0000",
+                  "s4": "0x00000000",
+                  "s5": "0x800B0000",
+                  "frame": 2796,
+                  "w": 4,
+                  "dma_ch": -1
+                }
+              ],
+              "delta_world": [
+                14.1875,
+                39.9375,
+                -666.875
+              ],
+              "direction": [
+                0.02123176601383671,
+                0.05976695366890598,
+                -0.9979865346591968
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "problems": []
+  },
+  "limits": [
+    "The all-13 damage and shot-type gate is the linked W5.3e desktop receipt, not a repeated 13-ID pair.",
+    "Synthetic copied MP fixtures only; live NPC/SP and operator barrel-to-impact acceptance remain open.",
+    "The scoped-fire control may remain native when the hidden scope model cannot expose a fresh animated marker."
+  ],
+  "raw_receipt": "analysis\\vr-baseline\\combat-states-final-20261027d\\receipt.json",
+  "raw_receipt_sha256": "0cc16752cf2c67526fe06d4a5855872187d86e5691a4f5e45d5db113d567ca7e"
+}

@@ -1,0 +1,63 @@
+{
+  "schema": 1,
+  "kind": "W5.4 combat-state desktop validation",
+  "complete": true,
+  "date": "2026-10-27",
+  "headset_used": false,
+  "proof": {
+    "path": "vr/proof/weapon-combat-states-receipt.json",
+    "sha256": "5c4220a1820e9970dc9a3c74eda0219cd37bdd5071766f16dfb8392347e61168",
+    "complete": true,
+    "cases": 6,
+    "problems": 0
+  },
+  "evidence": "docs/vr/COMBAT_STATE_EVIDENCE.md",
+  "executable_sha256": "8d0db60626bd516e91a342f648b22579e07b7ad3339ac104637774e1a71bc20d",
+  "runtime_revision": "af3a99b5759f64ee20e02f8b91bc7861ba21ed7f",
+  "worktree_scope": "W5.4 Python probe, tests and documentation; no runtime C source change",
+  "build": {
+    "PSX_DEBUG_TOOLS": "ON",
+    "MOHU_VR_DIAGNOSTICS": "ON",
+    "PSX_OPENXR": "ON",
+    "configuration": "Release"
+  },
+  "sources": {
+    "vr/underground/vr_diagnostic.c": "3c72017b751f29604de048dd05943d63010be51283a2adea62a4643b91733519",
+    "vr/underground/shot.h": "187f60f31ceb37648a0ad30fbd452c97d34c8e617ee923eb92f6f11fe2642446",
+    "vr/underground/weapon.c": "dd532791ff07592f085744c73b916554b48922b871c4ead44d3ced7106fde0c1",
+    "vr/underground/weapon.h": "7fd3b161dbd7f5fe5006313d64c6332fb5af89b9f344ade3dbfe80c2c82844c9",
+    "vr/underground/weapon_markers.h": "3034de39aab417bd7d1169b2160b70ad16b9c4851f9f63322cf64edc7eb1a0ca",
+    "vr/underground/weapon_marker_groups.inc": "102083c1e0c09471bba610bc6b8165fc7c28a124043889e0232b25e8b22e344a",
+    "vr/tools/probe_weapon_combat_states.py": "8de1714b0197c2b810070e56e7fb56cdbb0ad9e7c0e5634ff6d713b62390661e",
+    "vr/tests/test_weapon_combat_states.py": "5794c643692bc6c680c969e3cf72be7563e4000dbd461383ef48960e76fdf920"
+  },
+  "dependencies": {
+    "vr/proof/weapon-preservation-receipt.json": "24834d92b565b2ca3d6f47e4ed8cb74b993c3df32698ba7ae0d2f33a84913938",
+    "vr/proof/weapon-shot-families-receipt.json": "f30951a07258817cc41f1fabead7305d6340ef7748a393967c5f940a714e860f"
+  },
+  "validations": [
+    {
+      "command": "python -m unittest discover -s vr/tests -p 'test_*.py'",
+      "tests": 92,
+      "status": "pass"
+    },
+    {
+      "command": "python vr/tools/check_weapon_preservation.py analysis/vr-baseline/weapon-preservation-native-final-20261027 analysis/vr-baseline/weapon-preservation-tracked-final-20261027c",
+      "status": "pass"
+    },
+    {
+      "check": "W5.4 proof source and pair receipt hashes",
+      "status": "pass"
+    },
+    {
+      "check": "owned process exit codes, source saves and preferences",
+      "status": "pass"
+    }
+  ],
+  "limits": [
+    "Synthetic copied MP fixtures only.",
+    "Scoped fire remains a native fallback because the hidden model has no fresh candidate marker.",
+    "Live NPC/SP, physical attachment and operator barrel-to-impact alignment remain open.",
+    "No rebuild is claimed because no runtime C source changed for W5.4."
+  ]
+}

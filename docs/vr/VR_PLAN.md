@@ -8,7 +8,7 @@ scope has evidence; it never implies broader headset or gameplay acceptance.
 Historical design and prior attempts belong in
 [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md) and the evidence documents.
 
-**NEXT DESKTOP TASK: W5.4 - combat-state matrix.**
+**W5.4 DESKTOP TASK COMPLETE. NEXT GATE: operator barrel-to-impact confirmation.**
 W4 native P38 mapping and W5.1 opt-in rendered-muzzle shot conversion are now
 complete. The corrected P38 candidate retains its barrel, follows the measured
 grip, and passes native P2 damage/miss and tracking-fallback controls without a
@@ -22,7 +22,10 @@ initial constructors plus three final projectile-origin stages, with real
 load/stale/recovery/P2 controls. W5.3d now converts all 13 IDs under an explicit
 default-OFF candidate: P38, MP40 and six-pellet shotgun controls pass with native
 motion and real damage; grenade, petrol and rocket use complete guarded final-
-origin stages. W5.3e now passes paired preservation and P2 impact.
+origin stages. W5.3e now passes paired preservation and P2 impact. W5.4 now
+passes the reload-tail, empty-fire, switch-during-reload, scoped-fire,
+recoil-follow-up and load-recovery desktop pair. Scoped fire remains a recorded
+native fallback because the hidden model exposes no fresh candidate marker.
 W5.2 remains open because no compatible copied live NPC/SP
 fixture and independently measured SP binding was available. W3.3/W3.5 remain
 physical acceptance gates. Current evidence and exact continuation:
@@ -382,6 +385,14 @@ acceptance is required for physical claims and normal default promotion.
   13-ID native damage gate; recompute the rendered tip after native animation
   rather than reusing an idle fixed point; operator confirms barrel-to-impact
   alignment.
+- [x] W5.4a. Pass the paired desktop state matrix for reload tail, empty fire,
+  switch during reload, scoped fire on ID 5, recoil follow-up and load recovery.
+  The scoped samples remain a recorded native fallback. Evidence:
+  `weapon-combat-states-receipt.json`.
+- [x] W5.4b. Bind the all-13 native type/damage gate to the accepted W5.3e
+  receipt rather than repeating its conversion matrix.
+- [ ] W5.4c. Exercise the broader death transition and obtain operator
+  confirmation of physical barrel-to-impact alignment.
 
 W5.3 desktop substeps:
 
