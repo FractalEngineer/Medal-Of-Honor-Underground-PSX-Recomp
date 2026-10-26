@@ -8,7 +8,7 @@ scope has evidence; it never implies broader headset or gameplay acceptance.
 Historical design and prior attempts belong in
 [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md) and the evidence documents.
 
-**NEXT DESKTOP TASK: W5.3d - opt-in family-aware shot conversion.**
+**NEXT DESKTOP TASK: W5.3e - matched native/tracked preservation.**
 W4 native P38 mapping and W5.1 opt-in rendered-muzzle shot conversion are now
 complete. The corrected P38 candidate retains its barrel, follows the measured
 grip, and passes native P2 damage/miss and tracking-fallback controls without a
@@ -19,7 +19,10 @@ shotgun pellets. The native lifecycle probe now follows construction through
 motion and linked damage, providing the preservation baseline for conversion.
 W5.3c now passes canonical animated marker acquisition and timing at all 13
 initial constructors plus three final projectile-origin stages, with real
-load/stale/recovery/P2 controls. No non-P38 shot write is enabled.
+load/stale/recovery/P2 controls. W5.3d now converts all 13 IDs under an explicit
+default-OFF candidate: P38, MP40 and six-pellet shotgun controls pass with native
+motion and real damage; grenade, petrol and rocket use complete guarded final-
+origin stages. W5.3e owns paired preservation/impact acceptance.
 W5.2 remains open because no compatible copied live NPC/SP
 fixture and independently measured SP binding was available. W3.3/W3.5 remain
 physical acceptance gates. Current evidence and exact continuation:
@@ -374,8 +377,8 @@ acceptance is required for physical claims and normal default promotion.
   spread/pellets, rocket collision and both native throw/release/flight paths.
   All 13 IDs and five native types are now mapped through shared caller
   `0x800488D8`; one trigger produced six shotgun constructions. Family-aware
-  conversion and tracked preservation/impact acceptance remain open. The
-  checked substeps below are native measurements, not all-weapon override passes.
+  conversion passes on desktop; tracked preservation/impact acceptance remains
+  open in W5.3e.
 - [ ] W5.4. Complete reload/empty/switch/scoped/recoil/death/load matrix and the
   13-ID native damage gate; recompute the rendered tip after native animation
   rather than reusing an idle fixed point; operator confirms barrel-to-impact
@@ -397,10 +400,12 @@ W5.3 desktop substeps (the parent stays open until tracked controls pass):
   post-animation output, owns its vertex copies, rejects eye replay/P2 drawing,
   and guards source identity, load generation and guest-cycle freshness. All 13
   IDs / 18 constructor events / three final-origin stages and six controls pass.
-- [ ] W5.3d. Add opt-in family-aware conversion that uses those moving markers
+- [x] W5.3d. Add opt-in family-aware conversion that uses those moving markers
   and preserves native pellet generation, speeds, gravity, release and collision.
   Compare first integration origin as well as basis pose; no blind 13-ID guard
-  expansion or guessed compensation for native position changes.
+  expansion or guessed compensation for native position changes. Normal firearms
+  convert at the common basis; grenade/petrol/rocket convert at complete guarded
+  final-origin stages. Evidence: `weapon-aim-all-receipt.json`.
 - [ ] W5.3e. Pass paired native/tracked per-family controls, including release,
   sustained fire/object reuse, shotgun spread, rocket/bolt/throw motion, native
   ammo/damage, tracking fallback, ownership and replay rejection.
@@ -428,7 +433,18 @@ W5.3c is complete within the contract in
 [marker receipt](../../vr/proof/weapon-canonical-markers-receipt.json) and
 [build/regressions](../../vr/proof/weapon-canonical-markers-build-receipt.json).
 Maximum sampled constructor age is 1,128,671 cycles, below the declared
-2,257,920 limit. No family-aware override or moving-shot alignment is claimed.
+2,257,920 limit.
+
+W5.3d is complete for synthetic desktop controls:
+[all-family receipt](../../vr/proof/weapon-aim-all-receipt.json) and
+[build/regressions](../../vr/proof/weapon-aim-all-build-receipt.json). All 13
+IDs converted 23 shot events with zero candidate fallbacks. P38, MP40 and all
+expected firearm/bolt/rocket controls produced linked native P2 damage. The
+shotgun retained six pellets, 5.1817 degrees maximum native spread and a
+378.89 world-unit/frame speed range. Grenade, petrol and rocket passed through
+their complete function-hash-guarded final-origin seams. The legacy P38 flag
+still passed 14 controls when the all-family flag was absent. Moving-shot
+alignment, matched impact and physical acceptance remain open.
 
 Exit gate: real native trajectory/collision/damage agrees with the rendered
 barrel within a stated tested tolerance. Native hits alone are insufficient.

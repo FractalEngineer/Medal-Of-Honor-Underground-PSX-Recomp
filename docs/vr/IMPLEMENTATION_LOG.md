@@ -1250,3 +1250,37 @@ source saves, defaults, historical receipts and unrelated `.commandcode/`.
   [build/affected regressions](../../vr/proof/weapon-canonical-markers-build-receipt.json).
   W5.3c is checked. Parent W5.3 and W5.3d/e remain open; no non-P38 override or
   moving barrel/impact acceptance is claimed.
+
+## 2026-10-27 - W5.3d animated-marker family conversion
+
+- Added `mohu_vr_weapon_animated_shot()` as the shared immutable-tip/declared-
+  axis conversion. The historical P38 muzzle helper is now a compatibility
+  wrapper, with degenerate-axis, nonfinite and atomic-output fixtures.
+- Added default-OFF `MOHU_VR_WEAPON_AIM`, requiring `PSX_VR_WEAPON_POSE=1` and
+  `MOHU_VR_WEAPON_CALIBRATED=1`. The existing natural P1 marker producer and
+  quantized render affine are reused. When the new flag is absent, the old P38
+  path and its MP40-negative/fallback behavior remain unchanged.
+- Normal firearms and the crossbow write at the common basis entry. Grenade,
+  petrol and rocket are deferred to `80084CDC`, `80084B74` and `80048AAC`,
+  guarded by the complete 1,872-byte release-flow hash or the existing
+  constructor hash plus exact stage words and live register/type/ownership
+  checks. Native initialization, release, RNG, spread, speed, gravity,
+  collision, ammo and damage continue.
+- Added `probe_weapon_aim.py`, which solves each synthetic hand pose from that
+  profile's animated axis, verifies the immutable per-shot marker conversion,
+  traces first motion and linked P2 damage, and records shotgun spread/speed.
+- All 13 IDs / 23 events passed with zero shot fallbacks. P38, MP40 and every
+  expected firearm/bolt/rocket produced linked native damage. Shotgun retained
+  six pellets, 5.1817 degrees maximum spread and 378.89 world-units/frame speed
+  range. Grenade and petrol passed guarded stage/motion controls without damage
+  claims. The long stereo run reproduced the petrol discard burst, then
+  published pair 2,777 after failure 841 with zero rollback mismatches.
+- Validation: 81 Python tests; strict C/syntax fixtures; 64-case MP matrix;
+  lateral, native fire/recovery, flat pose and SP zero; 14 legacy P38 controls
+  with 684 pairs and zero failures; 33-case shared parity; inherited-flag
+  OpenXR-off flat startup. Debug tools were restored OFF after testing.
+- Evidence: [all-family receipt](../../vr/proof/weapon-aim-all-receipt.json) and
+  [build/regressions](../../vr/proof/weapon-aim-all-build-receipt.json). The
+  tested executable is `4a17ce5c...`, and the final debug-off executable is
+  `e2103a9f...`. W5.3d is checked. W5.3e paired preservation/impact, W5.2 NPC/SP
+  and physical W3.3/W3.5 remain open.

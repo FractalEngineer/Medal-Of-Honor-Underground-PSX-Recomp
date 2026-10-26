@@ -1,0 +1,103 @@
+{
+  "schema": 1,
+  "kind": "W5.3d animated-marker shot conversion build and regression receipt",
+  "complete": true,
+  "headset_used": false,
+  "revision": "0a55509014249d5c0930fca10334d7755da53508",
+  "framework_pin": "555e1eabccc59b9b6ff0d9fca48aca783513dc86",
+  "tested_executable_sha256": "4a17ce5cdc83533bb23f8c85ccdcd9834289ec7c8a32e45d162c291099c74d00",
+  "final_release_executable_sha256": "e2103a9ffb3696188b8cb405978bde587d17ea63cead196bddb007b029eb9fa1",
+  "sources": {
+    "vr/underground/vr_diagnostic.c": "3c72017b751f29604de048dd05943d63010be51283a2adea62a4643b91733519",
+    "vr/underground/shot.h": "187f60f31ceb37648a0ad30fbd452c97d34c8e617ee923eb92f6f11fe2642446",
+    "vr/underground/weapon.c": "dd532791ff07592f085744c73b916554b48922b871c4ead44d3ced7106fde0c1",
+    "vr/underground/weapon.h": "7fd3b161dbd7f5fe5006313d64c6332fb5af89b9f344ade3dbfe80c2c82844c9",
+    "vr/tools/probe_weapon_aim.py": "d33109dc22ff5c6549544fed3f18722a287178f22e4f0d558db29879dfc448e9",
+    "RunFlat.bat": "f9f084bf0d9f6c6073cf3c6d25b6487b5493b9e274aa45c1b291afdd61a27bb6"
+  },
+  "validation": {
+    "python_tests": 81,
+    "c_fixtures": [
+      "MP view ownership/mode/projection/pointer guards",
+      "native shot family and P38/family ownership/freshness guards",
+      "canonical marker means, selections, ownership, load and freshness",
+      "calibrated grip/muzzle and animated-tip conversion",
+      "weapon profile, node guard, tracked affine and stale fallback",
+      "strict diagnostic syntax"
+    ],
+    "all_family_weapons": 13,
+    "converted_shot_events": 23,
+    "shot_tracking_fallbacks": 0,
+    "shotgun": {
+      "pellets": 6,
+      "maximum_pair_angle_degrees": 5.18165084858427,
+      "minimum_pair_angle_degrees": 0.380071509331977,
+      "speed_range_world_units_per_frame": 378.889992082914
+    },
+    "native_damage_required_ids_pass": true,
+    "projectile_origin_stage_controls": {
+      "ids": [10, 15, 13],
+      "complete_code_guards": true
+    },
+    "legacy_p38": {
+      "cases": 14,
+      "stereo_pairs": 684,
+      "render_verify_mismatch": 0,
+      "stereo_failed": 0
+    },
+    "mp_matrix": {
+      "slot_appearances": 16,
+      "cases": 64,
+      "complete": true
+    },
+    "mp_lateral": true,
+    "mp_native_fire_recovery": true,
+    "flat_pose_cycle": true,
+    "sp_zero": true,
+    "shared_geometry_parity_cases": 33,
+    "flat_startup_with_inherited_flags": true,
+    "all_family_stereo_recovery": {
+      "discarded_eye_attempts": 235,
+      "last_failed_attempt": 841,
+      "last_published_pair": 2777,
+      "verify_mismatch": 0,
+      "recovered": true
+    },
+    "source_saves_unchanged": true,
+    "preferences_unchanged": true,
+    "remaining_game_pids": []
+  },
+  "builds": {
+    "tested": {
+      "configuration": "Release",
+      "PSX_OPENXR": "ON",
+      "MOHU_VR_DIAGNOSTICS": "ON",
+      "PSX_DEBUG_TOOLS": "ON"
+    },
+    "final": {
+      "configuration": "Release",
+      "PSX_OPENXR": "ON",
+      "MOHU_VR_DIAGNOSTICS": "ON",
+      "PSX_DEBUG_TOOLS": "OFF"
+    },
+    "flat": {
+      "configuration": "Release",
+      "PSX_OPENXR": "OFF",
+      "MOHU_VR_DIAGNOSTICS": "OFF",
+      "PSX_DEBUG_TOOLS": "OFF"
+    }
+  },
+  "receipts": {
+    "all_family": "vr/proof/weapon-aim-all-receipt.json",
+    "canonical_markers": "vr/proof/weapon-canonical-markers-receipt.json",
+    "projectile_origins": "vr/proof/weapon-projectile-origin-writers-receipt.json",
+    "shared_parity": "analysis/reference-parity/weapon-aim-20261027/baseline.json",
+    "legacy_p38": "analysis/vr-baseline/weapon-aim-p38-legacy-20261027/receipt.json",
+    "flat_startup": "analysis/vr-baseline/weapon-aim-flat-fallback-20261027/receipt.json"
+  },
+  "limits": [
+    "Synthetic desktop controls do not establish physical grip/scale or headset acceptance.",
+    "Non-P38 axes remain provisional exclusions from measured physical bore alignment.",
+    "W5.3e still owns paired native/tracked release, sustained-fire, impact and preservation tolerance acceptance."
+  ]
+}

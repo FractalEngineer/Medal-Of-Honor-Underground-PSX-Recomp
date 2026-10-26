@@ -339,6 +339,7 @@ static double g_weapon_delta_translation[3];
 static bool g_weapon_absolute;
 static bool g_p38_calibrated, g_p38_aim;
 static bool g_weapon_calibrated_all;
+static bool g_weapon_aim;
 static uint32_t g_p38_masked_vertices[2], g_p38_gun_vertices[2];
 static volatile int32_t g_weapon_control_x;
 static volatile int32_t g_weapon_control_yaw_mdeg;
@@ -1964,6 +1965,7 @@ typedef struct {
     uint32_t control[8], basis[8];
     int32_t position[3], angles[3];
     int eligible;
+    int family_eligible;
     int aimed;
     uint32_t weapon_control[8];
     int32_t aimed_position[3], aimed_angles[3];
@@ -2034,9 +2036,92 @@ static bool vr_p38_model_valid(uint32_t owner) {
         guest_range_fnv1a(faces,MOHU_VR_P38_TRIANGLE_STREAM_BYTES) == MOHU_VR_P38_TRIANGLE_STREAM_FNV;
 }
 
-/* Read-only final-origin stages measured in the object-address writer probe.
- * Observe grenade after its second basis call, petrol after its optional clamp,
- * and rocket after its constructor adjustment. These are not override guards. */
+static bool vr_weapon_aim_pose(
+    uint32_t shot, uint32_t owner, uint32_t weapon, uint64_t cycle,
+    uint32_t control[8], int32_t position[3], int32_t angles[3]) {
+    if (!g_weapon_aim || !g_weapon_calibrated_all || g_stereo_active ||
+        psx_mod_read_word(shot + 8u) != mohu_vr_shot_type(weapon)) {
+        return false;
+    }
+    MohuVrMarkerKey current;
+    if (!vr_marker_model_key(&current) || current.id != weapon ||
+        current.owner != owner ||
+        !mohu_vr_marker_usable(&g_marker_cache, &current, cycle) ||
+        !g_shot_camera_valid || g_shot_camera_owner != owner ||
+        g_shot_camera_cycle > cycle ||
+        cycle - g_shot_camera_cycle > MOHU_VR_SHOT_MAX_CAMERA_AGE) {
+        return false;
+    }
+    const MohuVrWeaponProfile* profile = mohu_vr_weapon_profile_find(weapon);
+    const MohuVrMarkerGroup* group = mohu_vr_marker_group(weapon);
+    if (!profile || !profile->calibration || !group) return false;
+
+    PSXModOpenXRHands hands = {0};
+    hands.struct_size = sizeof hands;
+    double rotation[9], translation[3], camera[9], camera_inverse[9];
+    uint32_t affine[8] = {0};
+    for (unsigned i = 0; i < 9u; ++i) {
+        camera[i] =
+            (int16_t)(g_shot_camera[i / 2u] >> ((i & 1u) * 16u)) / 4096.0;
+    }
+    const double camera_translation[3] = {
+        (int32_t)g_shot_camera[5], (int32_t)g_shot_camera[6],
+        (int32_t)g_shot_camera[7],
+    };
+    const double axis[3] = {
+        g_marker_cache.points[1][0] - g_marker_cache.points[2][0],
+        g_marker_cache.points[1][1] - g_marker_cache.points[2][1],
+        g_marker_cache.points[1][2] - g_marker_cache.points[2][2],
+    };
+    if (g_weapon_force_tracking_loss || !psx_mod_openxr_hands(&hands) ||
+        !mohu_vr_weapon_track_delta(
+            &hands, g_openxr_units_per_meter, rotation, translation) ||
+        !mohu_vr_weapon_calibrated_control(
+            affine, rotation, translation, g_openxr_units_per_meter,
+            profile->calibration) ||
+        !mohu_vr_laser_inverse(camera, camera_inverse) ||
+        !mohu_vr_weapon_animated_shot(
+            affine, g_marker_cache.points[1], axis, camera_inverse,
+            camera_translation, position, angles)) {
+        return false;
+    }
+    if (control) memcpy(control, affine, sizeof affine);
+    return true;
+}
+
+static void vr_write_shot_pose(
+    uint32_t shot, const int32_t position[3], const int32_t angles[3]) {
+    for (unsigned i = 0; i < 3u; ++i) {
+        psx_mod_write_word(shot + 0x220u + 4u * i, (uint32_t)position[i]);
+        psx_mod_write_word(shot + 0x23Cu + 4u * i, (uint32_t)angles[i]);
+    }
+}
+
+static bool vr_shot_stage_code_valid(unsigned id, uint32_t address) {
+    if (id == 10u) {
+        return address == MOHU_VR_SHOT_GRENADE_STAGE &&
+            psx_mod_read_word(address) == MOHU_VR_SHOT_GRENADE_STAGE_WORD &&
+            guest_range_fnv1a(MOHU_VR_SHOT_THROW_FLOW,
+                MOHU_VR_SHOT_THROW_FLOW_SIZE) == MOHU_VR_SHOT_THROW_FLOW_FNV;
+    }
+    if (id == 15u) {
+        return address == MOHU_VR_SHOT_PETROL_STAGE &&
+            psx_mod_read_word(address) == MOHU_VR_SHOT_PETROL_STAGE_WORD &&
+            guest_range_fnv1a(MOHU_VR_SHOT_THROW_FLOW,
+                MOHU_VR_SHOT_THROW_FLOW_SIZE) == MOHU_VR_SHOT_THROW_FLOW_FNV;
+    }
+    if (id == 13u) {
+        return address == MOHU_VR_SHOT_ROCKET_STAGE &&
+            psx_mod_read_word(address) == MOHU_VR_SHOT_ROCKET_STAGE_WORD &&
+            guest_range_fnv1a(MOHU_VR_SHOT_CONSTRUCTOR,
+                MOHU_VR_SHOT_CONSTRUCTOR_SIZE) == MOHU_VR_SHOT_CONSTRUCTOR_FNV;
+    }
+    return false;
+}
+
+/* Final-origin stages measured in the object-address writer probe. Candidate
+ * writes happen before native initialization/history reads and require the
+ * complete measured code unit at each stage. */
 static void vr_marker_origin_event(CPUState* cpu, uint32_t address) {
     if (!g_marker_enabled || !cpu || g_stereo_active) return;
     const unsigned id=address==0x80084CDCu ? 10u : address==0x80084B74u ? 15u : 13u;
@@ -2053,26 +2138,46 @@ static void vr_marker_origin_event(CPUState* cpu, uint32_t address) {
     }
     MohuVrShotSample* s=&g_marker_origins[g_marker_origin_count++];
     memset(s,0,sizeof *s);
+    s->guard.p1=owner;
     s->guard.shot=object; s->guard.owner=owner; s->guard.weapon_id=id;
     s->guard.type=mohu_vr_shot_type(id); s->guard.argument=address;
     s->guard.caller=cpu->gpr[31];
     s->guard.cycle=psx_cycle_count;
+    s->guard.camera_owner=g_shot_camera_owner;
+    s->guard.camera_cycle=g_shot_camera_cycle;
+    s->guard.camera_valid=g_shot_camera_valid;
+    s->guard.code_valid=vr_shot_stage_code_valid(id,address);
+    MohuVrMpInputState mp;
+    s->guard.multiplayer=vr_mp_input_snapshot(&mp);
     s->marker=g_marker_cache;
     s->marker_generation=g_marker_generation;
     s->marker_valid=mohu_vr_marker_usable(&s->marker,&current,psx_cycle_count);
+    memcpy(s->control,g_shot_camera,sizeof s->control);
+    if (g_weapon_aim) {
+        if (s->guard.multiplayer && s->guard.code_valid &&
+            vr_weapon_aim_pose(object,owner,id,psx_cycle_count,
+                s->weapon_control,s->aimed_position,s->aimed_angles)) {
+            vr_write_shot_pose(object,s->aimed_position,s->aimed_angles);
+            s->aimed=1;
+            psx_mod_counter_add("mohu.vr.shot.weapon.aimed",1);
+        } else {
+            psx_mod_counter_add("mohu.vr.shot.weapon.tracking_fallback",1);
+        }
+    }
 }
 
 static void vr_shot_basis_entry(CPUState* cpu, uint32_t address) {
     (void)address;
-    if ((!g_shot_capture && !g_p38_aim && !g_marker_enabled) || !cpu) return;
+    if ((!g_shot_capture && !g_p38_aim && !g_weapon_aim &&
+         !g_marker_enabled) || !cpu) return;
     if (g_stereo_active) {
         psx_mod_counter_add("mohu.vr.shot.replay_blocked", 1);
         return;
     }
     /*
-     * W5.3 family discovery records every actor-valid basis candidate while
-     * capture is enabled. The override path remains restricted to the exact
-     * measured P38 caller below; unknown families can only be sampled.
+     * Family discovery records every actor-valid basis candidate while capture
+     * is enabled. The W5.3d consumer is separately opt-in and still restricted
+     * to the measured caller, P1 ownership and known native type.
      */
     if ((!g_shot_capture && cpu->gpr[31] != MOHU_VR_SHOT_BASIS_RA) ||
         !mohu_vr_mp_actor_address(cpu->gpr[4]) ||
@@ -2110,6 +2215,7 @@ static void vr_shot_basis_entry(CPUState* cpu, uint32_t address) {
         psx_mod_read_word(MOHU_VR_SHOT_BASIS_CALL) == MOHU_VR_SHOT_BASIS_CALL_WORD &&
         psx_mod_read_word(MOHU_VR_SHOT_BASIS_CALL + 4u) == 0xAE200048u;
     s->eligible = mohu_vr_shot_guard(&s->guard);
+    s->family_eligible = mohu_vr_family_shot_guard(&s->guard);
     memcpy(s->control, g_shot_camera, sizeof s->control);
     for (unsigned i = 0; i < 3u; ++i) {
         s->position[i] = (int32_t)psx_mod_read_word(s->guard.argument + 0x220u + 4u*i);
@@ -2123,7 +2229,24 @@ static void vr_shot_basis_entry(CPUState* cpu, uint32_t address) {
             s->guard.owner==s->guard.p1 && vr_marker_model_key(&current) &&
             mohu_vr_marker_usable(&s->marker,&current,psx_cycle_count);
     }
-    if (g_p38_aim && s->eligible && vr_p38_model_valid(s->guard.owner)) {
+    if (g_weapon_aim && s->family_eligible) {
+        if (s->guard.type == MOHU_VR_SHOT_TYPE_THROWN ||
+            s->guard.type == MOHU_VR_SHOT_TYPE_ROCKET) {
+            psx_mod_counter_add("mohu.vr.shot.weapon.deferred", 1);
+        } else if (vr_weapon_aim_pose(
+                s->guard.shot, s->guard.owner, s->guard.weapon_id,
+                s->guard.cycle, s->weapon_control, s->aimed_position,
+                s->aimed_angles)) {
+            vr_write_shot_pose(
+                s->guard.shot, s->aimed_position, s->aimed_angles);
+            s->aimed = 1;
+            psx_mod_counter_add("mohu.vr.shot.weapon.aimed", 1);
+        } else {
+            psx_mod_counter_add(
+                "mohu.vr.shot.weapon.tracking_fallback", 1);
+        }
+    } else if (!g_weapon_aim && g_p38_aim && s->eligible &&
+               vr_p38_model_valid(s->guard.owner)) {
         PSXModOpenXRHands hands = {0};
         hands.struct_size = sizeof hands;
         double r[9], t[3], camera[9], inverse[9], tr[3];
@@ -2146,6 +2269,8 @@ static void vr_shot_basis_entry(CPUState* cpu, uint32_t address) {
             s->aimed = 1;
             psx_mod_counter_add("mohu.vr.shot.p38.aimed", 1);
         } else psx_mod_counter_add("mohu.vr.shot.p38.tracking_fallback", 1);
+    } else if (g_weapon_aim) {
+        psx_mod_counter_add("mohu.vr.shot.weapon.native", 1);
     }
     if (g_shot_capture && g_shot_count < sizeof g_shot_samples / sizeof g_shot_samples[0])
         g_shot_samples[g_shot_count++] = *s;
@@ -2157,8 +2282,10 @@ static int vr_shot_command(const char* args, char* reply, int cap) {
     if (!args || !reply || cap < 1) return -1;
     if (!strcmp(args, "render")) {
         (void)snprintf(reply,(size_t)cap,
-            "{\"calibrated\":%d,\"aim\":%d,\"masked_arm_vertices\":[%u,%u],\"visible_gun_vertices\":[%u,%u]}",
-            g_p38_calibrated,g_p38_aim,g_p38_masked_vertices[0],g_p38_masked_vertices[1],
+            "{\"calibrated\":%d,\"aim\":%d,\"weapon_aim\":%d,"
+            "\"masked_arm_vertices\":[%u,%u],\"visible_gun_vertices\":[%u,%u]}",
+            g_p38_calibrated,g_p38_aim,g_weapon_aim,
+            g_p38_masked_vertices[0],g_p38_masked_vertices[1],
             g_p38_gun_vertices[0],g_p38_gun_vertices[1]);
         return 1;
     }
@@ -2193,14 +2320,16 @@ static int vr_shot_command(const char* args, char* reply, int cap) {
         const MohuVrShotGuard* q = &s->guard;
         const int used = snprintf(reply, (size_t)cap,
             "{\"shot\":%u,\"owner\":%u,\"p1\":%u,\"type\":%u,\"weapon\":%u,"
-            "\"caller\":%u,\"argument\":%u,\"eligible\":%d,\"code_valid\":%d,"
+            "\"caller\":%u,\"argument\":%u,\"eligible\":%d,\"family_eligible\":%d,"
+            "\"code_valid\":%d,"
             "\"camera_valid\":%d,\"camera_owner\":%u,\"cycle\":%llu,\"camera_cycle\":%llu,"
             "\"position\":[%d,%d,%d],\"angles\":[%d,%d,%d],\"aimed\":%d,"
             "\"aimed_position\":[%d,%d,%d],\"aimed_angles\":[%d,%d,%d],"
             "\"weapon_control\":[%u,%u,%u,%u,%u,%u,%u,%u],"
             "\"camera\":[%u,%u,%u,%u,%u,%u,%u,%u]}",
             q->shot,q->owner,q->p1,q->type,q->weapon_id,q->caller,q->argument,
-            s->eligible,q->code_valid,q->camera_valid,q->camera_owner,
+            s->eligible,s->family_eligible,q->code_valid,q->camera_valid,
+            q->camera_owner,
             (unsigned long long)q->cycle,(unsigned long long)q->camera_cycle,
             s->position[0],s->position[1],s->position[2],
             s->angles[0],s->angles[1],s->angles[2],
@@ -2268,7 +2397,11 @@ static int vr_marker_command(const char* args, char* reply, int cap) {
         "\"sequence\":%u,\"cycle\":%llu,\"shot_cycle\":%llu,\"vertex_count\":%u,"
         "\"grip\":[%.12g,%.12g,%.12g],\"tip\":[%.12g,%.12g,%.12g],\"axis_base\":[%.12g,%.12g,%.12g],"
         "\"axis_kind\":\"%s\",\"event_pc\":%u,\"event_caller\":%u,\"event_shot\":%u,\"captures\":%u,\"replay_rejected\":%u,\"p2_rejected\":%u,"
-        "\"loads\":%u,\"load_cycle\":%llu}",
+        "\"loads\":%u,\"load_cycle\":%llu,"
+        "\"aimed\":%d,\"aimed_position\":[%d,%d,%d],"
+        "\"aimed_angles\":[%d,%d,%d],"
+        "\"code_valid\":%d,\"family_eligible\":%d,"
+        "\"weapon_control\":[%u,%u,%u,%u,%u,%u,%u,%u]}",
         g_marker_enabled,g_marker_frozen,valid,s->key.generation,
         shot ? event->marker_generation : g_marker_generation,
         s->key.owner,s->key.input,s->key.object,s->key.id,s->key.geometry_fnv32,
@@ -2277,7 +2410,24 @@ static int vr_marker_command(const char* args, char* reply, int cap) {
         s->points[2][0],s->points[2][1],s->points[2][2],s->key.id==0 ? "barrel-rings" : "provisional-grip-tip",
         origin ? event->guard.argument : 0u,shot ? event->guard.caller : 0u,shot ? event->guard.shot : 0u,
         g_marker_captures,g_marker_replay_rejected,g_marker_p2_rejected,g_marker_loads,
-        (unsigned long long)g_marker_load_cycle);
+        (unsigned long long)g_marker_load_cycle,
+        shot ? event->aimed : 0,
+        shot ? event->aimed_position[0] : 0,
+        shot ? event->aimed_position[1] : 0,
+        shot ? event->aimed_position[2] : 0,
+        shot ? event->aimed_angles[0] : 0,
+        shot ? event->aimed_angles[1] : 0,
+        shot ? event->aimed_angles[2] : 0,
+        shot ? event->guard.code_valid : 0,
+        shot ? event->family_eligible : 0,
+        shot ? event->weapon_control[0] : 0,
+        shot ? event->weapon_control[1] : 0,
+        shot ? event->weapon_control[2] : 0,
+        shot ? event->weapon_control[3] : 0,
+        shot ? event->weapon_control[4] : 0,
+        shot ? event->weapon_control[5] : 0,
+        shot ? event->weapon_control[6] : 0,
+        shot ? event->weapon_control[7] : 0);
     return used>=0 && used<cap ? 1 : -1;
 }
 
@@ -3772,6 +3922,14 @@ static void vr_diagnostic_activate(void) {
     const char* calibrated_all = getenv("MOHU_VR_WEAPON_CALIBRATED");
     g_weapon_calibrated_all = g_weapon_pose && calibrated_all &&
         *calibrated_all && *calibrated_all != '0';
+    const char* weapon_aim = getenv("MOHU_VR_WEAPON_AIM");
+    g_weapon_aim = g_weapon_calibrated_all && weapon_aim &&
+        *weapon_aim && *weapon_aim != '0';
+    if (g_weapon_aim) {
+        g_marker_enabled = true;
+        g_marker_cache.valid = 0;
+        g_marker_pending = false;
+    }
     const char* gun_only = getenv("MOHU_VR_WEAPON_GUN_ONLY");
     g_weapon_gun_only_all = g_weapon_calibrated_all ||
         (gun_only && *gun_only && *gun_only != '0');

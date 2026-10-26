@@ -72,6 +72,7 @@ def main():
         MOHU_VR_P38_AIM="1",
         MOHU_VR_WEAPON_GUN_ONLY="1",
         MOHU_VR_WEAPON_CALIBRATED="1",
+        MOHU_VR_WEAPON_AIM="1",
     )
     stdout_path = output / "stdout.log"
     stderr_path = output / "stderr.log"

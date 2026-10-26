@@ -45,7 +45,9 @@ int main(void) {
         .replay=0, .camera_valid=1, .code_valid=1, .multiplayer=1,
     };
     assert(mohu_vr_shot_guard(&good));
+    assert(mohu_vr_family_shot_guard(&good));
     assert(!mohu_vr_shot_guard(NULL));
+    assert(!mohu_vr_family_shot_guard(NULL));
 #define REJECT(field, value) do { MohuVrShotGuard s=good; s.field=value; \
     assert(!mohu_vr_shot_guard(&s)); } while (0)
     REJECT(owner, 0x80145810u); /* live P2 contract */
@@ -64,6 +66,21 @@ int main(void) {
     REJECT(code_valid, 0);
     REJECT(multiplayer, 0);
 #undef REJECT
+    const uint32_t ids[] = {0u,1u,4u,5u,8u,9u,10u,12u,13u,14u,15u,16u,17u};
+    for (unsigned i=0; i<sizeof ids/sizeof ids[0]; ++i) {
+        MohuVrShotGuard family=good;
+        family.weapon_id=ids[i];
+        family.type=mohu_vr_shot_type(ids[i]);
+        assert(mohu_vr_family_shot_guard(&family));
+    }
+    MohuVrShotGuard bad_family=good;
+    bad_family.weapon_id=1u;
+    bad_family.type=MOHU_VR_SHOT_TYPE_SINGLE;
+    assert(!mohu_vr_family_shot_guard(&bad_family));
+    bad_family=good;
+    bad_family.weapon_id=2u;
+    bad_family.type=0u;
+    assert(!mohu_vr_family_shot_guard(&bad_family));
     puts("native shot families and ownership/freshness: PASS (17 controls)");
     return 0;
 }

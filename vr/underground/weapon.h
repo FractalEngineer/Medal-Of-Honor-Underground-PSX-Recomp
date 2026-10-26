@@ -166,5 +166,13 @@ int mohu_vr_weapon_muzzle_shot(
     const uint32_t control[8], const MohuVrWeaponCalibration* calibration,
     const double camera_inverse[9], const double camera_translation[3],
     int32_t position[3], int32_t angles[3]);
+/* Convert one immutable animated marker tip and model-space axis through the
+ * same quantized render affine. The static P38 muzzle helper above is the
+ * compatibility wrapper for this path. */
+int mohu_vr_weapon_animated_shot(
+    const uint32_t control[8], const double tip[3],
+    const double axis[3], const double camera_inverse[9],
+    const double camera_translation[3], int32_t position[3],
+    int32_t angles[3]);
 
 #endif

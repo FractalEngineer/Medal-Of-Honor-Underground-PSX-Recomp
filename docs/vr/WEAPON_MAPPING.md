@@ -95,8 +95,9 @@ All 13 IDs enter the native basis builder `0x8006C8B0` with caller
 
 The shotgun constructed six native pellets in one trigger window. Read
 [SHOT_FAMILY_EVIDENCE.md](SHOT_FAMILY_EVIDENCE.md) before changing family
-behavior. Only P38 has a shot-pose override; family preservation and moving
-muzzle origins remain open.
+behavior. The separate default-OFF W5.3d `MOHU_VR_WEAPON_AIM` candidate now
+converts all five families from animated markers; paired preservation and
+impact remain open in W5.3e.
 
 ## P1-only multiplayer eye replay
 
@@ -487,11 +488,12 @@ interactive gameplay or new OpenXR acceptance.
 ```text
 Read HANDOFF.md, VR_PLAN.md, WEAPON_COMPLETE_PROFILES.md,
 P38_NATIVE_AIM_EVIDENCE.md and SHOT_FAMILY_EVIDENCE.md.
-Continue W5.3 family-aware shot conversion without a headset. W3.4 is complete;
+Continue W5.3e paired native/tracked preservation without a headset. W3.4 is complete;
 all 13 IDs require a moving marker recomputed after native animation. W4 P38
-mapping, W5.1 and the read-only all-ID family map pass. Do not repeat them or
+mapping, W5.1 and W5.3d all-family conversion pass. Do not repeat them or
 the all-ID topology, capture, calibration, 64-case controls or animation matrix.
-Only P38 has the accepted rendered-muzzle native-shot override. W5.2 remains
+Use the W5.3d all-family receipt and compare native/candidate family traces.
+W5.2 remains
 open until a compatible live NPC/SP fixture and guarded SP binding exist.
 Preserve native fallback, normal defaults, source saves, historical proofs and
 unrelated work. Leave physical W3.3/W3.5 open. No commit/push unless asked.

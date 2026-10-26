@@ -269,12 +269,15 @@ int mohu_vr_weapon_calibrated_control(
     return 1;
 }
 
-int mohu_vr_weapon_muzzle_shot(
-    const uint32_t control[8], const MohuVrWeaponCalibration* c,
-    const double inverse[9], const double camera_translation[3],
-    int32_t position[3], int32_t angles[3]) {
-    if (!control || !c || !inverse || !camera_translation || !position || !angles)
+int mohu_vr_weapon_animated_shot(
+    const uint32_t control[8], const double tip[3],
+    const double declared_axis[3], const double inverse[9],
+    const double camera_translation[3], int32_t position[3],
+    int32_t angles[3]) {
+    if (!control || !tip || !declared_axis || !inverse ||
+        !camera_translation || !position || !angles) {
         return 0;
+    }
     double muzzle[3], axis[3];
     for (unsigned row=0; row<3; ++row) {
         muzzle[row] = (int32_t)control[5+row];
@@ -282,8 +285,8 @@ int mohu_vr_weapon_muzzle_shot(
         for (unsigned col=0; col<3; ++col) {
             const unsigned i=row*3+col;
             const double r = (int16_t)(control[i/2] >> ((i&1u)*16u)) / 4096.0;
-            muzzle[row] += r * c->muzzle[col];
-            axis[row] += r * c->forward[col];
+            muzzle[row] += r * tip[col];
+            axis[row] += r * declared_axis[col];
         }
     }
     int32_t p[3];
@@ -313,6 +316,15 @@ int mohu_vr_weapon_muzzle_shot(
     memcpy(position, p, sizeof p);
     memcpy(angles, a, sizeof a);
     return 1;
+}
+
+int mohu_vr_weapon_muzzle_shot(
+    const uint32_t control[8], const MohuVrWeaponCalibration* c,
+    const double inverse[9], const double camera_translation[3],
+    int32_t position[3], int32_t angles[3]) {
+    return c ? mohu_vr_weapon_animated_shot(
+        control, c->muzzle, c->forward, inverse, camera_translation,
+        position, angles) : 0;
 }
 
 size_t mohu_vr_weapon_profile_count(void) {

@@ -15,6 +15,15 @@
 #define MOHU_VR_SHOT_BASIS_CALL 0x800488D0u
 #define MOHU_VR_SHOT_BASIS_CALL_WORD 0x0C01B22Cu
 #define MOHU_VR_SHOT_BASIS_RA 0x800488D8u
+#define MOHU_VR_SHOT_THROW_FLOW 0x8008468Cu
+#define MOHU_VR_SHOT_THROW_FLOW_SIZE 0x750u
+#define MOHU_VR_SHOT_THROW_FLOW_FNV 0xE77DB501u
+#define MOHU_VR_SHOT_GRENADE_STAGE 0x80084CDCu
+#define MOHU_VR_SHOT_GRENADE_STAGE_WORD 0x0C0145EDu
+#define MOHU_VR_SHOT_PETROL_STAGE 0x80084B74u
+#define MOHU_VR_SHOT_PETROL_STAGE_WORD 0xAE2B026Cu
+#define MOHU_VR_SHOT_ROCKET_STAGE 0x80048AACu
+#define MOHU_VR_SHOT_ROCKET_STAGE_WORD 0x8E090220u
 #define MOHU_VR_SHOT_P38_TYPE 0x13F6u
 #define MOHU_VR_SHOT_TYPE_ROCKET 0x13F1u
 #define MOHU_VR_SHOT_TYPE_THROWN 0x13F3u
@@ -80,6 +89,25 @@ static inline int mohu_vr_shot_guard(const MohuVrShotGuard* s) {
            s->argument == s->shot && s->type == MOHU_VR_SHOT_P38_TYPE &&
            s->cycle >= s->camera_cycle &&
            s->cycle - s->camera_cycle <= MOHU_VR_SHOT_MAX_CAMERA_AGE;
+}
+
+/* W5.3d candidate guard. Unlike the retained P38 guard above, this admits only
+ * the 13 measured IDs and requires the live native type to match that ID. */
+static inline int mohu_vr_family_shot_guard(const MohuVrShotGuard* s) {
+    if (!s || !s->multiplayer || s->replay || !s->code_valid ||
+        !s->camera_valid || s->caller != MOHU_VR_SHOT_BASIS_RA ||
+        !mohu_vr_mp_actor_address(s->p1) || s->owner != s->p1 ||
+        s->camera_owner != s->p1 || s->owner_class != 1u ||
+        s->owner_input != s->owner + 0x400u ||
+        s->weapon_id >= 256u ||
+        !mohu_vr_mp_actor_address(s->shot) || s->shot == s->owner ||
+        s->argument != s->shot ||
+        s->type != mohu_vr_shot_type(s->weapon_id) ||
+        s->cycle < s->camera_cycle ||
+        s->cycle - s->camera_cycle > MOHU_VR_SHOT_MAX_CAMERA_AGE) {
+        return 0;
+    }
+    return s->type != 0u;
 }
 
 #endif

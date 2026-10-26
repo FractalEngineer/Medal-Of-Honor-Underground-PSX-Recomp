@@ -131,7 +131,7 @@ calibration/aim flags remain OFF; the framework pin remains `555e1eab` on
 `vr/shared-development`. No framework, generated C, game config, source save,
 preference, headset or XR runtime change is part of this experiment.
 
-## Next: W5.3d
+## Next: W5.3d (completed)
 
 Use the measured source/timing contract when implementing an explicit default-OFF
 family candidate. Keep the existing P38 flag/unsupported-ID controls intact.
@@ -150,3 +150,10 @@ baselines. Matched native/tracked preservation and impact tests are W5.3e.
 Fresh cached geometry alone does not prove new shot conversion, same-event
 render/shot agreement, moving bore alignment, zoom-fire, thrown explosion
 damage, NPC/SP isolation or physical acceptance. Those gates remain explicit.
+
+W5.3d subsequently passed the synthetic desktop matrix. See
+[the all-family receipt](../../vr/proof/weapon-aim-all-receipt.json) and
+[build/regressions](../../vr/proof/weapon-aim-all-build-receipt.json). All 13
+IDs / 23 converted events used the immutable animated marker with zero shot
+fallbacks. The current next desktop task is W5.3e paired native/tracked
+preservation and impact; physical and NPC/SP gates remain open.

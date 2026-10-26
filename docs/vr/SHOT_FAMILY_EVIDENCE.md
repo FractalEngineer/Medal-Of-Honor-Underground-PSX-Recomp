@@ -46,7 +46,7 @@ The diagnostic capture command now has two read-only modes:
 - `mohu.vr.shot start` retains the existing broad MP/P2 capture behavior.
 - `mohu.vr.shot start-p1` filters capture to the live P1 owner for family work.
 
-`MOHU_VR_P38_AIM` remains restricted to P38 ID 0, type `0x13F6`, caller
+This historical map left `MOHU_VR_P38_AIM` restricted to P38 ID 0, type `0x13F6`, caller
 `0x800488D8`, P1 ownership and a fresh canonical camera. No non-P38 shot pose is
 written.
 
@@ -61,6 +61,10 @@ written.
 - Moving-marker origins are still required for every ID. The P38 candidate's
   existing static/recovered tests do not certify moving-shot alignment.
 - No live NPC/SP fixture or SP shot/camera binding is claimed.
+
+W5.3d later added the separate default-OFF `MOHU_VR_WEAPON_AIM` candidate and
+passed all 13 IDs on desktop. This document remains the native family map; it is
+not the all-family candidate receipt.
 
 ## Reproduction
 

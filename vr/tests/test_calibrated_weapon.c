@@ -65,6 +65,27 @@ int main(void) {
     assert(abs(angles[0])<65536);
     assert(abs(angles[1]-1024*65536)<65536);
     assert(angles[2]==0);
+    int32_t marker_position[3],marker_angles[3];
+    assert(mohu_vr_weapon_animated_shot(rotated,cal->muzzle,cal->forward,
+        inv,tr,marker_position,marker_angles));
+    assert(!memcmp(position,&marker_position,sizeof position));
+    assert(!memcmp(angles,&marker_angles,sizeof angles));
+    const double animated_tip[3]={cal->muzzle[0],cal->muzzle[1],cal->muzzle[2]+32};
+    const double animated_axis[3]={cal->forward[0],cal->forward[1],
+                                   cal->forward[2]};
+    assert(mohu_vr_weapon_animated_shot(rotated,animated_tip,animated_axis,
+        inv,tr,marker_position,marker_angles));
+    assert(marker_position[2]>position[2]);
+    int32_t marker_saved[3];
+    memcpy(marker_saved,marker_position,sizeof marker_saved);
+    const double zero_axis[3]={0,0,0};
+    assert(!mohu_vr_weapon_animated_shot(rotated,animated_tip,zero_axis,
+        inv,tr,marker_position,marker_angles));
+    assert(!memcmp(marker_saved,marker_position,sizeof marker_saved));
+    const double bad_tip[3]={NAN,0,0};
+    assert(!mohu_vr_weapon_animated_shot(rotated,bad_tip,animated_axis,
+        inv,tr,marker_position,marker_angles));
+    assert(!memcmp(marker_saved,marker_position,sizeof marker_saved));
     uint32_t original[8];memcpy(original,c,sizeof c);
     double bad[9]={NAN,0,0,0,1,0,0,0,1};
     assert(!mohu_vr_weapon_calibrated_control(c,bad,hand,1000,cal));
