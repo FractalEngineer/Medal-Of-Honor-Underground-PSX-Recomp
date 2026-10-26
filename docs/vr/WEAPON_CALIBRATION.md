@@ -268,3 +268,40 @@ W3.2-W3.5.
 Evidence: [calibration receipt](../../vr/proof/weapon-p38-calibration-receipt.json),
 [atomic capture](../../vr/proof/weapon-p38-calibration-capture-receipt.json) and
 [build receipt](../../vr/proof/weapon-p38-calibration-build-receipt.json).
+
+## W3.2 comparison preparation
+
+`vr/tools/probe_p38_headset.py` runs native and right-hand-tracked P38 cases
+from separate fresh copies of root multiplayer slot 1. It enables movement and
+the accepted MP controller path, disables the diagnostic laser for the visual
+comparison, checks the exact P38 mesh, samples live XR hands and input, and
+never sets headset acceptance.
+
+The two-mode synthetic transport check passed with 29 Python tests. The
+Quest 3/VDXR run then completed 30 seconds native and 30 seconds tracked with
+live focused hand samples throughout both modes. Stereo pairs and XR
+submissions advanced continuously, the final sample had zero failures, source
+saves/settings stayed unchanged, and the owned processes closed. The run used
+movement and the MP controller path; it did not claim operator acceptance.
+
+Evidence: [headset comparison](../../vr/proof/weapon-p38-headset-receipt.json)
+and [complete build receipt](../../vr/proof/weapon-p38-headset-complete-build-receipt.json).
+The earlier [synthetic dry run](../../vr/proof/weapon-p38-headset-dry-run-receipt.json)
+and [blocked launcher/sandbox attempt](../../vr/proof/weapon-p38-headset-blocked-receipt.json)
+remain historical.
+
+### Initial W3.3 operator findings
+
+The headset transport and tracking samples passed, but operator acceptance did
+not:
+
+- gameplay controls were not delivered;
+- a noise filter remained active;
+- weapon motion behaved like rotation around a pivot instead of following the
+  right controller;
+- the attached native arms remained visible.
+
+The gun-only target is explicit: hide the attached arm geometry while preserving
+the complete P38 model and native animations. Do not call the tracked hand path
+accepted until the controller-following behavior and input path are reproduced
+and corrected.

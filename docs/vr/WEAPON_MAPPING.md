@@ -310,7 +310,9 @@ All native nodes, arms, animation, recoil, reload, and muzzle handling remain
 inputs to the projection. W3.1 measured P38 model-local grip and muzzle markers,
 but no gun-only mesh extraction or physical grip acceptance is claimed. The
 current renderer still rotates around its W1 camera-space diagnostic pivot;
-nothing consumes the new calibration data yet.
+nothing consumes the new calibration data yet. Operator review now requires
+removing the attached arm geometry and carrying the gun from the measured grip
+rather than rotating around that diagnostic pivot.
 
 GTE TR registers use **integer camera units**. The older affine-composition
 helper packs translation in Q12. `mohu_vr_weapon_compose_gte_control` cancels that
@@ -395,9 +397,11 @@ selector are removed. The session-start diff is retained locally under
 
 ## Final build state
 
-The one `build-release` is restored to Release/OpenGL/OpenXR/PGXP with
-`PSX_DEBUG_TOOLS=OFF` at SHA-256
-`9eca8fa68894867908a569a6b6268b644be3dbe33677ac423f8224e07e034e6a`.
+The active `build-release` is Release/OpenGL/OpenXR/PGXP with
+`PSX_DEBUG_TOOLS=ON` while W3.3 work is active, at SHA-256
+`93499991a088650770b12a4a4bc3d01433e36b479087efbd96a84da072486db2`.
+The last debug-off release was
+`bae4f60f02f4bf70ce86ea85d201674df7157bafa4d6bea20c3086972f2ab71d`.
 The OpenXR-off flat executable is
 `18f4328bc9085f0a6a2322f940eea63516f07e93698010853cf3474cad94636c`.
 Flat startup is inert even with weapon-pose, flat-probe, synthetic-pose, MP
@@ -442,8 +446,9 @@ interactive gameplay or new OpenXR acceptance.
 
 ```text
 Read HANDOFF.md, VR_PLAN.md, REFERENCE_REUSE_AUDIT.md and the P38 calibration
-sources. Continue with W3.2 only: prepare a bounded, movement-enabled P38
-headset comparison from a fresh copied slot-1 fixture. Preserve W1-W3.1
+sources. W3.2 completed on Quest 3/VDXR with native and tracked 30-second passes.
+Continue with W3.3 only: prepare and record the P38 operator acceptance matrix.
+Preserve W1-W3.2
 behavior, native thresholds, calibration and unrelated work.
 
 Keep source saves and historical receipts unchanged. Retain the new comparison

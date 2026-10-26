@@ -978,9 +978,39 @@
   [atomic capture](../../vr/proof/weapon-p38-calibration-capture-receipt.json)
   and [build/regressions](../../vr/proof/weapon-p38-calibration-build-receipt.json).
 
+### W3.2 P38 headset comparison preparation
+
+- Added `vr/tools/probe_p38_headset.py`, a bounded native/tracked P38 runner that
+  copies root multiplayer slot 1 separately for each mode, enables movement and
+  the accepted MP controller path, validates the 354-face/14-node P38 model,
+  samples real hands and input, and keeps headset acceptance false.
+- The two-second synthetic comparison passed both modes. The runner preserved
+  source-save and settings hashes, sampled stereo pairs in both modes, and
+  drained all owned processes. The local suite is now 29 passing Python tests.
+- The first real-headset attempt loaded the copied P38 successfully but OpenXR
+  did not begin stereo. The runtime recorded `OpenXR begin failed; flat native
+  surface remains active`, and the probe recorded `OpenXR did not submit stereo
+  frames`; this became evidence of the sandbox-account/runtime boundary, not a
+  headset failure.
+- Rerunning the probe under the interactive `titan` account with the VDXR
+  manifest succeeded for separate 30-second native and tracked passes. Each
+  mode produced 30/30 focused live-hand samples; stereo pairs advanced
+  `21->522` and `19->515`, XR submissions advanced `18->525` and `15->518`,
+  and the final sample reported zero failures.
+- Kept `PSX_DEBUG_TOOLS=ON` during active W3.2/W3.3 work per operator direction.
+  Retained the [successful headset proof](../../vr/proof/weapon-p38-headset-receipt.json)
+  and [complete build receipt](../../vr/proof/weapon-p38-headset-complete-build-receipt.json).
+  The synthetic dry run and blocked sandbox-account attempt remain historical.
+- Operator review of the completed headset transport rejected W3.3: controls
+  were absent, a noise filter was visible, hand motion rotated around a pivot
+  instead of following the controller, and arms remained attached to the gun.
+  The transport result remains valid, but acceptance stays open.
+
 ## Next work
 
-**W3.2: bounded, movement-enabled P38 headset comparison.** W3.1 is complete;
-C1-C4 and prior feature gates remain closed. Prepare the comparison from a
-fresh copied slot-1 fixture, preserving the source save and settings. Physical
-size/attachment and per-weapon acceptance remain W3.3/W3.5.
+**W3.3: P38 operator acceptance.** W3.2 is complete; C1-C4 and prior feature
+gates remain closed. Prepare and record the explicit matrix for size/attachment,
+head/hand independence, recoil, reload/switch, wall proximity, recenter,
+focus/loss recovery and both eyes. First reconcile the observed missing controls,
+noise filter and pivot-like hand motion. W3.4 must render the gun alone without
+attached arms. Physical per-weapon acceptance remains W3.3/W3.5.

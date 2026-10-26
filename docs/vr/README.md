@@ -7,9 +7,10 @@ executable and live overlay content.
 
 ## Start here
 
-1. [HANDOFF.md](HANDOFF.md) is the current execution contract: W3.2 bounded,
-   movement-enabled P38 headset comparison; fixtures, commands and recovery
-   rules.
+1. [HANDOFF.md](HANDOFF.md) is the current execution contract: W3.3 P38
+   operator acceptance; fixtures, commands and recovery rules.
+   Headset verification must run under the interactive Windows account; see
+   [the mandatory execution-context section](HANDOFF.md#headset-execution-context---mandatory).
 2. [VR_PLAN.md](VR_PLAN.md) is the checkbox/status list and dependency order.
    Do not restart checked foundation/renderer work without a demonstrated regression.
    [REFERENCE_REUSE_AUDIT.md](REFERENCE_REUSE_AUDIT.md) maps every workstream

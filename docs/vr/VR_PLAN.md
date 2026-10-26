@@ -8,13 +8,14 @@ scope has evidence; it never implies broader headset or gameplay acceptance.
 Historical design and prior attempts belong in
 [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md) and the evidence documents.
 
-**NEXT IMPLEMENTATION TASK: W3.2 - prepare a movement-enabled, bounded P38
-headset comparison.** W3.1 measured the P38 model-local grip, axes, provisional
-scale and muzzle markers. W2.5 completed the MP movement/button,
+**NEXT IMPLEMENTATION TASK: W3.3 - P38 operator acceptance.** W3.2 completed
+the 30-second native and right-hand-tracked P38 comparison through VDXR with
+live focused hand samples and zero final XR/stereo failures. W3.1 measured the
+P38 model-local grip, axes, provisional scale and muzzle markers. W2.5 completed the MP movement/button,
 focus, pause/resume, SP and flat controls. See
 [weapon-mp-lifecycle-receipt.json](../../vr/proof/weapon-mp-lifecycle-receipt.json)
 and [its build receipt](../../vr/proof/weapon-mp-lifecycle-build-receipt.json).
-C1-C4 and W1-W3.1 remain complete. The reference runtime gate uses a fresh cold-boot
+C1-C4 and W1-W3.2 remain complete. The reference runtime gate uses a fresh cold-boot
 gameplay slot captured by the diagnostic build and passes world stability,
 weapon controls and watchdog recovery. See
 [CONSISTENCY_HANDOFF.md](CONSISTENCY_HANDOFF.md) and
@@ -259,14 +260,23 @@ gates. Do not wait for W3.3 before preparing the remaining desktop profiles.
   provisional. Evidence: [calibration receipt](../../vr/proof/weapon-p38-calibration-receipt.json),
   [atomic capture](../../vr/proof/weapon-p38-calibration-capture-receipt.json)
   and [build/regressions](../../vr/proof/weapon-p38-calibration-build-receipt.json).
-- [ ] W3.2. Prepare a movement-enabled bounded headset comparison with fresh copied
-  slot 1; keep source saves/settings untouched. Do not invent a new user save.
+- [x] W3.2. Prepared and ran a movement-enabled bounded headset comparison
+  from fresh copied slot 1 for native and tracked modes. Quest 3/VDXR supplied
+  30/30 live focused hand samples in each mode, fresh stereo/XR submissions,
+  0 final failures, unchanged source saves/settings and no remaining process.
+  Evidence: [headset comparison](../../vr/proof/weapon-p38-headset-receipt.json)
+  and [complete build receipt](../../vr/proof/weapon-p38-headset-complete-build-receipt.json).
 - [ ] W3.3. Operator accepts P38 size/attachment, head/hand independence, recoil,
   reload/switch, wall proximity, recenter, focus/loss recovery and both eyes.
+  Initial headset feedback failed the gate: no working controls, a noise filter
+  remained active, and hand motion pivoted rather than tracking the controller.
+  No acceptance is claimed.
 - [ ] W3.4. Expand captured profiles and desktop controls to all 13 IDs, including
   native gun subparts and special animations, using the existing inventory and
   reference profile/batch validators. Do not rediscover the measured meshes.
   Arms filtering is a separate asset decision, not a full-model prerequisite.
+  Operator requirement is explicit: render the gun model alone with no attached
+  arms.
 - [ ] W3.5. Operator accepts each designated weapon; retain a per-ID result table.
 
 W3.1 evidence: [P38 calibration](../../vr/proof/weapon-p38-calibration-receipt.json),

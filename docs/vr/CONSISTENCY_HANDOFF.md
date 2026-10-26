@@ -21,8 +21,8 @@ slot, source-save hashes, normal and diagnostic executable hashes, and fault
 recovery are recorded in
 [reference-parity-receipt.json](../../vr/proof/reference-parity-receipt.json).
 The shared implementation is on the framework fork at commit `555e1eab`.
-W2.3 was unstarted when this C pass closed. W2.3-W3.1 have since completed, and
-the current handoff points to W3.2.
+W2.3 was unstarted when this C pass closed. W2.3-W3.2 have since completed, and
+the current handoff points to W3.3.
 
 ## Answer: what was duplicated, and what was a valid port?
 
