@@ -58,13 +58,14 @@ def shot_command(args):
 
 
 class TraceCollector:
-    def __init__(self):
-        self.rows = {name: {} for name in FILTERS}
-        self.cursors = {name: {"total": 0, "frame": -1} for name in FILTERS}
-        self.windows = {name: [] for name in FILTERS}
+    def __init__(self, filters=None):
+        self.filters = dict(FILTERS if filters is None else filters)
+        self.rows = {name: {} for name in self.filters}
+        self.cursors = {name: {"total": 0, "frame": -1} for name in self.filters}
+        self.windows = {name: [] for name in self.filters}
 
     def collect(self):
-        for name, (lo, hi) in FILTERS.items():
+        for name, (lo, hi) in self.filters.items():
             cursor = self.cursors[name]
             trace = native.command(
                 "wtrace_dump", pc_lo=hex(lo), pc_hi=hex(hi), count=2048,

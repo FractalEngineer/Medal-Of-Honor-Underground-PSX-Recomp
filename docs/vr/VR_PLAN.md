@@ -8,14 +8,16 @@ scope has evidence; it never implies broader headset or gameplay acceptance.
 Historical design and prior attempts belong in
 [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md) and the evidence documents.
 
-**NEXT DESKTOP TASK: W5.3 - family-aware shot conversion and lifecycle.**
+**NEXT DESKTOP TASK: W5.3c - moving-shot origin contract.**
 W4 native P38 mapping and W5.1 opt-in rendered-muzzle shot conversion are now
 complete. The corrected P38 candidate retains its barrel, follows the measured
 grip, and passes native P2 damage/miss and tracking-fallback controls without a
 headset. W3.4 now has all-ID moving-marker evidence: recoil, reload, switching,
 scope hiding and prop special actions are exercised with native ammo/slot
 changes. W5.3 now has a complete read-only all-ID family map, including six
-shotgun pellets. W5.2 remains open because no compatible copied live NPC/SP
+shotgun pellets. The native lifecycle probe now follows construction through
+motion and linked damage, providing the preservation baseline for conversion.
+W5.2 remains open because no compatible copied live NPC/SP
 fixture and independently measured SP binding was available. W3.3/W3.5 remain
 physical acceptance gates. Current evidence and exact continuation:
 [WEAPON_COMPLETE_PROFILES.md](WEAPON_COMPLETE_PROFILES.md),
@@ -369,11 +371,33 @@ acceptance is required for physical claims and normal default promotion.
   spread/pellets, rocket collision and both native throw/release/flight paths.
   All 13 IDs and five native types are now mapped through shared caller
   `0x800488D8`; one trigger produced six shotgun constructions. Family-aware
-  conversion, preservation controls and motion/impact acceptance remain open.
+  conversion and tracked preservation/impact acceptance remain open. The
+  checked substeps below are native measurements, not all-weapon override passes.
 - [ ] W5.4. Complete reload/empty/switch/scoped/recoil/death/load matrix and the
   13-ID native damage gate; recompute the rendered tip after native animation
   rather than reusing an idle fixed point; operator confirms barrel-to-impact
   alignment.
+
+W5.3 desktop substeps (the parent stays open until tracked controls pass):
+
+- [x] W5.3a. Map all 13 IDs, five types and the common basis caller. Retain the
+  native six-pellet shotgun count and native ammo/slot changes.
+- [x] W5.3b. Retain constructor-to-motion native baselines, pellet trajectories,
+  linked damage and prop flight samples using copied MP fixtures. Split recycled
+  shot objects by constructor write sequence. Do not infer a trajectory from
+  basis angles alone. Evidence: `weapon-shot-lifecycle-receipt.json`.
+- [ ] W5.3c. Acquire fresh canonical animated marker data with owner, weapon,
+  load/time and freshness guards. The origin writers are mapped for thrown/rocket
+  families; grenade also rebuilds basis after the common constructor. Retain
+  those family-specific seams/history contracts. Eye snapshots and idle
+  calibration are not simulation caches.
+- [ ] W5.3d. Add opt-in family-aware conversion that uses those moving markers
+  and preserves native pellet generation, speeds, gravity, release and collision.
+  Compare first integration origin as well as basis pose; no blind 13-ID guard
+  expansion or guessed compensation for native position changes.
+- [ ] W5.3e. Pass paired native/tracked per-family controls, including release,
+  sustained fire/object reuse, shotgun spread, rocket/bolt/throw motion, native
+  ammo/damage, tracking fallback, ownership and replay rejection.
 
 W5.1 evidence: [tracked combat receipt](../../vr/proof/weapon-p38-aim-receipt.json)
 and [complete-gun controls](../../vr/proof/weapon-p38-aim-controls.png). The
@@ -385,6 +409,16 @@ W5.3 family evidence:
 [SHOT_FAMILY_EVIDENCE.md](SHOT_FAMILY_EVIDENCE.md),
 [family receipt](../../vr/proof/weapon-shot-families-receipt.json) and
 [build regressions](../../vr/proof/weapon-shot-families-build-receipt.json).
+W5.3b native preservation baseline:
+[lifecycle evidence](SHOT_LIFECYCLE_EVIDENCE.md),
+[receipt](../../vr/proof/weapon-shot-lifecycle-receipt.json) and
+[tool validation](../../vr/proof/weapon-shot-lifecycle-validation-receipt.json).
+All 13 IDs passed, with 22 lifetimes, 147 complete XYZ groups and 19 linked
+native damage writes. Six native pellet directions span about 5.25 degrees.
+The [focused origin receipt](../../vr/proof/weapon-projectile-origin-writers-receipt.json)
+resolves the thrown/rocket position writers and grenade's second basis call.
+W5.3c now continues with canonical animated sampling; no family-aware override
+is claimed.
 
 Exit gate: real native trajectory/collision/damage agrees with the rendered
 barrel within a stated tested tolerance. Native hits alone are insufficient.

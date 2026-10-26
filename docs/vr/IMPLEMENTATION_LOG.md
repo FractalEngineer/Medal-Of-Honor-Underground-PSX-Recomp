@@ -1146,12 +1146,65 @@
 
 ## Next work
 
-**W5.3: family-aware conversion and lifecycle controls, without a headset.**
-The read-only all-ID constructor map is complete. Use W5/W6's current animated
-marker, not the idle stored point, for any moving shot/laser work. Preserve the
-six-pellet shotgun path, rocket collision and native throw/release/flight
-behavior. W5.2 remains open until a compatible copied live NPC/SP fixture and
-independently measured SP binding are available. W3.3/W3.5 remain physical
-gates. Only P38 has the accepted rendered-muzzle native-shot override. Preserve
-source saves, normal defaults, historical receipts and unrelated .commandcode
-work.
+**W5.3c: moving-shot origin contract, without a headset.** Read the exact
+experiment in [HANDOFF.md](HANDOFF.md). Native family discovery, the
+constructor-to-motion preservation baseline and final projectile origin writers
+are mapped. Measure canonical animated-marker ownership/timing before
+family-aware writes. W5.3d/e remain conversion and
+matched tracked controls. W5.2 needs its compatible copied NPC/SP fixture and
+independent SP bindings; W3.3/W3.5 remain physical. Preserve native gameplay,
+source saves, defaults, historical receipts and unrelated `.commandcode/`.
+
+## 2026-10-27 — framework delivery tracker and W5.3 native lifecycle
+
+- Added [FRAMEWORK_UPSTREAM_TRACKER.md](FRAMEWORK_UPSTREAM_TRACKER.md): the three
+  generic commits stay on `vr/shared-development` at `555e1eab`; fork master
+  mirrors upstream `1a3fc0db`. Both games retain tested `555e1eab` gitlinks.
+  Listed the future per-feature PR split without creating branches/PRs for it.
+- Queried GitHub: the earlier VR stack #739-#746 is merged, including readiness
+  commit `31df2e1e`. Its first-game PR draft is historical, not pending work.
+  Documented the `.gitmodules` remote-master caveat and explicit pin policy.
+- Reviewed current first-game aim/guards and the local plan. The shared inverse,
+  visibility and slab math remains the source of truth; the 33-case host parity
+  harness passed again. Corrected stale audit/consistency pointers without
+  reopening C1-C4 or claiming another runtime/hardware acceptance.
+- Extended the existing family probe with `--lifecycle` and optional collector
+  filters. It streams native construction, position history, full motion/update
+  context, complete XYZ groups and exactly linked native damage. Per-ID raw
+  traces are saved before analysis, so failures can be inspected offline.
+- Automatic fire demonstrated object reuse. Lifetimes now use ordered native
+  constructor sequence bounds, not an address/frame-only identity. Added
+  malformed-history/XYZ/field, reuse, spread and receipt-hash fixtures. Corrected
+  the proof finalizer to hash final raw bytes without self-reference; historical
+  family receipts remain unchanged.
+- Final native matrix: 13 IDs, 22 lifetimes, 147 complete XYZ groups and 19
+  linked native damage writes, including rocket and crossbow. No shot override
+  was enabled. Six shotgun trajectories span `5.252537956386305` degrees despite
+  identical basis angles. Both thrown items were constructed after release;
+  no thrown explosion-damage or zoom-plus-fire acceptance is claimed.
+- Measured basis-to-first-integration start differences: grenade `(9,0,332)`,
+  petrol bomb `(8,0,149)`, Panzerfaust `(27,0,431)` world units. Other IDs had
+  zero difference. A focused all-PC object-address query over the full retained
+  ring then resolved grenade stores `80084CC0/CCC/CD8`, petrol stores
+  `80084AF0/B18/B40`, and rocket constructor stores `80048A20/A48/A70`.
+  Focused petrol/rocket Z differences were 150/432, proving those baseline
+  shifts are not fixed compensation constants.
+- The grenade release path calls basis again at `80084CD4`, RA `80084CDC`,
+  then initialization `800517B4`. Here the shot is `A0 == S1` and S2 is P1
+  input, so the existing constructor-only observer/override does not cover it.
+  Retained live code windows show the actual stores and surrounding calls; full
+  code guards and ownership policy still need validation before any new writes.
+- Added `probe_projectile_origins.py` and four origin-history failure fixtures.
+  The successful three-control probe uses the accepted eight-frame trigger
+  window; an earlier four-frame grenade attempt did not construct a shot.
+- Validation: 72 Python tests, 33 shared-math cases, final raw/proof/source and
+  unchanged executable hashes. Runtime C/framework sources did not change, so
+  no rebuild or unchanged P38/stereo matrix was required. Source saves and
+  preferences stayed unchanged; owned processes closed; no headset/XR runtime
+  launched. No commit/push requested in this pass.
+- Evidence: [lifecycle](SHOT_LIFECYCLE_EVIDENCE.md),
+  [compact receipt](../../vr/proof/weapon-shot-lifecycle-receipt.json),
+  [origin writers](../../vr/proof/weapon-projectile-origin-writers-receipt.json),
+  [validation receipt](../../vr/proof/weapon-shot-lifecycle-validation-receipt.json).
+  W5.3a/b are checked; parent W5.3 and its moving-origin, conversion and tracked
+  preservation substeps remain open.

@@ -1,6 +1,6 @@
 # Cross-game VR consistency pass
 
-Updated: 2026-10-26. Requested after the
+Updated: 2026-10-27. Requested after the
 [reference reuse audit](REFERENCE_REUSE_AUDIT.md). [VR_PLAN.md](VR_PLAN.md)
 owns C1-C4 status. Completed W1/W2.1/W2.2 stay closed.
 
@@ -20,9 +20,16 @@ because their execution/PGXP cookies differ from the current build. The fresh
 slot, source-save hashes, normal and diagnostic executable hashes, and fault
 recovery are recorded in
 [reference-parity-receipt.json](../../vr/proof/reference-parity-receipt.json).
-The shared implementation is on the framework fork at commit `555e1eab`.
-W2.3 was unstarted when this C pass closed. W2.3-W3.2 have since completed, and
-the current handoff points to W3.3.
+The shared implementation is on framework `vr/shared-development` at commit
+`555e1eab`; master now mirrors upstream. See
+[FRAMEWORK_UPSTREAM_TRACKER.md](FRAMEWORK_UPSTREAM_TRACKER.md) for merged and
+pending PRs. The 33-case host parity check passed again on 2026-10-27 in
+`analysis/reference-parity/framework-branches-20261027/baseline.json`. No shared
+math or game runtime code changed in that review, so earlier consumer runtime
+receipts retain their original scope. W2.3 was unstarted when this C pass closed;
+W2/W3.4/W4 and the bounded P38 W5.1 contract have since completed. The current
+[handoff](HANDOFF.md) continues W5.3 desktop shot-family work. W3.3 remains a
+physical acceptance gate, not a prerequisite for desktop development.
 
 ## Answer: what was duplicated, and what was a valid port?
 

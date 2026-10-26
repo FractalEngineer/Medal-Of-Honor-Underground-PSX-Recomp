@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 from pathlib import Path
 import shutil
 import socket
@@ -49,6 +50,14 @@ def command(name, **values):
 def save(path, value):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8")
+
+
+def seal_receipt(path, receipt):
+    """Hash the final raw bytes without embedding their hash into themselves."""
+    raw = {key: value for key,value in receipt.items()
+           if key != "raw_receipt_sha256"}
+    save(path, raw)
+    return {**raw, "raw_receipt_sha256": native.digest(path)}
 
 
 def first_occurrences():
@@ -140,7 +149,108 @@ def prepare_weapon(slot, switches):
     native.frames(6)
 
 
-def probe_weapon(slot, switches, expected_id):
+def trace_lifecycle(samples, collector):
+    """Associate native construction/motion with each distinct shot object.
+
+    Frames alone are insufficient: six shotgun objects are born in one frame.
+    Automatic fire can recycle an object even within one capture window. Split
+    by global write sequence, matching each basis sample to one constructor.
+    """
+    addresses = [number(row["shot"]) for row in samples]
+    births = {}
+    for address in set(addresses):
+        events = [row for row in collector.entries("constructor")
+                  if number(row["s0"]) == address and
+                  number(row["pc"]) == 0x80048790]
+        if len(events) != addresses.count(address):
+            raise RuntimeError(f"Shot {address:08X}: ambiguous native construction count")
+        births[address] = events
+    consumed = dict.fromkeys(addresses,0)
+    result = []
+    for sample, address in zip(samples, addresses):
+        occurrence = consumed[address]
+        construction = births[address][occurrence]
+        consumed[address] += 1
+        if number(construction["new"]) != sample["type"]:
+            raise RuntimeError(f"Shot {address:08X}: ambiguous native construction")
+        born = construction["frame"]
+        begin = construction["seq"]
+        end = (births[address][occurrence+1]["seq"]
+               if occurrence+1 < len(births[address]) else None)
+        def inside(row):
+            return row["seq"] > begin and (end is None or row["seq"] < end)
+        motion = [row for row in collector.entries("motion")
+                  if number(row["s0"]) == address and inside(row)]
+        if not motion:
+            raise RuntimeError(f"Shot {address:08X}: no constructor-to-motion path")
+        xyz = shot.first_motion(motion, address)
+        groups = []
+        for index in range(0, len(motion), 3):
+            stores = motion[index:index+3]
+            if (len(stores) != 3 or
+                    tuple(number(row["pc"]) for row in stores) != shot.MOTION_PCS or
+                    len({row["frame"] for row in stores}) != 1):
+                raise RuntimeError(f"Shot {address:08X}: incomplete later XYZ motion")
+            if any((number(row["addr"]) & 0x1FFFFFFF) !=
+                   ((address+0x220+axis*4) & 0x1FFFFFFF)
+                   for axis,row in enumerate(stores)):
+                raise RuntimeError(f"Shot {address:08X}: motion store targets another field")
+            groups.append({
+                "frame": stores[0]["frame"],
+                "before": [shot.signed(row["old"])/65536 for row in stores],
+                "after": [shot.signed(row["new"])/65536 for row in stores],
+            })
+        history = [row for row in collector.entries("constructor")
+                   if number(row["s0"]) == address and inside(row) and
+                   number(row["pc"]) in (0x800488EC, 0x800488F0, 0x800488F4)]
+        if (tuple(number(row["pc"]) for row in history) !=
+                (0x800488EC, 0x800488F0, 0x800488F4) or
+                any(row["frame"] != born for row in history)):
+            raise RuntimeError(f"Shot {address:08X}: missing native position history")
+        offsets = [row for row in collector.entries("constructor")
+                   if number(row["s0"]) == address and inside(row) and
+                   number(row["pc"]) in (0x80048A20,0x80048A48,0x80048A70)]
+        first_position = [shot.signed(row["old"]) for row in xyz["stores"]]
+        damage = [row for row in collector.entries("damage")
+                  if number(row["s1"]) == address and inside(row) and
+                  number(row["a2"]) == address and
+                  number(row["pc"]) == 0x8004EB80 and
+                  number(row["ra"]) == 0x80050900 and
+                  number(row["old"]) > number(row["new"])]
+        result.append({
+            "shot": address, "type": sample["type"], "birth_frame": born,
+            "birth_sequence": begin, "next_birth_sequence": end,
+            "basis_position": sample["position"], "basis_angles": sample["angles"],
+            "native_history": [shot.signed(row["new"]) for row in history],
+            "post_basis_origin_stores": offsets,
+            "basis_to_motion_origin_shift": [
+                (a-b)/65536 for a,b in zip(first_position,sample["position"])],
+            "first_motion": xyz, "motion_steps": len(groups),
+            "trajectory": groups,
+            "native_damage": damage,
+        })
+    return result
+
+
+def spread_summary(lifetimes, weapon_id):
+    if weapon_id != 4:
+        return None
+    if len(lifetimes) != 6:
+        raise RuntimeError("Shotgun lifecycle requires exactly six distinct pellets")
+    directions = [row["first_motion"]["direction"] for row in lifetimes]
+    minimum = min(sum(a*b for a,b in zip(left, right))
+                  for i,left in enumerate(directions) for right in directions[i+1:])
+    angle = math.degrees(math.acos(max(-1.0, min(1.0, minimum))))
+    # A native spread control must prove differing trajectories; six identical
+    # basis-angle records alone cannot certify a pellet spread contract.
+    if angle <= .01:
+        raise RuntimeError("Six shotgun pellets did not show measurable native spread")
+    return {"pellets": 6, "maximum_pair_angle_degrees": angle,
+            "basis_angle_variants": len({tuple(row["basis_angles"]) for row in lifetimes}),
+            "motion_direction_variants": len({tuple(row) for row in directions})}
+
+
+def probe_weapon(slot, switches, expected_id, *, lifecycle=False, trace_path=None):
     prepare_weapon(slot, switches)
     before = native.players()
     if before[0]["weapon_id"] != expected_id:
@@ -164,12 +274,26 @@ def probe_weapon(slot, switches, expected_id):
     if control["scoped"]:
         command("set_input", buttons=str(0xFFFF ^ R2))
         native.frames(30)
+    collector = None
+    if lifecycle:
+        command("wtrace_range", lo="0x800B0000", hi="0x801FF000")
+        command("wtrace_clear")
+        collector = shot.TraceCollector({**shot.FILTERS,
+            "motion_context": (0x8006EB8C,0x8006F7D0),
+            "shot_update": (0x80047720,0x80047C80)})
+    trigger_start = command("frame")["frame"]
     command("openxr_input_override", right_trigger=1000)
-    native.frames(min(control["hold_frames"], 8))
+    wait = collector.wait if collector else native.frames
+    wait(min(control["hold_frames"], 8))
+    release_before = command("frame")["frame"]
     command("openxr_input_override", clear=1)
+    release_after = command("frame")["frame"]
     if control["scoped"]:
         command("set_input", buttons="0xffff")
-    native.frames(control["release_frames"])
+    wait(control["release_frames"])
+    if collector:
+        command("wtrace_range", lo="0", hi="0")
+        collector.collect()
     shot.shot_command("stop")
     native.command("openxr_input_override", clear=1)
 
@@ -183,6 +307,8 @@ def probe_weapon(slot, switches, expected_id):
     summary = summarize_samples(
         samples, expected_id, int(before[0]["actor"], 16)
     )
+    if summary["aimed_count"]:
+        raise RuntimeError("Read-only family probe unexpectedly overrode a shot")
     effects = {
         "before": player_key(before[0]),
         "after": player_key(after[0]),
@@ -204,6 +330,10 @@ def probe_weapon(slot, switches, expected_id):
         "slot": slot,
         "switches": switches,
         "control": control,
+        "trigger_window": {"start": trigger_start,
+                           "release_before": release_before,
+                           "release_after": release_after,
+                           "requested_hold_frames": min(control["hold_frames"],8)},
         "before": before,
         "after": after,
         "effects": effects,
@@ -218,6 +348,20 @@ def probe_weapon(slot, switches, expected_id):
         "camera_invalid_count": summary["camera_invalid_count"],
         "shots": summary["samples"],
     }
+    if collector:
+        row["raw_traces"] = {key: collector.entries(key) for key in collector.filters}
+        if trace_path:
+            save(trace_path, {"shots": summary["samples"],
+                              "traces": row["raw_traces"],
+                              "trigger_window": row["trigger_window"]})
+        row["lifetimes"] = trace_lifecycle(summary["samples"], collector)
+        for lifetime in row["lifetimes"]:
+            born = lifetime["birth_frame"]
+            lifetime["trigger_phase"] = (
+                "held" if born < release_before else
+                "released" if born > release_after else "release-boundary")
+        row["spread"] = spread_summary(row["lifetimes"], expected_id)
+        row["trace_counts"] = {key: len(value) for key,value in collector.rows.items()}
     print(
         f"ID {expected_id:02} {row['name']}: type {family}, "
         f"samples {row['owned_count']}",
@@ -237,10 +381,24 @@ def write_proof(path, receipt):
             "remaining_game_pids", "exit_code",
         )
     }
+    proof["lifecycle"] = receipt["lifecycle"]
+    proof["weapons"] = []
+    for source in receipt["weapons"]:
+        row = {key: value for key,value in source.items() if key != "raw_traces"}
+        if "lifetimes" in row:
+            row["lifetimes"] = []
+            for lifetime in source["lifetimes"]:
+                item = dict(lifetime)
+                trajectory = item.pop("trajectory")
+                item["trajectory_first"] = trajectory[:3]
+                item["trajectory_last"] = trajectory[-1:]
+                row["lifetimes"].append(item)
+        proof["weapons"].append(row)
     proof["raw_receipt"] = receipt["raw_receipt"]
     proof["raw_receipt_sha256"] = receipt["raw_receipt_sha256"]
     proof["limits"] = [
-        "Read-only native shot-family mapping; P38 remains the only override.",
+        "Read-only native shot-family/lifecycle mapping; this run enables no shot override.",
+        "Native motion/damage evidence is a baseline, not all-weapon tracked-aim acceptance.",
         "Synthetic desktop controls do not establish live NPC or SP isolation.",
         "Physical attachment, recoil alignment and impact acceptance remain open.",
     ]
@@ -252,6 +410,8 @@ def main():
     parser.add_argument("directory", type=Path)
     parser.add_argument("--proof", type=Path)
     parser.add_argument("--ids", type=int, nargs="+")
+    parser.add_argument("--lifecycle", action="store_true",
+                        help="Trace each native construction through motion and damage")
     args = parser.parse_args()
     selected = set(args.ids or native.WEAPONS)
     unknown = selected - set(native.WEAPONS)
@@ -281,7 +441,7 @@ def main():
     executable = ROOT / "build-release/Medal_of_Honor_Underground_Recompiled.exe"
     receipt = {
         "schema": 1,
-        "kind": "W5.3 native MP shot-family map",
+        "kind": "W5.3 native MP shot-family lifecycle" if args.lifecycle else "W5.3 native MP shot-family map",
         "complete": False,
         "headset_used": False,
         "fixture": "copied root MP slots 1-4; first occurrence of every weapon ID",
@@ -307,6 +467,7 @@ def main():
         "preferences": preferences,
         "weapons": [],
         "families": {},
+        "lifecycle": args.lifecycle,
     }
     env = comparison.environment("native", True)
     env["PSX_INTERNAL_RESOLUTION"] = "native"
@@ -338,7 +499,8 @@ def main():
                 if weapon_id not in selected:
                     continue
                 receipt["weapons"].append(
-                    probe_weapon(slot, switches, weapon_id)
+                    probe_weapon(slot, switches, weapon_id, lifecycle=args.lifecycle,
+                                 trace_path=out / f"id-{weapon_id:02}-traces.json")
                 )
                 for row in receipt["weapons"]:
                     family = row["family"]
@@ -386,10 +548,10 @@ def main():
         receipt["raw_receipt"] = str(
             (out / "receipt.json").relative_to(ROOT)
         )
-        receipt["raw_receipt_sha256"] = native.digest(out / "receipt.json")
-        save(out / "receipt.json", receipt)
+        receipt = seal_receipt(out / "receipt.json", receipt)
         write_proof(args.proof, receipt)
-    print("PASS: all 13 native MP shot families captured", flush=True)
+    print(f"PASS: {len(selected)} native MP weapon families captured"
+          + (" with constructor-to-motion lifetimes" if args.lifecycle else ""), flush=True)
 
 
 if __name__ == "__main__":

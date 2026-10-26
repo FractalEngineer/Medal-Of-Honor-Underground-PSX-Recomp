@@ -3,6 +3,10 @@
 Updated: 2026-10-27. No headset was used. This is a read-only native
 constructor map, not an all-weapon aim override.
 
+Follow-up: [SHOT_LIFECYCLE_EVIDENCE.md](SHOT_LIFECYCLE_EVIDENCE.md) adds native
+constructor-to-motion/damage controls and the moving-shot origin continuation.
+It does not enable non-P38 shot writes or close tracked preservation acceptance.
+
 ## Result
 
 All 13 measured MP weapon IDs reach the shared basis constructor entry

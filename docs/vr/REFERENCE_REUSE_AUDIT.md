@@ -6,9 +6,11 @@ runtime or hardware test. [VR_PLAN.md](VR_PLAN.md) owns task status;
 by this review.
 
 Follow-up: the owner requested reconciling existing duplicated helpers too.
-[CONSISTENCY_HANDOFF.md](CONSISTENCY_HANDOFF.md) defines C1-C4, now the next
-bounded pass before W2.3. It distinguishes intentional ports from duplicate
-math and preserves the title-specific contracts identified here.
+[CONSISTENCY_HANDOFF.md](CONSISTENCY_HANDOFF.md) defines C1-C4, which are complete.
+The task dependencies below describe this audit's historical checkpoint; use
+[HANDOFF.md](HANDOFF.md) and [VR_PLAN.md](VR_PLAN.md) for the current W5.3
+continuation. [FRAMEWORK_UPSTREAM_TRACKER.md](FRAMEWORK_UPSTREAM_TRACKER.md)
+records generic changes, both consumer pins and merged/pending upstream work.
 
 ## Finding
 
