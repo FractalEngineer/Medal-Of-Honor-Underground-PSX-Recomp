@@ -45,6 +45,12 @@ int main(void) {
         const MohuVrWeaponProfile* profile = mohu_vr_weapon_profile_at(i);
         CHECK(profile && profile->name && mohu_vr_weapon_profile_find(profile->id));
         CHECK(profile->geometry_fnv32 && profile->node_count <= 32u);
+        CHECK(profile->calibration && profile->calibration->provisional == 1u);
+        CHECK(profile->calibration->model_units_per_metre > 1.0);
+        CHECK(profile->calibration->reference_length_m > 0.0);
+        CHECK(profile->gun_face_count &&
+              profile->gun_face_count < profile->face_count);
+        CHECK(profile->gun_vertex_count);
         CHECK(mohu_vr_weapon_mesh_layout_valid(profile, profile->mesh_magic,
             profile->face_count, profile->vertices, profile->node_count));
         CHECK(!mohu_vr_weapon_mesh_layout_valid(profile, 0x00160024u,
@@ -59,9 +65,53 @@ int main(void) {
         for (size_t j = 0; j < i; ++j) {
             CHECK(mohu_vr_weapon_profile_at(j)->id != profile->id);
         }
+        unsigned gun_vertices = 0;
+        for (unsigned node = 0; node < profile->node_count; ++node) {
+            const int whole_node =
+                (profile->gun_nodes & (UINT32_C(1) << node)) != 0u;
+            if (whole_node) {
+                gun_vertices += profile->vertices[node];
+            } else if (node == profile->partial_node) {
+                for (unsigned vertex = 0;
+                     vertex < profile->vertices[node]; ++vertex) {
+                    if ((profile->partial_vertices[vertex / 64u] >>
+                         (vertex % 64u)) & UINT64_C(1)) {
+                        ++gun_vertices;
+                    }
+                }
+            }
+            for (unsigned vertex = 0; vertex < profile->vertices[node];
+                 ++vertex) {
+                const int partial = node == profile->partial_node &&
+                    ((profile->partial_vertices[vertex / 64u] >>
+                      (vertex % 64u)) & UINT64_C(1));
+                CHECK(mohu_vr_weapon_gun_vertex(profile, node, vertex) ==
+                      (whole_node || partial));
+            }
+            CHECK(!mohu_vr_weapon_gun_vertex(
+                profile, node, profile->vertices[node]));
+        }
+        CHECK(gun_vertices == profile->gun_vertex_count);
+        CHECK(!mohu_vr_weapon_gun_vertex(profile, profile->node_count, 0u));
     }
     CHECK(!mohu_vr_weapon_profile_at(mohu_vr_weapon_profile_count()));
     CHECK(!mohu_vr_weapon_profile_find(2u));
+    CHECK(mohu_vr_weapon_gun_vertex(
+        mohu_vr_weapon_profile_find(0u), 11u, 6u));
+    CHECK(mohu_vr_weapon_gun_vertex(
+        mohu_vr_weapon_profile_find(0u), 11u, 32u));
+    CHECK(!mohu_vr_weapon_gun_vertex(
+        mohu_vr_weapon_profile_find(0u), 11u, 33u));
+    CHECK(mohu_vr_weapon_gun_vertex(
+        mohu_vr_weapon_profile_find(9u), 11u, 17u));
+    CHECK(!mohu_vr_weapon_gun_vertex(
+        mohu_vr_weapon_profile_find(9u), 11u, 18u));
+    CHECK(mohu_vr_weapon_gun_vertex(
+        mohu_vr_weapon_profile_find(9u), 11u, 26u));
+    CHECK(mohu_vr_weapon_gun_vertex(
+        mohu_vr_weapon_profile_find(1u), 26u, 0u));
+    CHECK(!mohu_vr_weapon_gun_vertex(
+        mohu_vr_weapon_profile_find(1u), 22u, 0u));
     {
         const MohuVrWeaponCalibration* calibration =
             mohu_vr_weapon_calibration_find(0u);
@@ -124,9 +174,12 @@ int main(void) {
                        calibration->model_units_per_metre -
                    calibration->reference_length_m) < 1e-11);
         for (unsigned id = 0u; id < 255u; ++id) {
-            if (id != 0u) {
-                CHECK(!mohu_vr_weapon_calibration_find((uint8_t)id));
-            }
+            const MohuVrWeaponProfile* profile =
+                mohu_vr_weapon_profile_find((uint8_t)id);
+            CHECK(profile
+                ? mohu_vr_weapon_calibration_find((uint8_t)id) ==
+                      profile->calibration
+                : !mohu_vr_weapon_calibration_find((uint8_t)id));
         }
     }
     CHECK(!mohu_vr_weapon_mesh_layout_valid(NULL, 0, 0, NULL, 0));

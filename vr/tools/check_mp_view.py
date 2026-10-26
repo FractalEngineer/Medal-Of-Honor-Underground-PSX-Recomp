@@ -609,6 +609,139 @@ def pair(directory, require_populated=True):
     return images, {p.name: native.digest(p) for p in (left[0], right[0])}
 
 
+def finalize_gun_only_evidence(out, receipt):
+    unique = {}
+    cases = 0
+    masks = {"left": 0, "right": 0}
+    for row in receipt["weapons"]:
+        unique.setdefault(row["id"], row)
+        for case in row["cases"]:
+            cases += 1
+            delta = case["counter_delta"]
+            for eye in ("left", "right"):
+                count = delta.get("mohu.vr.weapon.gun_only." + eye, 0)
+                if not count:
+                    raise RuntimeError(
+                        f"Missing gun-only mask for ID {row['id']} "
+                        f"{case['case']} {eye}"
+                    )
+                masks[eye] += count
+            rollback = case["rollback"]
+            if not rollback["verify_checks"] or any(
+                rollback[key] for key in
+                ("verify_mismatch", "vram_leaks", "watchdog", "nesting_repairs")
+            ):
+                raise RuntimeError("Gun-only rollback verification failed")
+    if set(unique) != set(native.WEAPONS):
+        raise RuntimeError("Gun-only control did not cover all 13 IDs")
+
+    panel_width, panel_height = 262, 30
+    scale = 2
+    label_width = 170
+    columns = ("native", "translated", "yawed")
+    sheet = Image.new(
+        "RGB",
+        (label_width + panel_width * scale * len(columns),
+         panel_height * scale * len(unique)),
+        (20, 20, 20),
+    )
+    draw = ImageDraw.Draw(sheet)
+    for row_index, weapon_id in enumerate(sorted(unique)):
+        row = unique[weapon_id]
+        draw.text(
+            (6, row_index * panel_height * scale + 17),
+            f"{weapon_id:02} {native.WEAPONS[weapon_id]}",
+            fill=(235, 235, 235),
+        )
+        for column, label in enumerate(columns):
+            case = next(
+                case for case in row["cases"] if case["case"] == label
+            )
+            case_dir = out / (
+                f"slot-{row['slot']:02}-weapon-{row['switches']}-{label}"
+            )
+            filename = sorted(case["images"])[0]
+            image = Image.open(case_dir / filename).convert("RGB")
+            crop = image.crop((250, 90, 512, 120))
+            crop = crop.resize(
+                (panel_width * scale, panel_height * scale),
+                Image.Resampling.NEAREST,
+            )
+            x = label_width + column * panel_width * scale
+            y = row_index * panel_height * scale
+            sheet.paste(crop, (x, y))
+            draw.rectangle(
+                (x, y, x + panel_width * scale - 1,
+                 y + panel_height * scale - 1),
+                outline=(70, 70, 70),
+            )
+
+    proof_image = native.ROOT / "vr/proof/weapon-complete-gun-controls.png"
+    sheet.save(proof_image, optimize=True)
+    compact_path = (
+        native.ROOT / "vr/proof/weapon-complete-gun-controls-receipt.json"
+    )
+    compact = {
+        "schema": 1,
+        "kind": "W3.4 all-ID complete-gun desktop controls",
+        "headset_used": False,
+        "complete": True,
+        "source_receipt": str((out / "receipt.json").relative_to(native.ROOT)),
+        "source_receipt_sha256": native.digest(out / "receipt.json"),
+        "executable_sha256": receipt["executable_sha256"],
+        "sources": receipt["sources"],
+        "source_saves": receipt["source_saves"],
+        "preferences": receipt["preferences"],
+        "unique_weapon_ids": sorted(unique),
+        "captured_slot_rows": len(receipt["weapons"]),
+        "cases": cases,
+        "eye_mask_applications": masks,
+        "cycles_closed": receipt["cycles"],
+        "weapons": [
+            {
+                "id": row["id"],
+                "slot": row["slot"],
+                "switches": row["switches"],
+                "cases": [case["case"] for case in row["cases"]],
+                "image_hashes": [case["images"] for case in row["cases"]],
+                "rollback_checks": sum(
+                    case["rollback"]["verify_checks"]
+                    for case in row["cases"]
+                ),
+                "mask_counts": {
+                    eye: sum(
+                        case["counter_delta"].get(
+                            "mohu.vr.weapon.gun_only." + eye, 0
+                        )
+                        for case in row["cases"]
+                    )
+                    for eye in ("left", "right")
+                },
+            }
+            for row in receipt["weapons"]
+        ],
+        "proof_image": str(proof_image.relative_to(native.ROOT)),
+        "proof_image_sha256": native.digest(proof_image),
+        "source_saves_unchanged": receipt["source_saves_unchanged"],
+        "preferences_unchanged": receipt["preferences_unchanged"],
+        "remaining_game_pids": receipt["remaining_game_pids"],
+        "limits": [
+            "Desktop synthetic pose controls, not physical acceptance.",
+            "Gun-only mask and native-pose integrity, not grip/scale acceptance.",
+            "No firing, NPC/SP override, special-animation or hardware claim.",
+        ],
+    }
+    native.save(compact_path, compact)
+    receipt["compact_receipt"] = str(compact_path.relative_to(native.ROOT))
+    receipt["compact_receipt_sha256"] = native.digest(compact_path)
+    native.save(out / "receipt.json", receipt)
+    print(
+        f"PASS: 13 complete-gun IDs, {cases} desktop cases, "
+        f"{masks['left'] + masks['right']} eye masks",
+        flush=True,
+    )
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("directory", type=Path)
@@ -618,14 +751,19 @@ def main():
     parser.add_argument("--reject-recover", action="store_true")
     parser.add_argument("--fire-pistol", action="store_true")
     parser.add_argument("--frustum", action="store_true")
+    parser.add_argument("--gun-only", action="store_true",
+                        help="Enable measured complete-gun masks for every ID")
+    parser.add_argument("--calibrated-all", action="store_true",
+                        help="Enable provisional measured calibration for every ID")
     parser.add_argument(
         "--visibility-controls", action="store_true",
         help="Run W2.3 zero, +/-90-degree and near-wall selector controls",
     )
     args = parser.parse_args()
+    effective_gun_only = args.gun_only or args.calibrated_all
     if args.visibility_controls and any((
         args.all_weapons, args.native_projection, args.reject_recover,
-        args.fire_pistol, args.frustum, args.eye_offset,
+        args.fire_pistol, args.frustum, args.eye_offset, args.calibrated_all,
     )):
         parser.error("--visibility-controls cannot be combined with other modes")
     if native.game_pids():
@@ -659,12 +797,15 @@ def main():
                MOHU_VR_EYE_GUEST_SUBMIT="1",
                MOHU_VR_EYE_OFFSET=str(args.eye_offset), PSX_VR_WEAPON_POSE="1",
                MOHU_VR_WEAPON_SYNTHETIC_X="1",
+               MOHU_VR_WEAPON_GUN_ONLY="1" if effective_gun_only else "0",
+               MOHU_VR_WEAPON_CALIBRATED="1" if args.calibrated_all else "0",
                MOHU_VR_MP_FRUSTUM="1" if args.frustum else "0")
     # A nonzero synthetic pose selects the diagnostic tracking source. Identity
     # controls are selected through the command after loading the fixture.
     exe = native.ROOT / "build-release/Medal_of_Honor_Underground_Recompiled.exe"
     receipt = {"complete": False, "eye_offset": args.eye_offset,
-               "mp_frustum": args.frustum,
+               "mp_frustum": args.frustum, "gun_only": effective_gun_only,
+               "calibrated_all": args.calibrated_all,
                "executable_sha256": native.digest(exe), "source_saves": hashes,
                "preferences": preference_hashes, "weapons": [], "cycles": {},
                "sources": {str(p.relative_to(native.ROOT)): native.digest(p) for p in
@@ -762,6 +903,16 @@ def main():
                                          "mohu.vr.mp.frustum.override.")):
                                 raise RuntimeError(
                                     "MP eye frustum ran with its guard disabled")
+                            if effective_gun_only:
+                                if not delta.get(
+                                        "mohu.vr.weapon.gun_only." + eye, 0):
+                                    raise RuntimeError(
+                                        "Complete-gun mask did not run in one eye")
+                            elif any(value for key, value in delta.items()
+                                     if key.startswith(
+                                         "mohu.vr.weapon.gun_only.")):
+                                raise RuntimeError(
+                                    "Complete-gun mask ran with its guard disabled")
                         if lost and after_counts.get("mohu.vr.weapon.viewmodel_apply", 0) != after_counts.get("mohu.vr.weapon.viewmodel_restore", 0):
                             raise RuntimeError("Weapon control scope did not drain")
                         if (not checks["verify_checks"] or any(checks[k] for k in
@@ -877,6 +1028,8 @@ def main():
             native.save(out / "receipt.json", receipt)
     if args.visibility_controls and receipt.get("complete"):
         finalize_visibility_evidence(out, receipt)
+    if effective_gun_only and args.all_weapons and receipt.get("complete"):
+        finalize_gun_only_evidence(out, receipt)
     if not (receipt["source_saves_unchanged"] and receipt["preferences_unchanged"]
             and not receipt["remaining_game_pids"] and receipt["exit_code"] == 0):
         raise RuntimeError("MP control cleanup failed")

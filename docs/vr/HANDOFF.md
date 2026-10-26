@@ -1,9 +1,11 @@
 # Underground VR implementation handoff
 
-Updated: 2026-10-26. This file is the execution contract for the next session.
+Updated: 2026-10-27. This file is the execution contract for the next session.
 [VR_PLAN.md](VR_PLAN.md) owns checkbox status. [WEAPON_MAPPING.md](WEAPON_MAPPING.md)
 owns the detailed measured weapon layout. [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md)
-owns history. History is not a queue of tasks to repeat.
+owns history. [WEAPON_COMPLETE_PROFILES.md](WEAPON_COMPLETE_PROFILES.md)
+owns the all-ID topology and provisional calibration result. History is not a
+queue of tasks to repeat.
 
 Read [REFERENCE_REUSE_AUDIT.md](REFERENCE_REUSE_AUDIT.md) before introducing
 new code. It lists the first-game implementation and the local counterpart for
@@ -13,16 +15,34 @@ the earlier hardware-first sequence; no completed box is reopened.
 
 ## 1. Start here - one next task
 
-**NEXT DESKTOP: W3.4 - remaining complete-gun profiles and controls.**
+**NEXT DESKTOP: W3.4 - moving-muzzle and special-animation controls.**
 The user explicitly requested desktop progress without another headset session.
-W4 and W5.1 are complete. The P38 candidate now follows the measured grip,
-retains its barrel and fires native shots from its declared true muzzle. Its
-14-case desktop matrix passes native hit/miss, head/body/hand controls, P2/MP40
-isolation and tracking fallback. W5.2 remains open for live NPC/SP isolation;
-W3.3/W3.5 remain physical gates. Do not repeat completed P38 discovery.
+The all-ID topology, animation capture, provisional calibration and gun-only
+desktop controls now pass. Do not repeat the 13-ID mesh discovery or unchanged
+pose matrix.
+
+The remaining W3.4 slice is the moving-muzzle contract during recoil, reload,
+weapon switching and each prop's special animation. The current calibration was
+captured at one fixed synthetic MP hand pose. W5.2 still needs live NPC/SP
+isolation, and the other 12 IDs do not yet have a rendered-muzzle native-shot
+override. W4/W5.1 remain complete for P38; their 14-case tracked matrix passed
+again after the all-ID calibration changes. W3.3/W3.5 remain physical gates.
 
 Read [P38_NATIVE_AIM_EVIDENCE.md](P38_NATIVE_AIM_EVIDENCE.md) first for current
-bindings, flags, complete-gun calibration, receipts and exact next steps.
+special-function bindings and P38 combat limits. Read
+[WEAPON_COMPLETE_PROFILES.md](WEAPON_COMPLETE_PROFILES.md) for the all-ID
+topology, per-weapon masks, provisional calibration and desktop controls.
+
+Current all-ID desktop result:
+
+- `MOHU_VR_WEAPON_GUN_ONLY=1` renders the measured gun islands without arms.
+- `MOHU_VR_WEAPON_CALIBRATED=1` enables the provisional all-ID calibration.
+- Both flags remain OFF by default. `MOHU_VR_P38_CALIBRATED=1` remains the
+  P38-specific path, and `MOHU_VR_P38_AIM=1` remains P38-shot-only.
+- The calibrated MP matrix ran 64 cases over 16 slot appearances / 13 unique
+  IDs in both eyes, with 876 gun-only applications and zero rollback failures.
+- The P38 and silenced-pistol masks use explicit per-vertex selections because
+  their gun islands share node 11 with the hand/arm mesh.
 
 The earlier operator findings now have desktop corrections:
 
@@ -31,7 +51,7 @@ The earlier operator findings now have desktop corrections:
 - Noise: the comparison now sets and verifies dithering OFF.
 - Pivot-like motion: `MOHU_VR_P38_CALIBRATED=1` uses the measured model grip and
   physical scale rather than the W1 camera-space pivot.
-- Arms and missing barrel: preserve all 69 node-13 receiver/grip vertices **plus
+- P38 arms and missing barrel: preserve all 69 node-13 receiver/grip vertices **plus
   node-11 vertices 6..32**, a 27-vertex/37-triangle barrel/sight island. The
   resulting gun is 128 triangles/96 vertices; hide 142 other vertices.
 
@@ -126,7 +146,7 @@ rollback. W2.3 later added the accepted heading and near-wall controls.
 | --- | --- |
 | Repository | `C:/Users/titan/Desktop/Github_Projects/Mine/Medal-Of-Honor-Underground-PSX-Recomp` |
 | Branch / current HEAD | `feature/vr-port`; read current HEAD during preflight. W1/W2.1 predecessor is `afda5082...` |
-| Checkpoint scope | W4 native P38 contract, opt-in complete-gun grip/muzzle candidate, barrel correction and automated combat evidence; inspect Git status and preserve `.commandcode/` |
+| Checkpoint scope | All-ID complete-gun topology/capture/provisional calibration and calibrated desktop controls; W4/W5.1 P38 retained; inspect Git status and preserve `.commandcode/` |
 | Framework gitlink | `555e1eabccc59b9b6ff0d9fca48aca783513dc86` |
 | UI gitlink | `7c635c6b366a6e0d5d3c913a7fce6ec04dd9f256` |
 | Title / version | `SLUS-01270` / `0.1.0` |
@@ -135,7 +155,7 @@ rollback. W2.3 later added the accepted heading and near-wall controls.
 | Current debug tools | `PSX_DEBUG_TOOLS=ON` for the active W3.2/W3.3 work by operator direction; restore OFF only for a public release |
 | CMake VR option | `MOHU_VR_DIAGNOSTICS` defaults OFF; current `build-release` has it ON |
 | Normal launcher | Native menus, `-Slot -1`; no implicit savestate load |
-| Experimental defaults | `PSX_VR_WEAPON_POSE`, `MOHU_VR_MP_CONTROL`, `MOHU_VR_MP_FRUSTUM`, `MOHU_VR_P38_CALIBRATED` and `MOHU_VR_P38_AIM` remain off; the diagnostic runner opts in explicitly |
+| Experimental defaults | `PSX_VR_WEAPON_POSE`, `MOHU_VR_MP_CONTROL`, `MOHU_VR_MP_FRUSTUM`, `MOHU_VR_WEAPON_GUN_ONLY`, `MOHU_VR_WEAPON_CALIBRATED`, `MOHU_VR_P38_CALIBRATED` and `MOHU_VR_P38_AIM` remain off; diagnostic runners opt in explicitly |
 | PGXP save ABI | `131106`; base flavor ABI `34` is incompatible |
 | Unrelated work | `.commandcode/` is unrelated; do not add, change or clean it |
 
@@ -160,15 +180,16 @@ Accepted evidence:
 | W2.5 MP lifecycle / recovery | [control receipt](../../vr/proof/weapon-mp-lifecycle-receipt.json) and [build receipt](../../vr/proof/weapon-mp-lifecycle-build-receipt.json): 17 MP input/button cases, native Start pause/resume, zero render-time sampling, 13 SP cases, inherited-flag flat startup |
 | W3.1 P38 calibration | [calibration receipt](../../vr/proof/weapon-p38-calibration-receipt.json), [capture receipt](../../vr/proof/weapon-p38-calibration-capture-receipt.json) and [build receipt](../../vr/proof/weapon-p38-calibration-build-receipt.json): 69 atomic source/animated vertices, orthonormal axes, grip and muzzle markers, nominal-size scale, focused tests and 33-case parity |
 | W3.2 P38 headset comparison | [headset comparison](../../vr/proof/weapon-p38-headset-receipt.json) and [complete build receipt](../../vr/proof/weapon-p38-headset-complete-build-receipt.json): 30 seconds native plus 30 seconds tracked, 30/30 live hand samples per mode, fresh VDXR submissions and stereo pairs, zero final failures; no operator acceptance claim |
-| Current build/regressions | [P38 native-aim build receipt](../../vr/proof/weapon-p38-native-aim-build-receipt.json): 38 Python tests, strict fixtures, native/tracked combat, W1/13-ID MP/SP/flat; active debug tools ON |
+| W3.4 all-ID profiles | [topology](../../vr/proof/weapon-complete-gun-topology-receipt.json), [animated capture](../../vr/proof/weapon-profile-captures-receipt.json), [provisional calibration](../../vr/proof/weapon-provisional-calibrations-receipt.json), [calibrated controls](../../vr/proof/weapon-complete-gun-controls-receipt.json) and [control sheet](../../vr/proof/weapon-complete-gun-controls.png): 13 unique IDs / 16 slot rows, 64 cases, 876 eye masks, zero mixed gun/arm triangles and zero rollback errors; special animations and physical acceptance remain open |
+| Current build/regressions | [all-ID profile build receipt](../../vr/proof/weapon-all-id-profiles-build-receipt.json): 47 Python tests, strict C fixtures, calibrated all-ID MP controls, native P38 fire, tracked P38 aim, SP zero and flat inherited-flag startup; active debug tools ON |
 | Earlier native damage | [WEAPON_SET_EVIDENCE.md](WEAPON_SET_EVIDENCE.md), [weapon-alignment-receipt.json](../../vr/proof/weapon-alignment-receipt.json): all 13 IDs, damage-only pose reachability |
-| Current eye images | [weapon-mp-eyes.png](../../vr/proof/weapon-mp-eyes.png) |
+| Current all-ID controls | [weapon-complete-gun-controls.png](../../vr/proof/weapon-complete-gun-controls.png) |
 | SP world / visibility | [PGXP_RENDER_VIEW_EVIDENCE.md](PGXP_RENDER_VIEW_EVIDENCE.md), [HEAD_TURN_HUD_EVIDENCE.md](HEAD_TURN_HUD_EVIDENCE.md), [SKY_GHOST_EVIDENCE.md](SKY_GHOST_EVIDENCE.md) |
 | Native input | [MOVEMENT_EVIDENCE.md](MOVEMENT_EVIDENCE.md): synthetic SP and MP controls; physical acceptance remains open |
 
 The current diagnostic executable SHA-256 is
-`f32bb4226313d26f7fb0816df2d8148c5764d512ed33ec107713da279ffbc572`.
-See the current [build receipt](../../vr/proof/weapon-p38-native-aim-build-receipt.json)
+`710e1d12cda31457fb67260d791bd3b34880b26953431d36f02f8194ebaed252`.
+See the current [build receipt](../../vr/proof/weapon-all-id-profiles-build-receipt.json)
 for exact source hashes, controls and remaining limits.
 The last debug-off release executable was
 `bae4f60f02f4bf70ce86ea85d201674df7157bafa4d6bea20c3086972f2ab71d`;
@@ -414,7 +435,7 @@ git status --short
 git branch --show-current
 git rev-parse HEAD
 git submodule status
-Get-Content vr/proof/weapon-p38-native-aim-build-receipt.json -Encoding utf8
+Get-Content vr/proof/weapon-all-id-profiles-build-receipt.json -Encoding utf8
 Get-FileHash -LiteralPath build-release/Medal_of_Honor_Underground_Recompiled.exe -Algorithm SHA256
 Select-String -LiteralPath build-release/CMakeCache.txt -Pattern '^(PSX_DEBUG_TOOLS|MOHU_VR_DIAGNOSTICS|PSX_OPENXR):'
 ```
@@ -454,6 +475,24 @@ if ($LASTEXITCODE -ne 0) { throw 'P38 MP eye control failed' }
 python vr/tools/check_mp_view.py (Join-Path $runRoot 'p38-frustum') --frustum
 if ($LASTEXITCODE -ne 0) { throw 'P38 zero-angle frustum control failed' }
 ```
+
+W3.4 topology/calibration reproduction after a changed profile path:
+
+```powershell
+python vr/tools/probe_weapon_profiles.py (Join-Path $runRoot 'profiles')
+if ($LASTEXITCODE -ne 0) { throw 'All-ID profile capture failed' }
+python vr/tools/derive_weapon_calibrations.py `
+  (Join-Path $runRoot 'profiles/captures.json') `
+  --proof vr/proof/<new-calibration-receipt>.json
+if ($LASTEXITCODE -ne 0) { throw 'Calibration derivation failed' }
+python vr/tools/check_mp_view.py (Join-Path $runRoot 'calibrated-all') `
+  --all-weapons --calibrated-all
+if ($LASTEXITCODE -ne 0) { throw 'All-ID calibrated MP controls failed' }
+```
+
+Use a new proof path for a new binary. The checked-in all-ID receipts remain
+historical after source changes. `--calibrated-all` enables the provisional
+profiles only for that child process; it does not alter normal defaults.
 
 The existing `--frustum` flag enables the override; it does not add head-turn
 or near-wall cases. The completed W2.3 command is:
@@ -661,15 +700,19 @@ if ($LASTEXITCODE -ne 0) { throw 'Release build failed' }
 ## 10. Continuation record
 
 - Complete: C1-C4, W1-W3.2, W4.1-W4.3 and W5.1. W3.3 physical acceptance is
-  open. W3.4 has a complete P38 subset; W5.2 has 14 desktop MP controls.
-- NEXT desktop: W3.4 remaining 12 complete-gun profiles. Start from the existing
-  13-ID inventory and copied slots; extend the bounded native triangle/strip
-  reader and identify mixed-node islands before filtering. Capture each complete
-  gun's grip/barrel/scale, then exercise existing pose and animation controls.
-  Keep unsupported IDs native until their profile passes. Do not rediscover P38.
-- Last evidence: `weapon-native-shot-receipt.json`, `weapon-p38-aim-receipt.json`,
-  `weapon-p38-complete-calibration-receipt.json` and the current build receipt in
-  `vr/proof/`. The control sheet shows the restored barrel in both eyes.
+  open. W3.4 now has all-ID topology, animated captures, provisional calibrations
+  and 64 calibrated desktop controls; its moving-muzzle/special-animation slice
+  remains. W5.2 has 14 desktop MP controls and still needs live NPC/SP isolation.
+- NEXT desktop: W3.4 moving-muzzle and special-animation controls. Start from the
+  all-ID receipts and profile data; do not repeat mesh discovery, topology or
+  fixed-pose controls. Add recoil, reload, switch and per-prop animation samples,
+  then decide which provisional muzzle markers remain valid while animated.
+- Last evidence: `weapon-complete-gun-topology-receipt.json`,
+  `weapon-profile-captures-receipt.json`,
+  `weapon-provisional-calibrations-receipt.json`,
+  `weapon-complete-gun-controls-receipt.json` / `.png`, and
+  `weapon-all-id-profiles-build-receipt.json`. P38 native-fire and tracked-aim
+  receipts still pass on the new binary.
 - Exact W5.2 remainder: a compatible copied live NPC/SP fixture and independently
   guarded SP shot/camera binding. Pure ownership tests and real P2/MP40 controls
   pass; they do not claim a live NPC or SP override. No unrelated enemy chase.

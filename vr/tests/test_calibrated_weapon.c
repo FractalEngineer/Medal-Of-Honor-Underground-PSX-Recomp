@@ -33,10 +33,14 @@ int main(void) {
     }
     assert(fabs(muzzle[0]-grip[0]-expected_x)<.05);
     assert(fabs(muzzle[1]-grip[1]-expected_y)<.05);
-    assert(mohu_vr_p38_gun_vertex(11,6) && mohu_vr_p38_gun_vertex(11,32));
-    assert(!mohu_vr_p38_gun_vertex(11,5) && !mohu_vr_p38_gun_vertex(11,33));
-    assert(mohu_vr_p38_gun_vertex(13,68) && !mohu_vr_p38_gun_vertex(13,69));
-    assert(!mohu_vr_p38_gun_vertex(9,0));
+    const MohuVrWeaponProfile *p38=mohu_vr_weapon_profile_find(0);
+    assert(mohu_vr_weapon_gun_vertex(p38,11,6));
+    assert(mohu_vr_weapon_gun_vertex(p38,11,32));
+    assert(!mohu_vr_weapon_gun_vertex(p38,11,5));
+    assert(!mohu_vr_weapon_gun_vertex(p38,11,33));
+    assert(mohu_vr_weapon_gun_vertex(p38,13,68));
+    assert(!mohu_vr_weapon_gun_vertex(p38,13,69));
+    assert(!mohu_vr_weapon_gun_vertex(p38,9,0));
     double grip_to_muzzle=0;
     for (unsigned i=0; i<3; ++i)
         grip_to_muzzle += (cal->muzzle[i]-cal->grip_pivot[i])*cal->forward[i];
@@ -67,6 +71,18 @@ int main(void) {
     assert(!memcmp(c,original,sizeof c));
     assert(!mohu_vr_weapon_calibrated_control(c,identity,hand,NAN,cal));
     assert(!memcmp(c,original,sizeof c));
+    const MohuVrWeaponCalibration *mp40=mohu_vr_weapon_calibration_find(1);
+    assert(mp40 && mp40->provisional);
+    uint32_t mp40_control[8]={0,0,0,0,0,0,0,0};
+    assert(mohu_vr_weapon_calibrated_control(
+        mp40_control,identity,hand,1000,mp40));
+    point(mp40_control,mp40->grip_pivot,grip);
+    point(mp40_control,mp40->muzzle,muzzle);
+    for (unsigned i=0; i<3; ++i) assert(fabs(grip[i]-hand[i])<=.5);
+    double mp40_forward=0;
+    for (unsigned i=0;i<3;++i)
+        mp40_forward+=(mp40->muzzle[i]-mp40->grip_pivot[i])*mp40->forward[i];
+    assert(mp40_forward>0);
     int32_t saved[3];memcpy(saved,position,sizeof saved);
     assert(!mohu_vr_weapon_muzzle_shot(c,cal,bad,tr,position,angles));
     assert(!memcmp(saved,position,sizeof saved));

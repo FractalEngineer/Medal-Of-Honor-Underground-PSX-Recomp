@@ -7,10 +7,12 @@ executable and live overlay content.
 
 ## Start here
 
-1. [HANDOFF.md](HANDOFF.md) is the current execution contract: W3.4 remaining desktop
-   complete-gun profiles; physical P38 acceptance stays open.
+1. [HANDOFF.md](HANDOFF.md) is the current execution contract: W3.4 remaining
+   moving-muzzle/special-animation controls; physical P38 acceptance stays open.
    [P38_NATIVE_AIM_EVIDENCE.md](P38_NATIVE_AIM_EVIDENCE.md) records the
    restored barrel, complete calibration, W4/W5.1 and automated native damage.
+   [WEAPON_COMPLETE_PROFILES.md](WEAPON_COMPLETE_PROFILES.md) records the
+   all-ID topology, provisional calibration and passing desktop controls.
    Headset verification must run under the interactive Windows account; see
    [the mandatory execution-context section](HANDOFF.md#headset-execution-context---mandatory).
 2. [VR_PLAN.md](VR_PLAN.md) is the checkbox/status list and dependency order.
@@ -58,6 +60,8 @@ executable and live overlay content.
 
 17. [WEAPON_MAPPING.md](WEAPON_MAPPING.md) is the current working handoff for
     multiplayer-first weapon pose mapping and its validation matrix.
+    [WEAPON_COMPLETE_PROFILES.md](WEAPON_COMPLETE_PROFILES.md) owns the all-ID
+    assembly masks, provisional calibrations and desktop control evidence.
 
 The latest machine-ranked function candidates are in
 [ENGINE_EQUIVALENCE_REPORT.md](ENGINE_EQUIVALENCE_REPORT.md). They are
@@ -110,7 +114,9 @@ stationary P2 target one weapon at a time; see
 [WEAPON_SET_EVIDENCE.md](WEAPON_SET_EVIDENCE.md).
 
 The real first-person seam and P1-only MP desktop eye renderer are verified for
-all 13 measured IDs. W1 is complete for the P38 absolute synthetic head/hand
+all 13 measured IDs. All IDs now have complete-gun masks, animated node captures
+and provisional calibration; 64 calibrated MP controls pass in both eyes. W1 is
+complete for the P38 absolute synthetic head/hand
 coordinate contract and is not a mesh-hook search. W2.1 measured the native MP
 flat scene-list selector. W2.2 added its measured, separately guarded
 eye-frustum override and passed a zero-angle both-eye control. W2.3 passed

@@ -1058,13 +1058,47 @@
   [complete calibration](../../vr/proof/weapon-p38-complete-calibration-receipt.json)
   and [build receipt](../../vr/proof/weapon-p38-native-aim-build-receipt.json).
 
+### W3.4 all-ID complete-gun profiles and controls
+
+- Added a data-driven complete-gun profile to `MohuVrWeaponProfile`. Long guns
+  use measured whole-node masks; P38 and the silenced pistol use an explicit
+  256-bit mask because their gun islands share node 11 with hand geometry.
+- Extended the bounded native strip decoder into an all-ID topology validator.
+  It recomputes the captured geometry identity, decodes every triangle, rejects
+  mixed gun/arm triangles and checks exact selected face/vertex totals.
+- Added a single-process profile probe over copied MP slots 1-4. Sixteen native
+  slot appearances cover 13 unique IDs; source and animated vertices are
+  captured for every non-empty node without firing.
+- Derived provisional grip, orthonormal axes, forward span and nominal-size
+  scale for the other 12 IDs while retaining P38's accepted values exactly. The
+  fixed synthetic pose is explicitly not physical acceptance.
+- Added `MOHU_VR_WEAPON_GUN_ONLY` and `MOHU_VR_WEAPON_CALIBRATED`; both default
+  OFF. The P38-specific calibrated and aim flags remain separate. The flat
+  launcher clears the new flags.
+- The calibrated MP matrix passes 64 cases across all 16 slot appearances with
+  both eyes, translated/yawed/lost controls, 876 per-eye gun masks and zero
+  rollback/VRAM/watchdog/nesting failures. The control sheet shows complete gun
+  crops without arms for all 13 IDs.
+- Validation: 47 Python tests; strict C weapon, calibrated-affine and
+  diagnostic checks; default P38 eye replay; native fire/ammo/P2 damage and
+  refusal recovery; 14-case tracked P38 aim/fallback; SP zero; rebuilt flat
+  startup with inherited flags inert. Source saves/preferences are unchanged
+  and no owned game remains.
+- Evidence: [profiles](WEAPON_COMPLETE_PROFILES.md),
+  [topology](../../vr/proof/weapon-complete-gun-topology-receipt.json),
+  [animated capture](../../vr/proof/weapon-profile-captures-receipt.json),
+  [provisional calibration](../../vr/proof/weapon-provisional-calibrations-receipt.json),
+  [controls](../../vr/proof/weapon-complete-gun-controls-receipt.json) and
+  [build receipt](../../vr/proof/weapon-all-id-profiles-build-receipt.json).
+
 ## Next work
 
-**W3.4: remaining complete-gun profiles and controls, without a headset.**
-P38 complete-gun preparation, W4 and W5.1 are done. Use the existing 13-ID
-inventory and bounded strip/topology reader for the remaining 12 profiles;
-identify complete mixed-node assemblies before calibrating or filtering.
+**W3.4: moving-muzzle and special-animation controls, without a headset.**
+All-ID topology, animated capture, provisional calibration and fixed-pose
+controls are done. Add recoil, reload, switching and prop-specific animation
+samples, then determine which provisional muzzle markers remain valid while
+animated. Do not repeat mesh discovery or the 64-case fixed-pose matrix.
 W5.2 has the passing MP desktop subset; live NPC/SP isolation needs its own
 measured binding/copied fixture. W3.3/W3.5 remain physical acceptance gates.
-Do not repeat P38 discovery, W1/W2 or unchanged controls. Preserve source saves,
-normal defaults, historical receipts and unrelated .commandcode work.
+Only P38 has the accepted rendered-muzzle native-shot override. Preserve source
+saves, normal defaults, historical receipts and unrelated .commandcode work.

@@ -1,6 +1,6 @@
 # Underground VR execution plan
 
-Updated: 2026-10-26. Working branch: `feature/vr-port`.
+Updated: 2026-10-27. Working branch: `feature/vr-port`.
 
 This is the current checkbox plan, not the original proposal. Start with
 [HANDOFF.md](HANDOFF.md) for exact instructions. Checked means the stated
@@ -8,16 +8,20 @@ scope has evidence; it never implies broader headset or gameplay acceptance.
 Historical design and prior attempts belong in
 [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md) and the evidence documents.
 
-**NEXT DESKTOP TASK: W3.4 - remaining complete-gun profiles and controls.**
+**NEXT DESKTOP TASK: W3.4 - moving-muzzle and special-animation controls.**
 W4 native P38 mapping and W5.1 opt-in rendered-muzzle shot conversion are now
 complete. The corrected P38 candidate retains its barrel, follows the measured
 grip, and passes native P2 damage/miss and tracking-fallback controls without a
 headset. W5.2 has a 14-case desktop subset; live NPC/SP isolation is still open.
 W3.3/W3.5 remain physical acceptance gates. Do not request another headset run
-before completing ready desktop work. Current evidence and exact continuation:
+before completing ready desktop work. All 13 IDs now have measured topology,
+animated captures, provisional calibration and 64 passing calibrated desktop
+controls; their moving-muzzle/special-animation checks remain. Current evidence
+and exact continuation:
+[WEAPON_COMPLETE_PROFILES.md](WEAPON_COMPLETE_PROFILES.md),
 [P38_NATIVE_AIM_EVIDENCE.md](P38_NATIVE_AIM_EVIDENCE.md),
 [combat receipt](../../vr/proof/weapon-p38-aim-receipt.json),
-[complete-gun calibration](../../vr/proof/weapon-p38-complete-calibration-receipt.json).
+[complete-gun controls](../../vr/proof/weapon-complete-gun-controls-receipt.json).
 C1-C4 and W1-W3.2 remain complete; their historical receipts are retained.
 
 The [reference reuse audit](REFERENCE_REUSE_AUDIT.md) names existing first-game
@@ -276,8 +280,10 @@ gates. Do not wait for W3.3 before preparing the remaining desktop profiles.
   reference profile/batch validators. Do not rediscover the measured meshes.
   Arms filtering is a separate asset decision, not a full-model prerequisite.
   Operator requirement is explicit: render the gun model alone with no attached
-  arms. P38 now retains 128 triangles/96 vertices, including the 27-vertex
-  mixed-node barrel, and masks 142 arm/hand vertices. The other 12 IDs remain open.
+  arms. All 13 now have measured whole-node or explicit per-vertex masks, with
+  zero mixed gun/arm triangles. The provisional all-ID calibration and 64-case
+  calibrated MP control matrix pass. Remaining: moving-muzzle evidence for recoil,
+  reload, switching and prop-specific animation states.
 - [ ] W3.5. Operator accepts each designated weapon; retain a per-ID result table.
 
 The original W3.1 markers below describe the receiver alone. The current
@@ -296,6 +302,14 @@ existing W1 seam. The animated grip block centers at
 right/up/forward basis and `530.210564041902` model units per metre using a
 nominal 216 mm P38 reference. The scale and placement are deliberately
 provisional; no headset size/attachment claim or renderer consumption is made.
+
+All-ID desktop evidence: [topology](../../vr/proof/weapon-complete-gun-topology-receipt.json),
+[animated profile captures](../../vr/proof/weapon-profile-captures-receipt.json),
+[provisional calibrations](../../vr/proof/weapon-provisional-calibrations-receipt.json),
+[64-case controls](../../vr/proof/weapon-complete-gun-controls-receipt.json) and
+[control sheet](../../vr/proof/weapon-complete-gun-controls.png). The masks retain
+complete gun islands, including mixed-node P38/silenced-pistol parts, while
+removing arms. Calibration beyond P38 is provisional and does not imply W3.5.
 
 Exit gate: per-weapon physical observations, not copied reference numbers or a
 single global "all works" claim. If hardware is unavailable, finish test

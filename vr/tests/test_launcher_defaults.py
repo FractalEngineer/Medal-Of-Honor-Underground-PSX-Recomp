@@ -24,6 +24,8 @@ class LauncherDefaultsTest(unittest.TestCase):
                          "MOHU_VR_MP_CONTROL", "MOHU_VR_MP_FRUSTUM",
                          "MOHU_VR_MP_FRUSTUM_CAPTURE",
                          "MOHU_VR_P38_CALIBRATED", "MOHU_VR_P38_AIM",
+                         "MOHU_VR_WEAPON_GUN_ONLY",
+                         "MOHU_VR_WEAPON_CALIBRATED",
                          "MOHU_VR_WEAPON_SYNTHETIC_X",
                          "MOHU_VR_WEAPON_SYNTHETIC_YAW_MDEG"} <= variables)
 

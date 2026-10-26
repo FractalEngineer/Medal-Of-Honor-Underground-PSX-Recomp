@@ -25,23 +25,18 @@
 #define MOHU_VR_WEAPON_FP_MODEL_BYTES 0xB4u
 #define MOHU_VR_WEAPON_FP_MODEL_FNV 0xFAE3646Eu
 #define MOHU_VR_WEAPON_FP_MAX_NODES 32u
+#define MOHU_VR_WEAPON_VERTEX_LIMIT 256u
+#define MOHU_VR_WEAPON_VERTEX_WORDS \
+    (MOHU_VR_WEAPON_VERTEX_LIMIT / 64u)
 #define MOHU_VR_WEAPON_NODE_COUNT 22u
 #define MOHU_VR_P38_TRIANGLE_STREAM_BYTES 4320u
 #define MOHU_VR_P38_TRIANGLE_STREAM_FNV 0x1F000741u
 
-/* Native 354-triangle stream: node13 receiver/grip (91 triangles) plus the
- * disconnected node11 barrel/sight island (37 triangles). Other node11 and
- * node9 vertices skin the hands/arms. Selection is tied to the full asset hash. */
-static inline int mohu_vr_p38_gun_vertex(unsigned node, unsigned vertex) {
-    return (node == 13u && vertex < 69u) ||
-           (node == 11u && vertex >= 6u && vertex <= 32u);
-}
-
 /*
  * W3 calibration is measured in the animated-model output space produced by
  * 8008DB98. All marker and axis positions use that space's integer model units;
- * model_units_per_metre describes the nominal physical size only. These P38
- * values are provisional until W3.3 headset acceptance.
+ * model_units_per_metre describes the nominal physical size only. P38 retains
+ * its accepted desktop values; all other profiles remain provisional until W3.5.
  */
 typedef struct {
     double grip_pivot[3];
@@ -65,13 +60,36 @@ typedef struct {
     uint16_t face_count;
     uint16_t node_count;
     uint16_t vertices[MOHU_VR_WEAPON_FP_MAX_NODES];
+    uint16_t gun_face_count;
+    uint16_t gun_vertex_count;
+    uint32_t gun_nodes;
+    uint8_t partial_node;
+    uint64_t partial_vertices[MOHU_VR_WEAPON_VERTEX_WORDS];
     const MohuVrWeaponCalibration* calibration;
 } MohuVrWeaponProfile;
+
+/*
+ * Selected gun components are represented by whole nodes except for the P38
+ * barrel and silenced-pistol suppressor, which share animated nodes with the
+ * arms. The masks come from native triangle connectivity, not node-name
+ * assumptions. Every index is still checked against the captured node count.
+ */
+static inline int mohu_vr_weapon_gun_vertex(
+    const MohuVrWeaponProfile* profile, unsigned node, unsigned vertex) {
+    if (!profile || node >= profile->node_count ||
+        vertex >= profile->vertices[node]) return 0;
+    if (profile->gun_nodes & (UINT32_C(1) << node)) return 1;
+    return node == profile->partial_node &&
+           ((profile->partial_vertices[vertex / 64u] >>
+             (vertex % 64u)) & UINT64_C(1));
+}
 
 size_t mohu_vr_weapon_profile_count(void);
 const MohuVrWeaponProfile* mohu_vr_weapon_profile_at(size_t index);
 const MohuVrWeaponProfile* mohu_vr_weapon_profile_find(uint8_t id);
 const MohuVrWeaponCalibration* mohu_vr_weapon_calibration_find(uint8_t id);
+/* Preserve the focused P38 contract as a named wrapper for existing tests. */
+int mohu_vr_p38_gun_vertex(unsigned node, unsigned vertex);
 int mohu_vr_weapon_mesh_layout_valid(const MohuVrWeaponProfile* profile,
                                      uint32_t magic, unsigned faces,
                                      const uint16_t* vertices, unsigned nodes);
@@ -137,9 +155,9 @@ int mohu_vr_weapon_compose_absolute_gte_control(
     uint32_t control[8], const double hand_rotation[9],
     const double hand_translation[3], const double pivot[3]);
 
-/* Opt-in W3/W5 P38 candidate. Animated vertices remain native. Map the measured
- * model grip/basis into the hand instead of rotating authored camera placement.
- * Both render and shot consumers use this same quantized affine. */
+/* Opt-in W3 calibration candidate. Animated vertices remain native. Map the
+ * measured model grip/basis into the hand instead of rotating authored camera
+ * placement. P38's W5 shot override shares the same quantized affine. */
 int mohu_vr_weapon_calibrated_control(
     uint32_t control[8], const double hand_rotation[9],
     const double hand_translation[3], double units_per_metre,

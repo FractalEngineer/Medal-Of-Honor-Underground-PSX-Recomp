@@ -1,0 +1,99 @@
+{
+  "schema": 1,
+  "date": "2026-10-27",
+  "kind": "W3.4 all-ID complete-gun topology and provisional calibration controls",
+  "headset_used": false,
+  "revision": "f6a5ba9d6f4e3d8b1a434b3c51fe3fd07b1c520b",
+  "working_tree": true,
+  "working_tree_sources": {
+    "RunFlat.bat": "4c019edef4e18e821da6f2477060d0dc081142b133194a61bfbe122929bcf7e4",
+    "vr/underground/weapon.c": "27a45a58a8343fe05400ad7f868d9b30b313e9afa9382bf18998776bd38be03f",
+    "vr/underground/weapon.h": "a8bd7a27d6fa5754bcf9739d5b16a17e83bd0d1bc2a0b252cb19866de00157d3",
+    "vr/underground/vr_diagnostic.c": "f4624285a1e2cca357ffe5c86aaeca07f9205d1c2e8485345d770e579eb75f0c",
+    "vr/tools/check_mp_view.py": "3d8a7b1f1e03f9c575e8c85fecb2521782117c3fc61ba34481bbdad0294abbc4",
+    "vr/tools/check_weapon_meshes.py": "6b0d1fcfc52fffcf9dc7bf002f7a0deef6538cbb925426a6a70db60cc22380ed",
+    "vr/tools/probe_weapon_profiles.py": "b3410f7800b022e5932ed60e8d873d6f2607d8520a11d27bb95770280490717c",
+    "vr/tools/derive_weapon_calibrations.py": "28f3889feaec494b6af33c19aa24b75aa3f75df1b6bdc19cb07e94d397ac3079",
+    "vr/tools/check_flat_fallback.py": "379e58705c7255ede77e799bd480d527bf465155f4f3d8736bf933ed8721cfd4",
+    "vr/tests/test_weapon.c": "e662b9ae363a871bca8698c8cb25c3073fe45e89af906a4456a4180046e3292e",
+    "vr/tests/test_calibrated_weapon.c": "504a2e13f88fc39b5881ea21ed22b8696eed066c90c5484a962b5137f972efa6",
+    "vr/tests/test_weapon_meshes.py": "59a0221f669f30f2234c9fc22303565be53dc401ed2e537896edbd2ee2d97431",
+    "vr/tests/test_weapon_profile_probe.py": "c95e91fcacf6355d5fd99e669c06d85da524a2445b305f4c2d9599e30cfed6c8",
+    "vr/tests/test_weapon_calibrations.py": "12d19f2fc28fdd778d1ff8ec071d5adfb4f9bb39ab0380b957f32fdee8738eba",
+    "vr/tests/test_launcher_defaults.py": "76019385a2a46774b3b7e07aca133902240ff5d54affe641a866cfac5ee87fac",
+    "docs/vr/WEAPON_COMPLETE_PROFILES.md": "254f83349c1235bc2f1c92fd6ee0a05a1c16876f42c28bf2ee68cc23c5e33a63"
+  },
+  "executable_sha256": "710e1d12cda31457fb67260d791bd3b34880b26953431d36f02f8194ebaed252",
+  "flat_executable_sha256": "18f4328bc9085f0a6a2322f940eea63516f07e93698010853cf3474cad94636c",
+  "build": {
+    "PSX_DEBUG_TOOLS": "ON",
+    "MOHU_VR_DIAGNOSTICS": "ON",
+    "PSX_OPENXR": "ON",
+    "configuration": "Release"
+  },
+  "framework_revision": "555e1eabccc59b9b6ff0d9fca48aca783513dc86",
+  "receipts": {
+    "complete_mesh_topology": {
+      "path": "vr/proof/weapon-complete-gun-topology-receipt.json",
+      "sha256": "4dad82dabec33a436cca49ec95bd09b3faa5fbc5fce611ba3338430f7003a739"
+    },
+    "profile_captures": {
+      "path": "vr/proof/weapon-profile-captures-receipt.json",
+      "sha256": "e1536e9583c1ec4aa61104c63d52440e3d5bb59e7590d1f954557c4c8a10a465"
+    },
+    "provisional_calibrations": {
+      "path": "vr/proof/weapon-provisional-calibrations-receipt.json",
+      "sha256": "90e7ef868d3eec84b71430b670b75d288eb74f9f0557498a7ad283451089ffa9"
+    },
+    "calibrated_controls": {
+      "path": "vr/proof/weapon-complete-gun-controls-receipt.json",
+      "sha256": "789efe523c28c5f0683df7512ec5a1a9d0f94ccb2bd45d4d3a000f3d6f249d50"
+    },
+    "calibrated_control_sheet": {
+      "path": "vr/proof/weapon-complete-gun-controls.png",
+      "sha256": "b5099ccc2487c87fc8fa14c62d428a59269e1f86de7dde14989ce5250a32e11f"
+    },
+    "flat_fallback": {
+      "path": "analysis/vr-baseline/weapon-all-id-flat-20261027c/receipt.json",
+      "sha256": "186cf3a2efd977243c2d1ff073f6eb49d5ffae7d9b5adf8d08c5420c85988394"
+    },
+    "sp_zero": {
+      "path": "analysis/vr-baseline/weapon-all-id-sp-zero-20261027c/receipt.json",
+      "sha256": "39d06e86440a27497bdc46e022ad63f686d42bbaf643ce312e0383d5ff6b7ec6"
+    },
+    "default_p38_native_fire_recovery": {
+      "path": "analysis/vr-baseline/weapon-p38-final-regression-20261027/receipt.json",
+      "sha256": "2398414a112759542399332601f536f700a6feaa98b87c28c10d70ffb639edc3"
+    },
+    "p38_tracked_aim": {
+      "path": "analysis/vr-baseline/weapon-p38-final-aim-20261027/receipt.json",
+      "sha256": "e8413d0c19a991d470419789f83c21f03bd203f967e35bb9847f309fa9bcb184"
+    }
+  },
+  "checks": {
+    "python_tests": 47,
+    "strict_c": "PASS: weapon masks, 13 calibration records, MP40 calibrated affine, P38 calibrated fixture, diagnostic syntax",
+    "unique_weapon_ids": 13,
+    "complete_gun_topologies": 13,
+    "mixed_gun_arm_triangles": 0,
+    "profile_capture_slot_rows": 16,
+    "profile_capture_unique_ids": 13,
+    "calibrated_control_cases": 64,
+    "calibrated_eye_mask_applications": 876,
+    "default_p38_cases": 4,
+    "native_fire_p2_damage": true,
+    "tracked_p38_cases": 14,
+    "flat_inherited_flags_inert": true,
+    "sp_zero": "PASS",
+    "source_saves_preferences_unchanged": true,
+    "remaining_owned_game_processes": []
+  },
+  "normal_defaults": "all all-ID calibration/gun-only flags OFF; P38-specific tracked flag remains separate",
+  "limits": [
+    "Calibration is provisional geometry recovery from one fixed synthetic MP hand pose.",
+    "Nominal physical lengths are display references, not physical acceptance.",
+    "Recoil, reload, switching and moving-muzzle animation calibration remain open.",
+    "Only P38 has the accepted rendered-muzzle native-shot override.",
+    "No headset or W3.5 physical acceptance was performed."
+  ]
+}

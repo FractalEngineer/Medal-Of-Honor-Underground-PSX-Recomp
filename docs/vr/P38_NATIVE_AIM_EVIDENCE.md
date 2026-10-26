@@ -1,8 +1,10 @@
 # P38 complete model and native combat candidate
 
-Updated: 2026-10-26. No headset was used in this session. W4 and W5.1 are
-complete; W5.2 has desktop P38/P2 evidence and remains open for live NPC/SP
-isolation. W3.3 physical acceptance and all-weapon W3.4/W3.5 remain open.
+Updated: 2026-10-27. No headset was used. W4 and W5.1 are complete; W5.2 has
+desktop P38/P2 evidence and remains open for live NPC/SP isolation. All 13 IDs
+now have complete-gun topology, animated captures and provisional calibration;
+only P38 has an accepted rendered-muzzle shot override. W3.3/W3.5 physical
+acceptance and W3.4 moving-animation checks remain open.
 
 ## Results and corrections
 
@@ -143,10 +145,11 @@ The `--tracked` diagnostic explicitly enables `PSX_VR_WEAPON_POSE`,
 `RunFlat.bat` clears the new flags. The prepared tracked headset comparison
 selects this corrected candidate, but no new headset run was requested or done.
 
-**NEXT desktop milestone: W3.4, remaining weapon assembly/profile preparation.**
-Use the measured 13-ID inventory; first extend this bounded strip/topology
-inspection to identify each complete gun, including any mixed-node islands.
-Do not repeat P38, W1/W2 or native P38 shot discovery. Other IDs have no accepted
-calibration and stay native. W5.2's remaining live NPC/SP isolation needs its own
+**NEXT desktop milestone: W3.4 moving-muzzle/special-animation controls.**
+Use the all-ID profile evidence; do not repeat topology, capture or fixed-pose
+controls. Add recoil, reload, switch and prop-specific animation samples, then
+check whether each provisional muzzle marker remains valid. Other IDs have
+provisional pose calibration but retain native shots. W5.2's remaining live
+NPC/SP isolation needs its own
 measured SP binding and copied fixture; W5.3/W5.4 retain constructor-family,
 special animation and all-weapon combat work. W3.3/W3.5 remain operator gates.

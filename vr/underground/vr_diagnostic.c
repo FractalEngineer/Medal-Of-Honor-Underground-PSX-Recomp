@@ -242,6 +242,9 @@ static bool g_weapon_trace;
 static bool g_weapon_viewmodel_pending;
 static bool g_weapon_viewmodel_applied;
 static bool g_weapon_viewmodel_view;
+static bool g_weapon_gun_only;
+static bool g_weapon_gun_only_all;
+static bool g_weapon_gun_only_ready;
 static bool g_weapon_delta_valid;
 static uint32_t g_mp_weapon_draws[2];
 static uint32_t g_weapon_viewmodel_saved_control[8];
@@ -300,6 +303,7 @@ static double g_weapon_delta_rotation[9];
 static double g_weapon_delta_translation[3];
 static bool g_weapon_absolute;
 static bool g_p38_calibrated, g_p38_aim;
+static bool g_weapon_calibrated_all;
 static uint32_t g_p38_masked_vertices[2], g_p38_gun_vertices[2];
 static volatile int32_t g_weapon_control_x;
 static volatile int32_t g_weapon_control_yaw_mdeg;
@@ -2747,6 +2751,10 @@ static void vr_weapon_identity_rotation(double rotation[9]) {
     rotation[8] = 1.0;
 }
 
+static bool vr_weapon_calibrated_active(void) {
+    return g_p38_calibrated || g_weapon_calibrated_all;
+}
+
 static bool vr_weapon_prepare_delta(void) {
     vr_weapon_identity_rotation(g_weapon_delta_rotation);
     memset(g_weapon_delta_translation, 0,
@@ -2778,7 +2786,9 @@ static bool vr_weapon_prepare_delta(void) {
             &hands, g_openxr_units_per_meter, rotation, translation)) {
         return false;
     }
-    if (g_weapon_profile_last_id != 0u) {
+    if (!mohu_vr_weapon_calibration_find(
+            (uint8_t)g_weapon_profile_last_id) ||
+        (g_weapon_profile_last_id != 0u && !g_weapon_calibrated_all)) {
         return false;
     }
     memcpy(g_weapon_delta_rotation, rotation, sizeof rotation);
@@ -2815,13 +2825,16 @@ static void vr_weapon_viewmodel_project(CPUState* cpu, uint32_t address) {
             /* Preserve native weapon H / world H until grip/scale calibration
              * replaces the authored camera-relative weapon placement. */
             weapon_view.projection_h_ref =
-                g_p38_calibrated && g_weapon_absolute && g_weapon_delta_valid ? 133u : 400u;
+                vr_weapon_calibrated_active() && g_weapon_absolute &&
+                        g_weapon_delta_valid
+                    ? 133u
+                    : 400u;
             if (!psx_mod_render_view(&weapon_view)) return;
             g_weapon_viewmodel_view = true;
         }
         ++g_mp_weapon_draws[g_stereo_current_eye];
     }
-    if (!g_weapon_delta_valid) {
+    if (!g_weapon_delta_valid && !g_weapon_gun_only) {
         g_weapon_viewmodel_pending = false;
         return;
     }
@@ -2839,6 +2852,7 @@ static void vr_weapon_viewmodel_project(CPUState* cpu, uint32_t address) {
     g_weapon_capture_ofy_q16 = (int32_t)cpu->gte_ctrl[25];
     g_weapon_capture_bounds_valid = false;
     g_weapon_capture_vertex_count = 0u;
+    g_weapon_gun_only_ready = false;
     const uint32_t output_table = cpu->gpr[19];
     const uint32_t object = g_weapon_profile_last_object;
     const uint32_t node_header = psx_mod_read_word(object + 0x80u);
@@ -2912,7 +2926,10 @@ static void vr_weapon_viewmodel_project(CPUState* cpu, uint32_t address) {
             if (g_weapon_capture_eye_view_valid) {
                 g_weapon_capture_eye_view = g_stereo_eye_view;
                 g_weapon_capture_eye_view.projection_h_ref =
-                    g_p38_calibrated && g_weapon_absolute && g_weapon_delta_valid ? 133u : 400u;
+                    vr_weapon_calibrated_active() && g_weapon_absolute &&
+                            g_weapon_delta_valid
+                        ? 133u
+                        : 400u;
             }
             double rotation[9];
             for (unsigned i = 0; i < 9u; ++i) {
@@ -2987,6 +3004,16 @@ static void vr_weapon_viewmodel_project(CPUState* cpu, uint32_t address) {
             }
             g_weapon_capture_bounds_valid = have_point && have_screen;
             g_weapon_capture_valid = true;
+            if (!g_weapon_delta_valid) {
+                memcpy(g_weapon_capture_tracked_control,
+                       g_weapon_viewmodel_saved_control,
+                       sizeof g_weapon_capture_tracked_control);
+                g_weapon_capture_tracked_valid = true;
+                g_weapon_gun_only_ready =
+                    g_weapon_gun_only && g_stereo_active;
+                g_weapon_viewmodel_pending = false;
+                return;
+            }
         }
     }
     const int32_t pivot[3] = {
@@ -2998,7 +3025,7 @@ static void vr_weapon_viewmodel_project(CPUState* cpu, uint32_t address) {
     memcpy(tracked, g_weapon_viewmodel_saved_control, sizeof tracked);
     const double absolute_pivot[3] = {98.0, 296.0, 193.0};
     const int composed = g_weapon_absolute
-        ? (g_p38_calibrated
+        ? (vr_weapon_calibrated_active()
            ? mohu_vr_weapon_calibrated_control(tracked,g_weapon_delta_rotation,
                g_weapon_delta_translation,g_openxr_units_per_meter,
                mohu_vr_weapon_calibration_find(g_weapon_profile_last_id))
@@ -3010,6 +3037,7 @@ static void vr_weapon_viewmodel_project(CPUState* cpu, uint32_t address) {
               g_weapon_delta_translation);
     if (!composed) {
         g_weapon_viewmodel_pending = false;
+        g_weapon_gun_only_ready = false;
         psx_mod_counter_add("mohu.vr.weapon.viewmodel_compose_fail", 1);
         return;
     }
@@ -3022,6 +3050,7 @@ static void vr_weapon_viewmodel_project(CPUState* cpu, uint32_t address) {
     g_weapon_capture_sequence++;
     g_weapon_viewmodel_pending = false;
     g_weapon_viewmodel_applied = true;
+    g_weapon_gun_only_ready = g_weapon_gun_only && g_stereo_active;
     const unsigned eye = g_stereo_active ? g_stereo_current_eye : 0u;
     ++g_weapon_profile_hits[eye];
     psx_mod_counter_add("mohu.vr.weapon.viewmodel_apply", 1);
@@ -3032,21 +3061,24 @@ static void vr_weapon_viewmodel_project(CPUState* cpu, uint32_t address) {
 /* The native triangle/strip reader rejects a vertex with negative SZ at +4.
  * Mask only projected non-gun vertices, after projection and before faces.
  * Source geometry, strip topology and animations remain untouched; rollback
- * owns the projected buffer. Preserve node13 plus node11's barrel island. */
-static void vr_p38_hide_arms(CPUState* cpu, uint32_t address) {
+ * owns the projected buffer. Profiles preserve complete measured gun islands. */
+static void vr_weapon_hide_arms(CPUState* cpu, uint32_t address) {
     (void)address;
-    if (!cpu || !g_p38_calibrated || !g_weapon_absolute ||
-        !g_weapon_viewmodel_applied || !g_stereo_active ||
-        g_weapon_profile_last_id != 0u ||
+    if (!cpu || !g_weapon_gun_only || !g_weapon_gun_only_ready ||
+        !g_stereo_active ||
         cpu->gpr[29] != g_weapon_viewmodel_sp - 0x48u) return;
+    const MohuVrWeaponProfile* profile =
+        mohu_vr_weapon_profile_find((uint8_t)g_weapon_profile_last_id);
+    if (!profile) return;
+    if (!g_weapon_gun_only_all && profile->id != 0u) return;
     const unsigned eye=g_stereo_current_eye;
     g_p38_masked_vertices[eye] = g_p38_gun_vertices[eye] = 0;
-    for (unsigned node=0; node<14u; ++node) {
+    for (unsigned node=0; node<profile->node_count; ++node) {
         const uint32_t output = g_weapon_capture_output_addrs[node];
-        const unsigned count = mohu_vr_weapon_profile_find(0)->vertices[node];
+        const unsigned count = profile->vertices[node];
         if (!count || output < 0x80000000u || output > 0x80200000u-count*8u) continue;
         for (unsigned i=0; i<count; ++i) {
-            if (mohu_vr_p38_gun_vertex(node,i)) {
+            if (mohu_vr_weapon_gun_vertex(profile,node,i)) {
                 if ((int16_t)psx_mod_read_half(output+i*8u+4u) >= 0)
                     ++g_p38_gun_vertices[eye];
             } else {
@@ -3055,7 +3087,9 @@ static void vr_p38_hide_arms(CPUState* cpu, uint32_t address) {
             }
         }
     }
-    psx_mod_counter_add("mohu.vr.weapon.p38.gun_only", 1);
+    psx_mod_counter_add("mohu.vr.weapon.gun_only", 1);
+    psx_mod_counter_add(eye ? "mohu.vr.weapon.gun_only.right"
+                            : "mohu.vr.weapon.gun_only.left", 1);
 }
 
 static void vr_weapon_viewmodel_restore(CPUState* cpu) {
@@ -3077,6 +3111,7 @@ static void vr_weapon_viewmodel_restore(CPUState* cpu) {
         g_weapon_viewmodel_view = false;
         psx_mod_counter_add("mohu.vr.weapon.view_restore", 1);
     }
+    g_weapon_gun_only_ready = false;
     g_weapon_viewmodel_pending = false;
 }
 
@@ -3287,6 +3322,13 @@ static void vr_diagnostic_activate(void) {
     const char* aimed = getenv("MOHU_VR_P38_AIM");
     g_p38_calibrated = g_weapon_pose && calibrated && *calibrated && *calibrated != '0';
     g_p38_aim = g_p38_calibrated && aimed && *aimed && *aimed != '0';
+    const char* calibrated_all = getenv("MOHU_VR_WEAPON_CALIBRATED");
+    g_weapon_calibrated_all = g_weapon_pose && calibrated_all &&
+        *calibrated_all && *calibrated_all != '0';
+    const char* gun_only = getenv("MOHU_VR_WEAPON_GUN_ONLY");
+    g_weapon_gun_only_all = g_weapon_calibrated_all ||
+        (gun_only && *gun_only && *gun_only != '0');
+    g_weapon_gun_only = g_p38_calibrated || g_weapon_gun_only_all;
     const char* weapon_trace = getenv(MOHU_VR_WEAPON_TRACE_ENV);
     g_weapon_trace = weapon_trace && *weapon_trace && *weapon_trace != '0';
     g_weapon_synthetic_x = 0;
@@ -3478,7 +3520,8 @@ PSX_MOD_CONSTRUCTOR(psx_register_mohu_vr_diagnostic_plugin) {
         MOHU_VR_WEAPON_FP_LEAVE_WORD,
         vr_weapon_viewmodel_return);
     (void)psx_mod_register_instruction_plugin(
-        MOHU_VR_DIAG_PLUGIN_ID, 0x80089600u, 0x8FB60054u, vr_p38_hide_arms);
+        MOHU_VR_DIAG_PLUGIN_ID, 0x80089600u, 0x8FB60054u,
+        vr_weapon_hide_arms);
     fprintf(stdout,
             "mohu-vr-weapon: viewmodel hooks enter=%d project=%d leave=%d\n",
             weapon_enter, weapon_project, weapon_return);
