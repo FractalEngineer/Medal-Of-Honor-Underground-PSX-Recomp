@@ -88,6 +88,29 @@
 #define MOHU_VR_NATIVE_SUBMIT_TAIL_ADDR 0x80053CFCu
 #define MOHU_VR_NATIVE_SUBMIT_TAIL_SIZE 80u
 #define MOHU_VR_NATIVE_SUBMIT_TAIL_FNV 0xA7A38EA0u
+#define MOHU_VR_INPUT_CONVERTER_ADDR 0x80083C6Cu
+#define MOHU_VR_INPUT_CONVERTER_SIZE 324u
+#define MOHU_VR_INPUT_CONVERTER_FNV 0x9CA131D0u
+#define MOHU_VR_INPUT_DISPATCHER_ADDR 0x80083DB0u
+#define MOHU_VR_INPUT_DISPATCHER_SIZE 84u
+#define MOHU_VR_INPUT_DISPATCHER_FNV 0x2D93CB1Cu
+#define MOHU_VR_INPUT_AXES_ADDR 0x800C47C8u
+#define MOHU_VR_INPUT_ACTIONS_ADDR 0x800C4AA8u
+#define MOHU_VR_INPUT_INVERSIONS_ADDR 0x800C4AD0u
+#define MOHU_VR_INPUT_CURVE_ADDR 0x800AB12Cu
+
+/* The multiplayer overlay shares the mapper contract but relocates every table. */
+#define MOHU_VR_MP_INPUT_CONVERTER_ADDR 0x800799E4u
+#define MOHU_VR_MP_INPUT_CONVERTER_SIZE 324u
+#define MOHU_VR_MP_INPUT_CONVERTER_FNV 0x890B7F9Fu
+#define MOHU_VR_MP_INPUT_DISPATCHER_ADDR 0x80079B28u
+#define MOHU_VR_MP_INPUT_DISPATCHER_SIZE 84u
+#define MOHU_VR_MP_INPUT_DISPATCHER_FNV 0x9E630C72u
+#define MOHU_VR_MP_INPUT_AXES_ADDR 0x800C0BF0u
+#define MOHU_VR_MP_INPUT_ACTIONS_ADDR 0x800C0ED0u
+#define MOHU_VR_MP_INPUT_INVERSIONS_ADDR 0x800C0F20u
+#define MOHU_VR_MP_INPUT_CURVE_ADDR 0x800A458Cu
+#define MOHU_VR_MP_INPUT_ENABLED_ADDR 0x800A4578u
 
 typedef struct {
     const char* name;
@@ -134,6 +157,7 @@ static uint32_t g_head_frustum_fallbacks[2];
 typedef struct {
     uint32_t node;
     uint32_t return_address;
+    uint32_t eye;
     int16_t center[3];
     int16_t radius;
     uint32_t control[8];
@@ -146,12 +170,14 @@ typedef struct {
     uint32_t input;
     uint32_t view;
     uint32_t native_result;
+    uint32_t override_result;
     bool result_valid;
+    bool override_valid;
 } MohuVrMpFrustumSample;
 static bool g_mp_frustum_capture;
 static uint32_t g_mp_frustum_capture_count;
 static uint32_t g_mp_frustum_capture_last;
-static MohuVrMpFrustumSample g_mp_frustum_samples[32];
+static MohuVrMpFrustumSample g_mp_frustum_samples[64];
 static bool g_mp_frustum;
 static bool g_mp_replay_guard_valid;
 static uint32_t g_mp_frustum_overrides[2];
@@ -238,6 +264,18 @@ static uint32_t g_weapon_capture_local_addr;
 static uint32_t g_weapon_capture_output_addr;
 static int16_t g_weapon_capture_local[MOHU_VR_WEAPON_FP_MAX_NODES][4];
 static int16_t g_weapon_capture_animated[MOHU_VR_WEAPON_FP_MAX_NODES][4];
+enum { MOHU_VR_WEAPON_CAPTURE_VERTEX_LIMIT = 256 };
+static int16_t
+    g_weapon_capture_local_vertices[MOHU_VR_WEAPON_CAPTURE_VERTEX_LIMIT][4];
+static int16_t
+    g_weapon_capture_animated_vertices[MOHU_VR_WEAPON_CAPTURE_VERTEX_LIMIT][4];
+static uint32_t g_weapon_capture_vertex_count;
+static int16_t
+    g_weapon_capture_snapshot_local[MOHU_VR_WEAPON_CAPTURE_VERTEX_LIMIT][4];
+static int16_t
+    g_weapon_capture_snapshot_animated[MOHU_VR_WEAPON_CAPTURE_VERTEX_LIMIT][4];
+static uint32_t g_weapon_capture_snapshot_count;
+static bool g_weapon_capture_snapshot_valid;
 static uint32_t g_weapon_capture_local_addrs[MOHU_VR_WEAPON_FP_MAX_NODES];
 static uint32_t g_weapon_capture_output_addrs[MOHU_VR_WEAPON_FP_MAX_NODES];
 static uint32_t g_weapon_capture_native_control[8];
@@ -280,53 +318,173 @@ static uint32_t g_laser_projection_h;
 static uint32_t g_laser_projection_h_ref;
 static uint32_t g_laser_hits[2];
 static uint32_t g_laser_misses[2];
+static int g_input_mode_reported = -1;
+static bool g_input_callback_reported;
 
 static void set_openxr_native_surface(bool enabled);
+static uint32_t guest_range_fnv1a(uint32_t address, uint32_t size);
+static bool vr_mp_snapshot(MohuVrMpState* state);
+
+static bool vr_mp_input_snapshot(MohuVrMpInputState* state) {
+    if (!state) return false;
+    memset(state, 0, sizeof *state);
+    state->width = psx_mod_read_word(MOHU_VR_MP_CONTEXT);
+    state->height = psx_mod_read_word(MOHU_VR_MP_CONTEXT + 4u);
+    state->focal = psx_mod_read_word(MOHU_VR_MP_CONTEXT + 8u);
+    state->player = psx_mod_read_word(MOHU_VR_MP_P1_ROOT);
+    state->other_player = psx_mod_read_word(MOHU_VR_MP_P1_ROOT + 4u);
+    state->current_player = psx_mod_read_word(MOHU_VR_MP_CURRENT_PLAYER);
+    if (!mohu_vr_mp_actor_address(state->player) ||
+        !mohu_vr_mp_actor_address(state->other_player)) return false;
+    state->player_class = psx_mod_read_word(state->player + 8u);
+    state->other_class = psx_mod_read_word(state->other_player + 8u);
+    state->player_input = psx_mod_read_word(state->player + 0x39Cu);
+    state->other_input = psx_mod_read_word(state->other_player + 0x39Cu);
+    return mohu_vr_mp_input_state_valid(state) != 0;
+}
+
+static bool vr_input_actions_match(uint32_t actions_address,
+                                   uint32_t inversions_address,
+                                   const uint32_t expected[9]) {
+    for (unsigned index = 0; index < 9u; ++index) {
+        if (psx_mod_read_word(actions_address + index * 4u) != expected[index] ||
+            psx_mod_read_word(inversions_address + index * 4u) != 0u) {
+            return false;
+        }
+    }
+    return true;
+}
+
+static bool vr_input_response_load(uint32_t axes_address, unsigned config,
+                                   const unsigned entry[3],
+                                   const unsigned native_axis[3],
+                                   uint32_t curve_address,
+                                   MohuVRAnalogResponse* response) {
+    if (!response || config > 1u) return false;
+    memset(response, 0, sizeof *response);
+    for (unsigned index = 0; index < 3u; ++index) {
+        if (entry[index] > 3u) return false;
+        const uint32_t base =
+            axes_address + config * 160u + entry[index] * 40u;
+        MohuVRAnalogAxis* axis = &response->axis[index];
+        if (psx_mod_read_word(base) != native_axis[index] ||
+            psx_mod_read_word(base + 36u) != 0u) {
+            return false;
+        }
+        axis->center = psx_mod_read_byte(base + 14u);
+        axis->negative_factor = psx_mod_read_word(base + 20u);
+        axis->positive_factor = psx_mod_read_word(base + 24u);
+        axis->scale = psx_mod_read_word(base + 32u) >> 8;
+    }
+    for (unsigned index = 0; index < sizeof response->curve; ++index)
+        response->curve[index] = psx_mod_read_byte(curve_address + index);
+    return true;
+}
 
 /* The game rebuilds the selected calibration after DualShock presentation.
  * Measured boot/load layouts swap entries 1/3; native LX/LY/RX retain their
  * turn/forward/strafe roles. Never force a guest configuration or table. */
 static int vr_controller_source(PSXModControllerState* pad) {
+    psx_mod_counter_add("mohu.vr.input.callback", 1);
+    if (g_stereo_active) {
+        /* Eye replay runs guest code synchronously. Do not even query the XR
+         * action snapshot from that render transaction. */
+        psx_mod_counter_add("mohu.vr.input.render_blocked", 1);
+        return 0;
+    }
     PSXModOpenXRInput input = {0};
     input.struct_size = sizeof input;
-    if (g_stereo_active || !psx_mod_openxr_input(&input)) return 0;
+    const bool input_ok = psx_mod_openxr_input(&input);
+    if (!g_input_callback_reported) {
+        g_input_callback_reported = true;
+        fprintf(stdout, "mohu-vr-input: callback stereo=0 input=%d\n",
+                input_ok ? 1 : 0);
+        fflush(stdout);
+    }
+    if (!input_ok) return 0;
+    if (!input.focused) {
+        psx_mod_counter_add("mohu.vr.input.focus_lost", 1);
+    }
+    MohuVrMpInputState mp;
+    const bool multiplayer = vr_mp_input_snapshot(&mp);
     uint32_t player = psx_mod_read_word(MOHU_VR_SP_PLAYER_POINTER_ADDR);
+    const int input_mode = g_openxr_native_surface == 1 ? 2 : multiplayer ? 1 : 0;
+    psx_mod_counter_add(
+        input_mode == 2 ? "mohu.vr.input.mode.menu"
+                        : input_mode == 1 ? "mohu.vr.input.mode.mp"
+                                          : "mohu.vr.input.mode.sp",
+        1);
+    if (input_mode != g_input_mode_reported) {
+        g_input_mode_reported = input_mode;
+        fprintf(stdout, "mohu-vr-input: mode=%s mp_player=0x%08X "
+                        "sp_player=0x%08X current=0x%08X\n",
+                input_mode == 2 ? "menu" : input_mode == 1 ? "mp" : "sp",
+                multiplayer ? mp.player : 0u, player,
+                multiplayer ? mp.current_player : 0u);
+        fflush(stdout);
+    }
     if (g_openxr_native_surface == 1 ||
-        player < 0x80000000u || player >= 0x801FFC00u)
+        (!multiplayer &&
+         (player < 0x80000000u || player >= 0x801FFC00u)))
         return mohu_vr_menu_input_map(&input, g_move_deadzone, pad);
-    bool analog_layout = psx_mod_read_word(0x800C47F0u) == 0;
-    const unsigned entry[3] = {analog_layout ? 3u : 1u, 0,
-                               analog_layout ? 1u : 3u};
+
+    const uint32_t converter_address =
+        multiplayer ? MOHU_VR_MP_INPUT_CONVERTER_ADDR
+                    : MOHU_VR_INPUT_CONVERTER_ADDR;
+    const uint32_t converter_size =
+        multiplayer ? MOHU_VR_MP_INPUT_CONVERTER_SIZE
+                    : MOHU_VR_INPUT_CONVERTER_SIZE;
+    const uint32_t converter_hash =
+        multiplayer ? MOHU_VR_MP_INPUT_CONVERTER_FNV
+                    : MOHU_VR_INPUT_CONVERTER_FNV;
+    const uint32_t dispatcher_address =
+        multiplayer ? MOHU_VR_MP_INPUT_DISPATCHER_ADDR
+                    : MOHU_VR_INPUT_DISPATCHER_ADDR;
+    const uint32_t dispatcher_size =
+        multiplayer ? MOHU_VR_MP_INPUT_DISPATCHER_SIZE
+                    : MOHU_VR_INPUT_DISPATCHER_SIZE;
+    const uint32_t dispatcher_hash =
+        multiplayer ? MOHU_VR_MP_INPUT_DISPATCHER_FNV
+                    : MOHU_VR_INPUT_DISPATCHER_FNV;
+    const uint32_t axes_address =
+        multiplayer ? MOHU_VR_MP_INPUT_AXES_ADDR : MOHU_VR_INPUT_AXES_ADDR;
+    const uint32_t actions_address =
+        multiplayer ? MOHU_VR_MP_INPUT_ACTIONS_ADDR
+                    : MOHU_VR_INPUT_ACTIONS_ADDR;
+    const uint32_t inversions_address =
+        multiplayer ? MOHU_VR_MP_INPUT_INVERSIONS_ADDR
+                    : MOHU_VR_INPUT_INVERSIONS_ADDR;
+    const uint32_t curve_address =
+        multiplayer ? MOHU_VR_MP_INPUT_CURVE_ADDR : MOHU_VR_INPUT_CURVE_ADDR;
+    bool analog_layout = multiplayer ||
+                         psx_mod_read_word(0x800C47F0u) == 0;
+    const unsigned entry[3] = {
+        multiplayer ? 3u : (analog_layout ? 3u : 1u),
+        0,
+        multiplayer ? 1u : (analog_layout ? 1u : 3u),
+    };
     const unsigned native_axis[3] = {2, 3, 0};
-    const uint32_t actions[9] = {0x40,0x10,0x20,1,0x80,0x80,0x800,3,2};
-    bool valid = true;
-    uint32_t hash = 2166136261u;
-    for (uint32_t i = 0; i < 324u; ++i)
-        hash = (hash ^ psx_mod_read_byte(0x80083C6Cu + i)) * 16777619u;
-    valid = hash == 0x9CA131D0u;
-    hash = 2166136261u;
-    for (uint32_t i = 0; i < 84u; ++i)
-        hash = (hash ^ psx_mod_read_byte(0x80083DB0u + i)) * 16777619u;
-    valid = valid && hash == 0x2D93CB1Cu;
-    for (unsigned i = 0; i < 9; ++i) {
-        uint32_t action = psx_mod_read_word(0x800C4AA8u + i * 4);
-        valid = valid && (i == 7 ? action == (analog_layout ? 0x200u : 3u) :
-                         action == actions[i]) &&
-                !psx_mod_read_word(0x800C4AD0u + i * 4);
+    const uint32_t analog_actions[9] =
+        {0x40, 0x10, 0x20, 1, 0x80, 0x80, 0x800, 0x200, 2};
+    const uint32_t initial_actions[9] =
+        {0x40, 0x10, 0x20, 1, 0x80, 0x80, 0x800, 3, 2};
+    bool valid =
+        guest_range_fnv1a(converter_address, converter_size) == converter_hash &&
+        guest_range_fnv1a(dispatcher_address, dispatcher_size) ==
+            dispatcher_hash &&
+        vr_input_actions_match(
+            actions_address, inversions_address,
+            multiplayer || analog_layout ? analog_actions : initial_actions);
+    if (multiplayer) {
+        valid = valid && psx_mod_read_word(MOHU_VR_MP_INPUT_ENABLED_ADDR) != 0u;
     }
     MohuVRAnalogResponse response;
-    for (unsigned i = 0; i < 3; ++i) {
-        uint32_t base = 0x800C47C8u + entry[i] * 40;
-        valid = valid && psx_mod_read_word(base) == native_axis[i] &&
-                !psx_mod_read_word(base + 36);
-        response.axis[i].center = psx_mod_read_byte(base + 14);
-        response.axis[i].negative_factor = psx_mod_read_word(base + 20);
-        response.axis[i].positive_factor = psx_mod_read_word(base + 24);
-        response.axis[i].scale = psx_mod_read_word(base + 32) >> 8;
-    }
-    for (unsigned i = 0; i < sizeof response.curve; ++i)
-        response.curve[i] = psx_mod_read_byte(0x800AB12Cu + i);
+    valid = valid &&
+            vr_input_response_load(axes_address,
+                                   multiplayer ? 0u : analog_layout ? 0u : 1u,
+                                   entry, native_axis, curve_address, &response);
     if (!valid) {
+        psx_mod_counter_add("mohu.vr.input.guard_fallback", 1);
         if (!g_input_guard_reported) {
             fprintf(stdout, "mohu-vr-input: unsupported code/control layout; "
                     "gameplay source neutral (select native Config. 2)\n");
@@ -841,9 +999,6 @@ static void vr_diagnostic_vblank(void) {
             g_stereo_attempts, &g_native_surface_seen_attempts,
             &g_native_surface_idle_vblanks, g_openxr_native_surface)) {
         set_openxr_native_surface(true);
-        if (g_openxr_native_surface == 1) {
-            psx_mod_counter_add("mohu.vr.native_surface.resume", 1);
-        }
     }
     if (g_laser && (g_openxr || g_stereo_proof)) {
         PSXModOpenXRInput input = {0};
@@ -934,6 +1089,11 @@ static int vr_weapon_space_command(const char* args, char* reply, int cap) {
             return -1;
         }
         g_weapon_capture_node = (uint32_t)value;
+        g_weapon_capture_snapshot_valid = false;
+        (void)snprintf(reply, (size_t)cap,
+                       "{\"valid\":false,\"sequence\":%u}",
+                       g_weapon_capture_sequence);
+        return 1;
     } else if (strcmp(args, "bounds") == 0) {
         if (!g_weapon_capture_bounds_valid) {
             (void)snprintf(reply, (size_t)cap,
@@ -953,6 +1113,49 @@ static int vr_weapon_space_command(const char* args, char* reply, int cap) {
             g_weapon_capture_screen_min[1], g_weapon_capture_screen_max[0],
             g_weapon_capture_screen_max[1]);
         return 1;
+    } else if (strncmp(args, "vertices=", 9u) == 0) {
+        char* end = NULL;
+        const long start = strtol(args + 9, &end, 0);
+        if (end == args + 9 || *end != '\0' || start < 0 ||
+            start > (long)g_weapon_capture_snapshot_count ||
+            !g_weapon_capture_snapshot_valid) {
+            return -1;
+        }
+        const uint32_t available =
+            start < (long)g_weapon_capture_snapshot_count
+                ? g_weapon_capture_snapshot_count - (uint32_t)start
+                : 0u;
+        const uint32_t count = available < 4u ? available : 4u;
+        int written = snprintf(
+            reply, (size_t)cap,
+            "{\"valid\":true,\"sequence\":%u,\"node\":%u,\"start\":%ld,"
+            "\"count\":%u,\"total\":%u,\"local\":[",
+            g_weapon_capture_sequence, g_weapon_capture_node, start, count,
+            g_weapon_capture_snapshot_count);
+        for (uint32_t i = 0; i < count && written > 0 && written < cap; ++i) {
+            const int16_t* vertex =
+                g_weapon_capture_snapshot_local[(uint32_t)start + i];
+            written += snprintf(
+                reply + written, (size_t)(cap - written),
+                "%s[%d,%d,%d,%d]", i ? "," : "", vertex[0], vertex[1],
+                vertex[2], vertex[3]);
+        }
+        if (written > 0 && written < cap) {
+            written += snprintf(reply + written, (size_t)(cap - written),
+                                "],\"animated\":[");
+        }
+        for (uint32_t i = 0; i < count && written > 0 && written < cap; ++i) {
+            const int16_t* vertex =
+                g_weapon_capture_snapshot_animated[(uint32_t)start + i];
+            written += snprintf(
+                reply + written, (size_t)(cap - written),
+                "%s[%d,%d,%d,%d]", i ? "," : "", vertex[0], vertex[1],
+                vertex[2], vertex[3]);
+        }
+        if (written > 0 && written < cap) {
+            (void)snprintf(reply + written, (size_t)(cap - written), "]}");
+        }
+        return 1;
     } else if (*args) {
         return -1;
     }
@@ -965,6 +1168,24 @@ static int vr_weapon_space_command(const char* args, char* reply, int cap) {
     const uint32_t node = g_weapon_capture_node < g_weapon_capture_node_count
                               ? g_weapon_capture_node
                               : 0u;
+    if (node != g_weapon_capture_node ||
+        !g_weapon_capture_vertex_count) {
+        (void)snprintf(reply, (size_t)cap,
+                       "{\"valid\":false,\"sequence\":%u}",
+                       g_weapon_capture_sequence);
+        return 1;
+    }
+    const uint32_t snapshot_count =
+        g_weapon_capture_vertex_count < MOHU_VR_WEAPON_CAPTURE_VERTEX_LIMIT
+            ? g_weapon_capture_vertex_count
+            : MOHU_VR_WEAPON_CAPTURE_VERTEX_LIMIT;
+    memcpy(g_weapon_capture_snapshot_local, g_weapon_capture_local_vertices,
+           snapshot_count * sizeof g_weapon_capture_snapshot_local[0]);
+    memcpy(g_weapon_capture_snapshot_animated,
+           g_weapon_capture_animated_vertices,
+           snapshot_count * sizeof g_weapon_capture_snapshot_animated[0]);
+    g_weapon_capture_snapshot_count = snapshot_count;
+    g_weapon_capture_snapshot_valid = true;
     g_weapon_capture_local_addr = g_weapon_capture_local_addrs[node];
     g_weapon_capture_output_addr = g_weapon_capture_output_addrs[node];
     const PSXModRenderView* view = &g_weapon_capture_eye_view;
@@ -1304,6 +1525,10 @@ static int vr_mp_frustum_filter(CPUState* cpu, uint32_t address) {
     if (ra != 0x8006C66Cu && ra != 0x8006C690u) {
         return 0;
     }
+    const uint32_t eye = g_stereo_current_eye;
+    if (eye > 1u) {
+        return 0;
+    }
     const uint32_t node = cpu->gpr[4];
     if (!mohu_vr_mp_actor_address(node) ||
         psx_mod_read_word(node + MOHU_VR_MP_NODE_CALLBACK) !=
@@ -1311,7 +1536,8 @@ static int vr_mp_frustum_filter(CPUState* cpu, uint32_t address) {
         return 0;
     }
     for (uint32_t i = 0; i < g_mp_frustum_capture_count; ++i) {
-        if (g_mp_frustum_samples[i].node == node) {
+        if (g_mp_frustum_samples[i].node == node &&
+            g_mp_frustum_samples[i].eye == eye) {
             return 0;
         }
     }
@@ -1338,6 +1564,7 @@ static int vr_mp_frustum_filter(CPUState* cpu, uint32_t address) {
     memset(sample, 0, sizeof *sample);
     sample->node = node;
     sample->return_address = ra;
+    sample->eye = eye;
     for (unsigned axis = 0; axis < 3u; ++axis) {
         sample->center[axis] = (int16_t)psx_mod_read_half(
             node + MOHU_VR_MP_NODE_CENTER + axis * 2u);
@@ -1369,6 +1596,33 @@ static void vr_mp_frustum_result_capture(CPUState* cpu, uint32_t address) {
     if (!sample->result_valid) {
         sample->native_result = cpu->gpr[2] ? 1u : 0u;
         sample->result_valid = true;
+        if (g_stereo_eye_view_valid &&
+            mohu_vr_mp_view_valid(
+                &g_stereo_eye_view, (int)sample->screen_width,
+                (int)sample->screen_height)) {
+            double matrix[9];
+            double tr[3];
+            for (unsigned i = 0; i < 9u; ++i) {
+                matrix[i] = (int16_t)(sample->control[i / 2u] >>
+                                      ((i & 1u) * 16u)) /
+                            4096.0;
+            }
+            for (unsigned i = 0; i < 3u; ++i) {
+                tr[i] = (int32_t)sample->control[5u + i];
+            }
+            const double cx =
+                (int32_t)cpu->gte_ctrl[24] / 65536.0;
+            const double cy =
+                (int32_t)cpu->gte_ctrl[25] / 65536.0;
+            const int visible = mohu_vr_mp_box_visible(
+                sample->center, sample->radius, matrix, tr,
+                &g_stereo_eye_view, cx, cy,
+                (int)sample->screen_width, (int)sample->screen_height);
+            if (visible >= 0) {
+                sample->override_result = visible ? 1u : 0u;
+                sample->override_valid = true;
+            }
+        }
     }
 }
 
@@ -1383,6 +1637,25 @@ static int vr_mp_frustum_command(const char* args, char* reply, int cap) {
         g_mp_frustum_capture_last = 0u;
         g_mp_frustum_capture = true;
         (void)snprintf(reply, (size_t)cap, "capture=1");
+        return 1;
+    }
+    if (strcmp(args, "enable") == 0) {
+        g_mp_frustum_capture = false;
+        g_mp_frustum = true;
+        (void)snprintf(reply, (size_t)cap, "capture=0 override=1");
+        return 1;
+    }
+    if (strcmp(args, "disable") == 0) {
+        g_mp_frustum_capture = false;
+        g_mp_frustum = false;
+        (void)snprintf(reply, (size_t)cap, "capture=0 override=0");
+        return 1;
+    }
+    if (strcmp(args, "status") == 0) {
+        (void)snprintf(reply, (size_t)cap, "capture=%u override=%u count=%u",
+                       g_mp_frustum_capture ? 1u : 0u,
+                       g_mp_frustum ? 1u : 0u,
+                       g_mp_frustum_capture_count);
         return 1;
     }
     if (strcmp(args, "stop") == 0) {
@@ -1404,19 +1677,21 @@ static int vr_mp_frustum_command(const char* args, char* reply, int cap) {
     const MohuVrMpFrustumSample* sample = &g_mp_frustum_samples[index];
     int used = snprintf(
         reply, (size_t)cap,
-        "node=%08X ra=%08X center=%d,%d,%d radius=%d "
+        "node=%08X ra=%08X eye=%u center=%d,%d,%d radius=%d "
         "control=%08X,%08X,%08X,%08X,%08X,%08X,%08X,%08X "
         "screen=%u,%u projection=%u,%u,%u "
         "camera=%08X input=%08X view=%08X "
-        "native_result=%u result_valid=%u",
-        sample->node, sample->return_address, sample->center[0],
+        "native_result=%u result_valid=%u "
+        "override_result=%u override_valid=%u",
+        sample->node, sample->return_address, sample->eye, sample->center[0],
         sample->center[1], sample->center[2], sample->radius,
         sample->control[0], sample->control[1], sample->control[2],
         sample->control[3], sample->control[4], sample->control[5],
         sample->control[6], sample->control[7], sample->screen_width,
         sample->screen_height, sample->projection_h, sample->ofx_q16,
         sample->ofy_q16, sample->camera, sample->input, sample->view,
-        sample->native_result, sample->result_valid ? 1u : 0u);
+        sample->native_result, sample->result_valid ? 1u : 0u,
+        sample->override_result, sample->override_valid ? 1u : 0u);
     if (used < 0 || used >= cap) {
         return -1;
     }
@@ -1656,6 +1931,10 @@ static void set_openxr_native_surface(bool enabled) {
         return;
     }
     g_openxr_native_surface = enabled ? 1 : 0;
+    psx_mod_counter_add(
+        enabled ? "mohu.vr.native_surface.resume"
+                : "mohu.vr.native_surface.suspend",
+        1);
     (void)psx_mod_set_stereo_presentation(enabled ? 0u : 1u);
 }
 
@@ -2351,6 +2630,7 @@ static void vr_weapon_viewmodel_project(CPUState* cpu, uint32_t address) {
     g_weapon_capture_ofx_q16 = (int32_t)cpu->gte_ctrl[24];
     g_weapon_capture_ofy_q16 = (int32_t)cpu->gte_ctrl[25];
     g_weapon_capture_bounds_valid = false;
+    g_weapon_capture_vertex_count = 0u;
     const uint32_t output_table = cpu->gpr[19];
     const uint32_t object = g_weapon_profile_last_object;
     const uint32_t node_header = psx_mod_read_word(object + 0x80u);
@@ -2366,6 +2646,10 @@ static void vr_weapon_viewmodel_project(CPUState* cpu, uint32_t address) {
         memset(g_weapon_capture_local, 0, sizeof g_weapon_capture_local);
         memset(g_weapon_capture_animated, 0,
                sizeof g_weapon_capture_animated);
+        memset(g_weapon_capture_local_vertices, 0,
+               sizeof g_weapon_capture_local_vertices);
+        memset(g_weapon_capture_animated_vertices, 0,
+               sizeof g_weapon_capture_animated_vertices);
         memset(g_weapon_capture_local_addrs, 0,
                sizeof g_weapon_capture_local_addrs);
         memset(g_weapon_capture_output_addrs, 0,
@@ -2392,6 +2676,23 @@ static void vr_weapon_viewmodel_project(CPUState* cpu, uint32_t address) {
                         (int16_t)psx_mod_read_half(local_addr + i * 2u);
                     g_weapon_capture_animated[node][i] =
                         (int16_t)psx_mod_read_half(output_addr + i * 2u);
+                }
+                if (node == g_weapon_capture_node) {
+                    const uint32_t stored =
+                        local_count < MOHU_VR_WEAPON_CAPTURE_VERTEX_LIMIT
+                            ? local_count
+                            : MOHU_VR_WEAPON_CAPTURE_VERTEX_LIMIT;
+                    for (uint32_t vertex = 0; vertex < stored; ++vertex) {
+                        for (unsigned i = 0; i < 4u; ++i) {
+                            g_weapon_capture_local_vertices[vertex][i] =
+                                (int16_t)psx_mod_read_half(
+                                    local_addr + vertex * 8u + i * 2u);
+                            g_weapon_capture_animated_vertices[vertex][i] =
+                                (int16_t)psx_mod_read_half(
+                                    output_addr + vertex * 8u + i * 2u);
+                        }
+                    }
+                    g_weapon_capture_vertex_count = stored;
                 }
             }
         }
@@ -2795,6 +3096,8 @@ static void vr_diagnostic_activate(void) {
             g_movement = false;
         }
     }
+    psx_mod_counter_add("mohu.vr.input.render_blocked", 0);
+    psx_mod_counter_add("mohu.vr.input.guard_fallback", 0);
     fprintf(stdout, "mohu-vr-input: enabled=%d deadzone=%.3f turn_gain=%.3f "
             "config=2 sample=offline\n", g_movement, g_move_deadzone, g_turn_gain);
     if (g_stereo_proof) {

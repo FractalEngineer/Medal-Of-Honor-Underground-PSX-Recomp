@@ -1,0 +1,190 @@
+{
+  "schema": 1,
+  "date": "2026-10-26",
+  "kind": "W2.5 multiplayer input and lifecycle controls",
+  "complete": true,
+  "source_revision": "8ebe08c4dda786f7b57a6585b9866cc75eb7fed0",
+  "worktree_changes": true,
+  "framework_gitlink": "555e1eabccc59b9b6ff0d9fca48aca783513dc86",
+  "ui_gitlink": "7c635c6b366a6e0d5d3c913a7fce6ec04dd9f256",
+  "fixture": {
+    "mp": "copied root MP slot 1, P38 ID 0, stationary P2, no switching or firing",
+    "sp": "copied isolated SP slot 2 through the normal VR launcher",
+    "flat": "build-flat-check Release, OpenXR OFF, diagnostics OFF, debug tools OFF"
+  },
+  "mp_controls": {
+    "samples": 17,
+    "movement": {
+      "neutral": {
+        "sticks": [128, 128, 128, 128],
+        "actor_changes": 0
+      },
+      "forward": {
+        "sticks": [128, 1, 128, 128],
+        "actor_position_changed": true
+      },
+      "back": {
+        "sticks": [128, 254, 128, 128],
+        "actor_position_changed": true
+      },
+      "strafe_right": {
+        "sticks": [128, 128, 254, 128],
+        "actor_position_changed": true
+      },
+      "strafe_left": {
+        "sticks": [128, 128, 1, 128],
+        "actor_position_changed": true
+      },
+      "turn_right": {
+        "sticks": [245, 128, 128, 128],
+        "actor_rotation_changed": true
+      },
+      "turn_left": {
+        "sticks": [10, 128, 128, 128],
+        "actor_rotation_changed": true
+      },
+      "focus_lost": {
+        "sticks": [128, 128, 128, 128],
+        "buttons": "0xFFFF"
+      },
+      "focus_recovered_forward": {
+        "sticks": [128, 1, 128, 128],
+        "actor_position_changed": true
+      },
+      "inactive_sticks": {
+        "sticks": [128, 128, 128, 128],
+        "actor_changes": 0
+      }
+    },
+    "buttons": {
+      "cross_trigger": "0xBFFF",
+      "right_primary_square": "0x7FFF",
+      "left_primary_square": "0x7FFF",
+      "right_secondary_circle": "0xDFFF",
+      "left_stick_triangle": "0xEFFF",
+      "right_stick_l2": "0xFEFF",
+      "combined_square_circle": "0x5FFF",
+      "release": "0xFFFF"
+    },
+    "counter_checks": {
+      "controller_callbacks": 537,
+      "mp_samples": 537,
+      "focus_lost_samples": 218,
+      "render_time_samples": 0,
+      "guard_fallbacks": 0
+    }
+  },
+  "mp_lifecycle": {
+    "pause": {
+      "action": "synthetic left Menu mapped to native Start",
+      "pad_buttons": "0xFFF7",
+      "paused_forward_pad_ly": 1,
+      "paused_actor_position_unchanged": true
+    },
+    "resume": {
+      "action": "second synthetic left Menu mapped to native Start",
+      "pad_buttons": "0xFFF7",
+      "resumed_forward_pad_ly": 1,
+      "resumed_actor_position_changed": true,
+      "pairs_before_resume": 237,
+      "pairs_after_resume": 261,
+      "failed_pairs": 0
+    },
+    "counter_checks": {
+      "controller_callbacks": 93,
+      "mp_samples": 93,
+      "render_time_samples": 0,
+      "guard_fallbacks": 0
+    }
+  },
+  "sp_fallback": {
+    "fixture_slot": 2,
+    "samples": 13,
+    "mode_samples": {
+      "sp": 211,
+      "mp": 0,
+      "menu": 0
+    },
+    "render_time_samples": 0,
+    "guard_fallbacks": 0,
+    "rollback_checks": 298,
+    "openxr_failures": 0,
+    "stereo_failed": 0,
+    "release_pad_neutral": true,
+    "settings_restored": true
+  },
+  "flat_fallback": {
+    "main_entered": true,
+    "inherited_flags_active": false,
+    "active_vr_markers": [],
+    "intentional_termination": true,
+    "source_saves_unchanged": true
+  },
+  "builds": {
+    "diagnostic": {
+      "configuration": "Release, OpenGL, OpenXR, PGXP, VR diagnostics ON, debug tools ON",
+      "executable_sha256": "3f45dbe29e00df793a97690e03ed8dea74e0f470bcfe9335d562e8cd24978446"
+    },
+    "release": {
+      "configuration": "Release, OpenGL, OpenXR, PGXP, VR diagnostics ON, debug tools OFF",
+      "executable_sha256": "02bd98ffc676ec79225ab58dc9c0d63aa246ab79270e9a5a92479b27d47e8278",
+      "result": "link pass"
+    },
+    "flat": {
+      "configuration": "Release, OpenGL, OpenXR OFF, VR diagnostics OFF, debug tools OFF",
+      "executable_sha256": "18f4328bc9085f0a6a2322f940eea63516f07e93698010853cf3474cad94636c",
+      "result": "build and inherited-flag startup pass"
+    }
+  },
+  "focused_checks": {
+    "python_unittest": {
+      "passed": 23,
+      "failed": 0
+    },
+    "strict_c_fixtures": {
+      "input": "passed",
+      "mp_view": "passed",
+      "menu_surface": "passed",
+      "frustum": "passed",
+      "raycast": "passed",
+      "hud_packets": "passed",
+      "weapon": "passed"
+    },
+    "strict_diagnostic_syntax": "passed",
+    "cross_game_parity": {
+      "cases": 33,
+      "passed": true
+    }
+  },
+  "raw_evidence": {
+    "mp": {
+      "path": "analysis/vr-baseline/mp-lifecycle-20261026i/receipt.json",
+      "sha256": "7df3355cae7857c5f11f3b8f8f0f34b36b2318193d5817868cd22faf9a44d143"
+    },
+    "sp": {
+      "path": "analysis/vr-baseline/movement-w25-20261026c/receipt.json",
+      "sha256": "ef338a606d9d013190dce0f3c93983a0794837dfac53a2e2e26c0faec28d301d"
+    },
+    "flat": {
+      "path": "analysis/vr-baseline/flat-w25-20261026b/receipt.json",
+      "sha256": "507ce34c90b11ec6da290591b1e7af689c9bf019b7f36f589dc8e7e8f6d2913e"
+    },
+    "parity": {
+      "path": "analysis/reference-parity/w25-post-20261026/baseline.json",
+      "sha256": "147faffac62f91301220bf6bf7ea63d1366d644fa1bc1415bb33e8907ab74746"
+    }
+  },
+  "cleanup": {
+    "source_saves_unchanged": true,
+    "preferences_unchanged": true,
+    "remaining_game_pids": [],
+    "debug_port_free": true
+  },
+  "limits": [
+    "Desktop synthetic XR actions, not physical headset input acceptance.",
+    "Pause/resume used native Start and gameplay freeze/resume; it did not swap between the MP and SP resident overlays.",
+    "Loading the isolated SP savestate inside the MP process was rejected as an invalid fixture because the MP overlay remained resident; SP was validated separately through its normal launcher path.",
+    "Flat startup validates inherited-flag inertness and the diagnostics-off build boundary, not interactive flat gameplay.",
+    "No physical stick direction, comfort, recenter, tracked-shot or menu acceptance is claimed."
+  ]
+}

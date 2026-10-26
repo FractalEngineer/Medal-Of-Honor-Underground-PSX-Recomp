@@ -2,8 +2,8 @@
 
 The operator confirmed the sky ghost fixed in the physical headset on
 2026-10-24. Movement work began from `627b31d`, with local HEAD and live remote
-matching. Physical movement acceptance and multiplayer weapon-set coverage
-remain pending.
+matching. Physical movement acceptance, physical MP controls and broader
+multiplayer weapon-set coverage remain pending.
 
 ## Controls and saves
 
@@ -28,8 +28,11 @@ and `1080p` internal rendering (5x) are preserved.
 The game owns combat contexts and weapon availability. These mappings do not
 establish damage, tracked aiming, mounted weapons, or every weapon. Menus use
 the native surface/player-pointer routing. Unsupported gameplay code/control
-tables deliver neutral. Multiplayer routing and overlay guards need the new
-fixtures; the SP receipt does not establish full multiplayer stereo support.
+tables deliver neutral. The SP receipt alone does not establish full
+multiplayer stereo support. W2.4 now verifies copied slot-1 P1 routing through
+the MP overlay. W2.5 verifies native pause/resume plus separate SP and flat
+cold-launch fallback; a live MP-savestate-to-SP-savestate swap is not a valid
+overlay transition fixture.
 
 The runtime launchers start at boot and do not load a savestate unless one is
 requested explicitly:
@@ -92,6 +95,29 @@ inverse mapper searches the actual curve for magnitudes reachable in both
 directions, then applies radial movement deadzone and turn gain. Copying the
 reference threshold math would have produced the wrong response.
 
+### Multiplayer overlay binding
+
+W2.4 showed that the MP overlay relocates the same converter/dispatcher
+contract and its data. MP mode is selected only when the linked P1 and P2 actor
+blocks, current-player root and 512x120/H=400 context are all valid. The source
+then requires every measured hash below; any mismatch returns neutral.
+
+| Item | MP value |
+| --- | --- |
+| Native converter | `0x800799E4`, 324 bytes, FNV `0x890B7F9F` |
+| Calibration dispatcher | `0x80079B28`, 84 bytes, FNV `0x9E630C72` |
+| Axis records | `0x800C0BF0`, config 0; selected records `3,0,1` map to native LX/LY/RX `2/3/0` |
+| P1 action masks / inversions | `0x800C0ED0` / `0x800C0F20` |
+| Response curve | `0x800A458C`, 128 bytes |
+| P1 ownership | root `0x800A3604` -> actor `0x801483D0`, input `0x801487D0` |
+| P2 ownership | root `0x800A3608` -> actor `0x80145810`, input `0x80145C10` |
+
+The SP converter/table/curve addresses are not resident in this MP overlay.
+The P1 action row, zero inversion row and config-0 axis values are guarded
+live. `vr/tools/probe_mp_input.py` uses the framework debug host-pad layer and
+XR action override, so the copied-save control exercises the actual controller
+source instead of bypassing it with `set_input` raw sticks.
+
 Native-axis controls showed LX changing actor rotation fields without position
 translation, LY translating, RX strafing, and RY changing pitch fields. The
 synthetic receipt records adjacent pad/actor queries; it is not an atomic
@@ -112,7 +138,22 @@ changed. Rollback checks had no mismatch, VRAM leak, watchdog, or nesting repair
 The boot control checked menu D-pad/confirm/back delivery without a loaded save;
 it did not establish multiplayer selection or multiplayer gameplay.
 
-The existing 13 Python tests and strict frustum/HUD/input C fixtures pass.
+The existing 23 Python tests and strict frustum/HUD/input/MP-view C fixtures pass.
+The W2.4 MP probe delivered six synthetic cases from copied root slot 1:
+neutral stayed neutral, forward and strafe changed P1 position, turn-right
+changed P1 rotation, focus loss released, and the right trigger delivered
+Cross. The live converter, dispatcher, actions, inversions, axes and curve all
+matched. The corrected SP slot-2 regression retained all 13 movement cases,
+304 rollback checks, zero OpenXR failures and unchanged settings.
+W2.5 extended that MP fixture to 17 exact input/button samples and a native
+Start pause/resume control. Both movement directions on every axis passed;
+focus released and recovered; Cross, Square, Circle, Triangle, L2 and a
+combined press matched the native active-low masks. P1 position remained fixed
+while paused even with forward held, then changed after the second Start.
+Across 630 MP controller callbacks, render-blocked sampling and guard fallbacks
+were both zero. The isolated SP slot-2 run passed 13 cases, 298 rollback checks
+and 211 SP samples with no MP/menu samples. The rebuilt OpenXR-off flat
+executable reached `main()` with inherited MP, stereo and weapon flags inert.
 Fresh zero and +/-90-degree captures retain eye identity and world coverage.
 Both synthetic look-up raw eyes and the SteamVR application layer were
 inspected; the measured sky ROI remained empty. Bulk evidence is bounded and
@@ -136,6 +177,6 @@ Rejected attempts, all cleaned up:
 - An exploratory menu query outlived its bounded launcher and received
   connection refused. The launcher had exited and restored settings normally.
 
-Next operator checks: stick direction/speed, release, pause/resume, and menu
-transitions in the headset, followed by fresh multiplayer weapon-set fixtures.
-Any invalid fixture requires asking for a fresh PGXP slot.
+Physical stick direction/speed, menu transitions, recenter and broader MP
+gameplay still need headset acceptance. Any invalid fixture requires asking for
+a fresh PGXP slot.

@@ -840,7 +840,7 @@
   The shared framework commit is `555e1eab`.
   Inverse wrappers retain separate limits; MP expansion/view validation and all
   tree layouts, masks, hooks, projection, input and weapon behavior stayed local.
-- The 32-case parity run passes after extraction. Inverse rejection now leaves
+- The 33-case parity run passes after extraction. Inverse rejection now leaves
   the caller's output untouched in both consumers. The shared ray test rejects
   malformed inputs instead of inheriting either wrapper's weaker checks.
 - C3 release builds pass in both checkouts. Underground's existing controls pass
@@ -860,9 +860,127 @@
   Historical receipts and source saves were not changed. Both builds were
   restored to debug OFF; no game or VR process remains.
 
+### W2.3 multiplayer head visibility and near-wall control
+
+- Extended `check_mp_view.py` with one `--visibility-controls` mode rather than
+  adding another renderer or selector framework. The diagnostic sampler now
+  captures native and shared-frustum results for every level node in each eye,
+  and local `enable`/`disable` actions keep OFF/ON controls in one owned process.
+- Zero yaw retained every natively visible node and populated both 512x120
+  eyes. The override selected 7 nodes versus 3 native nodes per eye.
+- +90 and -90 degrees used separate measured native body rotations because the
+  flat fixture exposes one side at a time. Both selected justified changed sets
+  and retained real top-screen world geometry in both eyes.
+- A fresh slot reload followed by a native forward approach measured two
+  consecutive chunks at or below 200,000 raw position units. The near-wall
+  pair retained 23,040 top-screen world pixels per eye.
+- All four controls had matching zero-IPD eye hashes/cycles, zero frustum
+  fallback and zero rollback mismatch, leak, watchdog or nesting repair.
+- The final run passed 23 Python tests, strict frustum/MP fixtures and
+  diagnostic syntax. Regressions passed the 64-case MP matrix across 13 weapon
+  IDs, lateral eye offset, native pistol fire and refusal recovery, flat
+  inventory and SP zero.
+- Retained [W2.3 controls](../../vr/proof/weapon-mp-visibility-receipt.json),
+  [control sheet](../../vr/proof/weapon-mp-visibility-controls.png) and
+  [build/regression receipt](../../vr/proof/weapon-mp-visibility-build-receipt.json).
+  Debug tools were restored OFF; source saves, preferences and historical
+  receipts remain unchanged.
+
+### W2.4 multiplayer input binding
+
+- Traced the MP overlay independently from the SP input path. The copied slot
+  uses converter `0x800799E4`, dispatcher `0x80079B28`, P1 actions
+  `0x800C0ED0`, inversions `0x800C0F20`, axes `0x800C0BF0` and curve
+  `0x800A458C`; the SP addresses contain unrelated MP overlay code/data.
+- Added a mode adapter to the existing controller source. It identifies MP from
+  both valid player actors, the current-player root and the native 512x120/H=400
+  context, then guards the converter/dispatcher and all selected table hashes.
+  Unsupported or stale layouts return neutral; rendering replay never samples
+  input and the pure mapper remains the sole action-to-pad implementation.
+- Added `vr/tools/probe_mp_input.py` for the copied slot-1 ownership/hash probe
+  and six synthetic controls through the framework host-pad and XR override
+  path. Neutral, forward, strafe-right, turn-right, focus loss and trigger/Cross
+  passed; forward/strafe changed position and turn changed rotation.
+- Extended `test_input.c` with the measured MP curve and selected 15360/8960/8960
+  axis response, and extended `test_mp_view.c` with the outside-render MP input
+  ownership guard. Corrected `check_movement.py` to explicitly load SP slot 2;
+  its 13-case regression, 304 rollback checks and settings restoration pass.
+- The final MP probe passed all six MP code/table hashes. The 23 Python tests,
+  strict input/MP-view/frustum/raycast/HUD fixtures, diagnostic syntax, fresh
+  33-case cross-game parity and final debug-off release build pass. A refresh of
+  the unchanged flat build tree stalled in its mod-staging target; the existing
+  diagnostics-off binary remains the recorded flat artifact and W2.5 still owns
+  flat fallback acceptance.
+- Retained [MP input controls](../../vr/proof/weapon-mp-input-receipt.json) and
+  [build/regressions](../../vr/proof/weapon-mp-input-build-receipt.json).
+  Source saves, preferences and historical receipts remain unchanged.
+
+### W2.5 multiplayer input lifecycle and fallback
+
+- Kept the accepted MP mapper and mode binding unchanged. Moved the eye-replay
+  guard ahead of the XR input query and added invisible counters for callbacks,
+  selected input mode, focus loss, render-blocked sampling and guard fallback.
+  This makes the existing no-render-input policy testable without replacing the
+  pure mapper.
+- Extended `probe_mp_input.py` to 17 exact controls: neutral, both directions of
+  forward/back, strafe and turn, focus loss/recovery, inactive sticks, Cross,
+  Square, Circle, Triangle, L2, combined buttons and release. The native pad
+  values, actor position/rotation changes and released state all pass.
+- Native Start produced pad `0xFFF7`. While paused, holding forward still
+  produced pad LY `1` but did not move P1; a second Start resumed forward motion.
+  Across 630 controller callbacks, render-blocked sampling and guard fallback
+  both remained zero.
+- Kept SP validation as a cold normal-launch boundary: copied isolated slot 2
+  passed 13 controls, 298 rollback checks, 211 SP samples and zero MP/menu
+  samples. An attempted MP-savestate-to-SP-savestate swap was rejected because
+  the resident MP overlay remained active and the strict converter guard
+  correctly returned neutral.
+- Rebuilt the OpenXR-off `build-flat-check` target. Its inherited-flag startup
+  reached `main()` with six framework packages and no active input, MP or stereo
+  marker. The run was intentionally terminated after 35 seconds; source saves
+  stayed unchanged.
+- Final checks passed 23 Python tests, all strict input/MP-view/menu/frustum/
+  raycast/HUD/weapon fixtures, diagnostic syntax and the 33-case cross-game
+  parity baseline. The diagnostic, debug-off release and flat executables are
+  `3f45dbe...`, `02bd98ff...` and `18f4328...` respectively.
+- Retained [W2.5 controls](../../vr/proof/weapon-mp-lifecycle-receipt.json) and
+  [build/regressions](../../vr/proof/weapon-mp-lifecycle-build-receipt.json).
+  Earlier receipts and source saves were not changed.
+
+### W3.1 P38 model-local calibration
+
+- Added a focused read-only probe that copies root MP slot 1, loads P38 ID 0,
+  configures the existing synthetic hand and eye controls, and captures the
+  selected node's complete source and animated vertex arrays at the W1 seam.
+  The first implementation found that the animated output pointer is a
+  per-frame buffer; the final probe stores both arrays atomically in the plugin
+  and returns bounded chunks instead of rereading a moving guest address.
+- All 69 node-13 vertices match the captured geometry identity. The animated
+  grip block center is `(76.555555555556, 100.777777777778,
+  287.888888888889)`, the muzzle cap center is `(76.2, 109.8, 396.8)`, the
+  forward span is `114.525481833051` model units, and the three axes are
+  orthonormal.
+- Added inert P38 calibration metadata to `MohuVrWeaponProfile`. The scale is
+  `530.210564041902` model units per metre using a nominal 216 mm P38 length
+  and is explicitly provisional. The W1 camera-space pivot remains the active
+  diagnostic rotation marker; the renderer, input, hooks, shot path and normal
+  defaults did not change.
+- Added `probe_weapon_calibration.py` and `check_weapon_calibration.py`, and
+  extended the strict weapon fixture with marker, axis, scale and unsupported-ID
+  checks. The final capture had matching zero-IPD eyes, 17 stereo pairs, zero
+  failures and zero render-verification mismatches.
+- Final checks passed 23 Python tests, strict weapon and MP-view fixtures,
+  diagnostic syntax, and the fresh 33-case cross-game parity baseline. The
+  release executable is `9eca8fa6...`; the tested diagnostic executable is
+  `d59a6a2f...`. Source saves, preferences and historical receipts remain
+  unchanged, and no owned game or debug listener remains.
+- Retained [calibration](../../vr/proof/weapon-p38-calibration-receipt.json),
+  [atomic capture](../../vr/proof/weapon-p38-calibration-capture-receipt.json)
+  and [build/regressions](../../vr/proof/weapon-p38-calibration-build-receipt.json).
+
 ## Next work
 
-**W2.3: zero, +/-90-degree and near-wall MP controls.** C1-C4 are complete and
-the prior feature gates remain closed. Use the measured flat MP selector and
-opt-in eye-frustum override; do not reopen renderer discovery or transplant the
-SP PVS selector.
+**W3.2: bounded, movement-enabled P38 headset comparison.** W3.1 is complete;
+C1-C4 and prior feature gates remain closed. Prepare the comparison from a
+fresh copied slot-1 fixture, preserving the source save and settings. Physical
+size/attachment and per-weapon acceptance remain W3.3/W3.5.

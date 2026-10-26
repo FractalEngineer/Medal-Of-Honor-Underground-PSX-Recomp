@@ -36,6 +36,10 @@ def neutral(pad):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("directory", type=Path)
+    parser.add_argument(
+        "--slot", type=int, default=2,
+        help="isolated saves/openbios slot to load (default: SP regression slot 2)",
+    )
     args = parser.parse_args()
     output = args.directory.resolve()
     output.mkdir(parents=True, exist_ok=False)
@@ -49,12 +53,13 @@ def main():
     env = {k: v for k, v in os.environ.items() if not k.startswith(
         ("MOHU_VR_", "PSX_VR_", "PSX_OPENXR"))}
     env["PSX_RENDER_PASS_VERIFY"] = "1"
-    result = {"synthetic": True, "atomic_queries": False,
+    result = {"synthetic": True, "atomic_queries": False, "fixture_slot": args.slot,
               "executable_sha256": hashlib.sha256((ROOT / "build-release/Medal_of_Honor_Underground_Recompiled.exe").read_bytes()).hexdigest(),
               "samples": []}
     launch = ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File",
               str(ROOT / "vr/run_vr.ps1"), "-Headless", "-Seconds", "40",
-              "-DebugPort", "4372", "-LogDirectory", str(output)]
+              "-DebugPort", "4372", "-LogDirectory", str(output),
+              "-Slot", str(args.slot)]
     with (output / "launcher.stdout.log").open("w") as stdout, (output / "launcher.stderr.log").open("w") as stderr:
         process = subprocess.Popen(launch, cwd=ROOT, env=env, stdout=stdout, stderr=stderr,
                                    creationflags=subprocess.CREATE_NO_WINDOW)
@@ -68,6 +73,10 @@ def main():
             if not state.get("last_ok"):
                 raise RuntimeError("Ask the operator for a fresh PGXP slot")
             result["savestate"] = state
+            counters_before = {
+                row["name"]: row["count"]
+                for row in command("mod_counters")["counters"]
+            }
             result["calibration"] = {hex(a): read(a, n).hex() for a, n in
                                      ((0x800C47C8, 160), (0x800C4AA8, 72), (0x800AB12C, 128))}
             result["before"] = {name: command(name) for name in
@@ -109,6 +118,29 @@ def main():
             time.sleep(.25)
             result["cleared_pad"] = command("pad_status")["slot0"]
             assert neutral(result["cleared_pad"]), result["cleared_pad"]
+            counters_after = {
+                row["name"]: row["count"]
+                for row in command("mod_counters")["counters"]
+            }
+            input_modes = {
+                "sp": counters_after.get("mohu.vr.input.mode.sp", 0) -
+                      counters_before.get("mohu.vr.input.mode.sp", 0),
+                "mp": counters_after.get("mohu.vr.input.mode.mp", 0) -
+                      counters_before.get("mohu.vr.input.mode.mp", 0),
+                "menu": counters_after.get("mohu.vr.input.mode.menu", 0) -
+                        counters_before.get("mohu.vr.input.mode.menu", 0),
+                "render_time_samples":
+                    counters_after.get("mohu.vr.input.render_blocked", 0) -
+                    counters_before.get("mohu.vr.input.render_blocked", 0),
+                "guard_fallbacks":
+                    counters_after.get("mohu.vr.input.guard_fallback", 0) -
+                    counters_before.get("mohu.vr.input.guard_fallback", 0),
+            }
+            result["input_mode_check"] = input_modes
+            assert input_modes["sp"] > 0, input_modes
+            assert input_modes["mp"] == 0, input_modes
+            assert input_modes["render_time_samples"] == 0, input_modes
+            assert input_modes["guard_fallbacks"] == 0, input_modes
             result["after"] = {name: command(name) for name in
                                ("openxr_stats", "stereo_stats", "render_pass_stats")}
             xr, stereo, checks = (result["after"][name] for name in

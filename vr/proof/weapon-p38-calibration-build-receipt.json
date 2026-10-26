@@ -1,0 +1,76 @@
+{
+  "schema": 1,
+  "date": "2026-10-26",
+  "kind": "W3.1 P38 calibration build and regression receipt",
+  "fixture": "copied root MP slot 1, P38 ID 0, zero switches, no fire",
+  "diagnostic_executable_sha256": "d59a6a2f02ccab4d4b9f14858e4a74c703a5075e78eea51bcb2a54eaec91df97",
+  "release_executable_sha256": "9eca8fa68894867908a569a6b6268b644be3dbe33677ac423f8224e07e034e6a",
+  "cmake": {
+    "MOHU_VR_DIAGNOSTICS": "ON",
+    "PSX_DEBUG_TOOLS": "OFF",
+    "PSX_OPENXR": "ON",
+    "configuration": "Release"
+  },
+  "source_hashes": {
+    "vr/underground/vr_diagnostic.c": "91ae32ab257eab1f24cee56fe880d84d32f01b0394db8364d6398bcfe4e06611",
+    "vr/underground/weapon.c": "4637c802251c034e7175f67b15146a836f609805725a15e86aca813a5590dafc",
+    "vr/underground/weapon.h": "4433ee10508d207142eae34e1a62c64ca2888fbfaa8891959177e64d1ab2fead",
+    "vr/tests/test_weapon.c": "dfbd94b40b15802bd45dd10b63d33da12f6d706b9b072c328a5958f354b4abc0",
+    "vr/tools/probe_weapon_calibration.py": "ffaa47d1d41b084b3d985b291dda082e4e208f4550ade00f8fb471da5d705fdf",
+    "vr/tools/check_weapon_calibration.py": "bdfbfdbdd4703d81b0325acbe450518356d793842bdc1fbd10d850ac98cd7c99",
+    "vr/tools/check_weapon_pose_spaces.py": "038592ac6cfceef31270ab5e567d3201f5baf76c39eae99163792072b126267b"
+  },
+  "capture_receipt": {
+    "path": "vr/proof/weapon-p38-calibration-capture-receipt.json",
+    "sha256": "b6ea997fd3a1d78ad6d81c557469fe89c7b81c6c9aa3cafc91b6fbc53a10f5a0",
+    "raw_path": "analysis/vr-baseline/weapon-mesh-mapping/w31-p38-calibration-20261026i/receipt.json",
+    "raw_sha256": "dad95fbcc6d616e795e4130c1f0431ef7012f27ab9752eec41c2a447e3bcb970"
+  },
+  "calibration_receipt": {
+    "path": "vr/proof/weapon-p38-calibration-receipt.json",
+    "sha256": "28bbaca4c6e0464017862466fb9eba041c03a5b5875c57bf2e7aaaf85f8abda3"
+  },
+  "checks": {
+    "python_tests": {
+      "count": 23,
+      "result": "PASS"
+    },
+    "weapon_fixture": "PASS",
+    "mp_view_fixture": "PASS",
+    "diagnostic_syntax": "PASS",
+    "cross_game_parity": {
+      "cases": 33,
+      "summary": "PASS",
+      "baseline": "analysis/reference-parity/w31-post-20261026/baseline.json",
+      "baseline_sha256": "147faffac62f91301220bf6bf7ea63d1366d644fa1bc1415bb33e8907ab74746"
+    },
+    "capture": {
+      "vertex_count": 69,
+      "local_sha256": "1b74334bf245decc40da4a20223070ef2bd8df846fea26c6a6a85f8283095a94",
+      "animated_sha256": "2c6113305c293de8e11f4b6a0ad8101be213d95b952fa1f2065a4e8fb65be277",
+      "max_marker_error_model_units": 4.405364961712621e-13,
+      "stereo_pairs": 17,
+      "stereo_failed": 0,
+      "left_right_zero_ipd_hashes_equal": true,
+      "render_verify_mismatch": 0
+    },
+    "source_saves_unchanged": true,
+    "preferences_unchanged": true,
+    "remaining_game_pids": 0,
+    "tcp_port_free": true
+  },
+  "scope": {
+    "changed": [
+      "P38 calibration metadata in the title weapon profile",
+      "A read-only diagnostic capture of the selected node's full vertex arrays",
+      "W3.1 capture and validation tools plus the strict weapon fixture"
+    ],
+    "not_changed": [
+      "Renderer behavior, normal experimental defaults or input mapping",
+      "Weapon hooks, muzzle effects, native shot construction or damage",
+      "Framework VR geometry or either game's source saves"
+    ],
+    "physical_acceptance": "open; W3.3",
+    "next": "W3.2"
+  }
+}

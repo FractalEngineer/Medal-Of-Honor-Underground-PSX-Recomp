@@ -1,0 +1,158 @@
+{
+  "schema": 1,
+  "date": "2026-10-26",
+  "kind": "W3.1 P38 provisional model-local calibration",
+  "capture": "analysis\\vr-baseline\\weapon-mesh-mapping\\w31-p38-calibration-20261026i\\receipt.json",
+  "capture_sha256": "dad95fbcc6d616e795e4130c1f0431ef7012f27ab9752eec41c2a447e3bcb970",
+  "fixture": "copied root MP slot 1, P38 ID 0, zero switches, no fire",
+  "executable_sha256": "d59a6a2f02ccab4d4b9f14858e4a74c703a5075e78eea51bcb2a54eaec91df97",
+  "capture_source_hashes": {
+    "vr/underground/vr_diagnostic.c": "91ae32ab257eab1f24cee56fe880d84d32f01b0394db8364d6398bcfe4e06611",
+    "vr/underground/weapon.c": "4637c802251c034e7175f67b15146a836f609805725a15e86aca813a5590dafc",
+    "vr/underground/weapon.h": "4433ee10508d207142eae34e1a62c64ca2888fbfaa8891959177e64d1ab2fead",
+    "vr/tools/check_weapon_pose_spaces.py": "038592ac6cfceef31270ab5e567d3201f5baf76c39eae99163792072b126267b",
+    "vr/tools/probe_weapon_calibration.py": "ffaa47d1d41b084b3d985b291dda082e4e208f4550ade00f8fb471da5d705fdf"
+  },
+  "asset": {
+    "id": 0,
+    "name": "P38 pistol",
+    "node": 13,
+    "vertex_count": 69,
+    "source_face_count": 354,
+    "local_sha256": "1b74334bf245decc40da4a20223070ef2bd8df846fea26c6a6a85f8283095a94",
+    "animated_sha256": "2c6113305c293de8e11f4b6a0ad8101be213d95b952fa1f2065a4e8fb65be277",
+    "object_state_sha256": "7f220684a2165a547f163357efe178b39338c3e703db42273922b2d12dc397cc"
+  },
+  "coordinate_space": "8008DB98 animated-model output",
+  "units": "integer native model units",
+  "marker_groups": {
+    "grip_vertex_indices": [
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61,
+      62,
+      63,
+      64
+    ],
+    "muzzle_vertex_indices": [
+      11,
+      12,
+      25,
+      26,
+      38
+    ],
+    "grip_method": "arithmetic mean of rear grip block",
+    "muzzle_method": "arithmetic mean of maximum-forward cap"
+  },
+  "animated_model": {
+    "grip_pivot": [
+      76.55555555555556,
+      100.77777777777777,
+      287.8888888888889
+    ],
+    "muzzle": [
+      76.2,
+      109.8,
+      396.8
+    ],
+    "right": [
+      0.9999946711058576,
+      0.0,
+      0.0032646224724941168
+    ],
+    "up": [
+      -0.00026951746568566206,
+      -0.996586343636879,
+      0.08255656870783966
+    ],
+    "forward": [
+      -0.003253478173217699,
+      0.08255700864539944,
+      0.9965810329337499
+    ],
+    "forward_span_units": 114.52548183305079,
+    "model_units_per_metre": 530.2105640419018,
+    "bounds_min": [
+      64.0,
+      93.0,
+      284.0
+    ],
+    "bounds_max": [
+      89.0,
+      128.0,
+      397.0
+    ]
+  },
+  "source_node_local": {
+    "grip_pivot": [
+      -10.555555555555555,
+      2.5555555555555554,
+      -1.3333333333333333
+    ],
+    "muzzle": [
+      -97.4,
+      -2.8,
+      -67.4
+    ],
+    "right": [
+      -0.605460143516855,
+      0.0,
+      0.7958756276030504
+    ],
+    "up": [
+      0.03901489525783954,
+      -0.9987977310470215,
+      0.02968047175065429
+    ],
+    "forward": [
+      -0.7949187710455511,
+      -0.04902134693499943,
+      -0.6047322175840387
+    ],
+    "forward_span_units": 114.0031087548733,
+    "model_units_per_metre": 527.7921701614505,
+    "bounds_min": [
+      -102.0,
+      -10.0,
+      -77.0
+    ],
+    "bounds_max": [
+      -5.0,
+      15.0,
+      3.0
+    ]
+  },
+  "scale": {
+    "provisional": true,
+    "reference": "P38 nominal overall length",
+    "reference_length_m": 0.216,
+    "model_units_per_metre": 530.2105640419018,
+    "physical_acceptance": "open; W3.3"
+  },
+  "checks": {
+    "max_abs_marker_error": 4.405364961712621e-13,
+    "orthonormal_axes": true,
+    "left_right_eye_hashes_equal": true,
+    "render_verify_mismatch": 0,
+    "source_saves_unchanged": true,
+    "preferences_unchanged": true,
+    "remaining_game_pids": 0
+  },
+  "limits": [
+    "One idle multiplayer P38 fixture; no recoil or reload animation.",
+    "Scale uses a nominal 216 mm reference length, not headset size acceptance.",
+    "Markers are provisional and do not change renderer or shot behavior."
+  ]
+}

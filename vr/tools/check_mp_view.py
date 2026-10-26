@@ -1,12 +1,13 @@
 """Exercise guarded P1-only MP eye replay in a fresh copied-save process."""
 import argparse
+import json
 import os
 from pathlib import Path
 import shutil
 import subprocess
 import time
 
-from PIL import Image, ImageChops, ImageStat
+from PIL import Image, ImageChops, ImageDraw, ImageStat
 
 import inspect_weapon_sets as native
 
@@ -22,8 +23,565 @@ def command(cmd, **values):
             time.sleep(.05)
 
 
-def pair(directory):
+def frustum_control(action):
+    result = command(
+        "mod_cmd", name="mohu.vr.mp.frustum", args=action
+    )
+    if result["result"] != 1:
+        raise RuntimeError(f"MP frustum control rejected: {result}")
+    return parse_reply(result["reply"])
+
+
+def parse_reply(reply):
+    values = {}
+    for token in reply.split():
+        key, separator, value = token.partition("=")
+        if not separator or not key or not value:
+            raise RuntimeError(f"Malformed selector reply token: {token}")
+        values[key] = value
+    return values
+
+
+def wait_pairs(count=4):
+    before = command("stereo_stats")["pairs"]
+    deadline = time.monotonic() + 15
+    while command("stereo_stats")["pairs"] < before + count:
+        if time.monotonic() > deadline:
+            raise RuntimeError("MP stereo replay did not advance")
+        time.sleep(.05)
+
+
+def settle_stereo(timeout=8):
+    deadline = time.monotonic() + timeout
+    while True:
+        stats = command("stereo_stats")
+        hashes = stats["eye_hashes"]
+        cycles = stats["eye_cycles"]
+        if (hashes[0] == hashes[1] and cycles[0] == cycles[1] and
+                hashes[0] != "0" * len(hashes[0]) and cycles[0]):
+            return stats
+        if time.monotonic() > deadline:
+            raise RuntimeError(f"stereo eyes did not settle: {stats}")
+        native.frames(1)
+
+
+def counter_values():
+    return {
+        row["name"]: row["count"]
+        for row in command("mod_counters")["counters"]
+    }
+
+
+def counter_delta(before, after):
+    return {
+        key: value - before.get(key, 0)
+        for key, value in after.items()
+    }
+
+
+def capture_selector_samples():
+    frustum_control("disable")
+    native.frames(6)
+    frustum_control("start")
+    wait_pairs(4)
+    status = frustum_control("status")
+    frustum_control("stop")
+    wait_pairs(4)
+    settle_stereo()
+    count = int(status["count"])
+    samples = []
+    for index in range(count):
+        raw = frustum_control(f"read={index}")
+        samples.append({
+            "node": raw["node"].upper(),
+            "return_address": raw["ra"].upper(),
+            "eye": int(raw["eye"]),
+            "center": [int(value) for value in raw["center"].split(",")],
+            "radius": int(raw["radius"]),
+            "control": [value.upper() for value in raw["control"].split(",")],
+            "screen": [int(value) for value in raw["screen"].split(",")],
+            "projection": [int(value) for value in raw["projection"].split(",")],
+            "camera": raw["camera"].upper(),
+            "input": raw["input"].upper(),
+            "view": raw["view"].upper(),
+            "native_result": int(raw["native_result"]),
+            "result_valid": int(raw["result_valid"]),
+            "override_result": int(raw["override_result"]),
+            "override_valid": int(raw["override_valid"]),
+        })
+    return samples
+
+
+def compare_selector_samples(samples):
+    by_eye = {0: {}, 1: {}}
+    for sample in samples:
+        eye = sample["eye"]
+        if eye not in by_eye:
+            raise RuntimeError(f"Unexpected selector eye {eye}")
+        if not sample["result_valid"] or not sample["override_valid"]:
+            raise RuntimeError(f"Selector result missing for {sample['node']}")
+        if sample["screen"] != [540, 120]:
+            raise RuntimeError(
+                f"Selector bounds changed: {sample['node']} {sample['screen']}"
+            )
+        if sample["node"] in by_eye[eye]:
+            raise RuntimeError(f"Duplicate selector node {sample['node']}")
+        by_eye[eye][sample["node"]] = sample
+    if set(by_eye[0]) != set(by_eye[1]):
+        raise RuntimeError("Selector nodes differ between eyes")
+    if not by_eye[0]:
+        raise RuntimeError("Selector capture was empty")
+
+    result = {}
+    for eye, nodes in by_eye.items():
+        native_visible = sorted(
+            node for node, sample in nodes.items()
+            if sample["native_result"]
+        )
+        override_visible = sorted(
+            node for node, sample in nodes.items()
+            if sample["override_result"]
+        )
+        native_set = set(native_visible)
+        override_set = set(override_visible)
+        result[str(eye)] = {
+            "samples": len(nodes),
+            "native_visible": native_visible,
+            "override_visible": override_visible,
+            "changed_nodes": sorted(native_set ^ override_set),
+            "native_visible_count": len(native_set),
+            "override_visible_count": len(override_set),
+        }
+    return result
+
+
+def image_difference(first, second):
+    difference = ImageChops.difference(first, second)
+    return {
+        "bbox": difference.getbbox(),
+        "changed_pixels": sum(
+            pixel != (0, 0, 0) for pixel in difference.getdata()
+        ),
+    }
+
+
+def run_visibility_case(out, name, pose, selection):
+    from check_weapon_pose_spaces import capture_eyes, set_head
+
+    head = set_head(**pose)
+    frustum_control("disable")
+    native.frames(8)
+
+    before_off = counter_values()
+    samples = capture_selector_samples()
+    decisions = compare_selector_samples(samples)
+    off_dir = out / f"{name}-frustum-off"
+    try:
+        off_images, off_files = capture_eyes(
+            off_dir, require_visible=selection != "changed"
+        )
+    except BaseException as error:
+        native.save(out / f"{name}-off-capture-failure.json", {
+            "case": name,
+            "pose": head,
+            "selection": selection,
+            "decisions": decisions,
+            "samples": samples,
+        })
+        raise RuntimeError(
+            f"{name}: frustum-off capture failed: {error}"
+        ) from error
+    off_stats = settle_stereo()
+    off_checks = command("render_pass_stats")
+    after_off = counter_values()
+    off_delta = counter_delta(before_off, after_off)
+
+    before_on = counter_values()
+    frustum_control("enable")
+    wait_pairs(4)
+    settle_stereo()
+    on_dir = out / f"{name}-frustum-on"
+    try:
+        on_images, on_files = capture_eyes(on_dir)
+    except BaseException as error:
+        native.save(out / f"{name}-on-capture-failure.json", {
+            "case": name,
+            "pose": head,
+            "selection": selection,
+            "decisions": decisions,
+            "samples": samples,
+        })
+        raise RuntimeError(
+            f"{name}: frustum-on capture failed: {error}"
+        ) from error
+    on_stats = settle_stereo()
+    on_checks = command("render_pass_stats")
+    after_on = counter_values()
+    on_delta = counter_delta(before_on, after_on)
+    frustum_control("disable")
+    native.frames(4)
+
+    off_world = [
+        world_region_populated(image) for image in off_images
+    ]
+    on_world = [
+        world_region_populated(image) for image in on_images
+    ]
+    problems = []
+    if not all(view["populated"] for view in on_world):
+        problems.append("frustum-on world geometry is not populated")
+    if (selection == "conservative" and
+            not all(view["populated"] for view in off_world)):
+        problems.append("frustum-off world geometry is not populated")
+    if any(
+        ImageChops.difference(*images).getbbox()
+        for images in (off_images, on_images)
+    ):
+        problems.append("zero-offset MP eyes differ")
+    if (off_stats["failed"] or on_stats["failed"] or
+            on_stats["eye_hashes"][0] != on_stats["eye_hashes"][1] or
+            on_stats["eye_cycles"][0] != on_stats["eye_cycles"][1]):
+        problems.append("stereo replay state mismatch")
+    for label, checks in (("off", off_checks), ("on", on_checks)):
+        if (not checks["verify_checks"] or
+                any(checks[key] for key in (
+                    "verify_mismatch", "vram_leaks", "watchdog",
+                    "nesting_repairs"))):
+            problems.append(f"{label} rollback check failed")
+    for eye in ("left", "right"):
+        if not off_delta.get(f"mohu.vr.mp.draw.{eye}", 0):
+            problems.append(f"missing off-state draw in {eye}")
+        if off_delta.get(f"mohu.vr.mp.frustum.override.{eye}", 0):
+            problems.append(f"override ran in off state for {eye}")
+        if off_delta.get(f"mohu.vr.mp.frustum.fallback.{eye}", 0):
+            problems.append(f"native capture used fallback in {eye}")
+        if not on_delta.get(f"mohu.vr.mp.draw.{eye}", 0):
+            problems.append(f"missing on-state draw in {eye}")
+        if not on_delta.get(f"mohu.vr.mp.frustum.override.{eye}", 0):
+            problems.append(f"missing override in {eye}")
+        if on_delta.get(f"mohu.vr.mp.frustum.fallback.{eye}", 0):
+            problems.append(f"override fell back in {eye}")
+
+    for eye, decision in decisions.items():
+        changed = decision["changed_nodes"]
+        if selection == "conservative":
+            missing = sorted(
+                set(decision["native_visible"]) -
+                set(decision["override_visible"])
+            )
+            if missing:
+                problems.append(
+                    f"eye {eye} override dropped native nodes: {missing}"
+                )
+        if selection == "changed" and not changed:
+            problems.append(f"eye {eye} selector ignored head yaw")
+    if problems:
+        native.save(out / f"{name}-failure.json", {
+            "case": name,
+            "pose": head,
+            "problems": problems,
+            "decisions": decisions,
+            "samples": samples,
+            "off_stereo": off_stats,
+            "on_stereo": on_stats,
+            "off_rollback": off_checks,
+            "on_rollback": on_checks,
+            "off_counter_delta": off_delta,
+            "on_counter_delta": on_delta,
+            "off_world": off_world,
+            "on_world": on_world,
+        })
+        raise RuntimeError(f"{name}: " + "; ".join(problems))
+
+    off_left = next(off_dir.glob("*_left.png"))
+    on_left = next(on_dir.glob("*_left.png"))
+    row = {
+        "case": name,
+        "pose": head,
+        "selector": decisions,
+        "sample_count": len(samples),
+        "samples": samples,
+        "off_world": off_world,
+        "on_world": on_world,
+        "images": {
+            "off": off_files,
+            "on": on_files,
+            "off_left_path": str(off_left),
+            "on_left_path": str(on_left),
+        },
+        "frustum_off": {
+            "stereo": off_stats,
+            "rollback": off_checks,
+            "counter_delta": off_delta,
+        },
+        "frustum_on": {
+            "stereo": on_stats,
+            "rollback": on_checks,
+            "counter_delta": on_delta,
+        },
+        "off_vs_on_image": {
+            "left": image_difference(off_images[0], on_images[0]),
+            "right": image_difference(off_images[1], on_images[1]),
+        },
+    }
+    return row
+
+
+def move_until_near_wall(out, max_chunks=24, frames_per_chunk=15,
+                         blocked_threshold=200000):
+    initial = native.players()[0]["position"]
+    current = initial
+    chunks = []
+    low_streak = 0
+    try:
+        for chunk in range(1, max_chunks + 1):
+            command("set_input", buttons=65535, ly=1000)
+            native.frames(frames_per_chunk)
+            command("set_input", buttons=65535, ly=0)
+            native.frames(8)
+            previous = current
+            current = native.players()[0]["position"]
+            movement = max(
+                abs(current[axis] - previous[axis]) for axis in range(3)
+            )
+            chunks.append({
+                "chunk": chunk,
+                "position": current,
+                "max_abs_delta": movement,
+            })
+            low_streak = low_streak + 1 if movement <= blocked_threshold else 0
+            if low_streak >= 2:
+                break
+    finally:
+        command("set_input", buttons=65535, ly=0)
+    if low_streak < 2:
+        native.save(out / "near-wall-movement-failure.json", {
+            "initial": initial,
+            "final": current,
+            "blocked_threshold": blocked_threshold,
+            "chunks": chunks,
+        })
+        raise RuntimeError(
+            "near-wall case did not reach two blocked movement chunks"
+        )
+    return {
+        "initial": initial,
+        "final": current,
+        "blocked_chunks_required": 2,
+        "blocked_threshold": blocked_threshold,
+        "chunks": chunks,
+    }
+
+
+def world_region_populated(image):
+    # Exclude the lower screen where the first-person weapon and body are drawn.
+    crop = image.crop((0, 0, 512, 45))
+    colors = len(set(crop.getdata()))
+    nonblack = sum(pixel != (0, 0, 0) for pixel in crop.getdata())
+    return {
+        "nonblack_pixels": nonblack,
+        "unique_colors": colors,
+        "populated": nonblack >= 512 and colors >= 20,
+    }
+
+
+def find_body_rotation_for_yaw(out, name, yaw, max_chunks=36,
+                               frames_per_chunk=6):
+    from check_weapon_pose_spaces import set_head
+
+    probes = []
+    found = False
+    frustum_control("enable")
+    try:
+        for chunk in range(max_chunks + 1):
+            set_head(yaw_mdeg=yaw)
+            native.frames(5)
+            images, files = pair(
+                out / f"{name}-probe-{chunk:02d}",
+                require_populated=False,
+            )
+            probe = {
+                "chunk": chunk,
+                "body_rotation": native.players()[0]["rotation"],
+                "images": files,
+                "eyes": [
+                    world_region_populated(image) for image in images
+                ],
+            }
+            probes.append(probe)
+            if all(eye["populated"] for eye in probe["eyes"]):
+                found = True
+                break
+            if chunk == max_chunks:
+                break
+            command("set_input", buttons=65535, lx=0)
+            native.frames(frames_per_chunk)
+            command("set_input", buttons=65535, lx=128)
+            native.frames(6)
+    finally:
+        command("set_input", buttons=65535, lx=128, ly=0)
+        frustum_control("disable")
+        set_head()
+        native.frames(5)
+    if not found:
+        native.save(out / f"{name}-positioning-failure.json", {
+            "yaw_mdeg": yaw,
+            "probes": probes,
+        })
+        raise RuntimeError(
+            f"no bounded body heading populated {name} world view"
+        )
+    return {
+        "yaw_mdeg": yaw,
+        "body_rotation": native.players()[0]["rotation"],
+        "guest_frames_per_chunk": frames_per_chunk,
+        "input": "native left analog lx toward 0 while stationary",
+        "probes": probes,
+    }
+
+
+def write_visibility_sheet(out, rows):
+    pictures = []
+    for row in rows:
+        path = Path(row["images"]["on_left_path"])
+        image = Image.open(path).convert("RGB")
+        tile = Image.new("RGB", (image.width, image.height + 18), (20, 22, 27))
+        tile.paste(image, (0, 18))
+        ImageDraw.Draw(tile).text(
+            (6, 3), f"{row['case']}  frustum ON", fill=(255, 255, 255)
+        )
+        pictures.append(tile)
+    sheet = Image.new(
+        "RGB", (pictures[0].width, sum(image.height for image in pictures)),
+        (20, 22, 27),
+    )
+    y = 0
+    for image in pictures:
+        sheet.paste(image, (0, y))
+        y += image.height
+    proof = native.ROOT / "vr/proof/weapon-mp-visibility-controls.png"
+    proof.parent.mkdir(parents=True, exist_ok=True)
+    sheet.save(proof)
+    return proof
+
+
+def run_visibility_controls(out, receipt):
+    before_players = native.players()
+    if (before_players[0]["weapon_slot"], before_players[0]["weapon_id"]) != (0, 0):
+        raise RuntimeError("W2.3 fixture is not P38 in slot 1")
+    rows = [
+        run_visibility_case(out, "zero", {"yaw_mdeg": 0}, "conservative")
+    ]
+    receipt["visibility_cases"] = rows
+    native.save(out / "receipt.json", receipt)
+    orientations = {}
+    for name, yaw in (
+        ("yaw-plus-90", 90000),
+        ("yaw-minus-90", -90000),
+    ):
+        orientations[name] = find_body_rotation_for_yaw(out, name, yaw)
+        pose = {"yaw_mdeg": yaw}
+        rows.append(run_visibility_case(out, name, pose, "changed"))
+        receipt["visibility_cases"] = rows
+        native.save(out / "receipt.json", receipt)
+
+    from check_weapon_pose_spaces import set_head
+    set_head()
+    native.frames(5)
+    receipt["near_wall_reload"] = native.load(1)
+    movement = move_until_near_wall(out)
+    rows.append(run_visibility_case(
+        out, "near-wall", {"yaw_mdeg": 0}, "conservative"
+    ))
+    proof = write_visibility_sheet(out, rows)
+    after_players = native.players()
+    if (after_players[0]["weapon_id"] != before_players[0]["weapon_id"] or
+            after_players[0]["clip"] != before_players[0]["clip"] or
+            after_players[0]["reserve"] != before_players[0]["reserve"] or
+            after_players[1]["health_raw"] != before_players[1]["health_raw"]):
+        raise RuntimeError("W2.3 controls changed weapon, ammo or P2 health")
+    return {
+        "cases": rows,
+        "body_orientations": orientations,
+        "near_wall_movement": movement,
+        "players_before": before_players,
+        "players_after": after_players,
+        "proof_image": str(proof.relative_to(native.ROOT)),
+        "proof_image_sha256": native.digest(proof),
+    }
+
+
+def finalize_visibility_evidence(out, receipt):
+    raw = out / "receipt.json"
+    compact = native.ROOT / "vr/proof/weapon-mp-visibility-receipt.json"
+    controls = receipt["visibility_controls"]
+    summary_cases = []
+    for row in controls["cases"]:
+        summary_cases.append({
+            "case": row["case"],
+            "pose": row["pose"],
+            "selector": row["selector"],
+            "off_world": row["off_world"],
+            "on_world": row["on_world"],
+            "images": row["images"],
+            "off_vs_on_image": row["off_vs_on_image"],
+            "frustum_off": {
+                "stereo_pairs": row["frustum_off"]["stereo"]["pairs"],
+                "rollback": row["frustum_off"]["rollback"],
+                "counter_delta": {
+                    key: value for key, value in
+                    row["frustum_off"]["counter_delta"].items()
+                    if key.startswith("mohu.vr.mp.frustum.")
+                },
+            },
+            "frustum_on": {
+                "stereo_pairs": row["frustum_on"]["stereo"]["pairs"],
+                "rollback": row["frustum_on"]["rollback"],
+                "counter_delta": {
+                    key: value for key, value in
+                    row["frustum_on"]["counter_delta"].items()
+                    if key.startswith("mohu.vr.mp.frustum.")
+                },
+            },
+        })
+    native.save(compact, {
+        "schema": 1,
+        "date": "2026-10-26",
+        "kind": "W2.3 multiplayer head visibility controls",
+        "complete": True,
+        "fixture": "copied root MP slot 1, P38 ID 0, no switching or firing",
+        "executable_sha256": receipt["executable_sha256"],
+        "source_hashes": receipt["sources"],
+        "raw_receipt": str(raw.relative_to(native.ROOT)),
+        "raw_receipt_sha256": native.digest(raw),
+        "controls": summary_cases,
+        "body_orientations": {
+            name: {
+                "yaw_mdeg": value["yaw_mdeg"],
+                "body_rotation": value["body_rotation"],
+                "guest_frames_per_chunk": value["guest_frames_per_chunk"],
+                "input": value["input"],
+                "selected_chunk": len(value["probes"]) - 1,
+            }
+            for name, value in controls["body_orientations"].items()
+        },
+        "near_wall_movement": controls["near_wall_movement"],
+        "proof_image": controls["proof_image"],
+        "proof_image_sha256": controls["proof_image_sha256"],
+        "source_saves_unchanged": receipt["source_saves_unchanged"],
+        "preferences_unchanged": receipt["preferences_unchanged"],
+        "remaining_game_pids": receipt["remaining_game_pids"],
+        "limits": [
+            "Desktop synthetic head controls, not physical headset acceptance.",
+            "The selector uses its measured 540x120 bounds; replay images are 512x120.",
+            "No weapon switch or firing occurred.",
+        ],
+    })
+    receipt["compact_receipt"] = str(compact.relative_to(native.ROOT))
+    receipt["compact_receipt_sha256"] = native.digest(compact)
+def pair(directory, require_populated=True):
     directory.mkdir()
+    settle_stereo()
     command("stereo_dump", path=directory.as_posix(), count=1)
     deadline = time.monotonic() + 10
     while time.monotonic() < deadline:
@@ -38,8 +596,15 @@ def pair(directory):
         time.sleep(.05)
     else:
         raise RuntimeError("No fresh complete eye pair")
-    if any(im.size != (512, 120) or len(set(im.getdata())) < 100 or
-           sum(ImageStat.Stat(im).mean) < 10 for im in images):
+    if any(
+        im.size != (512, 120) or
+        (
+            require_populated and
+            (len(set(im.getdata())) < 100 or
+             sum(ImageStat.Stat(im).mean) < 10)
+        )
+        for im in images
+    ):
         raise RuntimeError("Empty or incorrectly sized MP view")
     return images, {p.name: native.digest(p) for p in (left[0], right[0])}
 
@@ -53,7 +618,16 @@ def main():
     parser.add_argument("--reject-recover", action="store_true")
     parser.add_argument("--fire-pistol", action="store_true")
     parser.add_argument("--frustum", action="store_true")
+    parser.add_argument(
+        "--visibility-controls", action="store_true",
+        help="Run W2.3 zero, +/-90-degree and near-wall selector controls",
+    )
     args = parser.parse_args()
+    if args.visibility_controls and any((
+        args.all_weapons, args.native_projection, args.reject_recover,
+        args.fire_pistol, args.frustum, args.eye_offset,
+    )):
+        parser.error("--visibility-controls cannot be combined with other modes")
     if native.game_pids():
         raise RuntimeError("Close the existing game before this owned control")
     # Refuse a listening diagnostic endpoint before launching anything.
@@ -95,7 +669,13 @@ def main():
                "preferences": preference_hashes, "weapons": [], "cycles": {},
                "sources": {str(p.relative_to(native.ROOT)): native.digest(p) for p in
                            (native.ROOT / "vr/underground/vr_diagnostic.c",
-                            native.ROOT / "vr/underground/mp_view.h")}}
+                            native.ROOT / "vr/underground/mp_view.h",
+                            native.ROOT / "vr/underground/frustum.h",
+                            native.ROOT / "vr/tools/check_mp_view.py",
+                            native.ROOT / "vr/tools/check_weapon_pose_spaces.py",
+                            native.ROOT / "vr/tests/test_mp_view.c",
+                            native.ROOT / "psxrecomp/runtime/src/vr_geometry_math.c",
+                            native.ROOT / "psxrecomp/runtime/include/vr_geometry_math.h")}}
     with (out / "stdout.log").open("w") as stdout, (out / "stderr.log").open("w") as stderr:
         process = subprocess.Popen([str(exe), "--headless-opengl", "--no-launcher",
             "--game", str(native.ROOT / "analysis/vr-baseline/game-interp.toml"),
@@ -116,6 +696,13 @@ def main():
                     time.sleep(.1)
             for slot in slots:
                 native.load(slot)
+                if args.visibility_controls:
+                    receipt["visibility_controls"] = run_visibility_controls(
+                        out, receipt
+                    )
+                    receipt["complete"] = True
+                    native.save(out / "receipt.json", receipt)
+                    continue
                 first_weapon = native.players()[0]["weapon_id"]
                 for index in range(4 if args.all_weapons else 1):
                     players = native.players()
@@ -288,6 +875,8 @@ def main():
             receipt["preferences_unchanged"] = all(native.digest(Path(p)) == h for p, h in preference_hashes.items())
             receipt["remaining_game_pids"] = native.game_pids()
             native.save(out / "receipt.json", receipt)
+    if args.visibility_controls and receipt.get("complete"):
+        finalize_visibility_evidence(out, receipt)
     if not (receipt["source_saves_unchanged"] and receipt["preferences_unchanged"]
             and not receipt["remaining_game_pids"] and receipt["exit_code"] == 0):
         raise RuntimeError("MP control cleanup failed")

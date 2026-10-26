@@ -7,8 +7,9 @@ executable and live overlay content.
 
 ## Start here
 
-1. [HANDOFF.md](HANDOFF.md) is the current execution contract: W2.3 MP controls;
-   fixtures, commands and recovery rules.
+1. [HANDOFF.md](HANDOFF.md) is the current execution contract: W3.2 bounded,
+   movement-enabled P38 headset comparison; fixtures, commands and recovery
+   rules.
 2. [VR_PLAN.md](VR_PLAN.md) is the checkbox/status list and dependency order.
    Do not restart checked foundation/renderer work without a demonstrated regression.
    [REFERENCE_REUSE_AUDIT.md](REFERENCE_REUSE_AUDIT.md) maps every workstream
@@ -97,8 +98,8 @@ diagnostic plugin can now opt into OpenXR, obtain headset eye views, and submit
 the verified pair. Normal VR launch now uses 1080p internal rendering, per-eye
 world selection, and a temporary stereo-only suppression of the head-locked
 flat HUD. The operator confirmed the sky fix. Reference movement/button maps
-now run through the offline input source; headset movement, multiplayer
-transitions, and the hand/wrist HUD remain active work. The operator's four
+now run through the offline input source; physical headset movement, physical
+multiplayer transitions and the hand/wrist HUD remain active work. The operator's four
 multiplayer fixtures now have closed native inventory cycles and damage
 receipts for 13 weapons. Weapon-position work uses those fixtures and the
 stationary P2 target one weapon at a time; see
@@ -109,14 +110,21 @@ The real first-person seam and P1-only MP desktop eye renderer are verified for
 all 13 measured IDs. W1 is complete for the P38 absolute synthetic head/hand
 coordinate contract and is not a mesh-hook search. W2.1 measured the native MP
 flat scene-list selector. W2.2 added its measured, separately guarded
-eye-frustum override and passed a zero-angle both-eye control. C1-C2 and the
-shared ownership/test workflow are complete; C3's reference runtime fixture
-remains blocked, so W2.3 head-turn and near-wall validation has not started.
-Physical calibration, broader MP
-visibility and controls, tracked shot alignment, exact barrel laser and wrist
-HUD remain open under the ordered plan. See
+eye-frustum override and passed a zero-angle both-eye control. W2.3 passed
+zero, +/-90-degree and near-wall controls with populated world geometry,
+per-eye selector decisions and clean rollback. W2.4 then verified the
+separate MP converter, dispatcher, P1 action mask, axis records and response
+curve. W2.5 expanded that path to both signs of every movement axis, seven
+native button masks, focus recovery and native Start pause/resume, with zero
+input samples during eye replay. Isolated SP and OpenXR-off flat controls also
+pass. W3.1 then measured all 69 P38 node-13 vertices atomically, stored a
+provisional animated-model grip/muzzle/axis/scale contract and kept it inert in
+the renderer. C1-C4 and the shared ownership/test workflow are complete.
+Physical size/attachment, physical MP controls, tracked shot alignment, exact
+barrel laser and wrist HUD remain open under the ordered plan. See
 [WEAPON_CALIBRATION.md](WEAPON_CALIBRATION.md),
 [MP_LEVEL_SELECTOR_EVIDENCE.md](MP_LEVEL_SELECTOR_EVIDENCE.md),
 [MP_EYE_FRUSTUM_EVIDENCE.md](MP_EYE_FRUSTUM_EVIDENCE.md),
 [P38 pose receipt](../../vr/proof/weapon-pose-space-receipt.json) and
+[P38 calibration receipt](../../vr/proof/weapon-p38-calibration-receipt.json),
 [MP eye receipt](../../vr/proof/weapon-mp-eye-receipt.json).

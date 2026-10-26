@@ -1,9 +1,9 @@
 # P38 weapon coordinate contract
 
-Updated: 2026-10-25. Scope: W1.1 measurement for Underground MP P38 (ID 0),
-copied root MP slot 1, zero weapon switches, stationary P2 and no firing.
-This is a desktop synthetic-pose contract. It is not physical grip, size,
-muzzle, shot or headset acceptance.
+Updated: 2026-10-26. Scope: W1 and W3.1 measurements for Underground MP P38
+(ID 0), copied root MP slot 1, zero weapon switches, stationary P2 and no
+firing. These are desktop contracts. They are not physical grip, size, shot or
+headset acceptance.
 
 ## Captured fixture and seams
 
@@ -234,3 +234,37 @@ The measured contract is reproducible from
 `analysis/vr-baseline/weapon-mesh-mapping/w1-space-capture-20261025f/`.
 The implementation receipt under `vr/proof/` is authoritative for the binary
 and source hashes actually tested.
+
+## W3.1 provisional model-local calibration
+
+W3.1 does not reinterpret the W1 camera-space marker. It captures all 69
+node-13 source and animated vertex records atomically and derives a separate
+calibration in the `8008DB98` animated-model output space. The grip marker is
+the mean of the rear grip block (vertex indices 47 through 64). The muzzle is
+the mean of the maximum-forward cap (indices 11, 12, 25, 26 and 38).
+
+```text
+grip_pivot = (76.555555555556, 100.777777777778, 287.888888888889)
+muzzle     = (76.2, 109.8, 396.8)
+right      = (0.999994671106, 0, 0.003264622472)
+up         = (-0.000269517466, -0.996586343637, 0.082556568708)
+forward    = (-0.003253478173, 0.082557008645, 0.996581032934)
+```
+
+Positions are integer native model units; axes are dimensionless and
+orthonormal. The measured forward span is `114.525481833051` model units.
+Dividing by the nominal 216 mm overall length of a P38 gives
+`530.210564041902` model units per metre. This is an explicitly provisional
+desktop estimate, not a headset-accepted size.
+
+The values are stored in `MohuVrWeaponCalibration` with the P38 profile. The
+data is currently inert: W1 still renders with its camera-space diagnostic
+pivot, and nothing uses the new markers for shots, lasers or input. The
+source-node-local centroids and axes are retained in the proof for audit, but
+only the animated-model values are intended as the later hand-from-model
+contract. Recoil, reload, switching and hardware acceptance remain
+W3.2-W3.5.
+
+Evidence: [calibration receipt](../../vr/proof/weapon-p38-calibration-receipt.json),
+[atomic capture](../../vr/proof/weapon-p38-calibration-capture-receipt.json) and
+[build receipt](../../vr/proof/weapon-p38-calibration-build-receipt.json).

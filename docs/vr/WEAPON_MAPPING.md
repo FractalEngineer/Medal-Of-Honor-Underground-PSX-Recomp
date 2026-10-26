@@ -3,11 +3,11 @@
 Last updated: 2026-10-26
 
 Execution order and stop/recovery rules are in [HANDOFF.md](HANDOFF.md).
-Checkbox status is in [VR_PLAN.md](VR_PLAN.md). **The next task is C1:
-cross-game parity fixtures under [CONSISTENCY_HANDOFF.md](CONSISTENCY_HANDOFF.md).**
-W2.3 MP zero/side/near-wall visibility is the next feature after C1-C4. This file records
-measurements; it does not reopen completed renderer/mesh discovery or override
-the ordered plan.
+Checkbox status is in [VR_PLAN.md](VR_PLAN.md). **The next task is W3.2,
+preparing the bounded movement-enabled P38 headset comparison.** C1-C4 and
+W1-W3.1 are complete. This file records
+measurements; it does not reopen
+completed renderer/mesh discovery or override the ordered plan.
 
 ## Current result
 
@@ -205,9 +205,12 @@ eyes matched at SHA-256
 `de83c69d0a08f5933805c07dc86ac27f2310df3ef8eb1e920b12d0608d9b3c9e`;
 the retained both-eye image is
 [weapon-mp-frustum-controls.png](../../vr/proof/weapon-mp-frustum-controls.png).
-Head turns, near walls and native/override selector comparison remain W2.3.
-Turned eye views may correctly select a different set from the native body view;
-equality at every pose is not the acceptance criterion.
+W2.3 added zero, +/-90-degree and near-wall controls with native/override
+selector comparison. Turned eye views correctly select different sets from the
+native body view; equality at every pose is not the acceptance criterion.
+The accepted evidence is
+[weapon-mp-visibility-receipt.json](../../vr/proof/weapon-mp-visibility-receipt.json)
+and [the control sheet](../../vr/proof/weapon-mp-visibility-controls.png).
 
 Evidence:
 [MP_EYE_FRUSTUM_EVIDENCE.md](MP_EYE_FRUSTUM_EVIDENCE.md),
@@ -256,6 +259,35 @@ receipt also records the affected MP/flat/SP regressions, source hashes,
 unchanged saves/preferences and the final debug-OFF release hash. Physical
 recenter, MP visibility, grip/scale and tracked aim remain open.
 
+## W3.1 P38 model-local calibration
+
+The P38 calibration probe captures the complete node-13 source and animated
+vertex arrays atomically at the existing W1 seam. It uses copied root MP slot 1,
+ID 0, zero switches, stationary P2 and no fire. The animated-model grip block
+centers at `(76.555555555556, 100.777777777778, 287.888888888889)`; the muzzle
+cap centers at `(76.2, 109.8, 396.8)`. Their normalized direction is the
+provisional forward axis.
+
+| Field | Measured value | Units / status |
+| --- | --- | --- |
+| Grip pivot | `(76.555555555556, 100.777777777778, 287.888888888889)` | animated model units |
+| Muzzle | `(76.2, 109.8, 396.8)` | animated model units |
+| Right | `(0.999994671106, 0, 0.003264622472)` | dimensionless |
+| Up | `(-0.000269517466, -0.996586343637, 0.082556568708)` | dimensionless |
+| Forward | `(-0.003253478173, 0.082557008645, 0.996581032934)` | dimensionless |
+| Forward span | `114.525481833051` | animated model units |
+| Nominal scale | `530.210564041902` | model units/metre; provisional |
+
+The scale uses a 216 mm nominal P38 overall length. It is a geometry-based
+starting value, not operator acceptance. The old `(98,296,193)` camera marker
+remains the W1 rotation diagnostic and is not the measured grip. The new data
+is profile metadata; it does not yet alter the rendered pose, native shot or
+normal defaults.
+
+Evidence: [calibration receipt](../../vr/proof/weapon-p38-calibration-receipt.json),
+[atomic capture](../../vr/proof/weapon-p38-calibration-capture-receipt.json) and
+[build/regressions](../../vr/proof/weapon-p38-calibration-build-receipt.json).
+
 ## Captured first-person profiles
 
 | ID | Weapon | Nodes | Native faces | Geometry FNV32 |
@@ -275,9 +307,10 @@ recenter, MP visibility, grip/scale and tracked aim remain open.
 | 17 | StG44 | 32 | 352 | `F467028B` |
 
 All native nodes, arms, animation, recoil, reload, and muzzle handling remain
-inputs to the projection. No gun-only mesh extraction or per-weapon physical
-grip calibration is claimed. The current rotation pivot is the saved GTE TR;
-it is a diagnostic pivot, not a measured grip point.
+inputs to the projection. W3.1 measured P38 model-local grip and muzzle markers,
+but no gun-only mesh extraction or physical grip acceptance is claimed. The
+current renderer still rotates around its W1 camera-space diagnostic pivot;
+nothing consumes the new calibration data yet.
 
 GTE TR registers use **integer camera units**. The older affine-composition
 helper packs translation in Q12. `mohu_vr_weapon_compose_gte_control` cancels that
@@ -341,8 +374,14 @@ The same diagnostic binary's SP zero-eye control has 18 complete pairs, equal
 eye state/cycles and 37 rollback checks with zero mismatches, leaks, watchdogs
 or repairs. This validates the existing SP path, not MP weapon stereo.
 
-After C1-C4, the next feature remains W2.3 in [VR_PLAN.md](VR_PLAN.md). Follow its corrected
-dependencies: W3 desktop profile preparation and W4 native MP shot binding can
+W2.4 is complete. The copied MP slot now selects the measured overlay's
+converter `0x800799E4`, dispatcher `0x80079B28`, P1 actions `0x800C0ED0`,
+axis records `0x800C0BF0` and curve `0x800A458C`; the SP tables remain a
+separate checked path. W2.5 is also complete: both directions of every movement
+axis, seven button masks, focus recovery and native Start pause/resume pass,
+with zero render-time input samples. Isolated SP and OpenXR-off flat fallback
+pass in their own fixtures. Follow the corrected dependencies: W3 desktop
+profile preparation and W4 native MP shot binding can
 progress without physical acceptance; W5/W6 diagnostic candidates follow their
 measured contracts. Normal default enablement and physical accuracy claims
 remain gated by hardware acceptance. Use [HANDOFF.md](HANDOFF.md) and the
@@ -358,10 +397,12 @@ selector are removed. The session-start diff is retained locally under
 
 The one `build-release` is restored to Release/OpenGL/OpenXR/PGXP with
 `PSX_DEBUG_TOOLS=OFF` at SHA-256
-`d13aa6496ea4a690e2018cf8ed5e44668ad4c47e4af9919342ea2ce9deca955a`.
+`9eca8fa68894867908a569a6b6268b644be3dbe33677ac423f8224e07e034e6a`.
+The OpenXR-off flat executable is
+`18f4328bc9085f0a6a2322f940eea63516f07e93698010853cf3474cad94636c`.
 Flat startup is inert even with weapon-pose, flat-probe, synthetic-pose, MP
-control and the two new frustum flags inherited. Eighteen Python tests and the
-strict C fixtures pass, including the new AABB overflow/view guards. Saves,
+control and the two new frustum flags inherited. Twenty-three Python tests and the
+strict C fixtures pass, including the P38 calibration profile checks. Saves,
 controller preferences and SteamVR settings are unchanged; no owned game or
 debug listener remains.
 The flat smoke intentionally closes its hidden process and does not establish
@@ -382,6 +423,10 @@ interactive gameplay or new OpenXR acceptance.
 - [MP eye-frustum evidence](MP_EYE_FRUSTUM_EVIDENCE.md)
 - [MP eye-frustum measurement](../../vr/proof/weapon-mp-frustum-measurement.json)
 - [MP eye-frustum build receipt](../../vr/proof/weapon-mp-frustum-build-receipt.json)
+- [MP native input controls](../../vr/proof/weapon-mp-input-receipt.json)
+- [MP input build and regressions](../../vr/proof/weapon-mp-input-build-receipt.json)
+- [MP lifecycle controls](../../vr/proof/weapon-mp-lifecycle-receipt.json)
+- [MP lifecycle build and regressions](../../vr/proof/weapon-mp-lifecycle-build-receipt.json)
 - [First-person flat control receipt](../../vr/proof/weapon-viewmodel-receipt.json)
 - [Final build and flat isolation](../../vr/proof/weapon-viewmodel-build-receipt.json)
 - [Native / translation / yaw proof](../../vr/proof/weapon-viewmodel-controls.png)
@@ -396,14 +441,13 @@ interactive gameplay or new OpenXR acceptance.
 ## Resume prompt
 
 ```text
-Read docs/vr/CONSISTENCY_HANDOFF.md, REFERENCE_REUSE_AUDIT.md, HANDOFF.md and
-VR_PLAN.md. Execute C1-C4 in order: characterize both games, share the three
-specified pure operations through the framework with title adapters, and
-verify both consumers. Preserve current W1/W2.1/W2.2 results and native policy
-differences. Do not rewrite renderers, hooks, input mapping or calibration.
+Read HANDOFF.md, VR_PLAN.md, REFERENCE_REUSE_AUDIT.md and the P38 calibration
+sources. Continue with W3.2 only: prepare a bounded, movement-enabled P38
+headset comparison from a fresh copied slot-1 fixture. Preserve W1-W3.1
+behavior, native thresholds, calibration and unrelated work.
 
-Keep source saves and historical receipts unchanged. Retain new parity and
-affected-runtime evidence for both games. Mark only proven C items complete,
-then set NEXT=W2.3 and stop before implementing that feature. If blocked, record
-the exact case, missing fact and one next action; never repeat unchanged failures.
+Keep source saves and historical receipts unchanged. Retain the new comparison
+evidence and rebuild with debug OFF. Mark W3.2 complete only if the affected
+checks pass. If blocked, record the exact comparison case, missing fact and one
+next action; never repeat unchanged failures.
 ```

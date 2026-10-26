@@ -1,0 +1,1371 @@
+{
+  "schema": 1,
+  "date": "2026-10-26",
+  "kind": "W2.3 multiplayer head visibility controls",
+  "complete": true,
+  "fixture": "copied root MP slot 1, P38 ID 0, no switching or firing",
+  "executable_sha256": "2a5da6b8fcdab0b6bb001c01deb8b32ac3e819d8a1b7f75e9c28a12aa02a33a3",
+  "source_hashes": {
+    "vr\\underground\\vr_diagnostic.c": "2cf753e09157b9efde2ac2b53225b4c9039f015ba41c3c79672771ebda4b14e9",
+    "vr\\underground\\mp_view.h": "8e7b2a74a37f39ec3b63dd211e3fab1310107c5858589dcf061f8f2f962755f8",
+    "vr\\underground\\frustum.h": "9c60cb3113837ee71e702b35253c43edd076e7d0d525b1aa3061f74780d5f62b",
+    "vr\\tools\\check_mp_view.py": "e64b39db888fb44616b758195b4551f7eaa67e9b7f8e2b4e25fe10b56a726859",
+    "vr\\tools\\check_weapon_pose_spaces.py": "8935ba1e37594ca0c686dc745bfb1b986a813abee31cead8331beb7dd52ea735",
+    "vr\\tests\\test_mp_view.c": "622bc1cd3249826a611dfc63c170ddaa20ca54d40eeee0f51f4d570f91530b63",
+    "psxrecomp\\runtime\\src\\vr_geometry_math.c": "9e51708f0f05a16182e4d5893063a06f656d4fc723965f72cea9191632661a23",
+    "psxrecomp\\runtime\\include\\vr_geometry_math.h": "9669b212e9195b9be96edd47fe8f917287bdaf6e5e35e75210f6de337ae7a777"
+  },
+  "raw_receipt": "analysis\\vr-baseline\\weapon-mesh-mapping\\w23-visibility-20261026o\\receipt.json",
+  "raw_receipt_sha256": "f8ad4b9f58aea04558c6d2955435410df5adc44347f44643df944bb037dca3b9",
+  "controls": [
+    {
+      "case": "zero",
+      "pose": {
+        "yaw_mdeg": 0,
+        "pitch_mdeg": 0,
+        "x_milli": 0,
+        "y_milli": 0,
+        "z_milli": 0,
+        "requested_physical_mm": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "selector": {
+        "0": {
+          "samples": 21,
+          "native_visible": [
+            "80138310",
+            "8013D750",
+            "80142B90"
+          ],
+          "override_visible": [
+            "801319C0",
+            "80136E00",
+            "80138310",
+            "8013C240",
+            "8013D750",
+            "80142B90",
+            "801440A0"
+          ],
+          "changed_nodes": [
+            "801319C0",
+            "80136E00",
+            "8013C240",
+            "801440A0"
+          ],
+          "native_visible_count": 3,
+          "override_visible_count": 7
+        },
+        "1": {
+          "samples": 21,
+          "native_visible": [
+            "80138310",
+            "8013D750",
+            "80142B90"
+          ],
+          "override_visible": [
+            "801319C0",
+            "80136E00",
+            "80138310",
+            "8013C240",
+            "8013D750",
+            "80142B90",
+            "801440A0"
+          ],
+          "changed_nodes": [
+            "801319C0",
+            "80136E00",
+            "8013C240",
+            "801440A0"
+          ],
+          "native_visible_count": 3,
+          "override_visible_count": 7
+        }
+      },
+      "off_world": [
+        {
+          "nonblack_pixels": 23040,
+          "unique_colors": 307,
+          "populated": true
+        },
+        {
+          "nonblack_pixels": 23040,
+          "unique_colors": 307,
+          "populated": true
+        }
+      ],
+      "on_world": [
+        {
+          "nonblack_pixels": 23040,
+          "unique_colors": 307,
+          "populated": true
+        },
+        {
+          "nonblack_pixels": 23040,
+          "unique_colors": 307,
+          "populated": true
+        }
+      ],
+      "images": {
+        "off": {
+          "p000038_left.png": "16d839affd374d5d566adc3132ee2ad16b573112b0c054d435efa18ed88414db",
+          "p000038_right.png": "16d839affd374d5d566adc3132ee2ad16b573112b0c054d435efa18ed88414db"
+        },
+        "on": {
+          "p000045_left.png": "631705eeb15de6e8f9391a7b276b676df35a367ad34e76a012574fb046b3b18f",
+          "p000045_right.png": "631705eeb15de6e8f9391a7b276b676df35a367ad34e76a012574fb046b3b18f"
+        },
+        "off_left_path": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\weapon-mesh-mapping\\w23-visibility-20261026o\\zero-frustum-off\\p000038_left.png",
+        "on_left_path": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\weapon-mesh-mapping\\w23-visibility-20261026o\\zero-frustum-on\\p000045_left.png"
+      },
+      "off_vs_on_image": {
+        "left": {
+          "bbox": [
+            250,
+            80,
+            508,
+            97
+          ],
+          "changed_pixels": 18
+        },
+        "right": {
+          "bbox": [
+            250,
+            80,
+            508,
+            97
+          ],
+          "changed_pixels": 18
+        }
+      },
+      "frustum_off": {
+        "stereo_pairs": 39,
+        "rollback": {
+          "id": 0,
+          "ok": true,
+          "plans": 0,
+          "planned": 0,
+          "wanted": 0,
+          "refused": 0,
+          "passes": 79,
+          "aborted": 0,
+          "discarded": 0,
+          "watchdog": 0,
+          "vram_leaks": 0,
+          "nesting_repairs": 0,
+          "device_reads": 0,
+          "last_device_read": "0x00000000",
+          "last_device_read_width": 0,
+          "verify_checks": 79,
+          "verify_mismatch": 0,
+          "dropped": {
+            "spu": 0,
+            "cd": 0,
+            "timer": 0,
+            "dma": 0,
+            "gpu": 0,
+            "other": 0
+          },
+          "last_pass_ms": 11.431,
+          "avg_pass_ms": 10.905,
+          "avg_begin_ms": 0.689,
+          "avg_guest_ms": 9.157,
+          "avg_end_ms": 0.609,
+          "avg_restore_ms": 0.231,
+          "guest_cycles_last": 539239,
+          "disabled": 0,
+          "promotions": 0,
+          "pass_presents": 0,
+          "blended_presents": 0,
+          "expired": 0,
+          "late_presents": 0,
+          "unmatched_flips": 0,
+          "early_presents": 0,
+          "cost_us": 0,
+          "cost_rewarms": 0,
+          "frame_images": 0,
+          "journaled": 0,
+          "image_textures": 0,
+          "image_bytes": 0,
+          "status": 1,
+          "backups_reused": 40,
+          "pass_attempts": 80,
+          "argument_refused": 0,
+          "status_refused": 0,
+          "begin_refused": 0,
+          "checkpoint_refused": 0,
+          "spans": 0,
+          "span_failures": 0,
+          "local_views": 0,
+          "local_attempts": 0,
+          "local_status": 4,
+          "admission": {
+            "plans": 0,
+            "frame": 0,
+            "zero_credit_refusals": 0,
+            "idle_ms": 0.0,
+            "present_ms": 0.0,
+            "prior_pass_ms": 0.0,
+            "present_reserve_ms": 0.0,
+            "spare_ms": 0.0,
+            "frame_ms": 0.0,
+            "cost_ms": 0.0,
+            "budget_ms": 0.0,
+            "wanted": 0,
+            "planned": 0
+          },
+          "last_failure": null,
+          "last_abort_detail": "",
+          "span_fail": {
+            "reason": 0,
+            "pc": "0x00000000",
+            "start": "0x00000000",
+            "stop": "0x00000000",
+            "ra": "0x00000000",
+            "after": "0x00000000",
+            "insns": 0
+          }
+        },
+        "counter_delta": {}
+      },
+      "frustum_on": {
+        "stereo_pairs": 46,
+        "rollback": {
+          "id": 0,
+          "ok": true,
+          "plans": 0,
+          "planned": 0,
+          "wanted": 0,
+          "refused": 0,
+          "passes": 92,
+          "aborted": 0,
+          "discarded": 0,
+          "watchdog": 0,
+          "vram_leaks": 0,
+          "nesting_repairs": 0,
+          "device_reads": 0,
+          "last_device_read": "0x00000000",
+          "last_device_read_width": 0,
+          "verify_checks": 92,
+          "verify_mismatch": 0,
+          "dropped": {
+            "spu": 0,
+            "cd": 0,
+            "timer": 0,
+            "dma": 0,
+            "gpu": 0,
+            "other": 0
+          },
+          "last_pass_ms": 10.288,
+          "avg_pass_ms": 10.668,
+          "avg_begin_ms": 0.671,
+          "avg_guest_ms": 8.828,
+          "avg_end_ms": 0.71,
+          "avg_restore_ms": 0.241,
+          "guest_cycles_last": 505806,
+          "disabled": 0,
+          "promotions": 0,
+          "pass_presents": 0,
+          "blended_presents": 0,
+          "expired": 0,
+          "late_presents": 0,
+          "unmatched_flips": 0,
+          "early_presents": 0,
+          "cost_us": 0,
+          "cost_rewarms": 0,
+          "frame_images": 0,
+          "journaled": 0,
+          "image_textures": 0,
+          "image_bytes": 0,
+          "status": 1,
+          "backups_reused": 46,
+          "pass_attempts": 92,
+          "argument_refused": 0,
+          "status_refused": 0,
+          "begin_refused": 0,
+          "checkpoint_refused": 0,
+          "spans": 0,
+          "span_failures": 0,
+          "local_views": 0,
+          "local_attempts": 0,
+          "local_status": 4,
+          "admission": {
+            "plans": 0,
+            "frame": 0,
+            "zero_credit_refusals": 0,
+            "idle_ms": 0.0,
+            "present_ms": 0.0,
+            "prior_pass_ms": 0.0,
+            "present_reserve_ms": 0.0,
+            "spare_ms": 0.0,
+            "frame_ms": 0.0,
+            "cost_ms": 0.0,
+            "budget_ms": 0.0,
+            "wanted": 0,
+            "planned": 0
+          },
+          "last_failure": null,
+          "last_abort_detail": "",
+          "span_fail": {
+            "reason": 0,
+            "pc": "0x00000000",
+            "start": "0x00000000",
+            "stop": "0x00000000",
+            "ra": "0x00000000",
+            "after": "0x00000000",
+            "insns": 0
+          }
+        },
+        "counter_delta": {
+          "mohu.vr.mp.frustum.override.left": 126,
+          "mohu.vr.mp.frustum.skip_node.left": 6,
+          "mohu.vr.mp.frustum.override.right": 126,
+          "mohu.vr.mp.frustum.skip_node.right": 6
+        }
+      }
+    },
+    {
+      "case": "yaw-plus-90",
+      "pose": {
+        "yaw_mdeg": 90000,
+        "pitch_mdeg": 0,
+        "x_milli": 0,
+        "y_milli": 0,
+        "z_milli": 0,
+        "requested_physical_mm": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "selector": {
+        "0": {
+          "samples": 21,
+          "native_visible": [
+            "8012AEE0",
+            "8013EC60"
+          ],
+          "override_visible": [
+            "8012AEE0",
+            "8012D9A0",
+            "801343E0",
+            "801358F0",
+            "80139820",
+            "8013EC60"
+          ],
+          "changed_nodes": [
+            "8012D9A0",
+            "801343E0",
+            "801358F0",
+            "80139820"
+          ],
+          "native_visible_count": 2,
+          "override_visible_count": 6
+        },
+        "1": {
+          "samples": 21,
+          "native_visible": [
+            "8013D750",
+            "80142B90"
+          ],
+          "override_visible": [
+            "8012AEE0",
+            "8012C440",
+            "8012D9A0",
+            "801343E0",
+            "801358F0",
+            "80139820",
+            "80140170"
+          ],
+          "changed_nodes": [
+            "8012AEE0",
+            "8012C440",
+            "8012D9A0",
+            "801343E0",
+            "801358F0",
+            "80139820",
+            "8013D750",
+            "80140170",
+            "80142B90"
+          ],
+          "native_visible_count": 2,
+          "override_visible_count": 7
+        }
+      },
+      "off_world": [
+        {
+          "nonblack_pixels": 2769,
+          "unique_colors": 36,
+          "populated": true
+        },
+        {
+          "nonblack_pixels": 2769,
+          "unique_colors": 36,
+          "populated": true
+        }
+      ],
+      "on_world": [
+        {
+          "nonblack_pixels": 2908,
+          "unique_colors": 33,
+          "populated": true
+        },
+        {
+          "nonblack_pixels": 2908,
+          "unique_colors": 33,
+          "populated": true
+        }
+      ],
+      "images": {
+        "off": {
+          "p000093_left.png": "6f1a6ae85af0fcf4a9e08592326624603260fb619d72183be2dbcb6b5173bba9",
+          "p000093_right.png": "6f1a6ae85af0fcf4a9e08592326624603260fb619d72183be2dbcb6b5173bba9"
+        },
+        "on": {
+          "p000101_left.png": "757d19d567c3b45f3a94049f59b8f19b720a9c55535bf3ba9573e2cdda31c492",
+          "p000101_right.png": "757d19d567c3b45f3a94049f59b8f19b720a9c55535bf3ba9573e2cdda31c492"
+        },
+        "off_left_path": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\weapon-mesh-mapping\\w23-visibility-20261026o\\yaw-plus-90-frustum-off\\p000093_left.png",
+        "on_left_path": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\weapon-mesh-mapping\\w23-visibility-20261026o\\yaw-plus-90-frustum-on\\p000101_left.png"
+      },
+      "off_vs_on_image": {
+        "left": {
+          "bbox": [
+            0,
+            0,
+            252,
+            120
+          ],
+          "changed_pixels": 16408
+        },
+        "right": {
+          "bbox": [
+            0,
+            0,
+            252,
+            120
+          ],
+          "changed_pixels": 16408
+        }
+      },
+      "frustum_off": {
+        "stereo_pairs": 93,
+        "rollback": {
+          "id": 0,
+          "ok": true,
+          "plans": 0,
+          "planned": 0,
+          "wanted": 0,
+          "refused": 0,
+          "passes": 188,
+          "aborted": 0,
+          "discarded": 0,
+          "watchdog": 0,
+          "vram_leaks": 0,
+          "nesting_repairs": 0,
+          "device_reads": 0,
+          "last_device_read": "0x00000000",
+          "last_device_read_width": 0,
+          "verify_checks": 188,
+          "verify_mismatch": 0,
+          "dropped": {
+            "spu": 0,
+            "cd": 0,
+            "timer": 0,
+            "dma": 0,
+            "gpu": 0,
+            "other": 0
+          },
+          "last_pass_ms": 10.671,
+          "avg_pass_ms": 11.221,
+          "avg_begin_ms": 1.475,
+          "avg_guest_ms": 7.853,
+          "avg_end_ms": 1.425,
+          "avg_restore_ms": 0.244,
+          "guest_cycles_last": 447537,
+          "disabled": 0,
+          "promotions": 0,
+          "pass_presents": 0,
+          "blended_presents": 0,
+          "expired": 0,
+          "late_presents": 0,
+          "unmatched_flips": 0,
+          "early_presents": 0,
+          "cost_us": 0,
+          "cost_rewarms": 0,
+          "frame_images": 0,
+          "journaled": 0,
+          "image_textures": 0,
+          "image_bytes": 0,
+          "status": 1,
+          "backups_reused": 94,
+          "pass_attempts": 188,
+          "argument_refused": 0,
+          "status_refused": 0,
+          "begin_refused": 0,
+          "checkpoint_refused": 0,
+          "spans": 0,
+          "span_failures": 0,
+          "local_views": 0,
+          "local_attempts": 0,
+          "local_status": 4,
+          "admission": {
+            "plans": 0,
+            "frame": 0,
+            "zero_credit_refusals": 0,
+            "idle_ms": 0.0,
+            "present_ms": 0.0,
+            "prior_pass_ms": 0.0,
+            "present_reserve_ms": 0.0,
+            "spare_ms": 0.0,
+            "frame_ms": 0.0,
+            "cost_ms": 0.0,
+            "budget_ms": 0.0,
+            "wanted": 0,
+            "planned": 0
+          },
+          "last_failure": null,
+          "last_abort_detail": "",
+          "span_fail": {
+            "reason": 0,
+            "pc": "0x00000000",
+            "start": "0x00000000",
+            "stop": "0x00000000",
+            "ra": "0x00000000",
+            "after": "0x00000000",
+            "insns": 0
+          }
+        },
+        "counter_delta": {
+          "mohu.vr.mp.frustum.override.left": 0,
+          "mohu.vr.mp.frustum.skip_node.left": 0,
+          "mohu.vr.mp.frustum.override.right": 0,
+          "mohu.vr.mp.frustum.skip_node.right": 0
+        }
+      },
+      "frustum_on": {
+        "stereo_pairs": 102,
+        "rollback": {
+          "id": 0,
+          "ok": true,
+          "plans": 0,
+          "planned": 0,
+          "wanted": 0,
+          "refused": 0,
+          "passes": 204,
+          "aborted": 0,
+          "discarded": 0,
+          "watchdog": 0,
+          "vram_leaks": 0,
+          "nesting_repairs": 0,
+          "device_reads": 0,
+          "last_device_read": "0x00000000",
+          "last_device_read_width": 0,
+          "verify_checks": 204,
+          "verify_mismatch": 0,
+          "dropped": {
+            "spu": 0,
+            "cd": 0,
+            "timer": 0,
+            "dma": 0,
+            "gpu": 0,
+            "other": 0
+          },
+          "last_pass_ms": 10.115,
+          "avg_pass_ms": 11.159,
+          "avg_begin_ms": 1.663,
+          "avg_guest_ms": 7.35,
+          "avg_end_ms": 1.701,
+          "avg_restore_ms": 0.224,
+          "guest_cycles_last": 390544,
+          "disabled": 0,
+          "promotions": 0,
+          "pass_presents": 0,
+          "blended_presents": 0,
+          "expired": 0,
+          "late_presents": 0,
+          "unmatched_flips": 0,
+          "early_presents": 0,
+          "cost_us": 0,
+          "cost_rewarms": 0,
+          "frame_images": 0,
+          "journaled": 0,
+          "image_textures": 0,
+          "image_bytes": 0,
+          "status": 1,
+          "backups_reused": 102,
+          "pass_attempts": 204,
+          "argument_refused": 0,
+          "status_refused": 0,
+          "begin_refused": 0,
+          "checkpoint_refused": 0,
+          "spans": 0,
+          "span_failures": 0,
+          "local_views": 0,
+          "local_attempts": 0,
+          "local_status": 4,
+          "admission": {
+            "plans": 0,
+            "frame": 0,
+            "zero_credit_refusals": 0,
+            "idle_ms": 0.0,
+            "present_ms": 0.0,
+            "prior_pass_ms": 0.0,
+            "present_reserve_ms": 0.0,
+            "spare_ms": 0.0,
+            "frame_ms": 0.0,
+            "cost_ms": 0.0,
+            "budget_ms": 0.0,
+            "wanted": 0,
+            "planned": 0
+          },
+          "last_failure": null,
+          "last_abort_detail": "",
+          "span_fail": {
+            "reason": 0,
+            "pc": "0x00000000",
+            "start": "0x00000000",
+            "stop": "0x00000000",
+            "ra": "0x00000000",
+            "after": "0x00000000",
+            "insns": 0
+          }
+        },
+        "counter_delta": {
+          "mohu.vr.mp.frustum.override.left": 147,
+          "mohu.vr.mp.frustum.skip_node.left": 7,
+          "mohu.vr.mp.frustum.override.right": 147,
+          "mohu.vr.mp.frustum.skip_node.right": 7
+        }
+      }
+    },
+    {
+      "case": "yaw-minus-90",
+      "pose": {
+        "yaw_mdeg": -90000,
+        "pitch_mdeg": 0,
+        "x_milli": 0,
+        "y_milli": 0,
+        "z_milli": 0,
+        "requested_physical_mm": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "selector": {
+        "0": {
+          "samples": 21,
+          "native_visible": [
+            "8012C440"
+          ],
+          "override_visible": [
+            "8012C440",
+            "8012D9A0",
+            "801343E0",
+            "80139820",
+            "8013D750",
+            "8013EC60",
+            "80140170"
+          ],
+          "changed_nodes": [
+            "8012D9A0",
+            "801343E0",
+            "80139820",
+            "8013D750",
+            "8013EC60",
+            "80140170"
+          ],
+          "native_visible_count": 1,
+          "override_visible_count": 7
+        },
+        "1": {
+          "samples": 21,
+          "native_visible": [
+            "8012C440"
+          ],
+          "override_visible": [
+            "8012C440",
+            "8012D9A0",
+            "801343E0",
+            "80139820",
+            "8013D750",
+            "8013EC60",
+            "80140170"
+          ],
+          "changed_nodes": [
+            "8012D9A0",
+            "801343E0",
+            "80139820",
+            "8013D750",
+            "8013EC60",
+            "80140170"
+          ],
+          "native_visible_count": 1,
+          "override_visible_count": 7
+        }
+      },
+      "off_world": [
+        {
+          "nonblack_pixels": 5800,
+          "unique_colors": 89,
+          "populated": true
+        },
+        {
+          "nonblack_pixels": 5800,
+          "unique_colors": 89,
+          "populated": true
+        }
+      ],
+      "on_world": [
+        {
+          "nonblack_pixels": 6444,
+          "unique_colors": 93,
+          "populated": true
+        },
+        {
+          "nonblack_pixels": 6444,
+          "unique_colors": 93,
+          "populated": true
+        }
+      ],
+      "images": {
+        "off": {
+          "p000369_left.png": "1374cafb5c2afdc0bf2123e33ea63cf3bcd355b77b19ae7890b9fe627170c7e1",
+          "p000369_right.png": "1374cafb5c2afdc0bf2123e33ea63cf3bcd355b77b19ae7890b9fe627170c7e1"
+        },
+        "on": {
+          "p000374_left.png": "6da13ca231705948c1b0c1651d4cc06aac61166cd3d946b69e4cb56036036671",
+          "p000374_right.png": "6da13ca231705948c1b0c1651d4cc06aac61166cd3d946b69e4cb56036036671"
+        },
+        "off_left_path": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\weapon-mesh-mapping\\w23-visibility-20261026o\\yaw-minus-90-frustum-off\\p000369_left.png",
+        "on_left_path": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\weapon-mesh-mapping\\w23-visibility-20261026o\\yaw-minus-90-frustum-on\\p000374_left.png"
+      },
+      "off_vs_on_image": {
+        "left": {
+          "bbox": [
+            143,
+            0,
+            512,
+            120
+          ],
+          "changed_pixels": 21621
+        },
+        "right": {
+          "bbox": [
+            143,
+            0,
+            512,
+            120
+          ],
+          "changed_pixels": 21621
+        }
+      },
+      "frustum_off": {
+        "stereo_pairs": 369,
+        "rollback": {
+          "id": 0,
+          "ok": true,
+          "plans": 0,
+          "planned": 0,
+          "wanted": 0,
+          "refused": 0,
+          "passes": 738,
+          "aborted": 0,
+          "discarded": 0,
+          "watchdog": 0,
+          "vram_leaks": 0,
+          "nesting_repairs": 0,
+          "device_reads": 0,
+          "last_device_read": "0x00000000",
+          "last_device_read_width": 0,
+          "verify_checks": 738,
+          "verify_mismatch": 0,
+          "dropped": {
+            "spu": 0,
+            "cd": 0,
+            "timer": 0,
+            "dma": 0,
+            "gpu": 0,
+            "other": 0
+          },
+          "last_pass_ms": 11.175,
+          "avg_pass_ms": 11.737,
+          "avg_begin_ms": 1.582,
+          "avg_guest_ms": 7.772,
+          "avg_end_ms": 1.934,
+          "avg_restore_ms": 0.232,
+          "guest_cycles_last": 436665,
+          "disabled": 0,
+          "promotions": 0,
+          "pass_presents": 0,
+          "blended_presents": 0,
+          "expired": 0,
+          "late_presents": 0,
+          "unmatched_flips": 0,
+          "early_presents": 0,
+          "cost_us": 0,
+          "cost_rewarms": 0,
+          "frame_images": 0,
+          "journaled": 0,
+          "image_textures": 0,
+          "image_bytes": 0,
+          "status": 1,
+          "backups_reused": 369,
+          "pass_attempts": 738,
+          "argument_refused": 0,
+          "status_refused": 0,
+          "begin_refused": 0,
+          "checkpoint_refused": 0,
+          "spans": 0,
+          "span_failures": 0,
+          "local_views": 0,
+          "local_attempts": 0,
+          "local_status": 4,
+          "admission": {
+            "plans": 0,
+            "frame": 0,
+            "zero_credit_refusals": 0,
+            "idle_ms": 0.0,
+            "present_ms": 0.0,
+            "prior_pass_ms": 0.0,
+            "present_reserve_ms": 0.0,
+            "spare_ms": 0.0,
+            "frame_ms": 0.0,
+            "cost_ms": 0.0,
+            "budget_ms": 0.0,
+            "wanted": 0,
+            "planned": 0
+          },
+          "last_failure": null,
+          "last_abort_detail": "",
+          "span_fail": {
+            "reason": 0,
+            "pc": "0x00000000",
+            "start": "0x00000000",
+            "stop": "0x00000000",
+            "ra": "0x00000000",
+            "after": "0x00000000",
+            "insns": 0
+          }
+        },
+        "counter_delta": {
+          "mohu.vr.mp.frustum.override.left": 0,
+          "mohu.vr.mp.frustum.skip_node.left": 0,
+          "mohu.vr.mp.frustum.override.right": 0,
+          "mohu.vr.mp.frustum.skip_node.right": 0
+        }
+      },
+      "frustum_on": {
+        "stereo_pairs": 374,
+        "rollback": {
+          "id": 0,
+          "ok": true,
+          "plans": 0,
+          "planned": 0,
+          "wanted": 0,
+          "refused": 0,
+          "passes": 749,
+          "aborted": 0,
+          "discarded": 0,
+          "watchdog": 0,
+          "vram_leaks": 0,
+          "nesting_repairs": 0,
+          "device_reads": 0,
+          "last_device_read": "0x00000000",
+          "last_device_read_width": 0,
+          "verify_checks": 749,
+          "verify_mismatch": 0,
+          "dropped": {
+            "spu": 0,
+            "cd": 0,
+            "timer": 0,
+            "dma": 0,
+            "gpu": 0,
+            "other": 0
+          },
+          "last_pass_ms": 10.38,
+          "avg_pass_ms": 11.145,
+          "avg_begin_ms": 1.775,
+          "avg_guest_ms": 7.067,
+          "avg_end_ms": 1.869,
+          "avg_restore_ms": 0.217,
+          "guest_cycles_last": 356808,
+          "disabled": 0,
+          "promotions": 0,
+          "pass_presents": 0,
+          "blended_presents": 0,
+          "expired": 0,
+          "late_presents": 0,
+          "unmatched_flips": 0,
+          "early_presents": 0,
+          "cost_us": 0,
+          "cost_rewarms": 0,
+          "frame_images": 0,
+          "journaled": 0,
+          "image_textures": 0,
+          "image_bytes": 0,
+          "status": 1,
+          "backups_reused": 375,
+          "pass_attempts": 750,
+          "argument_refused": 0,
+          "status_refused": 0,
+          "begin_refused": 0,
+          "checkpoint_refused": 0,
+          "spans": 0,
+          "span_failures": 0,
+          "local_views": 0,
+          "local_attempts": 0,
+          "local_status": 4,
+          "admission": {
+            "plans": 0,
+            "frame": 0,
+            "zero_credit_refusals": 0,
+            "idle_ms": 0.0,
+            "present_ms": 0.0,
+            "prior_pass_ms": 0.0,
+            "present_reserve_ms": 0.0,
+            "spare_ms": 0.0,
+            "frame_ms": 0.0,
+            "cost_ms": 0.0,
+            "budget_ms": 0.0,
+            "wanted": 0,
+            "planned": 0
+          },
+          "last_failure": null,
+          "last_abort_detail": "",
+          "span_fail": {
+            "reason": 0,
+            "pc": "0x00000000",
+            "start": "0x00000000",
+            "stop": "0x00000000",
+            "ra": "0x00000000",
+            "after": "0x00000000",
+            "insns": 0
+          }
+        },
+        "counter_delta": {
+          "mohu.vr.mp.frustum.override.left": 126,
+          "mohu.vr.mp.frustum.skip_node.left": 6,
+          "mohu.vr.mp.frustum.override.right": 126,
+          "mohu.vr.mp.frustum.skip_node.right": 6
+        }
+      }
+    },
+    {
+      "case": "near-wall",
+      "pose": {
+        "yaw_mdeg": 0,
+        "pitch_mdeg": 0,
+        "x_milli": 0,
+        "y_milli": 0,
+        "z_milli": 0,
+        "requested_physical_mm": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "selector": {
+        "0": {
+          "samples": 21,
+          "native_visible": [
+            "80138310",
+            "80142B90"
+          ],
+          "override_visible": [
+            "801319C0",
+            "80136E00",
+            "80138310",
+            "8013C240",
+            "80142B90",
+            "801440A0"
+          ],
+          "changed_nodes": [
+            "801319C0",
+            "80136E00",
+            "8013C240",
+            "801440A0"
+          ],
+          "native_visible_count": 2,
+          "override_visible_count": 6
+        },
+        "1": {
+          "samples": 21,
+          "native_visible": [
+            "80138310",
+            "80142B90"
+          ],
+          "override_visible": [
+            "801319C0",
+            "80136E00",
+            "80138310",
+            "8013C240",
+            "80142B90",
+            "801440A0"
+          ],
+          "changed_nodes": [
+            "801319C0",
+            "80136E00",
+            "8013C240",
+            "801440A0"
+          ],
+          "native_visible_count": 2,
+          "override_visible_count": 6
+        }
+      },
+      "off_world": [
+        {
+          "nonblack_pixels": 23040,
+          "unique_colors": 186,
+          "populated": true
+        },
+        {
+          "nonblack_pixels": 23040,
+          "unique_colors": 186,
+          "populated": true
+        }
+      ],
+      "on_world": [
+        {
+          "nonblack_pixels": 23040,
+          "unique_colors": 147,
+          "populated": true
+        },
+        {
+          "nonblack_pixels": 23040,
+          "unique_colors": 147,
+          "populated": true
+        }
+      ],
+      "images": {
+        "off": {
+          "p000466_left.png": "bacf79cf83ae6413e26f73eaf51dc66631032baa839843edab4104a783985663",
+          "p000466_right.png": "bacf79cf83ae6413e26f73eaf51dc66631032baa839843edab4104a783985663"
+        },
+        "on": {
+          "p000473_left.png": "8ecd316ab468d78d6cdb863ad484c253ea4edde556970cd6958bd75825f10a6a",
+          "p000473_right.png": "8ecd316ab468d78d6cdb863ad484c253ea4edde556970cd6958bd75825f10a6a"
+        },
+        "off_left_path": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\weapon-mesh-mapping\\w23-visibility-20261026o\\near-wall-frustum-off\\p000466_left.png",
+        "on_left_path": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\weapon-mesh-mapping\\w23-visibility-20261026o\\near-wall-frustum-on\\p000473_left.png"
+      },
+      "off_vs_on_image": {
+        "left": {
+          "bbox": [
+            0,
+            0,
+            512,
+            120
+          ],
+          "changed_pixels": 58028
+        },
+        "right": {
+          "bbox": [
+            0,
+            0,
+            512,
+            120
+          ],
+          "changed_pixels": 58028
+        }
+      },
+      "frustum_off": {
+        "stereo_pairs": 468,
+        "rollback": {
+          "id": 0,
+          "ok": true,
+          "plans": 0,
+          "planned": 0,
+          "wanted": 0,
+          "refused": 0,
+          "passes": 936,
+          "aborted": 0,
+          "discarded": 0,
+          "watchdog": 0,
+          "vram_leaks": 0,
+          "nesting_repairs": 0,
+          "device_reads": 0,
+          "last_device_read": "0x00000000",
+          "last_device_read_width": 0,
+          "verify_checks": 936,
+          "verify_mismatch": 0,
+          "dropped": {
+            "spu": 0,
+            "cd": 0,
+            "timer": 0,
+            "dma": 0,
+            "gpu": 0,
+            "other": 0
+          },
+          "last_pass_ms": 12.238,
+          "avg_pass_ms": 12.126,
+          "avg_begin_ms": 2.151,
+          "avg_guest_ms": 7.771,
+          "avg_end_ms": 1.755,
+          "avg_restore_ms": 0.231,
+          "guest_cycles_last": 426074,
+          "disabled": 0,
+          "promotions": 0,
+          "pass_presents": 0,
+          "blended_presents": 0,
+          "expired": 0,
+          "late_presents": 0,
+          "unmatched_flips": 0,
+          "early_presents": 0,
+          "cost_us": 0,
+          "cost_rewarms": 0,
+          "frame_images": 0,
+          "journaled": 0,
+          "image_textures": 0,
+          "image_bytes": 0,
+          "status": 1,
+          "backups_reused": 468,
+          "pass_attempts": 936,
+          "argument_refused": 0,
+          "status_refused": 0,
+          "begin_refused": 0,
+          "checkpoint_refused": 0,
+          "spans": 0,
+          "span_failures": 0,
+          "local_views": 0,
+          "local_attempts": 0,
+          "local_status": 4,
+          "admission": {
+            "plans": 0,
+            "frame": 0,
+            "zero_credit_refusals": 0,
+            "idle_ms": 0.0,
+            "present_ms": 0.0,
+            "prior_pass_ms": 0.0,
+            "present_reserve_ms": 0.0,
+            "spare_ms": 0.0,
+            "frame_ms": 0.0,
+            "cost_ms": 0.0,
+            "budget_ms": 0.0,
+            "wanted": 0,
+            "planned": 0
+          },
+          "last_failure": null,
+          "last_abort_detail": "",
+          "span_fail": {
+            "reason": 0,
+            "pc": "0x00000000",
+            "start": "0x00000000",
+            "stop": "0x00000000",
+            "ra": "0x00000000",
+            "after": "0x00000000",
+            "insns": 0
+          }
+        },
+        "counter_delta": {
+          "mohu.vr.mp.frustum.override.left": 0,
+          "mohu.vr.mp.frustum.skip_node.left": 0,
+          "mohu.vr.mp.frustum.override.right": 0,
+          "mohu.vr.mp.frustum.skip_node.right": 0
+        }
+      },
+      "frustum_on": {
+        "stereo_pairs": 474,
+        "rollback": {
+          "id": 0,
+          "ok": true,
+          "plans": 0,
+          "planned": 0,
+          "wanted": 0,
+          "refused": 0,
+          "passes": 948,
+          "aborted": 0,
+          "discarded": 0,
+          "watchdog": 0,
+          "vram_leaks": 0,
+          "nesting_repairs": 0,
+          "device_reads": 0,
+          "last_device_read": "0x00000000",
+          "last_device_read_width": 0,
+          "verify_checks": 948,
+          "verify_mismatch": 0,
+          "dropped": {
+            "spu": 0,
+            "cd": 0,
+            "timer": 0,
+            "dma": 0,
+            "gpu": 0,
+            "other": 0
+          },
+          "last_pass_ms": 11.188,
+          "avg_pass_ms": 12.198,
+          "avg_begin_ms": 1.878,
+          "avg_guest_ms": 8.058,
+          "avg_end_ms": 1.809,
+          "avg_restore_ms": 0.232,
+          "guest_cycles_last": 442753,
+          "disabled": 0,
+          "promotions": 0,
+          "pass_presents": 0,
+          "blended_presents": 0,
+          "expired": 0,
+          "late_presents": 0,
+          "unmatched_flips": 0,
+          "early_presents": 0,
+          "cost_us": 0,
+          "cost_rewarms": 0,
+          "frame_images": 0,
+          "journaled": 0,
+          "image_textures": 0,
+          "image_bytes": 0,
+          "status": 1,
+          "backups_reused": 474,
+          "pass_attempts": 949,
+          "argument_refused": 0,
+          "status_refused": 0,
+          "begin_refused": 0,
+          "checkpoint_refused": 0,
+          "spans": 0,
+          "span_failures": 0,
+          "local_views": 0,
+          "local_attempts": 0,
+          "local_status": 4,
+          "admission": {
+            "plans": 0,
+            "frame": 0,
+            "zero_credit_refusals": 0,
+            "idle_ms": 0.0,
+            "present_ms": 0.0,
+            "prior_pass_ms": 0.0,
+            "present_reserve_ms": 0.0,
+            "spare_ms": 0.0,
+            "frame_ms": 0.0,
+            "cost_ms": 0.0,
+            "budget_ms": 0.0,
+            "wanted": 0,
+            "planned": 0
+          },
+          "last_failure": null,
+          "last_abort_detail": "",
+          "span_fail": {
+            "reason": 0,
+            "pc": "0x00000000",
+            "start": "0x00000000",
+            "stop": "0x00000000",
+            "ra": "0x00000000",
+            "after": "0x00000000",
+            "insns": 0
+          }
+        },
+        "counter_delta": {
+          "mohu.vr.mp.frustum.override.left": 147,
+          "mohu.vr.mp.frustum.skip_node.left": 7,
+          "mohu.vr.mp.frustum.override.right": 126,
+          "mohu.vr.mp.frustum.skip_node.right": 6
+        }
+      }
+    }
+  ],
+  "body_orientations": {
+    "yaw-plus-90": {
+      "yaw_mdeg": 90000,
+      "body_rotation": [
+        -16384,
+        24,
+        0
+      ],
+      "guest_frames_per_chunk": 6,
+      "input": "native left analog lx toward 0 while stationary",
+      "selected_chunk": 1
+    },
+    "yaw-minus-90": {
+      "yaw_mdeg": -90000,
+      "body_rotation": [
+        -32768,
+        20,
+        -32768
+      ],
+      "guest_frames_per_chunk": 6,
+      "input": "native left analog lx toward 0 while stationary",
+      "selected_chunk": 27
+    }
+  },
+  "near_wall_movement": {
+    "initial": [
+      -94470713,
+      33292288,
+      33718412
+    ],
+    "final": [
+      -93618745,
+      33292288,
+      39714444
+    ],
+    "blocked_chunks_required": 2,
+    "blocked_threshold": 200000,
+    "chunks": [
+      {
+        "chunk": 1,
+        "position": [
+          -94425657,
+          33292288,
+          35999884
+        ],
+        "max_abs_delta": 2281472
+      },
+      {
+        "chunk": 2,
+        "position": [
+          -94044729,
+          33357824,
+          46578828
+        ],
+        "max_abs_delta": 10578944
+      },
+      {
+        "chunk": 3,
+        "position": [
+          -93733433,
+          33357824,
+          44298380
+        ],
+        "max_abs_delta": 2280448
+      },
+      {
+        "chunk": 4,
+        "position": [
+          -93696569,
+          33292288,
+          39735948
+        ],
+        "max_abs_delta": 4562432
+      },
+      {
+        "chunk": 5,
+        "position": [
+          -93659705,
+          33292288,
+          39725196
+        ],
+        "max_abs_delta": 36864
+      },
+      {
+        "chunk": 6,
+        "position": [
+          -93618745,
+          33292288,
+          39714444
+        ],
+        "max_abs_delta": 40960
+      }
+    ]
+  },
+  "proof_image": "vr\\proof\\weapon-mp-visibility-controls.png",
+  "proof_image_sha256": "9ef2008ec0ab0e5af82af494a5544848ac6967e0ded77d58e817a0ae3f2f7a96",
+  "source_saves_unchanged": true,
+  "preferences_unchanged": true,
+  "remaining_game_pids": [],
+  "limits": [
+    "Desktop synthetic head controls, not physical headset acceptance.",
+    "The selector uses its measured 540x120 bounds; replay images are 512x120.",
+    "No weapon switch or firing occurred."
+  ]
+}

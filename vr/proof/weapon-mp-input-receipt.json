@@ -1,0 +1,114 @@
+{
+  "schema": 1,
+  "date": "2026-10-26",
+  "kind": "W2.4 multiplayer controller binding receipt",
+  "complete": true,
+  "source_revision": "8ebe08c4dda786f7b57a6585b9866cc75eb7fed0",
+  "framework_gitlink": "555e1eabccc59b9b6ff0d9fca48aca783513dc86",
+  "ui_gitlink": "7c635c6b366a6e0d5d3c913a7fce6ec04dd9f256",
+  "fixture": "copied root multiplayer slot 1, P38, stationary P2, no switching or firing",
+  "ownership": {
+    "p1_root_address": "0x800A3604",
+    "p1_actor": "0x801483D0",
+    "p1_input": "0x801487D0",
+    "p2_actor": "0x80145810",
+    "p2_input": "0x80145C10",
+    "current_player": "0x801483D0",
+    "sp_player_root": "0x800AA17C",
+    "sp_player": "0x00000000",
+    "mp_context": {
+      "width": 512,
+      "height": 120,
+      "focal": 400
+    }
+  },
+  "binding": {
+    "converter": {
+      "address": "0x800799E4",
+      "size": 324,
+      "fnv1a": "0x890B7F9F",
+      "sha256": "ac776b65510292f6bfbd5aa9606f496e565ffb56ef9f0a21f20075b0062dea26"
+    },
+    "dispatcher": {
+      "address": "0x80079B28",
+      "size": 84,
+      "fnv1a": "0x9E630C72",
+      "sha256": "0c956628610527639637bc5c0afb81479d601c7ef69a2eda13bc59d206410032"
+    },
+    "axis_records": {
+      "address": "0x800C0BF0",
+      "config": 0,
+      "selected_records": [3, 0, 1],
+      "native_axis_order": [2, 3, 0],
+      "native_axis_ids": [3, 0, 1, 2],
+      "selected_scales": [15360, 8960, 8960],
+      "center": 128,
+      "negative_factor": 255,
+      "positive_factor": 258,
+      "sha256": "55a8be31ca76c9d1219bb39dc6fe0c794cc52151c3c9f3f8ac1ec0328728e690"
+    },
+    "p1_actions": {
+      "address": "0x800C0ED0",
+      "mask": [64, 16, 32, 1, 128, 128, 2048, 512, 2],
+      "inversion_address": "0x800C0F20",
+      "inversions": [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      "sha256": "3979cabb60d68be209cf34dd702797504a68b39681f28cde4e1682869643f7dc",
+      "inversions_sha256": "496d31f9fe09a50a6c59d0a92ba417d3711a7e70648c82cee382a427b8f6d14f"
+    },
+    "response_curve": {
+      "address": "0x800A458C",
+      "size": 128,
+      "sha256": "856e2d9957e456645da61b67aab142f9711a06bd50ded980f4692f304813b017"
+    }
+  },
+  "controls": {
+    "samples": 6,
+    "neutral": {
+      "buttons": "0xFFFF",
+      "sticks": [128, 128, 128, 128]
+    },
+    "forward": {
+      "sticks": [128, 1, 128, 128],
+      "actor_position_changed": true
+    },
+    "strafe_right": {
+      "sticks": [128, 128, 254, 128],
+      "actor_position_changed": true
+    },
+    "turn_right": {
+      "sticks": [245, 128, 128, 128],
+      "actor_rotation_changed": true
+    },
+    "focus_lost": {
+      "buttons": "0xFFFF",
+      "sticks": [128, 128, 128, 128],
+      "released": true
+    },
+    "trigger_cross": {
+      "buttons": "0xBFFF"
+    }
+  },
+  "verification": {
+    "converter_hash_match": true,
+    "dispatcher_hash_match": true,
+    "axis_table_hash_match": true,
+    "action_table_hash_match": true,
+    "inversion_table_hash_match": true,
+    "curve_hash_match": true,
+    "source_saves_unchanged": true,
+    "preferences_unchanged": true,
+    "remaining_game_pids": [],
+    "raw_receipt": "analysis/vr-baseline/mp-input-final-20261026a/receipt.json",
+    "raw_receipt_sha256": "904ce30940ddb8ca9fd551edf55148d2171c637a15aaf3b90bef1fe423134d6e"
+  },
+  "policy": {
+    "sp_converter_hash_in_mp": "not resident; the SP address contains an unrelated MP overlay function",
+    "fallback": "mode, code, ownership, action, inversion, axis, or response-table mismatch returns neutral native input",
+    "source_sampling": "offline controller source only; eye replay remains unsampled"
+  },
+  "limits": [
+    "Desktop synthetic actions, not physical multiplayer headset acceptance.",
+    "No weapon switching or firing was performed by this W2.4 probe.",
+    "Only the measured P1 default action row and config-0 axis records are accepted; other layouts fail closed."
+  ]
+}

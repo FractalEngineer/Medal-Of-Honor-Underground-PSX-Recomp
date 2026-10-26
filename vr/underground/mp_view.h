@@ -31,8 +31,32 @@ typedef struct {
     uint32_t player, player_input, player_class, scene;
 } MohuVrMpState;
 
+typedef struct {
+    uint32_t player, other_player, current_player;
+    uint32_t player_input, other_input, player_class, other_class;
+    uint32_t width, height, focal;
+} MohuVrMpInputState;
+
 static inline int mohu_vr_mp_actor_address(uint32_t address) {
     return address >= 0x800B0000u && address <= 0x801FC000u && !(address & 3u);
+}
+
+/* Input is sampled outside the render transaction, where the camera/frame
+ * ownership used by the eye replay can be between updates. Bind MP input to
+ * the current P1 actor and its fixed +0x400 input block instead. */
+static inline int mohu_vr_mp_input_state_valid(
+        const MohuVrMpInputState* state) {
+    return state && state->width == 512u && state->height == 120u &&
+           state->focal == 400u &&
+           mohu_vr_mp_actor_address(state->player) &&
+           mohu_vr_mp_actor_address(state->other_player) &&
+           state->player != state->other_player &&
+           (state->current_player == state->player ||
+            state->current_player == state->other_player) &&
+           state->player_class == 1u &&
+           state->other_class == 1u &&
+           state->player_input == state->player + 0x400u &&
+           state->other_input == state->other_player + 0x400u;
 }
 
 /* Native 512x120 first-view contract, before any rollback-scoped write. */

@@ -5,6 +5,7 @@
 #include <stdlib.h>
 /* Underground slot-2 live calibration; converter is 80083C6C. */
 static const uint8_t measured_curve[128] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,10,10,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,52,54,56,58,60,62,64,66,68,70,72,74,76,78,80,82,84,86,88,90,94,98,102,106,110,114,118,122,126,130,134,138,142,146,150,160,170,180,190,200,210,220,230,240,250,255,255};
+static const uint8_t measured_mp_curve[128] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,10,10,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,52,54,56,58,60,62,64,66,68,70,72,74,76,78,80,82,84,86,88,90,94,98,102,106,110,114,118,122,126,130,134,138,142,146,150,160,170,180,190,200,210,220,230,240,250,255,255};
 int main(void) {
     MohuVRAnalogResponse response = {0};
     for (unsigned i = 0; i < 3; ++i)
@@ -134,5 +135,32 @@ int main(void) {
     uint32_t right_wins=pad.ly;
     input.stick[1][1]=.05f; /* inside the deadzone: the left hand's push stands */
     assert(mohu_vr_input_map(&input,.2,.65,&response,1,&pad) && pad.ly!=right_wins);
+
+    /* Multiplayer overlay: selected records native LX/LY/RX = 2/3/0. */
+    MohuVRAnalogResponse mp = {0};
+    mp.axis[0] = (MohuVRAnalogAxis){128, 255, 258, 15360};
+    mp.axis[1] = (MohuVRAnalogAxis){128, 255, 258, 8960};
+    mp.axis[2] = (MohuVRAnalogAxis){128, 255, 258, 8960};
+    memcpy(mp.curve, measured_mp_curve, sizeof measured_mp_curve);
+    PSXModOpenXRInput mp_input = {0};
+    mp_input.struct_size = sizeof mp_input;
+    mp_input.focused = 1;
+    mp_input.active[0] = mp_input.active[1] = 1;
+    assert(mohu_vr_input_map(&mp_input, .2, .65, &mp, 0, &pad) &&
+           pad.buttons == 0xffff && pad.lx == 128 && pad.ly == 128 &&
+           pad.rx == 128);
+    mp_input.stick[0][1] = 1;
+    assert(mohu_vr_input_map(&mp_input, .2, .65, &mp, 0, &pad) &&
+           pad.ly == 1);
+    mp_input.stick[0][1] = 0;
+    mp_input.stick[0][0] = 1;
+    assert(mohu_vr_input_map(&mp_input, .2, .65, &mp, 0, &pad) &&
+           pad.rx == 254);
+    mp_input.stick[0][0] = 0;
+    mp_input.stick[1][0] = 1;
+    assert(mohu_vr_input_map(&mp_input, .2, .65, &mp, 0, &pad) &&
+           pad.lx == 245);
+    assert(mohu_vr_analog_response(&mp, 0, 45) ==
+           -(int)measured_mp_curve[82] * 15360);
     return 0;
 }

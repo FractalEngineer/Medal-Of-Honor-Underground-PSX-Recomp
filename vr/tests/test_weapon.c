@@ -62,6 +62,73 @@ int main(void) {
     }
     CHECK(!mohu_vr_weapon_profile_at(mohu_vr_weapon_profile_count()));
     CHECK(!mohu_vr_weapon_profile_find(2u));
+    {
+        const MohuVrWeaponCalibration* calibration =
+            mohu_vr_weapon_calibration_find(0u);
+        const double grip[3] = {
+            76.555555555556, 100.777777777778, 287.888888888889,
+        };
+        const double muzzle[3] = {76.2, 109.8, 396.8};
+        const double right[3] = {
+            0.999994671106, 0.0, 0.003264622472,
+        };
+        const double up[3] = {
+            -0.000269517466, -0.996586343637, 0.082556568708,
+        };
+        const double forward[3] = {
+            -0.003253478173, 0.082557008645, 0.996581032934,
+        };
+        CHECK(calibration && calibration->provisional == 1u);
+        for (unsigned axis = 0; axis < 3u; ++axis) {
+            CHECK(fabs(calibration->grip_pivot[axis] - grip[axis]) < 1e-11);
+            CHECK(fabs(calibration->muzzle[axis] - muzzle[axis]) < 1e-11);
+            CHECK(fabs(calibration->right[axis] - right[axis]) < 1e-12);
+            CHECK(fabs(calibration->up[axis] - up[axis]) < 1e-12);
+            CHECK(fabs(calibration->forward[axis] - forward[axis]) < 1e-12);
+        }
+        CHECK(fabs(calibration->model_units_per_metre -
+                   530.210564041902) < 1e-11);
+        CHECK(fabs(calibration->reference_length_m - 0.216) < 1e-12);
+        CHECK(fabs(calibration->forward_span_units -
+                   114.525481833051) < 1e-11);
+        const double axes[3][3] = {
+            {calibration->right[0], calibration->right[1],
+             calibration->right[2]},
+            {calibration->up[0], calibration->up[1], calibration->up[2]},
+            {calibration->forward[0], calibration->forward[1],
+             calibration->forward[2]},
+        };
+        for (unsigned i = 0; i < 3u; ++i) {
+            const double length =
+                sqrt(axes[i][0] * axes[i][0] +
+                     axes[i][1] * axes[i][1] +
+                     axes[i][2] * axes[i][2]);
+            CHECK(fabs(length - 1.0) < 1e-11);
+            for (unsigned j = i + 1u; j < 3u; ++j) {
+                const double dot =
+                    axes[i][0] * axes[j][0] +
+                    axes[i][1] * axes[j][1] +
+                    axes[i][2] * axes[j][2];
+                CHECK(fabs(dot) < 1e-11);
+            }
+        }
+        const double grip_to_muzzle[3] = {
+            muzzle[0] - grip[0], muzzle[1] - grip[1], muzzle[2] - grip[2],
+        };
+        const double projected =
+            grip_to_muzzle[0] * forward[0] +
+            grip_to_muzzle[1] * forward[1] +
+            grip_to_muzzle[2] * forward[2];
+        CHECK(projected > 0.0);
+        CHECK(fabs(calibration->forward_span_units /
+                       calibration->model_units_per_metre -
+                   calibration->reference_length_m) < 1e-11);
+        for (unsigned id = 0u; id < 255u; ++id) {
+            if (id != 0u) {
+                CHECK(!mohu_vr_weapon_calibration_find((uint8_t)id));
+            }
+        }
+    }
     CHECK(!mohu_vr_weapon_mesh_layout_valid(NULL, 0, 0, NULL, 0));
     CHECK(mohu_vr_weapon_node_layout_valid(
         k_expected_nodes, MOHU_VR_WEAPON_NODE_COUNT));

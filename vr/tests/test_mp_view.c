@@ -16,6 +16,34 @@ int main(void) {
     MohuVrMpState wrong = native;
     wrong.camera_owner = 0x80145810u; /* Native P2, not the selected P1. */
     assert(!mohu_vr_mp_state_valid(&wrong));
+
+    MohuVrMpInputState input = {
+        0x80100000u, 0x80101000u, 0x80101000u,
+        0x80100400u, 0x80101400u, 1u, 1u, 512u, 120u, 400u,
+    };
+    assert(mohu_vr_mp_input_state_valid(&input));
+    assert(!mohu_vr_mp_input_state_valid(NULL));
+    MohuVrMpInputState input_wrong = input;
+    input_wrong.width = 640u;
+    assert(!mohu_vr_mp_input_state_valid(&input_wrong));
+    input_wrong = input;
+    input_wrong.current_player = 0x80102000u;
+    assert(!mohu_vr_mp_input_state_valid(&input_wrong));
+    input_wrong = input;
+    input_wrong.player_class = 2u;
+    assert(!mohu_vr_mp_input_state_valid(&input_wrong));
+    input_wrong = input;
+    input_wrong.other_class = 2u;
+    assert(!mohu_vr_mp_input_state_valid(&input_wrong));
+    input_wrong = input;
+    input_wrong.player_input += 4u;
+    assert(!mohu_vr_mp_input_state_valid(&input_wrong));
+    input_wrong = input;
+    input_wrong.player = 0x1000u;
+    assert(!mohu_vr_mp_input_state_valid(&input_wrong));
+    input_wrong = input;
+    input_wrong.other_player = input.player;
+    assert(!mohu_vr_mp_input_state_valid(&input_wrong));
     wrong = native; wrong.index = 2;
     assert(!mohu_vr_mp_state_valid(&wrong));
     wrong = native; wrong.height = 240;

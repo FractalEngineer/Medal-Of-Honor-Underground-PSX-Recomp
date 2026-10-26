@@ -285,15 +285,18 @@ def set_head(yaw_mdeg=0, pitch_mdeg=0, x_milli=0, y_milli=0, z_milli=0):
     }
 
 
-def capture_space(attempts=3):
+def capture_space(attempts=3, node=11, refresh=None):
+    command("mod_cmd", name="mohu.vr.weapon.space", args=f"node={node}")
     for _ in range(attempts):
+        if refresh is not None:
+            refresh()
+        native.frames(2)
         result = command(
-            "mod_cmd", name="mohu.vr.weapon.space", args="node=11"
+            "mod_cmd", name="mohu.vr.weapon.space", args=""
         )
         value = json.loads(result["reply"])
-        if value.get("valid"):
+        if value.get("valid") and value.get("node") == node:
             return value
-        native.frames(2)
     raise RuntimeError("weapon space capture was not refreshed")
 
 
@@ -366,7 +369,7 @@ def assert_render_clean():
     return stats, checks
 
 
-def capture_eyes(directory):
+def capture_eyes(directory, *, require_visible=True):
     for attempt in range(2):
         target = directory if attempt == 0 else directory.with_name(
             directory.name + "-retry"
@@ -385,11 +388,17 @@ def capture_eyes(directory):
                     ]
                     visible = all(
                         image.size == (512, 120)
-                        and sum(
-                            pixel != (0, 0, 0) for pixel in image.getdata()
+                        and (
+                            not require_visible
+                            or (
+                                sum(
+                                    pixel != (0, 0, 0)
+                                    for pixel in image.getdata()
+                                )
+                                >= 64
+                                and len(set(image.getdata())) >= 20
+                            )
                         )
-                        >= 64
-                        and len(set(image.getdata())) >= 20
                         for image in images
                     )
                     if visible:

@@ -6,7 +6,7 @@ owns C1-C4 status. Completed W1/W2.1/W2.2 stay closed.
 
 ## Execution status
 
-C1-C4 are complete. The 32-case host parity harness passes, both Release
+C1-C4 are complete. The 33-case host parity harness passes, both Release
 consumers build with OpenXR ON and with OpenXR/VR diagnostics OFF, and each
 title's affected runtime path has a retained receipt.
 Underground passes zero, lateral, head-yaw, weapon-control, refusal and recovery
@@ -21,7 +21,8 @@ slot, source-save hashes, normal and diagnostic executable hashes, and fault
 recovery are recorded in
 [reference-parity-receipt.json](../../vr/proof/reference-parity-receipt.json).
 The shared implementation is on the framework fork at commit `555e1eab`.
-W2.3 remains unstarted.
+W2.3 was unstarted when this C pass closed. W2.3-W3.1 have since completed, and
+the current handoff points to W3.2.
 
 ## Answer: what was duplicated, and what was a valid port?
 
@@ -180,9 +181,9 @@ once in the framework; keep measured bindings in title adapters; label a copied
 tool with its origin and meaningful local differences. A later generic fix must
 reach both consumers or explicitly record which consumer remains pending.
 
-C1-C4 evidence/status are complete, so **NEXT is W2.3**. No feature gate was
-completed by the consistency pass. Commit/push follows the latest user
-authorization at execution time.
+C1-C4 evidence/status are complete, so this pass closed with **NEXT W2.3**.
+No feature gate was completed by the consistency pass. Commit/push follows the
+latest user authorization at execution time.
 
 ## Limits and recovery
 
@@ -199,7 +200,8 @@ authorization at execution time.
 - Same failed hypothesis twice: retain evidence and choose the missing fact;
   no repeated rebuild/test loop with unchanged inputs.
 
-Current continuation: **W2.3**, after this completed consistency pass. Preserve
-the fresh slot 9 diagnostic fixture and its receipt. Do not treat the older
-source `.pst` snapshots as compatible with a new execution identity, and do not
-patch their headers.
+This consistency pass closed with **W2.3** as its continuation. W2.3 has since
+completed; preserve the fresh slot 9 diagnostic fixture and its receipt even
+though the current feature continuation is W2.4. Do not treat the older source
+`.pst` snapshots as compatible with a new execution identity, and do not patch
+their headers.

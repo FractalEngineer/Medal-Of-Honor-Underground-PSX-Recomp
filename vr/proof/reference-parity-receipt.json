@@ -56,7 +56,7 @@
   "host_parity": {
     "command": "python vr/tools/check_reference_parity.py --reference-root <reference-root> --out-dir <fresh-ignored-dir>",
     "result": "pass",
-    "cases": 32,
+    "cases": 33,
     "baseline_receipt": "analysis/reference-parity/c2-final-20261026/baseline.json",
     "baseline_sha256": "8327233858ce1ff921ec95af41e6f525555acc683e59e9165c1d0f650676757b",
     "fixture_sha256": "01713aefcaca701fbab560c695c9920180d8a5c2444be56267dccb5a54c8d761",

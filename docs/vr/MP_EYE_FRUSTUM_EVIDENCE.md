@@ -94,15 +94,45 @@ The same diagnostic executable also passed the full 13-ID MP matrix, lateral
 eye offset, native pistol damage/refusal recovery, flat pose cycle and SP
 zero-eye regression.
 
+## W2.3 head-turn and near-wall acceptance
+
+W2.3 extended `check_mp_view.py` with one OFF/ON control mode rather than a
+second selector or renderer. The fixture remained copied root MP slot 1 with
+P38, no weapon switches and no firing.
+
+For each case, the diagnostic sampler recorded all 21 level nodes separately
+for each eye, both native and shared-frustum decisions, the 540x120 selector
+bounds, eye pair hashes/cycles and rollback counters. World coverage was
+measured only in the top 45 rows so a lower-screen weapon or body silhouette
+could not masquerade as visible world geometry.
+
+- Zero yaw preserved every natively visible node. Each eye selected 7 override
+  nodes versus 3 native nodes and retained 23,040 top-screen world pixels.
+- +90 degrees selected a changed native/override set and retained 2,908 world
+  pixels in each eye after the override.
+- -90 degrees selected a changed set and retained 6,444 world pixels in each
+  eye. The two headings used separate measured native body rotations because
+  this flat fixture exposes one side at a time.
+- The near-wall approach reached two consecutive movement chunks at or below
+  200,000 raw position units and retained 23,040 world pixels in each eye.
+
+All cases had matching zero-IPD eye hashes/cycles, zero frustum fallback and
+zero rollback mismatch, leaks, watchdogs or nesting repairs. The affected
+regressions also passed the 13-ID MP matrix, lateral offset, native pistol fire
+with refusal recovery, flat inventory and SP zero control.
+
 ## Evidence
 
 - [Measurement proof](../../vr/proof/weapon-mp-frustum-measurement.json)
 - [Build and regression receipt](../../vr/proof/weapon-mp-frustum-build-receipt.json)
 - [Both-eye zero control](../../vr/proof/weapon-mp-frustum-controls.png)
+- [W2.3 control receipt](../../vr/proof/weapon-mp-visibility-receipt.json)
+- [W2.3 control sheet](../../vr/proof/weapon-mp-visibility-controls.png)
+- [W2.3 build/regression receipt](../../vr/proof/weapon-mp-visibility-build-receipt.json)
 - Raw capture:
   `analysis/vr-baseline/weapon-mesh-mapping/w2-frustum-capture-20261026i/receipt.json`
 - Probe: `vr/tools/probe_mp_level_selector.py`
 
 The measurement run exited 0, left no game or debug listener, changed neither
 source save hashes nor preferences, and kept the P38 fixture at clip 8 with P2
-health 32. W2.3 owns zero, +/-90-degree and near-wall acceptance.
+health 32. W2.3 completed the zero, +/-90-degree and near-wall acceptance.

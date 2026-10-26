@@ -147,10 +147,8 @@ function Resolve-OpenXrSource {
     if ($env:PSX_OPENXR_SDK_SOURCE_DIR) {
         return (Resolve-Path -LiteralPath $env:PSX_OPENXR_SDK_SOURCE_DIR).Path
     }
-    $siblingReference = Join-Path (Split-Path $repoRoot -Parent) 'Medal-Of-Honor-PSX-Recomp\build-release\_deps\psx_openxr_sdk-src'
     $candidates = @(
-        (Join-Path $buildPath '_deps\psx_openxr_sdk-src'),
-        $siblingReference
+        (Join-Path $buildPath '_deps\psx_openxr_sdk-src')
     )
     foreach ($candidate in $candidates) {
         if (Test-Path -LiteralPath $candidate) {

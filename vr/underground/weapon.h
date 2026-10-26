@@ -27,6 +27,24 @@
 #define MOHU_VR_WEAPON_FP_MAX_NODES 32u
 #define MOHU_VR_WEAPON_NODE_COUNT 22u
 
+/*
+ * W3 calibration is measured in the animated-model output space produced by
+ * 8008DB98. All marker and axis positions use that space's integer model units;
+ * model_units_per_metre describes the nominal physical size only. These P38
+ * values are provisional until W3.3 headset acceptance.
+ */
+typedef struct {
+    double grip_pivot[3];
+    double muzzle[3];
+    double right[3];
+    double up[3];
+    double forward[3];
+    double model_units_per_metre;
+    double reference_length_m;
+    double forward_span_units;
+    uint8_t provisional;
+} MohuVrWeaponCalibration;
+
 typedef struct {
     uint8_t id;
     uint8_t source_slot;
@@ -37,11 +55,13 @@ typedef struct {
     uint16_t face_count;
     uint16_t node_count;
     uint16_t vertices[MOHU_VR_WEAPON_FP_MAX_NODES];
+    const MohuVrWeaponCalibration* calibration;
 } MohuVrWeaponProfile;
 
 size_t mohu_vr_weapon_profile_count(void);
 const MohuVrWeaponProfile* mohu_vr_weapon_profile_at(size_t index);
 const MohuVrWeaponProfile* mohu_vr_weapon_profile_find(uint8_t id);
+const MohuVrWeaponCalibration* mohu_vr_weapon_calibration_find(uint8_t id);
 int mohu_vr_weapon_mesh_layout_valid(const MohuVrWeaponProfile* profile,
                                      uint32_t magic, unsigned faces,
                                      const uint16_t* vertices, unsigned nodes);

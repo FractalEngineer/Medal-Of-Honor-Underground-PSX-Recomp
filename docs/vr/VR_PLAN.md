@@ -8,10 +8,15 @@ scope has evidence; it never implies broader headset or gameplay acceptance.
 Historical design and prior attempts belong in
 [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md) and the evidence documents.
 
-**NEXT IMPLEMENTATION TASK: W2.3 - zero, +/-90-degree and near-wall MP
-controls.** C1-C4 are complete. The reference runtime gate now uses a fresh
-cold-boot gameplay slot captured by the diagnostic build and passes world
-stability, weapon controls and watchdog recovery. See
+**NEXT IMPLEMENTATION TASK: W3.2 - prepare a movement-enabled, bounded P38
+headset comparison.** W3.1 measured the P38 model-local grip, axes, provisional
+scale and muzzle markers. W2.5 completed the MP movement/button,
+focus, pause/resume, SP and flat controls. See
+[weapon-mp-lifecycle-receipt.json](../../vr/proof/weapon-mp-lifecycle-receipt.json)
+and [its build receipt](../../vr/proof/weapon-mp-lifecycle-build-receipt.json).
+C1-C4 and W1-W3.1 remain complete. The reference runtime gate uses a fresh cold-boot
+gameplay slot captured by the diagnostic build and passes world stability,
+weapon controls and watchdog recovery. See
 [CONSISTENCY_HANDOFF.md](CONSISTENCY_HANDOFF.md) and
 [the parity receipt](../../vr/proof/reference-parity-receipt.json).
 
@@ -41,7 +46,7 @@ strict W1->W6/hardware-first sequence.
   table for the helpers named in CONSISTENCY_HANDOFF. Preserve current outputs
   and capture intentional differences before extraction. Evidence:
   `vr/tests/reference_parity_vectors.c`, the two title adapters,
-  `vr/tools/check_reference_parity.py`, and the 32-case baseline.
+  `vr/tools/check_reference_parity.py`, and the 33-case baseline.
 - [x] C2. Consolidate exactly the 3x3 inverse, conservative box visibility and
   slab ray/box math in a shared framework implementation consumed by both games.
   Retain title-specific wrappers, limits, native readers, hooks and calibration.
@@ -59,7 +64,7 @@ strict W1->W6/hardware-first sequence.
   parity receipt.
 - [x] C4. Document common ownership, retained differences and a repeatable parity
   check in both projects. The ownership rule, command, receipt, source hashes
-  and intentional policy differences are recorded. NEXT is W2.3.
+  and intentional policy differences are recorded. At C4 close, NEXT was W2.3.
 
 Exit gate: shared calculation for these three operations, explicit game adapters,
 both consumers validated, no behavioral/default change concealed as cleanup.
@@ -165,14 +170,33 @@ Dependency: W1. Do not apply SP addresses to the MP overlay.
   scene callback; capture its complete code, tree/masks/queue and caller.
 - [x] W2.2. Add a separately guarded MP eye-frustum override only after measuring
   its actual layout; preserve native fallback on malformed/overflow input.
-- [ ] W2.3. Pass zero, +/-90-degree head turns and near-wall controls with populated
-  geometry, native selector comparison and zero rollback errors. Extend the
-  existing MP/head-pose/eye-capture helpers; do not build another selector.
-- [ ] W2.4. Verify MP controller converter/dispatcher and native action tables;
-  add a measured MP binding to the existing controller source and pure mapper.
-  Reuse the reference mode-adapter pattern, not its addresses/threshold math.
-- [ ] W2.5. Verify native movement/buttons, no render-time input sampling,
-  focus release, pause/resume, and SP/flat fallback. Record remaining hardware gates.
+- [x] W2.3. Pass zero, +/-90-degree head turns and near-wall controls with populated
+  geometry, native selector comparison and zero rollback errors. Evidence:
+  [controls](../../vr/proof/weapon-mp-visibility-receipt.json),
+  [control sheet](../../vr/proof/weapon-mp-visibility-controls.png) and
+  [build regressions](../../vr/proof/weapon-mp-visibility-build-receipt.json).
+  Each eye sampled all 21 level nodes. The zero and near-wall controls preserved
+  the native visible subset; the 90-degree cases exercised justified changed
+  sets and retained populated world pixels. The near-wall run measured two
+  consecutive approaches at or below 200,000 raw position units.
+- [x] W2.4. Verified the MP controller converter/dispatcher and native action
+  tables, then added the measured mode adapter to the existing controller
+  source and pure mapper. Evidence:
+  [MP input controls](../../vr/proof/weapon-mp-input-receipt.json) and
+  [build/regressions](../../vr/proof/weapon-mp-input-build-receipt.json).
+  P1 ownership, converter `0x800799E4`, dispatcher `0x80079B28`, action row
+  `0x800C0ED0`, axis records `0x800C0BF0` and curve `0x800A458C` are guarded by
+  live hashes. Forward, strafe, turn, focus release and trigger delivery passed;
+  the SP slot-2 regression and cross-game parity also passed.
+- [x] W2.5. Verified native movement/buttons, no render-time input sampling,
+  focus release, native Start pause/resume, and separate SP/flat fallback.
+  Evidence: [MP lifecycle controls](../../vr/proof/weapon-mp-lifecycle-receipt.json)
+  and [build/regressions](../../vr/proof/weapon-mp-lifecycle-build-receipt.json).
+  The MP run delivered 17 exact pad samples, froze actor position while paused
+  with forward held, resumed movement through native Start, recorded zero
+  render-time input samples and zero guard fallbacks. The isolated SP launcher
+  passed 13 controls and 298 rollback checks; the OpenXR-off flat build reached
+  `main()` with inherited VR flags inert. Physical MP input remains open.
 
 W2.1 evidence: [MP_LEVEL_SELECTOR_EVIDENCE.md](MP_LEVEL_SELECTOR_EVIDENCE.md)
 and [selector receipt](../../vr/proof/weapon-mp-level-selector-receipt.json),
@@ -191,10 +215,33 @@ W2.2 evidence: [MP_EYE_FRUSTUM_EVIDENCE.md](MP_EYE_FRUSTUM_EVIDENCE.md),
 [build receipt](../../vr/proof/weapon-mp-frustum-build-receipt.json). The live
 selector uses node center `+0x2F4..+0x2F8` and radius `+0x2FC`, current GTE
 RT/TR, a heap view descriptor and a measured 540x120 screen rectangle.
-`MOHU_VR_MP_FRUSTUM=1` covered every level node in each eye in the zero-angle
-P38 control, left non-level nodes native, had no fallback or rollback errors,
-and retained populated matching zero-IPD eyes. Head turns and near walls remain
-W2.3.
+`MOHU_VR_MP_FRUSTUM=1` covered every level node in each eye, left non-level
+nodes native, had no fallback or rollback errors, and retained populated
+matching zero-IPD eyes. W2.3 added zero, +/-90-degree and near-wall acceptance,
+including per-eye native/override selector comparisons and a strict top-screen
+world-coverage check that excludes the weapon/body region.
+
+W2.4 evidence: [MP input controls](../../vr/proof/weapon-mp-input-receipt.json)
+and [build/regressions](../../vr/proof/weapon-mp-input-build-receipt.json).
+The multiplayer overlay relocates input from the SP converter
+`0x80083C6C`/table `0x800C47C8`/curve `0x800AB12C` set to converter
+`0x800799E4`, dispatcher `0x80079B28`, P1 actions `0x800C0ED0`, axis records
+`0x800C0BF0` and curve `0x800A458C`. Both P1/P2 actor ownership plus the current
+player and 512x120/H=400 context select MP; copied slot 1 emitted neutral,
+forward, strafe-right, turn-right, focus-release and Cross samples. Mismatches
+return neutral. This is desktop synthetic input evidence, not physical
+acceptance.
+
+W2.5 evidence: [MP lifecycle controls](../../vr/proof/weapon-mp-lifecycle-receipt.json)
+and [build/regressions](../../vr/proof/weapon-mp-lifecycle-build-receipt.json).
+The controller source now checks replay state before querying XR input and
+records mode, focus and render-blocked counters without changing the pure
+mapper. Every movement sign, seven button masks, focus loss/recovery and native
+Start pause/resume passed. SP slot 2 passed through the normal launcher with
+`sp=211`, no MP/menu samples and no render-time sampling. The flat build's
+6-package configuration reached `main()` with no active input/MP/stereo marker.
+`probe_mp_input.py` rejects an MP-to-SP savestate swap because the resident
+overlay does not change; SP must use its own launch path.
 
 Exit gate: MP head movement and native inputs can support the next bounded
 physical test. SP visibility and SP movement receipts do not close this gate.
@@ -206,9 +253,12 @@ movement-enabled hardware testing also needs W2. Start with P38; expand after
 its desktop controls. W3.1/W3.2/W3.4 are preparation; W3.3/W3.5 are hardware
 gates. Do not wait for W3.3 before preparing the remaining desktop profiles.
 
-- [ ] W3.1. Measure model-local grip pivot, axes, scale and muzzle/forward markers
-  for P38. Save native asset identity and explicit units with the profile. Reuse
-  reference calibration/profile tooling; label initial physical values provisional.
+- [x] W3.1. Measured model-local grip pivot, axes, scale and muzzle/forward
+  markers for P38. Native asset identity and explicit animated-model units are
+  stored in the title profile; the 216 mm nominal-size scale remains
+  provisional. Evidence: [calibration receipt](../../vr/proof/weapon-p38-calibration-receipt.json),
+  [atomic capture](../../vr/proof/weapon-p38-calibration-capture-receipt.json)
+  and [build/regressions](../../vr/proof/weapon-p38-calibration-build-receipt.json).
 - [ ] W3.2. Prepare a movement-enabled bounded headset comparison with fresh copied
   slot 1; keep source saves/settings untouched. Do not invent a new user save.
 - [ ] W3.3. Operator accepts P38 size/attachment, head/hand independence, recoil,
@@ -218,6 +268,18 @@ gates. Do not wait for W3.3 before preparing the remaining desktop profiles.
   reference profile/batch validators. Do not rediscover the measured meshes.
   Arms filtering is a separate asset decision, not a full-model prerequisite.
 - [ ] W3.5. Operator accepts each designated weapon; retain a per-ID result table.
+
+W3.1 evidence: [P38 calibration](../../vr/proof/weapon-p38-calibration-receipt.json),
+[atomic vertex capture](../../vr/proof/weapon-p38-calibration-capture-receipt.json)
+and [build/regressions](../../vr/proof/weapon-p38-calibration-build-receipt.json).
+The capture stores all 69 node-13 source and animated vertex records through the
+existing W1 seam. The animated grip block centers at
+`(76.555555555556,100.777777777778,287.888888888889)`, the muzzle cap at
+`(76.2,109.8,396.8)`, and the measured forward span is
+`114.525481833051` model units. The profile carries an orthonormal
+right/up/forward basis and `530.210564041902` model units per metre using a
+nominal 216 mm P38 reference. The scale and placement are deliberately
+provisional; no headset size/attachment claim or renderer consumption is made.
 
 Exit gate: per-weapon physical observations, not copied reference numbers or a
 single global "all works" claim. If hardware is unavailable, finish test

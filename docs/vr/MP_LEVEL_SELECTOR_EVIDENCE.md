@@ -111,5 +111,7 @@ python vr/tools/probe_mp_level_selector.py analysis/vr-baseline/weapon-mesh-mapp
 - W2.1 is read-only mapping; no MP visibility override has been implemented.
 - The flat list and masks are recorded for this fixture and its live scene
   generation. W2.2 must retain complete code/layout guards and fall back native.
-- Zero, lateral and near-wall eye-frustum acceptance remains W2.3.
-- MP input converter/dispatcher and native hardware behavior remain W2.4-W2.5.
+- Zero, both 90-degree headings and the near-wall eye-frustum controls passed
+  in W2.3; lateral replay remains a separate rendering control.
+- MP input converter/dispatcher controls passed in W2.4 and the desktop
+  input/lifecycle matrix passed in W2.5. Physical input remains open.
