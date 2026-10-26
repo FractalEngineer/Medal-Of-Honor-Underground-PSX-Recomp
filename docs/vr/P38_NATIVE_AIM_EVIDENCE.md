@@ -2,9 +2,9 @@
 
 Updated: 2026-10-27. No headset was used. W4 and W5.1 are complete; W5.2 has
 desktop P38/P2 evidence and remains open for live NPC/SP isolation. All 13 IDs
-now have complete-gun topology, animated captures and provisional calibration;
-only P38 has an accepted rendered-muzzle shot override. W3.3/W3.5 physical
-acceptance and W3.4 moving-animation checks remain open.
+now have complete-gun topology, animated captures, provisional calibration and
+moving-animation evidence; only P38 has an accepted rendered-muzzle shot
+override. W3.3/W3.5 physical acceptance remains open.
 
 ## Results and corrections
 
@@ -73,8 +73,11 @@ the grip-to-cap vector.
 
 The [complete calibration receipt](../../vr/proof/weapon-p38-complete-calibration-receipt.json)
 supersedes the old markers for the candidate. Physical size remains provisional.
-Native recoil/reload still animate the model; moving animated muzzle markers
-during those actions are not yet calibrated or accepted.
+Native recoil/reload still animate the model. Frozen-frame controls now show
+that the P38 grip/tip relationship is not rigid during recoil, reload or switch;
+the static idle tip is not animation-safe. W5/W6 must recompute the tip from node
+11 indices 24..28 after native animation. The measured W5 controls remain valid
+for their tested static/recovered states but do not claim moving-shot alignment.
 
 ## Native P38 contract
 
@@ -145,11 +148,10 @@ The `--tracked` diagnostic explicitly enables `PSX_VR_WEAPON_POSE`,
 `RunFlat.bat` clears the new flags. The prepared tracked headset comparison
 selects this corrected candidate, but no new headset run was requested or done.
 
-**NEXT desktop milestone: W3.4 moving-muzzle/special-animation controls.**
-Use the all-ID profile evidence; do not repeat topology, capture or fixed-pose
-controls. Add recoil, reload, switch and prop-specific animation samples, then
-check whether each provisional muzzle marker remains valid. Other IDs have
-provisional pose calibration but retain native shots. W5.2's remaining live
-NPC/SP isolation needs its own
-measured SP binding and copied fixture; W5.3/W5.4 retain constructor-family,
-special animation and all-weapon combat work. W3.3/W3.5 remain operator gates.
+**NEXT desktop milestone: W5.2 live NPC/SP isolation.**
+W3.4 is complete: all 13 IDs have frozen-frame switching evidence and their
+available recoil/reload/special samples, with native ammo or slot changes. All
+IDs require a moving marker across the full tested range. W5.2 still needs its
+own measured SP binding and compatible copied live NPC/SP fixture; W5.3/W5.4
+retain constructor-family, moving-marker, special-animation and all-weapon
+combat work. W3.3/W3.5 remain operator gates.

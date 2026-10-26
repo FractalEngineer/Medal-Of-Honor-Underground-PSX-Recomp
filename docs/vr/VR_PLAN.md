@@ -8,20 +8,21 @@ scope has evidence; it never implies broader headset or gameplay acceptance.
 Historical design and prior attempts belong in
 [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md) and the evidence documents.
 
-**NEXT DESKTOP TASK: W3.4 - moving-muzzle and special-animation controls.**
+**NEXT DESKTOP TASK: W5.2 - live NPC/SP isolation.**
 W4 native P38 mapping and W5.1 opt-in rendered-muzzle shot conversion are now
 complete. The corrected P38 candidate retains its barrel, follows the measured
 grip, and passes native P2 damage/miss and tracking-fallback controls without a
-headset. W5.2 has a 14-case desktop subset; live NPC/SP isolation is still open.
-W3.3/W3.5 remain physical acceptance gates. Do not request another headset run
-before completing ready desktop work. All 13 IDs now have measured topology,
-animated captures, provisional calibration and 64 passing calibrated desktop
-controls; their moving-muzzle/special-animation checks remain. Current evidence
-and exact continuation:
+headset. W3.4 now has all-ID moving-marker evidence: recoil, reload, switching,
+scope hiding and prop special actions are exercised with native ammo/slot
+changes. W5.2 still needs a compatible copied live NPC/SP fixture and its own
+measured SP binding. If that fixture is unavailable, continue W5.3 constructor
+families without inventing an SP fixture. W3.3/W3.5 remain physical acceptance
+gates. Current evidence and exact continuation:
 [WEAPON_COMPLETE_PROFILES.md](WEAPON_COMPLETE_PROFILES.md),
 [P38_NATIVE_AIM_EVIDENCE.md](P38_NATIVE_AIM_EVIDENCE.md),
 [combat receipt](../../vr/proof/weapon-p38-aim-receipt.json),
-[complete-gun controls](../../vr/proof/weapon-complete-gun-controls-receipt.json).
+[complete-gun controls](../../vr/proof/weapon-complete-gun-controls-receipt.json)
+and [moving-marker controls](../../vr/proof/weapon-moving-muzzle-receipt.json).
 C1-C4 and W1-W3.2 remain complete; their historical receipts are retained.
 
 The [reference reuse audit](REFERENCE_REUSE_AUDIT.md) names existing first-game
@@ -275,15 +276,21 @@ gates. Do not wait for W3.3 before preparing the remaining desktop profiles.
   remained active, and hand motion pivoted rather than tracking the controller.
   No acceptance is claimed. Desktop fixes now release the load-time pad override,
   disable dithering and use a calibrated complete-gun grip; hardware recheck remains open.
-- [ ] W3.4. Expand captured profiles and desktop controls to all 13 IDs, including
+- [x] W3.4. Expand captured profiles and desktop controls to all 13 IDs, including
   native gun subparts and special animations, using the existing inventory and
   reference profile/batch validators. Do not rediscover the measured meshes.
   Arms filtering is a separate asset decision, not a full-model prerequisite.
   Operator requirement is explicit: render the gun model alone with no attached
   arms. All 13 now have measured whole-node or explicit per-vertex masks, with
   zero mixed gun/arm triangles. The provisional all-ID calibration and 64-case
-  calibrated MP control matrix pass. Remaining: moving-muzzle evidence for recoil,
-  reload, switching and prop-specific animation states.
+  calibrated MP control matrix pass. A frozen-frame moving-marker probe confirms
+  all 13 IDs across native switching and their available recoil/reload/special
+  states. The tested markers are not rigid: W5/W6 must recompute the tip from
+  current marker vertices after native animation. Sten reload and scoped-shot
+  ammo are explicitly not observed, not inferred. Evidence:
+  [moving-marker receipt](../../vr/proof/weapon-moving-muzzle-receipt.json),
+  [control sheet](../../vr/proof/weapon-moving-muzzle-controls.png) and
+  [build receipt](../../vr/proof/weapon-moving-muzzle-build-receipt.json).
 - [ ] W3.5. Operator accepts each designated weapon; retain a per-ID result table.
 
 The original W3.1 markers below describe the receiver alone. The current
@@ -360,7 +367,9 @@ acceptance is required for physical claims and normal default promotion.
 - [ ] W5.3. Expand measured constructor families to all 13 IDs; preserve shotgun
   spread/pellets, rocket collision and both native throw/release/flight paths.
 - [ ] W5.4. Complete reload/empty/switch/scoped/recoil/death/load matrix and the
-  13-ID native damage gate; operator confirms barrel-to-impact alignment.
+  13-ID native damage gate; recompute the rendered tip after native animation
+  rather than reusing an idle fixed point; operator confirms barrel-to-impact
+  alignment.
 
 W5.1 evidence: [tracked combat receipt](../../vr/proof/weapon-p38-aim-receipt.json)
 and [complete-gun controls](../../vr/proof/weapon-p38-aim-controls.png). The
@@ -378,7 +387,8 @@ geometry layout. Reuse reference ray/triangle math, bounded traversal, beam/dot
 projection and tests; port target data readers. Hardware acceptance is W6.4.
 The shared aim contract with W5 must agree; physical testing need not block code.
 
-- [ ] W6.1. Capture the actual rendered weapon affine plus calibrated muzzle/axis.
+- [ ] W6.1. Capture the actual rendered weapon affine plus the current animated
+  muzzle/axis (not an idle static marker).
 - [ ] W6.2. Locate and verify Underground triangle/vertex table bindings, comparing
   the reference drawer/record pattern first. Adapt its existing triangle raycast
   and fixtures; local MP scene bounds are not proof of SP triangle layout.

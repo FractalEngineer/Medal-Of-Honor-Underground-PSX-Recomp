@@ -3,15 +3,15 @@
 Last updated: 2026-10-27
 
 Execution order and stop/recovery rules are in [HANDOFF.md](HANDOFF.md).
-Checkbox status is in [VR_PLAN.md](VR_PLAN.md). **NEXT desktop: W3.4
-moving-muzzle/special-animation controls.** W4 P38 native mapping and W5.1
-opt-in rendered-muzzle shots are complete; physical acceptance remains open.
-All 13 IDs now have measured complete-gun topology, animated captures,
-provisional calibration and passing gun-only desktop controls.
+Checkbox status is in [VR_PLAN.md](VR_PLAN.md). **NEXT desktop: W5.2 live NPC/SP
+isolation.** W3.4, W4 P38 native mapping and W5.1 opt-in rendered-muzzle shots
+are complete; physical acceptance remains open. All 13 IDs now have measured
+complete-gun topology, animated captures, provisional calibration, passing
+gun-only desktop controls and moving-marker animation evidence.
 Read [P38_NATIVE_AIM_EVIDENCE.md](P38_NATIVE_AIM_EVIDENCE.md) for current
 bindings and the corrected mixed-node barrel. Read
 [WEAPON_COMPLETE_PROFILES.md](WEAPON_COMPLETE_PROFILES.md)
-for the all-ID mask/calibration table and exact remaining animation limits.
+for the all-ID mask/calibration table and the dynamic-marker requirement.
 Historical sections below remain measurement history, not instructions to
 repeat completed gates.
 
@@ -407,16 +407,17 @@ selector are removed. The session-start diff is retained locally under
 
 The active `build-release` is Release/OpenGL/OpenXR/PGXP with
 `PSX_DEBUG_TOOLS=ON` for active desktop work, at SHA-256
-`710e1d12cda31457fb67260d791bd3b34880b26953431d36f02f8194ebaed252`. The [current build receipt](../../vr/proof/weapon-all-id-profiles-build-receipt.json)
-records all-ID topology/calibration, 64 calibrated controls, P38 native combat
-and affected regressions.
+`16142c7d130049b33501383e4909cd7b4b1d08520aebb665c61b23c845fc6e66`. The
+[current build receipt](../../vr/proof/weapon-moving-muzzle-build-receipt.json)
+records all-ID topology/calibration, frozen moving-marker controls, 64 calibrated
+desktop controls with 804 eye masks, P38 native combat and affected regressions.
 The last debug-off release was
 `bae4f60f02f4bf70ce86ea85d201674df7157bafa4d6bea20c3086972f2ab71d`.
 The OpenXR-off flat executable is
 `18f4328bc9085f0a6a2322f940eea63516f07e93698010853cf3474cad94636c`.
 Flat startup is inert even with weapon-pose, flat-probe, synthetic-pose,
 all-ID calibration/gun-only, MP control and frustum flags inherited.
-Forty-seven Python tests and the strict C fixtures pass, including all 13
+Fifty-two Python tests and the strict C fixtures pass, including all 13
 compiled calibration records. Saves,
 controller preferences and SteamVR settings are unchanged; no owned game or
 debug listener remains.
@@ -453,6 +454,8 @@ interactive gameplay or new OpenXR acceptance.
 - [All-ID provisional calibration](../../vr/proof/weapon-provisional-calibrations-receipt.json)
 - [All-ID calibrated controls](../../vr/proof/weapon-complete-gun-controls-receipt.json)
 - [All-ID control sheet](../../vr/proof/weapon-complete-gun-controls.png)
+- [All-ID moving-marker controls](../../vr/proof/weapon-moving-muzzle-receipt.json)
+- [Moving-marker control sheet](../../vr/proof/weapon-moving-muzzle-controls.png)
 - `analysis/vr-baseline/weapon-mesh-mapping/first-person-geometry-20261025/inventory.json`
 - `analysis/vr-baseline/weapon-mesh-mapping/fp-controls-final-20261025/inventory.json`
 - `analysis/vr-baseline/weapon-mesh-mapping/fp-combat-final-20261025/inventory.json`
@@ -463,12 +466,11 @@ interactive gameplay or new OpenXR acceptance.
 ```text
 Read HANDOFF.md, VR_PLAN.md, WEAPON_COMPLETE_PROFILES.md and
 P38_NATIVE_AIM_EVIDENCE.md.
-Continue W3.4 moving-muzzle/special-animation controls without a headset.
-W4 P38 mapping and W5.1 pass; W5.2 has 14 desktop controls. Do not repeat them.
-Do not repeat the all-ID topology, capture, fixed-pose calibration or 64-case
-controls. Add recoil/reload/switch and prop-animation samples, then determine
-which provisional muzzle markers remain valid while animated. Only P38 has the
-accepted rendered-muzzle native-shot override.
+Continue W5.2 live NPC/SP isolation without a headset. W3.4 is complete; all 13
+IDs require a moving marker recomputed after native animation. W4 P38 mapping
+and W5.1 pass; W5.2 has 14 desktop controls. Do not repeat them or the all-ID
+topology, capture, calibration, 64-case controls or animation matrix. Only P38
+has the accepted rendered-muzzle native-shot override.
 Preserve native fallback, normal defaults, source saves, historical proofs and
 unrelated work. Leave physical W3.3/W3.5 open. No commit/push unless asked.
 ```

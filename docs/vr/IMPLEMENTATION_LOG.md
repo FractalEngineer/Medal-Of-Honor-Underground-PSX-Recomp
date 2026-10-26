@@ -1075,11 +1075,13 @@
 - Added `MOHU_VR_WEAPON_GUN_ONLY` and `MOHU_VR_WEAPON_CALIBRATED`; both default
   OFF. The P38-specific calibrated and aim flags remain separate. The flat
   launcher clears the new flags.
-- The calibrated MP matrix passes 64 cases across all 16 slot appearances with
-  both eyes, translated/yawed/lost controls, 876 per-eye gun masks and zero
+- The historical bootstrap-binary MP matrix passed 64 cases across all 16 slot
+  appearances with both eyes, translated/yawed/lost controls, 876 per-eye gun
+  masks and zero
   rollback/VRAM/watchdog/nesting failures. The control sheet shows complete gun
   crops without arms for all 13 IDs.
-- Validation: 47 Python tests; strict C weapon, calibrated-affine and
+- Historical bootstrap validation: 47 Python tests; strict C weapon,
+  calibrated-affine and
   diagnostic checks; default P38 eye replay; native fire/ammo/P2 damage and
   refusal recovery; 14-case tracked P38 aim/fallback; SP zero; rebuilt flat
   startup with inherited flags inert. Source saves/preferences are unchanged
@@ -1091,14 +1093,37 @@
   [controls](../../vr/proof/weapon-complete-gun-controls-receipt.json) and
   [build receipt](../../vr/proof/weapon-all-id-profiles-build-receipt.json).
 
+### W3.4 moving muzzle and native animation controls
+
+- Added a latched all-vertex diagnostic snapshot at the existing animated-model
+  seam. A request is filled once from the next complete model frame, then all
+  marker chunks read that frozen sequence without crossing animation frames.
+- Added a single-process copied-save animation probe over all 13 IDs. Native
+  press windows drive recoil, reload, switching, scope and prop hold/release
+  paths; every confirmed control records a clip, reserve or weapon-slot change.
+- Recomputed grip and tip points from their measured vertex groups at each
+  frozen frame. The predeclared limits are 1% of idle grip-to-tip span and two
+  degrees. Every ID exceeds the limits somewhere in its confirmed states, so
+  the stored idle point is not animation-safe. The crossbow launch sample alone
+  remained rigid, but its switch sample did not.
+- The matrix confirms 13 switches, nine recoil paths, seven reload paths, three
+  prop special actions and the scoped hidden-model state. Sten reload and
+  scoped-shot ammo were not observed and are recorded as limits, not passes.
+- Validation: 52 Python tests; strict MP and weapon C fixtures; diagnostic
+  syntax/build; 64 calibrated all-ID eye cases with 804 current-binary masks;
+  P38 native fire/refusal recovery; 14-case tracked P38 aim/fallback. Source
+  saves/preferences are unchanged and no owned game remains.
+- Evidence: [moving-marker receipt](../../vr/proof/weapon-moving-muzzle-receipt.json),
+  [control sheet](../../vr/proof/weapon-moving-muzzle-controls.png),
+  [build receipt](../../vr/proof/weapon-moving-muzzle-build-receipt.json) and
+  [profiles](WEAPON_COMPLETE_PROFILES.md).
+
 ## Next work
 
-**W3.4: moving-muzzle and special-animation controls, without a headset.**
-All-ID topology, animated capture, provisional calibration and fixed-pose
-controls are done. Add recoil, reload, switching and prop-specific animation
-samples, then determine which provisional muzzle markers remain valid while
-animated. Do not repeat mesh discovery or the 64-case fixed-pose matrix.
-W5.2 has the passing MP desktop subset; live NPC/SP isolation needs its own
-measured binding/copied fixture. W3.3/W3.5 remain physical acceptance gates.
+**W5.2: live NPC/SP isolation, without a headset.**
+W3.4 and the all-ID animation matrix are complete. Use W5/W6's current animated
+marker, not the idle stored point, for any moving shot/laser work. W5.2 needs a
+compatible copied live NPC/SP fixture and an independently measured SP binding;
+if absent, continue W5.3 constructor families. W3.3/W3.5 remain physical gates.
 Only P38 has the accepted rendered-muzzle native-shot override. Preserve source
 saves, normal defaults, historical receipts and unrelated .commandcode work.

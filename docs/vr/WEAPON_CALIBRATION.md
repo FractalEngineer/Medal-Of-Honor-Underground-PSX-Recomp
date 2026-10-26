@@ -274,6 +274,13 @@ Evidence: [calibration receipt](../../vr/proof/weapon-p38-calibration-receipt.js
 [atomic capture](../../vr/proof/weapon-p38-calibration-capture-receipt.json) and
 [build receipt](../../vr/proof/weapon-p38-calibration-build-receipt.json).
 
+W3.4 later froze complete animated-model frames during recoil, reload and
+switching. The grip-to-tip relationship changed beyond the predeclared 1%
+distance / two-degree limits, including the corrected node-11 tip. Treat the
+stored point as an idle reference and recompute the tip from node-11 indices
+24..28 after native animation before W5/W6 consume it. See the
+[moving-marker receipt](../../vr/proof/weapon-moving-muzzle-receipt.json).
+
 ## W3.2 comparison preparation
 
 `vr/tools/probe_p38_headset.py` runs native and right-hand-tracked P38 cases

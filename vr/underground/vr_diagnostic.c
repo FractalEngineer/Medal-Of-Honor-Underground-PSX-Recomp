@@ -281,6 +281,40 @@ static int16_t
     g_weapon_capture_snapshot_animated[MOHU_VR_WEAPON_CAPTURE_VERTEX_LIMIT][4];
 static uint32_t g_weapon_capture_snapshot_count;
 static bool g_weapon_capture_snapshot_valid;
+enum { MOHU_VR_WEAPON_FRAME_VERTEX_LIMIT = 256 };
+static int16_t
+    g_weapon_capture_frame_local[MOHU_VR_WEAPON_FRAME_VERTEX_LIMIT][4];
+static int16_t
+    g_weapon_capture_frame_animated[MOHU_VR_WEAPON_FRAME_VERTEX_LIMIT][4];
+static uint8_t
+    g_weapon_capture_frame_nodes[MOHU_VR_WEAPON_FRAME_VERTEX_LIMIT];
+static uint16_t
+    g_weapon_capture_frame_indices[MOHU_VR_WEAPON_FRAME_VERTEX_LIMIT];
+static uint16_t
+    g_weapon_capture_frame_node_counts[MOHU_VR_WEAPON_FP_MAX_NODES];
+static uint32_t g_weapon_capture_frame_vertex_count;
+static uint32_t g_weapon_capture_frame_native_control[8];
+static bool g_weapon_capture_frame_valid;
+/* A request copies the next complete model frame so chunk readers cannot
+ * observe a different animation frame between the metadata and vertices. */
+static int16_t
+    g_weapon_capture_frame_snapshot_local[MOHU_VR_WEAPON_FRAME_VERTEX_LIMIT][4];
+static int16_t g_weapon_capture_frame_snapshot_animated
+    [MOHU_VR_WEAPON_FRAME_VERTEX_LIMIT][4];
+static uint8_t
+    g_weapon_capture_frame_snapshot_nodes[MOHU_VR_WEAPON_FRAME_VERTEX_LIMIT];
+static uint16_t
+    g_weapon_capture_frame_snapshot_indices[MOHU_VR_WEAPON_FRAME_VERTEX_LIMIT];
+static uint16_t g_weapon_capture_frame_snapshot_node_counts
+    [MOHU_VR_WEAPON_FP_MAX_NODES];
+static uint32_t g_weapon_capture_frame_snapshot_vertex_count;
+static uint32_t g_weapon_capture_frame_snapshot_native_control[8];
+static uint32_t g_weapon_capture_frame_snapshot_sequence;
+static uint32_t g_weapon_capture_frame_snapshot_frame;
+static uint32_t g_weapon_capture_frame_snapshot_id;
+static uint32_t g_weapon_capture_frame_snapshot_node_count;
+static bool g_weapon_capture_frame_snapshot_valid;
+static bool g_weapon_capture_frame_requested;
 static uint32_t g_weapon_capture_local_addrs[MOHU_VR_WEAPON_FP_MAX_NODES];
 static uint32_t g_weapon_capture_output_addrs[MOHU_VR_WEAPON_FP_MAX_NODES];
 static uint32_t g_weapon_capture_native_control[8];
@@ -1102,6 +1136,119 @@ static int vr_weapon_space_command(const char* args, char* reply, int cap) {
                        "{\"valid\":false,\"sequence\":%u}",
                        g_weapon_capture_sequence);
         return 1;
+    } else if (strcmp(args, "frame-capture") == 0) {
+        g_weapon_capture_frame_snapshot_valid = false;
+        g_weapon_capture_frame_requested = true;
+        (void)snprintf(reply, (size_t)cap,
+                       "{\"requested\":true,\"sequence\":%u}",
+                       g_weapon_capture_sequence);
+        return 1;
+    } else if (strcmp(args, "frame") == 0) {
+        if (!g_weapon_capture_frame_snapshot_valid) {
+            (void)snprintf(reply, (size_t)cap,
+                           "{\"valid\":false,\"sequence\":%u}",
+                           g_weapon_capture_frame_snapshot_sequence);
+            return 1;
+        }
+        int written = snprintf(
+            reply, (size_t)cap,
+            "{\"valid\":true,\"sequence\":%u,\"frame\":%u,\"id\":%u,"
+            "\"node_count\":%u,\"vertex_count\":%u,\"nodes\":[",
+            g_weapon_capture_frame_snapshot_sequence,
+            g_weapon_capture_frame_snapshot_frame,
+            g_weapon_capture_frame_snapshot_id,
+            g_weapon_capture_frame_snapshot_node_count,
+            g_weapon_capture_frame_snapshot_vertex_count);
+        for (uint32_t node = 0;
+             written > 0 && written < cap &&
+             node < g_weapon_capture_frame_snapshot_node_count; ++node) {
+            written += snprintf(
+                reply + written, (size_t)(cap - written),
+                "%s{\"node\":%u,\"count\":%u}", node ? "," : "", node,
+                g_weapon_capture_frame_snapshot_node_counts[node]);
+        }
+        if (written > 0 && written < cap) {
+            written += snprintf(
+                reply + written, (size_t)(cap - written),
+                "],\"native_gte\":[\"%08X\",\"%08X\",\"%08X\",\"%08X\","
+                "\"%08X\",\"%08X\",\"%08X\",\"%08X\"]}",
+                g_weapon_capture_frame_snapshot_native_control[0],
+                g_weapon_capture_frame_snapshot_native_control[1],
+                g_weapon_capture_frame_snapshot_native_control[2],
+                g_weapon_capture_frame_snapshot_native_control[3],
+                g_weapon_capture_frame_snapshot_native_control[4],
+                g_weapon_capture_frame_snapshot_native_control[5],
+                g_weapon_capture_frame_snapshot_native_control[6],
+                g_weapon_capture_frame_snapshot_native_control[7]);
+        }
+        return written >= 0 && written < cap ? 1 : -1;
+    } else if (strncmp(args, "frame=", 6u) == 0) {
+        char* end = NULL;
+        const long start = strtol(args + 6, &end, 0);
+        if (end == args + 6 || *end != '\0' || start < 0 ||
+            start > (long)g_weapon_capture_frame_snapshot_vertex_count ||
+            !g_weapon_capture_frame_snapshot_valid) {
+            return -1;
+        }
+        const uint32_t available =
+            start < (long)g_weapon_capture_frame_snapshot_vertex_count
+                ? g_weapon_capture_frame_snapshot_vertex_count -
+                      (uint32_t)start
+                : 0u;
+        const uint32_t count = available < 4u ? available : 4u;
+        int written = snprintf(
+            reply, (size_t)cap,
+            "{\"valid\":true,\"sequence\":%u,\"start\":%ld,\"count\":%u,"
+            "\"total\":%u,\"nodes\":[",
+            g_weapon_capture_frame_snapshot_sequence, start, count,
+            g_weapon_capture_frame_snapshot_vertex_count);
+        for (uint32_t i = 0; i < count && written > 0 && written < cap; ++i) {
+            const uint32_t index = (uint32_t)start + i;
+            written += snprintf(
+                reply + written, (size_t)(cap - written), "%s%d",
+                i ? "," : "",
+                g_weapon_capture_frame_snapshot_nodes[index]);
+        }
+        if (written > 0 && written < cap) {
+            written += snprintf(reply + written, (size_t)(cap - written),
+                                "],\"indices\":[");
+        }
+        for (uint32_t i = 0; i < count && written > 0 && written < cap; ++i) {
+            const uint32_t index = (uint32_t)start + i;
+            written += snprintf(
+                reply + written, (size_t)(cap - written), "%s%u",
+                i ? "," : "",
+                g_weapon_capture_frame_snapshot_indices[index]);
+        }
+        if (written > 0 && written < cap) {
+            written += snprintf(reply + written, (size_t)(cap - written),
+                                "],\"local\":[");
+        }
+        for (uint32_t i = 0; i < count && written > 0 && written < cap; ++i) {
+            const int16_t* vertex =
+                g_weapon_capture_frame_snapshot_local[(uint32_t)start + i];
+            written += snprintf(
+                reply + written, (size_t)(cap - written),
+                "%s[%d,%d,%d,%d]", i ? "," : "", vertex[0], vertex[1],
+                vertex[2], vertex[3]);
+        }
+        if (written > 0 && written < cap) {
+            written += snprintf(reply + written, (size_t)(cap - written),
+                                "],\"animated\":[");
+        }
+        for (uint32_t i = 0; i < count && written > 0 && written < cap; ++i) {
+            const int16_t* vertex =
+                g_weapon_capture_frame_snapshot_animated
+                    [(uint32_t)start + i];
+            written += snprintf(
+                reply + written, (size_t)(cap - written),
+                "%s[%d,%d,%d,%d]", i ? "," : "", vertex[0], vertex[1],
+                vertex[2], vertex[3]);
+        }
+        if (written > 0 && written < cap) {
+            (void)snprintf(reply + written, (size_t)(cap - written), "]}");
+        }
+        return written >= 0 && written < cap ? 1 : -1;
     } else if (strcmp(args, "bounds") == 0) {
         if (!g_weapon_capture_bounds_valid) {
             (void)snprintf(reply, (size_t)cap,
@@ -2852,6 +2999,18 @@ static void vr_weapon_viewmodel_project(CPUState* cpu, uint32_t address) {
     g_weapon_capture_ofy_q16 = (int32_t)cpu->gte_ctrl[25];
     g_weapon_capture_bounds_valid = false;
     g_weapon_capture_vertex_count = 0u;
+    g_weapon_capture_frame_vertex_count = 0u;
+    g_weapon_capture_frame_valid = false;
+    memset(g_weapon_capture_frame_local, 0,
+           sizeof g_weapon_capture_frame_local);
+    memset(g_weapon_capture_frame_animated, 0,
+           sizeof g_weapon_capture_frame_animated);
+    memset(g_weapon_capture_frame_nodes, 0,
+           sizeof g_weapon_capture_frame_nodes);
+    memset(g_weapon_capture_frame_indices, 0,
+           sizeof g_weapon_capture_frame_indices);
+    memset(g_weapon_capture_frame_node_counts, 0,
+           sizeof g_weapon_capture_frame_node_counts);
     g_weapon_gun_only_ready = false;
     const uint32_t output_table = cpu->gpr[19];
     const uint32_t object = g_weapon_profile_last_object;
@@ -2893,6 +3052,11 @@ static void vr_weapon_viewmodel_project(CPUState* cpu, uint32_t address) {
             if (complete && local_count) {
                 g_weapon_capture_local_addrs[node] = local_addr;
                 g_weapon_capture_output_addrs[node] = output_addr;
+                if (local_count > MOHU_VR_WEAPON_FRAME_VERTEX_LIMIT -
+                        g_weapon_capture_frame_vertex_count) {
+                    complete = false;
+                    break;
+                }
                 for (unsigned i = 0; i < 4u; ++i) {
                     g_weapon_capture_local[node][i] =
                         (int16_t)psx_mod_read_half(local_addr + i * 2u);
@@ -2916,12 +3080,66 @@ static void vr_weapon_viewmodel_project(CPUState* cpu, uint32_t address) {
                     }
                     g_weapon_capture_vertex_count = stored;
                 }
+                g_weapon_capture_frame_node_counts[node] =
+                    (uint16_t)local_count;
+                for (uint32_t vertex = 0; vertex < local_count; ++vertex) {
+                    const uint32_t stored =
+                        g_weapon_capture_frame_vertex_count++;
+                    g_weapon_capture_frame_nodes[stored] = (uint8_t)node;
+                    g_weapon_capture_frame_indices[stored] =
+                        (uint16_t)vertex;
+                    for (unsigned i = 0; i < 4u; ++i) {
+                        g_weapon_capture_frame_local[stored][i] =
+                            (int16_t)psx_mod_read_half(
+                                local_addr + vertex * 8u + i * 2u);
+                        g_weapon_capture_frame_animated[stored][i] =
+                            (int16_t)psx_mod_read_half(
+                                output_addr + vertex * 8u + i * 2u);
+                    }
+                }
             }
         }
         if (complete) {
             g_weapon_capture_node_table = node_table;
             g_weapon_capture_output_table = output_table;
             g_weapon_capture_node_count = node_count;
+            memcpy(g_weapon_capture_frame_native_control,
+                   g_weapon_capture_native_control,
+                   sizeof g_weapon_capture_frame_native_control);
+            g_weapon_capture_frame_valid = true;
+            if (g_weapon_capture_frame_requested) {
+                memcpy(g_weapon_capture_frame_snapshot_local,
+                       g_weapon_capture_frame_local,
+                       sizeof g_weapon_capture_frame_snapshot_local);
+                memcpy(g_weapon_capture_frame_snapshot_animated,
+                       g_weapon_capture_frame_animated,
+                       sizeof g_weapon_capture_frame_snapshot_animated);
+                memcpy(g_weapon_capture_frame_snapshot_nodes,
+                       g_weapon_capture_frame_nodes,
+                       sizeof g_weapon_capture_frame_snapshot_nodes);
+                memcpy(g_weapon_capture_frame_snapshot_indices,
+                       g_weapon_capture_frame_indices,
+                       sizeof g_weapon_capture_frame_snapshot_indices);
+                memcpy(g_weapon_capture_frame_snapshot_node_counts,
+                       g_weapon_capture_frame_node_counts,
+                       sizeof g_weapon_capture_frame_snapshot_node_counts);
+                memcpy(g_weapon_capture_frame_snapshot_native_control,
+                       g_weapon_capture_frame_native_control,
+                       sizeof
+                           g_weapon_capture_frame_snapshot_native_control);
+                g_weapon_capture_frame_snapshot_vertex_count =
+                    g_weapon_capture_frame_vertex_count;
+                g_weapon_capture_frame_snapshot_sequence =
+                    g_weapon_capture_sequence;
+                g_weapon_capture_frame_snapshot_frame =
+                    g_weapon_capture_frame;
+                g_weapon_capture_frame_snapshot_id =
+                    g_weapon_profile_last_id;
+                g_weapon_capture_frame_snapshot_node_count =
+                    g_weapon_capture_node_count;
+                g_weapon_capture_frame_snapshot_valid = true;
+                g_weapon_capture_frame_requested = false;
+            }
             g_weapon_capture_eye_view_valid = g_stereo_eye_view_valid;
             if (g_weapon_capture_eye_view_valid) {
                 g_weapon_capture_eye_view = g_stereo_eye_view;

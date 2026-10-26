@@ -1,0 +1,108 @@
+{
+  "schema": 1,
+  "date": "2026-10-27",
+  "kind": "W3.4 moving-marker and special-animation desktop build",
+  "complete": true,
+  "headset_used": false,
+  "revision": "fcedb4393bc4b48bae38a3e565f6bf2f29f4a520",
+  "working_tree": true,
+  "working_tree_sources": {
+    "vr/underground/vr_diagnostic.c": "351e3d017cf56bb94b5f6db6cd1693263c24af690029eb3c7ca2ff22c7f22506",
+    "vr/underground/weapon.c": "27a45a58a8343fe05400ad7f868d9b30b313e9afa9382bf18998776bd38be03f",
+    "vr/underground/weapon.h": "a8bd7a27d6fa5754bcf9739d5b16a17e83bd0d1bc2a0b252cb19866de00157d3",
+    "vr/tools/probe_weapon_animations.py": "2e8fa81a629c837d07a97de75be55674eaae27ca7922f97a1e7e66f0346239cf",
+    "vr/tools/check_mp_view.py": "3d8a7b1f1e03f9c575e8c85fecb2521782117c3fc61ba34481bbdad0294abbc4",
+    "vr/tools/probe_native_shot.py": "911372df50621c7eff33d78a05ed7e829c2fe47e928077a66b391043b90a40b3",
+    "vr/tests/test_weapon_animations.py": "44fd69bb086a62b85239266fa946489d6c2ecac33ab1956ad09784a2d80bf4f4",
+    "docs/vr/HANDOFF.md": "a58bb2f818dc08a0fea8073783c60f4470d8b03113f496211f24512348dd1076",
+    "docs/vr/VR_PLAN.md": "b61a0c346970ada4664dc0fb2b8f2c3363118030e6d6e07f3a29bff350f5544b",
+    "docs/vr/WEAPON_COMPLETE_PROFILES.md": "cceef5f284a1f6c39dc97009b5662a7ae9b7e35872a0a016d104627069f01f1d",
+    "docs/vr/WEAPON_MAPPING.md": "eda93560a7e25421f3dcf4d8c7eb5c51bdb9ba424bc9d62d1a29f41a7b6f1eee",
+    "docs/vr/P38_NATIVE_AIM_EVIDENCE.md": "169aee0cbcd5db33be687f445061ab7011189e3c9d0d45969058923dc41a274c",
+    "docs/vr/IMPLEMENTATION_LOG.md": "3def26d7462011900e12e3d6b260185dc85bbb571aafab8763cfa91e46cd6f75",
+    "docs/vr/README.md": "8caefc8864770149da3733c758de32d55ffe4ec35ba08d3903858959c877457e",
+    "docs/vr/WEAPON_CALIBRATION.md": "5002c9130d2e18b399aedafa4fe068c39a08e92fc43d6787f6fd9ae13e5147cf"
+  },
+  "executable_sha256": "16142c7d130049b33501383e4909cd7b4b1d08520aebb665c61b23c845fc6e66",
+  "build": {
+    "PSX_DEBUG_TOOLS": "ON",
+    "MOHU_VR_DIAGNOSTICS": "ON",
+    "PSX_OPENXR": "ON",
+    "configuration": "Release"
+  },
+  "framework_revision": "555e1eabccc59b9b6ff0d9fca48aca783513dc86",
+  "receipts": {
+    "moving_markers": {
+      "path": "vr/proof/weapon-moving-muzzle-receipt.json",
+      "sha256": "212411fe418de124b8607cd69452cf4fd244be082602798a8f0f5205bf0e8791"
+    },
+    "moving_marker_sheet": {
+      "path": "vr/proof/weapon-moving-muzzle-controls.png",
+      "sha256": "d05e0ead7c8277c518b076cdc85430282967711e64fa2e545d86db237c02f818"
+    },
+    "all_id_controls": {
+      "path": "vr/proof/weapon-complete-gun-controls-receipt.json",
+      "sha256": "7c30f336769f217cb06aa1d0cc6a0a3a30e43151c22d627ebcb6c6e5e22d8dba"
+    },
+    "all_id_sheet": {
+      "path": "vr/proof/weapon-complete-gun-controls.png",
+      "sha256": "b1ba2a7fe76ed7fc7670f7b0048a6765741f771f8064ac05e7d291cfc7f5740c"
+    },
+    "p38_tracked_aim": {
+      "path": "vr/proof/weapon-p38-aim-receipt.json",
+      "sha256": "4d849dee7ab4b182afc1a508957acdb7ffd72ad4af3aa506fe387d1e86990abf"
+    },
+    "p38_aim_sheet": {
+      "path": "vr/proof/weapon-p38-aim-controls.png",
+      "sha256": "51bbe3d7757fc403807cf8d8a55e623c65083b2b6905109a81de5b08f0dc21d3"
+    },
+    "raw_animation": {
+      "path": "analysis/vr-baseline/weapon-animation-controls-final-20261027/receipt.json",
+      "sha256": "1015173474350b87a7ab54333097d89151cee82951ffa7b2b9ee157a299a0cda"
+    },
+    "raw_all_id_controls": {
+      "path": "analysis/vr-baseline/weapon-animation-all-final-20261027/receipt.json",
+      "sha256": "a720c865c0385e1856f88cd4dcbeff06aa9d4a3a6448de707a694d9da417063c"
+    },
+    "raw_native_fire": {
+      "path": "analysis/vr-baseline/weapon-animation-p38-fire-final-20261027/receipt.json",
+      "sha256": "a1b0e74034e5a5f91adfbc1401fb5ed7a5587e045abb1e13da09efb8b1752ed2"
+    },
+    "raw_tracked_aim": {
+      "path": "analysis/vr-baseline/weapon-animation-p38-aim-final-20261027/receipt.json",
+      "sha256": "3392e42765f104dd427bd1df6963f1edcddf2cc9d1c1c3c1082f27213720a695"
+    }
+  },
+  "checks": {
+    "python_tests": 52,
+    "strict_c": "PASS: MP ownership/mode/projection/pointer guards; weapon profiles, node guard, tracked affine and stale fallback; diagnostic syntax",
+    "moving_marker_unique_ids": 13,
+    "confirmed_states": {
+      "recoil": 9,
+      "reload": 7,
+      "special": 3,
+      "switch": 13,
+      "scoped": 2
+    },
+    "moving_marker_required_ids": 13,
+    "all_id_controls": 64,
+    "all_id_eye_masks": {
+      "left": 398,
+      "right": 406
+    },
+    "all_id_unique_ids": 13,
+    "p38_native_fire_recovery": true,
+    "p38_tracked_cases": 14,
+    "p38_tracked_aim_complete": true,
+    "source_saves_preferences_unchanged": true,
+    "remaining_owned_game_processes": []
+  },
+  "normal_defaults": "all all-ID calibration/gun-only flags OFF; diagnostics opt in explicitly",
+  "limits": [
+    "Desktop synthetic controls and copied saves only; no physical acceptance.",
+    "All 13 IDs require a marker recomputed after native animation.",
+    "Sten reload and scoped-shot ammo are not observed in this fixture.",
+    "Live NPC/SP isolation and all-weapon native-shot overrides remain open.",
+    "Only P38 has the accepted rendered-muzzle native-shot override."
+  ]
+}

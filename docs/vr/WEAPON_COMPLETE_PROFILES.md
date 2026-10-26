@@ -5,12 +5,12 @@ acceptance remains open, and no headset was used for this pass.
 
 ## Result
 
-All 13 native multiplayer weapon IDs now have a measured complete-gun topology,
-a source/animated vertex capture, and a provisional model-space calibration.
-The existing two-eye MP control matrix exercises all IDs with the complete-gun
-mask and the all-ID calibration candidate. P38 continues to use its accepted
-complete-gun calibration exactly; the other 12 profiles are explicitly
-provisional.
+All 13 native multiplayer weapon IDs have a measured complete-gun topology,
+a source/animated vertex capture, a provisional model-space calibration, and
+confirmed native-input animation samples. The moving-marker probe covers
+recoil, reload, switching, scope hiding and the grenade, petrol-bomb and
+Panzerfaust special actions. P38 continues to use its accepted complete-gun
+calibration exactly; the other 12 profiles are explicitly provisional.
 
 Normal defaults are unchanged. The new candidates require either
 `MOHU_VR_WEAPON_GUN_ONLY=1` or `MOHU_VR_WEAPON_CALIBRATED=1`.
@@ -85,24 +85,67 @@ Nominal lengths are size references, not measured copies of the PSX assets.
 ## Desktop controls
 
 `check_mp_view.py --all-weapons --calibrated-all` ran 64 cases: native,
-translated, yawed and tracking-loss for all 16 slot appearances. It retained
-876 per-eye gun-only mask applications, closed every four-weapon cycle, and
-recorded zero render-pass mismatches, VRAM leaks, watchdog events, nesting
-repairs or remaining owned processes.
+translated, yawed and tracking-loss for all 16 slot appearances. The current
+binary retained 804 per-eye gun-only mask applications, closed every four-weapon
+cycle, and recorded zero render-pass mismatches, VRAM leaks, watchdog events,
+nesting repairs or remaining owned processes. The historical 876 count belongs
+to the previous binary.
 
 The [control sheet](../../vr/proof/weapon-complete-gun-controls.png) shows the
 native, translated and yawed weapon crop for each ID. The
 [control receipt](../../vr/proof/weapon-complete-gun-controls-receipt.json)
 contains per-ID image hashes, rollback check counts and mask counts.
 
-Affected regressions also pass: default P38 eye replay, native P38
-fire/ammo/P2 damage, 14-case tracked P38 aim/fallback, SP zero and the
-OpenXR-off flat startup with inherited experiment flags.
+Affected regressions also pass: default P38 eye replay, native P38 fire/ammo/P2
+damage and refusal recovery, 14-case tracked P38 aim/fallback, 52 Python tests,
+strict C fixtures and the calibrated all-ID matrix.
+
+## Moving muzzle contract
+
+The moving-marker probe latches every animated vertex from one
+`0x8008DB98` output at a time. It recomputes the P38 grip/tip points and the
+provisional grip/tip points from the captured marker-vertex groups. A marker is
+called rigid only when its grip-to-tip distance stays within 1% of the idle span
+and its direction stays within 2 degrees. Those tolerances were fixed before the
+run.
+
+| ID | Weapon | Confirmed animation controls | Result |
+| --- | --- | --- | --- |
+| 0 | P38 pistol | recoil, reload, switch | moving marker required |
+| 1 | MP40 | recoil, reload, switch | moving marker required |
+| 4 | Shotgun | recoil, reload, switch | moving marker required |
+| 5 | Scoped rifle | scope model hidden, switch | moving marker required |
+| 8 | Colt .45 | recoil, reload, switch | moving marker required |
+| 9 | Silenced pistol | recoil, reload, switch | moving marker required |
+| 10 | Stick grenade | hold/release, switch | moving marker required |
+| 12 | M1 Garand | recoil, reload, switch | moving marker required |
+| 13 | Panzerfaust | launch, switch | moving marker required |
+| 14 | Crossbow | launch/auto-switch, switch | moving marker required |
+| 15 | Petrol bomb | hold/release, switch | moving marker required |
+| 16 | Sten | recoil, switch | moving marker required |
+| 17 | StG44 | recoil, reload, switch | moving marker required |
+
+Each confirmed state also records a native clip, reserve or weapon-slot change.
+The crossbow launch itself kept the sampled marker pair rigid, but its switch
+state did not. No per-ID static tip can therefore be treated as animation-safe
+across the complete tested range. W5/W6 must recompute the tip from its current
+marker vertices after native animation and before transforming it with the
+render affine. The stored calibration point remains the idle reference.
+
+The scoped rifle hides the viewmodel while scoped, so no moving tip is claimed
+there. Its scoped-shot ammo change was not observed. The Sten had already
+completed its magazine update before the query window, so its reload field is
+explicitly `not-observed`; recoil and switching are confirmed. These are recorded
+limits, not inferred passes.
+
+Evidence: [moving-marker receipt](../../vr/proof/weapon-moving-muzzle-receipt.json),
+[control sheet](../../vr/proof/weapon-moving-muzzle-controls.png) and
+[build receipt](../../vr/proof/weapon-moving-muzzle-build-receipt.json).
 
 ## Remaining work
 
-W3.4 still needs moving-muzzle checks during recoil, reload and weapon
-switching, plus per-ID animation-state evidence. The other 12 profiles do not
-yet have a rendered-muzzle native-shot override; that belongs to the later
-all-weapon aim/combat work. W3.3/W3.5 still require operator hardware acceptance
-of size, attachment, recoil, reload, recenter, focus recovery and both eyes.
+W3.4 desktop preparation is complete. The other 12 profiles still do not have a
+rendered-muzzle native-shot override; their shot families and the moving-tip
+consumer belong to W5/W6. W5.2 still needs live NPC/SP isolation. W3.3/W3.5
+require operator hardware acceptance of size, attachment, recoil, reload,
+recenter, focus recovery and both eyes.
