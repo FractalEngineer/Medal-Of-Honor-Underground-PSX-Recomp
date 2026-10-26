@@ -1284,3 +1284,35 @@ source saves, defaults, historical receipts and unrelated `.commandcode/`.
   tested executable is `4a17ce5c...`, and the final debug-off executable is
   `e2103a9f...`. W5.3d is checked. W5.3e paired preservation/impact, W5.2 NPC/SP
   and physical W3.3/W3.5 remain open.
+
+## 2026-10-27 - W5.3e paired preservation and impact
+
+- Extended the native lifecycle probe with the live LCG update at `80016DBC`,
+  state `800C4E5C`, explicit trigger/release bounds and per-weapon RNG state
+  sequences. The tracked probe now records the same constructor-to-motion
+  lifetimes, family origin stages and target-ray residuals.
+- Added `check_weapon_preservation.py` to join separately activated native and
+  tracked receipts. It checks common-prefix shot types, release phases, history
+  groups, family origin stages, per-shot ammo, object-reuse observation,
+  shotgun construction RNG, six pellets, angle/speed distributions, rendered
+  axis and real P2 damage. Native and tracked source saves and preferences must
+  be identical between launches.
+- The full pair passed 13 IDs. Native/tracked lifetimes were 22/21 and linked
+  damage writes 18/16; the final StG44 lifetime at the release boundary is the
+  one allowed frame-local difference. Automatic-fire displacement tolerances
+  are separate from single-shot/bolt limits.
+- The shotgun retained six pellets, exactly 21 construction-scoped RNG updates,
+  5.257088/5.259963 degree maximum pair angles, 0.010589 degree median
+  pair-angle delta and a 1.00003 median speed ratio. Missing/stale markers,
+  unfocused hand and P2 fire stayed native; a focused recovered control became
+  tracked again. The run recorded 379 replay-rejected and 94 P2-rejected marker
+  updates.
+- Validation: 86 Python tests, affected shot/calibrated-weapon C fixtures,
+  strict diagnostic syntax, a focused P38/shotgun pair and the complete 13-ID
+  pair. The Release/OpenXR/diagnostics/debug-tools build is
+  `8d0db606...`; all candidate flags remain OFF by default.
+- Evidence: [preservation evidence](WEAPON_PRESERVATION_EVIDENCE.md),
+  [paired receipt](../../vr/proof/weapon-preservation-receipt.json) and
+  [build/regressions](../../vr/proof/weapon-preservation-build-receipt.json).
+  W5.3 and W5.3e are checked. W5.4 combat states, W5.2 NPC/SP and physical
+  W3.3/W3.5 remain open.

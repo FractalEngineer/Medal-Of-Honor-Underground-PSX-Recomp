@@ -23,48 +23,37 @@ the earlier hardware-first sequence; no completed box is reopened.
 
 ## 1. Start here - one next task
 
-**NEXT DESKTOP: W5.3e - paired native/tracked preservation and impact.**
-W5.3d is complete. `MOHU_VR_WEAPON_AIM=1` now converts all 13 measured IDs from
-the immutable animated tip and declared axis through the calibrated render
-affine. The all-ID desktop pass converted 23 shot events with zero shot
-fallbacks. P38, MP40 and all expected firearm/bolt/rocket controls produced
-linked native P2 damage. The shotgun retained six native pellets, 5.1817
-degrees maximum spread and a 378.89 world-unit/frame speed range. Grenade,
-petrol and rocket passed complete function-hash-guarded seams at `80084CDC`,
-`80084B74` and `80048AAC`; normal firearms and the bolt use the common basis
-entry. The legacy P38 flag still passed 14 controls when the new flag was absent.
-Read [the all-family receipt](../../vr/proof/weapon-aim-all-receipt.json) and
-[build/regressions](../../vr/proof/weapon-aim-all-build-receipt.json). Do not
-repeat the all-ID map, mesh/animation matrix, canonical acquisition or W5.3d
-single-pose pass.
+**NEXT DESKTOP: W5.4 - combat-state matrix on the accepted W5.3e candidate.**
+W5.3e is complete. Paired native/tracked launches on the copied MP slots passed
+all 13 IDs, common-prefix release/history and family-stage checks, per-shot ammo,
+shotgun RNG/spread/speed, and real P2 impact. The shotgun retained all 21
+construction RNG updates and six pellets; pairwise maximum angles were
+`5.257088` native and `5.259963` tracked. Five P38 fallback controls covered
+missing/stale markers, unfocused hand, P2 ownership and recovery. Read
+[WEAPON_PRESERVATION_EVIDENCE.md](WEAPON_PRESERVATION_EVIDENCE.md),
+[the paired receipt](../../vr/proof/weapon-preservation-receipt.json) and
+[build/regressions](../../vr/proof/weapon-preservation-build-receipt.json).
+Do not repeat the W5.3e pair, all-ID conversion, family map, canonical
+acquisition or animation matrix.
 
-### W5.3e exact experiment and stop rules
+### W5.4 exact desktop scope and stop rules
 
-1. Build paired native/tracked controls from the same copied fixture, load,
-   trigger sequence and native input. Compare per family, not only a successful
-   tracked hit. Keep the two launch environments explicit because the flags are
-   read at activation.
-2. For ordinary firearms and the bolt, compare constructor origin/direction,
-   first integration, sustained-fire lifetimes/object reuse, ammo and linked
-   damage. For grenade/petrol/rocket, compare the guarded final-origin stage,
-   first motion, clearance/history fields, release timing and native
-   initialization. Do not subtract recorded stage shifts as constants.
-3. For the shotgun, compare native-versus-candidate pellet count, pairwise
-   angular distribution, speed distribution, RNG consumption, ammo and damage.
-   Do not require identical trajectories when the candidate aim intentionally
-   changes direction, but record a stated tolerance and retain native spread.
-4. Include missing/stale marker, unfocused hand, P2 fire, replay and unsupported
-   model controls. Every invalid candidate must remain native and must not reuse
-   an idle P38 point. Verify owner, ammo, collision and damage staying native.
-5. Impact acceptance must link the converted trajectory to the rendered animated
-   axis and a real native damage/contact event. Native damage alone is not
-   alignment evidence. No health/ammo/code/save edits or header patches.
-6. Two failed runs of the same hypothesis: inspect the paired traces and the
-   missing fact; do not repeat an unchanged matrix. Focused `--ids` runs cannot
-   publish an all-ID proof.
+1. Exercise native/tracked reload tails, empty fire, switch during reload,
+   scoped fire on ID 5, recoil follow-up and load/recovery. Reuse the accepted
+   moving-marker, freshness and family-stage contracts; no fixed idle point.
+2. For non-empty shots, require native ammo consumption, the expected native
+   shot type and linked damage where the paired native control has damage.
+   Empty or interrupted states must not construct a candidate shot.
+3. Re-sample the animated tip after every tested native action. Compare the
+   converted origin and first integration with the pair's stated tolerances;
+   record changed marker/load generations explicitly.
+4. P2 MP impact is a desktop gate only. W5.2 live NPC/SP, W3.3/W3.5 physical
+   attachment and operator-confirmed barrel-to-impact alignment remain open.
+5. Two failed runs of the same hypothesis require trace inspection before a
+   third run. Focused runs cannot publish a full W5.4 proof.
 
-W5.3e is desktop work. W5.2 NPC/SP and physical W3.3/W3.5 remain open
-independently. All candidate flags remain OFF by default.
+W5.4 desktop work may proceed without a headset. W5.2 NPC/SP and physical
+W3.3/W3.5 remain open independently. All candidate flags remain OFF by default.
 
 The moving-marker result is not optional: all 13 IDs require a tip recomputed
 from the current marker vertices after native animation. The stored calibration
@@ -265,14 +254,18 @@ Accepted evidence:
 | W5.3c canonical markers | [marker receipt](../../vr/proof/weapon-canonical-markers-receipt.json), [evidence](CANONICAL_MARKERS_EVIDENCE.md) and [build/regressions](../../vr/proof/weapon-canonical-markers-build-receipt.json): 13 IDs, 18 constructor events, three final-origin stages, independent vertex means, stale/load/recovery/P2/disabled controls; no new shot writes |
 | W5.3d all-family conversion | [all-family receipt](../../vr/proof/weapon-aim-all-receipt.json): 13 IDs, 23 converted events, zero candidate fallbacks, six-pellet shotgun with 5.18-degree native spread, expected real damage, complete guarded projectile stages, stereo failure/recovery recorded |
 | W5.3d build/regressions | [build receipt](../../vr/proof/weapon-aim-all-build-receipt.json): 81 Python tests, strict C/syntax, 64-case MP matrix, lateral/fire, flat pose, SP zero, 14 legacy P38 controls, 33-case parity and debug-off flat startup |
+| W5.3e paired preservation/impact | [paired receipt](../../vr/proof/weapon-preservation-receipt.json) and [evidence](WEAPON_PRESERVATION_EVIDENCE.md): 13 IDs, common-prefix lifetimes/release/history/stages, exact shotgun RNG and six-pellet distribution, native damage plus animated-axis/target residuals, five P38 fallback controls |
+| W5.3e build/regressions | [build receipt](../../vr/proof/weapon-preservation-build-receipt.json): 86 Python tests, affected C fixtures, strict diagnostic syntax, two-ID focused pair and the complete 13-ID pair |
 | Earlier native damage | [WEAPON_SET_EVIDENCE.md](WEAPON_SET_EVIDENCE.md), [weapon-alignment-receipt.json](../../vr/proof/weapon-alignment-receipt.json): all 13 IDs, damage-only pose reachability |
 | Current all-ID controls | [weapon-complete-gun-controls.png](../../vr/proof/weapon-complete-gun-controls.png) |
 | SP world / visibility | [PGXP_RENDER_VIEW_EVIDENCE.md](PGXP_RENDER_VIEW_EVIDENCE.md), [HEAD_TURN_HUD_EVIDENCE.md](HEAD_TURN_HUD_EVIDENCE.md), [SKY_GHOST_EVIDENCE.md](SKY_GHOST_EVIDENCE.md) |
 | Native input | [MOVEMENT_EVIDENCE.md](MOVEMENT_EVIDENCE.md): synthetic SP and MP controls; physical acceptance remains open |
 
-The W5.3d tested executable SHA-256 is
-`4a17ce5cdc83533bb23f8c85ccdcd9834289ec7c8a32e45d162c291099c74d00`.
-The normal debug-off Release executable built after the tests is
+The current W5.3e Release/debug-on executable SHA-256 is
+`8d0db60626bd516e91a342f648b22579e07b7ad3339ac104637774e1a71bc20d`.
+The W5.3d historical tested executable remains
+`4a17ce5cdc83533bb23f8c85ccdcd9834289ec7c8a32e45d162c291099c74d00`,
+and its debug-off release was
 `e2103a9ffb3696188b8cb405978bde587d17ea63cead196bddb007b029eb9fa1`.
 See the current [build receipt](../../vr/proof/weapon-aim-all-build-receipt.json)
 for runtime source hashes, 81 Python tests, focused C/syntax/build checks, the
@@ -822,22 +815,28 @@ if ($LASTEXITCODE -ne 0) { throw 'Release build failed' }
 
 ## 10. Continuation record
 
-- Complete: C1-C4, W1-W3.2, W3.4, W4.1-W4.3, W5.1 and W5.3a/b/c/d
-  family/lifecycle, final-origin, canonical-marker and all-family conversion
-  contracts. W3.3 physical acceptance
+- Complete: C1-C4, W1-W3.2, W3.4, W4.1-W4.3, W5.1 and W5.3a/b/c/d/e
+  family/lifecycle, final-origin, canonical-marker, all-family conversion and
+  paired preservation/impact contracts. W3.3 physical acceptance
   is open. W3.4 now includes all-ID frozen-frame moving-marker evidence for
   native recoil, reload, switching, scope hiding and prop actions.
 - Moving-marker result: all 13 IDs require recomputation from current marker
   vertices after native animation. The idle stored point remains a reference;
   W5/W6 must not treat it as animation-safe. The crossbow's tested launch sample
   alone was rigid. Sten reload and scoped-shot ammo are `not-observed`.
-- NEXT desktop: W5.3e paired native/tracked preservation and impact (section 1).
-  Reuse the W5.3d conversion and all-ID receipt; compare native and candidate
-  family traces, release/history behavior, spread distributions and linked
-  impact. W5.2 remains open until a compatible copied live NPC/SP fixture and
-  guarded SP binding are available. Do not repeat the W3.4 matrix, family map,
-  canonical acquisition or unchanged W5.3d single-pose controls.
-- Last evidence: `weapon-aim-all-receipt.json`,
+- NEXT desktop: W5.4 combat-state matrix (section 1). Reuse the accepted W5.3e
+  pair and moving-marker/family contracts for reload, empty, switch, scoped,
+  recoil and load interactions. W5.2 remains open until a compatible copied
+  live NPC/SP fixture and guarded SP binding are available. Do not repeat the
+  W3.4 matrix, family map, canonical acquisition, W5.3d conversion or W5.3e pair.
+- W5.3e result: 22 native / 21 tracked lifetimes, 16 tracked linked damage
+  writes, exact shotgun construction-scoped RNG (21 updates), six pellets,
+  maximum spread `5.257088` vs `5.259963` degrees and five fallback/recovery
+  controls. The one-frame StG44 lifetime difference is recorded; common-prefix
+  type, release, history, stage, ammo-per-shot and RNG behavior passed.
+- Last evidence: `weapon-preservation-receipt.json`,
+  `weapon-preservation-build-receipt.json`, `WEAPON_PRESERVATION_EVIDENCE.md`,
+  `weapon-aim-all-receipt.json`,
   `weapon-aim-all-build-receipt.json`, `weapon-shot-lifecycle-receipt.json`,
   `weapon-canonical-markers-receipt.json`, `CANONICAL_MARKERS_EVIDENCE.md`,
   `weapon-canonical-markers-build-receipt.json`,
@@ -854,8 +853,9 @@ if ($LASTEXITCODE -ne 0) { throw 'Release build failed' }
   pass; they do not claim a live NPC or SP override. No unrelated enemy chase.
 - Hardware: do not put the operator in the headset during this desktop pass.
   W3.3/W3.5 and release/default promotion still need later physical acceptance.
-- Build: `build-release` is restored to Release/OpenXR/diagnostics ON with debug
-  tools OFF. The flat build passed inherited-flag startup with VR inactive.
+- Build: `build-release` is Release/OpenXR/diagnostics ON with debug tools ON
+  for active W5 desktop work. W5.3e tested executable
+  `8d0db606...`; the inherited W5.3d debug-off flat startup remains historical.
   Normal candidate defaults remain OFF; no framework pin changed. Source
   saves/preferences are unchanged and owned processes are closed.
 - Do not commit/push without current authorization. Unrelated `.commandcode/`

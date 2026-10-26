@@ -148,13 +148,14 @@ The `--tracked` diagnostic explicitly enables `PSX_VR_WEAPON_POSE`,
 `RunFlat.bat` clears the new flags. The prepared tracked headset comparison
 selects this corrected candidate, but no new headset run was requested or done.
 
-**NEXT desktop milestone: W5.3 family-aware shot conversion.**
+**Current desktop milestone: W5.4 combat-state matrix.**
 W3.4 is complete: all 13 IDs have frozen-frame switching evidence and their
 available recoil/reload/special samples, with native ammo or slot changes. All
 IDs require a moving marker across the full tested range. The read-only W5.3
 family map now covers all 13 IDs and five native shot types; see
-[SHOT_FAMILY_EVIDENCE.md](SHOT_FAMILY_EVIDENCE.md). Family-aware writes,
-shotgun/rocket/throw preservation and moving-marker origins remain open. W5.2
+[SHOT_FAMILY_EVIDENCE.md](SHOT_FAMILY_EVIDENCE.md). W5.3d family-aware writes
+and the W5.3e paired shotgun/rocket/throw preservation and moving-marker
+controls now pass. W5.2
 still needs a compatible copied live NPC/SP fixture and its own measured SP
 binding. W5.4 retains the full special-animation and all-weapon combat matrix.
 W3.3/W3.5 remain operator gates.

@@ -75,7 +75,8 @@ do not change either consumer merely to match a moving master.
   complete, as are its native lifecycle baseline and final projectile origin
   writer measurements. Canonical animated sampling is now complete within its
   [measured timing/ownership contract](CANONICAL_MARKERS_EVIDENCE.md).
-  Family-aware writes and tracked preservation controls remain open. These
+  Family-aware writes and paired preservation/impact controls are complete.
+  W5.4 combat-state controls remain. These
   title-specific samplers add no pending framework PR or master change.
 - W5.2 NPC/SP isolation requires a compatible copied fixture and independent
   SP bindings. Physical W3.3/W3.5 and W5.4 acceptance remain open. Desktop work

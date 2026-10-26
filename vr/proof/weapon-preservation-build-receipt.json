@@ -1,0 +1,79 @@
+{
+  "schema": 1,
+  "kind": "W5.3e paired native/tracked preservation build and regression receipt",
+  "complete": true,
+  "headset_used": false,
+  "revision": "b66eac9538094ce2a394dd3151177c3f3a026038",
+  "framework_pin": "555e1eabccc59b9b6ff0d9fca48aca783513dc86",
+  "tested_executable_sha256": "8d0db60626bd516e91a342f648b22579e07b7ad3339ac104637774e1a71bc20d",
+  "current_executable_sha256": "8d0db60626bd516e91a342f648b22579e07b7ad3339ac104637774e1a71bc20d",
+  "runtime_sources_unchanged_since_w53d": true,
+  "sources": {
+    "vr/tools/check_weapon_preservation.py": "a81584dcfb8cf9b0886131188780b172cfd336dc0d5a71e55c510dbb51677fb1",
+    "vr/tools/probe_shot_families.py": "4ef849a533f096eeb0f5a1b1af9fd399881ea9763f3a76669488334b7ed65d01",
+    "vr/tools/probe_weapon_aim.py": "55f7a19afe64c298e86fcc937f0b825a5676d4fddfd5d58f0ae07c97e60ae463",
+    "vr/tests/test_weapon_preservation.py": "dc4edb98a8690f870ab26b6843f324d1fdeb69bab4f41e1b3c4d94ee61f1b599",
+    "docs/vr/WEAPON_PRESERVATION_EVIDENCE.md": "376078e44e85a3c72a3a7c0bdc32fb3844287a6c3dc2d6b660c6483b4c5469fe",
+    "vr/tests/test_calibrated_weapon.c": "853d430f667f040d37d17ec48c6e723aaf1de3fc18ccf17a2c2b6f17adaf8478",
+    "vr/tests/test_shot.c": "36e97ec58c7574660ac7c71c165da0a4419805194fc490ae8f07329fa12e6115",
+    "vr/underground/vr_diagnostic.c": "3c72017b751f29604de048dd05943d63010be51283a2adea62a4643b91733519",
+    "vr/underground/shot.h": "187f60f31ceb37648a0ad30fbd452c97d34c8e617ee923eb92f6f11fe2642446",
+    "vr/underground/weapon.c": "dd532791ff07592f085744c73b916554b48922b871c4ead44d3ced7106fde0c1",
+    "vr/underground/weapon.h": "7fd3b161dbd7f5fe5006313d64c6332fb5af89b9f344ade3dbfe80c2c82844c9"
+  },
+  "builds": {
+    "tested": {
+      "configuration": "Release",
+      "PSX_OPENXR": "ON",
+      "MOHU_VR_DIAGNOSTICS": "ON",
+      "PSX_DEBUG_TOOLS": "ON"
+    }
+  },
+  "validation": {
+    "python_tests": 86,
+    "c_fixtures": [
+      "native shot families, ownership and freshness: 17 controls",
+      "calibrated grip/muzzle, rotation, translation and scaled camera",
+      "strict diagnostic syntax"
+    ],
+    "focused_pair": {
+      "ids": [0, 4],
+      "complete": true
+    },
+    "all_family_pair": {
+      "ids": 13,
+      "native_lifetimes": 22,
+      "tracked_lifetimes": 21,
+      "tracked_linked_damage_writes": 16,
+      "fallback_controls": 5,
+      "marker_replay_rejections": 379,
+      "marker_p2_rejections": 94
+    },
+    "shotgun": {
+      "pellets": 6,
+      "native_maximum_pair_angle_degrees": 5.257087570384383,
+      "tracked_maximum_pair_angle_degrees": 5.259963214166818,
+      "median_pair_angle_delta_degrees": 0.01058915176164188,
+      "median_speed_ratio": 1.000030890482471,
+      "construction_rng_updates": 21
+    },
+    "source_saves_unchanged": true,
+    "preferences_unchanged": true,
+    "remaining_game_pids": []
+  },
+  "receipts": {
+    "paired": "vr/proof/weapon-preservation-receipt.json",
+    "paired_sha256": "24834d92b565b2ca3d6f47e4ed8cb74b993c3df32698ba7ae0d2f33a84913938",
+    "native_raw": "analysis/vr-baseline/weapon-preservation-native-final-20261027/receipt.json",
+    "native_raw_sha256": "6b4354f9823372591692e7856427d7d88ef625d2a66fbe286f3c6d0bd7fe09e8",
+    "tracked_raw": "analysis/vr-baseline/weapon-preservation-tracked-final-20261027c/receipt.json",
+    "tracked_raw_sha256": "f290f0692f84d6cf949f52cc17cc93841d8e665eaa04555fae7aeb77b4942a26",
+    "inherited_w53d": "vr/proof/weapon-aim-all-build-receipt.json"
+  },
+  "limits": [
+    "Copied MP fixture only; W5.2 live NPC/SP isolation remains open.",
+    "Synthetic hand poses do not establish physical bore or headset acceptance.",
+    "Automatic-fire lifetime count permits a one-frame local difference; all common-prefix invariants were checked.",
+    "Trajectory sample length after first integration is diagnostic, not a preservation invariant."
+  ]
+}

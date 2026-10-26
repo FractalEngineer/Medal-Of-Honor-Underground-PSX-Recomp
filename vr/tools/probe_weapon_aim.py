@@ -25,6 +25,8 @@ import probe_shot_families as families
 ROOT = native.ROOT
 CALIBRATION = ROOT / "vr/proof/weapon-provisional-calibrations-receipt.json"
 PSX_SIGNS = np.array([1.0, -1.0, -1.0])
+NON_SHOTGUN_AXIS_COSINE = 0.9995
+THROWN_AXIS_COSINE = 0.9945
 
 
 def mod_command(name, args):
@@ -229,6 +231,135 @@ def origin_rows(shot_address):
     return rows
 
 
+def run_fallback_control(name, out, *, marker_mode=None, invalid_hand=False,
+                         port=1, recover=False):
+    families.prepare_weapon(1, 0)
+    native.frames(8)
+    shot_command("stop")
+    shot_command("start")
+    native.frames(12)
+    before = native.players()
+    request = None
+    if port == 1 and marker_mode is None:
+        request = marker_aim(before, calibrations()[0], marker_command("status"))
+        if invalid_hand:
+            poses.set_hand_pair(
+                grip=(0.15, 0.0, -0.5),
+                aim_q=request["quaternion_xyzw"],
+                grip_q=request["quaternion_xyzw"],
+                focused=0,
+            )
+        native.frames(8)
+    if marker_mode == "missing":
+        marker_command("stop")
+    elif marker_mode == "stale":
+        marker_command("freeze")
+        native.frames(40)
+
+    marker_before = marker_command("status")
+    native.command("wtrace_range", lo="0x800B0000", hi="0x801FF000")
+    native.command("wtrace_clear")
+    collector = shot.TraceCollector({
+        **shot.FILTERS,
+        "motion_context": (0x8006EB8C, 0x8006F7D0),
+        "shot_update": (0x80047720, 0x80047C80),
+        "rng": families.RNG_FILTER,
+    })
+    if port == 1:
+        native.command("openxr_input_override", right_trigger=1000)
+    else:
+        native.command("set_input", port=2, buttons=65535 ^ 0x4000)
+    collector.wait(8)
+    release_before = native.command("frame")["frame"]
+    native.command("openxr_input_override", clear=1)
+    native.command("set_input", port=2, buttons=65535)
+    release_after = native.command("frame")["frame"]
+    collector.wait(180)
+    native.command("wtrace_range", lo="0", hi="0")
+    collector.collect()
+    shot_command("stop")
+
+    status = shot_command("status")
+    if status["overflow"]:
+        raise RuntimeError(f"{name}: shot sample overflow")
+    shots = [
+        shot_command(f"read={index}") for index in range(status["count"])
+    ]
+    owner = int(before[port - 1]["actor"], 16)
+    owned = [row for row in shots if row["owner"] == owner]
+    after = native.players()
+    if not owned or after[port - 1]["clip"] >= before[port - 1]["clip"]:
+        raise RuntimeError(f"{name}: missing native shot/ammo consumption")
+    if (not recover and any(row["aimed"] for row in owned)) or \
+            (recover and any(not row["aimed"] for row in owned)):
+        raise RuntimeError(f"{name}: invalid control was overridden")
+    if not recover and any(any(row["aimed_position"]) for row in owned):
+        raise RuntimeError(f"{name}: invalid control reused an aimed position")
+    if any(not row["code_valid"] for row in owned):
+        raise RuntimeError(f"{name}: missing native code guard")
+    if recover and any(not row["family_eligible"] for row in owned):
+        raise RuntimeError(f"{name}: valid control was not family-eligible")
+    if port == 2 and any(row["family_eligible"] for row in owned):
+        raise RuntimeError(f"{name}: P2 shot passed the P1 family guard")
+
+    lifetimes = families.trace_lifecycle(shots, collector)
+    for lifetime in lifetimes:
+        born = lifetime["birth_frame"]
+        lifetime["trigger_phase"] = (
+            "held" if born < release_before else
+            "released" if born > release_after else "release-boundary"
+        )
+    damage = [
+        row for row in collector.entries("damage")
+        if (int(row["addr"], 0) & 0x1FFFFFFF) ==
+           native.p2_health_address(before[port - 1])
+        and int(row["old"], 0) > int(row["new"], 0)
+    ]
+    row = {
+        "name": name,
+        "port": port,
+        "invalid_hand": invalid_hand,
+        "marker_mode": marker_mode or "valid",
+        "recovered": recover,
+        "before": before,
+        "after": after,
+        "marker_before": marker_before,
+        "request": request,
+        "shots": shots,
+        "owned_shots": owned,
+        "lifetimes": lifetimes,
+        "native_damage": damage,
+        "trace_counts": {
+            key: len(value) for key, value in collector.rows.items()
+        },
+    }
+    comparison.save_json(out / f"control-{name}.json", row)
+    print(
+        f"CONTROL {name}: shots={len(owned)} aimed=0 "
+        f"valid={marker_before['valid']}",
+        flush=True,
+    )
+    return row
+
+
+def run_fallback_controls(out):
+    controls = []
+    marker_command("start")
+    controls.append(run_fallback_control("missing-marker", out,
+                                         marker_mode="missing"))
+    marker_command("start")
+    controls.append(run_fallback_control("stale-marker", out,
+                                         marker_mode="stale"))
+    marker_command("start")
+    controls.append(run_fallback_control("unfocused-hand", out,
+                                         invalid_hand=True))
+    marker_command("start")
+    controls.append(run_fallback_control("p2-fire", out, port=2))
+    marker_command("start")
+    controls.append(run_fallback_control("recovered", out, recover=True))
+    return controls
+
+
 def spread_summary(motions):
     directions = [row["direction"] for row in motions]
     angles = [
@@ -247,6 +378,16 @@ def spread_summary(motions):
         "speeds_world_units_per_frame": speeds,
         "speed_range": max(speeds) - min(speeds),
     }
+
+
+def target_ray_miss(origin, direction, target):
+    origin = np.asarray(origin, dtype=float)
+    direction = np.asarray(direction, dtype=float)
+    target = np.asarray(target, dtype=float)
+    direction /= np.linalg.norm(direction)
+    projected = float(np.dot(target - origin, direction))
+    closest = origin + projected * direction
+    return float(np.linalg.norm(target - closest))
 
 
 def run_weapon(slot, switches, weapon_id, calibration, out):
@@ -283,10 +424,13 @@ def run_weapon(slot, switches, weapon_id, calibration, out):
         **shot.FILTERS,
         "motion_context": (0x8006EB8C, 0x8006F7D0),
         "shot_update": (0x80047720, 0x80047C80),
+        "rng": families.RNG_FILTER,
     })
     native.command("openxr_input_override", right_trigger=1000)
     collector.wait(min(control["hold_frames"], 8))
+    release_before = native.command("frame")["frame"]
     native.command("openxr_input_override", clear=1)
+    release_after = native.command("frame")["frame"]
     collector.wait(control["release_frames"])
     native.command("wtrace_range", lo="0", hi="0")
     collector.collect()
@@ -305,11 +449,13 @@ def run_weapon(slot, switches, weapon_id, calibration, out):
 
     motions = []
     converted = []
+    impacts = []
     stage_events = []
     for index, sample in enumerate(shots):
         if sample["weapon"] != weapon_id or not sample["family_eligible"]:
             raise RuntimeError(f"ID {weapon_id}: family guard rejected shot")
         marker = marker_command(f"shot={index}")
+        impact_position = sample["aimed_position"]
         events = origin_rows(sample["shot"])
         if sample["type"] == 0x13F3 or sample["type"] == 0x13F1:
             if sample["aimed"] or not events or not all(
@@ -324,6 +470,7 @@ def run_weapon(slot, switches, weapon_id, calibration, out):
                 "weapon_control": event["weapon_control"],
                 "aimed_position": event["aimed_position"],
             }
+            impact_position = event["aimed_position"]
             event_marker = marker_command(f"origin={origin_index}")
             converted.append(verify_marker_conversion(
                 event_sample, event_marker, request["camera"]
@@ -337,6 +484,24 @@ def run_weapon(slot, switches, weapon_id, calibration, out):
         motions.append(shot.first_motion(
             collector.entries("motion"), sample["shot"]
         ))
+        axis_cosine = float(np.dot(
+            converted[-1]["world_axis"], motions[-1]["direction"]
+        ))
+        minimum_axis_cosine = (
+            THROWN_AXIS_COSINE if weapon_id in (10, 15) else
+            NON_SHOTGUN_AXIS_COSINE
+        )
+        if weapon_id != 4 and axis_cosine < minimum_axis_cosine:
+            raise RuntimeError(
+                f"ID {weapon_id}: native motion disagrees with marker axis"
+            )
+        impacts.append({
+            "axis_cosine": axis_cosine,
+            "target_ray_miss_world_units": target_ray_miss(
+                np.asarray(impact_position, dtype=float) / 65536.0,
+                converted[-1]["world_axis"], request["target_world"],
+            ),
+        })
 
     damage_rows = [
         row for row in collector.entries("damage")
@@ -355,13 +520,20 @@ def run_weapon(slot, switches, weapon_id, calibration, out):
             raise RuntimeError(f"Shotgun native spread/speed changed: {spread}")
     else:
         spread = None
-        for index, motion in enumerate(motions):
-            cosine = float(np.dot(converted[index]["world_axis"],
-                                  motion["direction"]))
-            if cosine < 0.80:
-                raise RuntimeError(
-                    f"ID {weapon_id}: native motion disagrees with marker axis"
-                )
+
+    lifetimes = families.trace_lifecycle(shots, collector)
+    for lifetime in lifetimes:
+        born = lifetime["birth_frame"]
+        lifetime["trigger_phase"] = (
+            "held" if born < release_before else
+            "released" if born > release_after else "release-boundary"
+        )
+    rng = [
+        row for row in collector.entries("rng")
+        if int(row["pc"], 0) == families.RNG_STORE_PC
+    ]
+    if not rng:
+        raise RuntimeError(f"ID {weapon_id}: missing native RNG updates")
 
     row = {
         "id": weapon_id,
@@ -376,8 +548,25 @@ def run_weapon(slot, switches, weapon_id, calibration, out):
         "shots": shots,
         "motions": motions,
         "converted": converted,
+        "impacts": impacts,
+        "lifetimes": lifetimes,
         "origins": stage_events,
         "spread": spread,
+        "trigger_window": {
+            "release_before": release_before,
+            "release_after": release_after,
+            "requested_hold_frames": min(control["hold_frames"], 8),
+        },
+        "rng": {
+            "calls": len(rng),
+            "store_pc": f"0x{families.RNG_STORE_PC:08X}",
+            "events": [
+                {"seq": row["seq"], "old": row["old"], "new": row["new"]}
+                for row in rng
+            ],
+            "states_before": [row["old"] for row in rng],
+            "states_after": [row["new"] for row in rng],
+        },
         "native_damage": damage_rows,
         "trace_counts": {
             key: len(value) for key, value in collector.rows.items()
@@ -453,6 +642,7 @@ def main():
         "source_saves": source_hashes,
         "preferences": preferences,
         "weapons": [],
+        "controls": [],
         "limits": [
             "Synthetic desktop controls; physical grip/scale and headset acceptance remain open.",
             "Provisional non-P38 marker axes are not newly measured physical bores.",
@@ -507,6 +697,12 @@ def main():
             render = shot_command("render")
             if not render["weapon_aim"]:
                 raise RuntimeError("Candidate flag did not reach the runtime")
+            if selected == set(native.WEAPONS):
+                receipt["controls"] = run_fallback_controls(out)
+                marker_status = marker_command("status")
+                if marker_status["replay_rejected"] <= 0:
+                    raise RuntimeError("No marker replay-rejection evidence")
+                receipt["control_marker_status"] = marker_status
             receipt["render"] = render
             receipt["counters"] = counters
             receipt["render_pass"] = native.command("render_pass_stats")

@@ -145,7 +145,8 @@ damage stay native. The rocket clearance adjustment and grenade second basis/
 initialization must be handled deliberately; writing a common pose once or
 subtracting observed shifts is insufficient. Test P38, MP40 and six-pellet
 shotgun controls first, then each projectile family with the retained native
-baselines. Matched native/tracked preservation and impact tests are W5.3e.
+baselines. Matched native/tracked preservation and P2 impact subsequently
+passed in W5.3e.
 
 Fresh cached geometry alone does not prove new shot conversion, same-event
 render/shot agreement, moving bore alignment, zoom-fire, thrown explosion
@@ -155,5 +156,5 @@ W5.3d subsequently passed the synthetic desktop matrix. See
 [the all-family receipt](../../vr/proof/weapon-aim-all-receipt.json) and
 [build/regressions](../../vr/proof/weapon-aim-all-build-receipt.json). All 13
 IDs / 23 converted events used the immutable animated marker with zero shot
-fallbacks. The current next desktop task is W5.3e paired native/tracked
-preservation and impact; physical and NPC/SP gates remain open.
+fallbacks. [W5.3e](WEAPON_PRESERVATION_EVIDENCE.md) then passed the complete
+paired preservation and P2 impact matrix; physical and NPC/SP gates remain open.

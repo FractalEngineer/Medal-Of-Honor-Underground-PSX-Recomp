@@ -11,10 +11,10 @@ Shared framework branches, the merged upstream VR stack and the three pending
 generic changes are tracked in [FRAMEWORK_UPSTREAM_TRACKER.md](FRAMEWORK_UPSTREAM_TRACKER.md).
 Framework development uses `vr/shared-development`; master mirrors upstream.
 
-1. [HANDOFF.md](HANDOFF.md) is the current execution contract: W5.3d
-   animated-marker family conversion is complete and W5.3e paired
-   preservation/impact controls are next; W5.2 remains open for a
-   compatible live NPC/SP fixture, and physical P38 acceptance stays open.
+1. [HANDOFF.md](HANDOFF.md) is the current execution contract: W5.3e paired
+   preservation/impact is complete and the W5.4 combat-state matrix is next;
+   W5.2 remains open for a compatible live NPC/SP fixture, and physical P38
+   acceptance stays open.
    [P38_NATIVE_AIM_EVIDENCE.md](P38_NATIVE_AIM_EVIDENCE.md) records the
    restored barrel, complete calibration, W4/W5.1 and automated native damage.
    [SHOT_FAMILY_EVIDENCE.md](SHOT_FAMILY_EVIDENCE.md) records the read-only
@@ -25,6 +25,9 @@ Framework development uses `vr/shared-development`; master mirrors upstream.
    completed natural P1 animated-marker/timing contract and final-origin stages.
    [weapon-aim-all-receipt.json](../../vr/proof/weapon-aim-all-receipt.json)
    records the all-family desktop conversion.
+   [WEAPON_PRESERVATION_EVIDENCE.md](WEAPON_PRESERVATION_EVIDENCE.md) and
+   [weapon-preservation-receipt.json](../../vr/proof/weapon-preservation-receipt.json)
+   record the paired native/tracked, fallback and impact acceptance.
    [WEAPON_COMPLETE_PROFILES.md](WEAPON_COMPLETE_PROFILES.md) records the
    all-ID topology, provisional calibration, desktop controls and moving-marker
    animation evidence.

@@ -5,7 +5,8 @@ constructor map, not an all-weapon aim override.
 
 Follow-up: [SHOT_LIFECYCLE_EVIDENCE.md](SHOT_LIFECYCLE_EVIDENCE.md) adds native
 constructor-to-motion/damage controls and the moving-shot origin continuation.
-It does not enable non-P38 shot writes or close tracked preservation acceptance.
+It does not enable non-P38 shot writes. The later W5.3e pair closes desktop
+tracked preservation and P2 impact on the copied MP fixture.
 
 ## Result
 

@@ -26,6 +26,8 @@ CYCLES = profiles.CYCLES
 R2 = 0x0200
 P38_TYPE = 0x13F6
 BASIS_CALLER = 0x800488D8
+RNG_FILTER = (0x80016D9C, 0x80016DD0)
+RNG_STORE_PC = 0x80016DBC
 EXPECTED_FAMILIES = {
     0: 0x13F6,
     1: 0x13F7,
@@ -250,7 +252,10 @@ def spread_summary(lifetimes, weapon_id):
             "motion_direction_variants": len({tuple(row) for row in directions})}
 
 
-def probe_weapon(slot, switches, expected_id, *, lifecycle=False, trace_path=None):
+def probe_weapon(
+    slot, switches, expected_id, *, lifecycle=False, trace_path=None,
+    settle_frames=0,
+):
     prepare_weapon(slot, switches)
     before = native.players()
     if before[0]["weapon_id"] != expected_id:
@@ -270,6 +275,9 @@ def probe_weapon(slot, switches, expected_id, *, lifecycle=False, trace_path=Non
     camera = shot.shot_command("camera")
     if not camera["valid"]:
         raise RuntimeError(f"ID {expected_id}: canonical camera was not captured")
+    if settle_frames:
+        # W5.3e pairs this native run with the tracked hand-pose settling time.
+        native.frames(settle_frames)
 
     if control["scoped"]:
         command("set_input", buttons=str(0xFFFF ^ R2))
@@ -280,7 +288,8 @@ def probe_weapon(slot, switches, expected_id, *, lifecycle=False, trace_path=Non
         command("wtrace_clear")
         collector = shot.TraceCollector({**shot.FILTERS,
             "motion_context": (0x8006EB8C,0x8006F7D0),
-            "shot_update": (0x80047720,0x80047C80)})
+            "shot_update": (0x80047720,0x80047C80),
+            "rng": RNG_FILTER})
     trigger_start = command("frame")["frame"]
     command("openxr_input_override", right_trigger=1000)
     wait = collector.wait if collector else native.frames
@@ -361,6 +370,20 @@ def probe_weapon(slot, switches, expected_id, *, lifecycle=False, trace_path=Non
                 "held" if born < release_before else
                 "released" if born > release_after else "release-boundary")
         row["spread"] = spread_summary(row["lifetimes"], expected_id)
+        rng = [entry for entry in collector.entries("rng")
+               if number(entry["pc"]) == RNG_STORE_PC]
+        if not rng:
+            raise RuntimeError(f"ID {expected_id}: missing native RNG updates")
+        row["rng"] = {
+            "calls": len(rng),
+            "store_pc": f"0x{RNG_STORE_PC:08X}",
+            "events": [
+                {"seq": entry["seq"], "old": entry["old"], "new": entry["new"]}
+                for entry in rng
+            ],
+            "states_before": [entry["old"] for entry in rng],
+            "states_after": [entry["new"] for entry in rng],
+        }
         row["trace_counts"] = {key: len(value) for key,value in collector.rows.items()}
     print(
         f"ID {expected_id:02} {row['name']}: type {family}, "
@@ -412,7 +435,13 @@ def main():
     parser.add_argument("--ids", type=int, nargs="+")
     parser.add_argument("--lifecycle", action="store_true",
                         help="Trace each native construction through motion and damage")
+    parser.add_argument(
+        "--pair-settle-frames", type=int, default=0,
+        help="Wait after camera capture to match a tracked-pose arm",
+    )
     args = parser.parse_args()
+    if args.pair_settle_frames < 0:
+        parser.error("--pair-settle-frames cannot be negative")
     selected = set(args.ids or native.WEAPONS)
     unknown = selected - set(native.WEAPONS)
     if unknown:
@@ -500,7 +529,8 @@ def main():
                     continue
                 receipt["weapons"].append(
                     probe_weapon(slot, switches, weapon_id, lifecycle=args.lifecycle,
-                                 trace_path=out / f"id-{weapon_id:02}-traces.json")
+                                 trace_path=out / f"id-{weapon_id:02}-traces.json",
+                                 settle_frames=args.pair_settle_frames)
                 )
                 for row in receipt["weapons"]:
                     family = row["family"]

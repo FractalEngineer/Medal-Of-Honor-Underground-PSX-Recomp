@@ -1,7 +1,7 @@
 # Native MP shot lifecycle baseline
 
-Updated: 2026-10-27. W5.3a/b are native measurements. W5.3 remains open for
-family-aware conversion and matched tracked preservation controls. No headset
+Updated: 2026-10-27. W5.3a/b are native measurements. Family-aware conversion
+and matched tracked preservation/impact later passed in W5.3d/e. No headset
 or XR runtime was used; no game runtime code or framework pin changed.
 
 ## What this adds to the family map
@@ -158,8 +158,9 @@ window. The final run closed cleanly with source saves/preferences unchanged.
 Follow-up W5.3c is complete in
 [CANONICAL_MARKERS_EVIDENCE.md](CANONICAL_MARKERS_EVIDENCE.md), including natural
 P1 source ownership, freshness/load controls and all three final-origin stages.
-Next is **W5.3d**, specified in [HANDOFF.md](HANDOFF.md): implement the opt-in
-family-aware candidate. W5.3e supplies matched preservation/impact controls.
+W5.3d implemented the opt-in family-aware candidate, and W5.3e supplies the
+matched preservation/impact controls in
+[WEAPON_PRESERVATION_EVIDENCE.md](WEAPON_PRESERVATION_EVIDENCE.md).
 Native model/reload/recoil controls remain accepted
 within W3.4; they do not close moving-shot alignment. NPC/SP and physical gates
 remain separate.
