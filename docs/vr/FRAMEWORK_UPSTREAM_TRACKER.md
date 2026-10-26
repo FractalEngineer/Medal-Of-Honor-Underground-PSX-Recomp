@@ -73,8 +73,10 @@ do not change either consumer merely to match a moving master.
 - Underground W3.4 all-ID profiles and animated-marker evidence are complete.
   W4/W5.1 certify the bounded P38 contract. W5.3's all-ID family discovery is
   complete, as are its native lifecycle baseline and final projectile origin
-  writer measurements. Canonical animated sampling, family-aware writes and
-  tracked preservation controls remain open; see [the current evidence](SHOT_LIFECYCLE_EVIDENCE.md).
+  writer measurements. Canonical animated sampling is now complete within its
+  [measured timing/ownership contract](CANONICAL_MARKERS_EVIDENCE.md).
+  Family-aware writes and tracked preservation controls remain open. These
+  title-specific samplers add no pending framework PR or master change.
 - W5.2 NPC/SP isolation requires a compatible copied fixture and independent
   SP bindings. Physical W3.3/W3.5 and W5.4 acceptance remain open. Desktop work
   continues without treating those gates as implementation prerequisites.

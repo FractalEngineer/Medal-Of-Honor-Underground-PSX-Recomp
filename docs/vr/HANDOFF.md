@@ -23,7 +23,7 @@ the earlier hardware-first sequence; no completed box is reopened.
 
 ## 1. Start here - one next task
 
-**NEXT DESKTOP: W5.3c - moving-shot origin contract.**
+**NEXT DESKTOP: W5.3d - opt-in family-aware shot conversion.**
 The user explicitly requested desktop progress without another headset session.
 W3.4 desktop preparation is complete. The all-ID topology, animation capture,
 provisional calibration, gun-only controls, recoil/reload/switch samples and
@@ -35,13 +35,18 @@ The measured types are `13F1` rocket, `13F3` thrown, `13F6` single, `13F7`
 repeating/spread and `13FA` crossbow bolt. The shotgun constructs six native
 pellets. W5.3b now provides the native constructor-to-motion/damage preservation
 baseline. See [SHOT_LIFECYCLE_EVIDENCE.md](SHOT_LIFECYCLE_EVIDENCE.md). The next
-work is the explicit origin/sampling contract below, followed by family-aware
-conversion and matched native/tracked controls. No non-P38 override was enabled.
+work is family-aware conversion under the exact contract below. W5.3c is now
+complete for natural P1 marker acquisition, constructor/final-origin timing,
+freshness/load/ownership controls and independent vertex means. Read
+[CANONICAL_MARKERS_EVIDENCE.md](CANONICAL_MARKERS_EVIDENCE.md). No non-P38
+override was enabled by that measurement.
 
-### W5.3c exact experiment and stop rules
+### W5.3d exact experiment and stop rules
 
-1. Read the lifecycle evidence and compact receipt. Do not repeat all-ID family
-   discovery, mesh discovery, the unchanged pose matrix or a headset batch.
+1. Read canonical-marker and lifecycle evidence and their receipts. Do not
+   repeat all-ID family/mesh discovery, the unchanged pose matrix, canonical
+   acquisition or a headset batch. `weapon_markers.h` and the sampler already
+   provide selected animated points and owner/model/load/freshness guards.
 2. The intervening writers are now mapped in
    [the origin receipt](../../vr/proof/weapon-projectile-origin-writers-receipt.json).
    Do not rediscover them: grenade `80084CC0/80084CCC/80084CD8`, petrol bomb
@@ -54,27 +59,36 @@ conversion and matched native/tracked controls. No non-P38 override was enabled.
    choosing final family seams, and capture complete code units for any new
    guard before writes. Do not subtract measured shift vectors as constants;
    petrol/rocket shifted by another world unit in the focused follow-up.
-3. At the already measured `800894DC` animated-model seam, distinguish natural
-   P1 drawing from eye replay/P2 drawing. Capture a simulation-owned copy of the
-   measured marker groups only after native animation, with owner, object, ID,
-   source-asset identity, guest cycle and load generation. Measure timing relative
-   to the shot event. The existing diagnostic frozen-frame arrays are populated
-   in the render path and do not themselves establish a canonical simulation cache.
-4. Define the freshness/animation contract from that timing. Reject absent,
-   mismatched, stale or time-reversed marker data and invalidate it on load or
-   weapon/owner changes. Never use a last-eye affine or silently substitute the
-   idle stored tip. Use the same declared animated tip/axis and quantized affine
-   for the render/shot comparison.
-5. Retain one bounded receipt for the canonical-marker experiment; the writer
-   receipt is already complete for its three controls.
-   Only then implement W5.3d behind a separate default-OFF candidate flag. Do not
-   widen the P38 guard to all IDs as a substitute for those measurements. Preserve
-   native random pellet motion, speed, gravity, collision, ammo and release.
-6. Two failed runs of the same hypothesis: inspect the retained per-ID trace and
+3. Begin with complete native code units and guards for the already mapped
+   family stages. The new read-only observation PCs are grenade `80084CDC`
+   (after its second basis, before initialization), petrol `80084B74` (after
+   optional Y clamp, before history copying), rocket `80048AAC` (after its
+   constructor adjustment, before final input-history copies). Their observed
+   words/register relationships are in canonical evidence, not sufficient write
+   guards. Preserve native clearance/history/init policy; do not merely cancel
+   an origin adjustment to make a numeric muzzle assertion pass.
+4. Extend the existing quantized-affine/full-inverse helper to accept the
+   immutable animated tip and declared axis. Use the same render grip/basis
+   policy. P38 has a barrel-ring axis; other profiles currently have provisional
+   grip-to-tip axes, not newly measured bores. Reject degenerate axes. Keep the
+   static helper as a compatibility wrapper for the old P38 flag and tests.
+5. Add a separate default-OFF all-family candidate flag (proposed name
+   `MOHU_VR_WEAPON_AIM`, not implemented yet), requiring the calibrated render
+   path. Enable the existing canonical producer for that candidate; do not build
+   another cache. Keep the old P38 flag and its MP40-negative control unchanged
+   when the new flag is absent. Under the new candidate, stale/absent/mismatched
+   markers fall back to native, never silently to the idle P38 point.
+6. First prove P38, MP40 and six-pellet shotgun controls, including native random
+   spread/speed and real native damage. Then handle each projectile family at
+   its guarded origin/direction/init stages. Ammo, RNG, speed, gravity, release,
+   owner, collision and damage stay native. Use the retained native baselines;
+   do not claim all families from an initial constructor-only pose write.
+7. Two failed runs of the same hypothesis: inspect the retained per-ID trace and
    missing fact; do not repeat an unchanged full matrix. Focused `--ids` runs
    cannot publish an all-ID proof. No health/ammo/code/save edits or header patches.
 
-W5.3c is desktop work. W5.2 NPC/SP and physical W3.3/W3.5 stay open independently.
+W5.3d is desktop work. W5.3e matched preservation/impact, W5.2 NPC/SP and physical
+W3.3/W3.5 remain open independently.
 
 The moving-marker result is not optional: all 13 IDs require a tip recomputed
 from the current marker vertices after native animation. The stored calibration
@@ -98,8 +112,9 @@ Current all-ID desktop result:
 - `MOHU_VR_WEAPON_CALIBRATED=1` enables the provisional all-ID calibration.
 - Both flags remain OFF by default. `MOHU_VR_P38_CALIBRATED=1` remains the
   P38-specific path, and `MOHU_VR_P38_AIM=1` remains P38-shot-only.
-- The current calibrated MP matrix ran 64 cases over 16 slot appearances / 13
-  unique IDs in both eyes, with 804 gun-only applications and zero rollback
+- The calibrated MP profile matrix ran 64 cases over 16 slot appearances / 13
+  unique IDs in both eyes on its recorded binary, with 804 gun-only applications
+  and zero rollback
   failures. The earlier 876 count belongs to the previous binary.
 - The P38 and silenced-pistol masks use explicit per-vertex selections because
   their gun islands share node 11 with the hand/arm mesh.
@@ -114,6 +129,11 @@ Current all-ID desktop result:
   linked damage writes. Six shotgun directions span about 5.25 degrees despite
   identical initial basis angles. Recycled Sten addresses are split by global
   construction sequence. This baseline does not close tracked preservation.
+- Canonical sampling passed 13 IDs / 18 initial shot events and all three final
+  projectile-origin stages. Six cache controls passed. The source is the last
+  completed natural P1 model before the event, not the next recoil frame or a
+  last-eye buffer. Maximum observed initial-event age was 1,128,671 cycles;
+  the declared rejection limit is 2,257,920. W5.3c makes no new shot writes.
 
 The earlier operator findings now have desktop corrections:
 
@@ -253,24 +273,27 @@ Accepted evidence:
 | W2.5 MP lifecycle / recovery | [control receipt](../../vr/proof/weapon-mp-lifecycle-receipt.json) and [build receipt](../../vr/proof/weapon-mp-lifecycle-build-receipt.json): 17 MP input/button cases, native Start pause/resume, zero render-time sampling, 13 SP cases, inherited-flag flat startup |
 | W3.1 P38 calibration | [calibration receipt](../../vr/proof/weapon-p38-calibration-receipt.json), [capture receipt](../../vr/proof/weapon-p38-calibration-capture-receipt.json) and [build receipt](../../vr/proof/weapon-p38-calibration-build-receipt.json): 69 atomic source/animated vertices, orthonormal axes, grip and muzzle markers, nominal-size scale, focused tests and 33-case parity |
 | W3.2 P38 headset comparison | [headset comparison](../../vr/proof/weapon-p38-headset-receipt.json) and [complete build receipt](../../vr/proof/weapon-p38-headset-complete-build-receipt.json): 30 seconds native plus 30 seconds tracked, 30/30 live hand samples per mode, fresh VDXR submissions and stereo pairs, zero final failures; no operator acceptance claim |
-| W3.4 all-ID profiles | [topology](../../vr/proof/weapon-complete-gun-topology-receipt.json), [animated capture](../../vr/proof/weapon-profile-captures-receipt.json), [provisional calibration](../../vr/proof/weapon-provisional-calibrations-receipt.json), [calibrated controls](../../vr/proof/weapon-complete-gun-controls-receipt.json) and [control sheet](../../vr/proof/weapon-complete-gun-controls.png): 13 unique IDs / 16 slot rows, 64 cases, 804 current-binary eye masks, zero mixed gun/arm triangles and zero rollback errors |
+| W3.4 all-ID profiles | [topology](../../vr/proof/weapon-complete-gun-topology-receipt.json), [animated capture](../../vr/proof/weapon-profile-captures-receipt.json), [provisional calibration](../../vr/proof/weapon-provisional-calibrations-receipt.json), [calibrated controls](../../vr/proof/weapon-complete-gun-controls-receipt.json) and [control sheet](../../vr/proof/weapon-complete-gun-controls.png): 13 unique IDs / 16 slot rows, 64 cases, 804 eye masks on its recorded binary, zero mixed gun/arm triangles and zero rollback errors |
 | W3.4 moving marker | [moving-marker receipt](../../vr/proof/weapon-moving-muzzle-receipt.json) and [control sheet](../../vr/proof/weapon-moving-muzzle-controls.png): frozen all-vertex samples, 13 confirmed switches, nine recoil paths, seven confirmed reloads, three prop actions, scoped hidden-model states; all IDs require an animated marker recomputation |
 | W5.3 shot families | [family receipt](../../vr/proof/weapon-shot-families-receipt.json) and [evidence](SHOT_FAMILY_EVIDENCE.md): 13 IDs, common basis caller, types `13F1/13F3/13F6/13F7/13FA`, six shotgun pellets, native ammo/slot changes; read-only except P38 |
 | W5.3 native lifecycle | [lifecycle receipt](../../vr/proof/weapon-shot-lifecycle-receipt.json), [evidence](SHOT_LIFECYCLE_EVIDENCE.md) and [tool validation](../../vr/proof/weapon-shot-lifecycle-validation-receipt.json): all 13 IDs, 22 lifetimes, 147 XYZ groups, 19 native damage writes, six distinct pellet directions and safe address reuse; no override enabled |
 | W5.3c origin writers | [origin receipt](../../vr/proof/weapon-projectile-origin-writers-receipt.json): three actual objects, full object-address-filtered histories, last XYZ writers equal first-motion origins, live code windows; grenade has a second basis/init call after constructor |
-| Current build/regressions | [shot-family build receipt](../../vr/proof/weapon-shot-families-build-receipt.json): 57 Python tests, strict MP/shot/weapon fixtures, all-ID family capture, five-case native P38 and 14-case tracked P38 aim; active debug tools ON |
+| W5.3c canonical markers | [marker receipt](../../vr/proof/weapon-canonical-markers-receipt.json), [evidence](CANONICAL_MARKERS_EVIDENCE.md) and [build/regressions](../../vr/proof/weapon-canonical-markers-build-receipt.json): 13 IDs, 18 constructor events, three final-origin stages, independent vertex means, stale/load/recovery/P2/disabled controls; no new shot writes |
+| Current build/regressions | [canonical-marker build receipt](../../vr/proof/weapon-canonical-markers-build-receipt.json): 77 Python tests, strict C/syntax/build, 33 parity cases, all-ID/final-origin markers, five native and 14 tracked P38 controls; debug tools ON |
 | Earlier native damage | [WEAPON_SET_EVIDENCE.md](WEAPON_SET_EVIDENCE.md), [weapon-alignment-receipt.json](../../vr/proof/weapon-alignment-receipt.json): all 13 IDs, damage-only pose reachability |
 | Current all-ID controls | [weapon-complete-gun-controls.png](../../vr/proof/weapon-complete-gun-controls.png) |
 | SP world / visibility | [PGXP_RENDER_VIEW_EVIDENCE.md](PGXP_RENDER_VIEW_EVIDENCE.md), [HEAD_TURN_HUD_EVIDENCE.md](HEAD_TURN_HUD_EVIDENCE.md), [SKY_GHOST_EVIDENCE.md](SKY_GHOST_EVIDENCE.md) |
 | Native input | [MOVEMENT_EVIDENCE.md](MOVEMENT_EVIDENCE.md): synthetic SP and MP controls; physical acceptance remains open |
 
 The current diagnostic executable SHA-256 is
-`2fab9c257013832e9dde5aaddcb9e24a0c232d873514f5c48188c4d8e018e547`.
-See the current [build receipt](../../vr/proof/weapon-shot-families-build-receipt.json)
-for runtime source hashes, controls and remaining limits. The later
+`cf399e543a90a8ec9c09eea62f9ab7fd838fde1229d33e23957d8b9ea1b47e68`.
+See the current [build receipt](../../vr/proof/weapon-canonical-markers-build-receipt.json)
+for runtime source hashes, 77 Python tests, focused C/syntax/build checks and
+five native / 14 tracked P38 regressions. The earlier
 [lifecycle validation receipt](../../vr/proof/weapon-shot-lifecycle-validation-receipt.json)
-records the unchanged binary, current trace-tool hashes, 72 Python tests and
-33-case parity. No runtime rebuild was needed for that tooling/documentation pass.
+records the preceding binary, trace-tool hashes, 72 Python tests and 33-case
+parity for that earlier tooling/documentation pass. Historical receipts retain
+their original hashes.
 The last debug-off release executable was
 `bae4f60f02f4bf70ce86ea85d201674df7157bafa4d6bea20c3086972f2ab71d`;
 it is not the current working binary.
@@ -515,7 +538,7 @@ git status --short
 git branch --show-current
 git rev-parse HEAD
 git submodule status
-Get-Content vr/proof/weapon-all-id-profiles-build-receipt.json -Encoding utf8
+Get-Content vr/proof/weapon-canonical-markers-build-receipt.json -Encoding utf8
 Get-FileHash -LiteralPath build-release/Medal_of_Honor_Underground_Recompiled.exe -Algorithm SHA256
 Select-String -LiteralPath build-release/CMakeCache.txt -Pattern '^(PSX_DEBUG_TOOLS|MOHU_VR_DIAGNOSTICS|PSX_OPENXR):'
 ```
@@ -792,20 +815,22 @@ if ($LASTEXITCODE -ne 0) { throw 'Release build failed' }
 
 ## 10. Continuation record
 
-- Complete: C1-C4, W1-W3.2, W3.4, W4.1-W4.3, W5.1 and W5.3a/b read-only family
-  and native lifecycle baselines. W3.3 physical acceptance
+- Complete: C1-C4, W1-W3.2, W3.4, W4.1-W4.3, W5.1 and W5.3a/b/c read-only
+  family/lifecycle, final-origin and canonical-marker contracts. W3.3 physical acceptance
   is open. W3.4 now includes all-ID frozen-frame moving-marker evidence for
   native recoil, reload, switching, scope hiding and prop actions.
 - Moving-marker result: all 13 IDs require recomputation from current marker
   vertices after native animation. The idle stored point remains a reference;
   W5/W6 must not treat it as animation-safe. The crossbow's tested launch sample
   alone was rigid. Sten reload and scoped-shot ammo are `not-observed`.
-- NEXT desktop: W5.3c moving-shot origin contract (section 1). Preserve
+- NEXT desktop: W5.3d opt-in family-aware conversion (section 1). Preserve
   shotgun pellets, rocket collision and native throw/release/flight behavior;
   use the animated marker before any shot write. W5.2 remains open until a
   compatible copied live NPC/SP fixture and guarded SP binding are available.
   Do not repeat the W3.4 matrix, family map or P38 14-case subset.
 - Last evidence: `weapon-shot-lifecycle-receipt.json`,
+  `weapon-canonical-markers-receipt.json`, `CANONICAL_MARKERS_EVIDENCE.md`,
+  `weapon-canonical-markers-build-receipt.json`,
   `weapon-projectile-origin-writers-receipt.json`,
   `SHOT_LIFECYCLE_EVIDENCE.md`, `FRAMEWORK_UPSTREAM_TRACKER.md`,
   `weapon-shot-families-receipt.json`,

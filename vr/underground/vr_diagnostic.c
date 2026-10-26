@@ -11,6 +11,7 @@
 #include "shot.h"
 #include "psx_cycles.h"
 #include "weapon.h"
+#include "weapon_markers.h"
 #include "gpu_gl_renderer.h"
 #include "mod_plugins.h"
 #include "vr_pose_math.h"
@@ -1853,6 +1854,109 @@ static int vr_mp_frustum_command(const char* args, char* reply, int cap) {
     return 1;
 }
 
+/* Read-only canonical animated markers. Never populated by eye replay, and
+ * never used to write a shot in this measurement stage. */
+static bool g_marker_enabled, g_marker_frozen, g_marker_pending;
+static uint32_t g_marker_generation, g_marker_sequence, g_marker_sp;
+static uint32_t g_marker_captures, g_marker_replay_rejected, g_marker_p2_rejected;
+static uint32_t g_marker_loads;
+static uint64_t g_marker_load_cycle;
+static MohuVrMarkerKey g_marker_pending_key;
+static MohuVrMarkerSample g_marker_cache;
+
+static int vr_marker_model_key(MohuVrMarkerKey* key) {
+    MohuVrMpInputState mp;
+    if (!key || !vr_mp_input_snapshot(&mp)) return 0;
+    const uint32_t owner=psx_mod_read_word(MOHU_VR_MP_P1_ROOT);
+    const uint32_t input=psx_mod_read_word(owner+0x39Cu);
+    const uint32_t object=psx_mod_read_word(owner+0x114u);
+    if (input != owner+0x400u || object != input+MOHU_VR_WEAPON_FP_INPUT_OFFSET)
+        return 0;
+    const unsigned id=psx_mod_read_byte(input+93u);
+    const MohuVrWeaponProfile* p=mohu_vr_weapon_profile_find(id);
+    if (!p || !mohu_vr_marker_group(id) ||
+        guest_range_fnv1a(MOHU_VR_WEAPON_FP_RENDER_ADDR,MOHU_VR_WEAPON_FP_RENDER_BYTES)!=MOHU_VR_WEAPON_FP_RENDER_FNV ||
+        guest_range_fnv1a(MOHU_VR_WEAPON_FP_MODEL_ADDR,MOHU_VR_WEAPON_FP_MODEL_BYTES)!=MOHU_VR_WEAPON_FP_MODEL_FNV ||
+        psx_mod_read_word(MOHU_VR_WEAPON_FP_CALL_ADDR)!=MOHU_VR_WEAPON_FP_CALL_WORD ||
+        psx_mod_read_word(object+0x70u)!=p->mesh_magic ||
+        psx_mod_read_half(object+0xB6u)!=p->face_count) return 0;
+    const uint32_t header=psx_mod_read_word(object+0x80u);
+    if (header<0x80000000u || header>0x801FFFF8u || (header&3u) ||
+        psx_mod_read_word(header+4u)!=p->node_count) return 0;
+    const uint32_t nodes=psx_mod_read_word(header);
+    if (nodes<0x80000000u || nodes>0x80200000u-p->node_count*8u || (nodes&3u)) return 0;
+    uint32_t hash=2166136261u;
+    for (unsigned node=0; node<p->node_count; ++node) {
+        const uint32_t count=psx_mod_read_word(nodes+node*8u+4u);
+        const uint32_t data=psx_mod_read_word(nodes+node*8u);
+        if (count!=p->vertices[node] || (count &&
+            (data<0x80000000u || data>0x80200000u-count*8u || (data&3u)))) return 0;
+        for (unsigned k=0; k<4; ++k) hash=(hash^((count>>(k*8u))&255u))*16777619u;
+        for (unsigned k=0; k<count*8u; ++k) hash=(hash^psx_mod_read_byte(data+k))*16777619u;
+    }
+    if (hash!=p->geometry_fnv32) return 0;
+    *key=(MohuVrMarkerKey){owner,input,object,id,hash,g_marker_generation};
+    return 1;
+}
+
+static void vr_marker_load(void) {
+    ++g_marker_generation;
+    ++g_marker_loads;
+    g_marker_load_cycle=psx_cycle_count;
+    g_marker_cache.valid=0;
+    g_marker_pending=false;
+}
+
+static void vr_marker_enter(CPUState* cpu) {
+    if (!g_marker_enabled || !cpu) return;
+    if (g_stereo_active) { ++g_marker_replay_rejected; return; }
+    g_marker_pending=false;
+    if (g_marker_frozen) return;
+    MohuVrMarkerKey key;
+    if (!vr_marker_model_key(&key)) return;
+    if (cpu->gpr[4]!=key.object) {
+        const uint32_t p2=psx_mod_read_word(MOHU_VR_MP_P1_ROOT+4u);
+        if (mohu_vr_mp_actor_address(p2) && cpu->gpr[4]==psx_mod_read_word(p2+0x114u))
+            ++g_marker_p2_rejected;
+        return;
+    }
+    if (cpu->gpr[31]!=MOHU_VR_WEAPON_FP_CALLER_RA || cpu->gte_ctrl[26]!=133u) return;
+    g_marker_pending_key=key;
+    g_marker_sp=cpu->gpr[29];
+    g_marker_pending=true;
+}
+
+static void vr_marker_project(CPUState* cpu) {
+    if (!g_marker_enabled || !cpu || g_stereo_active || !g_marker_pending) return;
+    g_marker_pending=false;
+    if (g_marker_frozen || cpu->gpr[29]!=g_marker_sp-0x48u ||
+        cpu->gpr[20]!=g_marker_pending_key.object) return;
+    MohuVrMarkerKey key;
+    if (!vr_marker_model_key(&key) ||
+        memcmp(&key,&g_marker_pending_key,sizeof key)) return;
+    const MohuVrMarkerGroup* group=mohu_vr_marker_group(key.id);
+    const MohuVrWeaponProfile* p=mohu_vr_weapon_profile_find(key.id);
+    const uint32_t output=cpu->gpr[19];
+    if (output<0x80000000u || output>0x80200000u-p->node_count*4u || (output&3u)) return;
+    MohuVrMarkerSample result={0};
+    result.key=key;
+    result.cycle=psx_cycle_count;
+    result.vertex_count=group->counts[0]+group->counts[1]+group->counts[2];
+    for (unsigned i=0; i<result.vertex_count; ++i) {
+        const unsigned node=group->vertices[i][0], vertex=group->vertices[i][1];
+        if (node>=p->node_count || vertex>=p->vertices[node]) return;
+        const uint32_t data=psx_mod_read_word(output+node*4u);
+        if (data<0x80000000u || data>0x80200000u-p->vertices[node]*8u || (data&3u)) return;
+        for (unsigned axis=0; axis<3; ++axis)
+            result.vertices[i][axis]=(int16_t)psx_mod_read_half(data+vertex*8u+axis*2u);
+    }
+    if (!mohu_vr_marker_points(group,result.vertices,result.vertex_count,result.points)) return;
+    result.valid=1;
+    result.sequence=++g_marker_sequence;
+    g_marker_cache=result;
+    ++g_marker_captures;
+}
+
 /* Read-only native-shot instrumentation. Kept separate from the eye-only laser
  * cache: the canonical matrix must come from natural P1 level drawing. */
 typedef struct {
@@ -1863,10 +1967,15 @@ typedef struct {
     int aimed;
     uint32_t weapon_control[8];
     int32_t aimed_position[3], aimed_angles[3];
+    MohuVrMarkerSample marker;
+    uint32_t marker_generation;
+    int marker_valid;
 } MohuVrShotSample;
 static bool g_shot_capture;
 static unsigned g_shot_count, g_shot_overflow;
 static MohuVrShotSample g_shot_samples[64];
+static MohuVrShotSample g_marker_origins[64];
+static unsigned g_marker_origin_count, g_marker_origin_overflow;
 static uint32_t g_shot_camera[8], g_shot_camera_owner;
 static int32_t g_shot_native_camera_position[3];
 static uint64_t g_shot_camera_cycle;
@@ -1925,9 +2034,37 @@ static bool vr_p38_model_valid(uint32_t owner) {
         guest_range_fnv1a(faces,MOHU_VR_P38_TRIANGLE_STREAM_BYTES) == MOHU_VR_P38_TRIANGLE_STREAM_FNV;
 }
 
+/* Read-only final-origin stages measured in the object-address writer probe.
+ * Observe grenade after its second basis call, petrol after its optional clamp,
+ * and rocket after its constructor adjustment. These are not override guards. */
+static void vr_marker_origin_event(CPUState* cpu, uint32_t address) {
+    if (!g_marker_enabled || !cpu || g_stereo_active) return;
+    const unsigned id=address==0x80084CDCu ? 10u : address==0x80084B74u ? 15u : 13u;
+    const uint32_t object=cpu->gpr[id==13u ? 16 : 17];
+    const uint32_t owner=psx_mod_read_word(MOHU_VR_MP_P1_ROOT);
+    if (!mohu_vr_mp_actor_address(object) || object==owner ||
+        (id==13u ? cpu->gpr[18]!=owner : cpu->gpr[18]!=owner+0x400u) ||
+        psx_mod_read_word(object+8u)!=mohu_vr_shot_type(id)) return;
+    MohuVrMarkerKey current;
+    if (!vr_marker_model_key(&current) || current.id!=id ||
+        guest_range_fnv1a(MOHU_VR_SHOT_BASIS,MOHU_VR_SHOT_BASIS_SIZE)!=MOHU_VR_SHOT_BASIS_FNV) return;
+    if (g_marker_origin_count>=sizeof g_marker_origins/sizeof g_marker_origins[0]) {
+        ++g_marker_origin_overflow; return;
+    }
+    MohuVrShotSample* s=&g_marker_origins[g_marker_origin_count++];
+    memset(s,0,sizeof *s);
+    s->guard.shot=object; s->guard.owner=owner; s->guard.weapon_id=id;
+    s->guard.type=mohu_vr_shot_type(id); s->guard.argument=address;
+    s->guard.caller=cpu->gpr[31];
+    s->guard.cycle=psx_cycle_count;
+    s->marker=g_marker_cache;
+    s->marker_generation=g_marker_generation;
+    s->marker_valid=mohu_vr_marker_usable(&s->marker,&current,psx_cycle_count);
+}
+
 static void vr_shot_basis_entry(CPUState* cpu, uint32_t address) {
     (void)address;
-    if ((!g_shot_capture && !g_p38_aim) || !cpu) return;
+    if ((!g_shot_capture && !g_p38_aim && !g_marker_enabled) || !cpu) return;
     if (g_stereo_active) {
         psx_mod_counter_add("mohu.vr.shot.replay_blocked", 1);
         return;
@@ -1977,6 +2114,14 @@ static void vr_shot_basis_entry(CPUState* cpu, uint32_t address) {
     for (unsigned i = 0; i < 3u; ++i) {
         s->position[i] = (int32_t)psx_mod_read_word(s->guard.argument + 0x220u + 4u*i);
         s->angles[i] = (int32_t)psx_mod_read_word(s->guard.argument + 0x23Cu + 4u*i);
+    }
+    if (g_marker_enabled) {
+        MohuVrMarkerKey current;
+        s->marker=g_marker_cache;
+        s->marker_generation=g_marker_generation;
+        s->marker_valid=s->guard.code_valid && s->guard.multiplayer &&
+            s->guard.owner==s->guard.p1 && vr_marker_model_key(&current) &&
+            mohu_vr_marker_usable(&s->marker,&current,psx_cycle_count);
     }
     if (g_p38_aim && s->eligible && vr_p38_model_valid(s->guard.owner)) {
         PSXModOpenXRHands hands = {0};
@@ -2070,6 +2215,70 @@ static int vr_shot_command(const char* args, char* reply, int cap) {
     (void)snprintf(reply, (size_t)cap, "{\"capture\":%d,\"count\":%u,\"overflow\":%u}",
                    g_shot_capture ? 1 : 0, g_shot_count, g_shot_overflow);
     return 1;
+}
+
+static int vr_marker_command(const char* args, char* reply, int cap) {
+    if (!args || !reply || cap<1) return -1;
+    if (!strcmp(args,"start")) {
+        g_marker_enabled=true; g_marker_frozen=false;
+        g_marker_cache.valid=0; g_marker_pending=false;
+        g_marker_captures=g_marker_replay_rejected=g_marker_p2_rejected=0;
+        g_marker_origin_count=g_marker_origin_overflow=0;
+    } else if (!strcmp(args,"stop")) {
+        g_marker_enabled=false; g_marker_cache.valid=0; g_marker_pending=false;
+    } else if (!strcmp(args,"freeze")) {
+        g_marker_frozen=true; g_marker_pending=false;
+    } else if (!strcmp(args,"resume")) {
+        g_marker_frozen=false; g_marker_cache.valid=0; g_marker_pending=false;
+    } else if (!strcmp(args,"origins")) {
+        (void)snprintf(reply,(size_t)cap,"{\"count\":%u,\"overflow\":%u}",
+                       g_marker_origin_count,g_marker_origin_overflow);
+        return 1;
+    } else if (strcmp(args,"status") && strncmp(args,"shot=",5) && strncmp(args,"vertices=",9) &&
+               strncmp(args,"origin=",7) && strncmp(args,"origin-vertices=",16)) return -1;
+    unsigned index=0, start=0;
+    const bool origin_vertices=sscanf(args,"origin-vertices=%u:%u",&index,&start)==2;
+    const bool origin=origin_vertices || sscanf(args,"origin=%u",&index)==1;
+    const bool vertices=origin_vertices || sscanf(args,"vertices=%u:%u",&index,&start)==2;
+    const bool shot=origin || vertices || sscanf(args,"shot=%u",&index)==1;
+    if ((shot && index>=(origin ? g_marker_origin_count : g_shot_count)) ||
+        (vertices && start>MOHU_VR_MARKER_VERTEX_LIMIT)) return -1;
+    const MohuVrShotSample* event=origin ? &g_marker_origins[index] : &g_shot_samples[index];
+    const MohuVrMarkerSample* s=shot ? &event->marker : &g_marker_cache;
+    if (vertices) {
+        if (start>s->vertex_count) return -1;
+        unsigned count=s->vertex_count-start;
+        if (count>4u) count=4u;
+        int used=snprintf(reply,(size_t)cap,"{\"sequence\":%u,\"start\":%u,\"total\":%u,\"vertices\":[",
+                          s->sequence,start,s->vertex_count);
+        for (unsigned i=0; i<count && used>=0 && used<cap; ++i)
+            used+=snprintf(reply+used,(size_t)(cap-used),"%s[%d,%d,%d]",i ? "," : "",
+                s->vertices[start+i][0],s->vertices[start+i][1],s->vertices[start+i][2]);
+        if (used<0 || used>=cap) return -1;
+        used+=snprintf(reply+used,(size_t)(cap-used),"]}");
+        return used>=0 && used<cap ? 1 : -1;
+    }
+    MohuVrMarkerKey current;
+    const uint64_t cycle=shot ? event->guard.cycle : psx_cycle_count;
+    const int valid=shot ? event->marker_valid :
+        g_marker_enabled && vr_marker_model_key(&current) && mohu_vr_marker_usable(s,&current,cycle);
+    const int used=snprintf(reply,(size_t)cap,
+        "{\"enabled\":%d,\"frozen\":%d,\"valid\":%d,\"generation\":%u,\"expected_generation\":%u,"
+        "\"owner\":%u,\"input\":%u,\"object\":%u,\"id\":%u,\"geometry_fnv32\":%u,"
+        "\"sequence\":%u,\"cycle\":%llu,\"shot_cycle\":%llu,\"vertex_count\":%u,"
+        "\"grip\":[%.12g,%.12g,%.12g],\"tip\":[%.12g,%.12g,%.12g],\"axis_base\":[%.12g,%.12g,%.12g],"
+        "\"axis_kind\":\"%s\",\"event_pc\":%u,\"event_caller\":%u,\"event_shot\":%u,\"captures\":%u,\"replay_rejected\":%u,\"p2_rejected\":%u,"
+        "\"loads\":%u,\"load_cycle\":%llu}",
+        g_marker_enabled,g_marker_frozen,valid,s->key.generation,
+        shot ? event->marker_generation : g_marker_generation,
+        s->key.owner,s->key.input,s->key.object,s->key.id,s->key.geometry_fnv32,
+        s->sequence,(unsigned long long)s->cycle,(unsigned long long)cycle,s->vertex_count,
+        s->points[0][0],s->points[0][1],s->points[0][2],s->points[1][0],s->points[1][1],s->points[1][2],
+        s->points[2][0],s->points[2][1],s->points[2][2],s->key.id==0 ? "barrel-rings" : "provisional-grip-tip",
+        origin ? event->guard.argument : 0u,shot ? event->guard.caller : 0u,shot ? event->guard.shot : 0u,
+        g_marker_captures,g_marker_replay_rejected,g_marker_p2_rejected,g_marker_loads,
+        (unsigned long long)g_marker_load_cycle);
+    return used>=0 && used<cap ? 1 : -1;
 }
 
 static void vr_mp_frame_entry(CPUState* cpu, uint32_t address) {
@@ -2977,6 +3186,7 @@ static bool vr_weapon_scope(uint32_t* eye_out) {
 
 static void vr_weapon_viewmodel_project(CPUState* cpu, uint32_t address) {
     (void)address;
+    vr_marker_project(cpu);
     if (!g_weapon_viewmodel_pending || g_weapon_viewmodel_applied || !cpu ||
         cpu->gpr[29] != g_weapon_viewmodel_sp - 0x48u ||
         cpu->gpr[20] != g_weapon_profile_last_object) {
@@ -3360,6 +3570,7 @@ static void vr_weapon_viewmodel_return(CPUState* cpu, uint32_t address) {
  * after native animated vertices, before the caller projects those vertices. */
 static void vr_weapon_fp_enter(CPUState* cpu, uint32_t address) {
     (void)address;
+    vr_marker_enter(cpu);
     uint32_t eye;
     if (!cpu || !vr_weapon_scope(&eye) || g_weapon_viewmodel_pending ||
         g_weapon_viewmodel_applied) return;
@@ -3438,6 +3649,8 @@ static void vr_weapon_fp_enter(CPUState* cpu, uint32_t address) {
 }
 
 static void vr_diagnostic_activate(void) {
+    g_marker_enabled=g_marker_frozen=g_marker_pending=false;
+    memset(&g_marker_cache,0,sizeof g_marker_cache);
     g_active = true;
     const char* clear_only = getenv("MOHU_VR_CLEAR_ONLY");
     g_clear_only = clear_only && *clear_only && *clear_only != '0';
@@ -3711,6 +3924,14 @@ PSX_MOD_CONSTRUCTOR(psx_register_mohu_vr_diagnostic_plugin) {
     (void)psx_mod_register_command(
         "mohu.vr.mp.frustum", vr_mp_frustum_command);
     (void)psx_mod_register_command("mohu.vr.shot", vr_shot_command);
+    (void)psx_mod_register_command("mohu.vr.marker", vr_marker_command);
+    (void)psx_mod_register_savestate_plugin(MOHU_VR_DIAG_PLUGIN_ID,vr_marker_load);
+    (void)psx_mod_register_instruction_plugin(MOHU_VR_DIAG_PLUGIN_ID,
+        0x80084CDCu,0x0C0145EDu,vr_marker_origin_event);
+    (void)psx_mod_register_instruction_plugin(MOHU_VR_DIAG_PLUGIN_ID,
+        0x80084B74u,0xAE2B026Cu,vr_marker_origin_event);
+    (void)psx_mod_register_instruction_plugin(MOHU_VR_DIAG_PLUGIN_ID,
+        0x80048AACu,0x8E090220u,vr_marker_origin_event);
     (void)psx_mod_register_function_entry_plugin(
         MOHU_VR_DIAG_PLUGIN_ID, MOHU_VR_MP_SCENE_CALLBACK, vr_shot_camera_entry);
     (void)psx_mod_register_function_entry_plugin(

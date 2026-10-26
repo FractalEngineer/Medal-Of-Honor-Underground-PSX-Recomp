@@ -1146,12 +1146,12 @@
 
 ## Next work
 
-**W5.3c: moving-shot origin contract, without a headset.** Read the exact
-experiment in [HANDOFF.md](HANDOFF.md). Native family discovery, the
-constructor-to-motion preservation baseline and final projectile origin writers
-are mapped. Measure canonical animated-marker ownership/timing before
-family-aware writes. W5.3d/e remain conversion and
-matched tracked controls. W5.2 needs its compatible copied NPC/SP fixture and
+**W5.3d: opt-in family-aware shot conversion, without a headset.** Read the exact
+experiment in [HANDOFF.md](HANDOFF.md). Native family/lifecycle and final-origin
+mapping plus the canonical animated-marker contract are complete. Reuse the
+existing producer and quantized-affine/inverse helpers; capture complete code
+guards at the known family stages before new writes. W5.3e remains matched
+tracked controls. W5.2 needs its compatible copied NPC/SP fixture and
 independent SP bindings; W3.3/W3.5 remain physical. Preserve native gameplay,
 source saves, defaults, historical receipts and unrelated `.commandcode/`.
 
@@ -1208,3 +1208,45 @@ source saves, defaults, historical receipts and unrelated `.commandcode/`.
   [validation receipt](../../vr/proof/weapon-shot-lifecycle-validation-receipt.json).
   W5.3a/b are checked; parent W5.3 and its moving-origin, conversion and tracked
   preservation substeps remain open.
+
+## 2026-10-27 — W5.3c canonical animated-marker contract
+
+- Committed/pushed the preceding framework tracker and native lifecycle work as
+  `8fac00d` under the owner's commit/push/continue request.
+- Added a default-disabled, read-only natural P1 producer at the existing
+  post-animation `800894DC` seam. It checks the native entry/stack/caller/H=133,
+  live source model and vertex hash, copies the measured marker vertices, and
+  rejects eye replay/P2 drawing. No model, projection or shot field is written.
+- Added immutable per-shot selected-vertex snapshots, pure mean/usability guards,
+  a host load generation via the existing framework restore callback, and bounded
+  diagnostic commands. Marker groups are the existing W3.4 selections; P38 uses
+  barrel rings, while other grip-tip axes remain explicitly provisional.
+- Three separate observers sample grenade after its second basis call, petrol
+  after the optional clamp, and rocket after its constructor adjustment. The
+  initial constructor ring remains unchanged. Observed instruction/register
+  checks are not promoted to complete write guards.
+- Final all-ID measurement passes 13 IDs / 18 initial shot events / three final
+  origins. Maximum initial age is 1,128,671 cycles under a 2,257,920-cycle limit;
+  maximum independent NumPy mean error is `4.2857095650106203e-10`. All three
+  final stages use the same completed source sample as initial construction.
+- Six controls pass: fresh, frozen/stale, recovered, frozen-cache load rejection,
+  fresh P1 cache rejected for P2 fire, and disabled sampling. All fire through
+  native ammo logic. Load rejection covers generation and real clock reversal.
+- Validation: 77 Python tests including the strict C fixture and original group
+  comparison; strict diagnostic syntax; Release rebuild; fresh 33-case parity;
+  five native / 14 tracked P38 regressions with 901 pairs, 1,802 rollback checks
+  and zero failed pairs or mismatches. No framework/generated/config changes.
+- The all-ID sample reports 300 discarded eye attempts, isolated to the petrol
+  fixture and reproduced with the sampler disabled. Both have zero rollback
+  mismatches; a focused crossbow-death control has zero discards. Retained exact
+  counts/controls prevent a false zero-discard stereo claim. No render guard was
+  relaxed to hide that fixture behavior.
+- Current executable: `cf399e543a90a8ec9c09eea62f9ab7fd838fde1229d33e23957d8b9ea1b47e68`.
+  Debug/diagnostics remain ON for active work; sampler and candidate flags default
+  OFF. Source saves/preferences are unchanged, owned processes closed, and no
+  headset/XR runtime launched.
+- Evidence: [canonical contract](CANONICAL_MARKERS_EVIDENCE.md),
+  [marker receipt](../../vr/proof/weapon-canonical-markers-receipt.json),
+  [build/affected regressions](../../vr/proof/weapon-canonical-markers-build-receipt.json).
+  W5.3c is checked. Parent W5.3 and W5.3d/e remain open; no non-P38 override or
+  moving barrel/impact acceptance is claimed.

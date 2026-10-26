@@ -155,9 +155,11 @@ This three-control probe uses the accepted eight-frame trigger window. An earlie
 four-frame attempt did not construct the grenade; do not repeat that shorter
 window. The final run closed cleanly with source saves/preferences unchanged.
 
-Next is **W5.3c**, specified in [HANDOFF.md](HANDOFF.md): establish a fresh canonical
-animated-marker contract using the now-mapped final origin/basis seams before
-family-aware writes. W5.3d/e then implement and
-test the opt-in candidate. Native model/reload/recoil controls remain accepted
+Follow-up W5.3c is complete in
+[CANONICAL_MARKERS_EVIDENCE.md](CANONICAL_MARKERS_EVIDENCE.md), including natural
+P1 source ownership, freshness/load controls and all three final-origin stages.
+Next is **W5.3d**, specified in [HANDOFF.md](HANDOFF.md): implement the opt-in
+family-aware candidate. W5.3e supplies matched preservation/impact controls.
+Native model/reload/recoil controls remain accepted
 within W3.4; they do not close moving-shot alignment. NPC/SP and physical gates
 remain separate.

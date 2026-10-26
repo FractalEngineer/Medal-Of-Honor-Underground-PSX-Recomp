@@ -11,15 +11,17 @@ Shared framework branches, the merged upstream VR stack and the three pending
 generic changes are tracked in [FRAMEWORK_UPSTREAM_TRACKER.md](FRAMEWORK_UPSTREAM_TRACKER.md).
 Framework development uses `vr/shared-development`; master mirrors upstream.
 
-1. [HANDOFF.md](HANDOFF.md) is the current execution contract: W5.3c
-   moving-shot origin contract; W5.2 remains open for a
+1. [HANDOFF.md](HANDOFF.md) is the current execution contract: W5.3d
+   opt-in family-aware conversion; W5.2 remains open for a
    compatible live NPC/SP fixture, and physical P38 acceptance stays open.
    [P38_NATIVE_AIM_EVIDENCE.md](P38_NATIVE_AIM_EVIDENCE.md) records the
    restored barrel, complete calibration, W4/W5.1 and automated native damage.
    [SHOT_FAMILY_EVIDENCE.md](SHOT_FAMILY_EVIDENCE.md) records the read-only
    all-ID constructor map, native shot types and shotgun pellet count.
    [SHOT_LIFECYCLE_EVIDENCE.md](SHOT_LIFECYCLE_EVIDENCE.md) records native
-   trajectories, spread, damage and the remaining origin/sampling measurements.
+   trajectories, spread, damage and the final-origin writer mapping.
+   [CANONICAL_MARKERS_EVIDENCE.md](CANONICAL_MARKERS_EVIDENCE.md) records the
+   completed natural P1 animated-marker/timing contract and final-origin stages.
    [WEAPON_COMPLETE_PROFILES.md](WEAPON_COMPLETE_PROFILES.md) records the
    all-ID topology, provisional calibration, desktop controls and moving-marker
    animation evidence.

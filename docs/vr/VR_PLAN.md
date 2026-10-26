@@ -8,7 +8,7 @@ scope has evidence; it never implies broader headset or gameplay acceptance.
 Historical design and prior attempts belong in
 [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md) and the evidence documents.
 
-**NEXT DESKTOP TASK: W5.3c - moving-shot origin contract.**
+**NEXT DESKTOP TASK: W5.3d - opt-in family-aware shot conversion.**
 W4 native P38 mapping and W5.1 opt-in rendered-muzzle shot conversion are now
 complete. The corrected P38 candidate retains its barrel, follows the measured
 grip, and passes native P2 damage/miss and tracking-fallback controls without a
@@ -17,6 +17,9 @@ scope hiding and prop special actions are exercised with native ammo/slot
 changes. W5.3 now has a complete read-only all-ID family map, including six
 shotgun pellets. The native lifecycle probe now follows construction through
 motion and linked damage, providing the preservation baseline for conversion.
+W5.3c now passes canonical animated marker acquisition and timing at all 13
+initial constructors plus three final projectile-origin stages, with real
+load/stale/recovery/P2 controls. No non-P38 shot write is enabled.
 W5.2 remains open because no compatible copied live NPC/SP
 fixture and independently measured SP binding was available. W3.3/W3.5 remain
 physical acceptance gates. Current evidence and exact continuation:
@@ -386,11 +389,14 @@ W5.3 desktop substeps (the parent stays open until tracked controls pass):
   linked damage and prop flight samples using copied MP fixtures. Split recycled
   shot objects by constructor write sequence. Do not infer a trajectory from
   basis angles alone. Evidence: `weapon-shot-lifecycle-receipt.json`.
-- [ ] W5.3c. Acquire fresh canonical animated marker data with owner, weapon,
+- [x] W5.3c. Acquire fresh canonical animated marker data with owner, weapon,
   load/time and freshness guards. The origin writers are mapped for thrown/rocket
   families; grenade also rebuilds basis after the common constructor. Retain
   those family-specific seams/history contracts. Eye snapshots and idle
-  calibration are not simulation caches.
+  calibration are not simulation caches. The completed sampler uses natural P1
+  post-animation output, owns its vertex copies, rejects eye replay/P2 drawing,
+  and guards source identity, load generation and guest-cycle freshness. All 13
+  IDs / 18 constructor events / three final-origin stages and six controls pass.
 - [ ] W5.3d. Add opt-in family-aware conversion that uses those moving markers
   and preserves native pellet generation, speeds, gravity, release and collision.
   Compare first integration origin as well as basis pose; no blind 13-ID guard
@@ -417,8 +423,12 @@ All 13 IDs passed, with 22 lifetimes, 147 complete XYZ groups and 19 linked
 native damage writes. Six native pellet directions span about 5.25 degrees.
 The [focused origin receipt](../../vr/proof/weapon-projectile-origin-writers-receipt.json)
 resolves the thrown/rocket position writers and grenade's second basis call.
-W5.3c now continues with canonical animated sampling; no family-aware override
-is claimed.
+W5.3c is complete within the contract in
+[CANONICAL_MARKERS_EVIDENCE.md](CANONICAL_MARKERS_EVIDENCE.md),
+[marker receipt](../../vr/proof/weapon-canonical-markers-receipt.json) and
+[build/regressions](../../vr/proof/weapon-canonical-markers-build-receipt.json).
+Maximum sampled constructor age is 1,128,671 cycles, below the declared
+2,257,920 limit. No family-aware override or moving-shot alignment is claimed.
 
 Exit gate: real native trajectory/collision/damage agrees with the rendered
 barrel within a stated tested tolerance. Native hits alone are insufficient.
