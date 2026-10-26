@@ -16,24 +16,33 @@ the earlier hardware-first sequence; no completed box is reopened.
 
 ## 1. Start here - one next task
 
-**NEXT DESKTOP: W5.2 - live NPC/SP isolation.**
+**NEXT DESKTOP: W5.3 - family-aware shot conversion and lifecycle controls.**
 The user explicitly requested desktop progress without another headset session.
 W3.4 desktop preparation is complete. The all-ID topology, animation capture,
 provisional calibration, gun-only controls, recoil/reload/switch samples and
 prop special actions now pass. Do not repeat the 13-ID mesh discovery or the
 unchanged pose matrix.
 
+W5.3 family discovery is complete: all 13 IDs use basis caller `0x800488D8`.
+The measured types are `13F1` rocket, `13F3` thrown, `13F6` single, `13F7`
+repeating/spread and `13FA` crossbow bolt. The shotgun constructs six native
+pellets. The next W5.3 work is family-aware conversion plus preserved shotgun,
+rocket and throw/release/flight behavior; the read-only capture did not enable
+non-P38 override writes.
+
 The moving-marker result is not optional: all 13 IDs require a tip recomputed
 from the current marker vertices after native animation. The stored calibration
 point is the idle reference, not an animation-safe shot origin. W5/W6 must use
-the moving result before transforming it with the render affine. W5.2 still
-needs a compatible copied live NPC/SP fixture and its own SP binding; if that
-fixture is absent, continue W5.3 constructor families. W4/W5.1 remain complete
-for P38; their 14-case tracked matrix passed again on the current binary.
+the moving result before transforming it with the render affine. W5.2 remains
+open because no compatible copied live NPC/SP fixture or independently measured
+SP shot/camera binding was available. W4/W5.1 remain complete for P38; their
+five-case native and 14-case tracked matrices passed again on the current binary.
 W3.3/W3.5 remain physical gates.
 
 Read [P38_NATIVE_AIM_EVIDENCE.md](P38_NATIVE_AIM_EVIDENCE.md) first for current
 special-function bindings and P38 combat limits. Read
+[SHOT_FAMILY_EVIDENCE.md](SHOT_FAMILY_EVIDENCE.md) for the all-ID constructor
+map and family limits. Read
 [WEAPON_COMPLETE_PROFILES.md](WEAPON_COMPLETE_PROFILES.md) for the all-ID
 topology, per-weapon masks, provisional calibration and desktop controls.
 
@@ -52,6 +61,9 @@ Current all-ID desktop result:
   states, nine recoil states, seven confirmed reload states, three prop special
   actions and the scoped hidden-model state. Every confirmed native action also
   changed clip, reserve or weapon slot as appropriate.
+- Native shot-family capture covered all 13 IDs through the common basis caller.
+  It observed five types, six shotgun pellets and clean native ammo/slot changes.
+  Only P38 still has an opt-in shot-pose override.
 
 The earlier operator findings now have desktop corrections:
 
@@ -157,7 +169,7 @@ rollback. W2.3 later added the accepted heading and near-wall controls.
 | --- | --- |
 | Repository | `C:/Users/titan/Desktop/Github_Projects/Mine/Medal-Of-Honor-Underground-PSX-Recomp` |
 | Branch / current HEAD | `feature/vr-port`; read current HEAD during preflight. W1/W2.1 predecessor is `afda5082...` |
-| Checkpoint scope | All-ID topology/capture/provisional calibration, calibrated controls and moving-marker/recoil/reload/switch/special-animation evidence; W4/W5.1 P38 retained; preserve `.commandcode/` |
+| Checkpoint scope | All-ID topology/capture/provisional calibration, calibrated controls, moving-marker animation and read-only shot-family evidence; W4/W5.1 P38 retained; preserve `.commandcode/` |
 | Framework gitlink | `555e1eabccc59b9b6ff0d9fca48aca783513dc86` |
 | UI gitlink | `7c635c6b366a6e0d5d3c913a7fce6ec04dd9f256` |
 | Title / version | `SLUS-01270` / `0.1.0` |
@@ -193,15 +205,16 @@ Accepted evidence:
 | W3.2 P38 headset comparison | [headset comparison](../../vr/proof/weapon-p38-headset-receipt.json) and [complete build receipt](../../vr/proof/weapon-p38-headset-complete-build-receipt.json): 30 seconds native plus 30 seconds tracked, 30/30 live hand samples per mode, fresh VDXR submissions and stereo pairs, zero final failures; no operator acceptance claim |
 | W3.4 all-ID profiles | [topology](../../vr/proof/weapon-complete-gun-topology-receipt.json), [animated capture](../../vr/proof/weapon-profile-captures-receipt.json), [provisional calibration](../../vr/proof/weapon-provisional-calibrations-receipt.json), [calibrated controls](../../vr/proof/weapon-complete-gun-controls-receipt.json) and [control sheet](../../vr/proof/weapon-complete-gun-controls.png): 13 unique IDs / 16 slot rows, 64 cases, 804 current-binary eye masks, zero mixed gun/arm triangles and zero rollback errors |
 | W3.4 moving marker | [moving-marker receipt](../../vr/proof/weapon-moving-muzzle-receipt.json) and [control sheet](../../vr/proof/weapon-moving-muzzle-controls.png): frozen all-vertex samples, 13 confirmed switches, nine recoil paths, seven confirmed reloads, three prop actions, scoped hidden-model states; all IDs require an animated marker recomputation |
-| Current build/regressions | [moving-marker build receipt](../../vr/proof/weapon-moving-muzzle-build-receipt.json): 52 Python tests, strict C fixtures, calibrated all-ID MP controls (804 eye masks), native P38 fire/recovery and 14-case tracked P38 aim; active debug tools ON |
+| W5.3 shot families | [family receipt](../../vr/proof/weapon-shot-families-receipt.json) and [evidence](SHOT_FAMILY_EVIDENCE.md): 13 IDs, common basis caller, types `13F1/13F3/13F6/13F7/13FA`, six shotgun pellets, native ammo/slot changes; read-only except P38 |
+| Current build/regressions | [shot-family build receipt](../../vr/proof/weapon-shot-families-build-receipt.json): 57 Python tests, strict MP/shot/weapon fixtures, all-ID family capture, five-case native P38 and 14-case tracked P38 aim; active debug tools ON |
 | Earlier native damage | [WEAPON_SET_EVIDENCE.md](WEAPON_SET_EVIDENCE.md), [weapon-alignment-receipt.json](../../vr/proof/weapon-alignment-receipt.json): all 13 IDs, damage-only pose reachability |
 | Current all-ID controls | [weapon-complete-gun-controls.png](../../vr/proof/weapon-complete-gun-controls.png) |
 | SP world / visibility | [PGXP_RENDER_VIEW_EVIDENCE.md](PGXP_RENDER_VIEW_EVIDENCE.md), [HEAD_TURN_HUD_EVIDENCE.md](HEAD_TURN_HUD_EVIDENCE.md), [SKY_GHOST_EVIDENCE.md](SKY_GHOST_EVIDENCE.md) |
 | Native input | [MOVEMENT_EVIDENCE.md](MOVEMENT_EVIDENCE.md): synthetic SP and MP controls; physical acceptance remains open |
 
 The current diagnostic executable SHA-256 is
-`16142c7d130049b33501383e4909cd7b4b1d08520aebb665c61b23c845fc6e66`.
-See the current [build receipt](../../vr/proof/weapon-moving-muzzle-build-receipt.json)
+`2fab9c257013832e9dde5aaddcb9e24a0c232d873514f5c48188c4d8e018e547`.
+See the current [build receipt](../../vr/proof/weapon-shot-families-build-receipt.json)
 for exact source hashes, controls and remaining limits.
 The last debug-off release executable was
 `bae4f60f02f4bf70ce86ea85d201674df7157bafa4d6bea20c3086972f2ab71d`;
@@ -724,20 +737,23 @@ if ($LASTEXITCODE -ne 0) { throw 'Release build failed' }
 
 ## 10. Continuation record
 
-- Complete: C1-C4, W1-W3.2, W3.4, W4.1-W4.3 and W5.1. W3.3 physical acceptance
+- Complete: C1-C4, W1-W3.2, W3.4, W4.1-W4.3, W5.1 and the W5.3 read-only family
+  map. W3.3 physical acceptance
   is open. W3.4 now includes all-ID frozen-frame moving-marker evidence for
   native recoil, reload, switching, scope hiding and prop actions.
 - Moving-marker result: all 13 IDs require recomputation from current marker
   vertices after native animation. The idle stored point remains a reference;
   W5/W6 must not treat it as animation-safe. The crossbow's tested launch sample
   alone was rigid. Sten reload and scoped-shot ammo are `not-observed`.
-- NEXT desktop: W5.2 live NPC/SP isolation. It needs a compatible copied live
-  NPC/SP fixture and an independently guarded SP shot/camera binding. If that
-  fixture is unavailable, continue W5.3 constructor families rather than
-  inventing an SP fixture. Do not repeat the W3.4 matrix or P38 14-case subset.
-- Last evidence: `weapon-moving-muzzle-receipt.json`,
+- NEXT desktop: W5.3 family-aware conversion and lifecycle controls. Preserve
+  shotgun pellets, rocket collision and native throw/release/flight behavior;
+  use the animated marker before any shot write. W5.2 remains open until a
+  compatible copied live NPC/SP fixture and guarded SP binding are available.
+  Do not repeat the W3.4 matrix, family map or P38 14-case subset.
+- Last evidence: `weapon-shot-families-receipt.json`,
+  `weapon-shot-families-build-receipt.json`,
+  `weapon-moving-muzzle-receipt.json`,
   `weapon-moving-muzzle-controls.png`,
-  `weapon-moving-muzzle-build-receipt.json`,
   `weapon-complete-gun-controls-receipt.json` / `.png` and
   `weapon-p38-aim-receipt.json`.
 - Exact W5.2 remainder: a compatible copied live NPC/SP fixture and independently

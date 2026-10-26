@@ -144,8 +144,8 @@ Evidence: [moving-marker receipt](../../vr/proof/weapon-moving-muzzle-receipt.js
 
 ## Remaining work
 
-W3.4 desktop preparation is complete. The other 12 profiles still do not have a
-rendered-muzzle native-shot override; their shot families and the moving-tip
-consumer belong to W5/W6. W5.2 still needs live NPC/SP isolation. W3.3/W3.5
-require operator hardware acceptance of size, attachment, recoil, reload,
-recenter, focus recovery and both eyes.
+W3.4 desktop preparation is complete. W5.3 maps all 13 native shot families but
+the other 12 profiles still do not have a rendered-muzzle native-shot override.
+Their family-aware conversion and moving-tip consumer remain open. W5.2 still
+needs live NPC/SP isolation. W3.3/W3.5 require operator hardware acceptance of
+size, attachment, recoil, reload, recenter, focus recovery and both eyes.

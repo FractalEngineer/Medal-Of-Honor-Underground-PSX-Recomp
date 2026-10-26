@@ -1118,12 +1118,40 @@
   [build receipt](../../vr/proof/weapon-moving-muzzle-build-receipt.json) and
   [profiles](WEAPON_COMPLETE_PROFILES.md).
 
+### W5.3 multiplayer shot-family map
+
+- Extended explicit shot capture so W5.3 can sample actor-valid basis calls
+  without enabling writes. A `start-p1` mode filters to the live P1 owner, while
+  the existing broad control retains P2/NPC evidence.
+- The basis hook now requires valid shot/owner actors and `A0 == S0`. P38's
+  override remains behind the prior type, caller, ownership, model and camera
+  guards; all other IDs were sampled read-only.
+- Copied MP slots 1-4 covered the first occurrence of all 13 IDs. Every ID used
+  caller `0x800488D8`. Measured types are `13F1` Panzerfaust, `13F3` stick and
+  petrol bombs, `13F6` P38/scoped rifle/Colt/silenced pistol/M1, `13F7`
+  MP40/shotgun/Sten/StG44 and `13FA` crossbow.
+- One shotgun trigger window constructed six pellets. Action windows changed
+  clip for every firearm, reserve for the Panzerfaust, and slot/reserve for the
+  thrown items and crossbow. The isolated scoped path is recorded by ordinary
+  native fire because raw R2 plus fire did not construct a shot.
+- Added `mohu_vr_shot_type()` / `mohu_vr_shot_family()` and strict fixture
+  coverage. Unknown IDs return native.
+- Validation: 57 Python tests; strict MP, shot and weapon C fixtures; diagnostic
+  syntax/build; complete all-ID family capture; five-case native P38 and
+  14-case tracked P38 aim. Source saves/preferences stayed unchanged, no owned
+  game remained, and normal defaults stayed off.
+- Evidence: [family evidence](SHOT_FAMILY_EVIDENCE.md),
+  [receipt](../../vr/proof/weapon-shot-families-receipt.json) and
+  [build receipt](../../vr/proof/weapon-shot-families-build-receipt.json).
+
 ## Next work
 
-**W5.2: live NPC/SP isolation, without a headset.**
-W3.4 and the all-ID animation matrix are complete. Use W5/W6's current animated
-marker, not the idle stored point, for any moving shot/laser work. W5.2 needs a
-compatible copied live NPC/SP fixture and an independently measured SP binding;
-if absent, continue W5.3 constructor families. W3.3/W3.5 remain physical gates.
-Only P38 has the accepted rendered-muzzle native-shot override. Preserve source
-saves, normal defaults, historical receipts and unrelated .commandcode work.
+**W5.3: family-aware conversion and lifecycle controls, without a headset.**
+The read-only all-ID constructor map is complete. Use W5/W6's current animated
+marker, not the idle stored point, for any moving shot/laser work. Preserve the
+six-pellet shotgun path, rocket collision and native throw/release/flight
+behavior. W5.2 remains open until a compatible copied live NPC/SP fixture and
+independently measured SP binding are available. W3.3/W3.5 remain physical
+gates. Only P38 has the accepted rendered-muzzle native-shot override. Preserve
+source saves, normal defaults, historical receipts and unrelated .commandcode
+work.

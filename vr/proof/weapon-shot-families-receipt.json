@@ -1,0 +1,3360 @@
+{
+  "schema": 1,
+  "kind": "W5.3 native MP shot-family map",
+  "complete": true,
+  "headset_used": false,
+  "fixture": "copied root MP slots 1-4; first occurrence of every weapon ID",
+  "executable_sha256": "2fab9c257013832e9dde5aaddcb9e24a0c232d873514f5c48188c4d8e018e547",
+  "revision": "ee9926ae1d8fbde27d04737d866dbe670475b657",
+  "build": {
+    "PSX_DEBUG_TOOLS": "ON",
+    "MOHU_VR_DIAGNOSTICS": "ON",
+    "PSX_OPENXR": "ON",
+    "configuration": "Release"
+  },
+  "sources": {
+    "vr/underground/vr_diagnostic.c": "5f97104c3b9af3c18bb0d16eb2f95a6f88a1c20a04f7a706cdcf5ae5a5b46fe5",
+    "vr/underground/shot.h": "7f004d216c55c6dd4dd941b665e79fee7ee57da6c988276e9a972e7bfddaa885",
+    "vr/tools/probe_shot_families.py": "78319b2ac602bb40af6e684cff1944d2d4e146f3d1cd4d35d9caf3f1e8904c2a",
+    "vr/tools/probe_native_shot.py": "911372df50621c7eff33d78a05ed7e829c2fe47e928077a66b391043b90a40b3",
+    "vr/tools/probe_weapon_profiles.py": "b3410f7800b022e5932ed60e8d873d6f2607d8520a11d27bb95770280490717c",
+    "vr/tools/inspect_weapon_sets.py": "0f57469c3ce10c069f575fd8d64b4fa50266523eceb727cead831ce12ce36239"
+  },
+  "source_saves": {
+    "saves\\openbios\\state_8001F844_slot01.pst": "b248dfa247b45a41906beea3aa829cff79b39d863e425211e5c0651e853a7f5d",
+    "saves\\openbios\\state_8001F844_slot01.thumb": "008eb36b216f802cc54b8911eed2201b28b5167830ac4cfeaf4bfff5aab3543c",
+    "saves\\openbios\\state_8001F844_slot02.pst": "d849f30c217e31ef05a0508f98c10a0ffbc2e03260bebf8ae13bf975745223b0",
+    "saves\\openbios\\state_8001F844_slot02.thumb": "3062f96294604ea6c16ce2560780338908145cb0b59709f83bbc95279f61533e",
+    "saves\\openbios\\state_8001F844_slot03.pst": "ac6a5e3f85a8a12a0c312d95682b74a26109a5c651e3ada39f50a986e9242e9d",
+    "saves\\openbios\\state_8001F844_slot03.thumb": "17b69f2729f3cbc9dc0c470e7eaf0cdcb479fc3a2afe2a51516e5e21546d12d5",
+    "saves\\openbios\\state_8001F844_slot04.pst": "5beb061c29120eb61a0d9fe2df1a73a6329ca465a24c67b4ca9c3fa0ca8cd0e6",
+    "saves\\openbios\\state_8001F844_slot04.thumb": "ce4d5a2cbccbb79bb74856cfbb4d534f3b6c4625c8b760ceaccc854c3a5bba9d"
+  },
+  "preferences": {
+    "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\build-release\\settings.toml": "5ba64573bb6ec0f437f64384a79fb1e8f8149ab90c88a4404e81d565227364d4",
+    "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\build-release\\keybinds.ini": "55a6baab11a9a36b64d3f92908b9fc7a6fec657e73b3d287784b1de60715008b",
+    "C:\\Program Files (x86)\\Steam\\config\\steamvr.vrsettings": "bc4b95d242547c552e4e6f672ad3c3284d357cd37249069fd643522473323f10"
+  },
+  "weapons": [
+    {
+      "id": 0,
+      "name": "P38 pistol",
+      "slot": 1,
+      "switches": 0,
+      "control": {
+        "scoped": false,
+        "hold_frames": 24,
+        "release_frames": 180,
+        "approach_frames": 0
+      },
+      "before": [
+        {
+          "port": 1,
+          "actor": "0x801483d0",
+          "input": "0x801487d0",
+          "weapon_slot": 0,
+          "weapon_id": 0,
+          "weapon": "P38 pistol",
+          "reserve": 20,
+          "clip": 8,
+          "input_fields": "000000000000000010ffffff0c00000000000000000000000000000000000000000014002c015a00010032002c012c010900080000000000000000000000000000000000",
+          "health_raw": 2097152,
+          "health": 32.0,
+          "position": [
+            -94470713,
+            33292288,
+            33718412
+          ],
+          "rotation": [
+            -16384,
+            24,
+            0
+          ]
+        },
+        {
+          "port": 2,
+          "actor": "0x80145810",
+          "input": "0x80145c10",
+          "weapon_slot": 0,
+          "weapon_id": 0,
+          "weapon": "P38 pistol",
+          "reserve": 20,
+          "clip": 8,
+          "input_fields": "000000000000000010ffffff0c000000000000000000000000000000000000000000140020001e00010032002c012c010900080000000000000000000000000000000000",
+          "health_raw": 2097152,
+          "health": 32.0,
+          "position": [
+            -96488943,
+            33357824,
+            -70958831
+          ],
+          "rotation": [
+            -32768,
+            24,
+            -32768
+          ]
+        }
+      ],
+      "after": [
+        {
+          "port": 1,
+          "actor": "0x801483d0",
+          "input": "0x801487d0",
+          "weapon_slot": 0,
+          "weapon_id": 0,
+          "weapon": "P38 pistol",
+          "reserve": 20,
+          "clip": 7,
+          "input_fields": "000000000000000010ffffff0c0000000c000000000000000000000000000000000014002c015a00010032002c012c010900070000000000000000000000000000000000",
+          "health_raw": 2097152,
+          "health": 32.0,
+          "position": [
+            -94470713,
+            33292288,
+            33718412
+          ],
+          "rotation": [
+            -16384,
+            24,
+            0
+          ]
+        },
+        {
+          "port": 2,
+          "actor": "0x80145810",
+          "input": "0x80145c10",
+          "weapon_slot": 0,
+          "weapon_id": 0,
+          "weapon": "P38 pistol",
+          "reserve": 20,
+          "clip": 8,
+          "input_fields": "000000000000000010ffffff0c000000000000000000000000000000000000000000140020001e00010032002c012c010900080000000000000000000000000000000000",
+          "health_raw": 2048000,
+          "health": 31.25,
+          "position": [
+            -96467535,
+            33357824,
+            -70946639
+          ],
+          "rotation": [
+            -8192,
+            28,
+            -32768
+          ]
+        }
+      ],
+      "effects": {
+        "before": {
+          "weapon_slot": 0,
+          "weapon_id": 0,
+          "clip": 8,
+          "reserve": 20
+        },
+        "after": {
+          "weapon_slot": 0,
+          "weapon_id": 0,
+          "clip": 7,
+          "reserve": 20
+        },
+        "changed": {
+          "clip": [
+            8,
+            7
+          ]
+        }
+      },
+      "camera": {
+        "valid": 1,
+        "owner": 2148828112,
+        "cycle": 10431683011,
+        "control": [
+          4294762470,
+          246,
+          3281930,
+          5308170,
+          57338,
+          4294964372,
+          4294966954,
+          936
+        ],
+        "native_position": [
+          -94470713,
+          17563648,
+          33718412
+        ]
+      },
+      "types": [
+        5110
+      ],
+      "callers": [
+        "0x800488D8"
+      ],
+      "family": "13F6",
+      "owned_count": 1,
+      "ignored_count": 0,
+      "eligible_count": 1,
+      "aimed_count": 0,
+      "camera_invalid_count": 0,
+      "shots": [
+        {
+          "shot": 2148598720,
+          "owner": 2148828112,
+          "p1": 2148828112,
+          "type": 5110,
+          "weapon": 0,
+          "caller": 2147780824,
+          "argument": 2148598720,
+          "eligible": 1,
+          "code_valid": 1,
+          "camera_valid": 1,
+          "camera_owner": 2148828112,
+          "cycle": 10436189543,
+          "camera_cycle": 10435062744,
+          "position": [
+            -98566144,
+            23527424,
+            3735552
+          ],
+          "angles": [
+            131072,
+            133758976,
+            0
+          ],
+          "aimed": 0,
+          "aimed_position": [
+            0,
+            0,
+            0
+          ],
+          "aimed_angles": [
+            0,
+            0,
+            0
+          ],
+          "weapon_control": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "camera": [
+            4294762470,
+            246,
+            3281930,
+            5308170,
+            57338,
+            4294964372,
+            4294966954,
+            936
+          ]
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "name": "MP40",
+      "slot": 1,
+      "switches": 1,
+      "control": {
+        "scoped": false,
+        "hold_frames": 24,
+        "release_frames": 180,
+        "approach_frames": 0
+      },
+      "before": [
+        {
+          "port": 1,
+          "actor": "0x801483d0",
+          "input": "0x801487d0",
+          "weapon_slot": 1,
+          "weapon_id": 1,
+          "weapon": "MP40",
+          "reserve": 300,
+          "clip": 32,
+          "input_fields": "000000000000000010ffffff0400000000000000000000000000000000000000010114002c015a00010032002c012c010900080020000000000000000000000000000000",
+          "health_raw": 2097152,
+          "health": 32.0,
+          "position": [
+            -94470713,
+            33292288,
+            33718412
+          ],
+          "rotation": [
+            8192,
+            8,
+            0
+          ]
+        },
+        {
+          "port": 2,
+          "actor": "0x80145810",
+          "input": "0x80145c10",
+          "weapon_slot": 0,
+          "weapon_id": 0,
+          "weapon": "P38 pistol",
+          "reserve": 20,
+          "clip": 8,
+          "input_fields": "000000000000000010ffffff0c000000000000000000000000000000000000000000140020001e00010032002c012c010900080000000000000000000000000000000000",
+          "health_raw": 2097152,
+          "health": 32.0,
+          "position": [
+            -96488943,
+            33357824,
+            -70958831
+          ],
+          "rotation": [
+            -32768,
+            24,
+            -32768
+          ]
+        }
+      ],
+      "after": [
+        {
+          "port": 1,
+          "actor": "0x801483d0",
+          "input": "0x801487d0",
+          "weapon_slot": 1,
+          "weapon_id": 1,
+          "weapon": "MP40",
+          "reserve": 300,
+          "clip": 31,
+          "input_fields": "000000000000000010ffffff0400000004000000000000000000000000000000010114002c015a00010032002c012c01090008001f000000000000000000000000000000",
+          "health_raw": 2097152,
+          "health": 32.0,
+          "position": [
+            -94470713,
+            33292288,
+            33718412
+          ],
+          "rotation": [
+            8192,
+            8,
+            0
+          ]
+        },
+        {
+          "port": 2,
+          "actor": "0x80145810",
+          "input": "0x80145c10",
+          "weapon_slot": 0,
+          "weapon_id": 0,
+          "weapon": "P38 pistol",
+          "reserve": 20,
+          "clip": 8,
+          "input_fields": "000000000000000010ffffff0c000000000000000000000000000000000000000000140020001e00010032002c012c010900080000000000000000000000000000000000",
+          "health_raw": 2057831,
+          "health": 31.400009155273438,
+          "position": [
+            -96438351,
+            33357824,
+            -70945871
+          ],
+          "rotation": [
+            -8192,
+            28,
+            -32768
+          ]
+        }
+      ],
+      "effects": {
+        "before": {
+          "weapon_slot": 1,
+          "weapon_id": 1,
+          "clip": 32,
+          "reserve": 300
+        },
+        "after": {
+          "weapon_slot": 1,
+          "weapon_id": 1,
+          "clip": 31,
+          "reserve": 300
+        },
+        "changed": {
+          "clip": [
+            32,
+            31
+          ]
+        }
+      },
+      "camera": {
+        "valid": 1,
+        "owner": 2148828112,
+        "cycle": 10485267366,
+        "control": [
+          4294762470,
+          246,
+          3281930,
+          5308170,
+          57338,
+          4294964372,
+          4294966954,
+          936
+        ],
+        "native_position": [
+          -94470713,
+          17563648,
+          33718412
+        ]
+      },
+      "types": [
+        5111
+      ],
+      "callers": [
+        "0x800488D8"
+      ],
+      "family": "13F7",
+      "owned_count": 1,
+      "ignored_count": 0,
+      "eligible_count": 0,
+      "aimed_count": 0,
+      "camera_invalid_count": 0,
+      "shots": [
+        {
+          "shot": 2148697136,
+          "owner": 2148828112,
+          "p1": 2148828112,
+          "type": 5111,
+          "weapon": 1,
+          "caller": 2147780824,
+          "argument": 2148697136,
+          "eligible": 0,
+          "code_valid": 1,
+          "camera_valid": 1,
+          "camera_owner": 2148828112,
+          "cycle": 10487819715,
+          "camera_cycle": 10486733806,
+          "position": [
+            -99418112,
+            23855104,
+            1835008
+          ],
+          "angles": [
+            327680,
+            133300224,
+            0
+          ],
+          "aimed": 0,
+          "aimed_position": [
+            0,
+            0,
+            0
+          ],
+          "aimed_angles": [
+            0,
+            0,
+            0
+          ],
+          "weapon_control": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "camera": [
+            4294762470,
+            246,
+            3281930,
+            5308170,
+            57338,
+            4294964372,
+            4294966954,
+            936
+          ]
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "name": "StG44",
+      "slot": 1,
+      "switches": 2,
+      "control": {
+        "scoped": false,
+        "hold_frames": 24,
+        "release_frames": 180,
+        "approach_frames": 0
+      },
+      "before": [
+        {
+          "port": 1,
+          "actor": "0x801483d0",
+          "input": "0x801487d0",
+          "weapon_slot": 2,
+          "weapon_id": 17,
+          "weapon": "StG44",
+          "reserve": 60,
+          "clip": 30,
+          "input_fields": "000000000000000010ffffff0300000000000000000000000000000000000000021114002c013c00010032002c012c010900080020001e00000000000000000000000000",
+          "health_raw": 2097152,
+          "health": 32.0,
+          "position": [
+            -94470713,
+            33292288,
+            33718412
+          ],
+          "rotation": [
+            -8192,
+            -5,
+            0
+          ]
+        },
+        {
+          "port": 2,
+          "actor": "0x80145810",
+          "input": "0x80145c10",
+          "weapon_slot": 0,
+          "weapon_id": 0,
+          "weapon": "P38 pistol",
+          "reserve": 20,
+          "clip": 8,
+          "input_fields": "000000000000000010ffffff0c000000000000000000000000000000000000000000140020001e00010032002c012c010900080000000000000000000000000000000000",
+          "health_raw": 2097152,
+          "health": 32.0,
+          "position": [
+            -96488943,
+            33357824,
+            -70958831
+          ],
+          "rotation": [
+            -32768,
+            24,
+            -32768
+          ]
+        }
+      ],
+      "after": [
+        {
+          "port": 1,
+          "actor": "0x801483d0",
+          "input": "0x801487d0",
+          "weapon_slot": 2,
+          "weapon_id": 17,
+          "weapon": "StG44",
+          "reserve": 60,
+          "clip": 29,
+          "input_fields": "000000000000000010ffffff0300000003000000000000000000000000000000021114002c013c00010032002c012c010900080020001d00000000000000000000000000",
+          "health_raw": 2097152,
+          "health": 32.0,
+          "position": [
+            -94470713,
+            33292288,
+            33718412
+          ],
+          "rotation": [
+            -8192,
+            -5,
+            0
+          ]
+        },
+        {
+          "port": 2,
+          "actor": "0x80145810",
+          "input": "0x80145c10",
+          "weapon_slot": 0,
+          "weapon_id": 0,
+          "weapon": "P38 pistol",
+          "reserve": 20,
+          "clip": 8,
+          "input_fields": "000000000000000010ffffff0c000000000000000000000000000000000000000000140020001e00010032002c012c010900080000000000000000000000000000000000",
+          "health_raw": 2057831,
+          "health": 31.400009155273438,
+          "position": [
+            -96410703,
+            33357824,
+            -70945103
+          ],
+          "rotation": [
+            -8192,
+            28,
+            -32768
+          ]
+        }
+      ],
+      "effects": {
+        "before": {
+          "weapon_slot": 2,
+          "weapon_id": 17,
+          "clip": 30,
+          "reserve": 60
+        },
+        "after": {
+          "weapon_slot": 2,
+          "weapon_id": 17,
+          "clip": 29,
+          "reserve": 60
+        },
+        "changed": {
+          "clip": [
+            30,
+            29
+          ]
+        }
+      },
+      "camera": {
+        "valid": 1,
+        "owner": 2148828112,
+        "cycle": 10532604111,
+        "control": [
+          4294762470,
+          246,
+          3281930,
+          5308170,
+          57338,
+          4294964372,
+          4294966954,
+          936
+        ],
+        "native_position": [
+          -94470713,
+          17563648,
+          33718412
+        ]
+      },
+      "types": [
+        5111
+      ],
+      "callers": [
+        "0x800488D8"
+      ],
+      "family": "13F7",
+      "owned_count": 1,
+      "ignored_count": 0,
+      "eligible_count": 0,
+      "aimed_count": 0,
+      "camera_invalid_count": 0,
+      "shots": [
+        {
+          "shot": 2148598720,
+          "owner": 2148828112,
+          "p1": 2148828112,
+          "type": 5111,
+          "weapon": 17,
+          "caller": 2147780824,
+          "argument": 2148598720,
+          "eligible": 0,
+          "code_valid": 1,
+          "camera_valid": 1,
+          "camera_owner": 2148828112,
+          "cycle": 10536991079,
+          "camera_cycle": 10535888671,
+          "position": [
+            -99811328,
+            22216704,
+            -6029312
+          ],
+          "angles": [
+            -655360,
+            132907008,
+            0
+          ],
+          "aimed": 0,
+          "aimed_position": [
+            0,
+            0,
+            0
+          ],
+          "aimed_angles": [
+            0,
+            0,
+            0
+          ],
+          "weapon_control": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "camera": [
+            4294762470,
+            246,
+            3281930,
+            5308170,
+            57338,
+            4294964372,
+            4294966954,
+            936
+          ]
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "name": "Stick grenade",
+      "slot": 1,
+      "switches": 3,
+      "control": {
+        "scoped": false,
+        "hold_frames": 60,
+        "release_frames": 720,
+        "approach_frames": 0
+      },
+      "before": [
+        {
+          "port": 1,
+          "actor": "0x801483d0",
+          "input": "0x801487d0",
+          "weapon_slot": 3,
+          "weapon_id": 10,
+          "weapon": "Stick grenade",
+          "reserve": 0,
+          "clip": 1,
+          "input_fields": "000000000000000010ffffffc4ffffff00000000000000000000000000000000030a14002c013c00000032002c012c010900080020001e00010000000000000000000000",
+          "health_raw": 2097152,
+          "health": 32.0,
+          "position": [
+            -94470713,
+            33292288,
+            33718412
+          ],
+          "rotation": [
+            0,
+            0,
+            -27648
+          ]
+        },
+        {
+          "port": 2,
+          "actor": "0x80145810",
+          "input": "0x80145c10",
+          "weapon_slot": 0,
+          "weapon_id": 0,
+          "weapon": "P38 pistol",
+          "reserve": 20,
+          "clip": 8,
+          "input_fields": "000000000000000010ffffff0c000000000000000000000000000000000000000000140020001e00010032002c012c010900080000000000000000000000000000000000",
+          "health_raw": 2097152,
+          "health": 32.0,
+          "position": [
+            -96488943,
+            33357824,
+            -70958831
+          ],
+          "rotation": [
+            -32768,
+            24,
+            -32768
+          ]
+        }
+      ],
+      "after": [
+        {
+          "port": 1,
+          "actor": "0x801483d0",
+          "input": "0x801487d0",
+          "weapon_slot": 0,
+          "weapon_id": 0,
+          "weapon": "P38 pistol",
+          "reserve": 20,
+          "clip": 8,
+          "input_fields": "000000000000000010ffffff0c000000c4ffffff000000000000000000000000000014002c013c00000032002c012c010900080020001e00000000000000000000000000",
+          "health_raw": 2097152,
+          "health": 32.0,
+          "position": [
+            -94470713,
+            33292288,
+            33718412
+          ],
+          "rotation": [
+            24576,
+            27,
+            0
+          ]
+        },
+        {
+          "port": 2,
+          "actor": "0x80145810",
+          "input": "0x80145c10",
+          "weapon_slot": 0,
+          "weapon_id": 0,
+          "weapon": "P38 pistol",
+          "reserve": 20,
+          "clip": 8,
+          "input_fields": "000000000000000010ffffff0c000000000000000000000000000000000000000000140020001e00010032002c012c010900080000000000000000000000000000000000",
+          "health_raw": 2097152,
+          "health": 32.0,
+          "position": [
+            -96488943,
+            33357824,
+            -70958831
+          ],
+          "rotation": [
+            -8192,
+            28,
+            -32768
+          ]
+        }
+      ],
+      "effects": {
+        "before": {
+          "weapon_slot": 3,
+          "weapon_id": 10,
+          "clip": 1,
+          "reserve": 0
+        },
+        "after": {
+          "weapon_slot": 0,
+          "weapon_id": 0,
+          "clip": 8,
+          "reserve": 20
+        },
+        "changed": {
+          "weapon_slot": [
+            3,
+            0
+          ],
+          "weapon_id": [
+            10,
+            0
+          ],
+          "clip": [
+            1,
+            8
+          ],
+          "reserve": [
+            0,
+            20
+          ]
+        }
+      },
+      "camera": {
+        "valid": 1,
+        "owner": 2148828112,
+        "cycle": 10585165350,
+        "control": [
+          4294762470,
+          246,
+          3281930,
+          5308170,
+          57338,
+          4294964372,
+          4294966954,
+          936
+        ],
+        "native_position": [
+          -94470713,
+          17563648,
+          33718412
+        ]
+      },
+      "types": [
+        5107
+      ],
+      "callers": [
+        "0x800488D8"
+      ],
+      "family": "13F3",
+      "owned_count": 1,
+      "ignored_count": 0,
+      "eligible_count": 0,
+      "aimed_count": 0,
+      "camera_invalid_count": 0,
+      "shots": [
+        {
+          "shot": 2148598512,
+          "owner": 2148828112,
+          "p1": 2148828112,
+          "type": 5107,
+          "weapon": 10,
+          "caller": 2147780824,
+          "argument": 2148598512,
+          "eligible": 0,
+          "code_valid": 1,
+          "camera_valid": 1,
+          "camera_owner": 2148828112,
+          "cycle": 10616797808,
+          "camera_cycle": 10615780952,
+          "position": [
+            -97714176,
+            20185088,
+            12648448
+          ],
+          "angles": [
+            0,
+            135500800,
+            0
+          ],
+          "aimed": 0,
+          "aimed_position": [
+            0,
+            0,
+            0
+          ],
+          "aimed_angles": [
+            0,
+            0,
+            0
+          ],
+          "weapon_control": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "camera": [
+            4294762470,
+            246,
+            3281930,
+            5308170,
+            57338,
+            4294964372,
+            4294966954,
+            936
+          ]
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Colt .45",
+      "slot": 2,
+      "switches": 0,
+      "control": {
+        "scoped": false,
+        "hold_frames": 24,
+        "release_frames": 180,
+        "approach_frames": 0
+      },
+      "before": [
+        {
+          "port": 1,
+          "actor": "0x8014b390",
+          "input": "0x8014b790",
+          "weapon_slot": 0,
+          "weapon_id": 8,
+          "weapon": "Colt .45",
+          "reserve": 21,
+          "clip": 7,
+          "input_fields": "000000000000000010ffffff0c000000000000000000000000000000000000000008150020001800010032002c0128000900070000000000000000000000000000000000",
+          "health_raw": 2097152,
+          "health": 32.0,
+          "position": [
+            -91475232,
+            33292288,
+            33623056
+          ],
+          "rotation": [
+            0,
+            28,
+            -32768
+          ]
+        },
+        {
+          "port": 2,
+          "actor": "0x801487d0",
+          "input": "0x80148bd0",
+          "weapon_slot": 0,
+          "weapon_id": 8,
+          "weapon": "Colt .45",
+          "reserve": 21,
+          "clip": 7,
+          "input_fields": "000000000000000010ffffff0c000000000000000000000000000000000000000008150020000800010032002c0128000900070000000000000000000000000000000000",
+          "health_raw": 2097152,
+          "health": 32.0,
+          "position": [
+            -96332291,
+            33357824,
+            -70944515
+          ],
+          "rotation": [
+            0,
+            27,
+            -32768
+          ]
+        }
+      ],
+      "after": [
+        {
+          "port": 1,
+          "actor": "0x8014b390",
+          "input": "0x8014b790",
+          "weapon_slot": 0,
+          "weapon_id": 8,
+          "weapon": "Colt .45",
+          "reserve": 21,
+          "clip": 6,
+          "input_fields": "000000000000000010ffffff0c0000000c0000000000000000000000000000000008150020001800010032002c0128000900060000000000000000000000000000000000",
+          "health_raw": 2097152,
+          "health": 32.0,
+          "position": [
+            -91475232,
+            33292288,
+            33623056
+          ],
+          "rotation": [
+            0,
+            28,
+            -32768
+          ]
+        },
+        {
+          "port": 2,
+          "actor": "0x801487d0",
+          "input": "0x80148bd0",
+          "weapon_slot": 0,
+          "weapon_id": 8,
+          "weapon": "Colt .45",
+          "reserve": 21,
+          "clip": 7,
+          "input_fields": "000000000000000010ffffff0c000000000000000000000000000000000000000008150020000800010032002c0128000900070000000000000000000000000000000000",
+          "health_raw": 2048000,
+          "health": 31.25,
+          "position": [
+            -96445923,
+            33357824,
+            -70963427
+          ],
+          "rotation": [
+            16384,
+            32,
+            -32768
+          ]
+        }
+      ],
+      "effects": {
+        "before": {
+          "weapon_slot": 0,
+          "weapon_id": 8,
+          "clip": 7,
+          "reserve": 21
+        },
+        "after": {
+          "weapon_slot": 0,
+          "weapon_id": 8,
+          "clip": 6,
+          "reserve": 21
+        },
+        "changed": {
+          "clip": [
+            7,
+            6
+          ]
+        }
+      },
+      "camera": {
+        "valid": 1,
+        "owner": 2148840336,
+        "cycle": 14303798137,
+        "control": [
+          4294893522,
+          131566,
+          3281942,
+          5307924,
+          57338,
+          4294964426,
+          4294966953,
+          853
+        ],
+        "native_position": [
+          -91475232,
+          17563648,
+          33623056
+        ]
+      },
+      "types": [
+        5110
+      ],
+      "callers": [
+        "0x800488D8"
+      ],
+      "family": "13F6",
+      "owned_count": 1,
+      "ignored_count": 0,
+      "eligible_count": 0,
+      "aimed_count": 0,
+      "camera_invalid_count": 0,
+      "shots": [
+        {
+          "shot": 2148621808,
+          "owner": 2148840336,
+          "p1": 2148840336,
+          "type": 5110,
+          "weapon": 8,
+          "caller": 2147780824,
+          "argument": 2148621808,
+          "eligible": 0,
+          "code_valid": 1,
+          "camera_valid": 1,
+          "camera_owner": 2148840336,
+          "cycle": 14305208127,
+          "camera_cycle": 14304126766,
+          "position": [
+            -95617024,
+            23330816,
+            3997696
+          ],
+          "angles": [
+            0,
+            -132841472,
+            0
+          ],
+          "aimed": 0,
+          "aimed_position": [
+            0,
+            0,
+            0
+          ],
+          "aimed_angles": [
+            0,
+            0,
+            0
+          ],
+          "weapon_control": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "camera": [
+            4294893522,
+            131566,
+            3281942,
+            5307924,
+            57338,
+            4294964426,
+            4294966953,
+            853
+          ]
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "name": "Sten",
+      "slot": 2,
+      "switches": 1,
+      "control": {
+        "scoped": false,
+        "hold_frames": 24,
+        "release_frames": 180,
+        "approach_frames": 0
+      },
+      "before": [
+        {
+          "port": 1,
+          "actor": "0x8014b390",
+          "input": "0x8014b790",
+          "weapon_slot": 1,
+          "weapon_id": 16,
+          "weapon": "Sten",
+          "reserve": 0,
+          "clip": 32,
+          "input_fields": "000000000000000010ffffff02000000000000000000000000000000000000000110150000001800010032002c0128000900070020000000000000000000000000000000",
+          "health_raw": 2097152,
+          "health": 32.0,
+          "position": [
+            -91475232,
+            33292288,
+            33623056
+          ],
+          "rotation": [
+            16384,
+            5,
+            -32768
+          ]
+        },
+        {
+          "port": 2,
+          "actor": "0x801487d0",
+          "input": "0x80148bd0",
+          "weapon_slot": 0,
+          "weapon_id": 8,
+          "weapon": "Colt .45",
+          "reserve": 21,
+          "clip": 7,
+          "input_fields": "000000000000000010ffffff0c000000000000000000000000000000000000000008150020000800010032002c0128000900070000000000000000000000000000000000",
+          "health_raw": 2097152,
+          "health": 32.0,
+          "position": [
+            -96332291,
+            33357824,
+            -70944515
+          ],
+          "rotation": [
+            0,
+            27,
+            -32768
+          ]
+        }
+      ],
+      "after": [
+        {
+          "port": 1,
+          "actor": "0x8014b390",
+          "input": "0x8014b790",
+          "weapon_slot": 1,
+          "weapon_id": 16,
+          "weapon": "Sten",
+          "reserve": 0,
+          "clip": 30,
+          "input_fields": "000000000000000010ffffff02000000020000000000000000000000000000000110150000001800010032002c012800090007001e000000000000000000000000000000",
+          "health_raw": 2097152,
+          "health": 32.0,
+          "position": [
+            -91475232,
+            33292288,
+            33623056
+          ],
+          "rotation": [
+            -32768,
+            3,
+            -32768
+          ]
+        },
+        {
+          "port": 2,
+          "actor": "0x801487d0",
+          "input": "0x80148bd0",
+          "weapon_slot": 0,
+          "weapon_id": 8,
+          "weapon": "Colt .45",
+          "reserve": 21,
+          "clip": 7,
+          "input_fields": "000000000000000010ffffff0c000000000000000000000000000000000000000008150020000800010032002c0128000900070000000000000000000000000000000000",
+          "health_raw": 2018510,
+          "health": 30.800018310546875,
+          "position": [
+            -96348327,
+            33357824,
+            -70935911
+          ],
+          "rotation": [
+            -32768,
+            30,
+            -32768
+          ]
+        }
+      ],
+      "effects": {
+        "before": {
+          "weapon_slot": 1,
+          "weapon_id": 16,
+          "clip": 32,
+          "reserve": 0
+        },
+        "after": {
+          "weapon_slot": 1,
+          "weapon_id": 16,
+          "clip": 30,
+          "reserve": 0
+        },
+        "changed": {
+          "clip": [
+            32,
+            30
+          ]
+        }
+      },
+      "camera": {
+        "valid": 1,
+        "owner": 2148840336,
+        "cycle": 14355135183,
+        "control": [
+          4294893522,
+          131566,
+          3281942,
+          5307924,
+          57338,
+          4294964426,
+          4294966953,
+          853
+        ],
+        "native_position": [
+          -91475232,
+          17563648,
+          33623056
+        ]
+      },
+      "types": [
+        5111
+      ],
+      "callers": [
+        "0x800488D8"
+      ],
+      "family": "13F7",
+      "owned_count": 2,
+      "ignored_count": 0,
+      "eligible_count": 0,
+      "aimed_count": 0,
+      "camera_invalid_count": 0,
+      "shots": [
+        {
+          "shot": 2148720224,
+          "owner": 2148840336,
+          "p1": 2148840336,
+          "type": 5111,
+          "weapon": 16,
+          "caller": 2147780824,
+          "argument": 2148720224,
+          "eligible": 0,
+          "code_valid": 1,
+          "camera_valid": 1,
+          "camera_owner": 2148840336,
+          "cycle": 14357951485,
+          "camera_cycle": 14356842866,
+          "position": [
+            -98762752,
+            24248320,
+            524288
+          ],
+          "angles": [
+            589824,
+            133824512,
+            0
+          ],
+          "aimed": 0,
+          "aimed_position": [
+            0,
+            0,
+            0
+          ],
+          "aimed_angles": [
+            0,
+            0,
+            0
+          ],
+          "weapon_control": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "camera": [
+            4294893522,
+            131566,
+            3281942,
+            5307924,
+            57338,
+            4294964426,
+            4294966953,
+            853
+          ]
+        },
+        {
+          "shot": 2148718880,
+          "owner": 2148840336,
+          "p1": 2148840336,
+          "type": 5111,
+          "weapon": 16,
+          "caller": 2147780824,
+          "argument": 2148718880,
+          "eligible": 0,
+          "code_valid": 1,
+          "camera_valid": 1,
+          "camera_owner": 2148840336,
+          "cycle": 14362399698,
+          "camera_cycle": 14361278515,
+          "position": [
+            -98697216,
+            23986176,
+            2752512
+          ],
+          "angles": [
+            655360,
+            133890048,
+            0
+          ],
+          "aimed": 0,
+          "aimed_position": [
+            0,
+            0,
+            0
+          ],
+          "aimed_angles": [
+            0,
+            0,
+            0
+          ],
+          "weapon_control": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "camera": [
+            4294893522,
+            131566,
+            3281942,
+            5307924,
+            57338,
+            4294964426,
+            4294966953,
+            853
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Shotgun",
+      "slot": 2,
+      "switches": 2,
+      "control": {
+        "scoped": false,
+        "hold_frames": 24,
+        "release_frames": 180,
+        "approach_frames": 0
+      },
+      "before": [
+        {
+          "port": 1,
+          "actor": "0x8014b390",
+          "input": "0x8014b790",
+          "weapon_slot": 2,
+          "weapon_id": 4,
+          "weapon": "Shotgun",
+          "reserve": 16,
+          "clip": 8,
+          "input_fields": "000000000000000010ffffff1e000000000000000000000000000000000000000204150000001000010032002c0128000900070020000800000000000000000000000000",
+          "health_raw": 2097152,
+          "health": 32.0,
+          "position": [
+            -91475232,
+            33292288,
+            33623056
+          ],
+          "rotation": [
+            -32768,
+            -18,
+            -32768
+          ]
+        },
+        {
+          "port": 2,
+          "actor": "0x801487d0",
+          "input": "0x80148bd0",
+          "weapon_slot": 0,
+          "weapon_id": 8,
+          "weapon": "Colt .45",
+          "reserve": 21,
+          "clip": 7,
+          "input_fields": "000000000000000010ffffff0c000000000000000000000000000000000000000008150020000800010032002c0128000900070000000000000000000000000000000000",
+          "health_raw": 2097152,
+          "health": 32.0,
+          "position": [
+            -96332291,
+            33357824,
+            -70944515
+          ],
+          "rotation": [
+            0,
+            27,
+            -32768
+          ]
+        }
+      ],
+      "after": [
+        {
+          "port": 1,
+          "actor": "0x8014b390",
+          "input": "0x8014b790",
+          "weapon_slot": 2,
+          "weapon_id": 4,
+          "weapon": "Shotgun",
+          "reserve": 16,
+          "clip": 7,
+          "input_fields": "000000000000000010ffffff1e0000001e0000000000000000000000000000000204150000001000010032002c0128000900070020000700000000000000000000000000",
+          "health_raw": 2097152,
+          "health": 32.0,
+          "position": [
+            -91475232,
+            33292288,
+            33623056
+          ],
+          "rotation": [
+            -24576,
+            -33,
+            -32768
+          ]
+        },
+        {
+          "port": 2,
+          "actor": "0x801487d0",
+          "input": "0x80148bd0",
+          "weapon_slot": 0,
+          "weapon_id": 8,
+          "weapon": "Colt .45",
+          "reserve": 21,
+          "clip": 7,
+          "input_fields": "000000000000000010ffffff0c000000000000000000000000000000000000000008150020000800010032002c0128000900070000000000000000000000000000000000",
+          "health_raw": 1179648,
+          "health": 18.0,
+          "position": [
+            -96212059,
+            33357824,
+            -70942331
+          ],
+          "rotation": [
+            16384,
+            32,
+            -32768
+          ]
+        }
+      ],
+      "effects": {
+        "before": {
+          "weapon_slot": 2,
+          "weapon_id": 4,
+          "clip": 8,
+          "reserve": 16
+        },
+        "after": {
+          "weapon_slot": 2,
+          "weapon_id": 4,
+          "clip": 7,
+          "reserve": 16
+        },
+        "changed": {
+          "clip": [
+            8,
+            7
+          ]
+        }
+      },
+      "camera": {
+        "valid": 1,
+        "owner": 2148840336,
+        "cycle": 14413955868,
+        "control": [
+          4294893522,
+          131566,
+          3281942,
+          5307924,
+          57338,
+          4294964426,
+          4294966953,
+          853
+        ],
+        "native_position": [
+          -91475232,
+          17563648,
+          33623056
+        ]
+      },
+      "types": [
+        5111
+      ],
+      "callers": [
+        "0x800488D8"
+      ],
+      "family": "13F7",
+      "owned_count": 6,
+      "ignored_count": 0,
+      "eligible_count": 0,
+      "aimed_count": 0,
+      "camera_invalid_count": 0,
+      "shots": [
+        {
+          "shot": 2148720128,
+          "owner": 2148840336,
+          "p1": 2148840336,
+          "type": 5111,
+          "weapon": 4,
+          "caller": 2147780824,
+          "argument": 2148720128,
+          "eligible": 0,
+          "code_valid": 1,
+          "camera_valid": 1,
+          "camera_owner": 2148840336,
+          "cycle": 14416470407,
+          "camera_cycle": 14415387291,
+          "position": [
+            -97714176,
+            22478848,
+            -589824
+          ],
+          "angles": [
+            -458752,
+            -134021120,
+            0
+          ],
+          "aimed": 0,
+          "aimed_position": [
+            0,
+            0,
+            0
+          ],
+          "aimed_angles": [
+            0,
+            0,
+            0
+          ],
+          "weapon_control": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "camera": [
+            4294893522,
+            131566,
+            3281942,
+            5307924,
+            57338,
+            4294964426,
+            4294966953,
+            853
+          ]
+        },
+        {
+          "shot": 2148718784,
+          "owner": 2148840336,
+          "p1": 2148840336,
+          "type": 5111,
+          "weapon": 4,
+          "caller": 2147780824,
+          "argument": 2148718784,
+          "eligible": 0,
+          "code_valid": 1,
+          "camera_valid": 1,
+          "camera_owner": 2148840336,
+          "cycle": 14416477198,
+          "camera_cycle": 14415387291,
+          "position": [
+            -97714176,
+            22478848,
+            -589824
+          ],
+          "angles": [
+            -458752,
+            -134021120,
+            0
+          ],
+          "aimed": 0,
+          "aimed_position": [
+            0,
+            0,
+            0
+          ],
+          "aimed_angles": [
+            0,
+            0,
+            0
+          ],
+          "weapon_control": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "camera": [
+            4294893522,
+            131566,
+            3281942,
+            5307924,
+            57338,
+            4294964426,
+            4294966953,
+            853
+          ]
+        },
+        {
+          "shot": 2148717440,
+          "owner": 2148840336,
+          "p1": 2148840336,
+          "type": 5111,
+          "weapon": 4,
+          "caller": 2147780824,
+          "argument": 2148717440,
+          "eligible": 0,
+          "code_valid": 1,
+          "camera_valid": 1,
+          "camera_owner": 2148840336,
+          "cycle": 14416483942,
+          "camera_cycle": 14415387291,
+          "position": [
+            -97714176,
+            22478848,
+            -589824
+          ],
+          "angles": [
+            -458752,
+            -134021120,
+            0
+          ],
+          "aimed": 0,
+          "aimed_position": [
+            0,
+            0,
+            0
+          ],
+          "aimed_angles": [
+            0,
+            0,
+            0
+          ],
+          "weapon_control": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "camera": [
+            4294893522,
+            131566,
+            3281942,
+            5307924,
+            57338,
+            4294964426,
+            4294966953,
+            853
+          ]
+        },
+        {
+          "shot": 2148716096,
+          "owner": 2148840336,
+          "p1": 2148840336,
+          "type": 5111,
+          "weapon": 4,
+          "caller": 2147780824,
+          "argument": 2148716096,
+          "eligible": 0,
+          "code_valid": 1,
+          "camera_valid": 1,
+          "camera_owner": 2148840336,
+          "cycle": 14416490697,
+          "camera_cycle": 14415387291,
+          "position": [
+            -97714176,
+            22478848,
+            -589824
+          ],
+          "angles": [
+            -458752,
+            -134021120,
+            0
+          ],
+          "aimed": 0,
+          "aimed_position": [
+            0,
+            0,
+            0
+          ],
+          "aimed_angles": [
+            0,
+            0,
+            0
+          ],
+          "weapon_control": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "camera": [
+            4294893522,
+            131566,
+            3281942,
+            5307924,
+            57338,
+            4294964426,
+            4294966953,
+            853
+          ]
+        },
+        {
+          "shot": 2148714752,
+          "owner": 2148840336,
+          "p1": 2148840336,
+          "type": 5111,
+          "weapon": 4,
+          "caller": 2147780824,
+          "argument": 2148714752,
+          "eligible": 0,
+          "code_valid": 1,
+          "camera_valid": 1,
+          "camera_owner": 2148840336,
+          "cycle": 14416497473,
+          "camera_cycle": 14415387291,
+          "position": [
+            -97714176,
+            22478848,
+            -589824
+          ],
+          "angles": [
+            -458752,
+            -134021120,
+            0
+          ],
+          "aimed": 0,
+          "aimed_position": [
+            0,
+            0,
+            0
+          ],
+          "aimed_angles": [
+            0,
+            0,
+            0
+          ],
+          "weapon_control": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "camera": [
+            4294893522,
+            131566,
+            3281942,
+            5307924,
+            57338,
+            4294964426,
+            4294966953,
+            853
+          ]
+        },
+        {
+          "shot": 2148713408,
+          "owner": 2148840336,
+          "p1": 2148840336,
+          "type": 5111,
+          "weapon": 4,
+          "caller": 2147780824,
+          "argument": 2148713408,
+          "eligible": 0,
+          "code_valid": 1,
+          "camera_valid": 1,
+          "camera_owner": 2148840336,
+          "cycle": 14416504295,
+          "camera_cycle": 14415387291,
+          "position": [
+            -97714176,
+            22478848,
+            -589824
+          ],
+          "angles": [
+            -458752,
+            -134021120,
+            0
+          ],
+          "aimed": 0,
+          "aimed_position": [
+            0,
+            0,
+            0
+          ],
+          "aimed_angles": [
+            0,
+            0,
+            0
+          ],
+          "weapon_control": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "camera": [
+            4294893522,
+            131566,
+            3281942,
+            5307924,
+            57338,
+            4294964426,
+            4294966953,
+            853
+          ]
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "name": "Petrol bomb",
+      "slot": 2,
+      "switches": 3,
+      "control": {
+        "scoped": false,
+        "hold_frames": 60,
+        "release_frames": 720,
+        "approach_frames": 180
+      },
+      "before": [
+        {
+          "port": 1,
+          "actor": "0x8014b390",
+          "input": "0x8014b790",
+          "weapon_slot": 3,
+          "weapon_id": 15,
+          "weapon": "Petrol bomb",
+          "reserve": 0,
+          "clip": 1,
+          "input_fields": "000000000000000010ffffffc4ffffff00000000000000000000000000000000030f150000001000000032002c0128000900070020000800010000000000000000000000",
+          "health_raw": 2097152,
+          "health": 32.0,
+          "position": [
+            -111506002,
+            33357824,
+            -70978120
+          ],
+          "rotation": [
+            0,
+            0,
+            27648
+          ]
+        },
+        {
+          "port": 2,
+          "actor": "0x801487d0",
+          "input": "0x80148bd0",
+          "weapon_slot": 0,
+          "weapon_id": 8,
+          "weapon": "Colt .45",
+          "reserve": 21,
+          "clip": 7,
+          "input_fields": "000000000000000010ffffff0c000000000000000000000000000000000000000008150020000800010032002c0128000900070000000000000000000000000000000000",
+          "health_raw": 2097152,
+          "health": 32.0,
+          "position": [
+            -87451180,
+            33357824,
+            -71096070
+          ],
+          "rotation": [
+            -32768,
+            24,
+            -32768
+          ]
+        }
+      ],
+      "after": [
+        {
+          "port": 1,
+          "actor": "0x8014b390",
+          "input": "0x8014b790",
+          "weapon_slot": 0,
+          "weapon_id": 8,
+          "weapon": "Colt .45",
+          "reserve": 21,
+          "clip": 7,
+          "input_fields": "000000000000000010ffffff0c000000c4ffffff0000000000000000000000000008150020000800010032002c0128000900070000000000000000000000000000000000",
+          "health_raw": 2097152,
+          "health": 32.0,
+          "position": [
+            -167247872,
+            32374784,
+            -358940672
+          ],
+          "rotation": [
+            0,
+            116,
+            -32768
+          ]
+        },
+        {
+          "port": 2,
+          "actor": "0x801487d0",
+          "input": "0x80148bd0",
+          "weapon_slot": 0,
+          "weapon_id": 8,
+          "weapon": "Colt .45",
+          "reserve": 21,
+          "clip": 7,
+          "input_fields": "000000000000000010ffffff0c000000000000000000000000000000000000000008150020000800010032002c0128000900070000000000000000000000000000000000",
+          "health_raw": 2097152,
+          "health": 32.0,
+          "position": [
+            158138368,
+            34078720,
+            -258932736
+          ],
+          "rotation": [
+            0,
+            116,
+            -32768
+          ]
+        }
+      ],
+      "effects": {
+        "before": {
+          "weapon_slot": 3,
+          "weapon_id": 15,
+          "clip": 1,
+          "reserve": 0
+        },
+        "after": {
+          "weapon_slot": 0,
+          "weapon_id": 8,
+          "clip": 7,
+          "reserve": 21
+        },
+        "changed": {
+          "weapon_slot": [
+            3,
+            0
+          ],
+          "weapon_id": [
+            15,
+            8
+          ],
+          "clip": [
+            1,
+            7
+          ],
+          "reserve": [
+            0,
+            21
+          ]
+        }
+      },
+      "camera": {
+        "valid": 1,
+        "owner": 2148840336,
+        "cycle": 14571639759,
+        "control": [
+          4294893522,
+          131566,
+          3281942,
+          5307924,
+          57338,
+          4294964003,
+          4294966972,
+          4294964916
+        ],
+        "native_position": [
+          -111506002,
+          17629184,
+          -70978120
+        ]
+      },
+      "types": [
+        5107
+      ],
+      "callers": [
+        "0x800488D8"
+      ],
+      "family": "13F3",
+      "owned_count": 1,
+      "ignored_count": 0,
+      "eligible_count": 0,
+      "aimed_count": 0,
+      "camera_invalid_count": 0,
+      "shots": [
+        {
+          "shot": 2148620848,
+          "owner": 2148840336,
+          "p1": 2148840336,
+          "type": 5107,
+          "weapon": 15,
+          "caller": 2147780824,
+          "argument": 2148620848,
+          "eligible": 0,
+          "code_valid": 1,
+          "camera_valid": 1,
+          "camera_owner": 2148840336,
+          "cycle": 14587108173,
+          "camera_cycle": 14586053954,
+          "position": [
+            -114622464,
+            18415616,
+            -86310912
+          ],
+          "angles": [
+            0,
+            136801280,
+            0
+          ],
+          "aimed": 0,
+          "aimed_position": [
+            0,
+            0,
+            0
+          ],
+          "aimed_angles": [
+            0,
+            0,
+            0
+          ],
+          "weapon_control": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "camera": [
+            4294893522,
+            131566,
+            3281942,
+            5307924,
+            57338,
+            4294964003,
+            4294966972,
+            4294964916
+          ]
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "name": "Silenced pistol",
+      "slot": 3,
+      "switches": 0,
+      "control": {
+        "scoped": false,
+        "hold_frames": 24,
+        "release_frames": 180,
+        "approach_frames": 0
+      },
+      "before": [
+        {
+          "port": 1,
+          "actor": "0x80146cc0",
+          "input": "0x801470c0",
+          "weapon_slot": 0,
+          "weapon_id": 9,
+          "weapon": "Silenced pistol",
+          "reserve": 21,
+          "clip": 7,
+          "input_fields": "000000000000000010ffffff0c000000000000000000000000000000000000000009150001000f0004003200140064000900070000000000000000000000000000000000",
+          "health_raw": 2097152,
+          "health": 32.0,
+          "position": [
+            -97630038,
+            33357824,
+            46599489
+          ],
+          "rotation": [
+            -24576,
+            -2,
+            0
+          ]
+        },
+        {
+          "port": 2,
+          "actor": "0x80144100",
+          "input": "0x80144500",
+          "weapon_slot": 0,
+          "weapon_id": 9,
+          "weapon": "Silenced pistol",
+          "reserve": 21,
+          "clip": 7,
+          "input_fields": "000000000000000010ffffff0c000000000000000000000000000000000000000009150001000f0001003200140064000900070000000000000000000000000000000000",
+          "health_raw": 2097152,
+          "health": 32.0,
+          "position": [
+            -94118405,
+            33357824,
+            -70941957
+          ],
+          "rotation": [
+            -16384,
+            -4,
+            0
+          ]
+        }
+      ],
+      "after": [
+        {
+          "port": 1,
+          "actor": "0x80146cc0",
+          "input": "0x801470c0",
+          "weapon_slot": 0,
+          "weapon_id": 9,
+          "weapon": "Silenced pistol",
+          "reserve": 21,
+          "clip": 6,
+          "input_fields": "000000000000000010ffffff0c0000000c0000000000000000000000000000000009150001000f0004003200140064000900060000000000000000000000000000000000",
+          "health_raw": 2097152,
+          "health": 32.0,
+          "position": [
+            -97630038,
+            33357824,
+            46599489
+          ],
+          "rotation": [
+            -24576,
+            -2,
+            0
+          ]
+        },
+        {
+          "port": 2,
+          "actor": "0x80144100",
+          "input": "0x80144500",
+          "weapon_slot": 0,
+          "weapon_id": 9,
+          "weapon": "Silenced pistol",
+          "reserve": 21,
+          "clip": 7,
+          "input_fields": "000000000000000010ffffff0c000000000000000000000000000000000000000009150001000f0001003200140064000900070000000000000000000000000000000000",
+          "health_raw": 2048000,
+          "health": 31.25,
+          "position": [
+            -94010125,
+            33357824,
+            -70949901
+          ],
+          "rotation": [
+            8192,
+            -6,
+            0
+          ]
+        }
+      ],
+      "effects": {
+        "before": {
+          "weapon_slot": 0,
+          "weapon_id": 9,
+          "clip": 7,
+          "reserve": 21
+        },
+        "after": {
+          "weapon_slot": 0,
+          "weapon_id": 9,
+          "clip": 6,
+          "reserve": 21
+        },
+        "changed": {
+          "clip": [
+            7,
+            6
+          ]
+        }
+      },
+      "camera": {
+        "valid": 1,
+        "owner": 2148822208,
+        "cycle": 18570713494,
+        "control": [
+          4294893546,
+          65412,
+          3281928,
+          5243002,
+          57338,
+          4294964329,
+          4294966950,
+          1462
+        ],
+        "native_position": [
+          -97630038,
+          17629184,
+          46599489
+        ]
+      },
+      "types": [
+        5110
+      ],
+      "callers": [
+        "0x800488D8"
+      ],
+      "family": "13F6",
+      "owned_count": 1,
+      "ignored_count": 0,
+      "eligible_count": 0,
+      "aimed_count": 0,
+      "camera_invalid_count": 0,
+      "shots": [
+        {
+          "shot": 2148625248,
+          "owner": 2148822208,
+          "p1": 2148822208,
+          "type": 5110,
+          "weapon": 9,
+          "caller": 2147780824,
+          "argument": 2148625248,
+          "eligible": 0,
+          "code_valid": 1,
+          "camera_valid": 1,
+          "camera_owner": 2148822208,
+          "cycle": 18573232797,
+          "camera_cycle": 18572144823,
+          "position": [
+            -99352576,
+            24707072,
+            13762560
+          ],
+          "angles": [
+            327680,
+            132579328,
+            0
+          ],
+          "aimed": 0,
+          "aimed_position": [
+            0,
+            0,
+            0
+          ],
+          "aimed_angles": [
+            0,
+            0,
+            0
+          ],
+          "weapon_control": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "camera": [
+            4294893546,
+            65412,
+            3281928,
+            5243002,
+            57338,
+            4294964329,
+            4294966950,
+            1462
+          ]
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "name": "Crossbow",
+      "slot": 3,
+      "switches": 1,
+      "control": {
+        "scoped": false,
+        "hold_frames": 36,
+        "release_frames": 360,
+        "approach_frames": 0
+      },
+      "before": [
+        {
+          "port": 1,
+          "actor": "0x80146cc0",
+          "input": "0x801470c0",
+          "weapon_slot": 1,
+          "weapon_id": 14,
+          "weapon": "Crossbow",
+          "reserve": 0,
+          "clip": 1,
+          "input_fields": "000000000000000010ffffffa5ffffff00000000000000000000000000000000010e150000000f0004003200140064000900070001000000000000000000000000000000",
+          "health_raw": 2097152,
+          "health": 32.0,
+          "position": [
+            -97630038,
+            33357824,
+            46599489
+          ],
+          "rotation": [
+            -24576,
+            -2,
+            0
+          ]
+        },
+        {
+          "port": 2,
+          "actor": "0x80144100",
+          "input": "0x80144500",
+          "weapon_slot": 0,
+          "weapon_id": 9,
+          "weapon": "Silenced pistol",
+          "reserve": 21,
+          "clip": 7,
+          "input_fields": "000000000000000010ffffff0c000000000000000000000000000000000000000009150001000f0001003200140064000900070000000000000000000000000000000000",
+          "health_raw": 2097152,
+          "health": 32.0,
+          "position": [
+            -94118405,
+            33357824,
+            -70941957
+          ],
+          "rotation": [
+            -16384,
+            -4,
+            0
+          ]
+        }
+      ],
+      "after": [
+        {
+          "port": 1,
+          "actor": "0x80146cc0",
+          "input": "0x801470c0",
+          "weapon_slot": 2,
+          "weapon_id": 5,
+          "weapon": "Scoped rifle",
+          "reserve": 10,
+          "clip": 5,
+          "input_fields": "000000000000000010ffffff14000000a5ffffff0000000000000000000000000205150000000a0004003200140064000900070000000500000000000000000000000000",
+          "health_raw": 2097152,
+          "health": 32.0,
+          "position": [
+            -97630038,
+            33357824,
+            46599489
+          ],
+          "rotation": [
+            16384,
+            8,
+            0
+          ]
+        },
+        {
+          "port": 2,
+          "actor": "0x80144100",
+          "input": "0x80144500",
+          "weapon_slot": 0,
+          "weapon_id": 9,
+          "weapon": "Silenced pistol",
+          "reserve": 21,
+          "clip": 7,
+          "input_fields": "000000000000000010ffffff0c000000000000000000000000000000000000000009150001000f0001003200140064000900070000000000000000000000000000000000",
+          "health_raw": 0,
+          "health": 0.0,
+          "position": [
+            -95393511,
+            33357824,
+            -67166183
+          ],
+          "rotation": [
+            -16384,
+            -4,
+            0
+          ]
+        }
+      ],
+      "effects": {
+        "before": {
+          "weapon_slot": 1,
+          "weapon_id": 14,
+          "clip": 1,
+          "reserve": 0
+        },
+        "after": {
+          "weapon_slot": 2,
+          "weapon_id": 5,
+          "clip": 5,
+          "reserve": 10
+        },
+        "changed": {
+          "weapon_slot": [
+            1,
+            2
+          ],
+          "weapon_id": [
+            14,
+            5
+          ],
+          "clip": [
+            1,
+            5
+          ],
+          "reserve": [
+            0,
+            10
+          ]
+        }
+      },
+      "camera": {
+        "valid": 1,
+        "owner": 2148822208,
+        "cycle": 18621525258,
+        "control": [
+          4294893546,
+          65412,
+          3281928,
+          5243002,
+          57338,
+          4294964329,
+          4294966950,
+          1462
+        ],
+        "native_position": [
+          -97630038,
+          17629184,
+          46599489
+        ]
+      },
+      "types": [
+        5114
+      ],
+      "callers": [
+        "0x800488D8"
+      ],
+      "family": "13FA",
+      "owned_count": 1,
+      "ignored_count": 0,
+      "eligible_count": 0,
+      "aimed_count": 0,
+      "camera_invalid_count": 0,
+      "shots": [
+        {
+          "shot": 2148723456,
+          "owner": 2148822208,
+          "p1": 2148822208,
+          "type": 5114,
+          "weapon": 14,
+          "caller": 2147780824,
+          "argument": 2148723456,
+          "eligible": 0,
+          "code_valid": 1,
+          "camera_valid": 1,
+          "camera_owner": 2148822208,
+          "cycle": 18624068676,
+          "camera_cycle": 18622972679,
+          "position": [
+            -101908480,
+            25427968,
+            6750208
+          ],
+          "angles": [
+            786432,
+            131072000,
+            0
+          ],
+          "aimed": 0,
+          "aimed_position": [
+            0,
+            0,
+            0
+          ],
+          "aimed_angles": [
+            0,
+            0,
+            0
+          ],
+          "weapon_control": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "camera": [
+            4294893546,
+            65412,
+            3281928,
+            5243002,
+            57338,
+            4294964329,
+            4294966950,
+            1462
+          ]
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Scoped rifle",
+      "slot": 3,
+      "switches": 2,
+      "control": {
+        "scoped": false,
+        "hold_frames": 60,
+        "release_frames": 90,
+        "approach_frames": 0
+      },
+      "before": [
+        {
+          "port": 1,
+          "actor": "0x80146cc0",
+          "input": "0x801470c0",
+          "weapon_slot": 2,
+          "weapon_id": 5,
+          "weapon": "Scoped rifle",
+          "reserve": 10,
+          "clip": 5,
+          "input_fields": "000000000000000010ffffff14000000000000000000000000000000000000000205150000000a0004003200140064000900070001000500000000000000000000000000",
+          "health_raw": 2097152,
+          "health": 32.0,
+          "position": [
+            -97630038,
+            33357824,
+            46599489
+          ],
+          "rotation": [
+            -24576,
+            -2,
+            0
+          ]
+        },
+        {
+          "port": 2,
+          "actor": "0x80144100",
+          "input": "0x80144500",
+          "weapon_slot": 0,
+          "weapon_id": 9,
+          "weapon": "Silenced pistol",
+          "reserve": 21,
+          "clip": 7,
+          "input_fields": "000000000000000010ffffff0c000000000000000000000000000000000000000009150001000f0001003200140064000900070000000000000000000000000000000000",
+          "health_raw": 2097152,
+          "health": 32.0,
+          "position": [
+            -94118405,
+            33357824,
+            -70941957
+          ],
+          "rotation": [
+            -16384,
+            -4,
+            0
+          ]
+        }
+      ],
+      "after": [
+        {
+          "port": 1,
+          "actor": "0x80146cc0",
+          "input": "0x801470c0",
+          "weapon_slot": 2,
+          "weapon_id": 5,
+          "weapon": "Scoped rifle",
+          "reserve": 10,
+          "clip": 4,
+          "input_fields": "000000000000000010ffffff14000000140000000000000000000000000000000205150000000a0004003200140064000900070001000400000000000000000000000000",
+          "health_raw": 2097152,
+          "health": 32.0,
+          "position": [
+            -97630038,
+            33357824,
+            46599489
+          ],
+          "rotation": [
+            0,
+            10,
+            0
+          ]
+        },
+        {
+          "port": 2,
+          "actor": "0x80144100",
+          "input": "0x80144500",
+          "weapon_slot": 0,
+          "weapon_id": 9,
+          "weapon": "Silenced pistol",
+          "reserve": 21,
+          "clip": 7,
+          "input_fields": "000000000000000010ffffff0c000000000000000000000000000000000000000009150001000f0001003200140064000900070000000000000000000000000000000000",
+          "health_raw": 1048576,
+          "health": 16.0,
+          "position": [
+            -93980941,
+            33357824,
+            -70948365
+          ],
+          "rotation": [
+            8192,
+            -6,
+            0
+          ]
+        }
+      ],
+      "effects": {
+        "before": {
+          "weapon_slot": 2,
+          "weapon_id": 5,
+          "clip": 5,
+          "reserve": 10
+        },
+        "after": {
+          "weapon_slot": 2,
+          "weapon_id": 5,
+          "clip": 4,
+          "reserve": 10
+        },
+        "changed": {
+          "clip": [
+            5,
+            4
+          ]
+        }
+      },
+      "camera": {
+        "valid": 1,
+        "owner": 2148822208,
+        "cycle": 18674779371,
+        "control": [
+          4294893546,
+          65412,
+          3281928,
+          5243002,
+          57338,
+          4294964329,
+          4294966950,
+          1462
+        ],
+        "native_position": [
+          -97630038,
+          17629184,
+          46599489
+        ]
+      },
+      "types": [
+        5110
+      ],
+      "callers": [
+        "0x800488D8"
+      ],
+      "family": "13F6",
+      "owned_count": 1,
+      "ignored_count": 0,
+      "eligible_count": 0,
+      "aimed_count": 0,
+      "camera_invalid_count": 0,
+      "shots": [
+        {
+          "shot": 2148723552,
+          "owner": 2148822208,
+          "p1": 2148822208,
+          "type": 5110,
+          "weapon": 5,
+          "caller": 2147780824,
+          "argument": 2148723552,
+          "eligible": 0,
+          "code_valid": 1,
+          "camera_valid": 1,
+          "camera_owner": 2148822208,
+          "cycle": 18677318771,
+          "camera_cycle": 18676205839,
+          "position": [
+            -99352576,
+            23461888,
+            -3145728
+          ],
+          "angles": [
+            -327680,
+            132186112,
+            0
+          ],
+          "aimed": 0,
+          "aimed_position": [
+            0,
+            0,
+            0
+          ],
+          "aimed_angles": [
+            0,
+            0,
+            0
+          ],
+          "weapon_control": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "camera": [
+            4294893546,
+            65412,
+            3281928,
+            5243002,
+            57338,
+            4294964329,
+            4294966950,
+            1462
+          ]
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "name": "M1 Garand",
+      "slot": 4,
+      "switches": 0,
+      "control": {
+        "scoped": false,
+        "hold_frames": 24,
+        "release_frames": 180,
+        "approach_frames": 0
+      },
+      "before": [
+        {
+          "port": 1,
+          "actor": "0x80147fb0",
+          "input": "0x801483b0",
+          "weapon_slot": 0,
+          "weapon_id": 12,
+          "weapon": "M1 Garand",
+          "reserve": 32,
+          "clip": 8,
+          "input_fields": "000000000000000010ffffff1400000000000000000000000000000000000000000c20001e000300010064002c0105000900080000000000000000000000000000000000",
+          "health_raw": 2097152,
+          "health": 32.0,
+          "position": [
+            -88327471,
+            33357824,
+            50037507
+          ],
+          "rotation": [
+            -16384,
+            1,
+            -32768
+          ]
+        },
+        {
+          "port": 2,
+          "actor": "0x801453f0",
+          "input": "0x801457f0",
+          "weapon_slot": 0,
+          "weapon_id": 12,
+          "weapon": "M1 Garand",
+          "reserve": 0,
+          "clip": 8,
+          "input_fields": "000000000000000010ffffff1400000000000000000000000000000000000000000c00001e000100010064002c0105000900080000000000000000000000000000000000",
+          "health_raw": 2097152,
+          "health": 32.0,
+          "position": [
+            -95535661,
+            33357824,
+            -70968621
+          ],
+          "rotation": [
+            -32768,
+            -1,
+            -32768
+          ]
+        }
+      ],
+      "after": [
+        {
+          "port": 1,
+          "actor": "0x80147fb0",
+          "input": "0x801483b0",
+          "weapon_slot": 0,
+          "weapon_id": 12,
+          "weapon": "M1 Garand",
+          "reserve": 32,
+          "clip": 7,
+          "input_fields": "000000000000000010ffffff1400000014000000000000000000000000000000000c20001e000300010064002c0105000900070000000000000000000000000000000000",
+          "health_raw": 2097152,
+          "health": 32.0,
+          "position": [
+            -88327471,
+            33357824,
+            50037507
+          ],
+          "rotation": [
+            -8192,
+            0,
+            -32768
+          ]
+        },
+        {
+          "port": 2,
+          "actor": "0x801453f0",
+          "input": "0x801457f0",
+          "weapon_slot": 0,
+          "weapon_id": 12,
+          "weapon": "M1 Garand",
+          "reserve": 0,
+          "clip": 8,
+          "input_fields": "000000000000000010ffffff1400000000000000000000000000000000000000000c00001e000100010064002c0105000900080000000000000000000000000000000000",
+          "health_raw": 1769472,
+          "health": 27.0,
+          "position": [
+            -95649437,
+            33357824,
+            -70950813
+          ],
+          "rotation": [
+            -24576,
+            -2,
+            -32768
+          ]
+        }
+      ],
+      "effects": {
+        "before": {
+          "weapon_slot": 0,
+          "weapon_id": 12,
+          "clip": 8,
+          "reserve": 32
+        },
+        "after": {
+          "weapon_slot": 0,
+          "weapon_id": 12,
+          "clip": 7,
+          "reserve": 32
+        },
+        "changed": {
+          "clip": [
+            8,
+            7
+          ]
+        }
+      },
+      "camera": {
+        "valid": 1,
+        "owner": 2148827056,
+        "cycle": 23046726663,
+        "control": [
+          4294893518,
+          131608,
+          3281946,
+          5307882,
+          57338,
+          4294964483,
+          4294966949,
+          1346
+        ],
+        "native_position": [
+          -88327471,
+          17629184,
+          50037507
+        ]
+      },
+      "types": [
+        5110
+      ],
+      "callers": [
+        "0x800488D8"
+      ],
+      "family": "13F6",
+      "owned_count": 1,
+      "ignored_count": 0,
+      "eligible_count": 0,
+      "aimed_count": 0,
+      "camera_invalid_count": 0,
+      "shots": [
+        {
+          "shot": 2148602960,
+          "owner": 2148827056,
+          "p1": 2148827056,
+          "type": 5110,
+          "weapon": 12,
+          "caller": 2147780824,
+          "argument": 2148602960,
+          "eligible": 0,
+          "code_valid": 1,
+          "camera_valid": 1,
+          "camera_owner": 2148827056,
+          "cycle": 23049248173,
+          "camera_cycle": 23048172676,
+          "position": [
+            -94306304,
+            23199744,
+            1376256
+          ],
+          "angles": [
+            -589824,
+            -132841472,
+            0
+          ],
+          "aimed": 0,
+          "aimed_position": [
+            0,
+            0,
+            0
+          ],
+          "aimed_angles": [
+            0,
+            0,
+            0
+          ],
+          "weapon_control": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "camera": [
+            4294893518,
+            131608,
+            3281946,
+            5307882,
+            57338,
+            4294964483,
+            4294966949,
+            1346
+          ]
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "name": "Panzerfaust",
+      "slot": 4,
+      "switches": 2,
+      "control": {
+        "scoped": false,
+        "hold_frames": 36,
+        "release_frames": 360,
+        "approach_frames": 0
+      },
+      "before": [
+        {
+          "port": 1,
+          "actor": "0x80147fb0",
+          "input": "0x801483b0",
+          "weapon_slot": 2,
+          "weapon_id": 13,
+          "weapon": "Panzerfaust",
+          "reserve": 2,
+          "clip": 1,
+          "input_fields": "000000000000000010ffffffd8ffffff00000000000000000000000000000000020d200000000200010064002c010500090008001e000100000000000000000000000000",
+          "health_raw": 2097152,
+          "health": 32.0,
+          "position": [
+            -88327471,
+            33357824,
+            50037507
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "port": 2,
+          "actor": "0x801453f0",
+          "input": "0x801457f0",
+          "weapon_slot": 0,
+          "weapon_id": 12,
+          "weapon": "M1 Garand",
+          "reserve": 0,
+          "clip": 8,
+          "input_fields": "000000000000000010ffffff1400000000000000000000000000000000000000000c00001e000100010064002c0105000900080000000000000000000000000000000000",
+          "health_raw": 2097152,
+          "health": 32.0,
+          "position": [
+            -95535661,
+            33357824,
+            -70968621
+          ],
+          "rotation": [
+            -32768,
+            -1,
+            -32768
+          ]
+        }
+      ],
+      "after": [
+        {
+          "port": 1,
+          "actor": "0x80147fb0",
+          "input": "0x801483b0",
+          "weapon_slot": 2,
+          "weapon_id": 13,
+          "weapon": "Panzerfaust",
+          "reserve": 1,
+          "clip": 1,
+          "input_fields": "000000000000000010ffffffd8ffffffd8ffffff000000000000000000000000020d200000000100010064002c010500090008001e000100000000000000000000000000",
+          "health_raw": 2097152,
+          "health": 32.0,
+          "position": [
+            -88327471,
+            33357824,
+            50037507
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "port": 2,
+          "actor": "0x801453f0",
+          "input": "0x801457f0",
+          "weapon_slot": 0,
+          "weapon_id": 12,
+          "weapon": "M1 Garand",
+          "reserve": 0,
+          "clip": 8,
+          "input_fields": "000000000000000010ffffff1400000000000000000000000000000000000000000c00001e000100010064002c0105000900080000000000000000000000000000000000",
+          "health_raw": 0,
+          "health": 0.0,
+          "position": [
+            -91235067,
+            33357824,
+            -63281563
+          ],
+          "rotation": [
+            -16384,
+            -3,
+            -32768
+          ]
+        }
+      ],
+      "effects": {
+        "before": {
+          "weapon_slot": 2,
+          "weapon_id": 13,
+          "clip": 1,
+          "reserve": 2
+        },
+        "after": {
+          "weapon_slot": 2,
+          "weapon_id": 13,
+          "clip": 1,
+          "reserve": 1
+        },
+        "changed": {
+          "reserve": [
+            2,
+            1
+          ]
+        }
+      },
+      "camera": {
+        "valid": 1,
+        "owner": 2148827056,
+        "cycle": 23147787088,
+        "control": [
+          4294893518,
+          131608,
+          3281946,
+          5307882,
+          57338,
+          4294964483,
+          4294966949,
+          1346
+        ],
+        "native_position": [
+          -88327471,
+          17629184,
+          50037507
+        ]
+      },
+      "types": [
+        5105
+      ],
+      "callers": [
+        "0x800488D8"
+      ],
+      "family": "13F1",
+      "owned_count": 1,
+      "ignored_count": 0,
+      "eligible_count": 0,
+      "aimed_count": 0,
+      "camera_invalid_count": 0,
+      "shots": [
+        {
+          "shot": 2148700416,
+          "owner": 2148827056,
+          "p1": 2148827056,
+          "type": 5105,
+          "weapon": 13,
+          "caller": 2147780824,
+          "argument": 2148700416,
+          "eligible": 0,
+          "code_valid": 1,
+          "camera_valid": 1,
+          "camera_owner": 2148827056,
+          "cycle": 23151906654,
+          "camera_cycle": 23150858945,
+          "position": [
+            -92143616,
+            20054016,
+            29884416
+          ],
+          "angles": [
+            0,
+            136904704,
+            0
+          ],
+          "aimed": 0,
+          "aimed_position": [
+            0,
+            0,
+            0
+          ],
+          "aimed_angles": [
+            0,
+            0,
+            0
+          ],
+          "weapon_control": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "camera": [
+            4294893518,
+            131608,
+            3281946,
+            5307882,
+            57338,
+            4294964483,
+            4294966949,
+            1346
+          ]
+        }
+      ]
+    }
+  ],
+  "families": {
+    "13F6": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      8,
+      0,
+      8,
+      0,
+      8,
+      0,
+      8,
+      0,
+      8,
+      9,
+      0,
+      8,
+      9,
+      0,
+      8,
+      9,
+      5,
+      0,
+      8,
+      9,
+      5,
+      12,
+      0,
+      8,
+      9,
+      5,
+      12
+    ],
+    "13F7": [
+      1,
+      1,
+      17,
+      1,
+      17,
+      1,
+      17,
+      1,
+      17,
+      16,
+      1,
+      17,
+      16,
+      4,
+      1,
+      17,
+      16,
+      4,
+      1,
+      17,
+      16,
+      4,
+      1,
+      17,
+      16,
+      4,
+      1,
+      17,
+      16,
+      4,
+      1,
+      17,
+      16,
+      4,
+      1,
+      17,
+      16,
+      4
+    ],
+    "13F3": [
+      10,
+      10,
+      10,
+      10,
+      10,
+      15,
+      10,
+      15,
+      10,
+      15,
+      10,
+      15,
+      10,
+      15,
+      10,
+      15
+    ],
+    "13FA": [
+      14,
+      14,
+      14,
+      14
+    ],
+    "13F1": [
+      13
+    ]
+  },
+  "source_saves_unchanged": true,
+  "preferences_unchanged": true,
+  "remaining_game_pids": [],
+  "exit_code": 0,
+  "raw_receipt": "analysis\\vr-baseline\\shot-families-final-20261027\\receipt.json",
+  "raw_receipt_sha256": "ec3eacc97dff2bdf2d09d70c89821375c413be2f2c1c38c2cd986282414e095b",
+  "limits": [
+    "Read-only native shot-family mapping; P38 remains the only override.",
+    "Synthetic desktop controls do not establish live NPC or SP isolation.",
+    "Physical attachment, recoil alignment and impact acceptance remain open."
+  ]
+}

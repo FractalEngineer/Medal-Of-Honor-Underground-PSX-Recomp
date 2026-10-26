@@ -1871,6 +1871,7 @@ static uint32_t g_shot_camera[8], g_shot_camera_owner;
 static int32_t g_shot_native_camera_position[3];
 static uint64_t g_shot_camera_cycle;
 static bool g_shot_camera_valid;
+static bool g_shot_capture_p1_only;
 
 static void vr_shot_camera_entry(CPUState* cpu, uint32_t address) {
     (void)address;
@@ -1931,9 +1932,17 @@ static void vr_shot_basis_entry(CPUState* cpu, uint32_t address) {
         psx_mod_counter_add("mohu.vr.shot.replay_blocked", 1);
         return;
     }
-    if (cpu->gpr[31] != MOHU_VR_SHOT_BASIS_RA ||
+    /*
+     * W5.3 family discovery records every actor-valid basis candidate while
+     * capture is enabled. The override path remains restricted to the exact
+     * measured P38 caller below; unknown families can only be sampled.
+     */
+    if ((!g_shot_capture && cpu->gpr[31] != MOHU_VR_SHOT_BASIS_RA) ||
         !mohu_vr_mp_actor_address(cpu->gpr[4]) ||
         !mohu_vr_mp_actor_address(cpu->gpr[18])) return;
+    if (g_shot_capture_p1_only &&
+        cpu->gpr[18] != psx_mod_read_word(MOHU_VR_MP_P1_ROOT)) return;
+    if (cpu->gpr[4] != cpu->gpr[16]) return;
     if (g_shot_capture && g_shot_count >= sizeof g_shot_samples / sizeof g_shot_samples[0]) {
         ++g_shot_overflow;
     }
@@ -2020,10 +2029,17 @@ static int vr_shot_command(const char* args, char* reply, int cap) {
     }
     if (!strcmp(args, "start")) {
         g_shot_capture = true;
+        g_shot_capture_p1_only = false;
+        g_shot_count = g_shot_overflow = 0;
+        g_shot_camera_valid = false;
+    } else if (!strcmp(args, "start-p1")) {
+        g_shot_capture = true;
+        g_shot_capture_p1_only = true;
         g_shot_count = g_shot_overflow = 0;
         g_shot_camera_valid = false;
     } else if (!strcmp(args, "stop")) {
         g_shot_capture = false;
+        g_shot_capture_p1_only = false;
         g_shot_camera_valid = false;
     } else if (strcmp(args, "status")) {
         unsigned index;

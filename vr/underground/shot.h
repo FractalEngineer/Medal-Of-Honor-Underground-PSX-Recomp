@@ -16,8 +16,22 @@
 #define MOHU_VR_SHOT_BASIS_CALL_WORD 0x0C01B22Cu
 #define MOHU_VR_SHOT_BASIS_RA 0x800488D8u
 #define MOHU_VR_SHOT_P38_TYPE 0x13F6u
+#define MOHU_VR_SHOT_TYPE_ROCKET 0x13F1u
+#define MOHU_VR_SHOT_TYPE_THROWN 0x13F3u
+#define MOHU_VR_SHOT_TYPE_SINGLE 0x13F6u
+#define MOHU_VR_SHOT_TYPE_REPEATING 0x13F7u
+#define MOHU_VR_SHOT_TYPE_BOLT 0x13FAu
 #define MOHU_VR_SHOT_MAX_CAMERA_AGE 2257920u /* four NTSC VBlanks */
 #define MOHU_VR_SHOT_CAMERA_MATRIX 0x800A2CECu /* loaded by native 80096AC8 */
+
+typedef enum {
+    MOHU_VR_SHOT_FAMILY_UNKNOWN = 0,
+    MOHU_VR_SHOT_FAMILY_ROCKET,
+    MOHU_VR_SHOT_FAMILY_THROWN,
+    MOHU_VR_SHOT_FAMILY_SINGLE,
+    MOHU_VR_SHOT_FAMILY_REPEATING,
+    MOHU_VR_SHOT_FAMILY_BOLT,
+} MohuVrShotFamily;
 
 typedef struct {
     uint32_t p1, owner, owner_class, owner_input, weapon_id;
@@ -25,6 +39,36 @@ typedef struct {
     uint64_t cycle, camera_cycle;
     int replay, camera_valid, code_valid, multiplayer;
 } MohuVrShotGuard;
+
+/* Measured on copied MP cycles 1-4 with the shared basis caller above. */
+static inline uint16_t mohu_vr_shot_type(uint32_t weapon_id) {
+    switch (weapon_id) {
+    case 0u: case 5u: case 8u: case 9u: case 12u:
+        return MOHU_VR_SHOT_TYPE_SINGLE;
+    case 1u: case 4u: case 16u: case 17u:
+        return MOHU_VR_SHOT_TYPE_REPEATING;
+    case 10u: case 15u:
+        return MOHU_VR_SHOT_TYPE_THROWN;
+    case 13u:
+        return MOHU_VR_SHOT_TYPE_ROCKET;
+    case 14u:
+        return MOHU_VR_SHOT_TYPE_BOLT;
+    default:
+        return 0u;
+    }
+}
+
+static inline MohuVrShotFamily mohu_vr_shot_family(uint32_t type) {
+    switch (type) {
+    case MOHU_VR_SHOT_TYPE_ROCKET: return MOHU_VR_SHOT_FAMILY_ROCKET;
+    case MOHU_VR_SHOT_TYPE_THROWN: return MOHU_VR_SHOT_FAMILY_THROWN;
+    case MOHU_VR_SHOT_TYPE_SINGLE: return MOHU_VR_SHOT_FAMILY_SINGLE;
+    case MOHU_VR_SHOT_TYPE_REPEATING:
+        return MOHU_VR_SHOT_FAMILY_REPEATING;
+    case MOHU_VR_SHOT_TYPE_BOLT: return MOHU_VR_SHOT_FAMILY_BOLT;
+    default: return MOHU_VR_SHOT_FAMILY_UNKNOWN;
+    }
+}
 
 static inline int mohu_vr_shot_guard(const MohuVrShotGuard* s) {
     return s && s->multiplayer && !s->replay && s->code_valid &&

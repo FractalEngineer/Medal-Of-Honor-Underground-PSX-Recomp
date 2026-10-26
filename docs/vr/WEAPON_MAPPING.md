@@ -3,9 +3,10 @@
 Last updated: 2026-10-27
 
 Execution order and stop/recovery rules are in [HANDOFF.md](HANDOFF.md).
-Checkbox status is in [VR_PLAN.md](VR_PLAN.md). **NEXT desktop: W5.2 live NPC/SP
-isolation.** W3.4, W4 P38 native mapping and W5.1 opt-in rendered-muzzle shots
-are complete; physical acceptance remains open. All 13 IDs now have measured
+Checkbox status is in [VR_PLAN.md](VR_PLAN.md). **NEXT desktop: W5.3
+family-aware shot conversion and lifecycle.** W3.4, W4 P38 native mapping, W5.1
+opt-in rendered-muzzle shots and the W5.3 read-only family map are complete;
+physical acceptance remains open. All 13 IDs now have measured
 complete-gun topology, animated captures, provisional calibration, passing
 gun-only desktop controls and moving-marker animation evidence.
 Read [P38_NATIVE_AIM_EVIDENCE.md](P38_NATIVE_AIM_EVIDENCE.md) for current
@@ -78,6 +79,24 @@ hashes, known weapon ID, exact magic, native face count, node counts, and a hash
 of every source vertex record. Vertex hashes include counts and data, not heap
 pointers, so repeated IDs in different source slots retain the same guard.
 Unknown layouts, code, projection, or tracking return to native rendering.
+
+## Shot-family map
+
+All 13 IDs enter the native basis builder `0x8006C8B0` with caller
+`0x800488D8`. `shot.h` maps the measured types and returns unknown IDs to native.
+
+| Type | IDs | Family |
+| --- | --- | --- |
+| `0x13F1` | 13 | rocket |
+| `0x13F3` | 10, 15 | thrown |
+| `0x13F6` | 0, 5, 8, 9, 12 | single |
+| `0x13F7` | 1, 4, 16, 17 | repeating/spread |
+| `0x13FA` | 14 | bolt |
+
+The shotgun constructed six native pellets in one trigger window. Read
+[SHOT_FAMILY_EVIDENCE.md](SHOT_FAMILY_EVIDENCE.md) before changing family
+behavior. Only P38 has a shot-pose override; family preservation and moving
+muzzle origins remain open.
 
 ## P1-only multiplayer eye replay
 
@@ -407,17 +426,17 @@ selector are removed. The session-start diff is retained locally under
 
 The active `build-release` is Release/OpenGL/OpenXR/PGXP with
 `PSX_DEBUG_TOOLS=ON` for active desktop work, at SHA-256
-`16142c7d130049b33501383e4909cd7b4b1d08520aebb665c61b23c845fc6e66`. The
-[current build receipt](../../vr/proof/weapon-moving-muzzle-build-receipt.json)
-records all-ID topology/calibration, frozen moving-marker controls, 64 calibrated
-desktop controls with 804 eye masks, P38 native combat and affected regressions.
+`2fab9c257013832e9dde5aaddcb9e24a0c232d873514f5c48188c4d8e018e547`. The
+[current build receipt](../../vr/proof/weapon-shot-families-build-receipt.json)
+records all-ID shot families, strict fixtures, P38 native/tracked combat and
+related regressions.
 The last debug-off release was
 `bae4f60f02f4bf70ce86ea85d201674df7157bafa4d6bea20c3086972f2ab71d`.
 The OpenXR-off flat executable is
 `18f4328bc9085f0a6a2322f940eea63516f07e93698010853cf3474cad94636c`.
 Flat startup is inert even with weapon-pose, flat-probe, synthetic-pose,
 all-ID calibration/gun-only, MP control and frustum flags inherited.
-Fifty-two Python tests and the strict C fixtures pass, including all 13
+Fifty-seven Python tests and the strict C fixtures pass, including all 13
 compiled calibration records. Saves,
 controller preferences and SteamVR settings are unchanged; no owned game or
 debug listener remains.
@@ -456,6 +475,8 @@ interactive gameplay or new OpenXR acceptance.
 - [All-ID control sheet](../../vr/proof/weapon-complete-gun-controls.png)
 - [All-ID moving-marker controls](../../vr/proof/weapon-moving-muzzle-receipt.json)
 - [Moving-marker control sheet](../../vr/proof/weapon-moving-muzzle-controls.png)
+- [All-ID shot-family receipt](../../vr/proof/weapon-shot-families-receipt.json)
+- [Shot-family build/regressions](../../vr/proof/weapon-shot-families-build-receipt.json)
 - `analysis/vr-baseline/weapon-mesh-mapping/first-person-geometry-20261025/inventory.json`
 - `analysis/vr-baseline/weapon-mesh-mapping/fp-controls-final-20261025/inventory.json`
 - `analysis/vr-baseline/weapon-mesh-mapping/fp-combat-final-20261025/inventory.json`
@@ -464,13 +485,14 @@ interactive gameplay or new OpenXR acceptance.
 ## Resume prompt
 
 ```text
-Read HANDOFF.md, VR_PLAN.md, WEAPON_COMPLETE_PROFILES.md and
-P38_NATIVE_AIM_EVIDENCE.md.
-Continue W5.2 live NPC/SP isolation without a headset. W3.4 is complete; all 13
-IDs require a moving marker recomputed after native animation. W4 P38 mapping
-and W5.1 pass; W5.2 has 14 desktop controls. Do not repeat them or the all-ID
-topology, capture, calibration, 64-case controls or animation matrix. Only P38
-has the accepted rendered-muzzle native-shot override.
+Read HANDOFF.md, VR_PLAN.md, WEAPON_COMPLETE_PROFILES.md,
+P38_NATIVE_AIM_EVIDENCE.md and SHOT_FAMILY_EVIDENCE.md.
+Continue W5.3 family-aware shot conversion without a headset. W3.4 is complete;
+all 13 IDs require a moving marker recomputed after native animation. W4 P38
+mapping, W5.1 and the read-only all-ID family map pass. Do not repeat them or
+the all-ID topology, capture, calibration, 64-case controls or animation matrix.
+Only P38 has the accepted rendered-muzzle native-shot override. W5.2 remains
+open until a compatible live NPC/SP fixture and guarded SP binding exist.
 Preserve native fallback, normal defaults, source saves, historical proofs and
 unrelated work. Leave physical W3.3/W3.5 open. No commit/push unless asked.
 ```

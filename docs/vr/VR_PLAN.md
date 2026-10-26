@@ -8,17 +8,18 @@ scope has evidence; it never implies broader headset or gameplay acceptance.
 Historical design and prior attempts belong in
 [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md) and the evidence documents.
 
-**NEXT DESKTOP TASK: W5.2 - live NPC/SP isolation.**
+**NEXT DESKTOP TASK: W5.3 - family-aware shot conversion and lifecycle.**
 W4 native P38 mapping and W5.1 opt-in rendered-muzzle shot conversion are now
 complete. The corrected P38 candidate retains its barrel, follows the measured
 grip, and passes native P2 damage/miss and tracking-fallback controls without a
 headset. W3.4 now has all-ID moving-marker evidence: recoil, reload, switching,
 scope hiding and prop special actions are exercised with native ammo/slot
-changes. W5.2 still needs a compatible copied live NPC/SP fixture and its own
-measured SP binding. If that fixture is unavailable, continue W5.3 constructor
-families without inventing an SP fixture. W3.3/W3.5 remain physical acceptance
-gates. Current evidence and exact continuation:
+changes. W5.3 now has a complete read-only all-ID family map, including six
+shotgun pellets. W5.2 remains open because no compatible copied live NPC/SP
+fixture and independently measured SP binding was available. W3.3/W3.5 remain
+physical acceptance gates. Current evidence and exact continuation:
 [WEAPON_COMPLETE_PROFILES.md](WEAPON_COMPLETE_PROFILES.md),
+[SHOT_FAMILY_EVIDENCE.md](SHOT_FAMILY_EVIDENCE.md),
 [P38_NATIVE_AIM_EVIDENCE.md](P38_NATIVE_AIM_EVIDENCE.md),
 [combat receipt](../../vr/proof/weapon-p38-aim-receipt.json),
 [complete-gun controls](../../vr/proof/weapon-complete-gun-controls-receipt.json)
@@ -366,6 +367,9 @@ acceptance is required for physical claims and normal default promotion.
   this box is not closed by the MP fixture or pure ownership tests.
 - [ ] W5.3. Expand measured constructor families to all 13 IDs; preserve shotgun
   spread/pellets, rocket collision and both native throw/release/flight paths.
+  All 13 IDs and five native types are now mapped through shared caller
+  `0x800488D8`; one trigger produced six shotgun constructions. Family-aware
+  conversion, preservation controls and motion/impact acceptance remain open.
 - [ ] W5.4. Complete reload/empty/switch/scoped/recoil/death/load matrix and the
   13-ID native damage gate; recompute the rendered tip after native animation
   rather than reusing an idle fixed point; operator confirms barrel-to-impact
@@ -376,6 +380,11 @@ and [complete-gun controls](../../vr/proof/weapon-p38-aim-controls.png). The
 candidate uses the corrected node-11 barrel tip and one quantized render/shot
 affine. New flags are explicit and normal defaults remain native. The W3.1
 node-13-only receiver marker/scale are historical, superseded for this candidate.
+
+W5.3 family evidence:
+[SHOT_FAMILY_EVIDENCE.md](SHOT_FAMILY_EVIDENCE.md),
+[family receipt](../../vr/proof/weapon-shot-families-receipt.json) and
+[build regressions](../../vr/proof/weapon-shot-families-build-receipt.json).
 
 Exit gate: real native trajectory/collision/damage agrees with the rendered
 barrel within a stated tested tolerance. Native hits alone are insufficient.

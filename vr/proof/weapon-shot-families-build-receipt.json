@@ -1,0 +1,70 @@
+{
+  "schema": 1,
+  "date": "2026-10-27",
+  "kind": "W5.3 native MP shot-family map and regressions",
+  "complete": true,
+  "headset_used": false,
+  "revision": "ee9926ae1d8fbde27d04737d866dbe670475b657",
+  "working_tree": true,
+  "executable_sha256": "2fab9c257013832e9dde5aaddcb9e24a0c232d873514f5c48188c4d8e018e547",
+  "build": {
+    "configuration": "Release",
+    "PSX_DEBUG_TOOLS": "ON",
+    "MOHU_VR_DIAGNOSTICS": "ON",
+    "PSX_OPENXR": "ON"
+  },
+  "sources": {
+    "vr/underground/vr_diagnostic.c": "5f97104c3b9af3c18bb0d16eb2f95a6f88a1c20a04f7a706cdcf5ae5a5b46fe5",
+    "vr/underground/shot.h": "7f004d216c55c6dd4dd941b665e79fee7ee57da6c988276e9a972e7bfddaa885",
+    "vr/tools/probe_shot_families.py": "78319b2ac602bb40af6e684cff1944d2d4e146f3d1cd4d35d9caf3f1e8904c2a",
+    "vr/tests/test_shot.c": "9caffab7d9ebd265ce4dc37934e5b6d8f408220bd39fd673265552bda25b0642",
+    "vr/tests/test_shot_families.py": "21675f1ca7d689ea9bce3ffabb2886abf4766c3605219df4395ce14ed7ff116e"
+  },
+  "receipts": {
+    "shot_families": {
+      "path": "vr/proof/weapon-shot-families-receipt.json",
+      "sha256": "f30951a07258817cc41f1fabead7305d6340ef7748a393967c5f940a714e860f"
+    },
+    "raw_shot_families": {
+      "path": "analysis/vr-baseline/shot-families-final-20261027/receipt.json",
+      "sha256": "146103cbf78d899028730d8a768dbab6256e7ceb91f8ba5f3fa903657a01db25"
+    },
+    "raw_p38_native": {
+      "path": "analysis/vr-baseline/w5-3-p38-native-20261027/receipt.json",
+      "sha256": "fcc34196ffb035d5d979f75e7114aac3b796e00e13d1580f8d6d7c8c5bdda2ae"
+    },
+    "raw_p38_tracked": {
+      "path": "analysis/vr-baseline/w5-3-p38-tracked-20261027/receipt.json",
+      "sha256": "1c9e0ada55fb5e40031276e77efb233827ef910c1a6f6696424178afbcd2e480"
+    }
+  },
+  "checks": {
+    "python_tests": 57,
+    "strict_c": "PASS: MP ownership/mode/projection/pointer guards; native shot families and ownership/freshness; weapon profiles, node guard, tracked affine and stale fallback; diagnostic syntax",
+    "shot_family_ids": 13,
+    "families": {
+      "13F1": [13],
+      "13F3": [10, 15],
+      "13F6": [0, 5, 8, 9, 12],
+      "13F7": [1, 4, 16, 17],
+      "13FA": [14]
+    },
+    "basis_caller": "0x800488D8",
+    "shotgun_pellets": 6,
+    "camera_invalid_samples": 0,
+    "p38_native_cases": 5,
+    "p38_tracked_cases": 14,
+    "p38_tracked_aim_complete": true,
+    "tracked_gun_changed_pixels": 2356,
+    "tracked_world_changed_pixels": 0,
+    "source_saves_preferences_unchanged": true,
+    "remaining_owned_game_processes": []
+  },
+  "normal_defaults": "all calibration, gun-only and shot-override flags remain OFF",
+  "limits": [
+    "This is a read-only family map; P38 remains the only native-shot override.",
+    "The scoped-rifle family was measured by ordinary native fire, not zoom plus fire.",
+    "Rocket/crossbow flight, thrown release paths and moving-marker shot origins remain open.",
+    "Live NPC/SP isolation and physical impact acceptance remain open."
+  ]
+}
