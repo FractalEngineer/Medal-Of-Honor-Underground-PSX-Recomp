@@ -3,9 +3,9 @@
 Last updated: 2026-10-27
 
 Execution order and stop/recovery rules are in [HANDOFF.md](HANDOFF.md).
-Checkbox status is in [VR_PLAN.md](VR_PLAN.md). **NEXT desktop: W6.1
-rendered animated muzzle capture.** W3.4, W4 P38 native mapping, W5.1,
-W5.3 all-family conversion/preservation and W5.4a/b/c desktop states/death pass;
+Checkbox status is in [VR_PLAN.md](VR_PLAN.md). **NEXT desktop: W6.2
+verified triangle/vertex bindings.** W3.4, W4 P38 native mapping, W5.1,
+W5.3/W5.4 desktop gates and W6.1 hand-fixed ray capture pass;
 physical acceptance remains open. All 13 IDs now have measured
 complete-gun topology, animated captures, provisional calibration, passing
 gun-only desktop controls and moving-marker animation evidence.
@@ -15,6 +15,11 @@ bindings and the corrected mixed-node barrel. Read
 for the all-ID mask/calibration table and the dynamic-marker requirement.
 Historical sections below remain measurement history, not instructions to
 repeat completed gates.
+
+Current operator contract: the laser shows the bullet's hand-fixed aim ray;
+native recoil is visual. Fixed calibration/hand affine drives shots and the
+future laser. Animated markers remain diagnostics. This supersedes older
+moving-marker aiming requirements; see RENDERED_MUZZLE_EVIDENCE.md.
 
 ## Current result
 
@@ -489,14 +494,16 @@ interactive gameplay or new OpenXR acceptance.
 ```text
 Read HANDOFF.md, VR_PLAN.md, WEAPON_COMPLETE_PROFILES.md,
 P38_NATIVE_AIM_EVIDENCE.md and SHOT_FAMILY_EVIDENCE.md.
-Continue W6.1 using the exact capture contract in HANDOFF section 1. W3.4 is complete;
-all 13 IDs require a moving marker recomputed after native animation. W4 P38
+Continue W6.2 using the exact reader contract in HANDOFF section 1. W3.4 is complete;
+all 13 IDs retain model-animation diagnostics; shot/laser aim is fixed to the hand. W4 P38
 mapping, W5.1, W5.3d conversion, W5.3e paired preservation/impact and the W5.4
 desktop combat-state pair and P1 death/native respawn/fresh-shot supplement pass.
 Read DEATH_RESPAWN_EVIDENCE.md for the lifecycle scope (stereo inactive).
-Physical W5.4d barrel-to-impact confirmation stays open. Do not repeat them or
+Physical W5.4d hand-aim/impact confirmation stays open. Do not repeat them or
+the accepted W6.1 rendered-muzzle matrix (RENDERED_MUZZLE_EVIDENCE.md), nor
 the all-ID topology, capture, calibration, 64-case controls or animation matrix.
-Use the W5.3e paired receipt and its stated common-prefix tolerances.
+Use the current weapon-hand-fixed-preservation-receipt.json and its stated
+common-prefix tolerances. Older animated-reference receipts remain historical.
 W5.2 remains
 open until a compatible live NPC/SP fixture and guarded SP binding exist.
 Preserve native fallback, normal defaults, source saves, historical proofs and

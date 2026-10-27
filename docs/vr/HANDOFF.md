@@ -23,97 +23,86 @@ the earlier hardware-first sequence; no completed box is reopened.
 
 ## 1. Start here - one next task
 
-**W5.4 DESKTOP COMPLETE. NEXT TASK: W6.1 rendered animated muzzle capture.**
-The paired native/tracked desktop matrix now passes reload tail, empty fire,
-switch during reload, scoped fire on ID 5, recoil follow-up and load recovery.
-It uses the accepted W5.3e all-13 damage/type gate rather than repeating that
-matrix. Read [COMBAT_STATE_EVIDENCE.md](COMBAT_STATE_EVIDENCE.md),
-[the paired receipt](../../vr/proof/weapon-combat-states-receipt.json) and
-[build/validations](../../vr/proof/weapon-combat-states-build-receipt.json).
-The separate [death/respawn supplement](DEATH_RESPAWN_EVIDENCE.md) now passes
-P1 native death, native respawn and a fresh converted post-respawn shot. The
-supplement is a headless shot/marker lifecycle test; stereo was inactive and
-its zero counters are not additional rollback acceptance.
+**W6.1 COMPLETE. NEXT TASK: W6.2 verified triangle/vertex bindings.**
 
-Completed desktop details:
+**Operator contract: the laser points along the bullet's hand-fixed aim ray.**
+Native recoil/reload animation plays normally and does not steer that ray.
+`MOHU_VR_WEAPON_AIM` now uses the fixed calibrated muzzle/forward reference with
+its tracked hand affine; W6 consumes the same ray. Animated marker copies are
+only diagnostics and eligibility/freshness guards. This explicitly supersedes
+older W5/W6 requirements to make aim follow an animated barrel. See
+[the current contract and proof](RENDERED_MUZZLE_EVIDENCE.md).
+Read [RENDERED_MUZZLE_EVIDENCE.md](RENDERED_MUZZLE_EVIDENCE.md),
+[the snapshot proof](../../vr/proof/weapon-rendered-muzzle-receipt.json) and
+[build/regressions](../../vr/proof/weapon-rendered-muzzle-build-receipt.json).
+Ten complete P38 snapshots cover the hand-fixed ray in both eyes, independent head/hand poses,
+recoil/reload, tracking/load recovery and live pair refusal. The actual applied
+quantized affine and copied animated vertices predict base/eye markers within
+`1e-8` units. The actual P38 shot agrees with the shared fixed ray within one Q16 step.
+Recoil/reload change the visible model while the fixed ray remains identical.
+The 13-ID native/tracked preservation pair also passes under this new policy.
 
-1. Reload-tail and load-recovery shots consumed native ammo and produced linked
-   P2 damage in both modes; the early reload-interlock attempt constructed no
-   shot. Tracked load generation advanced 6->7.
-2. Empty fire and switch-during-reload constructed no additional candidate shot
-   or damage. P38's native auto-reload transition is recorded separately.
-3. Scoped ID 5 produced two `0x13F6` shots, consumed two rounds and damaged P2.
-   The tracked run deliberately stayed native because the hidden-scope family
-   guard has no fresh animated candidate marker.
-4. Recoil follow-up was turned away from P2 so its converted tip and first
-   integration remained observable. All non-fallback converted origins and
-   first-motion origins were zero at recorded precision; normalized axis
-   cosines were `1.0`.
-5. Both modes closed cleanly with source saves and preferences unchanged. The
-   tested executable is `8d0db606...`; no runtime C source changed.
+The capture is host-only, OFF until `mohu.vr.muzzle capture`. It stages both
+eyes, requires native scope restoration and publishes only after the enclosing
+pair succeeds. The live refusal invalidated sequence 9 without publishing;
+recovery produced a newer complete pair. Read-only snapshots do not draw a
+beam, prove triangle geometry or certify physical alignment.
 
-6. The death supplement killed P1 through exact linked native P2 damage,
-   observed health 32->0->32 with unchanged P1 actor/input and load generation,
-   and required zero P1 shots from the respawn input. The later P38 shot
-   consumed one round in each mode. Tracked markers went valid->invalid->valid;
-   its new marker's first-motion origin error was zero. No guest health/ammo
-   edits were used.
+W5.3a-e and W5.4a-c remain complete for their documented desktop scopes. Read
+[COMBAT_STATE_EVIDENCE.md](COMBAT_STATE_EVIDENCE.md) and
+[DEATH_RESPAWN_EVIDENCE.md](DEATH_RESPAWN_EVIDENCE.md) for the state/death limits.
+W5.4d physical alignment, W5.2 live NPC/SP and W3.3/W3.5 remain independently
+open. Do not repeat these matrices, canonical acquisition or W3.4 animation
+without a changed path or demonstrated regression. Hardware acceptance does
+not block W6.2 desktop work; all normal candidate defaults remain OFF.
 
-Do not repeat the W5.4 pair/death supplement, W5.3e pair, all-ID conversion,
-family map, canonical acquisition or W3.4 animation matrix without a changed
-path or demonstrated regression. W5.4d physical barrel-to-impact confirmation,
-W5.2 live NPC/SP and physical W3.3/W3.5 remain independently open. Hardware
-acceptance does not block the ready W6 desktop work. All candidate flags
-remain OFF by default.
+### Execute W6.2 before drawing a beam
 
-### Execute W6.1 only before opening geometry work
+1. Open the reference `vr/moh_vr_raycast.h` (`moh_vr_ray_tri`,
+   `moh_vr_ray_tree_tris`), `vr/test_moh_vr_raycast.c` and the reference
+   `vr_laser_draw` in `vr/psx_vr_stereo.c`. Reuse its triangle algorithm and
+   fixture cases. Its 16-byte records / 8-byte vertices are a measured
+   first-game lead, not an Underground layout or address contract. Test the
+   origin-inside case explicitly; do not blindly inherit its leaf-skip shortcut.
+2. Use copied root MP slot 1 and the existing owned-process/read-only tools.
+   Read [MP_LEVEL_SELECTOR_EVIDENCE.md](MP_LEVEL_SELECTOR_EVIDENCE.md) and
+   its saved complete callback disassembly first. The MP scene has 21 level
+   nodes with callback `8006C61C`, scene `8006E9D8` and list `[800A35CC]`.
+   Their center/radius fields are visibility bounds, not triangle records.
+   The known SP projector `80099960` and SP tree do not establish MP geometry.
+3. Follow the actual MP drawer/geometry reader from the measured callback,
+   comparing its loads/calls with the reference record reader. Capture complete
+   code units and hashes before trusting a binding. Record where the real vertex
+   and triangle counts, bases, strides, indices and object-to-world transform
+   come from. Reuse bounded code/trace snapshots; no broad RAM rediscovery,
+   generated-C edits, actor/health/ammo writes or source-save changes.
+4. Retain a bounded geometry snapshot and independently decode at least three
+   spatially distinct drawn triangles from the real index/vertex tables. State
+   their coordinate space and reconstruct their world positions. Validate counts,
+   alignment, overflow and every index against measured bounds. A visibility-box
+   hit or native damage alone is insufficient evidence for this reader.
+5. Adapt reference ray/triangle fixtures for nearest hit, both windings, miss,
+   range, parallel/degenerate triangles, edge hits, origin-inside bounds, malformed
+   pointers/indices and traversal budgets. Keep broad-phase boxes separate from
+   the final triangle test. Do not weaken bounds or substitute a different
+   overlay when a guard fails. Run shared parity if shared math/wrappers change.
+6. Close W6.2 only with the guarded reader, independent geometry reconstruction,
+   pure fixtures and source/binary/fixture receipt. Then NEXT is W6.3: consume
+   W6.1's current hand-fixed ray and per-eye view for beam/dot placement and nearest triangles.
+   Before screen projection, also retain actual guest OFX/OFY/H; W6.1 currently
+   records the affine and scoped view, not those extra projection registers.
+   Reuse existing projection/clip/beam code; do not promote the old right-aim
+   box pointer or borrow the reference's static pivot/muzzle/calibration.
 
-1. Read [REFERENCE_REUSE_AUDIT.md](REFERENCE_REUSE_AUDIT.md), the current
-   `vr_weapon_viewmodel_project`, `vr_weapon_aim_pose`,
-   `mohu_vr_weapon_animated_shot`, and the reference `vr_laser_capture` /
-   `vr_laser_draw` in `../Medal-Of-Honor-PSX-Recomp/vr/psx_vr_stereo.c`.
-   Reuse the existing quantized affine, full inverse and marker-group math.
-   Do not port the reference's static pivot/muzzle or calibration numbers.
-2. Start with copied root MP slot 1/P38 only. At the already guarded
-   `800894DC` projection seam, own copies of that draw's selected animated
-   vertices and actual applied RT/TR plus eye render view. Existing
-   `g_weapon_capture_frame_*` and native/tracked-control capture already expose
-   this information. Extend that capture with per-eye/pair ownership instead
-   of discovering another weapon seam or creating a second renderer.
-3. Record P1 owner/input/object, profile/source hash, marker indices, guest
-   cycle/load generation, pair attempt/eye and the applied view/control with
-   each bounded host snapshot. Invalidate on load, tracking loss, unsupported
-   model and rejected/interrupted draw. A last-eye matrix or canonical
-   simulation cache alone is not evidence of the current rendered muzzle.
-   Keep W5's natural simulation cache separate from these draw snapshots.
-4. Recompute the tip and declared axis from those copied animated vertices,
-   then apply the actual quantized render transform. Account for the eye view
-   exactly once. Preserve the P38 barrel-ring axis; other grip-to-tip axes stay
-   provisional. Reject degenerate axes. No shot, guest model or laser writes
-   belong in this read-only capture task.
-5. Extend the existing pose/marker harness: both eyes, fixed-hand/head-only,
-   fixed-head/hand-only, one moving native recoil/reload sample, invalid hand,
-   load and recovery. Independently recompute the points/axis in Python from
-   the copied vertices/controls. Compare W5 and W6 on the same animation
-   epoch/frozen snapshot; do not hide differing native sample times with a
-   larger tolerance. Retain exact controls and source times. Derive numeric
-   bounds from Q12 RT/integer TR/Q16 storage before judging results.
-6. Close W6.1 only with a compact source/binary/fixture receipt and affected
-   capture/pose/shot checks. Run cross-game parity if shared math or its wrappers
-   change. No fresh gameplay/build is needed for unchanged historical receipts.
-   After W6.1, NEXT is W6.2: verify actual target triangle/vertex readers against
-   the reference records and drawer. The current MP node bounds and SP tree
-   pointer do not establish triangle bindings. Do not enable a beam/dot, claim
-   W6.2/3, change pins/defaults, or request headset acceptance to finish W6.1.
+If the MP reader cannot yet be proven, retain the exact unresolved load/call and
+bounded snapshots as the continuation. Two failures of the same hypothesis mean
+inspect the missing fact, not repeat an unchanged full matrix. Do not jump to
+HUD/performance or request headset acceptance to finish this desktop task.
 
-Stop after two failures of the same hypothesis: retain both snapshots and name
-the missing transform/ownership/timing fact. Do not rerun whole weapon matrices
-or move to HUD/performance while W6.1 remains the active task.
-
-The moving-marker result is not optional: all 13 IDs require a tip recomputed
-from the current marker vertices after native animation. The stored calibration
-point is the idle reference, not an animation-safe shot origin. W5/W6 must use
-the moving result before transforming it with the render affine. W5.2 remains
+The moving-marker evidence characterizes the native model animation. It is
+retained for diagnostics, not as a laser or shot-origin requirement. The current
+operator-selected aim uses a fixed calibrated reference in hand space; native
+recoil may move the visible barrel independently. W5.2 remains
 open because no compatible copied live NPC/SP fixture or independently measured
 SP shot/camera binding was available. W4/W5.1 remain complete for P38; their
 five-case native and 14-case tracked matrices passed again on the current binary.
@@ -180,8 +169,8 @@ candidate calibration is in
 true tip `(81.8,110.6,447.6)`, barrel axis from node-11 rings, provisional
 `760.489674616524` units/metre. Preserve historical W3.1/W3.2 receipts. No new
 physical acceptance is claimed; no headset/runtime was launched for this work.
-The frozen-frame matrix supersedes a static animation-aim assumption: W5/W6 must
-recompute the P38 tip from node-11 indices 24..28 after native animation.
+The frozen-frame matrix characterizes the visible P38 tip at node-11 indices
+24..28. The current hand-fixed aim intentionally does not follow that motion.
 
 Shared VR matrix, conservative visibility and slab math has one source of truth:
 `psxrecomp/runtime/src/vr_geometry_math.c` and its public header. Fix shared math
@@ -267,7 +256,7 @@ rollback. W2.3 later added the accepted heading and near-wall controls.
 | --- | --- |
 | Repository | `C:/Users/titan/Desktop/Github_Projects/Mine/Medal-Of-Honor-Underground-PSX-Recomp` |
 | Branch / current HEAD | `feature/vr-port`; read current HEAD during preflight. W1/W2.1 predecessor is `afda5082...` |
-| Checkpoint scope | W5.3 all-family conversion/preservation, W5.4 desktop states and P1 death/native respawn/fresh shot complete; NEXT W6.1 rendered-muzzle capture; preserve `.commandcode/` |
+| Checkpoint scope | W5.3/W5.4 desktop gates and W6.1 per-eye rendered-muzzle capture complete; NEXT W6.2 triangle/vertex bindings; preserve `.commandcode/` |
 | Framework gitlink | `555e1eabccc59b9b6ff0d9fca48aca783513dc86` |
 | UI gitlink | `7c635c6b366a6e0d5d3c913a7fce6ec04dd9f256` |
 | Title / version | `SLUS-01270` / `0.1.0` |
@@ -573,7 +562,7 @@ git status --short
 git branch --show-current
 git rev-parse HEAD
 git submodule status
-Get-Content vr/proof/weapon-death-respawn-validation-receipt.json -Encoding utf8
+Get-Content vr/proof/weapon-rendered-muzzle-build-receipt.json -Encoding utf8
 Get-FileHash -LiteralPath build-release/Medal_of_Honor_Underground_Recompiled.exe -Algorithm SHA256
 Select-String -LiteralPath build-release/CMakeCache.txt -Pattern '^(PSX_DEBUG_TOOLS|MOHU_VR_DIAGNOSTICS|PSX_OPENXR):'
 ```
@@ -863,7 +852,7 @@ if ($LASTEXITCODE -ne 0) { throw 'Release build failed' }
 | Following native y=240 flip for eye scratch | Accepted rollback-protected y=0 buffer; alternating black pairs were measured |
 | Affine `*4096` applied to GTE TR | Integer TR helper and Q12 RT are deliberately different |
 | Reference `ref=133`, pivot `(80,150,100)` or scale 850 copied as calibration | Existing authored pose uses ref=400; measure Underground spaces/mesh before changing placement |
-| Native P2 hits prove tracked aim | Native shots are still native; require construction, trajectory and calibrated barrel-to-impact evidence |
+| Native P2 hits prove tracked aim | Native shots are still native; require construction, trajectory and shared hand-ray/impact evidence |
 | SP converter/table addresses applied to MP | W2.4 measured the MP converter `800799E4` and relocated tables; only the shared visibility selector helper is common |
 | Current right-aim/node-box laser called exact barrel/triangle laser | W6 rendered affine/muzzle plus independently mapped exact triangles |
 | New build folder or patched state header repairs a save | Ordinary PGXP checks and operator-provided compatible slot only |
@@ -875,30 +864,43 @@ if ($LASTEXITCODE -ne 0) { throw 'Release build failed' }
 - Complete: C1-C4, W1-W3.2, W3.4, W4.1-W4.3, W5.1, W5.3a/b/c/d/e
   family/lifecycle, final-origin, canonical-marker, all-family conversion,
   paired preservation/impact, W5.4a/b combat states and W5.4c P1 death/native
-  respawn/fresh post-respawn shot. W3.3 physical acceptance
+  respawn/fresh post-respawn shot; W6.1 per-eye rendered animated muzzle capture. W3.3 physical acceptance
   is open. W3.4 now includes all-ID frozen-frame moving-marker evidence for
   native recoil, reload, switching, scope hiding and prop actions.
-- Moving-marker result: all 13 IDs require recomputation from current marker
-  vertices after native animation. The idle stored point remains a reference;
-  W5/W6 must not treat it as animation-safe. The crossbow's tested launch sample
+- Operator policy: use the same hand-fixed calibrated ray for shots and the
+  future laser. Native model recoil/reload stays visual. Moving-marker copies
+  remain diagnostics/guards; they no longer define current shot/laser motion. The crossbow's tested launch sample
   alone was rigid. Sten reload and scoped-shot ammo are `not-observed`.
-- NEXT task: W6.1 rendered animated muzzle capture under section 1. Physical
-  W5.4d barrel-to-impact alignment stays open. W5.2 remains open
+- NEXT task: W6.2 verified triangle/vertex bindings under section 1. Physical
+  W5.4d physical hand-aim/impact alignment stays open. W5.2 remains open
   until a compatible copied live NPC/SP fixture and guarded SP binding are
   available. Do not repeat the W3.4 matrix, family map, canonical acquisition,
-  W5.3d conversion, W5.3e pair, W5.4 desktop pair or death supplement.
+  W5.3d conversion, W5.3e pair, W5.4 desktop pair/death supplement or W6.1
+  capture matrix unless their path changes.
 - W5.4c result: native/tracked P1 health 32->0->32; P2 native attack shots
   34/29, all candidate-ineligible. Respawn input constructed no P1 shot. A
   later P38 shot consumed one round in each mode. The tracked marker sequence
   advanced from 836 at death to 948 at that shot without changing generation
   1; converted origin error `0.0000072954`, first-motion error `0`, axis cosine
   `0.9999991904`. Stereo was inactive; no new rollback acceptance is claimed.
-- W5.3e result: 22 native / 21 tracked lifetimes, 16 tracked linked damage
+- Historical animated-reference W5.3e result: 22 native / 21 tracked lifetimes, 16 tracked linked damage
   writes, exact shotgun construction-scoped RNG (21 updates), six pellets,
   maximum spread `5.257088` vs `5.259963` degrees and five fallback/recovery
   controls. The one-frame StG44 lifetime difference is recorded; common-prefix
   type, release, history, stage, ammo-per-shot and RNG behavior passed.
-- Last evidence: `weapon-death-respawn-receipt.json`,
+- W6.1 result: ten snapshots / 20 eyes, 268 published pairs, 536 rollback
+  checks, zero mismatches/failed eyes and six intentional admission refusals.
+  Base/eye reconstruction is within `1e-8`; same-snapshot W5 world-tip error
+  <=`0.000007151`. New capture OFF by default; no beam/triangle claim.
+- Current hand-fixed family pair: all 13 IDs, 21 native / 21 tracked
+  lifetimes, 22 tracked linked P2 health decreases. Shotgun retains six pellets
+  and 21 construction-scoped RNG updates. Missing/stale marker, unfocused, P2
+  ownership and recovered controls pass. Redirected grenade/petrol add four/one
+  real hits where the native baseline misses; no physics check was relaxed.
+- Last evidence: `weapon-rendered-muzzle-receipt.json`,
+  `weapon-rendered-muzzle-build-receipt.json`, `RENDERED_MUZZLE_EVIDENCE.md`,
+  `weapon-hand-fixed-aim-receipt.json`, `weapon-hand-fixed-preservation-receipt.json`,
+  `weapon-death-respawn-receipt.json`,
   `weapon-death-respawn-validation-receipt.json`, `DEATH_RESPAWN_EVIDENCE.md`,
   `weapon-combat-states-receipt.json`,
   `weapon-combat-states-build-receipt.json`, `COMBAT_STATE_EVIDENCE.md`,
@@ -922,8 +924,8 @@ if ($LASTEXITCODE -ne 0) { throw 'Release build failed' }
 - Hardware: do not put the operator in the headset during this desktop pass.
   W3.3/W3.5 and release/default promotion still need later physical acceptance.
 - Build: `build-release` is Release/OpenXR/diagnostics ON with debug tools ON
-  for active desktop work. W5.3e/W5.4/death supplement tested executable
-  `8d0db606...`; no runtime C source changed in the death task. The inherited
+  for active desktop work. Current hand-fixed/W6.1 executable `4204a6f3...`; W5.3e/W5.4
+  and death receipts retain historical `8d0db606...`. The inherited
   W5.3d debug-off flat startup remains historical.
   Normal candidate defaults remain OFF; no framework pin changed. Source
   saves/preferences are unchanged and owned processes are closed.

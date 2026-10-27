@@ -135,6 +135,32 @@ class WeaponPreservationTests(unittest.TestCase):
             for row in result["problems"]
         ))
 
+    def test_hand_directed_explosive_can_add_native_damage_but_cannot_lose_it(self):
+        native = weapon(weapon_id=10)
+        native["shots"][0]["type"] = 0x13F3
+        tracked = copy.deepcopy(native)
+        native["native_damage"] = []
+        tracked["shots"][0]["hand_fixed"] = 1
+        result = preserve.compare_receipts(receipt(native), receipt(tracked))
+        self.assertTrue(result["complete"], result["problems"])
+        self.assertTrue(result["weapons"][0]["additional_redirected_explosive_hits"])
+        tracked["shots"][0]["hand_fixed"] = 0
+        result = preserve.compare_receipts(receipt(native), receipt(tracked))
+        self.assertFalse(result["complete"])
+        native["native_damage"] = [{"old": "0x20", "new": "0x10"}]
+        tracked["native_damage"] = []
+        tracked["shots"][0]["hand_fixed"] = 1
+        result = preserve.compare_receipts(receipt(native), receipt(tracked))
+        self.assertFalse(result["complete"])
+
+    def test_extra_hit_exception_does_not_apply_to_other_weapon_families(self):
+        native = weapon()
+        tracked = copy.deepcopy(native)
+        native["native_damage"] = []
+        tracked["shots"][0]["hand_fixed"] = 1
+        result = preserve.compare_receipts(receipt(native), receipt(tracked))
+        self.assertFalse(result["complete"])
+
 
 if __name__ == "__main__":
     unittest.main()

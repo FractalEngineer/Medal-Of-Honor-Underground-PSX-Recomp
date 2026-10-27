@@ -141,8 +141,8 @@ def marker_aim(before, calibration, marker):
     grip = np.array([0.15, 0.0, -0.5])
     hand_origin = grip * PSX_SIGNS * poses.HAND_UNITS_PER_METRE
     grip_pivot = np.asarray(calibration["grip_pivot"], dtype=float)
-    tip = np.asarray(marker["tip"], dtype=float)
-    axis = tip - np.asarray(marker["axis_base"], dtype=float)
+    tip = np.asarray(calibration["muzzle"], dtype=float)
+    axis = np.asarray(calibration["forward"], dtype=float)
     basis_axis = model_basis_vector(calibration, axis)
     basis_tip = model_basis_vector(calibration, tip - grip_pivot)
     scale = poses.HAND_UNITS_PER_METRE / calibration["model_units_per_metre"]
@@ -197,8 +197,14 @@ def camera_point_to_world(camera, point):
 def verify_marker_conversion(sample, marker, camera):
     if not marker["valid"] or marker["id"] != sample["weapon"]:
         raise RuntimeError(f"ID {sample['weapon']}: invalid per-shot marker")
-    tip = marker["tip"]
-    axis = np.asarray(marker["tip"]) - np.asarray(marker["axis_base"])
+    if sample.get("hand_fixed"):
+        calibration = calibrations()[sample["weapon"]]
+        tip = calibration["muzzle"]
+        axis = np.asarray(calibration["forward"])
+    else:
+        # Historical animated-origin receipts retain their declared policy.
+        tip = marker["tip"]
+        axis = np.asarray(marker["tip"]) - np.asarray(marker["axis_base"])
     camera_tip = affine_point(sample["weapon_control"], tip)
     camera_axis = (
         affine_point(sample["weapon_control"], np.asarray(tip) + axis)

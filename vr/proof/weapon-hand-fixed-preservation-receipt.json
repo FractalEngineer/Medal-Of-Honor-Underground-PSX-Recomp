@@ -1,0 +1,683 @@
+{
+  "schema": 1,
+  "kind": "W5.3e paired native/tracked preservation and impact",
+  "complete": true,
+  "headset_used": false,
+  "fixture": "copied root MP slots 1-4; first occurrence of every weapon ID",
+  "executable_sha256": "4204a6f3e2ca2037cfc1e7bc2987399f524e1e12156511eb8501c57d1e3a74d6",
+  "revision": "69cda7c5d4d42bdb9e2bc9d1c4be51efa08f272c",
+  "build": {
+    "PSX_DEBUG_TOOLS": "ON",
+    "MOHU_VR_DIAGNOSTICS": "ON",
+    "PSX_OPENXR": "ON",
+    "configuration": "Release"
+  },
+  "sources": {
+    "vr/tools/check_weapon_preservation.py": "11a6fca49c74db0756b30be3abf64beb33d8501e97fd9eacc758c94d071181e8",
+    "vr/tools/probe_shot_families.py": "4ef849a533f096eeb0f5a1b1af9fd399881ea9763f3a76669488334b7ed65d01",
+    "vr/tools/probe_weapon_aim.py": "50485b2ee2b94677c40d3bbf03c851dd335a866633021d83e38b0d7eb2eaa99a",
+    "vr/tools/probe_native_shot.py": "c01da4a2fc07b5e7391aeee5f30b75d9dd53188d4e82721e858f4d069a09d7cf",
+    "vr/underground/shot.h": "187f60f31ceb37648a0ad30fbd452c97d34c8e617ee923eb92f6f11fe2642446",
+    "vr/underground/weapon.c": "dd532791ff07592f085744c73b916554b48922b871c4ead44d3ced7106fde0c1",
+    "vr/underground/vr_diagnostic.c": "2f7a8e5d480a71d61bfd0d5add55cb679e8bbff3a90f666fffdff6062181b042"
+  },
+  "receipts": {
+    "native": "analysis\\vr-baseline\\hand-fixed-native-20261027\\receipt.json",
+    "native_sha256": "d4d2685cc6bc01e56c89d26396403f76e92a592bd0faac15624db3180861ea93",
+    "tracked": "analysis\\vr-baseline\\hand-fixed-tracked-20261027\\receipt.json",
+    "tracked_sha256": "3a06a3e9ff8c0ce0e2c75170e044887b65899f08bf9da0118109d773da2f05c6"
+  },
+  "tolerances": {
+    "shotgun_pair_angle_degrees": 1.0,
+    "speed_relative": 0.1,
+    "projectile_origin_world_units": 2.0,
+    "impact_ray_world_units": 1.0,
+    "impact_ray_automatic_world_units": 10.0,
+    "non_shotgun_axis_cosine": 0.9995,
+    "thrown_axis_cosine": 0.9945,
+    "shotgun_axis_cosine": 0.9945218953682733
+  },
+  "weapons": [
+    {
+      "id": 0,
+      "name": "P38 pistol",
+      "lifecycles": 1,
+      "release_phases": [
+        "held"
+      ],
+      "object_reuse": false,
+      "history_groups": [
+        1
+      ],
+      "trajectory_groups": [
+        3
+      ],
+      "origin_store_pcs": [
+        []
+      ],
+      "ammo_delta": {
+        "clip": 1,
+        "reserve": 0,
+        "slot": 0
+      },
+      "linked_damage_events": 1,
+      "native_linked_damage_events": 1,
+      "additional_redirected_explosive_hits": false,
+      "rng_calls": 1,
+      "rng_calls_total": 10,
+      "rng_calls_after_last_birth": 9,
+      "object_reuse_observed": false,
+      "native_speed_median": 668.0413768996648,
+      "tracked_speed_median": 668.2204386933253,
+      "speed_ratio": 1.000268039974547,
+      "impact": {
+        "minimum_axis_cosine": 0.9999994990224604,
+        "minimum_target_ray_miss_world_units": 0.5077173014975165,
+        "maximum_target_ray_miss_world_units": 0.5077173014975165,
+        "linked_damage_events": 1
+      }
+    },
+    {
+      "id": 1,
+      "name": "MP40",
+      "lifecycles": 2,
+      "release_phases": [
+        "held",
+        "release-boundary"
+      ],
+      "object_reuse": false,
+      "history_groups": [
+        1,
+        1
+      ],
+      "trajectory_groups": [
+        2,
+        3
+      ],
+      "origin_store_pcs": [
+        [],
+        []
+      ],
+      "ammo_delta": {
+        "clip": 2,
+        "reserve": 0,
+        "slot": 0
+      },
+      "linked_damage_events": 2,
+      "native_linked_damage_events": 1,
+      "additional_redirected_explosive_hits": false,
+      "rng_calls": 10,
+      "rng_calls_total": 19,
+      "rng_calls_after_last_birth": 9,
+      "object_reuse_observed": false,
+      "native_speed_median": 647.0051348569423,
+      "tracked_speed_median": 629.7294599723668,
+      "speed_ratio": 0.9732990142521895,
+      "impact": {
+        "minimum_axis_cosine": 0.9999790562526997,
+        "minimum_target_ray_miss_world_units": 0.18496203969043046,
+        "maximum_target_ray_miss_world_units": 0.18496203969043046,
+        "linked_damage_events": 2
+      }
+    },
+    {
+      "id": 4,
+      "name": "Shotgun",
+      "lifecycles": 6,
+      "release_phases": [
+        "held",
+        "held",
+        "held",
+        "held",
+        "held",
+        "held"
+      ],
+      "object_reuse": false,
+      "history_groups": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "trajectory_groups": [
+        4,
+        3,
+        3,
+        2,
+        2,
+        3
+      ],
+      "origin_store_pcs": [
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ],
+      "ammo_delta": {
+        "clip": 1,
+        "reserve": 0,
+        "slot": 0
+      },
+      "linked_damage_events": 4,
+      "native_linked_damage_events": 4,
+      "additional_redirected_explosive_hits": false,
+      "rng_calls": 21,
+      "rng_calls_total": 215,
+      "rng_calls_after_last_birth": 194,
+      "object_reuse_observed": true,
+      "native_speed_median": 529.1112685858168,
+      "tracked_speed_median": 529.1759339530596,
+      "speed_ratio": 1.000122215063413,
+      "impact": {
+        "minimum_axis_cosine": 0.9986286915400889,
+        "minimum_target_ray_miss_world_units": 0.07580358459984597,
+        "maximum_target_ray_miss_world_units": 0.07580358459984597,
+        "linked_damage_events": 4
+      },
+      "pair_angles": {
+        "native_maximum_degrees": 5.257087570384383,
+        "tracked_maximum_degrees": 5.186965703438514,
+        "median_absolute_delta_degrees": 0.04384417006586805
+      },
+      "speed_ratios": [
+        1.0003153245624814,
+        0.9998944624279614,
+        1.0001811687393942,
+        1.0000725162086541,
+        1.0000929827430949,
+        1.0000260210420495
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Scoped rifle",
+      "lifecycles": 1,
+      "release_phases": [
+        "held"
+      ],
+      "object_reuse": false,
+      "history_groups": [
+        1
+      ],
+      "trajectory_groups": [
+        3
+      ],
+      "origin_store_pcs": [
+        []
+      ],
+      "ammo_delta": {
+        "clip": 1,
+        "reserve": 0,
+        "slot": 0
+      },
+      "linked_damage_events": 1,
+      "native_linked_damage_events": 1,
+      "additional_redirected_explosive_hits": false,
+      "rng_calls": 1,
+      "rng_calls_total": 7,
+      "rng_calls_after_last_birth": 6,
+      "object_reuse_observed": false,
+      "native_speed_median": 663.0040211275117,
+      "tracked_speed_median": 663.1943118818948,
+      "speed_ratio": 1.0002870129717456,
+      "impact": {
+        "minimum_axis_cosine": 0.9999993425333255,
+        "minimum_target_ray_miss_world_units": 0.23837203868717216,
+        "maximum_target_ray_miss_world_units": 0.23837203868717216,
+        "linked_damage_events": 1
+      }
+    },
+    {
+      "id": 8,
+      "name": "Colt .45",
+      "lifecycles": 1,
+      "release_phases": [
+        "held"
+      ],
+      "object_reuse": false,
+      "history_groups": [
+        1
+      ],
+      "trajectory_groups": [
+        3
+      ],
+      "origin_store_pcs": [
+        []
+      ],
+      "ammo_delta": {
+        "clip": 1,
+        "reserve": 0,
+        "slot": 0
+      },
+      "linked_damage_events": 1,
+      "native_linked_damage_events": 1,
+      "additional_redirected_explosive_hits": false,
+      "rng_calls": 1,
+      "rng_calls_total": 7,
+      "rng_calls_after_last_birth": 6,
+      "object_reuse_observed": false,
+      "native_speed_median": 633.0799743367737,
+      "tracked_speed_median": 633.0815662544993,
+      "speed_ratio": 1.0000025145602296,
+      "impact": {
+        "minimum_axis_cosine": 0.9999985907086781,
+        "minimum_target_ray_miss_world_units": 0.5595289129616792,
+        "maximum_target_ray_miss_world_units": 0.5595289129616792,
+        "linked_damage_events": 1
+      }
+    },
+    {
+      "id": 9,
+      "name": "Silenced pistol",
+      "lifecycles": 1,
+      "release_phases": [
+        "held"
+      ],
+      "object_reuse": false,
+      "history_groups": [
+        1
+      ],
+      "trajectory_groups": [
+        3
+      ],
+      "origin_store_pcs": [
+        []
+      ],
+      "ammo_delta": {
+        "clip": 1,
+        "reserve": 0,
+        "slot": 0
+      },
+      "linked_damage_events": 1,
+      "native_linked_damage_events": 1,
+      "additional_redirected_explosive_hits": false,
+      "rng_calls": 1,
+      "rng_calls_total": 8,
+      "rng_calls_after_last_birth": 7,
+      "object_reuse_observed": false,
+      "native_speed_median": 669.0730323785663,
+      "tracked_speed_median": 669.2037858763576,
+      "speed_ratio": 1.0001954248511953,
+      "impact": {
+        "minimum_axis_cosine": 0.9999990406991884,
+        "minimum_target_ray_miss_world_units": 0.2475547835667964,
+        "maximum_target_ray_miss_world_units": 0.2475547835667964,
+        "linked_damage_events": 1
+      }
+    },
+    {
+      "id": 10,
+      "name": "Stick grenade",
+      "lifecycles": 1,
+      "release_phases": [
+        "released"
+      ],
+      "object_reuse": false,
+      "history_groups": [
+        1
+      ],
+      "trajectory_groups": [
+        90
+      ],
+      "origin_store_pcs": [
+        []
+      ],
+      "ammo_delta": {
+        "clip": -7,
+        "reserve": -20,
+        "slot": -3
+      },
+      "linked_damage_events": 4,
+      "native_linked_damage_events": 0,
+      "additional_redirected_explosive_hits": true,
+      "rng_calls": 0,
+      "rng_calls_total": 491,
+      "rng_calls_after_last_birth": 491,
+      "object_reuse_observed": false,
+      "native_speed_median": 65.22080884388049,
+      "tracked_speed_median": 71.22329543414851,
+      "speed_ratio": 1.0920333049630864,
+      "impact": {
+        "minimum_axis_cosine": 0.9974772736328805,
+        "minimum_target_ray_miss_world_units": 0.25811112913978584,
+        "maximum_target_ray_miss_world_units": 0.25811112913978584,
+        "linked_damage_events": 4
+      },
+      "native_basis_to_motion_shift_median": 361.1384775955063,
+      "tracked_final_origin_error_median": 0.0,
+      "tracked_target_ray_miss_median": 0.25811112913978584
+    },
+    {
+      "id": 12,
+      "name": "M1 Garand",
+      "lifecycles": 1,
+      "release_phases": [
+        "held"
+      ],
+      "object_reuse": false,
+      "history_groups": [
+        1
+      ],
+      "trajectory_groups": [
+        3
+      ],
+      "origin_store_pcs": [
+        []
+      ],
+      "ammo_delta": {
+        "clip": 1,
+        "reserve": 0,
+        "slot": 0
+      },
+      "linked_damage_events": 1,
+      "native_linked_damage_events": 1,
+      "additional_redirected_explosive_hits": false,
+      "rng_calls": 1,
+      "rng_calls_total": 7,
+      "rng_calls_after_last_birth": 6,
+      "object_reuse_observed": false,
+      "native_speed_median": 623.1347917986926,
+      "tracked_speed_median": 623.0987206093429,
+      "speed_ratio": 0.9999421133439755,
+      "impact": {
+        "minimum_axis_cosine": 0.9999992921752732,
+        "minimum_target_ray_miss_world_units": 0.21018555074335663,
+        "maximum_target_ray_miss_world_units": 0.21018555074335663,
+        "linked_damage_events": 1
+      }
+    },
+    {
+      "id": 13,
+      "name": "Panzerfaust",
+      "lifecycles": 1,
+      "release_phases": [
+        "held"
+      ],
+      "object_reuse": false,
+      "history_groups": [
+        1
+      ],
+      "trajectory_groups": [
+        8
+      ],
+      "origin_store_pcs": [
+        [
+          "0x80048A20",
+          "0x80048A48",
+          "0x80048A70"
+        ]
+      ],
+      "ammo_delta": {
+        "clip": 0,
+        "reserve": 1,
+        "slot": 0
+      },
+      "linked_damage_events": 1,
+      "native_linked_damage_events": 1,
+      "additional_redirected_explosive_hits": false,
+      "rng_calls": 0,
+      "rng_calls_total": 292,
+      "rng_calls_after_last_birth": 292,
+      "object_reuse_observed": false,
+      "native_speed_median": 200.01989158893673,
+      "tracked_speed_median": 200.07421474605368,
+      "speed_ratio": 1.0002715887739235,
+      "impact": {
+        "minimum_axis_cosine": 0.9999999496953245,
+        "minimum_target_ray_miss_world_units": 0.14617028531115245,
+        "maximum_target_ray_miss_world_units": 0.14617028531115245,
+        "linked_damage_events": 1
+      },
+      "native_basis_to_motion_shift_median": 432.8429276307977,
+      "tracked_final_origin_error_median": 0.0,
+      "tracked_target_ray_miss_median": 0.14617028531115245
+    },
+    {
+      "id": 14,
+      "name": "Crossbow",
+      "lifecycles": 1,
+      "release_phases": [
+        "held"
+      ],
+      "object_reuse": false,
+      "history_groups": [
+        1
+      ],
+      "trajectory_groups": [
+        8
+      ],
+      "origin_store_pcs": [
+        []
+      ],
+      "ammo_delta": {
+        "clip": -4,
+        "reserve": -10,
+        "slot": 1
+      },
+      "linked_damage_events": 1,
+      "native_linked_damage_events": 1,
+      "additional_redirected_explosive_hits": false,
+      "rng_calls": 0,
+      "rng_calls_total": 13,
+      "rng_calls_after_last_birth": 13,
+      "object_reuse_observed": false,
+      "native_speed_median": 200.06933368522525,
+      "tracked_speed_median": 200.0767528506248,
+      "speed_ratio": 1.0000370829715024,
+      "impact": {
+        "minimum_axis_cosine": 0.9999995538402536,
+        "minimum_target_ray_miss_world_units": 0.24142606783305923,
+        "maximum_target_ray_miss_world_units": 0.24142606783305923,
+        "linked_damage_events": 1
+      }
+    },
+    {
+      "id": 15,
+      "name": "Petrol bomb",
+      "lifecycles": 1,
+      "release_phases": [
+        "released"
+      ],
+      "object_reuse": false,
+      "history_groups": [
+        1
+      ],
+      "trajectory_groups": [
+        5
+      ],
+      "origin_store_pcs": [
+        []
+      ],
+      "ammo_delta": {
+        "clip": -6,
+        "reserve": -21,
+        "slot": -3
+      },
+      "linked_damage_events": 1,
+      "native_linked_damage_events": 0,
+      "additional_redirected_explosive_hits": true,
+      "rng_calls": 0,
+      "rng_calls_total": 389,
+      "rng_calls_after_last_birth": 389,
+      "object_reuse_observed": false,
+      "native_speed_median": 67.24680522151219,
+      "tracked_speed_median": 71.15767044036785,
+      "speed_ratio": 1.0581568924497335,
+      "impact": {
+        "minimum_axis_cosine": 0.9974582338869918,
+        "minimum_target_ray_miss_world_units": 0.38204561040250745,
+        "maximum_target_ray_miss_world_units": 0.38204561040250745,
+        "linked_damage_events": 1
+      },
+      "native_basis_to_motion_shift_median": 150.2131818450032,
+      "tracked_final_origin_error_median": 0.0,
+      "tracked_target_ray_miss_median": 0.38204561040250745
+    },
+    {
+      "id": 16,
+      "name": "Sten",
+      "lifecycles": 2,
+      "release_phases": [
+        "held",
+        "held"
+      ],
+      "object_reuse": false,
+      "history_groups": [
+        1,
+        1
+      ],
+      "trajectory_groups": [
+        3,
+        3
+      ],
+      "origin_store_pcs": [
+        [],
+        []
+      ],
+      "ammo_delta": {
+        "clip": 2,
+        "reserve": 0,
+        "slot": 0
+      },
+      "linked_damage_events": 2,
+      "native_linked_damage_events": 3,
+      "additional_redirected_explosive_hits": false,
+      "rng_calls": 7,
+      "rng_calls_total": 24,
+      "rng_calls_after_last_birth": 17,
+      "object_reuse_observed": false,
+      "native_speed_median": 632.0494597191347,
+      "tracked_speed_median": 639.1542765180989,
+      "speed_ratio": 1.0112409190289022,
+      "impact": {
+        "minimum_axis_cosine": 0.999981078132516,
+        "minimum_target_ray_miss_world_units": 0.0809085559984839,
+        "maximum_target_ray_miss_world_units": 0.0809085559984839,
+        "linked_damage_events": 2
+      }
+    },
+    {
+      "id": 17,
+      "name": "StG44",
+      "lifecycles": 2,
+      "release_phases": [
+        "held",
+        "release-boundary"
+      ],
+      "object_reuse": false,
+      "history_groups": [
+        1,
+        1
+      ],
+      "trajectory_groups": [
+        2,
+        2
+      ],
+      "origin_store_pcs": [
+        [],
+        []
+      ],
+      "ammo_delta": {
+        "clip": 2,
+        "reserve": 0,
+        "slot": 0
+      },
+      "linked_damage_events": 2,
+      "native_linked_damage_events": 2,
+      "additional_redirected_explosive_hits": false,
+      "rng_calls": 11,
+      "rng_calls_total": 22,
+      "rng_calls_after_last_birth": 11,
+      "object_reuse_observed": false,
+      "native_speed_median": 638.5415491408276,
+      "tracked_speed_median": 638.6571534762754,
+      "speed_ratio": 1.0001810443433217,
+      "impact": {
+        "minimum_axis_cosine": 0.9999695019490676,
+        "minimum_target_ray_miss_world_units": 0.23966629236939402,
+        "maximum_target_ray_miss_world_units": 0.23966629236939402,
+        "linked_damage_events": 2
+      }
+    }
+  ],
+  "controls": [
+    {
+      "name": "missing-marker",
+      "port": 1,
+      "marker_valid": 0,
+      "marker_frozen": 0,
+      "owned_shots": 1,
+      "aimed_shots": 0,
+      "family_eligible_shots": 1,
+      "ammo_delta": 1,
+      "linked_damage_events": 1,
+      "replay_rejected": 88,
+      "p2_marker_rejected": 22
+    },
+    {
+      "name": "p2-fire",
+      "port": 2,
+      "marker_valid": 1,
+      "marker_frozen": 0,
+      "owned_shots": 1,
+      "aimed_shots": 0,
+      "family_eligible_shots": 0,
+      "ammo_delta": 1,
+      "linked_damage_events": 0,
+      "replay_rejected": 91,
+      "p2_marker_rejected": 22
+    },
+    {
+      "name": "recovered",
+      "port": 1,
+      "marker_valid": 1,
+      "marker_frozen": 0,
+      "owned_shots": 1,
+      "aimed_shots": 1,
+      "family_eligible_shots": 1,
+      "ammo_delta": 1,
+      "linked_damage_events": 1,
+      "replay_rejected": 107,
+      "p2_marker_rejected": 28
+    },
+    {
+      "name": "stale-marker",
+      "port": 1,
+      "marker_valid": 0,
+      "marker_frozen": 1,
+      "owned_shots": 1,
+      "aimed_shots": 0,
+      "family_eligible_shots": 1,
+      "ammo_delta": 1,
+      "linked_damage_events": 1,
+      "replay_rejected": 136,
+      "p2_marker_rejected": 21
+    },
+    {
+      "name": "unfocused-hand",
+      "port": 1,
+      "marker_valid": 1,
+      "marker_frozen": 0,
+      "owned_shots": 1,
+      "aimed_shots": 0,
+      "family_eligible_shots": 1,
+      "ammo_delta": 1,
+      "linked_damage_events": 1,
+      "replay_rejected": 92,
+      "p2_marker_rejected": 24
+    }
+  ],
+  "control_marker_status": {
+    "replay_rejected": 384,
+    "p2_rejected": 97
+  },
+  "limits": [
+    "Synthetic copied MP fixtures; headset, NPC/SP and physical alignment remain open.",
+    "Paired native/tracked runs use separate activation environments and one executable.",
+    "Impact acceptance uses native damage plus converted-axis/target residuals, not a physical bore measurement."
+  ]
+}

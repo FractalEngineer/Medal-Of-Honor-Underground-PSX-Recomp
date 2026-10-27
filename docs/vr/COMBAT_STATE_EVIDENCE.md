@@ -6,7 +6,8 @@ confirmation.
 
 The later [P1 death/respawn supplement](DEATH_RESPAWN_EVIDENCE.md) closes W5.4c
 without repeating this six-case matrix. Physical barrel-to-impact confirmation
-is now W5.4d; W6.1 desktop rendered-muzzle capture is the next task.
+is now W5.4d. W6.1 desktop capture subsequently passed; current task W6.2 is
+specified in [HANDOFF.md](HANDOFF.md).
 
 ## Result
 

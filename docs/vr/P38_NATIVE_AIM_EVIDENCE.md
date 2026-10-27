@@ -75,8 +75,9 @@ The [complete calibration receipt](../../vr/proof/weapon-p38-complete-calibratio
 supersedes the old markers for the candidate. Physical size remains provisional.
 Native recoil/reload still animate the model. Frozen-frame controls now show
 that the P38 grip/tip relationship is not rigid during recoil, reload or switch;
-the static idle tip is not animation-safe. W5/W6 must recompute the tip from node
-11 indices 24..28 after native animation. The measured W5 controls remain valid
+the static idle tip does not follow the moving mesh. The operator subsequently
+selected a hand-fixed shot/laser ray, so native animation no longer steers aim.
+Current evidence is in [RENDERED_MUZZLE_EVIDENCE.md](RENDERED_MUZZLE_EVIDENCE.md). The measured W5 controls remain valid
 for their tested static/recovered states but do not claim moving-shot alignment.
 
 ## Native P38 contract
@@ -148,7 +149,7 @@ The `--tracked` diagnostic explicitly enables `PSX_VR_WEAPON_POSE`,
 `RunFlat.bat` clears the new flags. The prepared tracked headset comparison
 selects this corrected candidate, but no new headset run was requested or done.
 
-**Next desktop milestone: W6.1 rendered animated muzzle capture.**
+**Next desktop milestone: W6.2 verified triangle/vertex bindings.**
 W3.4 is complete: all 13 IDs have frozen-frame switching evidence and their
 available recoil/reload/special samples, with native ammo or slot changes. All
 IDs require a moving marker across the full tested range. The read-only W5.3
@@ -160,5 +161,7 @@ also passes; scoped fire remains a recorded native fallback. W5.2
 still needs a compatible copied live NPC/SP fixture and its own measured SP
 binding. The [P1 death/native respawn supplement](DEATH_RESPAWN_EVIDENCE.md)
 now passes W5.4c, including a fresh converted post-respawn shot with stereo
-inactive. W5.4d retains physical barrel-to-impact confirmation. W3.3/W3.5
-remain operator gates; they do not block W6.1 desktop capture.
+inactive. W5.4d retains physical hand-aim/impact confirmation. W3.3/W3.5
+remain operator gates. [W6.1 rendered-muzzle capture](RENDERED_MUZZLE_EVIDENCE.md)
+now passes ten P38 snapshots / 20 eyes, including moving native markers and
+live pair-refusal recovery. W6.2 is ready desktop work.

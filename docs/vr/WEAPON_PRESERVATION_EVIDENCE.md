@@ -1,6 +1,11 @@
 # Paired native/tracked weapon preservation
 
 Updated: 2026-10-27. W5.3e is complete for the copied MP desktop fixture.
+This receipt describes the earlier animated-origin candidate. The operator
+subsequently selected a hand-fixed shot/laser ray with native recoil left
+visual. Current all-13 revalidation and its explicitly recorded additional
+explosive hits are in [RENDERED_MUZZLE_EVIDENCE.md](RENDERED_MUZZLE_EVIDENCE.md).
+The numbers and hashes below remain historical.
 No headset or XR runtime was launched. The two environments are separate owned
 game launches because `MOHU_VR_WEAPON_AIM` is read during activation:
 

@@ -12,6 +12,7 @@
 #include "psx_cycles.h"
 #include "weapon.h"
 #include "weapon_markers.h"
+#include "rendered_muzzle.h"
 #include "gpu_gl_renderer.h"
 #include "mod_plugins.h"
 #include "vr_pose_math.h"
@@ -368,6 +369,8 @@ static bool g_input_callback_reported;
 static void set_openxr_native_surface(bool enabled);
 static uint32_t guest_range_fnv1a(uint32_t address, uint32_t size);
 static bool vr_mp_snapshot(MohuVrMpState* state);
+static bool vr_weapon_calibrated_active(void);
+static void vr_muzzle_invalidate(void);
 
 static bool vr_mp_input_snapshot(MohuVrMpInputState* state) {
     if (!state) return false;
@@ -1901,6 +1904,7 @@ static int vr_marker_model_key(MohuVrMarkerKey* key) {
 }
 
 static void vr_marker_load(void) {
+    vr_muzzle_invalidate();
     ++g_marker_generation;
     ++g_marker_loads;
     g_marker_load_cycle=psx_cycle_count;
@@ -1966,6 +1970,7 @@ typedef struct {
     int32_t position[3], angles[3];
     int eligible;
     int family_eligible;
+    int hand_fixed;
     int aimed;
     uint32_t weapon_control[8];
     int32_t aimed_position[3], aimed_angles[3];
@@ -2068,11 +2073,6 @@ static bool vr_weapon_aim_pose(
         (int32_t)g_shot_camera[5], (int32_t)g_shot_camera[6],
         (int32_t)g_shot_camera[7],
     };
-    const double axis[3] = {
-        g_marker_cache.points[1][0] - g_marker_cache.points[2][0],
-        g_marker_cache.points[1][1] - g_marker_cache.points[2][1],
-        g_marker_cache.points[1][2] - g_marker_cache.points[2][2],
-    };
     if (g_weapon_force_tracking_loss || !psx_mod_openxr_hands(&hands) ||
         !mohu_vr_weapon_track_delta(
             &hands, g_openxr_units_per_meter, rotation, translation) ||
@@ -2080,8 +2080,8 @@ static bool vr_weapon_aim_pose(
             affine, rotation, translation, g_openxr_units_per_meter,
             profile->calibration) ||
         !mohu_vr_laser_inverse(camera, camera_inverse) ||
-        !mohu_vr_weapon_animated_shot(
-            affine, g_marker_cache.points[1], axis, camera_inverse,
+        !mohu_vr_weapon_muzzle_shot(
+            affine, profile->calibration, camera_inverse,
             camera_translation, position, angles)) {
         return false;
     }
@@ -2138,6 +2138,7 @@ static void vr_marker_origin_event(CPUState* cpu, uint32_t address) {
     }
     MohuVrShotSample* s=&g_marker_origins[g_marker_origin_count++];
     memset(s,0,sizeof *s);
+    s->hand_fixed=g_weapon_aim;
     s->guard.p1=owner;
     s->guard.shot=object; s->guard.owner=owner; s->guard.weapon_id=id;
     s->guard.type=mohu_vr_shot_type(id); s->guard.argument=address;
@@ -2191,6 +2192,7 @@ static void vr_shot_basis_entry(CPUState* cpu, uint32_t address) {
     MohuVrShotSample temporary;
     MohuVrShotSample* s = &temporary;
     memset(s, 0, sizeof *s);
+    s->hand_fixed=g_weapon_aim;
     s->guard.p1 = psx_mod_read_word(MOHU_VR_MP_P1_ROOT);
     s->guard.owner = cpu->gpr[18];
     s->guard.owner_class = psx_mod_read_word(s->guard.owner + 8u);
@@ -2321,14 +2323,14 @@ static int vr_shot_command(const char* args, char* reply, int cap) {
         const int used = snprintf(reply, (size_t)cap,
             "{\"shot\":%u,\"owner\":%u,\"p1\":%u,\"type\":%u,\"weapon\":%u,"
             "\"caller\":%u,\"argument\":%u,\"eligible\":%d,\"family_eligible\":%d,"
-            "\"code_valid\":%d,"
+            "\"code_valid\":%d,\"hand_fixed\":%d,"
             "\"camera_valid\":%d,\"camera_owner\":%u,\"cycle\":%llu,\"camera_cycle\":%llu,"
             "\"position\":[%d,%d,%d],\"angles\":[%d,%d,%d],\"aimed\":%d,"
             "\"aimed_position\":[%d,%d,%d],\"aimed_angles\":[%d,%d,%d],"
             "\"weapon_control\":[%u,%u,%u,%u,%u,%u,%u,%u],"
             "\"camera\":[%u,%u,%u,%u,%u,%u,%u,%u]}",
             q->shot,q->owner,q->p1,q->type,q->weapon_id,q->caller,q->argument,
-            s->eligible,s->family_eligible,q->code_valid,q->camera_valid,
+            s->eligible,s->family_eligible,q->code_valid,s->hand_fixed,q->camera_valid,
             q->camera_owner,
             (unsigned long long)q->cycle,(unsigned long long)q->camera_cycle,
             s->position[0],s->position[1],s->position[2],
@@ -2400,7 +2402,7 @@ static int vr_marker_command(const char* args, char* reply, int cap) {
         "\"loads\":%u,\"load_cycle\":%llu,"
         "\"aimed\":%d,\"aimed_position\":[%d,%d,%d],"
         "\"aimed_angles\":[%d,%d,%d],"
-        "\"code_valid\":%d,\"family_eligible\":%d,"
+        "\"code_valid\":%d,\"family_eligible\":%d,\"hand_fixed\":%d,"
         "\"weapon_control\":[%u,%u,%u,%u,%u,%u,%u,%u]}",
         g_marker_enabled,g_marker_frozen,valid,s->key.generation,
         shot ? event->marker_generation : g_marker_generation,
@@ -2420,6 +2422,7 @@ static int vr_marker_command(const char* args, char* reply, int cap) {
         shot ? event->aimed_angles[2] : 0,
         shot ? event->guard.code_valid : 0,
         shot ? event->family_eligible : 0,
+        shot ? event->hand_fixed : 0,
         shot ? event->weapon_control[0] : 0,
         shot ? event->weapon_control[1] : 0,
         shot ? event->weapon_control[2] : 0,
@@ -2430,6 +2433,8 @@ static int vr_marker_command(const char* args, char* reply, int cap) {
         shot ? event->weapon_control[7] : 0);
     return used>=0 && used<cap ? 1 : -1;
 }
+
+#include "rendered_muzzle.inc"
 
 static void vr_mp_frame_entry(CPUState* cpu, uint32_t address) {
     (void)address;
@@ -2996,6 +3001,7 @@ static void run_stereo_proof(CPUState* cpu) {
     }
 
     g_stereo_attempts++;
+    vr_muzzle_begin();
     g_stereo_active = true;
     int rendered = psx_mod_render_stereo(cpu, &frame, vr_stereo_eye_draw, NULL);
     g_replaying_frame = false;
@@ -3005,6 +3011,7 @@ static void run_stereo_proof(CPUState* cpu) {
     g_weapon_viewmodel_applied = false;
     g_weapon_viewmodel_view = false;
     g_stereo_active = false;
+    vr_muzzle_finish(rendered);
     if (g_openxr) {
         (void)psx_mod_openxr_end(rendered);
         g_openxr_ends++;
@@ -3642,6 +3649,7 @@ static void vr_weapon_viewmodel_project(CPUState* cpu, uint32_t address) {
            sizeof g_weapon_capture_tracked_control);
     g_weapon_capture_tracked_valid = true;
     g_weapon_capture_sequence++;
+    vr_muzzle_draw(cpu);
     g_weapon_viewmodel_pending = false;
     g_weapon_viewmodel_applied = true;
     g_weapon_gun_only_ready = g_weapon_gun_only && g_stereo_active;
@@ -3697,6 +3705,13 @@ static void vr_weapon_viewmodel_restore(CPUState* cpu) {
                 g_weapon_viewmodel_saved_control[i];
         }
         g_weapon_capture_restored_valid = true;
+        if (g_muzzle_enabled && g_stereo_active && g_stereo_current_eye<2u &&
+            g_muzzle_pending[g_stereo_current_eye].valid) {
+            g_muzzle_pending[g_stereo_current_eye].restored=
+                !memcmp(cpu->gte_ctrl,
+                    g_muzzle_pending[g_stereo_current_eye].native_control,
+                    sizeof g_weapon_viewmodel_saved_control);
+        }
         g_weapon_viewmodel_applied = false;
         psx_mod_counter_add("mohu.vr.weapon.viewmodel_restore", 1);
     }
@@ -3799,6 +3814,8 @@ static void vr_weapon_fp_enter(CPUState* cpu, uint32_t address) {
 }
 
 static void vr_diagnostic_activate(void) {
+    g_muzzle_enabled=g_muzzle_requested=false;
+    vr_muzzle_invalidate();
     g_marker_enabled=g_marker_frozen=g_marker_pending=false;
     memset(&g_marker_cache,0,sizeof g_marker_cache);
     g_active = true;
@@ -4083,6 +4100,7 @@ PSX_MOD_CONSTRUCTOR(psx_register_mohu_vr_diagnostic_plugin) {
         "mohu.vr.mp.frustum", vr_mp_frustum_command);
     (void)psx_mod_register_command("mohu.vr.shot", vr_shot_command);
     (void)psx_mod_register_command("mohu.vr.marker", vr_marker_command);
+    (void)psx_mod_register_command("mohu.vr.muzzle", vr_muzzle_command);
     (void)psx_mod_register_savestate_plugin(MOHU_VR_DIAG_PLUGIN_ID,vr_marker_load);
     (void)psx_mod_register_instruction_plugin(MOHU_VR_DIAG_PLUGIN_ID,
         0x80084CDCu,0x0C0145EDu,vr_marker_origin_event);

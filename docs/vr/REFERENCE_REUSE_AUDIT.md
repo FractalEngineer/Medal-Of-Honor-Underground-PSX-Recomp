@@ -8,7 +8,7 @@ by this review.
 Follow-up: the owner requested reconciling existing duplicated helpers too.
 [CONSISTENCY_HANDOFF.md](CONSISTENCY_HANDOFF.md) defines C1-C4, which are complete.
 The task dependencies below describe this audit's historical checkpoint; use
-[HANDOFF.md](HANDOFF.md) and [VR_PLAN.md](VR_PLAN.md) for the current W5.3
+[HANDOFF.md](HANDOFF.md) and [VR_PLAN.md](VR_PLAN.md) for the current
 continuation. [FRAMEWORK_UPSTREAM_TRACKER.md](FRAMEWORK_UPSTREAM_TRACKER.md)
 records generic changes, both consumer pins and merged/pending upstream work.
 

@@ -192,7 +192,13 @@ def compare_common(weapon_id, native, tracked, problems):
 
     native_damage = linked_damage(native)
     tracked_damage = linked_damage(tracked)
-    if bool(native_damage) != bool(tracked_damage):
+    added_redirected_explosive_hits = (
+        weapon_id in (10, 15) and not native_damage and bool(tracked_damage)
+        and bool(tracked["shots"])
+        and all(shot.get("hand_fixed") and shot["type"] == 0x13F3
+                for shot in tracked["shots"])
+    )
+    if bool(native_damage) != bool(tracked_damage) and not added_redirected_explosive_hits:
         add_problem(problems, weapon_id, "linked native damage presence changed")
     native_rng = native.get("rng", {})
     tracked_rng = tracked.get("rng", {})
@@ -247,6 +253,8 @@ def compare_common(weapon_id, native, tracked, problems):
         "origin_store_pcs": tracked_summary["origin_store_pcs"],
         "ammo_delta": tracked_ammo,
         "linked_damage_events": len(tracked_damage),
+        "native_linked_damage_events": len(native_damage),
+        "additional_redirected_explosive_hits": added_redirected_explosive_hits,
         "rng_calls": len(tracked_rng_construction),
         "rng_calls_total": tracked_rng.get("calls", 0),
         "rng_calls_after_last_birth": (

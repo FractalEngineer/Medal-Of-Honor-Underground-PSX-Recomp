@@ -11,11 +11,11 @@ Shared framework branches, the merged upstream VR stack and the three pending
 generic changes are tracked in [FRAMEWORK_UPSTREAM_TRACKER.md](FRAMEWORK_UPSTREAM_TRACKER.md).
 Framework development uses `vr/shared-development`; master mirrors upstream.
 
-1. [HANDOFF.md](HANDOFF.md) is the current execution contract: W5.3e paired
-   preservation/impact and the W5.4 desktop state matrix are complete; operator
-   barrel-to-impact confirmation and death coverage remain open. W5.2 remains
-   open for a compatible live NPC/SP fixture, and physical P38 acceptance
-   stays open.
+1. [HANDOFF.md](HANDOFF.md) is the current execution contract: W5 desktop gates
+   and W6.1 hand-fixed ray capture are complete. The shot and future laser share
+   the hand-fixed aim ray; native recoil stays visual. W6.2 target triangle
+   binding is next. Physical hand-aim/impact acceptance and live NPC/SP
+   isolation remain separate open gates.
    [P38_NATIVE_AIM_EVIDENCE.md](P38_NATIVE_AIM_EVIDENCE.md) records the
    restored barrel, complete calibration, W4/W5.1 and automated native damage.
    [SHOT_FAMILY_EVIDENCE.md](SHOT_FAMILY_EVIDENCE.md) records the read-only
@@ -32,8 +32,10 @@ Framework development uses `vr/shared-development`; master mirrors upstream.
    [COMBAT_STATE_EVIDENCE.md](COMBAT_STATE_EVIDENCE.md) records the paired
    reload/empty/switch/scoped/recoil/load desktop controls.
    [DEATH_RESPAWN_EVIDENCE.md](DEATH_RESPAWN_EVIDENCE.md) closes the P1
-   death/native respawn/fresh-shot desktop supplement. W6.1 rendered-muzzle
-   capture is next; physical barrel alignment remains open.
+   death/native respawn/fresh-shot desktop supplement.
+   [RENDERED_MUZZLE_EVIDENCE.md](RENDERED_MUZZLE_EVIDENCE.md) records W6.1's
+   shared hand-fixed shot/laser ray, animation diagnostics and stereo controls. W6.2
+   triangle/vertex binding is next; physical barrel alignment remains open.
    [WEAPON_COMPLETE_PROFILES.md](WEAPON_COMPLETE_PROFILES.md) records the
    all-ID topology, provisional calibration, desktop controls and moving-marker
    animation evidence.

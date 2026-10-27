@@ -1,8 +1,8 @@
 # P1 death and native respawn evidence
 
 Updated: 2026-10-27. W5.4c passes for the copied MP desktop fixture. Physical
-barrel-to-impact confirmation stays open in W5.4d. The next desktop task is
-W6.1 rendered animated muzzle capture, as specified in [HANDOFF.md](HANDOFF.md).
+barrel-to-impact confirmation stays open in W5.4d. W6.1 rendered animated muzzle
+capture subsequently passed; [HANDOFF.md](HANDOFF.md) specifies current W6.2.
 
 ## Accepted result
 

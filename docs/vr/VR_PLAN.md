@@ -8,7 +8,14 @@ scope has evidence; it never implies broader headset or gameplay acceptance.
 Historical design and prior attempts belong in
 [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md) and the evidence documents.
 
-**W5.4 DESKTOP COMPLETE. NEXT: W6.1 rendered animated muzzle capture.**
+**W6.1 COMPLETE. NEXT: W6.2 verified triangle/vertex bindings.**
+
+Operator policy: the laser indicates the bullet's hand-fixed aim ray. Native
+recoil/reload remains visual. The shot candidate and future laser use the same
+fixed calibrated muzzle/forward reference; animated markers are diagnostic and
+eligibility data. This supersedes older moving-barrel aim requirements below.
+Current evidence: [RENDERED_MUZZLE_EVIDENCE.md](RENDERED_MUZZLE_EVIDENCE.md) and
+`weapon-hand-fixed-preservation-receipt.json` (all 13 IDs).
 W4 native P38 mapping and W5.1 opt-in rendered-muzzle shot conversion are now
 complete. The corrected P38 candidate retains its barrel, follows the measured
 grip, and passes native P2 damage/miss and tracking-fallback controls without a
@@ -29,8 +36,10 @@ native fallback because the hidden model exposes no fresh candidate marker.
 The death/respawn supplement now exercises P1 health 32->0->32, rejects P2
 candidate ownership, restores fresh markers without a save load and fires one
 converted post-respawn P38 shot. It runs with stereo inactive; it adds lifecycle
-evidence, not a new eye-rollback result. W5.4d physical barrel-to-impact
-confirmation stays open while W6.1 desktop capture proceeds.
+evidence, not a new eye-rollback result. W5.4d physical hand-aim/impact
+confirmation stays open. W6.1 now passes ten per-eye rendered-muzzle snapshots,
+native recoil/reload, ownership/load/tracking rejection and live pair refusal/
+recovery with actual stereo verification. W6.2 is the next desktop task.
 W5.2 remains open because no compatible copied live NPC/SP
 fixture and independently measured SP binding was available. W3.3/W3.5 remain
 physical acceptance gates. Current evidence and exact continuation:
@@ -302,8 +311,8 @@ gates. Do not wait for W3.3 before preparing the remaining desktop profiles.
   zero mixed gun/arm triangles. The provisional all-ID calibration and 64-case
   calibrated MP control matrix pass. A frozen-frame moving-marker probe confirms
   all 13 IDs across native switching and their available recoil/reload/special
-  states. The tested markers are not rigid: W5/W6 must recompute the tip from
-  current marker vertices after native animation. Sten reload and scoped-shot
+  states. The tested model markers are not rigid. They remain model-animation
+  diagnostics; the operator-selected shot/laser ray is fixed to the hand. Sten reload and scoped-shot
   ammo are explicitly not observed, not inferred. Evidence:
   [moving-marker receipt](../../vr/proof/weapon-moving-muzzle-receipt.json),
   [control sheet](../../vr/proof/weapon-moving-muzzle-controls.png) and
@@ -387,9 +396,8 @@ acceptance is required for physical claims and normal default promotion.
   `0x800488D8`; one trigger produced six shotgun constructions. Family-aware
   conversion and paired native/tracked preservation/impact pass on desktop.
 - [ ] W5.4. Complete reload/empty/switch/scoped/recoil/death/load matrix and the
-  13-ID native damage gate; recompute the rendered tip after native animation
-  rather than reusing an idle fixed point; operator confirms barrel-to-impact
-  alignment.
+  13-ID native damage gate; use the shared hand-fixed shot/laser ray while
+  native recoil animation plays; operator confirms hand-aim/impact alignment.
 - [x] W5.4a. Pass the paired desktop state matrix for reload tail, empty fire,
   switch during reload, scoped fire on ID 5, recoil follow-up and load recovery.
   The scoped samples remain a recorded native fallback. Evidence:
@@ -402,7 +410,7 @@ acceptance is required for physical claims and normal default promotion.
   markers and one round consumed. Evidence: `weapon-death-respawn-receipt.json`
   and [DEATH_RESPAWN_EVIDENCE.md](DEATH_RESPAWN_EVIDENCE.md). This headless
   lifecycle control has stereo inactive.
-- [ ] W5.4d. Obtain operator confirmation of physical barrel-to-impact alignment.
+- [ ] W5.4d. Obtain operator confirmation of physical hand-aim/impact alignment.
   This is independent of ready desktop W6 work.
 
 W5.3 desktop substeps:
@@ -421,7 +429,7 @@ W5.3 desktop substeps:
   post-animation output, owns its vertex copies, rejects eye replay/P2 drawing,
   and guards source identity, load generation and guest-cycle freshness. All 13
   IDs / 18 constructor events / three final-origin stages and six controls pass.
-- [x] W5.3d. Add opt-in family-aware conversion that uses those moving markers
+- [x] W5.3d. Add opt-in family-aware conversion using the hand-fixed calibrated ray
   and preserves native pellet generation, speeds, gravity, release and collision.
   Compare first integration origin as well as basis pose; no blind 13-ID guard
   expansion or guessed compensation for native position changes. Normal firearms
@@ -480,8 +488,8 @@ unfocused hand, P2 ownership and recovery. Tracked P2 damage was tied to the
 converted animated axis and target residual rather than claimed from native
 hits alone.
 
-Exit gate: real native trajectory/collision/damage agrees with the rendered
-barrel within the stated tested tolerance. The W5.3e desktop exit gate is met
+Exit gate: real native trajectory/collision/damage agrees with the shared
+hand-fixed aim ray within the stated tested tolerance. The W5.3e desktop exit gate is met
 for the copied MP fixture; physical and NPC/SP gates remain explicit.
 
 ## W6 - Mesh-derived exact-triangle laser
@@ -489,19 +497,25 @@ for the copied MP fixture; physical and NPC/SP gates remain explicit.
 Desktop dependencies: declared W3.1 rendered-muzzle contract and verified target
 geometry layout. Reuse reference ray/triangle math, bounded traversal, beam/dot
 projection and tests; port target data readers. Hardware acceptance is W6.4.
-The shared aim contract with W5 must agree; physical testing need not block code.
-W6.1 is the next task. The handoff's six-step capture contract specifies the
-existing seam, immutable per-eye data, numeric controls and stop conditions.
+The hand-fixed ray is shared with W5; native recoil animation does not steer it. Physical testing need not block code.
+W6.2 is the next task. The handoff's six-step reader contract specifies the
+reference algorithm, known MP callback, missing geometry bindings and controls.
 Do not reopen the completed W5 matrices or call the old box pointer exact.
 
-- [ ] W6.1. Capture the actual rendered weapon affine plus the current animated
-  muzzle/axis (not an idle static marker).
+- [x] W6.1. Capture the hand-fixed aim ray, actual per-eye view/affine and optional
+  animated-model diagnostics. Native recoil/reload must not steer the ray.
+  Ten P38 snapshots / 20 eyes pass independent head/hand,
+  recoil/reload, tracking/load/weapon context and live refusal/recovery controls.
+  Source data is owned per draw and published only after both scopes restore
+  and the stereo pair completes. Evidence: `weapon-rendered-muzzle-receipt.json`
+  and [RENDERED_MUZZLE_EVIDENCE.md](RENDERED_MUZZLE_EVIDENCE.md). Other-ID
+  draw capture and physical alignment are not claimed by this P38 gate.
 - [ ] W6.2. Locate and verify Underground triangle/vertex table bindings, comparing
   the reference drawer/record pattern first. Adapt its existing triangle raycast
   and fixtures; local MP scene bounds are not proof of SP triangle layout.
-- [ ] W6.3. Beam origin/direction agrees with the rendered mesh; first triangle hit
+- [ ] W6.3. Beam origin/direction uses the same hand-fixed ray as shots; first triangle hit
   gets the dot; native misses/range limit, weapon eligibility and rollback pass.
-- [ ] W6.4. Operator accepts alignment in both eyes. Clearly distinguish this from
+- [ ] W6.4. Operator accepts hand-fixed laser/shot agreement in both eyes. Clearly distinguish this from
   the existing right-aim/visibility-node-extents pointer.
 
 ## Remaining port gates - after the weapon sequence, not alternate rabbit holes

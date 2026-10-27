@@ -1383,3 +1383,45 @@ source saves, defaults, historical receipts and unrelated `.commandcode/`.
   no rebuild, repeated parity matrix or headset session was needed. Debug tools
   remain ON for active desktop work; candidate defaults remain OFF. No
   framework pin or reference checkout changed. `.commandcode/` was untouched.
+
+## 2026-10-27 - Shared hand-fixed shot/laser ray and W6.1 capture
+
+- Committed/pushed the prior death checkpoint as `69cda7c`. Continued W6.1 by
+  extending the guarded existing projection capture with immutable per-eye
+  controls/view/model diagnostics and complete-pair/restore ownership.
+- The operator clarified the intended behavior: the laser points where the
+  bullet goes, fixed to the hand; native recoil animation plays independently.
+  Replaced the opt-in all-family shot reference with fixed profile muzzle and
+  forward via the existing `mohu_vr_weapon_muzzle_shot` helper. The ray capture
+  uses the same helper/affine. Animated markers remain diagnostics and guard
+  data. Existing native animation and physics code is unchanged.
+- Current P38 controls pass ten snapshots / 20 eyes. Native recoil/reload move
+  the visible model while the hand-fixed ray remains identical. An actual shot
+  matches the captured ray's recorded position/angles exactly. Tracking loss,
+  weapon/load identity and live pair-refusal/recovery controls pass: 268 pairs,
+  536 rollback checks, zero mismatches/failed eyes and six deliberate refusals.
+- Revalidated the changed aim policy on all 13 families in a fresh native/
+  tracked pair: 21/21 lifetimes, 22 linked tracked health decreases, six shotgun
+  pellets and 21 matching construction RNG updates. All five fallback/recovery
+  controls pass. Speed, history, release, ownership and impact checks pass.
+- The redirected grenade/petrol now hit P2 where the native baseline misses.
+  The checker records this explicitly and permits only added linked damage for
+  hand-fixed mapped `0x13F3` throws; damage loss, other-family exceptions and
+  physics changes still fail. Tests cover the policy difference. The tracked
+  run reproduces the known 300 petrol eye discards and publishes pair 3296
+  after failed attempt 1844 with zero rollback mismatches.
+- Validation: 115 Python tests, strict C syntax and active build; current-binary
+  P38 legacy recovery and MP40 native fallback. The earlier capture-only binary
+  `fecd002a...` passed 19 P38 controls, the 64-case MP matrix, lateral/native
+  fire/refusal recovery, all-ID flat poses and SP zero. Those regression
+  receipts retain their actual binary and are not relabeled as current.
+- Current executable: `4204a6f3...`, Release/OpenXR/diagnostics/debug tools ON.
+  Normal experimental defaults stay OFF. No headset/XR runtime, framework pin,
+  source save/preference or reference checkout change. Owned processes closed.
+- Evidence: [hand-fixed contract](RENDERED_MUZZLE_EVIDENCE.md),
+  `weapon-rendered-muzzle-receipt.json`, `weapon-hand-fixed-aim-receipt.json`,
+  `weapon-hand-fixed-preservation-receipt.json` and
+  `weapon-rendered-muzzle-build-receipt.json`. W6.1 is checked; W6.2 verified
+  triangle/vertex bindings is NEXT. No exact-triangle beam or physical
+  acceptance is claimed. Earlier moving-barrel aiming requirements are
+  superseded by the operator policy in the current handoff/plan.

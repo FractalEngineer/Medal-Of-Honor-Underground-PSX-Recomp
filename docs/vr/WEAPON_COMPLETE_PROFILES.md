@@ -3,6 +3,11 @@
 Updated: 2026-10-27. This is desktop evidence only. W3.3/W3.5 physical
 acceptance remains open, and no headset was used for this pass.
 
+Current operator policy: native recoil remains visual; shots and the future
+laser share a fixed reference in hand space. Moving-marker requirements in this
+historical model characterization are not current aiming requirements. See
+[RENDERED_MUZZLE_EVIDENCE.md](RENDERED_MUZZLE_EVIDENCE.md).
+
 ## Result
 
 All 13 native multiplayer weapon IDs have a measured complete-gun topology,
@@ -128,9 +133,9 @@ run.
 Each confirmed state also records a native clip, reserve or weapon-slot change.
 The crossbow launch itself kept the sampled marker pair rigid, but its switch
 state did not. No per-ID static tip can therefore be treated as animation-safe
-across the complete tested range. W5/W6 must recompute the tip from its current
-marker vertices after native animation and before transforming it with the
-render affine. The stored calibration point remains the idle reference.
+across the complete tested range when following the visible mesh. Current shot
+and laser aim deliberately use the fixed calibration reference attached to the
+hand, while the visible native model animates independently.
 
 The scoped rifle hides the viewmodel while scoped, so no moving tip is claimed
 there. Its scoped-shot ammo change was not observed. The Sten had already

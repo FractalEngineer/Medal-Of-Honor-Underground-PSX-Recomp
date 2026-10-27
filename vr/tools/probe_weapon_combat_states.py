@@ -646,7 +646,7 @@ def source_hashes():
 
 
 def run_mode(mode, directory, selected_cases, *, case_functions=None,
-             extra_sources=()):
+             extra_sources=(), environment_overrides=None):
     registry = CASES if case_functions is None else case_functions
     if any(name not in registry for name in selected_cases):
         raise ValueError("Unknown combat-state case")
@@ -705,6 +705,8 @@ def run_mode(mode, directory, selected_cases, *, case_functions=None,
             MOHU_VR_WEAPON_CALIBRATED="1",
             MOHU_VR_WEAPON_AIM="1",
         )
+    if environment_overrides:
+        env.update(environment_overrides)
     process = None
     with (out / "stdout.log").open("w") as stdout, \
             (out / "stderr.log").open("w") as stderr:
@@ -744,9 +746,11 @@ def run_mode(mode, directory, selected_cases, *, case_functions=None,
             receipt["render"] = aim.shot_command("render")
             receipt["render_pass"] = native.command("render_pass_stats")
             receipt["stereo"] = native.command("stereo_stats")
+            intentional_refusals = sum(case.get("intentional_refusals", 0)
+                                       for case in receipt["cases"])
             if receipt["render_pass"]["verify_mismatch"] or \
                     receipt["render_pass"]["vram_leaks"] or \
-                    receipt["stereo"]["refused"]:
+                    receipt["stereo"]["refused"] != intentional_refusals:
                 raise RuntimeError("Stereo/render rollback regression")
             receipt["complete"] = True
         except BaseException as error:
