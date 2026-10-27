@@ -174,5 +174,10 @@ int mohu_vr_weapon_animated_shot(
     const double axis[3], const double camera_inverse[9],
     const double camera_translation[3], int32_t position[3],
     int32_t angles[3]);
+/* Translate the four packed XY words of the native screen-space muzzle flash
+ * so their centre follows a projected rendered muzzle. Topology and size are
+ * preserved; an off-screen or malformed result is rejected. */
+int mohu_vr_weapon_translate_flash_quad(
+    const uint32_t xy[4], double target_x, double target_y, uint32_t out[4]);
 
 #endif

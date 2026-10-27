@@ -23,43 +23,52 @@ the earlier hardware-first sequence; no completed box is reopened.
 
 ## 1. Start here - one next task
 
-**W6.1 COMPLETE. NEXT SESSION: S1-S5 headset-smoke follow-up; then W6.2.**
+**S1 RUNTIME COMPLETE. S2 DESKTOP CONFIG COMPLETE. NEXT: PHYSICAL S2 RETEST,
+THEN THE FLASH/AIM FEEDBACK BELOW; THEN S3-S5 AND W6.2.**
 
-The operator requested **document and push only** at this checkpoint. Stop after
-that; do not launch more tests or implement more changes this session.
-Read [HEADSET_SMOKE_EVIDENCE.md](HEADSET_SMOKE_EVIDENCE.md) and
-[the checkpoint receipt](../../vr/proof/headset-smoke-20261027-receipt.json)
-first. These physical observations supersede older statements that no headset
-run occurred, but do not close W3.3/W3.5/W5.4d or W5.2.
+Read [HEADSET_SMOKE_EVIDENCE.md](HEADSET_SMOKE_EVIDENCE.md), the
+[S1 proof](../../vr/proof/headset-s1-camera-receipt.json), and
+[NATIVE_MUZZLE_FLASH_EVIDENCE.md](NATIVE_MUZZLE_FLASH_EVIDENCE.md). S1 passed on
+binary `924691b6...` without arming shot recording: 13,524 canonical camera
+updates, 20 P1-eligible hand-fixed aim updates, zero fallbacks and three linked
+P2 health writes (32->14). Capture remained off. The same run still exited 1
+after forced shutdown, so S5 remains open.
 
-On a later instruction to resume implementation, follow this order:
+The next physical run should use the current `0dbdb244...` binary and check:
 
-1. **S1, camera without recording:** use the already changed camera predicate;
-   do not rediscover shot bindings. Run one focused copied-MP P38 control with
-   all-family aim/calibration/gun-only ON, legacy P38 aim OFF, and shot capture
-   OFF. Verify canonical camera/eligible hand-fixed aim updates before arming
-   recording; arming `shot start-p1` first would hide the original defect.
-   Record fallback/ownership and actual damage separately. The rebuilt
-   `924691b6...` passed build/syntax/11 unit tests only; do not relabel the
-   earlier `4204a6f3...` headset result as validation of this fix.
-2. **S2, MP edges:** the existing MP probe now enables
-   `MOHU_VR_MP_FRUSTUM=1`; the physical smoke omitted it. Verify the effective
-   flag in the receipt, then use `probe_p38_headset.py --hand-fixed` with the
-   copied MP fixture for a bounded operator retest when ready. Run as the
-   interactive Titan account with VDXR, not the offline sandbox account.
-   SP's `PSX_VR_HEAD_FRUSTUM` is a different switch. No selector rediscovery.
-3. **S3, SP fog:** use the isolated analysis SP slot 2, never root MP slot 2.
+1. **S2 MP edges** with `MOHU_VR_MP_FRUSTUM=1`. The desktop control now proves
+   the effective MP selector path: 1,638 overrides per eye, zero fallbacks and
+   clean exit. The previous `level_hits=0/0` line is the unrelated SP counter;
+   this desktop receipt also records the real MP counters. A physical edge
+   report is still required. Use `probe_p38_headset.py --hand-fixed` as the
+   interactive Titan account under VDXR; the other MP selector counters are
+   now recorded by the same probe. Desktop receipt:
+   [headset-s2-mp-frustum-receipt.json](../../vr/proof/headset-s2-mp-frustum-receipt.json).
+2. **Native flash alignment.** The eye replay now translates the existing 32x32
+   semi-transparent flash packet at `actor+0xCBC` to the projected animated
+   muzzle. A +150 mm hand translation moved the flash centre from about
+   `(287,92)` to `(320,92)` in the 512x120 replay; the natural packet stayed
+   near `(293,106)`. Confirm visually in the headset.
+3. **Impact alignment and resolution.** The operator reports shots still landing
+   slightly high and very poor resolution. These are physical observations, not
+   measured passes. Do not tune a pitch/distance constant or raise render scale
+   blindly; record a controlled target test and capture the actual resolution
+   path before changing either.
+
+The remaining physical order is:
+
+1. **S3, SP fog:** use the isolated analysis SP slot 2, never root MP slot 2.
    Operator reports good edges but shorter visibility straight ahead than at
    the FOV edge while turning the head. Inspect the first game's existing
    fog/depth implementation and docs before adding code; capture the actual SP
    fog/depth producer and compare fixed world points under head rotation.
    Determine whether clipping, fog depth or transform ownership is responsible
    before changing any distance/FOV constants. Cause is currently unconfirmed.
-4. **S4, performance:** operator reports about 35 FPS in SP. Capture unique
+2. **S4, performance:** operator reports about 35 FPS in SP. Capture unique
    guest/world-pair cadence separately from XR submissions, plus render/guest/
    restore timing in the same copied fixture. Reuse reference profiling tools.
    Do not call the reported number a measured benchmark or optimize blindly.
-5. **S5, cleanup:** old MP smoke exited 1 despite raw `complete=true`.
+3. **S5, cleanup:** old MP smoke exited 1 despite raw `complete=true`.
    `tcp_quit` was reported; forced cleanup was not recorded. The probe now
    rejects nonzero/forced cleanup as acceptance. Retain the old raw evidence;
    investigate shutdown only with bounded owned-process cleanup, and record a
@@ -70,8 +79,8 @@ not a feature expected from this SP smoke. Do not borrow MP actor/camera
 addresses or claim live NPC damage from it. The 12 recorded MP aimed shots
 caused no observed linked health writes; health 32->29 happened before recording.
 After this follow-up, continue the W6.2 reader contract below without reopening
-completed matrices. The older instruction against premature performance work
-below applies to W6.2 discovery; these new operator-reported S tasks take priority.
+completed matrices. The reported resolution belongs to S4 measurement; do not
+confuse it with W6.2 selector/geometry discovery.
 
 **Operator contract: the laser points along the bullet's hand-fixed aim ray.**
 Native recoil/reload animation plays normally and does not steer that ray.
@@ -80,6 +89,8 @@ its tracked hand affine; W6 consumes the same ray. Animated marker copies are
 only diagnostics and eligibility/freshness guards. This explicitly supersedes
 older W5/W6 requirements to make aim follow an animated barrel. See
 [the current contract and proof](RENDERED_MUZZLE_EVIDENCE.md).
+The visible native muzzle flash is separate: it follows the projected animated
+muzzle in the eye replay, while the shot/laser ray remains fixed to the hand.
 Read [RENDERED_MUZZLE_EVIDENCE.md](RENDERED_MUZZLE_EVIDENCE.md),
 [the snapshot proof](../../vr/proof/weapon-rendered-muzzle-receipt.json) and
 [build/regressions](../../vr/proof/weapon-rendered-muzzle-build-receipt.json).
@@ -305,7 +316,7 @@ rollback. W2.3 later added the accepted heading and near-wall controls.
 | --- | --- |
 | Repository | `C:/Users/titan/Desktop/Github_Projects/Mine/Medal-Of-Honor-Underground-PSX-Recomp` |
 | Branch / current HEAD | `feature/vr-port`; read current HEAD during preflight. W1/W2.1 predecessor is `afda5082...` |
-| Checkpoint scope | W5.3/W5.4 desktop gates and W6.1 per-eye rendered-muzzle capture complete; NEXT W6.2 triangle/vertex bindings; preserve `.commandcode/` |
+| Checkpoint scope | S1 camera/aim and S1a native-flash eye-replay alignment complete; physical S2 edge/flash/impact pass next; then S3-S5 and W6.2; preserve `.commandcode/` |
 | Framework gitlink | `555e1eabccc59b9b6ff0d9fca48aca783513dc86` |
 | UI gitlink | `7c635c6b366a6e0d5d3c913a7fce6ec04dd9f256` |
 | Title / version | `SLUS-01270` / `0.1.0` |
@@ -337,6 +348,9 @@ Accepted evidence:
 | W2.3 MP head/near-wall visibility | [control receipt](../../vr/proof/weapon-mp-visibility-receipt.json), [control sheet](../../vr/proof/weapon-mp-visibility-controls.png) and [build regressions](../../vr/proof/weapon-mp-visibility-build-receipt.json): zero, +/-90-degree and near-wall; both eyes, per-eye selector comparison, populated top-screen world geometry, no fallback and clean rollback |
 | W2.4 MP native input | [control receipt](../../vr/proof/weapon-mp-input-receipt.json) and [build regressions](../../vr/proof/weapon-mp-input-build-receipt.json): P1 actor/input/current ownership, live converter and table hashes, six synthetic controls, SP slot-2 regression, 23 Python tests and 33-case parity |
 | W2.5 MP lifecycle / recovery | [control receipt](../../vr/proof/weapon-mp-lifecycle-receipt.json) and [build receipt](../../vr/proof/weapon-mp-lifecycle-build-receipt.json): 17 MP input/button cases, native Start pause/resume, zero render-time sampling, 13 SP cases, inherited-flag flat startup |
+| S1 camera without recording | [proof](../../vr/proof/headset-s1-camera-receipt.json): 30 live samples, capture OFF, 13,524 camera callbacks, 20 eligible hand-fixed aim updates, zero fallbacks and linked P2 damage 32->14; shutdown still fails S5 |
+| S1a native muzzle flash | [evidence](NATIVE_MUZZLE_FLASH_EVIDENCE.md) and [receipt](../../vr/proof/native-flash-alignment-receipt.json): existing 32x32 flash packet tracked in eye replay; baseline `(287,92)`, +150 mm hand X `(320,92)`, zero fallbacks; physical visibility open |
+| S2 MP frustum desktop | [receipt](../../vr/proof/headset-s2-mp-frustum-receipt.json): 1,638 overrides per eye, zero fallbacks, 201 rollback checks, zero mismatches and clean exit; physical edges remain open |
 | W3.1 P38 calibration | [calibration receipt](../../vr/proof/weapon-p38-calibration-receipt.json), [capture receipt](../../vr/proof/weapon-p38-calibration-capture-receipt.json) and [build receipt](../../vr/proof/weapon-p38-calibration-build-receipt.json): 69 atomic source/animated vertices, orthonormal axes, grip and muzzle markers, nominal-size scale, focused tests and 33-case parity |
 | W3.2 P38 headset comparison | [headset comparison](../../vr/proof/weapon-p38-headset-receipt.json) and [complete build receipt](../../vr/proof/weapon-p38-headset-complete-build-receipt.json): 30 seconds native plus 30 seconds tracked, 30/30 live hand samples per mode, fresh VDXR submissions and stereo pairs, zero final failures; no operator acceptance claim |
 | W3.4 all-ID profiles | [topology](../../vr/proof/weapon-complete-gun-topology-receipt.json), [animated capture](../../vr/proof/weapon-profile-captures-receipt.json), [provisional calibration](../../vr/proof/weapon-provisional-calibrations-receipt.json), [calibrated controls](../../vr/proof/weapon-complete-gun-controls-receipt.json) and [control sheet](../../vr/proof/weapon-complete-gun-controls.png): 13 unique IDs / 16 slot rows, 64 cases, 804 eye masks on its recorded binary, zero mixed gun/arm triangles and zero rollback errors |
@@ -913,15 +927,18 @@ if ($LASTEXITCODE -ne 0) { throw 'Release build failed' }
 - Complete: C1-C4, W1-W3.2, W3.4, W4.1-W4.3, W5.1, W5.3a/b/c/d/e
   family/lifecycle, final-origin, canonical-marker, all-family conversion,
   paired preservation/impact, W5.4a/b combat states and W5.4c P1 death/native
-  respawn/fresh post-respawn shot; W6.1 per-eye rendered animated muzzle capture. W3.3 physical acceptance
+  respawn/fresh post-respawn shot; W6.1 per-eye rendered animated muzzle capture;
+  S1 camera/aim runtime proof and S1a native-flash eye-replay alignment. W3.3 physical acceptance
   is open. W3.4 now includes all-ID frozen-frame moving-marker evidence for
   native recoil, reload, switching, scope hiding and prop actions.
 - Operator policy: use the same hand-fixed calibrated ray for shots and the
   future laser. Native model recoil/reload stays visual. Moving-marker copies
   remain diagnostics/guards; they no longer define current shot/laser motion. The crossbow's tested launch sample
   alone was rigid. Sten reload and scoped-shot ammo are `not-observed`.
-- NEXT task: W6.2 verified triangle/vertex bindings under section 1. Physical
-  W5.4d physical hand-aim/impact alignment stays open. W5.2 remains open
+- NEXT task: one physical S2 pass on the current binary for MP FOV edges,
+  native-flash placement, high-impact feedback and resolution evidence; then
+  S3-S5 and W6.2 verified triangle/vertex bindings under section 1. Physical
+  W5.4d hand-aim/impact alignment stays open. W5.2 remains open
   until a compatible copied live NPC/SP fixture and guarded SP binding are
   available. Do not repeat the W3.4 matrix, family map, canonical acquisition,
   W5.3d conversion, W5.3e pair, W5.4 desktop pair/death supplement or W6.1
@@ -941,6 +958,15 @@ if ($LASTEXITCODE -ne 0) { throw 'Release build failed' }
   checks, zero mismatches/failed eyes and six intentional admission refusals.
   Base/eye reconstruction is within `1e-8`; same-snapshot W5 world-tip error
   <=`0.000007151`. New capture OFF by default; no beam/triangle claim.
+- S1 result: 30 live/focused samples on `924691b6...`, shot capture OFF,
+  13,524 canonical camera callbacks, 20 P1-eligible hand-fixed aim updates,
+  zero fallbacks, no legacy P38 aim and three linked P2 health writes
+  (32->14). The run still exited 1 after forced cleanup; S5 remains open.
+- Native flash result: the centre-fixed effect is the existing 32x32
+  semi-transparent packet at `actor+0xCB8/+0xCBC`. Eye replay translates the
+  same packet to the projected animated muzzle. Baseline replay centred near
+  `(287,92)`; +150 mm hand X moved it to `(320,92)` with `231` alignments,
+  zero fallbacks and clean exit on `0dbdb244...`. Physical placement is open.
 - Current hand-fixed family pair: all 13 IDs, 21 native / 21 tracked
   lifetimes, 22 tracked linked P2 health decreases. Shotgun retains six pellets
   and 21 construction-scoped RNG updates. Missing/stale marker, unfocused, P2
@@ -965,15 +991,20 @@ if ($LASTEXITCODE -ne 0) { throw 'Release build failed' }
   `weapon-shot-families-build-receipt.json`,
   `weapon-moving-muzzle-receipt.json`,
   `weapon-moving-muzzle-controls.png`,
-  `weapon-complete-gun-controls-receipt.json` / `.png` and
-  `weapon-p38-aim-receipt.json`.
+  `weapon-complete-gun-controls-receipt.json` / `.png`,
+  `weapon-p38-aim-receipt.json`, `headset-s1-camera-receipt.json`,
+  `headset-s2-mp-frustum-receipt.json`, `native-flash-alignment-receipt.json`,
+  `NATIVE_MUZZLE_FLASH_EVIDENCE.md`,
+  `HEADSET_SMOKE_EVIDENCE.md` and `headset-smoke-20261027-receipt.json`.
 - Exact W5.2 remainder: a compatible copied live NPC/SP fixture and independently
   guarded SP shot/camera binding. Pure ownership tests and real P2/MP40 controls
   pass; they do not claim a live NPC or SP override. No unrelated enemy chase.
-- Hardware: do not put the operator in the headset during this desktop pass.
-  W3.3/W3.5 and release/default promotion still need later physical acceptance.
+- Hardware: the next edge/flash pass needs the operator and interactive Titan
+  account. W3.3/W3.5, W5.4d and release/default promotion still need physical
+  acceptance.
 - Build: `build-release` is Release/OpenXR/diagnostics ON with debug tools ON
-  for active desktop work. Current hand-fixed/W6.1 executable `4204a6f3...`; W5.3e/W5.4
+  for active desktop work. Current S1a executable `0dbdb244...`; S1 camera
+  predicate was tested on `924691b6...`; W5.3e/W5.4
   and death receipts retain historical `8d0db606...`. The inherited
   W5.3d debug-off flat startup remains historical.
   Normal candidate defaults remain OFF; no framework pin changed. Source

@@ -37,6 +37,29 @@ DEFAULT_SECONDS = 30
 MAX_SECONDS = 120
 MODES = ("native", "tracked")
 CALIBRATION_PROOF = ROOT / "vr/proof/weapon-p38-complete-calibration-receipt.json"
+SHOT_COUNTERS = (
+    "mohu.vr.shot.camera.native",
+    "mohu.vr.shot.p1.eligible",
+    "mohu.vr.shot.native.rejected",
+    "mohu.vr.shot.weapon.aimed",
+    "mohu.vr.shot.weapon.deferred",
+    "mohu.vr.shot.weapon.tracking_fallback",
+    "mohu.vr.shot.weapon.native",
+    "mohu.vr.shot.p38.aimed",
+    "mohu.vr.shot.p38.tracking_fallback",
+    "mohu.vr.shot.replay_blocked",
+)
+MP_FRUSTUM_COUNTERS = (
+    "mohu.vr.mp.frustum.override.left",
+    "mohu.vr.mp.frustum.override.right",
+    "mohu.vr.mp.frustum.fallback.left",
+    "mohu.vr.mp.frustum.fallback.right",
+    "mohu.vr.mp.frustum.skip_caller.left",
+    "mohu.vr.mp.frustum.skip_caller.right",
+    "mohu.vr.mp.frustum.skip_node.left",
+    "mohu.vr.mp.frustum.skip_node.right",
+    "mohu.vr.mp.guard_fail",
+)
 
 
 def digest(path):
@@ -134,6 +157,111 @@ def p38_model_matches(model):
         and model["node_count"] == P38_NODE_COUNT
         and int(model["geometry_fnv32"], 16) == P38_GEOMETRY_FNV32
     )
+
+
+def shot_command(args):
+    result = native.command("mod_cmd", name="mohu.vr.shot", args=args)
+    if result["result"] != 1:
+        raise RuntimeError(f"Shot diagnostic rejected: {result}")
+    return json.loads(result["reply"])
+
+
+def counter_values():
+    return {
+        row["name"]: row["count"]
+        for row in native.command("mod_counters")["counters"]
+    }
+
+
+def shot_counter_values(values):
+    return {name: values.get(name, 0) for name in SHOT_COUNTERS}
+
+
+def counter_delta(before, after):
+    return {
+        name: after.get(name, 0) - before.get(name, 0)
+        for name in SHOT_COUNTERS
+    }
+
+
+def selected_counter_values(values, names):
+    return {name: values.get(name, 0) for name in names}
+
+
+def mp_frustum_checks(counters):
+    return {
+        "override_left": counters.get(
+            "mohu.vr.mp.frustum.override.left", 0
+        ),
+        "override_right": counters.get(
+            "mohu.vr.mp.frustum.override.right", 0
+        ),
+        "fallback_left": counters.get(
+            "mohu.vr.mp.frustum.fallback.left", 0
+        ),
+        "fallback_right": counters.get(
+            "mohu.vr.mp.frustum.fallback.right", 0
+        ),
+        "guard_fail": counters.get("mohu.vr.mp.guard_fail", 0),
+    }
+
+
+def hand_fixed_checks(
+    camera_before,
+    camera_samples,
+    camera_after,
+    capture_statuses,
+    counters,
+    p1_actor,
+    *,
+    require_aim=True,
+):
+    problems = []
+    cameras = [camera_before, *camera_samples, camera_after]
+    if any(status.get("capture") for status in capture_statuses):
+        problems.append("shot capture was armed")
+    if any(status.get("count") for status in capture_statuses):
+        problems.append("shot samples were recorded")
+    if any(not camera.get("valid") for camera in cameras):
+        problems.append("canonical camera was invalid")
+    if any(int(camera.get("owner", 0)) != p1_actor for camera in cameras):
+        problems.append("canonical camera owner was not P1")
+    cycles = [
+        int(camera.get("cycle", 0))
+        for camera in cameras
+        if camera.get("valid") and int(camera.get("owner", 0)) == p1_actor
+    ]
+    cycle_advance = max(cycles, default=0) - min(cycles, default=0)
+    if cycle_advance <= 0:
+        problems.append("canonical camera did not refresh")
+    if counters.get("mohu.vr.shot.camera.native", 0) <= 0:
+        problems.append("canonical camera counter did not advance")
+    if require_aim and counters.get("mohu.vr.shot.p1.eligible", 0) <= 0:
+        problems.append("no P1-eligible shot was observed")
+    if require_aim and counters.get("mohu.vr.shot.weapon.aimed", 0) <= 0:
+        problems.append("no hand-fixed aim update was observed")
+    if counters.get("mohu.vr.shot.weapon.tracking_fallback", 0):
+        problems.append("hand-fixed aim used a tracking fallback")
+    if counters.get("mohu.vr.shot.p38.aimed", 0):
+        problems.append("legacy P38 aim remained active")
+    return {
+        "capture_armed": any(
+            status.get("capture") for status in capture_statuses
+        ),
+        "recorded_samples": max(
+            (int(status.get("count", 0)) for status in capture_statuses),
+            default=0,
+        ),
+        "camera_owner": p1_actor,
+        "camera_cycle_advance": cycle_advance,
+        "valid_camera_samples": sum(
+            bool(camera.get("valid"))
+            and int(camera.get("owner", 0)) == p1_actor
+            for camera in cameras
+        ),
+        "counter_delta": dict(counters),
+        "problems": problems,
+    }
 
 
 def calibration_provenance():
@@ -490,6 +618,23 @@ def run_case(out, mode, seconds, desktop, runtime_manifest, *, hand_fixed=False)
                 )
             }
 
+            capture_statuses = []
+            camera_samples = []
+            shot_counters_before = None
+            mp_counters_before = None
+            camera_before = None
+            damage_address = None
+            if hand_fixed and mode == "tracked":
+                shot_command("stop")
+                capture_statuses.append(shot_command("status"))
+                damage_address = int(players[1]["actor"], 16) + 0x108
+                native.command(
+                    "wtrace_range",
+                    lo=hex(damage_address),
+                    hi=hex(damage_address + 4),
+                )
+                native.command("wtrace_clear")
+
             if desktop:
                 set_desktop_hands()
                 case["xr_before"] = None
@@ -499,6 +644,15 @@ def run_case(out, mode, seconds, desktop, runtime_manifest, *, hand_fixed=False)
                     process, mode
                 )
             native.frames(18)
+            if hand_fixed and mode == "tracked":
+                camera_before = shot_command("camera")
+                runtime_counters_before = counter_values()
+                shot_counters_before = shot_counter_values(
+                    runtime_counters_before
+                )
+                mp_counters_before = selected_counter_values(
+                    runtime_counters_before, MP_FRUSTUM_COUNTERS
+                )
             case["stereo_before"] = native.command("stereo_stats")
             case["render_before"] = native.command("render_pass_stats")
             case["input_before"] = native.command("openxr_input")
@@ -520,15 +674,19 @@ def run_case(out, mode, seconds, desktop, runtime_manifest, *, hand_fixed=False)
                     raise RuntimeError(f"Game exited: {process.returncode}")
                 elapsed = time.monotonic() - started
                 if not samples or elapsed - samples[-1]["seconds"] >= 1:
-                    samples.append(
-                        {
-                            "seconds": round(elapsed, 3),
-                            "frame": native.command("frame"),
-                            "stereo": native.command("stereo_stats"),
-                            "hands": native.command("openxr_hands"),
-                            "input": native.command("openxr_input"),
-                        }
-                    )
+                    sample = {
+                        "seconds": round(elapsed, 3),
+                        "frame": native.command("frame"),
+                        "stereo": native.command("stereo_stats"),
+                        "hands": native.command("openxr_hands"),
+                        "input": native.command("openxr_input"),
+                    }
+                    if hand_fixed and mode == "tracked":
+                        sample["shot_capture"] = shot_command("status")
+                        sample["shot_camera"] = shot_command("camera")
+                        capture_statuses.append(sample["shot_capture"])
+                        camera_samples.append(sample["shot_camera"])
+                    samples.append(sample)
                 time.sleep(0.04)
             case["elapsed_seconds"] = round(
                 time.monotonic() - started, 3
@@ -560,6 +718,62 @@ def run_case(out, mode, seconds, desktop, runtime_manifest, *, hand_fixed=False)
             if mode == "tracked" and desktop:
                 if case["sample_summary"]["pose_ready_samples"] == 0:
                     raise RuntimeError("Synthetic tracked control was not live")
+            if hand_fixed and mode == "tracked":
+                capture_statuses.append(shot_command("status"))
+                camera_after = shot_command("camera")
+                runtime_counters_after = counter_values()
+                shot_counters_after = shot_counter_values(
+                    runtime_counters_after
+                )
+                shot_delta = counter_delta(
+                    shot_counters_before, shot_counters_after
+                )
+                mp_counters_after = selected_counter_values(
+                    runtime_counters_after, MP_FRUSTUM_COUNTERS
+                )
+                mp_delta = {
+                    name: mp_counters_after[name] - mp_counters_before[name]
+                    for name in MP_FRUSTUM_COUNTERS
+                }
+                case["mp_frustum"] = {
+                    **mp_frustum_checks(mp_delta),
+                    "counter_delta": mp_delta,
+                }
+                case["shot_runtime"] = hand_fixed_checks(
+                    camera_before,
+                    camera_samples,
+                    camera_after,
+                    capture_statuses,
+                    shot_delta,
+                    int(players[0]["actor"], 16),
+                    require_aim=not desktop,
+                )
+                case["shot_runtime"]["counters_before"] = shot_counters_before
+                case["shot_runtime"]["counters_after"] = shot_counters_after
+                case["shot_runtime"]["capture_status_before"] = (
+                    capture_statuses[0]
+                )
+                case["shot_runtime"]["capture_status_after"] = (
+                    capture_statuses[-1]
+                )
+                case["shot_runtime"]["camera_before"] = camera_before
+                case["shot_runtime"]["camera_after"] = camera_after
+                players_after = native.players()
+                damage_trace = native.command("wtrace_dump", count=128)
+                case["damage"] = {
+                    "address": hex(damage_address),
+                    "before_health": players[1]["health"],
+                    "after_health": players_after[1]["health"],
+                    "linked_health_write": native.p2_damage_in_trace(
+                        damage_trace, players_after[1]
+                    ),
+                    "trace": damage_trace,
+                }
+                if case["shot_runtime"]["problems"]:
+                    raise RuntimeError(
+                        "Hand-fixed runtime evidence failed: "
+                        + ", ".join(case["shot_runtime"]["problems"])
+                    )
             case["complete"] = True
             print(f"END P38 {mode}", flush=True)
         except BaseException as error:
@@ -572,6 +786,11 @@ def run_case(out, mode, seconds, desktop, runtime_manifest, *, hand_fixed=False)
                 native.command("openxr_hands_override", clear=1)
             except (OSError, RuntimeError):
                 pass
+            if damage_address is not None:
+                try:
+                    native.command("wtrace_range", lo="0", hi="0")
+                except (OSError, RuntimeError):
+                    pass
             if process.poll() is None:
                 try:
                     native.command("render_pass_refuse", on=1)

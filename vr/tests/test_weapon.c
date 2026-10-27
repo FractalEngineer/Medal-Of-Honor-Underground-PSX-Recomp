@@ -354,6 +354,21 @@ int main(void) {
     CHECK(!mohu_vr_weapon_track_delta(
         &hands, 1000.0, current_rotation, current_translation));
 
+    const uint32_t flash_xy[4] = {
+        0x00580113u, 0x005D0140u, 0x0077010Cu, 0x007C0139u,
+    };
+    uint32_t flash_out[4];
+    CHECK(mohu_vr_weapon_translate_flash_quad(
+        flash_xy, 289.0, 95.0, flash_out));
+    const uint32_t flash_expected[4] = {
+        0x004D010Eu, 0x0052013Bu, 0x006C0107u, 0x00710134u,
+    };
+    CHECK(memcmp(flash_out, flash_expected, sizeof flash_out) == 0);
+    CHECK(!mohu_vr_weapon_translate_flash_quad(
+        flash_xy, NAN, 95.0, flash_out));
+    CHECK(!mohu_vr_weapon_translate_flash_quad(
+        flash_xy, 1023.0, 1023.0, flash_out));
+
     puts("PASS: weapon profiles, node guard, tracked affine and stale fallback");
     return 0;
 }

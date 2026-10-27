@@ -1,0 +1,92 @@
+{
+  "schema": 1,
+  "date": "2026-10-27",
+  "kind": "S1 hand-fixed canonical camera runtime proof",
+  "headset_acceptance": false,
+  "s1_runtime_proven": true,
+  "tested_revision": "4f3328de52d3272da9126f2aff029a7fa75b82b0",
+  "tested_executable_sha256": "924691b65b561c4aefe0ea135953b3181dc55e8f7f24e0d1112fa19d33808f2c",
+  "raw_receipt": "analysis/vr-baseline/headset-s1-camera-20261027a/receipt.json",
+  "raw_receipt_sha256": "e14a6bf7dafddf182496b72c974cf21369075461421683b7a2f0a0e629596449",
+  "runtime": "C:\\Program Files\\Virtual Desktop Streamer\\OpenXR\\virtualdesktop-openxr.json",
+  "execution_account": "fractal-power\\titan",
+  "fixture": {
+    "source": "root multiplayer slot 1",
+    "weapon_id": 0,
+    "weapon": "P38 pistol",
+    "pst_sha256": "b248dfa247b45a41906beea3aa829cff79b39d863e425211e5c0651e853a7f5d",
+    "thumb_sha256": "008eb36b216f802cc54b8911eed2201b28b5167830ac4cfeaf4bfff5aab3543c"
+  },
+  "environment": {
+    "MOHU_VR_MP_FRUSTUM": "1",
+    "MOHU_VR_WEAPON_CALIBRATED": "1",
+    "MOHU_VR_WEAPON_AIM": "1",
+    "MOHU_VR_WEAPON_GUN_ONLY": "1",
+    "MOHU_VR_P38_CALIBRATED": "0",
+    "MOHU_VR_P38_AIM": "0",
+    "PSX_VR_LASER": "0"
+  },
+  "samples": {
+    "seconds": 30,
+    "samples": 30,
+    "live_hand_samples": 30,
+    "pose_ready_samples": 30,
+    "focused_samples": 30,
+    "right_hand_travel_m": 0.3628103005904423
+  },
+  "shot_capture": {
+    "armed_before": false,
+    "armed_after": false,
+    "recorded_samples_before": 0,
+    "recorded_samples_after": 0
+  },
+  "camera": {
+    "owner": "0x801483d0",
+    "valid_samples": 32,
+    "cycle_advance": 896337534,
+    "callback_delta": 13524
+  },
+  "hand_fixed_aim": {
+    "p1_eligible_delta": 20,
+    "aimed_delta": 20,
+    "tracking_fallback_delta": 0,
+    "legacy_p38_aimed_delta": 0,
+    "legacy_p38_fallback_delta": 0,
+    "native_rejected_delta": 0,
+    "problems": []
+  },
+  "damage": {
+    "address": "0x80145918",
+    "before_health": 32.0,
+    "after_health": 14.0,
+    "linked_health_write": true,
+    "health_write_count": 3,
+    "note": "Recorded separately from camera/aim eligibility; the trace links each decrease to the native shot path."
+  },
+  "transport": {
+    "stereo_pairs_before": 22,
+    "stereo_pairs_after": 607,
+    "xr_submitted_before": 17,
+    "xr_submitted_after": 611,
+    "rollback_verify_checks": 0,
+    "source_saves_unchanged": true,
+    "preferences_unchanged": true,
+    "remaining_game_pids": []
+  },
+  "shutdown": {
+    "exit_code": 1,
+    "forced_cleanup": true,
+    "clean": false,
+    "task": "S5 remains open"
+  },
+  "operator_feedback": {
+    "quote": "very poor resolution, shots seem to hit a bit higher than expected and the muzzle flash seems to stay fixed in the center instead of following the gun muzzle",
+    "treated_as": "physical observation, not measured pass"
+  },
+  "limits": [
+    "The predicate is runtime-validated, but physical aim alignment remains W5.4d.",
+    "The run did not enable rollback verification.",
+    "The nonzero forced shutdown does not satisfy S5.",
+    "The MP frustum opt-in was present, but this proof does not claim physical FOV-edge acceptance."
+  ]
+}

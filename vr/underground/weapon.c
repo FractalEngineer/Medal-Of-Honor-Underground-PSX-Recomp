@@ -327,6 +327,31 @@ int mohu_vr_weapon_muzzle_shot(
         position, angles) : 0;
 }
 
+int mohu_vr_weapon_translate_flash_quad(
+    const uint32_t xy[4], double target_x, double target_y, uint32_t out[4]) {
+    if (!xy || !out || !isfinite(target_x) || !isfinite(target_y) ||
+        target_x < 0.0 || target_x > 1023.0 ||
+        target_y < 0.0 || target_y > 1023.0) {
+        return 0;
+    }
+    int32_t sx = 0, sy = 0;
+    for (unsigned i = 0; i < 4; ++i) {
+        sx += (int16_t)(xy[i] & 0xffffu);
+        sy += (int16_t)(xy[i] >> 16);
+    }
+    const int32_t dx = (int32_t)lround(target_x - sx / 4.0);
+    const int32_t dy = (int32_t)lround(target_y - sy / 4.0);
+    uint32_t result[4];
+    for (unsigned i = 0; i < 4; ++i) {
+        const int32_t x = (int16_t)(xy[i] & 0xffffu) + dx;
+        const int32_t y = (int16_t)(xy[i] >> 16) + dy;
+        if (x < 0 || x > 1023 || y < 0 || y > 1023) return 0;
+        result[i] = (uint16_t)x | ((uint32_t)(uint16_t)y << 16);
+    }
+    memcpy(out, result, sizeof result);
+    return 1;
+}
+
 size_t mohu_vr_weapon_profile_count(void) {
     return sizeof k_weapon_profiles / sizeof k_weapon_profiles[0];
 }

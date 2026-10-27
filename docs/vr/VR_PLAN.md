@@ -79,19 +79,29 @@ strict W1->W6/hardware-first sequence.
 
 ## S - follow up the 2026-10-27 physical smoke
 
-These are next-session tasks, not authorization for more work at this checkpoint.
 Follow the ordered contract in HANDOFF; preserve prior receipts and fixture hashes.
 
-- [ ] S1. Validate the all-family camera refresh with shot recording OFF and
+- [x] S1. Validate the all-family camera refresh with shot recording OFF and
   legacy P38 aim OFF; recording must not hide the startup dependency. Capture
   current-binary evidence before calling the predicate fix runtime-validated.
+  Evidence: `headset-s1-camera-receipt.json`; 20 eligible hand-fixed aim updates,
+  zero fallbacks, capture count zero and linked P2 damage 32->14.
+- [x] S1a. Isolate the centre-fixed native muzzle flash and move the same
+  eye-replay packet to the projected animated muzzle on desktop. Evidence:
+  [NATIVE_MUZZLE_FLASH_EVIDENCE.md](NATIVE_MUZZLE_FLASH_EVIDENCE.md) and
+  `native-flash-alignment-receipt.json`. Physical visibility remains in S2.
 - [ ] S2. Retest physical MP FOV edges with the separate MP frustum opt-in ON
   and the explicit hand-fixed probe profile. Configuration fix alone is not
-  proof of visual correction or complete weapon acceptance.
+  proof of visual correction or complete weapon acceptance. The desktop control
+  records 1,638 overrides per eye with zero fallbacks; physical edges and
+  flash/impact observations remain pending. Evidence:
+  `headset-s2-mp-frustum-receipt.json`.
 - [ ] S3. Measure the SP view-dependent fog/distance defect and its actual
   producer, reusing first-game fog/depth work before changing target bindings.
 - [ ] S4. Capture SP guest/world-pair cadence and timing versus XR refresh for
-  the operator-reported approximately 35 FPS; feed measured bottlenecks into Q2.
+  the operator-reported approximately 35 FPS and very poor resolution; measure
+  the actual source/eye/swapchain path before changing scale. Feed measured
+  bottlenecks into Q2.
 - [ ] S5. Resolve/record bounded MP shutdown with a real clean child exit;
   nonzero exit or forced cleanup cannot produce complete acceptance.
 
@@ -438,7 +448,8 @@ acceptance is required for physical claims and normal default promotion.
   and [DEATH_RESPAWN_EVIDENCE.md](DEATH_RESPAWN_EVIDENCE.md). This headless
   lifecycle control has stereo inactive.
 - [ ] W5.4d. Obtain operator confirmation of physical hand-aim/impact alignment.
-  This is independent of ready desktop W6 work.
+  This is independent of ready desktop W6 work. The 2026-10-27 report says
+  impacts land slightly high; it is a failure observation, not acceptance.
 
 W5.3 desktop substeps:
 

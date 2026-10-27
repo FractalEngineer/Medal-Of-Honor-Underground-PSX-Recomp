@@ -1455,3 +1455,40 @@ source saves, defaults, historical receipts and unrelated `.commandcode/`.
   Framework pins/defaults and reference checkout unchanged; `.commandcode/`
   remains untouched. Evidence: [headset smoke](HEADSET_SMOKE_EVIDENCE.md) and
   [checkpoint receipt](../../vr/proof/headset-smoke-20261027-receipt.json).
+
+## 2026-10-27 - S1 retest, MP selector control and native flash alignment
+
+- Extended `probe_p38_headset.py` so `--hand-fixed` samples canonical camera
+  ownership/cycle and shot counters while capture remains OFF. It rejects armed
+  capture, recorded samples, non-P1 cameras, missing eligible/aimed updates,
+  tracking fallback and legacy P38 aim. MP selector overrides/fallbacks are
+  recorded separately from the unrelated SP `level_hits` counter.
+- Interactive VDXR S1 on copied root MP slot 1 and `924691b6...` produced 30
+  live/focused samples, 13,524 canonical camera callbacks, 20 eligible
+  hand-fixed aim updates, zero fallbacks, capture count zero and three linked
+  P2 health writes (32->14). The process still exited 1 after forced cleanup,
+  so S5 remains open. Evidence:
+  [S1 proof](../../vr/proof/headset-s1-camera-receipt.json).
+- Desktop `MOHU_VR_MP_FRUSTUM=1` control produced 1,638 overrides in each eye,
+  zero fallback and clean exit. This proves the selector path but not physical
+  edge appearance.
+- Isolated the operator-reported centre-fixed flash. It is the native 32x32
+  semi-transparent packet at `actor+0xCB8/+0xCBC`, not the calibrated shot or
+  gun mesh. Added a guarded eye-replay translation that preserves packet colour,
+  texture, size, ordering and timing while moving its four XY words to the
+  projected animated muzzle. Shot position/angles remain unchanged.
+- Synthetic copied-MP controls captured the same packet before and after a
+  +150 mm hand X translation. Eye-replay flash centres moved from `(287,92)` to
+  `(320,92)` in the 512x120 surface; the natural packet remained near
+  `(293,106)`. Current-binary counters were 234/231 successful alignments, zero
+  fallbacks, clean exits and unchanged copied saves/preferences.
+- The operator additionally reported very poor resolution and impacts slightly
+  high. Resolution is now explicit S4 measurement; high impact is an open
+  W5.4d failure observation. No scale or aim-pitch constant was changed.
+- Validation: 121 Python tests, strict weapon/MP/rendered-muzzle C fixtures,
+  focused tracked P38 shot with linked P2 damage, strict diagnostic syntax and
+  active Release build. Current executable `0dbdb244...`; defaults remain OFF.
+- Evidence: [native flash evidence](NATIVE_MUZZLE_FLASH_EVIDENCE.md),
+  [native flash receipt](../../vr/proof/native-flash-alignment-receipt.json),
+  [headset smoke evidence](HEADSET_SMOKE_EVIDENCE.md) and the raw GP0 histories
+  under `analysis/vr-baseline/p38-effect-flash-align-final-20261027a/` and `b/`.

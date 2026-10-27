@@ -1,0 +1,122 @@
+{
+  "schema": 1,
+  "date": "2026-10-27",
+  "kind": "native MP P38 muzzle-flash eye-replay alignment",
+  "headset_acceptance": false,
+  "physical_flash_alignment_accepted": false,
+  "revision": "4f3328de52d3272da9126f2aff029a7fa75b82b0+working-tree",
+  "executable_sha256": "0dbdb244fc7379f6757598856b86274325da84c01c77a96c47ba70118a18110b",
+  "build": {
+    "configuration": "Release",
+    "PSX_DEBUG_TOOLS": "ON",
+    "MOHU_VR_DIAGNOSTICS": "ON",
+    "PSX_OPENXR": "ON"
+  },
+  "native_packet": {
+    "tag_offset": "actor+0xCB8",
+    "colour_source_offset": "actor+0xCBC",
+    "xy_word_offsets": [
+      "actor+0xCC0",
+      "actor+0xCC8",
+      "actor+0xCD0",
+      "actor+0xCD8"
+    ],
+    "draw_pc": "0x8001A048",
+    "draw_ra": "0x8001A4A8",
+    "colour": "0x2E606060",
+    "clut": 15998,
+    "texpage": 47,
+    "uv": [
+      [192, 128],
+      [223, 128],
+      [192, 159],
+      [223, 159]
+    ],
+    "natural_center_512x120": [293, 106]
+  },
+  "implementation": {
+    "policy": "translate the existing quad in eye replay",
+    "anchor": "per-eye projected animated P38 muzzle",
+    "preserved": [
+      "native texture",
+      "native colour",
+      "native quad size",
+      "native ordering-table depth",
+      "native timing",
+      "native draw order"
+    ],
+    "shot_ray_changed": false,
+    "normal_defaults": "OFF",
+    "success_counter": "mohu.vr.flash.align",
+    "fallback_counter": "mohu.vr.flash.fallback"
+  },
+  "controls": [
+    {
+      "name": "baseline",
+      "hand_translation_mm": [0, 0, 0],
+      "shots": 3,
+      "align_counter": 234,
+      "fallback_counter": 0,
+      "flash_centers_512x120": [
+        [287, 92],
+        [289, 98],
+        [291, 99]
+      ],
+      "exit_code": 0,
+      "forced_cleanup": false,
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "remaining_game_pids": [],
+      "raw_receipt": "analysis/vr-baseline/p38-effect-flash-align-final-20261027a/receipt.json",
+      "raw_receipt_sha256": "368941d10807cb36634072877bc147b2d91f173f44279bc0b73c2bf2dcbce58f"
+    },
+    {
+      "name": "hand-plus-150mm-x",
+      "hand_translation_mm": [150, 0, 0],
+      "shots": 3,
+      "align_counter": 231,
+      "fallback_counter": 0,
+      "flash_centers_512x120": [
+        [320, 92],
+        [320, 92],
+        [320, 92]
+      ],
+      "exit_code": 0,
+      "forced_cleanup": false,
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "remaining_game_pids": [],
+      "raw_receipt": "analysis/vr-baseline/p38-effect-flash-align-final-20261027b/receipt.json",
+      "raw_receipt_sha256": "823089e2766ad3c06980faaa6945770c995cc572af9c431ef8c4af7229a0df59"
+    }
+  ],
+  "focused_shot": {
+    "raw_receipt": "analysis/vr-baseline/flash-focused-shot-final-20261027a/receipt.json",
+    "raw_receipt_sha256": "d7916ad6a9f9e9e4749a47a74bc3f9d6ccb2c5ef851d4669913d0318bd59c3fa",
+    "shots": 1,
+    "native_ammunition_consumed": true,
+    "linked_p2_damage": true
+  },
+  "verification": {
+    "python_tests": 121,
+    "python_result": "pass",
+    "weapon_c_fixture": "pass",
+    "mp_view_c_fixture": "pass",
+    "rendered_muzzle_c_fixture": "pass",
+    "strict_vr_diagnostic_syntax": "pass",
+    "active_release_build": "pass"
+  },
+  "sources": {
+    "vr/underground/vr_diagnostic.c": "8A1E16A58DAB091C683DA2139A9572562A48226D630C3E67F46EA636883BFE1A",
+    "vr/underground/weapon.c": "EA4D59A9515D28309FDE68DAB2AC9351ACD91BAF36AB646AE9BCC735C385DDC5",
+    "vr/underground/weapon.h": "B9EF8697B08382343C22C4540AB18A02FC87B2BC0AE5C2457DE8FFD5F894D3A3",
+    "vr/tests/test_weapon.c": "96209CB96AE36E53EB73743CC4E6E62F917C2DBE6FAC3E353F572640C334B932",
+    "vr/tools/probe_p38_effect.py": "CD0E6EC46C861132CF5493035220C25892C94DF2DBB4E775494F1D3276A0E7E8"
+  },
+  "limits": [
+    "Synthetic desktop input; no physical visibility/alignment acceptance.",
+    "A frame-selected PNG of the transient flash was not retained; the raw GP0 history is retained.",
+    "Operator-reported high impacts are not changed or explained by this flash fix.",
+    "W3.3, W3.5 and W5.4d remain open."
+  ]
+}

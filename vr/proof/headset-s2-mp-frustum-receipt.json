@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "date": "2026-10-27",
+  "kind": "S2 MP frustum desktop selector control",
+  "headset_acceptance": false,
+  "physical_edge_acceptance": false,
+  "revision": "4f3328de52d3272da9126f2aff029a7fa75b82b0+working-tree",
+  "executable_sha256": "0dbdb244fc7379f6757598856b86274325da84c01c77a96c47ba70118a18110b",
+  "raw_receipt": "analysis/vr-baseline/headset-s2-desktop-final-20261027a/receipt.json",
+  "raw_receipt_sha256": "21bd5b9e1743371f40e52bd8c4c1e5105ec2d44e8b01fbb371deaf296d145390",
+  "fixture": "copied root multiplayer slot 1; P38",
+  "environment": {
+    "MOHU_VR_MP_FRUSTUM": "1",
+    "PSX_VR_HEAD_FRUSTUM": "1",
+    "MOHU_VR_WEAPON_AIM": "1",
+    "MOHU_VR_WEAPON_CALIBRATED": "1",
+    "MOHU_VR_P38_AIM": "0"
+  },
+  "counters": {
+    "override_left": 1638,
+    "override_right": 1638,
+    "fallback_left": 0,
+    "fallback_right": 0,
+    "skip_node_left": 78,
+    "skip_node_right": 78,
+    "guard_fail": 0
+  },
+  "checks": {
+    "complete": true,
+    "exit_code": 0,
+    "forced_cleanup": false,
+    "source_saves_unchanged": true,
+    "preferences_unchanged": true,
+    "remaining_game_pids": [],
+    "rollback_verify_checks": 201,
+    "rollback_mismatches": 0,
+    "vram_leaks": 0,
+    "watchdog_events": 0,
+    "nesting_repairs": 0,
+    "stereo_pairs": 100,
+    "stereo_failed_eyes": 0
+  },
+  "limits": [
+    "Proves the effective desktop selector path in both eyes.",
+    "Does not prove physical FOV-edge appearance or comfort.",
+    "The headset log's level_hits=0/0 is the separate SP level transformer counter."
+  ]
+}

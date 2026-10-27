@@ -52,6 +52,19 @@ class P38HeadsetTests(unittest.TestCase):
         for mode in tool.MODES:
             self.assertEqual(tool.environment(mode, True)["MOHU_VR_MP_FRUSTUM"], "1")
 
+    def test_mp_frustum_checks_report_real_selector_counters(self):
+        checks = tool.mp_frustum_checks({
+            "mohu.vr.mp.frustum.override.left": 42,
+            "mohu.vr.mp.frustum.override.right": 41,
+            "mohu.vr.mp.frustum.fallback.left": 0,
+            "mohu.vr.mp.frustum.fallback.right": 1,
+            "mohu.vr.mp.guard_fail": 0,
+        })
+        self.assertEqual(checks["override_left"], 42)
+        self.assertEqual(checks["override_right"], 41)
+        self.assertEqual(checks["fallback_left"], 0)
+        self.assertEqual(checks["fallback_right"], 1)
+
     def test_hand_fixed_smoke_explicitly_selects_current_aim(self):
         env = tool.environment("tracked", True, hand_fixed=True)
         self.assertEqual(env["MOHU_VR_WEAPON_AIM"], "1")
@@ -60,6 +73,60 @@ class P38HeadsetTests(unittest.TestCase):
         self.assertEqual(env["MOHU_VR_P38_AIM"], "0")
         native = tool.environment("native", True, hand_fixed=True)
         self.assertEqual(native.get("MOHU_VR_WEAPON_AIM", "0"), "0")
+
+    def test_hand_fixed_runtime_requires_capture_off_and_camera_aim(self):
+        camera = {"valid": 1, "owner": 0x801483D0, "cycle": 100}
+        counters = {
+            "mohu.vr.shot.camera.native": 2,
+            "mohu.vr.shot.p1.eligible": 1,
+            "mohu.vr.shot.weapon.aimed": 1,
+            "mohu.vr.shot.weapon.tracking_fallback": 0,
+            "mohu.vr.shot.p38.aimed": 0,
+        }
+        result = tool.hand_fixed_checks(
+            camera,
+            [{**camera, "cycle": 200}],
+            {**camera, "cycle": 300},
+            [{"capture": 0, "count": 0}],
+            counters,
+            camera["owner"],
+        )
+        self.assertEqual(result["problems"], [])
+        self.assertEqual(result["camera_cycle_advance"], 200)
+        self.assertFalse(result["capture_armed"])
+
+    def test_hand_fixed_runtime_rejects_recording_and_fallback(self):
+        camera = {"valid": 1, "owner": 0x801483D0, "cycle": 100}
+        result = tool.hand_fixed_checks(
+            camera,
+            [],
+            camera,
+            [{"capture": 1, "count": 1}],
+            {"mohu.vr.shot.weapon.tracking_fallback": 1},
+            camera["owner"],
+        )
+        self.assertIn("shot capture was armed", result["problems"])
+        self.assertIn("shot samples were recorded", result["problems"])
+        self.assertIn(
+            "canonical camera did not refresh", result["problems"]
+        )
+        self.assertIn(
+            "hand-fixed aim used a tracking fallback",
+            result["problems"],
+        )
+
+    def test_desktop_camera_check_does_not_require_a_shot(self):
+        camera = {"valid": 1, "owner": 0x801483D0, "cycle": 100}
+        result = tool.hand_fixed_checks(
+            camera,
+            [],
+            {**camera, "cycle": 200},
+            [{"capture": 0, "count": 0}],
+            {"mohu.vr.shot.camera.native": 1},
+            camera["owner"],
+            require_aim=False,
+        )
+        self.assertEqual(result["problems"], [])
 
     def test_tracked_comparison_explicitly_selects_calibrated_combat_candidate(self):
         for mode in tool.MODES:
