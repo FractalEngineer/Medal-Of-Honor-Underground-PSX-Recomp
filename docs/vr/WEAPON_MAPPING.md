@@ -3,8 +3,9 @@
 Last updated: 2026-10-28
 
 Execution order and stop/recovery rules are in [HANDOFF.md](HANDOFF.md).
-Checkbox status is in [VR_PLAN.md](VR_PLAN.md). **NEXT desktop: R4 native-hook/performance integration, then SP fog and
-live NPC impact.** See [SP_PARITY_REPAIR.md](SP_PARITY_REPAIR.md) for the
+Checkbox status is in [VR_PLAN.md](VR_PLAN.md). **NEXT desktop: R6 linked live
+SP NPC impact; R5 fog is paused on fixture selection.** See
+[SP_PARITY_REPAIR.md](SP_PARITY_REPAIR.md) for the
 current muzzle/arm/slot-3 fixes; W6.2 is deferred. W3.4, W4 P38 native mapping, W5.1,
 W5.3/W5.4 desktop gates and W6.1 hand-fixed ray capture pass;
 physical acceptance remains open. All 13 IDs now have measured

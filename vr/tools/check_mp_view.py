@@ -12,6 +12,19 @@ from PIL import Image, ImageChops, ImageDraw, ImageStat
 import inspect_weapon_sets as native
 
 
+def overlay_native_summary(response):
+    ring = response.get("ring", {}) if isinstance(response, dict) else {}
+    return {
+        "native_exec": int(ring.get("native_exec", 0)),
+        "calls_total": int(ring.get("calls_total", 0)),
+        "would_run": int(ring.get("would_run", 0)),
+        "in_progress": ring.get("in_progress"),
+        "recent_addresses": [
+            item.get("addr") for item in ring.get("recent", [])[:32]
+        ],
+    }
+
+
 def command(cmd, **values):
     deadline = time.monotonic() + 15
     while True:
@@ -748,6 +761,9 @@ def main():
     parser.add_argument("--all-weapons", action="store_true")
     parser.add_argument("--eye-offset", type=int, default=0)
     parser.add_argument("--native-projection", action="store_true")
+    parser.add_argument("--production-config", action="store_true")
+    parser.add_argument("--require-native", action="store_true")
+    parser.add_argument("--native-warm-seconds", type=int, default=0)
     parser.add_argument("--reject-recover", action="store_true")
     parser.add_argument("--fire-pistol", action="store_true")
     parser.add_argument("--frustum", action="store_true")
@@ -791,6 +807,7 @@ def main():
     preference_hashes = {str(p): native.digest(p) for p in preferences if p.exists()}
     env = {k: v for k, v in os.environ.items() if not k.startswith(("PSX_", "MOHU_VR_"))}
     env.update(PSX_DEV_INPUT="0", PSX_VSYNC="0", PSX_OPENXR_ENABLE="0",
+               PSX_INTERNAL_RESOLUTION="native",
                PSX_STEREO_SHED="0", PSX_RENDER_PASS_VERIFY="1",
                MOHU_VR_MP_CONTROL="1", MOHU_VR_STEREO_PROOF="1",
                MOHU_VR_EYE_RENDER_VIEW="0" if args.native_projection else "1",
@@ -806,6 +823,8 @@ def main():
     receipt = {"complete": False, "eye_offset": args.eye_offset,
                "mp_frustum": args.frustum, "gun_only": effective_gun_only,
                "calibrated_all": args.calibrated_all,
+               "production_config": args.production_config,
+               "require_native": args.require_native,
                "executable_sha256": native.digest(exe), "source_saves": hashes,
                "preferences": preference_hashes, "weapons": [], "cycles": {},
                "sources": {str(p.relative_to(native.ROOT)): native.digest(p) for p in
@@ -817,9 +836,16 @@ def main():
                             native.ROOT / "vr/tests/test_mp_view.c",
                             native.ROOT / "psxrecomp/runtime/src/vr_geometry_math.c",
                             native.ROOT / "psxrecomp/runtime/include/vr_geometry_math.h")}}
+    game_config = native.ROOT / (
+        "game.toml" if args.production_config
+        else "analysis/vr-baseline/game-interp.toml"
+    )
+    receipt["sources"][str(game_config.relative_to(native.ROOT))] = native.digest(
+        game_config
+    )
     with (out / "stdout.log").open("w") as stdout, (out / "stderr.log").open("w") as stderr:
         process = subprocess.Popen([str(exe), "--headless-opengl", "--no-launcher",
-            "--game", str(native.ROOT / "analysis/vr-baseline/game-interp.toml"),
+            "--game", str(game_config),
             "--memcard-dir", str(out / "saves"), "--debug-port", "4372"],
             cwd=out, env=env, stdout=stdout, stderr=stderr,
             creationflags=subprocess.CREATE_NO_WINDOW)
@@ -837,6 +863,16 @@ def main():
                     time.sleep(.1)
             for slot in slots:
                 native.load(slot)
+                if args.native_warm_seconds:
+                    if not args.require_native:
+                        parser.error("--native-warm-seconds requires --require-native")
+                    time.sleep(args.native_warm_seconds)
+                    native.frames(30)
+                native_before = None
+                if args.require_native:
+                    native_before = overlay_native_summary(
+                        command("overlay_native_ring")
+                    )
                 if args.visibility_controls:
                     receipt["visibility_controls"] = run_visibility_controls(
                         out, receipt
@@ -1001,6 +1037,18 @@ def main():
                         or recovered["last_pair_id"] <= recovered["last_failed_attempt"]
                         or recovery_pair_id <= recovered["last_failed_attempt"]):
                     raise RuntimeError("MP rejected-draw recovery contract failed")
+            if args.require_native:
+                native_after = overlay_native_summary(
+                    command("overlay_native_ring")
+                )
+                receipt["overlay_native"] = {
+                    "before": native_before,
+                    "after": native_after,
+                }
+                if (not native_before["native_exec"] or
+                        not native_after["native_exec"] or
+                        native_after["calls_total"] <= native_before["calls_total"]):
+                    raise RuntimeError("MP control did not execute native overlays")
             receipt["complete"] = True
         except BaseException as error:
             receipt["error"] = str(error)

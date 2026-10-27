@@ -13,6 +13,16 @@ sys.path.insert(0, str(ROOT / 'vr/tools'))
 import inspect_weapon_sets as n
 import probe_p38_headset as p
 
+def overlay_native_summary(response):
+    ring = response.get('ring', {}) if isinstance(response, dict) else {}
+    return {
+        'native_exec': int(ring.get('native_exec', 0)),
+        'calls_total': int(ring.get('calls_total', 0)),
+        'would_run': int(ring.get('would_run', 0)),
+        'in_progress': ring.get('in_progress'),
+        'recent_addresses': [x.get('addr') for x in ring.get('recent', [])[:32]],
+    }
+
 def main():
     a = argparse.ArgumentParser()
     a.add_argument('out', type=Path)
@@ -24,6 +34,7 @@ def main():
     a.add_argument('--reload', action='store_true')
     a.add_argument('--resolution', default='1080p')
     a.add_argument('--production-config', action='store_true')
+    a.add_argument('--require-native', action='store_true')
     a.add_argument('--native-adapter', action='store_true')
     a.add_argument('--head-yaw', type=int, default=0)
     a.add_argument('--hand-z-mm', type=int, default=-400)
@@ -122,6 +133,9 @@ def main():
                 poses.set_hand_pair(grip=grip, aim=grip, aim_q=q)
             n.frames(12)
             snapshot('before')
+            r['overlay_status_before']=n.command('overlay_loader_status')
+            r['overlay_native_before']=overlay_native_summary(
+                n.command('overlay_native_ring'))
             (out/'ram.bin').write_bytes(n.read(0x80000000, 0x200000))
             # Quiet window excludes readbacks and verification when measuring performance.
             r['start_frame']=n.command('frame')
@@ -144,6 +158,9 @@ def main():
             n.command('set_input', buttons='0xffff')
             n.frames(12)
             r['final_counters']=p.counter_values()
+            r['overlay_status_after']=n.command('overlay_loader_status')
+            r['overlay_native_after']=overlay_native_summary(
+                n.command('overlay_native_ring'))
             r['render']=p.shot_command('render')
             r['stereo']=n.command('stereo_stats')
             r['restoration']=n.command('render_pass_stats')
@@ -154,6 +171,13 @@ def main():
                     r['restoration']['verify_checks'] > 0
                     and r['restoration']['verify_mismatch'] == 0),
             }
+            if args.require_native:
+                before=r['overlay_native_before']
+                after=r['overlay_native_after']
+                r['checks']['native_exec'] = bool(before.get('native_exec'))
+                r['checks']['native_calls_advance'] = (
+                    int(after.get('calls_total', 0)) >
+                    int(before.get('calls_total', 0)))
             if not args.native:
                 missing_control = args.no_spare_arena and abs(args.head_yaw) >= 60
                 r['checks']['expected_gun'] = r['render']['visible_gun_vertices'] == (
@@ -179,7 +203,10 @@ def main():
                 r['reload_render']=p.shot_command('render')
             r['complete']=True
         finally:
-            try: n.command('quit')
+            try:
+                n.command('render_pass_refuse', on=1)
+                n.frames(6)
+                n.command('quit')
             except (OSError, RuntimeError): pass
             try: proc.wait(timeout=8)
             except subprocess.TimeoutExpired:

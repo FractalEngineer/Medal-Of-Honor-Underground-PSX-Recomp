@@ -78,8 +78,9 @@ do not change either consumer merely to match a moving master.
   Family-aware writes, paired preservation/impact and the W5.4 desktop
   combat-state controls and headless P1 death/native respawn supplement are
   complete, as is W6.1's per-eye rendered-muzzle capture. W5.4d operator
-  alignment remains. The 2026-10-28 SP repair now takes priority; R4b native
-  hook/performance integration, fog and live SP impact precede W6.2. These
+  alignment remains. The 2026-10-28 SP repair now takes priority; R4/R4b native
+  callback integration and bounded production cadence are complete. Fog is
+  paused on fixture selection; live SP impact is next before W6.2. These
   title-specific samplers add no pending framework PR or master change.
 - SP P38 render/shot bindings and copied SP fixtures are now available. W5.2
   still requires linked live-NPC isolation/damage and broader SP family coverage. Physical W3.3/W3.5 and W5.4 operator acceptance remain open. Desktop work

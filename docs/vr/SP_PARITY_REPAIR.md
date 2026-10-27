@@ -125,7 +125,7 @@ This is a 60.6% pair-throughput increase with the same final plugin source and r
 configuration. An earlier checkpoint also measured 19.01 pairs/s with debug ON
 versus 28.50 and 29.10 with OFF; those binaries predate the last flash-tag/hidden-
 muzzle correction and are retained as supporting measurements, not relabeled.
-The final production executable is `5199a03b67277f263452cbdf5dd8e4f583744c46a9b2ad3e98e8143b5afe1e24`.
+The current production executable is `6c39318c2fb27c7574ab90417581beb32a9ff8987c0563a3e6c216f9a063cbf8`.
 A common guest-frame 300-to-900 cross-check, interpolated from the once-per-
 second framework logs, also supports the direction of the gain (approximately
 36.3 versus 60.8 guest frames/s). This is an approximate cadence cross-check,
@@ -133,18 +133,32 @@ not a frame-latency distribution. Future comparisons should also enable the
 existing `PSX_BENCH_WINDOW=300:900` report directly.
 The performance campaign and physical performance gate remain open.
 
-A separate cached-native `game.toml` control produced zero stereo pairs because
-the native overlay entry/instruction sites are not instrumented for this plugin.
-Its higher flat frame rate is invalid as a VR benchmark. The launcher currently
-uses an interpreter-only analysis config so the hooks execute. R4b is explicit
-native-hook/codegen integration, preserving saves and verifying stereo before
-claiming a performance improvement. The bounded PSX_NATIVE_BLOCK experiment
-only localizes this gap and is not promoted into the normal launcher.
+R4b is now complete. `game.toml` declares 24 entry hooks and 11 guarded
+instruction sites derived from the plugin registration block and verified engine
+map. The supported emitter regenerated the static forwarders and overlay codegen
+identity. Native cached overlays produce real pairs and execute the SP weapon,
+flash, arena, HUD, frame and focused MP callbacks. The SP
+baseline/turned/close/lost/out-of-view controls and a P38 MP
+stereo/fire/rollback/recovery regression pass with native-call evidence.
+
+The matched production comparison used one debug-off binary, copied SP slot 3,
+1080p, no XR, no tracked hand, VERIFY OFF and `PSX_BENCH_WINDOW=300:900`:
+
+| Mode | Pair cadence | Wall | Guest work | Dirty instructions |
+| --- | ---: | ---: | ---: | ---: |
+| Native cache | 30.00/s | 9,943.5 ms | 7,979.9 ms | 379,200 |
+| Interpreter config | 29.19/s | 9,897.8 ms | 9,760.2 ms | 133,806,583 |
+
+This is a bounded scene result: wall time is effectively flat (0.46% slower in
+the final native sample), while measured guest work falls 18.2%. It is not a
+uniform FPS gain. The native path executed 2,807,918 overlay calls in the
+window after a warm cache. `PSX_NATIVE_BLOCK` remains only a localization control.
 
 ## Verification and continuation
 
-- 121 Python tests pass; strict weapon C fixtures cover masks, precision bounds,
-  spare-bank bounds and malformed bank/cursor/overflow cases. Strict diagnostic
+- 123 Python tests pass, including an exact `game.toml` hook-list and generated
+  main-EXE forwarder regression. Strict weapon/MP C fixtures cover masks,
+  precision bounds, spare-bank bounds and malformed cases. Strict diagnostic
   C syntax and Release builds pass.
 - Changed SP paths exercise lateral eyes, translated hand, +60-degree head/hand,
   close hand, tracking loss, native firing, repeated load and out-of-view flashes.
@@ -155,7 +169,8 @@ only localizes this gap and is not promoted into the normal launcher.
 - Source saves/preferences are unchanged. No first-game source, framework/UI pin,
   framework master or generated guest C changed. No headset was started.
 
-Next: R4b native integration/performance; then measured fog (R5), linked live SP
-NPC damage/isolation and family coverage (R6), followed by one physical batch
-(R7). W6 triangle laser/HUD work stays deferred. Use the exact commands and
-failure limits in HANDOFF; do not repeat completed MP inventories or matrices.
+Next independent desktop work is linked live SP NPC damage/isolation and family
+coverage (R6). R5 fog remains open but is paused: the captured slot 0/2/3 states
+do not match the operator's street-wall case. Do not tune distance/fog values
+until a correct fixture is available. The physical batch (R7) comes later, and
+W6 triangle laser/HUD work stays deferred.

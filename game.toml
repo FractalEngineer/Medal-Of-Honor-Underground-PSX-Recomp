@@ -33,6 +33,51 @@ known_crc32 = [
 seeds = "seeds/ghidra_funcs.txt"
 out_dir = "generated"
 strict = true
+# Trusted VR callbacks must survive cached-native overlay execution. These
+# entries mirror the registration block in vr/underground/vr_diagnostic.c:
+# the verified engine-map bindings, mode-specific shot/camera callbacks,
+# native submit/HUD filters, and the multiplayer frame/selector hooks.
+mod_function_entry_funcs = [
+  "0x80093830", # entity transform
+  "0x80013B40", # entity node transformer
+  "0x80013EB4", # GTE RT/TR loader
+  "0x80099960", # level vertex transformer
+  "0x8009D828", # gameplay render wait
+  "0x80090760", # scene draw bridge
+  "0x80091854", # scene draw dispatcher
+  "0x800913A0", # entity render entry
+  "0x80079AF8", # render list wrapper
+  "0x80076A50", # actor render entry
+  "0x8008AB84", # player render entry
+  "0x80078E08", # actor update dispatcher
+  "0x80053BB4", # frame render
+  "0x8006D65C", # frame driver
+  "0x80018B48", # DrawOTag
+  "0x8004356C", # post-render update
+  "0x80018BB8", # PutDrawEnv
+  "0x8006C61C", # multiplayer camera entry
+  "0x8006C8B0", # multiplayer shot basis
+  "0x80076C28", # single-player shot basis
+  "0x80054BC4", # multiplayer frame entry
+  "0x80096EF4", # multiplayer frustum selector
+  "0x80053CFC", # native submit tail
+  "0x8006B64C", # flat HUD text filter
+]
+# Exact words are checked again by the plugin at runtime. Listing these sites
+# makes the dirty-RAM callbacks available in generated native game code too.
+mod_instruction_sites = [
+  "0x80084CDC", # marker constructor origin
+  "0x80084B74", # marker writer
+  "0x80048AAC", # marker load
+  "0x80090954", # SP held-weapon projection
+  "0x80090A78", # SP projected muzzle/arm mask
+  "0x8009086C", # SP primitive-budget branch
+  "0x80096F78", # multiplayer frustum result
+  "0x800892E8", # first-person render entry
+  "0x800894DC", # first-person projection
+  "0x80089D30", # first-person leave
+  "0x80089600", # first-person arm mask
+]
 
 [runtime]
 window_title = "Medal of Honor Underground Recompiled"

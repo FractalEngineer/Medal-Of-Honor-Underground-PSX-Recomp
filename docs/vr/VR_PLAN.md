@@ -8,8 +8,9 @@ scope has evidence; it never implies broader headset or gameplay acceptance.
 Historical design and prior attempts belong in
 [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md) and the evidence documents.
 
-**NEXT: R4 native-hook/performance integration, then R5 fog and R6 SP impact.
-W6.2 and another headset batch are deferred.**
+**NEXT: R5 is paused until a compatible save reproduces the operated street
+fog case. R6 linked SP impact and family coverage is the next independent
+desktop task. W6.2 and another headset batch are deferred.**
 
 The owner rejected SP muzzle placement, poor performance, slot-3 weapon loss
 and visible arms. The prior "physical pass next" order was premature. See
@@ -93,17 +94,31 @@ strict W1->W6/hardware-first sequence.
   spare native-buffer use. Same binary, pose and fixture: disabled path loses
   the gun; enabled path renders 96 vertices per eye. Preserve source data,
   reload compatibility, arena pointers and eye rollback. Broader scenes remain open.
-- [ ] R4. Complete production performance/native overlay integration. Separate
+- [x] R4. Complete production performance/native overlay integration. Separate
   measured debug overhead from the remaining interpreter cost. Native cached
-  config currently bypasses VR hooks and produces zero pairs; it cannot be
-  called a faster VR result. Exact continuation is HANDOFF section 1.
+  config now executes the VR callbacks with real stereo and weapon parity.
+  Matched 300:900 window: 9.9435 s native versus 9.8978 s interpreted, with
+  slot 3, 1080p, no XR, VERIFY OFF and a clean exit. Wall time is effectively
+  unchanged (0.46% slower in this native sample); the native path finishes the
+  same 600 guest frames with 18.2% less measured guest work. Evidence:
+  [SP native hooks](SP_NATIVE_HOOK_EVIDENCE.md).
 - [x] R4a. Remove detailed debug recording from the playable build, retain
   diagnostic ON only for TCP tools, and measure matched quiet SP controls.
   Final-source debug ON: 18.2 new pairs/s; OFF: 29.2 pairs/s (no XR, native-hand
   fallback, 1080p, VERIFY OFF). This is a build-overhead result, not headset FPS.
-- [ ] R4b. Instrument the existing native overlay hooks and pass stereo/weapon
-  parity before comparing native throughput; zero-pair cached-native runs fail.
+- [x] R4b. Instrumented 24 entry hooks and 11 guarded instruction sites from the
+  registration block/engine map, regenerated with the supported emitter, and
+  passed SP baseline/turned/close/lost/out-of-view plus focused P38 MP
+  stereo/fire/rollback/recovery controls before comparing throughput.
+  Native work used 2,807,918 calls in the final matched window; measured guest
+  work fell 18.2% but wall time stayed effectively flat. The bounded result
+  does not claim a uniform FPS gain. Evidence:
+  [SP native hooks](SP_NATIVE_HOOK_EVIDENCE.md).
 - [ ] R5. Resolve SP view-dependent fog from measured depth/transform ownership.
+  Paused on fixture selection: the available analysis/root slot-0 captures show
+  the courtyard but not the operator's street-wall/fog case. The earlier
+  slot-2/3 sweeps are non-matching controls, not fog evidence. Request a fresh
+  compatible PGXP SP state that reproduces the reported scene.
 - [ ] R6. Pass real SP NPC P38 damage/isolation and extend SP weapon families;
   reuse the already measured P38 shot basis and fixed hand ray.
 - [ ] R7. Obtain bounded physical gun-only, both-eye flash/impact and performance

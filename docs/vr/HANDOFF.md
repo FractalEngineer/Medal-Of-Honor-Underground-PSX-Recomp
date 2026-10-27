@@ -24,8 +24,9 @@ except the demonstrated SP regressions explicitly reopened in R1-R3.
 
 ## 1. Start here - SP repair before new features
 
-**NEXT: R4 native-hook/performance integration, then R5 fog and R6 live SP
-impact. Do these on desktop. W6.2 and another headset batch are deferred.**
+**NEXT: R5 is paused until a compatible save reproduces the operator's street
+fog case. R6 live SP impact is the next independent desktop task. W6.2 and
+another headset batch are deferred.**
 
 Read [SP_PARITY_REPAIR.md](SP_PARITY_REPAIR.md) and
 [sp-parity-repair-receipt.json](../../vr/proof/sp-parity-repair-receipt.json).
@@ -33,6 +34,17 @@ The operator rejected the earlier SP flash/visibility result. S1b's old counters
 proved movement in one pose, not robust muzzle attachment or SP readiness.
 The first game's post-animation transform, arm filtering and precision pattern
 were reusable and should have been carried into the SP adapter together.
+
+R4/R4b are complete. `game.toml` declares 24 native entry hooks and 11 guarded
+instruction sites from the existing callback registrations. Native SP
+baseline/turned/close/lost/out-of-view controls and a focused P38 MP
+stereo/fire/recovery regression pass with real native-call deltas. The matched
+production window is neutral in wall time: 600 guest frames took 9.9435 s
+native versus 9.8978 s interpreted, while measured guest work fell 18.2% in
+the native sample. Do not repeat the all-ID matrices or call this a uniform
+FPS gain.
+Evidence: [SP_NATIVE_HOOK_EVIDENCE.md](SP_NATIVE_HOOK_EVIDENCE.md) and
+[sp-native-hooks-receipt.json](../../vr/proof/sp-native-hooks-receipt.json).
 
 ### What is fixed, and what remains open
 
@@ -60,46 +72,47 @@ were reusable and should have been carried into the SP adapter together.
 - Production/debug performance is recorded separately in the repair receipt.
   No current result is headset-refresh-rate or whole-campaign acceptance.
 
-### Exact next desktop work: R4
+### R4 result - complete
 
-1. Keep one `build-release`, current framework pin `555e1eab`, and the existing
-   shared-development/upstream tracker. Read its cache before running tools.
-   Normal play uses `PSX_DEBUG_TOOLS=OFF`; TCP probes need ON. `run_vr.ps1 -Build`
-   selects ON only with explicit `-DebugPort`; it builds with two jobs.
-2. Read `REFERENCE_REUSE_AUDIT.md`'s new repair table and the reference
-   `docs/reverse/VR_SLOT2_PERFORMANCE.md`. Detailed debug recording and VERIFY
-   are excluded from throughput comparisons. Use the same copied analysis SP
-   slot 3, resolution, scene and quiet window, and count unique stereo pairs
-   separately from guest frames and XR submissions.
-3. Fix the native overlay integration gap, before optimizing the renderer.
-   `game.toml` has no `mod_function_entry_funcs`/`mod_instruction_sites` for
-   the VR callbacks. Its current cached-native control produces ZERO stereo
-   pairs; its higher flat FPS is invalid as a VR result. The launcher currently
-   selects the interpreter analysis config so hooks execute. Record the resolved
-   config; do not silently switch to native and claim a performance win.
-4. Derive the required entry and instruction list from the existing registration
-   block at the bottom of `vr/underground/vr_diagnostic.c` and the verified engine
-   map. Reuse the framework's documented codegen instrumentation and the reference
-   game's config pattern. Regenerate with the supported tool; never hand-edit
-   generated C, inject guest code or disable correctness guards. No function/address
-   rediscovery is needed. A diagnostic PSX_NATIVE_BLOCK control is retained as a
-   localization experiment, not the shipping solution or a completed native path.
-5. Instrumentation changes codegen identity. Preserve original saves. If a new
-   compatible fixture is required, boot/create one in an isolated directory using
-   native menu/input automation; do not patch personal state headers or weaken the
-   loader. Validate real stereo pairs, the SP baseline/turned/close/lost controls,
-   muzzle flashes, a focused MP regression and rollback before benchmarking.
-6. Capture a quiet matched production comparison using the first-game reporting
-   workflow, including `PSX_BENCH_WINDOW=300:900` for a common guest-frame window. Report pair cadence and stage costs. A faster run with zero pairs,
-   missing weapons, lower resolution or disabled projective rendering fails R4.
-   If native integration cannot be completed, retain the exact failed site and
-   bounded trace rather than rerunning the full MP matrices or requesting a headset.
+- `game.toml` declares 24 entry hooks and 11 guarded instruction sites derived
+  from the plugin registration block and verified engine map. Regeneration with
+  the supported emitter added four static main-EXE forwarders and changed only
+  the two expected generated shards.
+- Native-required SP controls pass baseline, turned +60 with reload, close hand,
+  tracking loss and true head-only out-of-view. Expected gun/arm masks and both
+  flash banks are observed, with clean stereo rollback and child exits.
+- A focused native MP P38 control passes both-eye cases, native firing, clip
+  8->7, linked P2 health 32->31.25 and a fresh recovery pair.
+- The latest debug-off 300:900 comparison on active executable
+  `6c39318c...` completed 600 guest frames in 9.9435 s native versus 9.8978 s
+  interpreted. Wall time is effectively flat; measured guest work fell 18.2%.
+  Do not present that as a uniform FPS win.
+- Production/debug separation remains: normal play uses `PSX_DEBUG_TOOLS=OFF`;
+  TCP probes need ON. The production binary is now restored to OFF. The active
+  build provenance and raw receipts are in
+  [sp-native-hooks-receipt.json](../../vr/proof/sp-native-hooks-receipt.json).
+- `PSX_NATIVE_BLOCK` remains a localization control, not the shipping solution.
+  Do not repeat the focused MP or full weapon matrices for this configuration
+  change unless a later source change touches those paths.
+
+### R5 fixture gate - paused
+
+The 2026-10-28 slot-0 yaw sweep captured the courtyard and Eiffel Tower, but
+the operator identified that saved scene as the wrong fixture for the reported
+"wall at the end of the street becomes visible as fog disappears" case. The
+analysis slot 2/3 sweeps show different nearby geometry and are non-matching
+controls. No fog producer, depth convention or correction is claimed.
+
+Do not continue R5 by tuning FOV, draw distance or fog constants against these
+states. R5 resumes only with a compatible PGXP SP save that reproduces that
+specific street/wall view at yaw zero and under head turn. Preserve the fixture
+and source hashes, then use fixed world points and matched views as previously
+specified.
 
 ### Subsequent order
 
-- **R5 / S3 fog:** identify the actual SP depth/fog producer. Compare fixed world
-  points under head rotation against the reference implementation. The current
-  explanation is unconfirmed; do not tune draw-distance/FOV constants blindly.
+- **R5 / S3 fog:** paused on a correct fixture; do not use current slot 0/2/3
+  captures as fog evidence.
 - **R6 / W5.2:** native-versus-tracked P38 firing against one real SP NPC with
   health tracing armed before firing. Record linked decreases and target ownership.
   MP P2 damage and a flash counter do not close this gate. Then expand SP families.
@@ -129,7 +142,7 @@ Enable debug tools only for these probes, then restore production OFF.
 | --- | --- |
 | Repository | `C:/Users/titan/Desktop/Github_Projects/Mine/Medal-Of-Honor-Underground-PSX-Recomp` |
 | Branch / current HEAD | `feature/vr-port`; read current HEAD during preflight. W1/W2.1 predecessor is `afda5082...` |
-| Checkpoint scope | R1-R3 SP repair and R4a production overhead measured; NEXT R4b native hooks, then fog/live NPC; physical acceptance open |
+| Checkpoint scope | R1-R4 native callbacks and bounded production cadence complete; NEXT R5 measured SP fog, then live NPC; physical acceptance open |
 | Framework gitlink | `555e1eabccc59b9b6ff0d9fca48aca783513dc86` |
 | UI gitlink | `7c635c6b366a6e0d5d3c913a7fce6ec04dd9f256` |
 | Title / version | `SLUS-01270` / `0.1.0` |

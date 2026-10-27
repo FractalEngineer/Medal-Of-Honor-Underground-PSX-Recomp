@@ -15,10 +15,11 @@ Shared framework branches, the merged upstream VR stack and the three pending
 generic changes are tracked in [FRAMEWORK_UPSTREAM_TRACKER.md](FRAMEWORK_UPSTREAM_TRACKER.md).
 Framework development uses `vr/shared-development`; master mirrors upstream.
 
-1. [HANDOFF.md](HANDOFF.md) is the current execution contract: W5 desktop gates
-   and W6.1 hand-fixed ray capture are complete. The shot and future laser share
-   the hand-fixed aim ray; native recoil stays visual. W6.2 target triangle
-   binding is next. Physical hand-aim/impact acceptance and live NPC/SP
+1. [HANDOFF.md](HANDOFF.md) is the current execution contract: R4 native hooks
+   and stereo parity are complete. R5 fog is paused pending the correct street
+   fixture; R6 linked live SP impact is the next independent desktop task.
+   W6.1 hand-fixed ray capture is complete, while W6.2 target triangle binding is
+   deferred. Physical hand-aim/impact acceptance and live NPC/SP
    isolation remain separate open gates.
    [P38_NATIVE_AIM_EVIDENCE.md](P38_NATIVE_AIM_EVIDENCE.md) records the
    restored barrel, complete calibration, W4/W5.1 and automated native damage.

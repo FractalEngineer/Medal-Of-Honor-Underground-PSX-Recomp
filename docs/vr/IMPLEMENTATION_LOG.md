@@ -1573,3 +1573,30 @@ source saves, defaults, historical receipts and unrelated `.commandcode/`.
   Source, fixture, binary, raw-receipt and inspected-image hashes are in
   `vr/proof/sp-parity-repair-receipt.json`. Current conclusions and exact next
   actions are in SP_PARITY_REPAIR.md, VR_PLAN.md and HANDOFF.md.
+
+## 2026-10-28 - R4 native overlay hooks and matched SP cadence
+
+- Derived 24 entry hooks and 11 guarded instruction sites from the existing
+  plugin registration block and verified engine map. Added them to `game.toml`,
+  regenerated with `psxrecomp_cli.py generate`, and verified the four main-EXE
+  forwarders in generated C. No generated C was hand-edited.
+- Runtime native-required controls pass SP baseline, turned +60 with reload,
+  close hand, tracking loss, and true head-only out-of-view. Each advances
+  native overlay calls, produces fresh stereo pairs, keeps the expected 96/96
+  gun vertices and 142/142 arm masks (except the expected 0/0 out-of-view gun),
+  and has zero eye failures or rollback mismatches.
+- The focused native MP P38 control passes both-eye pose cases, native clip
+  8->7, linked P2 health 32->31.25, VERIFY 1,106 checks with zero mismatches, and
+  a fresh recovery pair. Native calls advance 30,690 with zero deferred calls.
+- The matched debug-off 300:900 window on copied SP slot 3 records 600 frames
+  in 9.9435 s native versus 9.8978 s interpreted. Guest work is 7,979.9 versus
+  9,760.2 ms; dirty instructions are 379,200 versus 133,806,583. Native
+  executes 2,807,918 overlay calls in the warm-cache window. Wall time is
+  effectively flat; this is not a uniform FPS claim.
+- Production executable is `6c39318c2fb27c7574ab90417581beb32a9ff8987c0563a3e6c216f9a063cbf8`
+  with `PSX_DEBUG_TOOLS=OFF`; the diagnostic controls used the preceding
+  debug-on binary. Source saves/preferences are unchanged and no headset ran.
+- Validation: 123 Python tests, strict weapon/MP C fixtures, strict diagnostic
+  syntax and Release builds. Evidence:
+  [SP native hooks](SP_NATIVE_HOOK_EVIDENCE.md) and
+  [receipt](../../vr/proof/sp-native-hooks-receipt.json). Next is R5 fog.

@@ -73,8 +73,9 @@ passed. The rebuilt executable SHA-256 is
 **It has not been runtime/headset retested.** Historical headset receipts retain
 their original executable hash. Defaults and framework pins are unchanged.
 
-Current continuation is R4b/R5/R6 in [VR_PLAN.md](VR_PLAN.md), with exact
-instructions in [HANDOFF.md](HANDOFF.md). See [SP_PARITY_REPAIR.md](SP_PARITY_REPAIR.md)
+Current continuation is R5/R6 in [VR_PLAN.md](VR_PLAN.md), with exact
+instructions in [HANDOFF.md](HANDOFF.md). R4 native hooks are complete; R5 fog
+is paused pending the correct street fixture. See [SP_PARITY_REPAIR.md](SP_PARITY_REPAIR.md)
 for the operator-reopened flash, arms, slot-3 visibility and production performance
 findings. W6.2 is deferred behind these SP defects. The unretested-build sentence
 above describes the original 2026-10-27 checkpoint, not current runtime status. Do not repeat completed weapon matrices
