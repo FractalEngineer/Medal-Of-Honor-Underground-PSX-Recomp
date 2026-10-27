@@ -1492,3 +1492,33 @@ source saves, defaults, historical receipts and unrelated `.commandcode/`.
   [native flash receipt](../../vr/proof/native-flash-alignment-receipt.json),
   [headset smoke evidence](HEADSET_SMOKE_EVIDENCE.md) and the raw GP0 histories
   under `analysis/vr-baseline/p38-effect-flash-align-final-20261027a/` and `b/`.
+
+## 2026-10-28 - SP tracked weapon, muzzle flash and P38 shot ray
+
+- Bound the real SP held-weapon draw at `0x80091854` / caller `0x80091420`.
+  The calibrated hand transform is scoped around that dispatcher and the native
+  GTE state is restored immediately afterward. The SP player/weapon layout is
+  `player+0x114`, input `player+0x39C`, weapon ID `input+93`.
+- SP projects the held weapon with `H=400`, not MP's `H=133`. The flash target
+  uses `OFX/OFY=256/120` produced by the dispatcher call and translates both
+  guarded packet copies at `player+0x600` and `player+0x624`.
+- Traced the SP P38 basis chain as `0x80048604 -> 0x80076C28`, return
+  `0x8004860C`, shot type `0x13F6`. The guarded shot write supplies the shared
+  calibrated muzzle/forward ray before native basis/history initialization.
+- Final desktop controls on executable `0bc60df5...`: baseline flash
+  `(355,225)` and +150 mm hand-X flash `(454,225)` in the 512x240 surface.
+  Baseline recorded 332 weapon applications / 308 flash alignments; shifted
+  recorded 378 / 354. Both wrote 2/2 aimed P38 shots with zero flash or shot
+  fallbacks, clean exit, unchanged copied saves/preferences and no remaining
+  game process. Raw receipts are hashed in
+  [the SP receipt](../../vr/proof/sp-weapon-aim-flash-receipt.json). The final
+  binary resets stale per-eye flash targets at eye entry; the controls were
+  rerun against that exact build.
+- `RunVR` now enables the tracked calibrated weapon/aim path and forces
+  `1080p`; `game.toml` ships the same preset for direct launches. A user
+  `settings.toml` preset still outranks `game.toml` on a direct launch.
+- Validation: 121 Python tests, strict weapon and MP-guard C fixtures, focused
+  MP tracked desktop passthrough control and active Release build.
+- Limits: synthetic desktop input only. Physical gun/flash/impact alignment,
+  non-P38 SP shot families, SP arm filtering and measured performance remain
+  open. The high-impact report still requires a controlled target test.

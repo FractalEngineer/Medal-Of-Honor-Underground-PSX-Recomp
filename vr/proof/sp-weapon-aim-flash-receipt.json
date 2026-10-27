@@ -1,0 +1,102 @@
+{
+  "schema": 1,
+  "date": "2026-10-28",
+  "kind": "SP tracked P38 render, muzzle flash and shot-ray desktop control",
+  "headset_acceptance": false,
+  "physical_impact_acceptance": false,
+  "revision": "19a8a05d7d62f0ac059146aab7d72a21365cbba9+working-tree",
+  "executable_sha256": "0bc60df5e9160a3cf26f0d6f15e17f584b0076be7799067766efd610a163af4c",
+  "fixture": "copied single-player slot 0, P38",
+  "bindings": {
+    "scene_draw_dispatcher": "0x80091854",
+    "scene_draw_caller": "0x80091420",
+    "player_pointer": "0x800AA17C",
+    "weapon_object": "player+0x114",
+    "weapon_input": "player+0x39C",
+    "weapon_id": "input+93",
+    "weapon_projection_h": 400,
+    "p38_shot_basis": "0x80076C28",
+    "p38_basis_call": "0x80048604",
+    "p38_basis_return": "0x8004860C",
+    "p38_shot_type": "0x13F6",
+    "flat_flash_packet": "player+0x624",
+    "stereo_flash_packet": "player+0x600"
+  },
+  "controls": [
+    {
+      "name": "baseline",
+      "hand_translation_mm": [0, 0, 0],
+      "weapon_applies": 332,
+      "flash_alignments": 308,
+      "flash_fallbacks": 0,
+      "flash_center_512x240": [355, 225],
+      "shots": 2,
+      "aimed_shots": 2,
+      "shot_fallbacks": 0,
+      "exit_code": 0,
+      "forced_cleanup": false,
+      "raw_receipt": "analysis/vr-baseline/sp-final-baseline-20261028b/receipt.json",
+      "raw_receipt_sha256": "ed1c5b2df6efcd881955257ec3a002543b441547f4f645f44bcee9251c167186"
+    },
+    {
+      "name": "hand-plus-150mm-x",
+      "hand_translation_mm": [150, 0, 0],
+      "weapon_applies": 378,
+      "flash_alignments": 354,
+      "flash_fallbacks": 0,
+      "flash_center_512x240": [454, 225],
+      "shots": 2,
+      "aimed_shots": 2,
+      "shot_fallbacks": 0,
+      "exit_code": 0,
+      "forced_cleanup": false,
+      "raw_receipt": "analysis/vr-baseline/sp-final-shift-20261028b/receipt.json",
+      "raw_receipt_sha256": "228c54fd0f633c5755a33fa5cb5ec2321d95f9e020934bf856b8badb5768d53e"
+    }
+  ],
+  "stereo_visual_control": {
+    "frame": 29,
+    "baseline": {
+      "image": "analysis/vr-baseline/sp-final-baseline-20261028b/sp-eyes/p000029_sbs.png",
+      "sha256": "dd3045d38a2b21f7846db228ef329257350d9889e605c65a4461030e4f012117",
+      "observation": "The flash is visible at the rendered P38 muzzle in both eyes, not at screen centre."
+    },
+    "hand_plus_150mm_x": {
+      "image": "analysis/vr-baseline/sp-final-shift-20261028b/sp-eyes/p000029_sbs.png",
+      "sha256": "49c41ed733f0fef7d3c4af075aff8ddf2c861b0a43f9bdd6b9ce4ea945715eb8",
+      "observation": "The flash and rendered muzzle moved right together."
+    }
+  },
+  "mp_passthrough": {
+    "result": "pass",
+    "raw_receipt": "analysis/vr-baseline/mp-scene-filter-regression-20261028a/receipt.json",
+    "raw_receipt_sha256": "f5bd2911e933a625480aba135dd3abe2d8ce8f886a6ea2b4dafe137e176c1490"
+  },
+  "verification": {
+    "python_tests": 121,
+    "python_result": "pass",
+    "weapon_c_fixture": "pass",
+    "mp_view_c_fixture": "pass",
+    "active_release_build": "pass"
+  },
+  "changes": [
+    "SP weapon tracking uses the actual held weapon draw instead of the MP-only first-person function.",
+    "SP P38 shots write the same calibrated muzzle/forward ray used by the tracked gun.",
+    "SP muzzle flash translates the guarded stereo and flat packets using the H=400 weapon projection.",
+    "The VR launcher enables the tracked weapon profile and defaults direct launches to 1080p."
+  ],
+  "limits": [
+    "Synthetic desktop XR input; no physical headset or target acceptance is claimed.",
+    "SP shot conversion is currently guarded to the measured P38 type.",
+    "SP still renders native arms; MP remains the all-weapon tracking fixture.",
+    "The 1080p default improves source resolution but is not a measured performance fix.",
+    "High-impact feedback still requires a controlled physical target test."
+  ],
+  "sources": {
+    "game.toml": "91595c1c56570f6f00f43bbd2f4edd8ca7e90f3fbd9f9e68f36279342daad797",
+    "vr/run_vr.ps1": "f6192caa6a7fdb3aa2a628f599b53c948631dd2746574ff09cdd206a22cc1c87",
+    "vr/underground/shot.h": "d08aefe1cfe3f2fda33240714d7be12d772c4acb4e892ad3fa89288de723edf5",
+    "vr/underground/vr_diagnostic.c": "e6af98d49936eceacdb05b2464abf02e5f0c64a9fa542452b39e129b34497a1e",
+    "vr/tools/probe_p38_effect.py": "c8dbaf0d08b196a91d082c5a5fe473639f047c26912f1abdc0856fba2aa8fca6"
+  }
+}

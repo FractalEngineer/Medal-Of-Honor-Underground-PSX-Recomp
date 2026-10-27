@@ -42,6 +42,7 @@ overlay_cache = true
 [video]
 renderer = "opengl"
 aspect_ratio = "4:3"
+internal_resolution = "1080p"
 
 [controller]
 default_mode = "digital"

@@ -328,6 +328,12 @@ try {
         PSX_VR_LASER = $(if ($NoLaser) { '0' } else { '1' })
         PSX_VR_MOVE_DEADZONE = $MoveDeadzone.ToString([Globalization.CultureInfo]::InvariantCulture)
         PSX_VR_TURN_GAIN = $TurnGain.ToString([Globalization.CultureInfo]::InvariantCulture)
+        PSX_VR_WEAPON_POSE = '1'
+        MOHU_VR_WEAPON_CALIBRATED = '1'
+        MOHU_VR_WEAPON_AIM = '1'
+        MOHU_VR_WEAPON_GUN_ONLY = '1'
+        MOHU_VR_P38_CALIBRATED = '0'
+        MOHU_VR_P38_AIM = '0'
         PSX_OPENXR_READY_FILE = $readyPath
     }
     if ($null -ne $runtimeManifest) {

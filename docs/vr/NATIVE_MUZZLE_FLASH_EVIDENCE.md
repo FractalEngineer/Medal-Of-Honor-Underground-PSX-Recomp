@@ -1,6 +1,6 @@
 # Native muzzle-flash eye-replay alignment
 
-Updated: 2026-10-27. This is a desktop synthetic result, not physical
+Updated: 2026-10-28. This is a desktop synthetic result, not physical
 acceptance.
 
 ## Observation
@@ -71,6 +71,30 @@ Evidence:
   `0dbdb244fc7379f6757598856b86274325da84c01c77a96c47ba70118a18110b`
 - compact receipt: `../../vr/proof/native-flash-alignment-receipt.json`
 
+## SP stereo and flat packets
+
+The SP path uses a different visible packet from MP. The stereo eye copy is at
+`player+0x600`; the flat companion is at `player+0x624`. Both retain the same
+32x32 colour/UV contract. SP also projects the held weapon with `H=400`, so the
+flash target uses the post-draw `OFX/OFY=256/120` projection offsets rather than
+MP's `H=133` formula.
+
+Two copied SP slot-0 controls on executable `0bc60df5...` recorded:
+
+| Case | Weapon applies | Align | Fallback | Flash centre in 512x240 | Aimed P38 shots |
+| --- | ---: | ---: | ---: | --- | ---: |
+| Baseline | 332 | 308 | 0 | `(355,225)` | 2/2 |
+| Hand +150 mm X | 378 | 354 | 0 | `(454,225)` | 2/2 |
+
+The translated centre matches the rendered gun-tip projection. Both controls
+had zero shot fallbacks, clean exits and unchanged copied saves/preferences.
+Frame 29 of both 2560x1200-per-eye stereo captures shows the flash on the
+rendered muzzle in both eyes; the +150 mm control shows the flash and muzzle
+moving right together rather than the flash staying at screen centre.
+The compact receipt is
+`../../vr/proof/sp-weapon-aim-flash-receipt.json`. This remains synthetic
+desktop evidence; physical eye placement and target impact are open.
+
 ## Verification
 
 - 121 Python VR tests pass.
@@ -83,9 +107,9 @@ Evidence:
 
 ## Limits
 
-This proves packet ownership and eye-replay movement, not physical visibility,
-comfort or exact apparent barrel alignment. A frame-selected screenshot of the
-three-frame flash was not retained; the full GP0 history is retained instead.
+This proves packet ownership and desktop eye-replay placement, not physical
+comfort or exact apparent barrel alignment. The selected SP frame supplements
+the retained GP0 history.
 The operator still reports impacts slightly high. Do not treat flash translation
 as a shot-ray pitch fix. Physical flash location and impact alignment remain
 open, and this document does not close W3.3, W3.5 or W5.4d.

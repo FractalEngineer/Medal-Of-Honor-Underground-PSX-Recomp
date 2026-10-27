@@ -1,6 +1,6 @@
 """Capture a bounded P38 muzzle-effect and player-object diagnostic.
 
-Uses a copied multiplayer fixture, synthetic hand input and the existing
+Uses a copied MP or SP fixture, synthetic hand input and the existing
 read-only diagnostics. No source save, health, ammo or guest code is edited.
 """
 from __future__ import annotations
@@ -26,14 +26,14 @@ sys.path.insert(0, str(ROOT / "psxrecomp/tools"))
 import psx_gpu_frame as gpu
 
 
-def copy_fixture(out):
+def copy_fixture(out, slot):
     destination = out / "saves/openbios"
     destination.mkdir(parents=True)
     sources = []
     for extension in ("pst", "thumb"):
         source = (
             ROOT
-            / f"saves/openbios/state_8001F844_slot01.{extension}"
+            / f"saves/openbios/state_8001F844_slot{slot:02}.{extension}"
         )
         shutil.copyfile(source, destination / source.name)
         sources.append(
@@ -70,11 +70,12 @@ def save_json(path, value):
     )
 
 
-def run(directory, hand_x_mm=0, hand_y_mm=0):
+def run(directory, hand_x_mm=0, hand_y_mm=0, sp=False,
+        native_flags=False):
     out = directory.resolve()
     out.mkdir(parents=True, exist_ok=False)
     (out / "frames").mkdir()
-    source_hashes = copy_fixture(out)
+    source_hashes = copy_fixture(out, 0 if sp else 1)
     preference_hashes = {
         str(path): native.digest(path)
         for path in comparison.preference_paths()
@@ -85,6 +86,14 @@ def run(directory, hand_x_mm=0, hand_y_mm=0):
         / "build-release/Medal_of_Honor_Underground_Recompiled.exe"
     )
     env = comparison.environment("tracked", True, hand_fixed=True)
+    if sp:
+        for key in ("MOHU_VR_MP_CONTROL", "MOHU_VR_MP_FRUSTUM"):
+            env.pop(key, None)
+        env["MOHU_VR_WEAPON_TRACE"] = "1"
+        if native_flags:
+            for key in tuple(env):
+                if key.startswith(("PSX_VR_WEAPON_", "MOHU_VR_WEAPON_")):
+                    env.pop(key, None)
     command = [
         str(executable),
         "--headless-opengl",
@@ -98,7 +107,10 @@ def run(directory, hand_x_mm=0, hand_y_mm=0):
     ]
     receipt = {
         "schema": 1,
-        "kind": "bounded P38 muzzle-effect player-object diagnostic",
+        "kind": (
+            "bounded SP P38 muzzle-effect player-object diagnostic"
+            if sp else "bounded MP P38 muzzle-effect player-object diagnostic"
+        ),
         "complete": False,
         "executable_sha256": native.digest(executable),
         "source_fixture": source_hashes,
@@ -122,7 +134,7 @@ def run(directory, hand_x_mm=0, hand_y_mm=0):
         )
         try:
             comparison.wait_for_ping(process)
-            native.load(1)
+            native.load(0 if sp else 1)
             comparison.release_load_override()
             if hand_x_mm or hand_y_mm:
                 x = 0.15 + hand_x_mm / 1000.0
@@ -133,16 +145,30 @@ def run(directory, hand_x_mm=0, hand_y_mm=0):
             else:
                 comparison.set_desktop_hands()
             native.frames(12)
-            players = native.players()
-            actor = int(players[0]["actor"], 16)
-            player_input = int(players[0]["input"], 16)
-            shot.shot_command("stop")
-            shot.shot_command("start-p1")
+            if sp:
+                actor = struct.unpack(
+                    "<I", native.read(0x800AA17C, 4)
+                )[0]
+                player_input = struct.unpack(
+                    "<I", native.read(actor + 0x39C, 4)
+                )[0]
+                player_snapshot = {
+                    "actor": f"0x{actor:08X}",
+                    "input": f"0x{player_input:08X}",
+                }
+            else:
+                players = native.players()
+                actor = int(players[0]["actor"], 16)
+                player_input = int(players[0]["input"], 16)
+                player_snapshot = players[0]
+            if not sp:
+                shot.shot_command("stop")
+                shot.shot_command("start-p1")
             native.frames(4)
             actor_before = native.read(actor, 0x1000)
             input_before = native.read(player_input, 0x400)
-            trace_lo = actor + 0xC80
-            trace_hi = actor + 0xD00
+            trace_lo = actor + (0x5F0 if sp else 0xC80)
+            trace_hi = actor + (0x680 if sp else 0xD00)
             native.command(
                 "wtrace_range", lo=hex(trace_lo), hi=hex(trace_hi)
             )
@@ -158,10 +184,19 @@ def run(directory, hand_x_mm=0, hand_y_mm=0):
                     "index": capture_index,
                     "phase": "before",
                     "frame": native.command("frame"),
-                    "player": native.players()[0],
+                    "player": player_snapshot,
                 }
             )
-            native.command("openxr_input_override", right_trigger=1000)
+            if sp:
+                eyes = out / "sp-eyes"
+                eyes.mkdir()
+                native.command(
+                    "stereo_dump", path=eyes.as_posix(), count=6
+                )
+            if sp:
+                native.command("set_input", buttons="0xbfff")
+            else:
+                native.command("openxr_input_override", right_trigger=1000)
             for capture_index in range(1, 13):
                 native.frames(1)
                 native.command(
@@ -175,11 +210,14 @@ def run(directory, hand_x_mm=0, hand_y_mm=0):
                         "index": capture_index,
                         "phase": "fire",
                         "frame": native.command("frame"),
-                        "player": native.players()[0],
+                        "player": player_snapshot,
                     }
                 )
                 time.sleep(0.005)
-            native.command("openxr_input_override", clear=1)
+            if sp:
+                native.command("set_input", buttons="0xffff")
+            else:
+                native.command("openxr_input_override", clear=1)
             native.frames(24)
             for capture_index in (13, 14, 15):
                 native.command(
@@ -193,7 +231,7 @@ def run(directory, hand_x_mm=0, hand_y_mm=0):
                         "index": capture_index,
                         "phase": "after",
                         "frame": native.command("frame"),
-                        "player": native.players()[0],
+                        "player": player_snapshot,
                     }
                 )
             first_frame = int(receipt["frames"][0]["frame"]["frame"])
@@ -212,7 +250,7 @@ def run(directory, hand_x_mm=0, hand_y_mm=0):
                     if (
                         prim.get("semi")
                         and int(prim.get("src", "0"), 16)
-                        == (actor + 0xCBC) & 0x1FFFFFFF
+                        == (actor + (0x628 if sp else 0xCBC)) & 0x1FFFFFFF
                     ):
                         vertices = prim["verts"]
                         flash_quads.append(
@@ -252,11 +290,15 @@ def run(directory, hand_x_mm=0, hand_y_mm=0):
                 addr_lo=hex(trace_lo),
                 addr_hi=hex(trace_hi),
             )
-            status = shot.shot_command("status")
-            shots = [
-                shot.shot_command(f"read={index}")
-                for index in range(status["count"])
-            ]
+            if sp:
+                status = {"capture": 0, "count": 0, "overflow": 0}
+                shots = []
+            else:
+                status = shot.shot_command("status")
+                shots = [
+                    shot.shot_command(f"read={index}")
+                    for index in range(status["count"])
+                ]
             native.command("wtrace_range", lo="0", hi="0")
             receipt["actor_changes"] = changed_words(
                 actor_before, actor_after
@@ -282,7 +324,8 @@ def run(directory, hand_x_mm=0, hand_y_mm=0):
             try:
                 native.command("openxr_input_override", clear=1)
                 native.command("wtrace_range", lo="0", hi="0")
-                shot.shot_command("stop")
+                if not sp:
+                    shot.shot_command("stop")
                 native.command("quit")
             except (OSError, RuntimeError):
                 pass
@@ -313,13 +356,18 @@ def main():
     parser.add_argument("directory", type=Path)
     parser.add_argument("--hand-x-mm", type=int, default=0)
     parser.add_argument("--hand-y-mm", type=int, default=0)
+    parser.add_argument("--sp", action="store_true")
+    parser.add_argument("--native", action="store_true")
     args = parser.parse_args()
     if native.game_pids():
         raise RuntimeError("Close the existing game before this owned probe")
     with socket.socket() as probe:
         if probe.connect_ex(("127.0.0.1", 4372)) == 0:
             raise RuntimeError("Diagnostic TCP port 4372 is occupied")
-    receipt = run(args.directory, args.hand_x_mm, args.hand_y_mm)
+    receipt = run(
+        args.directory, args.hand_x_mm, args.hand_y_mm, sp=args.sp,
+        native_flags=args.native
+    )
     if (
         not receipt["complete"]
         or receipt.get("exit_code") != 0

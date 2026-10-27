@@ -90,23 +90,33 @@ Follow the ordered contract in HANDOFF; preserve prior receipts and fixture hash
   eye-replay packet to the projected animated muzzle on desktop. Evidence:
   [NATIVE_MUZZLE_FLASH_EVIDENCE.md](NATIVE_MUZZLE_FLASH_EVIDENCE.md) and
   `native-flash-alignment-receipt.json`. Physical visibility remains in S2.
+- [x] S1b. Bind the actual SP held-weapon draw, guard the measured SP P38
+  basis caller and translate both SP flash copies with the `H=400` weapon
+  projection. Baseline flash `(355,225)` moved to `(454,225)` after +150 mm
+  hand X; each control wrote 2/2 aimed P38 shots with zero shot/flash
+  fallbacks and clean exit. Evidence:
+  [SP receipt](../../vr/proof/sp-weapon-aim-flash-receipt.json). Physical
+  gun/flash/impact acceptance remains open.
 - [ ] S2. Retest physical MP FOV edges with the separate MP frustum opt-in ON
   and the explicit hand-fixed probe profile. Configuration fix alone is not
   proof of visual correction or complete weapon acceptance. The desktop control
   records 1,638 overrides per eye with zero fallbacks; physical edges and
-  flash/impact observations remain pending. Evidence:
+  physical observations remain pending. MP remains the all-weapon tracking
+  fixture; it is not the primary product target. Evidence:
   `headset-s2-mp-frustum-receipt.json`.
 - [ ] S3. Measure the SP view-dependent fog/distance defect and its actual
   producer, reusing first-game fog/depth work before changing target bindings.
 - [ ] S4. Capture SP guest/world-pair cadence and timing versus XR refresh for
   the operator-reported approximately 35 FPS and very poor resolution; measure
   the actual source/eye/swapchain path before changing scale. Feed measured
-  bottlenecks into Q2.
+  bottlenecks into Q2. Direct/default launch now uses `1080p`; the measured SP
+  path is 2560x1200, but this is not a performance or physical-quality claim.
 - [ ] S5. Resolve/record bounded MP shutdown with a real clean child exit;
   nonzero exit or forced cleanup cannot produce complete acceptance.
 
-SP tracked weapon control remains W5.2; it is not implemented by the smoke.
-W6.2 remains the next weapon feature once this reported-issue follow-up is handled.
+SP tracked P38 render/aim now has desktop evidence; physical and non-P38 SP
+coverage remain open. W6.2 remains the next weapon feature once the physical
+follow-up is handled.
 
 ## C - cross-game consistency pass (complete; no feature rediscovery)
 
