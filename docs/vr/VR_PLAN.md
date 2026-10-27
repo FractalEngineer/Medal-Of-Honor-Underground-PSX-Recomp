@@ -8,9 +8,12 @@ scope has evidence; it never implies broader headset or gameplay acceptance.
 Historical design and prior attempts belong in
 [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md) and the evidence documents.
 
-**NEXT: R5 is paused until a compatible save reproduces the operated street
-fog case. R6 linked SP impact and family coverage is the next independent
-desktop task. W6.2 and another headset batch are deferred.**
+**CURRENT: study/documentation only. The operator's detailed feedback reopens
+weapon calibration, StG hand masking, high firing and floating laser endpoints.
+Read [ALPHA_PLAYABILITY_AND_CALIBRATION.md](ALPHA_PLAYABILITY_AND_CALIBRATION.md)
+for the runtime menu design and alpha-first A1-A6 sequence. When implementation
+is authorized, start A1/S5 exit classification and A2 default profile/aim fixes.
+Headset launches must run outside the sandbox; R5 still needs its matching fixture.**
 
 The owner rejected SP muzzle placement, poor performance, slot-3 weapon loss
 and visible arms. The prior "physical pass next" order was premature. See
@@ -46,7 +49,7 @@ converted post-respawn P38 shot. It runs with stereo inactive; it adds lifecycle
 evidence, not a new eye-rollback result. W5.4d physical hand-aim/impact
 confirmation stays open. W6.1 now passes ten per-eye rendered-muzzle snapshots,
 native recoil/reload, ownership/load/tracking rejection and live pair refusal/
-recovery with actual stereo verification. W6.2 is deferred behind the reported SP defects.
+recovery with actual stereo verification. W6.2 now follows the A1-A3 playability work.
 SP P38 render/shot bindings are measured; W5.2 remains open for linked live-NPC
 damage/isolation, broader SP families and physical impact. W3.3/W3.5 remain
 physical acceptance gates. Current evidence and exact continuation:
@@ -77,6 +80,36 @@ strict W1->W6/hardware-first sequence.
   completed work repeatedly while leaving the current task unchanged.
 - Update the handoff's next task ID, last result and next experiment at session
   end. An incomplete task needs a precise continuation, not "continue mapping".
+
+## A - Alpha playability order (studied; implementation pending)
+
+This sequence controls priority over the older serial weapon/port ordering.
+The [study](ALPHA_PLAYABILITY_AND_CALIBRATION.md) gives source entry points,
+menu behavior, calibration/persistence contracts and scope limits.
+Latest operator clarification: **port the working first-game implementations**.
+The study's concrete source-to-source table owns reuse: A1 triage -> A2 weapon
+parity -> A4 exact laser -> A5 native HUD -> A6 alpha validation/package.
+The operator additionally reports broken native pause: insert A7 immediately
+after A1 triage and before A2. This is a required reference-game port, separate
+from the optional A3 settings editor.
+A3's runtime editor is optional follow-up unless a remaining calibration blocker
+actually requires it. The numbered items below are stable IDs, not serial mandates.
+
+- [ ] A1. Classify/fix active-play versus close-only process exits (S5/Q1).
+- [ ] A7. Restore native pause-menu presentation/navigation/resume by porting
+  the first game's explicit pause-state + quad/identity-view + menu-input path.
+  Reuse the existing local mapper; bind native Underground pause state. Test SP
+  and MP separately. Start delivery/frozen movement alone does not close this.
+- [ ] A2. Correct grenade held orientation, StG gun-only mask, oversized defaults
+  and shared shot/sight alignment; pass representative live SP NPC impact (R6).
+- [ ] A3. Add effective per-ID calibration state, versioned persistence and a
+  minimal controller-operated in-headset menu using existing UI/XR surfaces.
+- [ ] A4. Share the shot ray and hit actual triangles for the laser (W6.2-W6.4),
+  or omit it from alpha instead of presenting visibility-box hits as surfaces.
+- [ ] A5. Readable health/ammo/essential mission information with native fallback
+  (H1/H2 minimum); wrist polish may follow alpha.
+- [ ] A6. Focused SP route, recovery/death/load, measured cadence and bounded
+  stability test, then debug-off alpha packaging (B9/B10/Q1-Q4).
 
 ## R - 2026-10-28 SP parity repair (current execution order)
 
@@ -123,6 +156,12 @@ strict W1->W6/hardware-first sequence.
   reuse the already measured P38 shot basis and fixed hand ray.
 - [ ] R7. Obtain bounded physical gun-only, both-eye flash/impact and performance
   feedback after desktop fixes. This does not gate R4-R6 desktop work.
+- [x] R7a. Complete the operator-requested visual tracking batch: all four MP
+  sets / 13 unique IDs and SP slot-3 P38 smoke, including a laser-enabled restart,
+  initially received "Looks good". Later detailed feedback reopens calibration,
+  StG hand masking, high shots and laser endpoints; batch execution remains complete.
+  See [headset batch](HEADSET_BATCH.md). Impact measurements,
+  numeric performance, recenter/recovery and clean shutdown retain separate gates.
 
 ## S - follow up the 2026-10-27 physical smoke
 
@@ -161,10 +200,13 @@ Follow the ordered contract in HANDOFF; preserve prior receipts and fixture hash
   path is 2560x1200, but this is not a performance or physical-quality claim.
 - [ ] S5. Resolve/record bounded MP shutdown with a real clean child exit;
   nonzero exit or forced cleanup cannot produce complete acceptance.
+  The 2026-10-28 physical batch adds repeated `0xC0000409` process exits in MP
+  and SP and `3489660927` in MP2; source saves/preferences stayed unchanged.
+  Investigate these exits separately from the accepted weapon visual smoke.
 
 S1b records historical one-pose evidence. R2/R3 supersede its SP render and
-flash implementation. Physical and non-P38 SP coverage remain open; R4-R6 come
-before another physical batch or W6.2.
+flash implementation. Physical and non-P38 SP coverage remain open. A1-A6 now
+controls priority; the completed smoke is historical, with specific failures reopened.
 
 ## C - cross-game consistency pass (complete; no feature rediscovery)
 
@@ -395,8 +437,9 @@ gates. Do not wait for W3.3 before preparing the remaining desktop profiles.
   reload/switch, wall proximity, recenter, focus/loss recovery and both eyes.
   Initial headset feedback failed the gate: no working controls, a noise filter
   remained active, and hand motion pivoted rather than tracking the controller.
-  No acceptance is claimed. Desktop fixes now release the load-time pad override,
-  disable dithering and use a calibrated complete-gun grip; hardware recheck remains open.
+  The 2026-10-28 MP1/SP operator smoke now accepts ordinary tracking/model/flash
+  behavior after the fixes. Wall-proximity, recenter and focus/loss recovery were
+  not explicitly confirmed in that batch; the full gate remains open.
 - [x] W3.4. Expand captured profiles and desktop controls to all 13 IDs, including
   native gun subparts and special animations, using the existing inventory and
   reference profile/batch validators. Do not rediscover the measured meshes.
@@ -412,7 +455,12 @@ gates. Do not wait for W3.3 before preparing the remaining desktop profiles.
   [moving-marker receipt](../../vr/proof/weapon-moving-muzzle-receipt.json),
   [control sheet](../../vr/proof/weapon-moving-muzzle-controls.png) and
   [build receipt](../../vr/proof/weapon-moving-muzzle-build-receipt.json).
-- [ ] W3.5. Operator accepts each designated weapon; retain a per-ID result table.
+- [ ] W3.5. Operator accepts each designated weapon after profile corrections.
+  Reopened: initial positive batch answers were followed by reports of incorrect
+  grenade orientation, oversized weapons and a hand remaining on StG44.
+  High firing/laser reports also leave W5.4d/W6.4 open. The historical 13-ID
+  table/receipt remain in [HEADSET_BATCH.md](HEADSET_BATCH.md). Validate changed
+  profiles and named failures; do not repeat unchanged combat matrices.
 
 The original W3.1 markers below describe the receiver alone. The current
 candidate uses [complete-gun calibration](../../vr/proof/weapon-p38-complete-calibration-receipt.json)
@@ -594,7 +642,9 @@ Desktop dependencies: declared W3.1 rendered-muzzle contract and verified target
 geometry layout. Reuse reference ray/triangle math, bounded traversal, beam/dot
 projection and tests; port target data readers. Hardware acceptance is W6.4.
 The hand-fixed ray is shared with W5; native recoil animation does not steer it. Physical testing need not block code.
-W6.2 is deferred behind R4-R6. The handoff's retained reader contract specifies the
+W6.2 is now A4 after weapon parity, porting the first game's existing exact laser;
+the new runtime menu does not block it. An alpha may omit the laser
+until it is accurate. The handoff's retained reader contract specifies the
 reference algorithm, known MP callback, missing geometry bindings and controls.
 Do not reopen the completed W5 matrices or call the old box pointer exact.
 

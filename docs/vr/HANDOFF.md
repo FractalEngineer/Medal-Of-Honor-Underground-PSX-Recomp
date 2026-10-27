@@ -24,9 +24,25 @@ except the demonstrated SP regressions explicitly reopened in R1-R3.
 
 ## 1. Start here - SP repair before new features
 
-**NEXT: R5 is paused until a compatible save reproduces the operator's street
-fog case. R6 live SP impact is the next independent desktop task. W6.2 and
-another headset batch are deferred.**
+**CURRENT: study/documentation only, per the latest operator request. Read
+[ALPHA_PLAYABILITY_AND_CALIBRATION.md](ALPHA_PLAYABILITY_AND_CALIBRATION.md).
+Detailed feedback reopens calibration/gun-only acceptance: upright grenades,
+oversized profiles, attached StG hand, high shots and false laser endpoints.
+The prior "Looks good" answers remain history, not blanket readiness. No further
+implementation or game launch in this documentation task. When authorized, do
+A1/S5 exit classification, then restore the native pause menu from the first game
+(A7), followed by its working weapon behavior (A2),
+exact laser (A4) and native hand HUD (A5), with local bindings/assets verified.
+The study names exact source functions; do not rebuild those features from scratch.
+A3's new runtime menu is optional follow-up, not a blocker for A6 alpha validation
+and packaging. All headset launches must be unsandboxed. R5 needs its real fixture.**
+
+Pause-menu report is an alpha blocker. The study names the reference
+`vr_scene_entry` explicit native pause/`g_menu_flat`/quad/identity-view branch and
+menu controller routing. Underground already has the menu mapper and idle native
+surface fallback; adapt the missing explicit paused-scene path after measuring
+its local pause state. Do not copy reference `0x8009A61C` or treat W2.5's Start/
+frozen-position receipt as proof of a readable/navigable headset pause menu.
 
 Read [SP_PARITY_REPAIR.md](SP_PARITY_REPAIR.md) and
 [sp-parity-repair-receipt.json](../../vr/proof/sp-parity-repair-receipt.json).
@@ -111,6 +127,9 @@ specified.
 
 ### Subsequent order
 
+The alpha-first A1-A6 sequence in the study now owns implementation priority.
+The task descriptions below retain their contracts, not a mandatory serial order.
+
 - **R5 / S3 fog:** paused on a correct fixture; do not use current slot 0/2/3
   captures as fog evidence.
 - **R6 / W5.2:** native-versus-tracked P38 firing against one real SP NPC with
@@ -119,8 +138,9 @@ specified.
 - **R7 physical:** one bounded operator batch after desktop quality/performance
   fixes, for hand attachment, scale, both-eye flash and target impact. No hardware
   acceptance is claimed by these desktop controls.
-- **W6.2 later:** use the retained reader contract in section 6. A triangle laser
-  and wrist HUD do not take priority over the reported SP defects.
+- **W6.2 / A4:** use the retained reader contract in section 6. The reported
+  floating laser makes this an alpha usability task after basic aim/menu work;
+  omit the laser from alpha if its validated surface reader is not ready.
 
 ### Repeatable changed-path controls
 
@@ -142,7 +162,7 @@ Enable debug tools only for these probes, then restore production OFF.
 | --- | --- |
 | Repository | `C:/Users/titan/Desktop/Github_Projects/Mine/Medal-Of-Honor-Underground-PSX-Recomp` |
 | Branch / current HEAD | `feature/vr-port`; read current HEAD during preflight. W1/W2.1 predecessor is `afda5082...` |
-| Checkpoint scope | R1-R4 native callbacks and bounded production cadence complete; NEXT R5 measured SP fog, then live NPC; physical acceptance open |
+| Checkpoint scope | R1-R4 complete; physical batch executed with specific profile/aim/laser failures; alpha study A1-A6 controls the next authorized implementation |
 | Framework gitlink | `555e1eabccc59b9b6ff0d9fca48aca783513dc86` |
 | UI gitlink | `7c635c6b366a6e0d5d3c913a7fce6ec04dd9f256` |
 | Title / version | `SLUS-01270` / `0.1.0` |
@@ -791,8 +811,10 @@ if ($LASTEXITCODE -ne 0) { throw 'Release build failed' }
 
 ## 10. Continuation record
 
-The current checkpoint and next actions are section 1, R1-R7 in VR_PLAN, and
-SP_PARITY_REPAIR.md. Do not resume an older NEXT pointer from an evidence log.
+The current checkpoint is section 1 and ALPHA_PLAYABILITY_AND_CALIBRATION.md;
+A1-A6 in VR_PLAN controls the next authorized implementation. R1-R7 and
+SP_PARITY_REPAIR.md retain their measured contracts. Do not resume an older NEXT
+pointer from an evidence log.
 
 Completed MP inventory, calibration, shot/lifecycle and W6.1 math receipts retain
 their original scope and binary hashes. SP quality was reopened by a demonstrated

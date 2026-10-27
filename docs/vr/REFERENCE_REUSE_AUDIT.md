@@ -5,6 +5,23 @@ runtime or hardware test. [VR_PLAN.md](VR_PLAN.md) owns task status;
 [HANDOFF.md](HANDOFF.md) owns the next experiment. No acceptance box was closed
 by this review.
 
+2026-10-28 operator clarification: the alpha work must start from the working
+first-game implementations. Current reference HEAD inspected is `d82a5d0`.
+[The concrete port table](ALPHA_PLAYABILITY_AND_CALIBRATION.md) names the exact
+weapon transform/filter/aim, triangle laser and native hand HUD functions and
+local adaptation boundaries. Port those before a new runtime calibration editor.
+Both games already combine aim orientation with grip position; the next pose
+comparison is authored-basis preservation versus per-ID normalized calibration,
+not a fresh controller-space discovery. Reference StG-specific data does not
+exist; only that asset's local hand mask needs new classification. The reference
+options menu remains pending, so that narrow integration is not a finished port.
+The **native pause menu is implemented in the reference**, unlike its optional
+VR settings editor. Port `vr_scene_entry` native pause/`g_menu_flat` + quad and
+identity eye views, native-surface transitions and menu-controller routing.
+Local `mohu_vr_menu_input_map` already exists; measure only the missing local
+pause-state/presentation ownership and MP-specific contract. A7 now precedes
+weapon/laser/HUD ports in the alpha continuation after stability triage.
+
 Follow-up: the owner requested reconciling existing duplicated helpers too.
 [CONSISTENCY_HANDOFF.md](CONSISTENCY_HANDOFF.md) defines C1-C4, which are complete.
 The task dependencies below describe this audit's historical checkpoint; use

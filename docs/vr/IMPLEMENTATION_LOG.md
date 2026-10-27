@@ -1600,3 +1600,85 @@ source saves, defaults, historical receipts and unrelated `.commandcode/`.
   syntax and Release builds. Evidence:
   [SP native hooks](SP_NATIVE_HOOK_EVIDENCE.md) and
   [receipt](../../vr/proof/sp-native-hooks-receipt.json). Next is R5 fog.
+
+## 2026-10-28 - Operator MP all-weapon tracking batch and SP smoke
+
+- Prepared isolated root MP slots 1-4 and analysis SP slot 3 with the existing
+  native `game.toml` and production debug-off executable `6c39318c...`. No game
+  implementation, framework pin or generated guest C changed in this batch.
+- All four MP cycles received positive operator feedback, covering the 13 unique
+  IDs. SP P38 tracking/fire/reload, flash, gun-only visibility and performance
+  smoke also received "Looks good". Added the per-ID attribution table to
+  [HEADSET_BATCH.md](HEADSET_BATCH.md); W3.5 visual smoke acceptance is recorded.
+- Added a small copied-fixture runner using existing environment helpers, native
+  startup, normal owned-window close and hashed evidence. The operator requested
+  the existing squeeze-gated laser in SP; a separate `--laser` run preserves
+  both laser-off and laser-on receipts. Exact laser alignment is not accepted.
+- The first sandbox launch failed headset startup. The handoff already required
+  interactive unsandboxed execution; subsequent physical cases used that context.
+  No reconnect was needed. All five desktop startup preflights exited normally.
+- Physical process exits failed separately: MP1/3/4 and SP returned `0xC0000409`;
+  MP2 returned `3489660927`. Some runs ended before their timer, so the cause is
+  unproven; no soak or clean-shutdown result is claimed. Final SP laser-on proof
+  records 4,950 pairs and zero XR begin/view failures. VERIFY was OFF.
+- Source saves/preferences stayed unchanged and no game remains. Raw evidence
+  is under `analysis/vr-baseline/headset-batch-20261028`; hashes and verbatim
+  operator feedback are retained in
+  [the batch receipt](../../vr/proof/headset-batch-20261028-receipt.json).
+- Next is S5 exit investigation; R5 still needs the matching street fixture.
+  Live SP NPC damage/families, explicit recenter/focus recovery, numeric headset
+  performance and exact laser work retain their separate gates.
+
+## 2026-10-28 - Detailed operator corrections and alpha/menu study
+
+- Later feedback supersedes blanket acceptance: held grenades face forward,
+  some weapons are oversized, StG44 retains a hand, several weapons fire high,
+  and the laser terminates in empty space. Reopened W3.5 and preserved the
+  original batch answers/raw hashes as historical observations.
+- Studied the current per-ID calibration math, pose commands, shared runtime UI,
+  host menu/input interfaces and OpenXR surface API. Proposed one title-owned
+  current-weapon page with grip/size/alignment preview, save/cancel/reset and
+  versioned host-only settings. No implementation or launch occurred.
+- Verified that the existing laser uses controller aim and visibility-box tree
+  hits. It does not consume the calibrated shot ray or actual surface triangles;
+  this explains the architectural gap without claiming a measured cause for
+  every visual symptom. The menu cannot fix false hit geometry or the StG mask.
+- The first game's VR options menu remains backlog; reuse current shared UI
+  navigation/software image rendering and existing XR surface submission rather
+  than inventing a renderer or assuming a desktop overlay is visible in VR.
+- Documented A1-A6: exit classification, corrected defaults/aim/SP damage, minimal
+  calibration menu, accurate laser or omit it, essential HUD, then a focused
+  gameplay/recovery/performance route and debug-off alpha package. Fog needs its
+  correct fixture; wrist polish and broad optional features can follow alpha.
+- See [the study](ALPHA_PLAYABILITY_AND_CALIBRATION.md). No code, build, source
+  saves/preferences, framework pins or reference-game files changed in this task.
+
+## 2026-10-28 - Make alpha continuation explicitly port-first
+
+- Operator requested using the previous game's solved behavior. Inspected current
+  reference HEAD `d82a5d0`, its actual weapon filters/transform/aim, triangle
+  laser/camera projection, native hand HUD and launcher size/pivot controls.
+- Added a concrete source-to-source port table to the alpha study and reuse audit.
+  Both titles already use aim orientation with grip position. Compare the
+  reference's preserved authored animated basis against local normalized asset
+  calibration; do not redo hand-pose architecture or blindly copy scale constants.
+- Prioritize weapon parity, exact laser and native hand HUD ports before the new
+  runtime menu. The reference has no StG44 mask and still lists its VR options
+  menu as pending; these limited target/new-feature gaps do not justify
+  reinventing the solved algorithms. Local fixed-ray/native recoil policy stays.
+- Documentation only; no game, source implementation, build or reference changes.
+
+## 2026-10-28 - Add native pause-menu parity to alpha blockers
+
+- Operator reports native pause menu still not working. Distinguished this from
+  the optional new calibration editor; native pause is already implemented and
+  previously accepted in the first game.
+- Inspected its explicit SP pause flag/`g_menu_flat`, quad/identity eye views,
+  native-surface fallback and menu-controller routing. Local Start/menu mapping
+  exists, but the inspected scene path lacks the reference's explicit native
+  pause-state presentation branch. Idle-frame fallback alone is insufficient
+  when a paused scene keeps rendering; exact runtime cause remains to verify.
+- Added A7 immediately after stability triage, with measured Underground pause
+  ownership, separate SP/MP contracts and both-eye navigation/resume acceptance.
+  Kept existing W2.5 native Start/frozen-position evidence in its original scope.
+- Study/docs only; no game launch, implementation or build.

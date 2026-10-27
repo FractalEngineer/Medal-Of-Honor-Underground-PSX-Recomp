@@ -172,5 +172,8 @@ window after a warm cache. `PSX_NATIVE_BLOCK` remains only a localization contro
 Next independent desktop work is linked live SP NPC damage/isolation and family
 coverage (R6). R5 fog remains open but is paused: the captured slot 0/2/3 states
 do not match the operator's street-wall case. Do not tune distance/fog values
-until a correct fixture is available. The physical batch (R7) comes later, and
-W6 triangle laser/HUD work stays deferred.
+until a correct fixture is available. A later operator-requested MP/SP physical
+batch ran; specific grenade orientation, scale, StG hand, high-shot and laser
+failures reopen calibration/visual acceptance. The current alpha-first order and
+runtime menu study are in [ALPHA_PLAYABILITY_AND_CALIBRATION.md](ALPHA_PLAYABILITY_AND_CALIBRATION.md),
+which supersedes the earlier physical-batch/W6 priority here.
