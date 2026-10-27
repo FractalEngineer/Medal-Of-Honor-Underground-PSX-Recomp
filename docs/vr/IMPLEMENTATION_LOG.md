@@ -1347,3 +1347,39 @@ source saves, defaults, historical receipts and unrelated `.commandcode/`.
   [build/validations](../../vr/proof/weapon-combat-states-build-receipt.json).
   W5.4a/b are checked. Operator barrel-to-impact confirmation, the unexercised
   death transition, W5.2 live NPC/SP and physical W3.3/W3.5 remain open.
+
+## 2026-10-27 - W5.4c P1 death, native respawn and fresh tracked shot
+
+- Reviewed advancement against current receipts: W5.3d/e and W5.4a/b were
+  already complete. The previous next-pointer combined physical alignment with
+  a still-open desktop death test. Split W5.4c desktop lifecycle from W5.4d
+  physical acceptance; NEXT is now W6.1 under a six-step capture contract.
+- Added `probe_weapon_death.py`, reusing the combat runner's copied saves,
+  process ownership, explicit environment and cleanup through an optional case
+  registry. The accepted six-case matrix and its hashes are unchanged.
+- The paired final control observed P1 health 32->0->32 through exact native
+  P2 damage and native respawn. All 34 native / 29 tracked P2 attack shots
+  remained candidate-ineligible. The respawn press constructed no P1 shot;
+  a later P38 shot consumed one round in both modes. Tracked markers changed
+  valid->invalid->valid without changing P1 actor/input or load generation.
+- The recovered tracked sample used a new post-death marker: origin error
+  `0.0000072954` world units, first-motion error `0`, normalized axis cosine
+  `0.9999991904`. No post-respawn damage is claimed for the upward shot.
+- Fixture corrections are retained in the evidence: fixed-turn crossbow and
+  continuous-turn/salvo recipes were unreliable; short native turns/bursts
+  measured useful aim. Observe restored health before calling a fire input a
+  recovered shot. Signed lethal subtraction must be linked to its native zero
+  clamp, rather than requiring zero at the subtract instruction.
+- Validation: 103 Python tests, including signed-health/clamp, wrong-victim,
+  P2 ownership, respawn extra-shot, load-substitution, stale-marker and nonfinite
+  conversion rejection; independent proof/raw/source/binary hashes; clean mode
+  exit codes; unchanged source saves/preferences; no remaining owned game or
+  listener. Both modes had stereo inactive (zero verification checks), so no
+  new rollback or stereo-death acceptance is claimed.
+- Evidence: [death/respawn evidence](DEATH_RESPAWN_EVIDENCE.md),
+  [paired proof](../../vr/proof/weapon-death-respawn-receipt.json) and
+  [validation](../../vr/proof/weapon-death-respawn-validation-receipt.json).
+  The executable remains `8d0db606...`; no runtime C or shared math changed, so
+  no rebuild, repeated parity matrix or headset session was needed. Debug tools
+  remain ON for active desktop work; candidate defaults remain OFF. No
+  framework pin or reference checkout changed. `.commandcode/` was untouched.

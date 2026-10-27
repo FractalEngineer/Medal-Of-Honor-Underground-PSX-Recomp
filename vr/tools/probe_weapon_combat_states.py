@@ -645,7 +645,11 @@ def source_hashes():
     }
 
 
-def run_mode(mode, directory, selected_cases):
+def run_mode(mode, directory, selected_cases, *, case_functions=None,
+             extra_sources=()):
+    registry = CASES if case_functions is None else case_functions
+    if any(name not in registry for name in selected_cases):
+        raise ValueError("Unknown combat-state case")
     if native.game_pids():
         raise RuntimeError("Close the existing game before this owned probe")
     with socket.socket() as probe:
@@ -688,6 +692,8 @@ def run_mode(mode, directory, selected_cases):
         "preferences": preferences,
         "cases": [],
     }
+    receipt["sources"].update({name: digest(ROOT / name)
+                               for name in extra_sources})
     env = comparison.environment("native", True)
     env["PSX_INTERNAL_RESOLUTION"] = "native"
     # These controls exercise the measured native pad. Keep the MP controller
@@ -726,7 +732,7 @@ def run_mode(mode, directory, selected_cases):
             if mode == "tracked":
                 marker("start")
             for name in selected_cases:
-                case = CASES[name](mode)
+                case = registry[name](mode)
                 receipt["cases"].append(case)
                 save(out / "receipt.json", receipt)
                 print(

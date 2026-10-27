@@ -8,7 +8,7 @@ scope has evidence; it never implies broader headset or gameplay acceptance.
 Historical design and prior attempts belong in
 [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md) and the evidence documents.
 
-**W5.4 DESKTOP TASK COMPLETE. NEXT GATE: operator barrel-to-impact confirmation.**
+**W5.4 DESKTOP COMPLETE. NEXT: W6.1 rendered animated muzzle capture.**
 W4 native P38 mapping and W5.1 opt-in rendered-muzzle shot conversion are now
 complete. The corrected P38 candidate retains its barrel, follows the measured
 grip, and passes native P2 damage/miss and tracking-fallback controls without a
@@ -26,6 +26,11 @@ origin stages. W5.3e now passes paired preservation and P2 impact. W5.4 now
 passes the reload-tail, empty-fire, switch-during-reload, scoped-fire,
 recoil-follow-up and load-recovery desktop pair. Scoped fire remains a recorded
 native fallback because the hidden model exposes no fresh candidate marker.
+The death/respawn supplement now exercises P1 health 32->0->32, rejects P2
+candidate ownership, restores fresh markers without a save load and fires one
+converted post-respawn P38 shot. It runs with stereo inactive; it adds lifecycle
+evidence, not a new eye-rollback result. W5.4d physical barrel-to-impact
+confirmation stays open while W6.1 desktop capture proceeds.
 W5.2 remains open because no compatible copied live NPC/SP
 fixture and independently measured SP binding was available. W3.3/W3.5 remain
 physical acceptance gates. Current evidence and exact continuation:
@@ -391,8 +396,14 @@ acceptance is required for physical claims and normal default promotion.
   `weapon-combat-states-receipt.json`.
 - [x] W5.4b. Bind the all-13 native type/damage gate to the accepted W5.3e
   receipt rather than repeating its conversion matrix.
-- [ ] W5.4c. Exercise the broader death transition and obtain operator
-  confirmation of physical barrel-to-impact alignment.
+- [x] W5.4c. Pass native/tracked P1 death, native respawn and a separate
+  post-respawn shot. Require exact native health-write/shot linkage, no P1
+  construction from respawn input, unchanged load generation, fresh tracked
+  markers and one round consumed. Evidence: `weapon-death-respawn-receipt.json`
+  and [DEATH_RESPAWN_EVIDENCE.md](DEATH_RESPAWN_EVIDENCE.md). This headless
+  lifecycle control has stereo inactive.
+- [ ] W5.4d. Obtain operator confirmation of physical barrel-to-impact alignment.
+  This is independent of ready desktop W6 work.
 
 W5.3 desktop substeps:
 
@@ -479,6 +490,9 @@ Desktop dependencies: declared W3.1 rendered-muzzle contract and verified target
 geometry layout. Reuse reference ray/triangle math, bounded traversal, beam/dot
 projection and tests; port target data readers. Hardware acceptance is W6.4.
 The shared aim contract with W5 must agree; physical testing need not block code.
+W6.1 is the next task. The handoff's six-step capture contract specifies the
+existing seam, immutable per-eye data, numeric controls and stop conditions.
+Do not reopen the completed W5 matrices or call the old box pointer exact.
 
 - [ ] W6.1. Capture the actual rendered weapon affine plus the current animated
   muzzle/axis (not an idle static marker).

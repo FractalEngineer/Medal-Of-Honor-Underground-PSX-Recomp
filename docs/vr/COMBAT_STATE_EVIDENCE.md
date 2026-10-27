@@ -4,6 +4,10 @@ Updated: 2026-10-27. This document records the W5.4 desktop matrix. It does not
 close physical acceptance, W5.2 live NPC/SP, or the operator's barrel-to-impact
 confirmation.
 
+The later [P1 death/respawn supplement](DEATH_RESPAWN_EVIDENCE.md) closes W5.4c
+without repeating this six-case matrix. Physical barrel-to-impact confirmation
+is now W5.4d; W6.1 desktop rendered-muzzle capture is the next task.
+
 ## Result
 
 The paired native/tracked run passed all six state controls on copied root MP

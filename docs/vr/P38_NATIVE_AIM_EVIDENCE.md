@@ -148,7 +148,7 @@ The `--tracked` diagnostic explicitly enables `PSX_VR_WEAPON_POSE`,
 `RunFlat.bat` clears the new flags. The prepared tracked headset comparison
 selects this corrected candidate, but no new headset run was requested or done.
 
-**Current milestone: W5.4 operator alignment and death-transition gate.**
+**Next desktop milestone: W6.1 rendered animated muzzle capture.**
 W3.4 is complete: all 13 IDs have frozen-frame switching evidence and their
 available recoil/reload/special samples, with native ammo or slot changes. All
 IDs require a moving marker across the full tested range. The read-only W5.3
@@ -158,5 +158,7 @@ and the W5.3e paired shotgun/rocket/throw preservation and moving-marker
 controls now pass. The W5.4 reload/empty/switch/scoped/recoil/load desktop pair
 also passes; scoped fire remains a recorded native fallback. W5.2
 still needs a compatible copied live NPC/SP fixture and its own measured SP
-binding. W5.4 retains operator barrel-to-impact confirmation and the broader
-death transition. W3.3/W3.5 remain operator gates.
+binding. The [P1 death/native respawn supplement](DEATH_RESPAWN_EVIDENCE.md)
+now passes W5.4c, including a fresh converted post-respawn shot with stereo
+inactive. W5.4d retains physical barrel-to-impact confirmation. W3.3/W3.5
+remain operator gates; they do not block W6.1 desktop capture.

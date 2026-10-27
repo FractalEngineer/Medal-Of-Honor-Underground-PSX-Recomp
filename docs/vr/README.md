@@ -31,6 +31,9 @@ Framework development uses `vr/shared-development`; master mirrors upstream.
    record the paired native/tracked, fallback and impact acceptance.
    [COMBAT_STATE_EVIDENCE.md](COMBAT_STATE_EVIDENCE.md) records the paired
    reload/empty/switch/scoped/recoil/load desktop controls.
+   [DEATH_RESPAWN_EVIDENCE.md](DEATH_RESPAWN_EVIDENCE.md) closes the P1
+   death/native respawn/fresh-shot desktop supplement. W6.1 rendered-muzzle
+   capture is next; physical barrel alignment remains open.
    [WEAPON_COMPLETE_PROFILES.md](WEAPON_COMPLETE_PROFILES.md) records the
    all-ID topology, provisional calibration, desktop controls and moving-marker
    animation evidence.

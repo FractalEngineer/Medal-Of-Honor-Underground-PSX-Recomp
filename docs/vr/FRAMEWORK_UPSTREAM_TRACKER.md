@@ -76,8 +76,8 @@ do not change either consumer merely to match a moving master.
   writer measurements. Canonical animated sampling is now complete within its
   [measured timing/ownership contract](CANONICAL_MARKERS_EVIDENCE.md).
   Family-aware writes, paired preservation/impact and the W5.4 desktop
-  combat-state controls are complete. W5.4's operator alignment and death
-  transition remain. These
+  combat-state controls and headless P1 death/native respawn supplement are
+  complete. W5.4d operator alignment remains; W6.1 desktop capture is next. These
   title-specific samplers add no pending framework PR or master change.
 - W5.2 NPC/SP isolation requires a compatible copied fixture and independent
   SP bindings. Physical W3.3/W3.5 and W5.4 operator acceptance remain open. Desktop work
