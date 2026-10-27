@@ -19,307 +19,109 @@ Read [REFERENCE_REUSE_AUDIT.md](REFERENCE_REUSE_AUDIT.md) before introducing
 new code. It lists the first-game implementation and the local counterpart for
 each task. Reuse their algorithms/tools and verify only Underground's bindings,
 units and assets. Its corrected desktop-versus-hardware dependencies supersede
-the earlier hardware-first sequence; no completed box is reopened.
+the earlier hardware-first sequence. Historical completed scopes stay closed
+except the demonstrated SP regressions explicitly reopened in R1-R3.
 
-## 1. Start here - one next task
+## 1. Start here - SP repair before new features
 
-**SP TRACKED WEAPON DESKTOP PATH COMPLETE. NEXT: PHYSICAL SP PASS FOR AIM,
-FLASH AND IMPACT; THEN S3-S5 AND W6.2. MP IS ONLY THE ALL-WEAPON FIXTURE.**
+**NEXT: R4 native-hook/performance integration, then R5 fog and R6 live SP
+impact. Do these on desktop. W6.2 and another headset batch are deferred.**
 
-Read [HEADSET_SMOKE_EVIDENCE.md](HEADSET_SMOKE_EVIDENCE.md), the
-[S1 proof](../../vr/proof/headset-s1-camera-receipt.json), and
-[NATIVE_MUZZLE_FLASH_EVIDENCE.md](NATIVE_MUZZLE_FLASH_EVIDENCE.md). S1 passed on
-binary `924691b6...` without arming shot recording: 13,524 canonical camera
-updates, 20 P1-eligible hand-fixed aim updates, zero fallbacks and three linked
-P2 health writes (32->14). Capture remained off. The same run still exited 1
-after forced shutdown, so S5 remains open.
+Read [SP_PARITY_REPAIR.md](SP_PARITY_REPAIR.md) and
+[sp-parity-repair-receipt.json](../../vr/proof/sp-parity-repair-receipt.json).
+The operator rejected the earlier SP flash/visibility result. S1b's old counters
+proved movement in one pose, not robust muzzle attachment or SP readiness.
+The first game's post-animation transform, arm filtering and precision pattern
+were reusable and should have been carried into the SP adapter together.
 
-Desktop SP controls now pass on `0bc60df5...`:
+### What is fixed, and what remains open
 
-1. **SP held weapon.** The actual SP held-weapon draw at `0x80091854` consumes
-   the calibrated hand transform. A 6-second copied-slot control recorded 332
-   successful applications with zero flash-packet fallbacks.
-2. **SP muzzle flash.** The measured stereo and flat copies at `player+0x600`
-   and `player+0x624` are translated with the SP `H=400` weapon projection.
-   The flash centre was `(355,225)` at baseline and `(454,225)` after a
-   +150 mm hand-X control in the 512x240 surface. The rendered gun tip uses the
-   same projection.
-3. **SP P38 shot ray.** The measured SP basis caller is
-   `0x80048604 -> 0x80076C28`, return `0x8004860C`, shot type `0x13F6`. Both
-   baseline and translated controls wrote 2/2 P38 shots through the calibrated
-   muzzle/forward ray with zero shot fallbacks.
+- The native SP dispatcher `80091854`, caller `80091420`, owns the held draw.
+  Apply at `80090954` after native animation and camera restoration. Read the
+  projected muzzle and mask arms at `80090A78`, before triangle submission.
+- Flash uses the exact projected animated tip vertices from that eye's draw.
+  There is no independent fixed-400 projection. The same reader is used in MP.
+  Native recoil moves the visible flash; the shot/laser ray stays fixed to hand.
+  SP FT4 tags are `player+0x5FC` and `player+0x624`; their color words are
+  `+0x600` and `+0x628`. Do not confuse a color-source address with a packet tag.
+- P38 retains all 96 gun vertices (including the node-11 barrel), and masks
+  142 arm vertices in each eye. Tracking loss keeps the native gun-only draw.
+- Slot-3 disappearance reproduced at the native arena-full branch `8009086C`.
+  When needed, use only a checked, unreferenced 32 KiB tail of the other native
+  primitive bank for this held draw, restoring both arena words immediately.
+  The same-binary OFF/ON control changes missing gun to 96 visible gun vertices.
+  This is a bounded desktop fix; broader scene/weapon acceptance remains open.
+- Existing source saves still load; repeated load and rollback controls pass.
+  Do not add a persistent mod-memory allocation to solve this: it changes the
+  memory-layout cookie and rejects the owner's existing states.
+- SP P38 shot basis is already measured: `80048604 -> 80076C28`, return
+  `8004860C`, type `13F6`. Do not rediscover it. W5.2 remains open for live NPC
+  damage/isolation, broader SP families and physical impact, not missing P38 bindings.
+- Production/debug performance is recorded separately in the repair receipt.
+  No current result is headset-refresh-rate or whole-campaign acceptance.
 
-The next physical SP run should use the current `0bc60df5...` binary and check:
+### Exact next desktop work: R4
 
-1. **SP gun and flash.** Confirm the gun follows the hand, the flash sits at the
-   rendered muzzle rather than screen centre, and both eyes agree. Desktop proof:
-   [sp-weapon-aim-flash-receipt.json](../../vr/proof/sp-weapon-aim-flash-receipt.json).
-2. **SP impact alignment.** Fire at a controlled target. The desktop path now
-   uses the same hand-fixed muzzle/forward ray for the P38 shot, but physical
-   impact and the earlier "slightly high" report remain unaccepted.
-3. **SP resolution.** `RunVR` now forces `1080p` and `game.toml` ships a
-   `1080p` preset (`2560x1200` source in the measured SP path). A user
-   `settings.toml` preset still outranks `game.toml` on a direct launch, so
-   verify the effective setting as well as the image. Do not treat 1080p as a
-   measured performance fix.
-4. **MP regression only.** `MOHU_VR_MP_FRUSTUM=1` remains the all-weapon tracking
-   fixture and its desktop selector control still passes. A physical MP edge
-   report is not a product priority while SP is the goal.
+1. Keep one `build-release`, current framework pin `555e1eab`, and the existing
+   shared-development/upstream tracker. Read its cache before running tools.
+   Normal play uses `PSX_DEBUG_TOOLS=OFF`; TCP probes need ON. `run_vr.ps1 -Build`
+   selects ON only with explicit `-DebugPort`; it builds with two jobs.
+2. Read `REFERENCE_REUSE_AUDIT.md`'s new repair table and the reference
+   `docs/reverse/VR_SLOT2_PERFORMANCE.md`. Detailed debug recording and VERIFY
+   are excluded from throughput comparisons. Use the same copied analysis SP
+   slot 3, resolution, scene and quiet window, and count unique stereo pairs
+   separately from guest frames and XR submissions.
+3. Fix the native overlay integration gap, before optimizing the renderer.
+   `game.toml` has no `mod_function_entry_funcs`/`mod_instruction_sites` for
+   the VR callbacks. Its current cached-native control produces ZERO stereo
+   pairs; its higher flat FPS is invalid as a VR result. The launcher currently
+   selects the interpreter analysis config so hooks execute. Record the resolved
+   config; do not silently switch to native and claim a performance win.
+4. Derive the required entry and instruction list from the existing registration
+   block at the bottom of `vr/underground/vr_diagnostic.c` and the verified engine
+   map. Reuse the framework's documented codegen instrumentation and the reference
+   game's config pattern. Regenerate with the supported tool; never hand-edit
+   generated C, inject guest code or disable correctness guards. No function/address
+   rediscovery is needed. A diagnostic PSX_NATIVE_BLOCK control is retained as a
+   localization experiment, not the shipping solution or a completed native path.
+5. Instrumentation changes codegen identity. Preserve original saves. If a new
+   compatible fixture is required, boot/create one in an isolated directory using
+   native menu/input automation; do not patch personal state headers or weaken the
+   loader. Validate real stereo pairs, the SP baseline/turned/close/lost controls,
+   muzzle flashes, a focused MP regression and rollback before benchmarking.
+6. Capture a quiet matched production comparison using the first-game reporting
+   workflow, including `PSX_BENCH_WINDOW=300:900` for a common guest-frame window. Report pair cadence and stage costs. A faster run with zero pairs,
+   missing weapons, lower resolution or disabled projective rendering fails R4.
+   If native integration cannot be completed, retain the exact failed site and
+   bounded trace rather than rerunning the full MP matrices or requesting a headset.
 
-The remaining physical order is:
+### Subsequent order
 
-1. **S3, SP fog:** use the isolated analysis SP slot 2, never root MP slot 2.
-   Operator reports good edges but shorter visibility straight ahead than at
-   the FOV edge while turning the head. Inspect the first game's existing
-   fog/depth implementation and docs before adding code; capture the actual SP
-   fog/depth producer and compare fixed world points under head rotation.
-   Determine whether clipping, fog depth or transform ownership is responsible
-   before changing any distance/FOV constants. Cause is currently unconfirmed.
-2. **S4, performance:** operator reports about 35 FPS in SP. Capture unique
-   guest/world-pair cadence separately from XR submissions, plus render/guest/
-   restore timing in the same copied fixture. Reuse reference profiling tools.
-   Do not call the reported number a measured benchmark or optimize blindly.
-3. **S5, cleanup:** old MP smoke exited 1 despite raw `complete=true`.
-   `tcp_quit` was reported; forced cleanup was not recorded. The probe now
-   rejects nonzero/forced cleanup as acceptance. Retain the old raw evidence;
-   investigate shutdown only with bounded owned-process cleanup, and record a
-   real clean exit before claiming it. No unrelated VD service termination.
+- **R5 / S3 fog:** identify the actual SP depth/fog producer. Compare fixed world
+  points under head rotation against the reference implementation. The current
+  explanation is unconfirmed; do not tune draw-distance/FOV constants blindly.
+- **R6 / W5.2:** native-versus-tracked P38 firing against one real SP NPC with
+  health tracing armed before firing. Record linked decreases and target ownership.
+  MP P2 damage and a flash counter do not close this gate. Then expand SP families.
+- **R7 physical:** one bounded operator batch after desktop quality/performance
+  fixes, for hand attachment, scale, both-eye flash and target impact. No hardware
+  acceptance is claimed by these desktop controls.
+- **W6.2 later:** use the retained reader contract in section 6. A triangle laser
+  and wrist HUD do not take priority over the reported SP defects.
 
-SP tracked weapon control remains the independently open W5.2 binding task,
-not a feature expected from this SP smoke. Do not borrow MP actor/camera
-addresses or claim live NPC damage from it. The 12 recorded MP aimed shots
-caused no observed linked health writes; health 32->29 happened before recording.
-After this follow-up, continue the W6.2 reader contract below without reopening
-completed matrices. The reported resolution belongs to S4 measurement; do not
-confuse it with W6.2 selector/geometry discovery.
+### Repeatable changed-path controls
 
-**Operator contract: the laser points along the bullet's hand-fixed aim ray.**
-Native recoil/reload animation plays normally and does not steer that ray.
-`MOHU_VR_WEAPON_AIM` now uses the fixed calibrated muzzle/forward reference with
-its tracked hand affine; W6 consumes the same ray. Animated marker copies are
-only diagnostics and eligibility/freshness guards. This explicitly supersedes
-older W5/W6 requirements to make aim follow an animated barrel. See
-[the current contract and proof](RENDERED_MUZZLE_EVIDENCE.md).
-The visible native muzzle flash is separate: it follows the projected animated
-muzzle in the eye replay, while the shot/laser ray remains fixed to the hand.
-Read [RENDERED_MUZZLE_EVIDENCE.md](RENDERED_MUZZLE_EVIDENCE.md),
-[the snapshot proof](../../vr/proof/weapon-rendered-muzzle-receipt.json) and
-[build/regressions](../../vr/proof/weapon-rendered-muzzle-build-receipt.json).
-Ten complete P38 snapshots cover the hand-fixed ray in both eyes, independent head/hand poses,
-recoil/reload, tracking/load recovery and live pair refusal. The actual applied
-quantized affine and copied animated vertices predict base/eye markers within
-`1e-8` units. The actual P38 shot agrees with the shared fixed ray within one Q16 step.
-Recoil/reload change the visible model while the fixed ray remains identical.
-The 13-ID native/tracked preservation pair also passes under this new policy.
-
-The capture is host-only, OFF until `mohu.vr.muzzle capture`. It stages both
-eyes, requires native scope restoration and publishes only after the enclosing
-pair succeeds. The live refusal invalidated sequence 9 without publishing;
-recovery produced a newer complete pair. Read-only snapshots do not draw a
-beam, prove triangle geometry or certify physical alignment.
-
-W5.3a-e and W5.4a-c remain complete for their documented desktop scopes. Read
-[COMBAT_STATE_EVIDENCE.md](COMBAT_STATE_EVIDENCE.md) and
-[DEATH_RESPAWN_EVIDENCE.md](DEATH_RESPAWN_EVIDENCE.md) for the state/death limits.
-W5.4d physical alignment, W5.2 live NPC/SP and W3.3/W3.5 remain independently
-open. Do not repeat these matrices, canonical acquisition or W3.4 animation
-without a changed path or demonstrated regression. Hardware acceptance does
-not block W6.2 desktop work; all normal candidate defaults remain OFF.
-
-### Execute W6.2 before drawing a beam
-
-1. Open the reference `vr/moh_vr_raycast.h` (`moh_vr_ray_tri`,
-   `moh_vr_ray_tree_tris`), `vr/test_moh_vr_raycast.c` and the reference
-   `vr_laser_draw` in `vr/psx_vr_stereo.c`. Reuse its triangle algorithm and
-   fixture cases. Its 16-byte records / 8-byte vertices are a measured
-   first-game lead, not an Underground layout or address contract. Test the
-   origin-inside case explicitly; do not blindly inherit its leaf-skip shortcut.
-2. Use copied root MP slot 1 and the existing owned-process/read-only tools.
-   Read [MP_LEVEL_SELECTOR_EVIDENCE.md](MP_LEVEL_SELECTOR_EVIDENCE.md) and
-   its saved complete callback disassembly first. The MP scene has 21 level
-   nodes with callback `8006C61C`, scene `8006E9D8` and list `[800A35CC]`.
-   Their center/radius fields are visibility bounds, not triangle records.
-   The known SP projector `80099960` and SP tree do not establish MP geometry.
-3. Follow the actual MP drawer/geometry reader from the measured callback,
-   comparing its loads/calls with the reference record reader. Capture complete
-   code units and hashes before trusting a binding. Record where the real vertex
-   and triangle counts, bases, strides, indices and object-to-world transform
-   come from. Reuse bounded code/trace snapshots; no broad RAM rediscovery,
-   generated-C edits, actor/health/ammo writes or source-save changes.
-4. Retain a bounded geometry snapshot and independently decode at least three
-   spatially distinct drawn triangles from the real index/vertex tables. State
-   their coordinate space and reconstruct their world positions. Validate counts,
-   alignment, overflow and every index against measured bounds. A visibility-box
-   hit or native damage alone is insufficient evidence for this reader.
-5. Adapt reference ray/triangle fixtures for nearest hit, both windings, miss,
-   range, parallel/degenerate triangles, edge hits, origin-inside bounds, malformed
-   pointers/indices and traversal budgets. Keep broad-phase boxes separate from
-   the final triangle test. Do not weaken bounds or substitute a different
-   overlay when a guard fails. Run shared parity if shared math/wrappers change.
-6. Close W6.2 only with the guarded reader, independent geometry reconstruction,
-   pure fixtures and source/binary/fixture receipt. Then NEXT is W6.3: consume
-   W6.1's current hand-fixed ray and per-eye view for beam/dot placement and nearest triangles.
-   Before screen projection, also retain actual guest OFX/OFY/H; W6.1 currently
-   records the affine and scoped view, not those extra projection registers.
-   Reuse existing projection/clip/beam code; do not promote the old right-aim
-   box pointer or borrow the reference's static pivot/muzzle/calibration.
-
-If the MP reader cannot yet be proven, retain the exact unresolved load/call and
-bounded snapshots as the continuation. Two failures of the same hypothesis mean
-inspect the missing fact, not repeat an unchanged full matrix. Do not jump to
-HUD/performance or request headset acceptance to finish this desktop task.
-
-The moving-marker evidence characterizes the native model animation. It is
-retained for diagnostics, not as a laser or shot-origin requirement. The current
-operator-selected aim uses a fixed calibrated reference in hand space; native
-recoil may move the visible barrel independently. W5.2 remains
-open because no compatible copied live NPC/SP fixture or independently measured
-SP shot/camera binding was available. W4/W5.1 remain complete for P38; their
-five-case native and 14-case tracked matrices passed again on the current binary.
-W3.3/W3.5 remain physical gates.
-
-Read [P38_NATIVE_AIM_EVIDENCE.md](P38_NATIVE_AIM_EVIDENCE.md) first for current
-special-function bindings and P38 combat limits. Read
-[SHOT_FAMILY_EVIDENCE.md](SHOT_FAMILY_EVIDENCE.md) for the all-ID constructor
-map and family limits. Read
-[WEAPON_COMPLETE_PROFILES.md](WEAPON_COMPLETE_PROFILES.md) for the all-ID
-topology, per-weapon masks, provisional calibration and desktop controls.
-
-Current all-ID desktop result:
-
-- `MOHU_VR_WEAPON_GUN_ONLY=1` renders the measured gun islands without arms.
-- `MOHU_VR_WEAPON_CALIBRATED=1` enables the provisional all-ID calibration.
-- `MOHU_VR_WEAPON_AIM=1` enables the all-family shot candidate and requires the
-  calibrated render path. All three flags remain OFF by default.
-- `MOHU_VR_P38_CALIBRATED=1` and `MOHU_VR_P38_AIM=1` retain the historical
-  P38-only path when the all-family flag is absent.
-- The calibrated MP profile matrix ran 64 cases over 16 slot appearances / 13
-  unique IDs in both eyes on its recorded binary, with 804 gun-only applications
-  and zero rollback
-  failures. The earlier 876 count belongs to the previous binary.
-- The P38 and silenced-pistol masks use explicit per-vertex selections because
-  their gun islands share node 11 with the hand/arm mesh.
-- Frozen-frame animation sampling covered all 13 IDs: 13 confirmed switch
-  states, nine recoil states, seven confirmed reload states, three prop special
-  actions and the scoped hidden-model state. Every confirmed native action also
-  changed clip, reserve or weapon slot as appropriate.
-- Native shot-family capture covered all 13 IDs through the common basis caller.
-  It observed five types, six shotgun pellets and clean native ammo/slot changes.
-  W5.3d now supplies the explicit all-family opt-in conversion.
-- The W5.3d candidate passed all 13 IDs / 23 converted events with zero shot
-  fallbacks. The shotgun retained six pellets and 5.18 degrees native spread.
-  P38, MP40, all other expected firearms, the crossbow and rocket produced linked
-  native P2 damage. Grenade and petrol passed guarded final-origin and motion
-  controls without fabricated damage claims.
-- Native lifecycle capture passed 13 IDs / 22 lifetimes / 147 XYZ groups and 19
-  linked damage writes. Six shotgun directions span about 5.25 degrees despite
-  identical initial basis angles. Recycled Sten addresses are split by global
-  construction sequence. This baseline does not close tracked preservation.
-- Canonical sampling passed 13 IDs / 18 initial shot events and all three final
-  projectile-origin stages. Six cache controls passed. The source is the last
-  completed natural P1 model before the event, not the next recoil frame or a
-  last-eye buffer. Maximum observed initial-event age was 1,128,671 cycles;
-  the declared rejection limit is 2,257,920. W5.3c made no shot writes; W5.3d
-  adds the separate opt-in conversion above.
-
-The earlier operator findings now have desktop corrections:
-
-- Missing controls: `load()` armed an absolute neutral debug-pad override. The
-  comparison now clears it and supplies only a neutral host-layer pad.
-- Noise: the comparison now sets and verifies dithering OFF.
-- Pivot-like motion: `MOHU_VR_P38_CALIBRATED=1` uses the measured model grip and
-  physical scale rather than the W1 camera-space pivot.
-- P38 arms and missing barrel: preserve all 69 node-13 receiver/grip vertices **plus
-  node-11 vertices 6..32**, a 27-vertex/37-triangle barrel/sight island. The
-  resulting gun is 128 triangles/96 vertices; hide 142 other vertices.
-
-The original W3.1 receiver-only supposed muzzle was a receiver cap. Current
-candidate calibration is in
-[the complete-gun receipt](../../vr/proof/weapon-p38-complete-calibration-receipt.json):
-true tip `(81.8,110.6,447.6)`, barrel axis from node-11 rings, provisional
-`760.489674616524` units/metre. Preserve historical W3.1/W3.2 receipts. No new
-physical acceptance was claimed by that desktop work. The later headset smoke
-is recorded separately in HEADSET_SMOKE_EVIDENCE.md.
-The frozen-frame matrix characterizes the visible P38 tip at node-11 indices
-24..28. The current hand-fixed aim intentionally does not follow that motion.
-
-Shared VR matrix, conservative visibility and slab math has one source of truth:
-`psxrecomp/runtime/src/vr_geometry_math.c` and its public header. Fix shared math
-once there; keep measured bindings, rejection policy, native layouts, hooks,
-weapon behavior and calibration in title adapters. Run the current local VR
-workflow and the explicit cross-game parity harness before
-changing wrappers:
-
-```powershell
-python -m unittest discover -s vr/tests -p 'test_*.py'
-python vr/tools/check_reference_parity.py `
-  --reference-root <reference-checkout> `
-  --out-dir analysis/reference-parity/<fresh-directory>
-```
-
-The harness is host-only and takes both roots explicitly. Shipped code must not
-depend on the adjacent game checkout. A later shared-math change must reach both
-title adapters or record which consumer remains pending.
-
-W2.3 passed by extending `vr/tools/check_mp_view.py` with
-`--visibility-controls`. The run used copied root MP slot 1/P38, no switching or
-firing, four poses with frustum OFF/ON, 21 sampled level nodes per eye and a
-512x120 eye pair. The top 45 rows were required to contain world pixels,
-excluding the lower weapon/body region. The +90 and -90 headings use separate
-measured native body rotations because this flat fixture exposes one side at a
-time; the override preserved greater-than-native containment at zero and
-near-wall while producing justified changed sets at both 90-degree headings.
-
-W2.4 verified that the MP overlay uses converter `0x800799E4`, dispatcher
-`0x80079B28`, P1 actions `0x800C0ED0`, inversions `0x800C0F20`, axis records
-`0x800C0BF0` and curve `0x800A458C`. These differ from the SP converter/table
-addresses. The controller source now selects MP from both actor roots, current
-player and the 512x120/H=400 context, then checks code and all measured data
-hashes before mapping. A mismatch returns neutral; no reference addresses or
-thresholds are copied.
-
-W2.5 exercised the accepted MP binding without changing its mapping. The
-17-case XR control delivered neutral, forward/back, both strafes, both turns,
-focus-loss/recovery, inactive sticks, Cross, Square, Circle, Triangle, L2 and
-combined buttons. A paused actor did not move while the pad held forward, and
-the second native Start resumed movement. Across 630 controller callbacks,
-`mohu.vr.input.render_blocked` and `mohu.vr.input.guard_fallback` both stayed
-zero. The isolated SP slot-2 launcher passed 13 controls and 298 rollback
-checks; the OpenXR-off flat build reached `main()` with all inherited VR flags
-inert.
-
-W3.1 captured the complete P38 node-13 source and animated vertex arrays through
-the existing guarded first-person seam. In the atomic animated-model record the
-rear grip block centers at `(76.555555555556, 100.777777777778,
-287.888888888889)`, the muzzle cap at `(76.2, 109.8, 396.8)`, and the measured
-forward span is `114.525481833051` model units. The orthonormal right/up/forward
-basis and provisional nominal-length scale (`530.210564041902` model units per
-metre for a 216 mm P38 reference) are stored with the title profile. The prior
-camera-space marker `(98,296,193)` remains only the W1 diagnostic pivot and is
-not promoted to a grip. Those original node-13-only markers are historical;
-the current opt-in candidate consumes the corrected complete-gun calibration
-above. Physical size/attachment remain unaccepted.
-
-The visible weapon seam and P1-only MP eye renderer are already found and
-working in desktop controls. W1 is complete for the P38 synthetic spatial
-contract: the first-accepted-hand neutral delta has been replaced by an
-absolute hand path, and independent head/hand controls pass in both eyes with
-numeric residual checks. Do not rediscover the seam or rerun unchanged W1
-controls. Physical grip/scale, physical MP controls and tracked shots remain
-open in W3-W5.
-
-W2.1 is complete. Copied root MP slot 1 calls the native frame `80054BC4`,
-scene `8006E9D8`, per-node callback `8006C61C`, visibility selector `80096EF4`
-and helper `80096AC8`. The 21 level nodes are a flat scene-list queue gated by
-`+0x0C` visibility masks. No separate MP PVS leaf queue was found at this seam.
-
-W2.2 is also complete for its guarded override. The selector consumes node
-center `+0x2F4..+0x2F8`, radius `+0x2FC`, the live GTE RT/TR, a heap view
-descriptor at `camera_input+0xC8`, and an observed 540x120 screen rectangle.
-`MOHU_VR_MP_FRUSTUM=1` replaces only level-node selection inside a valid P1 eye
-replay; non-level nodes and every malformed or unknown path remain native. The
-zero-angle P38 control passed in both eyes with zero fallbacks and clean
-rollback. W2.3 later added the accepted heading and near-wall controls.
+`python vr/tools/probe_sp_weapon.py <fresh-analysis-directory> --slot 3 --verify`
+uses `analysis/vr-baseline/saves` by default: this is the SP fixture, not root MP
+slot 3. Useful controls are `--head-yaw 60 --follow-head --eye-offset 8`,
+`--hand-x-mm 300`, `--hand-z-mm -120`, `--tracking-loss`, and `--reload`.
+`--no-spare-arena` is the causal disappearance control only. Use the receipt's
+binary and request/environment; a completed transport is not visual acceptance.
+The probe fires native input and never edits health/ammo or source saves.
+Its `render.calibrated=0` is the legacy P38-only flag; the all-family
+`MOHU_VR_WEAPON_CALIBRATED=1` / `weapon_aim=1` path is enabled. Do not turn
+legacy aim on to "fix" that diagnostic label.
+Enable debug tools only for these probes, then restore production OFF.
 
 ## 2. Current state - facts, not work to restart
 
@@ -327,16 +129,16 @@ rollback. W2.3 later added the accepted heading and near-wall controls.
 | --- | --- |
 | Repository | `C:/Users/titan/Desktop/Github_Projects/Mine/Medal-Of-Honor-Underground-PSX-Recomp` |
 | Branch / current HEAD | `feature/vr-port`; read current HEAD during preflight. W1/W2.1 predecessor is `afda5082...` |
-| Checkpoint scope | S1 camera/aim and SP held-weapon/flash/P38 shot desktop path complete; physical SP aim/flash/impact pass next; then S3-S5 and W6.2; preserve `.commandcode/` |
+| Checkpoint scope | R1-R3 SP repair and R4a production overhead measured; NEXT R4b native hooks, then fog/live NPC; physical acceptance open |
 | Framework gitlink | `555e1eabccc59b9b6ff0d9fca48aca783513dc86` |
 | UI gitlink | `7c635c6b366a6e0d5d3c913a7fce6ec04dd9f256` |
 | Title / version | `SLUS-01270` / `0.1.0` |
 | One active build | `build-release`, Release/OpenGL/OpenXR/PGXP |
 | Game executable | `build-release/Medal_of_Honor_Underground_Recompiled.exe`; `psx-runtime` is the CMake target, not the executable filename |
-| Current debug tools | `PSX_DEBUG_TOOLS=ON` for active desktop W5 work by operator direction; restore OFF only for a public release |
+| Current debug tools | Production checkpoint uses `PSX_DEBUG_TOOLS=OFF`; explicitly build ON for TCP diagnostics, then restore OFF before play/performance |
 | CMake VR option | `MOHU_VR_DIAGNOSTICS` defaults OFF; current `build-release` has it ON |
 | Normal launcher | Native menus, `-Slot -1`; no implicit savestate load |
-| Experimental defaults | `PSX_VR_WEAPON_POSE`, `MOHU_VR_MP_CONTROL`, `MOHU_VR_MP_FRUSTUM`, `MOHU_VR_WEAPON_GUN_ONLY`, `MOHU_VR_WEAPON_CALIBRATED`, `MOHU_VR_WEAPON_AIM`, `MOHU_VR_P38_CALIBRATED` and `MOHU_VR_P38_AIM` remain off; diagnostic runners opt in explicitly |
+| Defaults | CMake VR option remains OFF for ordinary builds. The VR launcher explicitly enables calibrated gun-only SP/P38 aim. MP control/frustum remain a separate fixture opt-in. |
 | PGXP save ABI | `131106`; base flavor ABI `34` is incompatible |
 | Unrelated work | `.commandcode/` is unrelated; do not add, change or clean it |
 
@@ -345,7 +147,7 @@ to reset HEAD, switch to master, restore an old binary or force old gitlinks.
 `BASELINE.md` records the 2026-10-23 starting tree, including old `31df2e1e`;
 it is historical and must not override the current framework pin above.
 
-Accepted evidence:
+Evidence at each receipt's recorded revision (not blanket current-binary acceptance):
 
 | Scope | Receipt / practical limit |
 | --- | --- |
@@ -361,7 +163,7 @@ Accepted evidence:
 | W2.5 MP lifecycle / recovery | [control receipt](../../vr/proof/weapon-mp-lifecycle-receipt.json) and [build receipt](../../vr/proof/weapon-mp-lifecycle-build-receipt.json): 17 MP input/button cases, native Start pause/resume, zero render-time sampling, 13 SP cases, inherited-flag flat startup |
 | S1 camera without recording | [proof](../../vr/proof/headset-s1-camera-receipt.json): 30 live samples, capture OFF, 13,524 camera callbacks, 20 eligible hand-fixed aim updates, zero fallbacks and linked P2 damage 32->14; shutdown still fails S5 |
 | S1a native muzzle flash | [evidence](NATIVE_MUZZLE_FLASH_EVIDENCE.md) and [receipt](../../vr/proof/native-flash-alignment-receipt.json): existing 32x32 flash packet tracked in eye replay; baseline `(287,92)`, +150 mm hand X `(320,92)`, zero fallbacks; physical visibility open |
-| S1b SP tracked weapon / P38 aim | [SP receipt](../../vr/proof/sp-weapon-aim-flash-receipt.json): held-weapon dispatch active; flash `(355,225)` -> `(454,225)` after +150 mm hand X; 2/2 shots aimed in each control with zero shot/flash fallbacks and clean exit; physical acceptance open |
+| Historical S1b SP binding / P38 aim (visual claim superseded by R2) | [SP receipt](../../vr/proof/sp-weapon-aim-flash-receipt.json): held-weapon dispatch active; flash `(355,225)` -> `(454,225)` after +150 mm hand X; 2/2 shots aimed in each control with zero shot/flash fallbacks and clean exit; physical acceptance open |
 | S2 MP frustum desktop | [receipt](../../vr/proof/headset-s2-mp-frustum-receipt.json): 1,638 overrides per eye, zero fallbacks, 201 rollback checks, zero mismatches and clean exit; physical edges remain open |
 | W3.1 P38 calibration | [calibration receipt](../../vr/proof/weapon-p38-calibration-receipt.json), [capture receipt](../../vr/proof/weapon-p38-calibration-capture-receipt.json) and [build receipt](../../vr/proof/weapon-p38-calibration-build-receipt.json): 69 atomic source/animated vertices, orthonormal axes, grip and muzzle markers, nominal-size scale, focused tests and 33-case parity |
 | W3.2 P38 headset comparison | [headset comparison](../../vr/proof/weapon-p38-headset-receipt.json) and [complete build receipt](../../vr/proof/weapon-p38-headset-complete-build-receipt.json): 30 seconds native plus 30 seconds tracked, 30/30 live hand samples per mode, fresh VDXR submissions and stereo pairs, zero final failures; no operator acceptance claim |
@@ -380,13 +182,13 @@ Accepted evidence:
 | SP world / visibility | [PGXP_RENDER_VIEW_EVIDENCE.md](PGXP_RENDER_VIEW_EVIDENCE.md), [HEAD_TURN_HUD_EVIDENCE.md](HEAD_TURN_HUD_EVIDENCE.md), [SKY_GHOST_EVIDENCE.md](SKY_GHOST_EVIDENCE.md) |
 | Native input | [MOVEMENT_EVIDENCE.md](MOVEMENT_EVIDENCE.md): synthetic SP and MP controls; physical acceptance remains open |
 
-The current W5.3e Release/debug-on executable SHA-256 is
+The historical W5.3e Release/debug-on executable SHA-256 is
 `8d0db60626bd516e91a342f648b22579e07b7ad3339ac104637774e1a71bc20d`.
 The W5.3d historical tested executable remains
 `4a17ce5cdc83533bb23f8c85ccdcd9834289ec7c8a32e45d162c291099c74d00`,
 and its debug-off release was
 `e2103a9ffb3696188b8cb405978bde587d17ea63cead196bddb007b029eb9fa1`.
-See the current [build receipt](../../vr/proof/weapon-aim-all-build-receipt.json)
+See the historical [build receipt](../../vr/proof/weapon-aim-all-build-receipt.json)
 for runtime source hashes, 81 Python tests, focused C/syntax/build checks, the
 all-ID matrix and five native / 14 tracked legacy P38 regressions. The earlier
 [lifecycle validation receipt](../../vr/proof/weapon-shot-lifecycle-validation-receipt.json)
@@ -628,6 +430,45 @@ contains historical SP scripts with hardcoded slot 0/run names: read them as
 leads, do not execute them unchanged for MP or adopt their fields as measured MP.
 Keep native speed/spread/ammo/reload/collision/damage/throw behavior.
 
+### Execute W6.2 before drawing a beam
+
+1. Open the reference `vr/moh_vr_raycast.h` (`moh_vr_ray_tri`,
+   `moh_vr_ray_tree_tris`), `vr/test_moh_vr_raycast.c` and the reference
+   `vr_laser_draw` in `vr/psx_vr_stereo.c`. Reuse its triangle algorithm and
+   fixture cases. Its 16-byte records / 8-byte vertices are a measured
+   first-game lead, not an Underground layout or address contract. Test the
+   origin-inside case explicitly; do not blindly inherit its leaf-skip shortcut.
+2. Use copied root MP slot 1 and the existing owned-process/read-only tools.
+   Read [MP_LEVEL_SELECTOR_EVIDENCE.md](MP_LEVEL_SELECTOR_EVIDENCE.md) and
+   its saved complete callback disassembly first. The MP scene has 21 level
+   nodes with callback `8006C61C`, scene `8006E9D8` and list `[800A35CC]`.
+   Their center/radius fields are visibility bounds, not triangle records.
+   The known SP projector `80099960` and SP tree do not establish MP geometry.
+3. Follow the actual MP drawer/geometry reader from the measured callback,
+   comparing its loads/calls with the reference record reader. Capture complete
+   code units and hashes before trusting a binding. Record where the real vertex
+   and triangle counts, bases, strides, indices and object-to-world transform
+   come from. Reuse bounded code/trace snapshots; no broad RAM rediscovery,
+   generated-C edits, actor/health/ammo writes or source-save changes.
+4. Retain a bounded geometry snapshot and independently decode at least three
+   spatially distinct drawn triangles from the real index/vertex tables. State
+   their coordinate space and reconstruct their world positions. Validate counts,
+   alignment, overflow and every index against measured bounds. A visibility-box
+   hit or native damage alone is insufficient evidence for this reader.
+5. Adapt reference ray/triangle fixtures for nearest hit, both windings, miss,
+   range, parallel/degenerate triangles, edge hits, origin-inside bounds, malformed
+   pointers/indices and traversal budgets. Keep broad-phase boxes separate from
+   the final triangle test. Do not weaken bounds or substitute a different
+   overlay when a guard fails. Run shared parity if shared math/wrappers change.
+6. Close W6.2 only with the guarded reader, independent geometry reconstruction,
+   pure fixtures and source/binary/fixture receipt. Then NEXT is W6.3: consume
+   W6.1's current hand-fixed ray and per-eye view for beam/dot placement and nearest triangles.
+   Before screen projection, also retain actual guest OFX/OFY/H; W6.1 currently
+   records the affine and scoped view, not those extra projection registers.
+   Reuse existing projection/clip/beam code; do not promote the old right-aim
+   box pointer or borrow the reference's static pivot/muzzle/calibration.
+
+
 ## 7. Session preflight and bounded diagnostic commands
 
 Read only, before editing:
@@ -666,8 +507,9 @@ New-Item -ItemType Directory -Path $runRoot | Out-Null
 The parent `$runRoot` may exist; **each tool's output child must not exist**.
 Do not pre-create the child paths below. The tools own copying and cleanup.
 Run one game at a time. Refuse occupied TCP 4372/existing games; do not attach
-these controls to or terminate an operator's game. Do not pass `-Build` to a
-VR launcher during a TCP run: it configures debug tools OFF.
+these controls to or terminate an operator's game. Configure/build before a
+run, never while its process is alive. Explicit `-DebugPort` with `-Build`
+selects debug ON; ordinary `-Build` selects production OFF.
 
 Small existing zero-angle control, only when a changed path needs it:
 
@@ -936,101 +778,15 @@ if ($LASTEXITCODE -ne 0) { throw 'Release build failed' }
 
 ## 10. Continuation record
 
-- Complete: C1-C4, W1-W3.2, W3.4, W4.1-W4.3, W5.1, W5.3a/b/c/d/e
-  family/lifecycle, final-origin, canonical-marker, all-family conversion,
-  paired preservation/impact, W5.4a/b combat states and W5.4c P1 death/native
-  respawn/fresh post-respawn shot; W6.1 per-eye rendered animated muzzle capture;
-  S1 camera/aim runtime proof, S1a native-flash eye-replay alignment and the
-  SP held-weapon/flash/P38-shot desktop path. W3.3 physical acceptance is open.
-  W3.4 now includes all-ID frozen-frame moving-marker evidence for native
-  recoil, reload, switching, scope hiding and prop actions.
-- Operator policy: use the same hand-fixed calibrated ray for shots and the
-  future laser. Native model recoil/reload stays visual. Moving-marker copies
-  remain diagnostics/guards; they no longer define current shot/laser motion. The crossbow's tested launch sample
-  alone was rigid. Sten reload and scoped-shot ammo are `not-observed`.
-- NEXT task: one physical SP pass on the current binary for hand tracking,
-  muzzle-flash placement, high-impact feedback and `1080p` resolution evidence;
-  then S3-S5 and W6.2 verified triangle/vertex bindings under section 1. Physical
-  W5.4d hand-aim/impact alignment stays open. W5.2 remains open
-  for physical/live-NPC acceptance and non-P38 SP family coverage. Do not repeat
-  the W3.4 matrix, family map, canonical acquisition,
-  W5.3d conversion, W5.3e pair, W5.4 desktop pair/death supplement or W6.1
-  capture matrix unless their path changes.
-- W5.4c result: native/tracked P1 health 32->0->32; P2 native attack shots
-  34/29, all candidate-ineligible. Respawn input constructed no P1 shot. A
-  later P38 shot consumed one round in each mode. The tracked marker sequence
-  advanced from 836 at death to 948 at that shot without changing generation
-  1; converted origin error `0.0000072954`, first-motion error `0`, axis cosine
-  `0.9999991904`. Stereo was inactive; no new rollback acceptance is claimed.
-- Historical animated-reference W5.3e result: 22 native / 21 tracked lifetimes, 16 tracked linked damage
-  writes, exact shotgun construction-scoped RNG (21 updates), six pellets,
-  maximum spread `5.257088` vs `5.259963` degrees and five fallback/recovery
-  controls. The one-frame StG44 lifetime difference is recorded; common-prefix
-  type, release, history, stage, ammo-per-shot and RNG behavior passed.
-- W6.1 result: ten snapshots / 20 eyes, 268 published pairs, 536 rollback
-  checks, zero mismatches/failed eyes and six intentional admission refusals.
-  Base/eye reconstruction is within `1e-8`; same-snapshot W5 world-tip error
-  <=`0.000007151`. New capture OFF by default; no beam/triangle claim.
-- S1 result: 30 live/focused samples on `924691b6...`, shot capture OFF,
-  13,524 canonical camera callbacks, 20 P1-eligible hand-fixed aim updates,
-  zero fallbacks, no legacy P38 aim and three linked P2 health writes
-  (32->14). The run still exited 1 after forced cleanup; S5 remains open.
-- Native flash result: the centre-fixed effect is the existing 32x32
-  semi-transparent packet at `actor+0xCB8/+0xCBC`. Eye replay translates the
-  same packet to the projected animated muzzle. Baseline replay centred near
-  `(287,92)`; +150 mm hand X moved it to `(320,92)` with `231` alignments,
-  zero fallbacks and clean exit on `0dbdb244...`. Physical placement is open.
-- SP desktop result on `0bc60df5...`: the held weapon now uses the actual
-  `0x80091854` dispatcher path, the stereo/flat flash packets at
-  `player+0x600/+0x624` use the `H=400` projection, and the measured
-  `0x80048604 -> 0x80076C28` P38 basis caller consumes the hand-fixed ray.
-  Baseline flash `(355,225)` moved to `(454,225)` after +150 mm hand X;
-  each control wrote 2/2 P38 shots with zero shot/flash fallbacks and clean
-  exit. Physical visual/impact acceptance is still open.
-- Current hand-fixed family pair: all 13 IDs, 21 native / 21 tracked
-  lifetimes, 22 tracked linked P2 health decreases. Shotgun retains six pellets
-  and 21 construction-scoped RNG updates. Missing/stale marker, unfocused, P2
-  ownership and recovered controls pass. Redirected grenade/petrol add four/one
-  real hits where the native baseline misses; no physics check was relaxed.
-- Last evidence: `weapon-rendered-muzzle-receipt.json`,
-  `weapon-rendered-muzzle-build-receipt.json`, `RENDERED_MUZZLE_EVIDENCE.md`,
-  `weapon-hand-fixed-aim-receipt.json`, `weapon-hand-fixed-preservation-receipt.json`,
-  `weapon-death-respawn-receipt.json`,
-  `weapon-death-respawn-validation-receipt.json`, `DEATH_RESPAWN_EVIDENCE.md`,
-  `weapon-combat-states-receipt.json`,
-  `weapon-combat-states-build-receipt.json`, `COMBAT_STATE_EVIDENCE.md`,
-  `weapon-preservation-receipt.json`,
-  `weapon-preservation-build-receipt.json`, `WEAPON_PRESERVATION_EVIDENCE.md`,
-  `weapon-aim-all-receipt.json`,
-  `weapon-aim-all-build-receipt.json`, `weapon-shot-lifecycle-receipt.json`,
-  `weapon-canonical-markers-receipt.json`, `CANONICAL_MARKERS_EVIDENCE.md`,
-  `weapon-canonical-markers-build-receipt.json`,
-  `weapon-projectile-origin-writers-receipt.json`,
-  `SHOT_LIFECYCLE_EVIDENCE.md`, `FRAMEWORK_UPSTREAM_TRACKER.md`,
-  `weapon-shot-families-receipt.json`,
-  `weapon-shot-families-build-receipt.json`,
-  `weapon-moving-muzzle-receipt.json`,
-  `weapon-moving-muzzle-controls.png`,
-  `weapon-complete-gun-controls-receipt.json` / `.png`,
-  `weapon-p38-aim-receipt.json`, `headset-s1-camera-receipt.json`,
-  `headset-s2-mp-frustum-receipt.json`, `native-flash-alignment-receipt.json`,
-  `NATIVE_MUZZLE_FLASH_EVIDENCE.md`,
-  `HEADSET_SMOKE_EVIDENCE.md`, `headset-smoke-20261027-receipt.json` and
-  `sp-weapon-aim-flash-receipt.json`.
-- Exact W5.2 remainder: a compatible copied live NPC/SP fixture and independently
-  guarded SP shot/camera binding. Pure ownership tests and real P2/MP40 controls
-  pass; they do not claim a live NPC or SP override. No unrelated enemy chase.
-- Hardware: the next edge/flash pass needs the operator and interactive Titan
-  account. W3.3/W3.5, W5.4d and release/default promotion still need physical
-  acceptance.
-- Build: `build-release` is Release/OpenXR/diagnostics ON with debug tools ON
-  for active desktop work. Current SP desktop executable `0bc60df5...`; S1a
-  retains `0dbdb244...`; S1 camera predicate was tested on `924691b6...`; W5.3e/W5.4
-  and death receipts retain historical `8d0db606...`. The inherited
-  W5.3d debug-off flat startup remains historical.
-  Direct/flat launches keep the weapon candidates OFF; the VR launcher now
-  opts into the tracked calibrated P38/all-family render and aim candidate.
-  No framework pin changed. Source saves/preferences are unchanged and owned
-  processes are closed.
-- Do not commit/push without current authorization. Unrelated `.commandcode/`
-  remains untouched. Update this pointer and the checkbox plan with new evidence.
+The current checkpoint and next actions are section 1, R1-R7 in VR_PLAN, and
+SP_PARITY_REPAIR.md. Do not resume an older NEXT pointer from an evidence log.
+
+Completed MP inventory, calibration, shot/lifecycle and W6.1 math receipts retain
+their original scope and binary hashes. SP quality was reopened by a demonstrated
+regression and operator rejection; this does not erase those historical results.
+S1b's old movement/projection evidence is superseded for current SP visual claims.
+
+Do not repeat full 13-ID combat matrices for a launcher/config change. Recheck
+changed render/arm/arena paths and native integration, then profile production.
+Keep W3.3/W3.5/W5.4d and live NPC/SP acceptance open until their actual controls
+pass. Never convert transport counters or the 96-vertex result into a headset claim.

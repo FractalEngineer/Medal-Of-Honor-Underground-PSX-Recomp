@@ -369,6 +369,40 @@ int main(void) {
     CHECK(!mohu_vr_weapon_translate_flash_quad(
         flash_xy, 1023.0, 1023.0, flash_out));
 
+    uint32_t precision_control[8] = {
+        4096u, 0u, 4096u, 0u, 4096u, 10u, (uint32_t)-20, 100u,
+    };
+    double factor = 0;
+    CHECK(mohu_vr_weapon_precision_control(precision_control, &factor));
+    CHECK(factor == 4.0); /* 8x Q12 identity would overflow signed RT. */
+    CHECK(precision_control[0] == 16384u && precision_control[5] == 40u);
+    CHECK((int32_t)precision_control[6] == -80 && precision_control[7] == 400u);
+    /* Uniform lift preserves pinhole ratios and scales eye translation once. */
+    CHECK((double)precision_control[5] / precision_control[7] == 0.1);
+    precision_control[5] = INT32_MAX;
+    CHECK(mohu_vr_weapon_precision_control(precision_control, &factor));
+    CHECK(factor == 1.0 && precision_control[5] == INT32_MAX);
+    precision_control[0] = 32768u;
+    uint32_t precision_before[8];
+    memcpy(precision_before, precision_control, sizeof precision_before);
+    factor = 9.0;
+    CHECK(!mohu_vr_weapon_precision_control(precision_control, &factor));
+    CHECK(factor == 9.0 && !memcmp(precision_before, precision_control, sizeof precision_before));
+    CHECK(!mohu_vr_weapon_precision_control(NULL, &factor));
+    const uint32_t arena = 0x80100000u, bank = 0x10000u;
+    CHECK(mohu_vr_weapon_spare_bank(arena, bank, arena + 100u,
+        arena + bank - 1u) == arena + 2u * bank - 32768u);
+    CHECK(mohu_vr_weapon_spare_bank(arena, bank, arena + bank + 100u,
+        arena + 2u * bank - 1u) == arena + bank - 32768u);
+    CHECK(!mohu_vr_weapon_spare_bank(arena, bank, arena + 100u,
+        arena + 2u * bank - 1u)); /* cursor belongs to the wrong bank */
+    CHECK(!mohu_vr_weapon_spare_bank(arena, bank, arena + bank,
+        arena + bank - 1u));
+    CHECK(!mohu_vr_weapon_spare_bank(arena, 1024u, arena, arena + 1023u));
+    CHECK(!mohu_vr_weapon_spare_bank(0x801F0000u, bank, 0x801F0000u,
+        0x801FFFFFu)); /* other bank would leave RAM */
+    CHECK(!mohu_vr_weapon_spare_bank(arena, bank, arena, UINT32_MAX));
+
     puts("PASS: weapon profiles, node guard, tracked affine and stale fallback");
     return 0;
 }

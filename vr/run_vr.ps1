@@ -195,16 +195,17 @@ function Build-Release {
     } else {
         Write-Warning 'Pre-fetched OpenXR SDK source is unavailable; CMake will try the pinned fetch.'
     }
+    $debugTools = if ($DebugPort -gt 0) { 'ON' } else { 'OFF' }
     cmake -S $repoRoot -B $buildPath `
         -DCMAKE_BUILD_TYPE=Release `
         -DMOHU_VR_DIAGNOSTICS=ON `
         -DPSX_OPENXR=ON `
-        -DPSX_DEBUG_TOOLS=OFF `
+        -DPSX_DEBUG_TOOLS=$debugTools `
         -DPSXRECOMP_REQUIRE_GAME_C=ON
     if ($LASTEXITCODE -ne 0) {
         throw 'Release configure failed.'
     }
-    cmake --build $buildPath --target psx-runtime -- -j 8
+    cmake --build $buildPath --target psx-runtime --parallel 2
     if ($LASTEXITCODE -ne 0) {
         throw 'Release build failed.'
     }

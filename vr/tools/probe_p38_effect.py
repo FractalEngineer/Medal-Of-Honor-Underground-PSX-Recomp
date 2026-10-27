@@ -87,6 +87,7 @@ def run(directory, hand_x_mm=0, hand_y_mm=0, sp=False,
     )
     env = comparison.environment("tracked", True, hand_fixed=True)
     if sp:
+        env["MOHU_VR_UNITS_PER_METER"] = "238.80597014925373"
         for key in ("MOHU_VR_MP_CONTROL", "MOHU_VR_MP_FRUSTUM"):
             env.pop(key, None)
         env["MOHU_VR_WEAPON_TRACE"] = "1"
@@ -187,12 +188,9 @@ def run(directory, hand_x_mm=0, hand_y_mm=0, sp=False,
                     "player": player_snapshot,
                 }
             )
-            if sp:
-                eyes = out / "sp-eyes"
-                eyes.mkdir()
-                native.command(
-                    "stereo_dump", path=eyes.as_posix(), count=6
-                )
+            eyes = out / "sp-eyes"  # Retain the historical evidence path.
+            eyes.mkdir()
+            native.command("stereo_dump", path=eyes.as_posix(), count=6)
             if sp:
                 native.command("set_input", buttons="0xbfff")
             else:
@@ -250,12 +248,15 @@ def run(directory, hand_x_mm=0, hand_y_mm=0, sp=False,
                     if (
                         prim.get("semi")
                         and int(prim.get("src", "0"), 16)
-                        == (actor + (0x628 if sp else 0xCBC)) & 0x1FFFFFFF
+                        in ({(actor + 0x600) & 0x1FFFFFFF,
+                             (actor + 0x628) & 0x1FFFFFFF} if sp else
+                            {(actor + 0xCBC) & 0x1FFFFFFF})
                     ):
                         vertices = prim["verts"]
                         flash_quads.append(
                             {
                                 "frame": frame,
+                                "source": prim["src"],
                                 "center": [
                                     sum(vertex[0] for vertex in vertices)
                                     / len(vertices),
@@ -330,7 +331,7 @@ def run(directory, hand_x_mm=0, hand_y_mm=0, sp=False,
             except (OSError, RuntimeError):
                 pass
             try:
-                process.wait(timeout=8)
+                process.wait(timeout=20)
             except subprocess.TimeoutExpired:
                 receipt["forced_cleanup"] = True
                 process.terminate()

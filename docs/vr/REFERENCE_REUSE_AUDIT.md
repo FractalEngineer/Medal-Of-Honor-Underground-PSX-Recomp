@@ -12,6 +12,26 @@ The task dependencies below describe this audit's historical checkpoint; use
 continuation. [FRAMEWORK_UPSTREAM_TRACKER.md](FRAMEWORK_UPSTREAM_TRACKER.md)
 records generic changes, both consumer pins and merged/pending upstream work.
 
+## 2026-10-28 repair review (current precedence)
+
+The original audit identified reusable work but the SP implementation did not
+carry the full reference pattern through. Follow R1-R7 in VR_PLAN and section 1
+of HANDOFF, not the historical W2.3/serial priority below. The new evidence is
+[SP_PARITY_REPAIR.md](SP_PARITY_REPAIR.md).
+
+| Area | Existing first-game solution | Underground discrepancy / current repair |
+| --- | --- | --- |
+| Held draw | `vr_weapon_geometry_filter` + `vr_weapon_vertices_filter` in `vr/psx_vr_stereo.c`: scope the weapon, transform after animation, restore before other entities | SP initially changed an earlier dispatcher and omitted its post-animation adapter. Now apply at `80090954` and mask/projected-tip capture at `80090A78`. |
+| Weapon only | Native face filtering using validated profile gun islands; mixed nodes retain suppressor/barrel islands | MP already had a validated projected-vertex equivalent, but SP left arms visible. SP now reuses the same local profile/mask; P38 keeps 96 and masks 142 vertices, including loss fallback. |
+| Precision | Uniform weapon-coordinate and eye-translation enlargement avoids native H/2 rejection without changing apparent scale | Now adapt the reference precision rule with a bounded Q12 power-of-two factor. Shot coordinates remain unscaled. |
+| Muzzle placement | Reference laser captures the actual scoped weapon affine/view. Its native muzzle flash has no separate packet-relocation function in the reviewed source. | The old SP flash also used a color-source address as bank 0's tag, so that visible bank never moved while bank 1 supplied successful counters. It added a second fixed-400 projection and used static markers. Now use the actual projected animated tip, avoiding duplicate projection math. Reference calibration/IDs are still not portable data. |
+| Scene visibility | Existing frustum/PGXP correction, with native geometry and state restoration | Slot 3 also exhausted the native primitive arena before the gun draw. This target-specific cause was measured at `8009086C`; a guarded spare native-bank region now restores the held draw. |
+| Performance | `VR_SLOT2_PERFORMANCE.md`: separate production OFF from detailed debug ON, VERIFY separately, report actual pairs and guest cadence | The playable checkpoint retained debug ON and the launcher uses an interpreter-only analysis config. Restore production OFF and measure matched windows; native cached config currently skips VR hooks and gives zero pairs. Instrumentation integration remains R4. |
+| Plan status | Separate physical acceptance, desktop controls and shipping defaults | Removed stale “physical next”, “no SP binding” and W6-first pointers. Real SP NPC damage, fog, broader scenes/families and physical acceptance remain open. |
+
+No framework, first-game source, gitlink or generated guest C was modified by
+this repair. Shared geometry helpers retain their existing ownership and pins.
+
 ## Finding
 
 The plan was too serial and did not name enough reusable implementations.

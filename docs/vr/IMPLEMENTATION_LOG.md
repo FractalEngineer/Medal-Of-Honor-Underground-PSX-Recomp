@@ -1522,3 +1522,54 @@ source saves, defaults, historical receipts and unrelated `.commandcode/`.
 - Limits: synthetic desktop input only. Physical gun/flash/impact alignment,
   non-P38 SP shot families, SP arm filtering and measured performance remain
   open. The high-impact report still requires a controlled target test.
+
+
+## 2026-10-28 - Reopen SP visual quality and repair reference parity
+
+- Re-audited the reference weapon geometry/vertex filters, weapon profiles,
+  rendered-affine/laser projection and production performance documentation.
+  The reference architecture was reusable; the SP adapter had not carried its
+  post-animation transform, arm removal and precision handling through.
+- Found the direct flash binding bug: `player+0x600` is bank 0's color-source
+  word, not its FT4 tag. The correct tags are `+0x5FC/+0x624`, stride 40.
+  The old guard silently skipped the visible first bank while the other bank
+  supplied passing alignment counters. The old flat/stereo labels and general
+  SP H=400 projection statement are superseded, with historical receipts intact.
+- Apply SP calibration after native animation at `80090954`; sample the actual
+  projected muzzle and mask arms at `80090A78`. Share that projected-tip reader
+  with MP. The shot/laser ray stays fixed to the hand; recoil moves the visible
+  barrel/flash. Out-of-view known owned flashes are degenerated during replay.
+- P38 now preserves 96 gun vertices (including its barrel) and masks 142 arm
+  vertices per eye, including tracking-loss native fallback. Physical acceptance
+  remains open and unknown assets retain the guarded fallback policy.
+- Reproduced slot-3 loss at native arena-full branch `8009086C`. A same-binary
+  head/hand +60-degree control changes 0 visible gun vertices to 96/96 using a
+  guarded unreferenced tail of the other native primitive bank. Restore arena
+  pointers immediately; source geometry/packets are rollback-owned. Persistent
+  GPU-DMA allocation was rejected because it invalidated existing save layout;
+  reduced reservation did not fix saturation. Neither experiment remains in code.
+- Final flash source histories show `player+0x600` and `+0x628` moving to the
+  same displaced muzzle `(450,217)`. Actual both-eye firing images show the flash
+  at the barrel. The final-source reload, lateral-eye, head-follow and out-of-view
+  controls pass with nonzero rollback verification and zero mismatches.
+- Restored the active playable build to debug OFF. Matched final-source hidden-
+  window controls measure 18.17 -> 29.19 fresh world pairs/s (+60.6%), with
+  unchanged 1080p rendering, no XR, native-hand fallback, no screenshots/VERIFY
+  and clean exits. This is build-overhead evidence, not physical display FPS.
+  Earlier OFF repeats also reached 28.50/29.10; their hashes stay historical.
+- Identified the next integration gap: cached native `game.toml` bypasses the
+  VR entry/instruction hooks and produces zero stereo pairs. Its higher flat
+  cadence is invalid as VR performance. Native instrumentation is R4b; fog,
+  linked live SP NPC impact and a later physical batch are R5-R7. W6.2 is deferred.
+- Added focused reusable SP visual/cadence probes, expanded GPU flash collection
+  to both actual SP color sources, and increased its bounded shutdown allowance.
+  Launcher `-Build` selects debug ON only for an explicit debug port and uses
+  two build jobs. Normal production remains OFF.
+- Validation: 121 Python tests, strict weapon C fixtures and diagnostic syntax,
+  diagnostic/production Release builds, PowerShell parse and bounded desktop
+  runs. No headset, reference source, framework/UI pin, generated guest C,
+  original saves/preferences or unrelated `.commandcode/` were changed.
+- Current production executable: `5199a03b67277f263452cbdf5dd8e4f583744c46a9b2ad3e98e8143b5afe1e24`.
+  Source, fixture, binary, raw-receipt and inspected-image hashes are in
+  `vr/proof/sp-parity-repair-receipt.json`. Current conclusions and exact next
+  actions are in SP_PARITY_REPAIR.md, VR_PLAN.md and HANDOFF.md.

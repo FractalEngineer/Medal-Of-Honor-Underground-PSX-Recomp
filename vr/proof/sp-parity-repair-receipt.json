@@ -1,0 +1,929 @@
+{
+  "schema": 1,
+  "date": "2026-10-28",
+  "kind": "SP parity repair: visible muzzle, arms, primitive exhaustion and production build overhead",
+  "headset_acceptance": false,
+  "sp_npc_damage_acceptance": false,
+  "release_acceptance": false,
+  "starting_revision": "550d9cc",
+  "source_state": "working tree",
+  "framework_pin": "555e1eabccc59b9b6ff0d9fca48aca783513dc86",
+  "sources": {
+    "vr/underground/vr_diagnostic.c": "80ef574d0179c708df4bd5b4f5ca1eefa5b3cd863cbb312b79e840a131a941a9",
+    "vr/underground/weapon.c": "c5a3dd0ae777599342637ec484aad42e400f2350f16c84cad8e8095e039de2d0",
+    "vr/underground/weapon.h": "906138806b45ac887825acb707cbe7c378161c129bb579367cc0de798c93e433",
+    "vr/tests/test_weapon.c": "fb62384557a30e9f5d7a9c7d0a9616f92bd8263411779902b8f9a8a3832a1722",
+    "vr/run_vr.ps1": "2e7c4062fdacb817b4e506c468bf5eedf8f327e8a6b85f8b1d185a2e721909f1",
+    "vr/tools/probe_sp_weapon.py": "92572130fdbf8005d20b3f7c70d75fdab2d6326783d68ba4966898fe1329ff1b",
+    "vr/tools/probe_p38_effect.py": "bcea01cfbd5c7b99f28e5a011aeacbac6906df35095ac40e30b7b473b7dc7e8a",
+    "vr/tools/profile_sp_runtime.py": "5220fd52a72dd952b5d0addfc581c294155cd3e10539de9af912893bce6b4362"
+  },
+  "active_production_executable_sha256": "5199a03b67277f263452cbdf5dd8e4f583744c46a9b2ad3e98e8143b5afe1e24",
+  "source_policy": "Original saves/preferences untouched; no guest generated C, framework or reference-game source changes",
+  "flash_bindings": {
+    "sp_packet_tags": [
+      "player+0x5FC",
+      "player+0x624"
+    ],
+    "sp_color_sources": [
+      "player+0x600",
+      "player+0x628"
+    ],
+    "stride": 40,
+    "muzzle_source": "Same-eye projected animated tip vertices; no independent focal/H formula",
+    "ownership": "Known held model only; invalid/out-of-view owned flash is degenerated inside replay"
+  },
+  "controls": [
+    {
+      "label": "Causal missing-gun control; spare native bank disabled",
+      "raw_receipt": {
+        "path": "analysis/vr-baseline/sp-parity-final-arena-disabled-20261028/receipt.json",
+        "sha256": "665bf5dbbffa6c200982c41925b7d595a9d4aa0e05b66d6fde5c65a18aea546d"
+      },
+      "executable_sha256": "870a4d5ad47d40e79bdba1bc034495f33dc56632ff7b062ba2ca6803880a71c2",
+      "transport_complete": true,
+      "control_passed": null,
+      "exit_code": 0,
+      "forced_cleanup": false,
+      "fixture": {
+        "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\saves\\openbios\\state_8001F844_slot03.pst": "85ca88b1ca3f54856530f4af0495dfc2c990a8529d868c3c4a350ac27511cc7a",
+        "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\saves\\openbios\\state_8001F844_slot03.thumb": "92297c45e412148d652aaea843a59b16e5da7af35805a88851b6eb572ea32640"
+      },
+      "render": {
+        "calibrated": 0,
+        "aim": 0,
+        "weapon_aim": 1,
+        "masked_arm_vertices": [
+          0,
+          0
+        ],
+        "visible_gun_vertices": [
+          0,
+          0
+        ]
+      },
+      "counters": {
+        "mohu.vr.shot.sp.camera": 282,
+        "mohu.vr.weapon.sp.tracking_fallback": 34,
+        "mohu.vr.weapon.sp.arena_full": 141,
+        "mohu.vr.weapon.sp.project_fallback": 141,
+        "mohu.vr.shot.sp.aimed": 1
+      },
+      "stereo": {
+        "pairs": 71,
+        "failed": 0
+      },
+      "verification": {
+        "verify_checks": 142,
+        "verify_mismatch": 0,
+        "watchdog": 0,
+        "discarded": 0
+      },
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "reload_status": null,
+      "reload_render": null
+    },
+    {
+      "label": "Same-binary missing-gun control; spare native bank enabled",
+      "raw_receipt": {
+        "path": "analysis/vr-baseline/sp-parity-final-arena-enabled-20261028/receipt.json",
+        "sha256": "bccef5e67609aba20ad2a15b3e38052b0ac51ace330b8b8f4768c92b83d7d20e"
+      },
+      "executable_sha256": "870a4d5ad47d40e79bdba1bc034495f33dc56632ff7b062ba2ca6803880a71c2",
+      "transport_complete": true,
+      "control_passed": null,
+      "exit_code": 0,
+      "forced_cleanup": false,
+      "fixture": {
+        "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\saves\\openbios\\state_8001F844_slot03.pst": "85ca88b1ca3f54856530f4af0495dfc2c990a8529d868c3c4a350ac27511cc7a",
+        "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\saves\\openbios\\state_8001F844_slot03.thumb": "92297c45e412148d652aaea843a59b16e5da7af35805a88851b6eb572ea32640"
+      },
+      "render": {
+        "calibrated": 0,
+        "aim": 0,
+        "weapon_aim": 1,
+        "masked_arm_vertices": [
+          142,
+          142
+        ],
+        "visible_gun_vertices": [
+          96,
+          96
+        ]
+      },
+      "counters": {
+        "mohu.vr.shot.sp.camera": 270,
+        "mohu.vr.weapon.sp.tracking_fallback": 32,
+        "mohu.vr.weapon.sp.spare_arena": 135,
+        "mohu.vr.weapon.sp.native_gun_only": 32,
+        "mohu.vr.weapon.sp.gun_only": 135,
+        "mohu.vr.weapon.sp.project": 103,
+        "mohu.vr.weapon.sp.apply": 102,
+        "mohu.vr.flash.sp.projected_tip": 98,
+        "mohu.vr.flash.align": 97,
+        "mohu.vr.shot.sp.aimed": 1
+      },
+      "stereo": {
+        "pairs": 68,
+        "failed": 0
+      },
+      "verification": {
+        "verify_checks": 136,
+        "verify_mismatch": 0,
+        "watchdog": 0,
+        "discarded": 0
+      },
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "reload_status": null,
+      "reload_render": null
+    },
+    {
+      "label": "Displaced hand; arm/geometry scope before final flash-tag correction",
+      "raw_receipt": {
+        "path": "analysis/vr-baseline/sp-parity-validated-shift-20261028/receipt.json",
+        "sha256": "1d487bf60c1e04c10901468bbf6db16e12deb24aaa7fadbc1a986fbed5037119"
+      },
+      "executable_sha256": "870a4d5ad47d40e79bdba1bc034495f33dc56632ff7b062ba2ca6803880a71c2",
+      "transport_complete": true,
+      "control_passed": null,
+      "exit_code": 0,
+      "forced_cleanup": false,
+      "fixture": {
+        "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\saves\\openbios\\state_8001F844_slot03.pst": "85ca88b1ca3f54856530f4af0495dfc2c990a8529d868c3c4a350ac27511cc7a",
+        "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\saves\\openbios\\state_8001F844_slot03.thumb": "92297c45e412148d652aaea843a59b16e5da7af35805a88851b6eb572ea32640"
+      },
+      "render": {
+        "calibrated": 0,
+        "aim": 0,
+        "weapon_aim": 1,
+        "masked_arm_vertices": [
+          142,
+          142
+        ],
+        "visible_gun_vertices": [
+          96,
+          96
+        ]
+      },
+      "counters": {
+        "mohu.vr.shot.sp.camera": 226,
+        "mohu.vr.weapon.sp.tracking_fallback": 32,
+        "mohu.vr.weapon.sp.native_gun_only": 32,
+        "mohu.vr.flash.sp.projected_tip": 112,
+        "mohu.vr.weapon.sp.gun_only": 112,
+        "mohu.vr.flash.align": 112,
+        "mohu.vr.weapon.sp.project": 81,
+        "mohu.vr.weapon.sp.apply": 80,
+        "mohu.vr.shot.sp.aimed": 1
+      },
+      "stereo": {
+        "pairs": 56,
+        "failed": 0
+      },
+      "verification": {
+        "verify_checks": 114,
+        "verify_mismatch": 0,
+        "watchdog": 0,
+        "discarded": 0
+      },
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "reload_status": null,
+      "reload_render": null
+    },
+    {
+      "label": "Close hand; arm/geometry scope before final flash-tag correction",
+      "raw_receipt": {
+        "path": "analysis/vr-baseline/sp-parity-validated-close-20261028/receipt.json",
+        "sha256": "f6d2662edbc0113e8a21306f086560d9fb12cb43799fdf1ddbe804a324612a42"
+      },
+      "executable_sha256": "870a4d5ad47d40e79bdba1bc034495f33dc56632ff7b062ba2ca6803880a71c2",
+      "transport_complete": true,
+      "control_passed": null,
+      "exit_code": 0,
+      "forced_cleanup": false,
+      "fixture": {
+        "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\saves\\openbios\\state_8001F844_slot03.pst": "85ca88b1ca3f54856530f4af0495dfc2c990a8529d868c3c4a350ac27511cc7a",
+        "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\saves\\openbios\\state_8001F844_slot03.thumb": "92297c45e412148d652aaea843a59b16e5da7af35805a88851b6eb572ea32640"
+      },
+      "render": {
+        "calibrated": 0,
+        "aim": 0,
+        "weapon_aim": 1,
+        "masked_arm_vertices": [
+          142,
+          142
+        ],
+        "visible_gun_vertices": [
+          96,
+          96
+        ]
+      },
+      "counters": {
+        "mohu.vr.shot.sp.camera": 274,
+        "mohu.vr.weapon.sp.tracking_fallback": 32,
+        "mohu.vr.weapon.sp.native_gun_only": 32,
+        "mohu.vr.flash.sp.projected_tip": 138,
+        "mohu.vr.weapon.sp.gun_only": 138,
+        "mohu.vr.flash.align": 138,
+        "mohu.vr.weapon.sp.project": 106,
+        "mohu.vr.weapon.sp.apply": 106,
+        "mohu.vr.shot.sp.aimed": 1
+      },
+      "stereo": {
+        "pairs": 69,
+        "failed": 0
+      },
+      "verification": {
+        "verify_checks": 138,
+        "verify_mismatch": 0,
+        "watchdog": 0,
+        "discarded": 0
+      },
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "reload_status": null,
+      "reload_render": null
+    },
+    {
+      "label": "Tracking loss keeps gun-only fallback; before final flash-tag correction",
+      "raw_receipt": {
+        "path": "analysis/vr-baseline/sp-parity-validated-loss-20261028/receipt.json",
+        "sha256": "7320c3f27cca7d70cf4470a61fee9447f50201edaf98aa92accf1b0eb1fc5cf5"
+      },
+      "executable_sha256": "870a4d5ad47d40e79bdba1bc034495f33dc56632ff7b062ba2ca6803880a71c2",
+      "transport_complete": true,
+      "control_passed": null,
+      "exit_code": 0,
+      "forced_cleanup": false,
+      "fixture": {
+        "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\saves\\openbios\\state_8001F844_slot03.pst": "85ca88b1ca3f54856530f4af0495dfc2c990a8529d868c3c4a350ac27511cc7a",
+        "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\saves\\openbios\\state_8001F844_slot03.thumb": "92297c45e412148d652aaea843a59b16e5da7af35805a88851b6eb572ea32640"
+      },
+      "render": {
+        "calibrated": 0,
+        "aim": 0,
+        "weapon_aim": 1,
+        "masked_arm_vertices": [
+          142,
+          142
+        ],
+        "visible_gun_vertices": [
+          96,
+          96
+        ]
+      },
+      "counters": {
+        "mohu.vr.shot.sp.camera": 274,
+        "mohu.vr.weapon.sp.tracking_fallback": 138,
+        "mohu.vr.weapon.sp.native_gun_only": 138,
+        "mohu.vr.flash.sp.projected_tip": 138,
+        "mohu.vr.weapon.sp.gun_only": 138,
+        "mohu.vr.flash.align": 137,
+        "mohu.vr.shot.sp.tracking_fallback": 1
+      },
+      "stereo": {
+        "pairs": 69,
+        "failed": 0
+      },
+      "verification": {
+        "verify_checks": 138,
+        "verify_mismatch": 0,
+        "watchdog": 0,
+        "discarded": 0
+      },
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "reload_status": null,
+      "reload_render": null
+    },
+    {
+      "label": "Final-source P38 native firing, lateral eyes and repeated SP load",
+      "raw_receipt": {
+        "path": "analysis/vr-baseline/sp-final-current-reload-20261028/receipt.json",
+        "sha256": "3f3edeeb32533c3e7a3e40220b52fe30e108bd6d009d33bb34d0860c7580579f"
+      },
+      "executable_sha256": "354594cc613d3eace3c0ff5f2295a0c3d444f9d5a6016386d8036dad6f827b0a",
+      "transport_complete": true,
+      "control_passed": true,
+      "exit_code": 0,
+      "forced_cleanup": false,
+      "fixture": {
+        "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\saves\\openbios\\state_8001F844_slot03.pst": "85ca88b1ca3f54856530f4af0495dfc2c990a8529d868c3c4a350ac27511cc7a",
+        "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\saves\\openbios\\state_8001F844_slot03.thumb": "92297c45e412148d652aaea843a59b16e5da7af35805a88851b6eb572ea32640"
+      },
+      "render": {
+        "calibrated": 0,
+        "aim": 0,
+        "weapon_aim": 1,
+        "masked_arm_vertices": [
+          142,
+          142
+        ],
+        "visible_gun_vertices": [
+          96,
+          96
+        ]
+      },
+      "counters": {
+        "mohu.vr.shot.sp.camera": 274,
+        "mohu.vr.weapon.sp.tracking_fallback": 32,
+        "mohu.vr.weapon.sp.native_gun_only": 32,
+        "mohu.vr.flash.sp.projected_tip": 138,
+        "mohu.vr.weapon.sp.gun_only": 138,
+        "mohu.vr.flash.align": 274,
+        "mohu.vr.flash.sp.bank0": 137,
+        "mohu.vr.flash.sp.bank1": 137,
+        "mohu.vr.weapon.sp.project": 106,
+        "mohu.vr.weapon.sp.apply": 105,
+        "mohu.vr.shot.sp.aimed": 1
+      },
+      "stereo": {
+        "pairs": 69,
+        "failed": 0
+      },
+      "verification": {
+        "verify_checks": 138,
+        "verify_mismatch": 0,
+        "watchdog": 0,
+        "discarded": 0
+      },
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "reload_status": {
+        "id": 0,
+        "ok": true,
+        "generation": 2,
+        "pending": 0,
+        "last_ok": 1,
+        "last_op": "load",
+        "last_slot": 3
+      },
+      "reload_render": {
+        "calibrated": 0,
+        "aim": 0,
+        "weapon_aim": 1,
+        "masked_arm_vertices": [
+          142,
+          142
+        ],
+        "visible_gun_vertices": [
+          96,
+          96
+        ]
+      }
+    },
+    {
+      "label": "Final-source owned flash suppression outside eye",
+      "raw_receipt": {
+        "path": "analysis/vr-baseline/sp-final-current-out-of-view-20261028/receipt.json",
+        "sha256": "1dc8864c7290c3464612fa511681df9860d6d98c06e80cffbeac1e535fd64c54"
+      },
+      "executable_sha256": "354594cc613d3eace3c0ff5f2295a0c3d444f9d5a6016386d8036dad6f827b0a",
+      "transport_complete": true,
+      "control_passed": true,
+      "exit_code": 0,
+      "forced_cleanup": false,
+      "fixture": {
+        "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\saves\\openbios\\state_8001F844_slot03.pst": "85ca88b1ca3f54856530f4af0495dfc2c990a8529d868c3c4a350ac27511cc7a",
+        "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\saves\\openbios\\state_8001F844_slot03.thumb": "92297c45e412148d652aaea843a59b16e5da7af35805a88851b6eb572ea32640"
+      },
+      "render": {
+        "calibrated": 0,
+        "aim": 0,
+        "weapon_aim": 1,
+        "masked_arm_vertices": [
+          142,
+          142
+        ],
+        "visible_gun_vertices": [
+          0,
+          0
+        ]
+      },
+      "counters": {
+        "mohu.vr.shot.sp.camera": 238,
+        "mohu.vr.weapon.sp.tracking_fallback": 33,
+        "mohu.vr.weapon.sp.spare_arena": 118,
+        "mohu.vr.weapon.sp.native_gun_only": 33,
+        "mohu.vr.weapon.sp.gun_only": 118,
+        "mohu.vr.flash.hidden": 236,
+        "mohu.vr.flash.sp.bank0": 118,
+        "mohu.vr.flash.sp.bank1": 118,
+        "mohu.vr.weapon.sp.project": 85,
+        "mohu.vr.weapon.sp.apply": 85,
+        "mohu.vr.shot.sp.aimed": 1
+      },
+      "stereo": {
+        "pairs": 59,
+        "failed": 0
+      },
+      "verification": {
+        "verify_checks": 119,
+        "verify_mismatch": 0,
+        "watchdog": 0,
+        "discarded": 0
+      },
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "reload_status": null,
+      "reload_render": null
+    },
+    {
+      "label": "Final-source turned head/hand, spare bank, lateral eyes and gun-only rendering",
+      "raw_receipt": {
+        "path": "analysis/vr-baseline/sp-final-current-follow60-20261028/receipt.json",
+        "sha256": "893045763102acfce02d2c0e7b5ecfb9a2a81afad6f223793abcab9a8536ba57"
+      },
+      "executable_sha256": "354594cc613d3eace3c0ff5f2295a0c3d444f9d5a6016386d8036dad6f827b0a",
+      "transport_complete": true,
+      "control_passed": true,
+      "exit_code": 0,
+      "forced_cleanup": false,
+      "fixture": {
+        "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\saves\\openbios\\state_8001F844_slot03.pst": "85ca88b1ca3f54856530f4af0495dfc2c990a8529d868c3c4a350ac27511cc7a",
+        "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\saves\\openbios\\state_8001F844_slot03.thumb": "92297c45e412148d652aaea843a59b16e5da7af35805a88851b6eb572ea32640"
+      },
+      "render": {
+        "calibrated": 0,
+        "aim": 0,
+        "weapon_aim": 1,
+        "masked_arm_vertices": [
+          142,
+          142
+        ],
+        "visible_gun_vertices": [
+          96,
+          96
+        ]
+      },
+      "counters": {
+        "mohu.vr.shot.sp.camera": 258,
+        "mohu.vr.weapon.sp.tracking_fallback": 34,
+        "mohu.vr.weapon.sp.spare_arena": 128,
+        "mohu.vr.weapon.sp.native_gun_only": 34,
+        "mohu.vr.weapon.sp.gun_only": 128,
+        "mohu.vr.flash.hidden": 76,
+        "mohu.vr.flash.sp.bank0": 128,
+        "mohu.vr.flash.sp.bank1": 128,
+        "mohu.vr.weapon.sp.project": 94,
+        "mohu.vr.weapon.sp.apply": 94,
+        "mohu.vr.flash.sp.projected_tip": 90,
+        "mohu.vr.flash.align": 180,
+        "mohu.vr.shot.sp.aimed": 1
+      },
+      "stereo": {
+        "pairs": 64,
+        "failed": 0
+      },
+      "verification": {
+        "verify_checks": 128,
+        "verify_mismatch": 0,
+        "watchdog": 0,
+        "discarded": 0
+      },
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "reload_status": null,
+      "reload_render": null
+    }
+  ],
+  "flash": [
+    {
+      "label": "Corrected first FT4 tag; before out-of-view suppression",
+      "raw_receipt": {
+        "path": "analysis/vr-baseline/sp-both-flash-banks-20261028/receipt.json",
+        "sha256": "0ae936ebeaa53063c5177765efb0b16a0e46d51447cebd280544d250a91712b6"
+      },
+      "executable_sha256": "e963f0639058323b0359b72ac064fdfbee875e9981368d989ee68570fa41d197",
+      "alignments": 403,
+      "fallbacks": 0,
+      "bank_operations": {
+        "mohu.vr.flash.sp.bank0": 403
+      },
+      "observed_quads": [
+        {
+          "frame": 57,
+          "source": "0x000F11E0",
+          "center": [
+            350.0,
+            217.0
+          ],
+          "vertices": [
+            [
+              331,
+              201
+            ],
+            [
+              371,
+              206
+            ],
+            [
+              329,
+              228
+            ],
+            [
+              369,
+              233
+            ]
+          ]
+        },
+        {
+          "frame": 57,
+          "source": "0x000F11E0",
+          "center": [
+            350.0,
+            217.0
+          ],
+          "vertices": [
+            [
+              331,
+              201
+            ],
+            [
+              371,
+              206
+            ],
+            [
+              329,
+              228
+            ],
+            [
+              369,
+              233
+            ]
+          ]
+        },
+        {
+          "frame": 59,
+          "source": "0x000F11E0",
+          "center": [
+            288.0,
+            157.0
+          ],
+          "vertices": [
+            [
+              270,
+              141
+            ],
+            [
+              310,
+              147
+            ],
+            [
+              266,
+              167
+            ],
+            [
+              306,
+              173
+            ]
+          ]
+        }
+      ],
+      "inspected_eye_images": [
+        {
+          "path": "analysis/vr-baseline/sp-both-flash-banks-20261028/sp-eyes/p000028_left.png",
+          "sha256": "f60434c2db7457e191c0b088318dcdba2efe187c81fbe0fffc958b459967ae70"
+        },
+        {
+          "path": "analysis/vr-baseline/sp-both-flash-banks-20261028/sp-eyes/p000028_right.png",
+          "sha256": "f60434c2db7457e191c0b088318dcdba2efe187c81fbe0fffc958b459967ae70"
+        }
+      ],
+      "exit_code": 0,
+      "forced_cleanup": false,
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true
+    },
+    {
+      "label": "Final-source shifted hand; both FT4 sources visible in GP0 history",
+      "raw_receipt": {
+        "path": "analysis/vr-baseline/sp-flash-shift-both-banks-20261028/receipt.json",
+        "sha256": "c16f95be711ac72ff5774df9c8011d01a623e8e231c7a892f2ffef479a33e18e"
+      },
+      "executable_sha256": "354594cc613d3eace3c0ff5f2295a0c3d444f9d5a6016386d8036dad6f827b0a",
+      "alignments": 774,
+      "fallbacks": 0,
+      "bank_operations": {
+        "mohu.vr.flash.sp.bank1": 400,
+        "mohu.vr.flash.sp.bank0": 374
+      },
+      "observed_quads": [
+        {
+          "frame": 59,
+          "source": "0x000F1208",
+          "center": [
+            450.0,
+            217.0
+          ],
+          "vertices": [
+            [
+              454,
+              198
+            ],
+            [
+              476,
+              220
+            ],
+            [
+              424,
+              214
+            ],
+            [
+              446,
+              236
+            ]
+          ]
+        },
+        {
+          "frame": 59,
+          "source": "0x000F1208",
+          "center": [
+            450.0,
+            217.0
+          ],
+          "vertices": [
+            [
+              454,
+              198
+            ],
+            [
+              476,
+              220
+            ],
+            [
+              424,
+              214
+            ],
+            [
+              446,
+              236
+            ]
+          ]
+        },
+        {
+          "frame": 61,
+          "source": "0x000F1208",
+          "center": [
+            289.0,
+            397.0
+          ],
+          "vertices": [
+            [
+              292,
+              378
+            ],
+            [
+              315,
+              400
+            ],
+            [
+              263,
+              394
+            ],
+            [
+              286,
+              416
+            ]
+          ]
+        },
+        {
+          "frame": 85,
+          "source": "0x000F11E0",
+          "center": [
+            450.0,
+            217.0
+          ],
+          "vertices": [
+            [
+              423,
+              225
+            ],
+            [
+              431,
+              201
+            ],
+            [
+              469,
+              233
+            ],
+            [
+              477,
+              209
+            ]
+          ]
+        },
+        {
+          "frame": 85,
+          "source": "0x000F11E0",
+          "center": [
+            450.0,
+            217.0
+          ],
+          "vertices": [
+            [
+              423,
+              225
+            ],
+            [
+              431,
+              201
+            ],
+            [
+              469,
+              233
+            ],
+            [
+              477,
+              209
+            ]
+          ]
+        },
+        {
+          "frame": 87,
+          "source": "0x000F11E0",
+          "center": [
+            288.0,
+            157.0
+          ],
+          "vertices": [
+            [
+              261,
+              166
+            ],
+            [
+              269,
+              141
+            ],
+            [
+              307,
+              173
+            ],
+            [
+              315,
+              148
+            ]
+          ]
+        }
+      ],
+      "inspected_eye_images": [
+        {
+          "path": "analysis/vr-baseline/sp-flash-shift-both-banks-20261028/sp-eyes/p000029_left.png",
+          "sha256": "9322287ca6eb682c84e5a2f3329d6fd8727fa675d0d3efa28047a7048afdad7e"
+        },
+        {
+          "path": "analysis/vr-baseline/sp-flash-shift-both-banks-20261028/sp-eyes/p000029_right.png",
+          "sha256": "9322287ca6eb682c84e5a2f3329d6fd8727fa675d0d3efa28047a7048afdad7e"
+        }
+      ],
+      "exit_code": 0,
+      "forced_cleanup": false,
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true
+    }
+  ],
+  "performance": {
+    "final_source_matched_profiles": [
+      {
+        "raw_receipt": {
+          "path": "analysis/vr-baseline/sp-profile-final-debug-on-20261028/receipt.json",
+          "sha256": "fd3f13d90a03b49fb6362088abb67d75ef3610617a825fcada06f0c38e4caf9a"
+        },
+        "executable_sha256": "354594cc613d3eace3c0ff5f2295a0c3d444f9d5a6016386d8036dad6f827b0a",
+        "build": {
+          "PSX_DEBUG_TOOLS": "ON",
+          "MOHU_VR_DIAGNOSTICS": "ON",
+          "PSX_OPENXR": "ON",
+          "configuration": "Release"
+        },
+        "complete": true,
+        "mode": "hidden SDL window, no XR, native fallback hand; matched build-overhead control",
+        "pairs_per_second": 18.168840032512243,
+        "interval": "First/last counter samples arriving between 8 and 30 seconds; no screenshots/VERIFY/XR",
+        "exit_code": 0,
+        "forced_cleanup": false,
+        "source_saves_unchanged": true,
+        "preferences_unchanged": true
+      },
+      {
+        "raw_receipt": {
+          "path": "analysis/vr-baseline/sp-profile-final-production-20261028/receipt.json",
+          "sha256": "41708a126b3ec977c22e686ac4a91013924bfb92186c6dc5b0713d8475b4ecce"
+        },
+        "executable_sha256": "5199a03b67277f263452cbdf5dd8e4f583744c46a9b2ad3e98e8143b5afe1e24",
+        "build": {
+          "PSX_DEBUG_TOOLS": "OFF",
+          "MOHU_VR_DIAGNOSTICS": "ON",
+          "PSX_OPENXR": "ON",
+          "configuration": "Release"
+        },
+        "complete": true,
+        "mode": "hidden SDL window, no XR, native fallback hand; matched build-overhead control",
+        "pairs_per_second": 29.187551089286128,
+        "interval": "First/last counter samples arriving between 8 and 30 seconds; no screenshots/VERIFY/XR",
+        "exit_code": 0,
+        "forced_cleanup": false,
+        "source_saves_unchanged": true,
+        "preferences_unchanged": true
+      }
+    ],
+    "relative_pair_throughput_gain": 0.6064619996134286,
+    "limits": "No XR, hidden SDL window, native hand fallback, 1080p. Unique world pair throughput, not headset display FPS or tracked-hand latency.",
+    "earlier_repeat_controls": [
+      {
+        "raw_receipt": {
+          "path": "analysis/vr-baseline/sp-profile-debug-on-20261028/receipt.json",
+          "sha256": "0a455bf2a636feae0c2ed09726e99567ba82f8378805738379cc6735975b4ff1"
+        },
+        "executable_sha256": "870a4d5ad47d40e79bdba1bc034495f33dc56632ff7b062ba2ca6803880a71c2",
+        "pairs_per_second": 19.0066301705336,
+        "scope": "Earlier source checkpoint; build overhead only"
+      },
+      {
+        "raw_receipt": {
+          "path": "analysis/vr-baseline/sp-profile-debug-off-20261028/receipt.json",
+          "sha256": "e04f185bf649cf8f2043e802fc1ae42c1d835b9e7d9b89f36807664ce0c1e70a"
+        },
+        "executable_sha256": "a36cc1de3e60c8b0fa2db93e912753c9bba93cd952e8e2fa6cb5f970ed165481",
+        "pairs_per_second": 28.500715716949095,
+        "scope": "Earlier source checkpoint; build overhead only"
+      },
+      {
+        "raw_receipt": {
+          "path": "analysis/vr-baseline/sp-profile-debug-off-repeat-20261028/receipt.json",
+          "sha256": "96d1a8004271c3dde1a599eb28d81a1728e9c83f79fbc1d9e217d7ee47ed47f2"
+        },
+        "executable_sha256": "a36cc1de3e60c8b0fa2db93e912753c9bba93cd952e8e2fa6cb5f970ed165481",
+        "pairs_per_second": 29.099992944725823,
+        "scope": "Earlier source checkpoint; build overhead only"
+      }
+    ],
+    "common_guest_frame_crosscheck": {
+      "method": "Approximate linear interpolation between once-per-second frame reports; corroboration only, not per-frame latency or exact BENCH instrumentation",
+      "controls": [
+        {
+          "stdout": {
+            "path": "analysis/vr-baseline/sp-profile-final-debug-on-20261028/stdout.log",
+            "sha256": "d9807fa8ac4a2cbaf4f874d33d6d81829179baf0a9da525b2028cb0e20835a94"
+          },
+          "guest_frame_window": [
+            300,
+            900
+          ],
+          "interpolated_wall_ms": 16518.810810810814,
+          "approximate_guest_frames_per_second": 36.32222723970706
+        },
+        {
+          "stdout": {
+            "path": "analysis/vr-baseline/sp-profile-final-production-20261028/stdout.log",
+            "sha256": "3d531ca67883a47931d9afad95237bc965be5cfdc78c410fd27902fa09048f5b"
+          },
+          "guest_frame_window": [
+            300,
+            900
+          ],
+          "interpolated_wall_ms": 9868.317204301076,
+          "approximate_guest_frames_per_second": 60.8006398232205
+        }
+      ]
+    }
+  },
+  "native_cache_negative_control": {
+    "raw_receipt": {
+      "path": "analysis/vr-baseline/sp-parity-native-cache-20261028/receipt.json",
+      "sha256": "2caed7f69299b513fa30079b2efb9124b903fa1b92a989d368e5474d38db7a87"
+    },
+    "executable_sha256": "5efeb20c9dde112489e805e608cf030c496a1caf97440dce7de7b349ac160927",
+    "fresh_stereo_images": 0,
+    "diagnosis": "Cached native functions lack configured VR entry/instruction hook instrumentation; faster flat cadence is invalid as VR performance."
+  },
+  "validation": {
+    "python_tests": 121,
+    "python_result": "pass",
+    "strict_weapon_c_fixture": "pass; mask, tracked affine, stale/focus, flash translation, precision and bank bounds",
+    "strict_diagnostic_syntax": "pass",
+    "release_debug_on_build": "pass",
+    "release_production_off_build": "pass",
+    "launcher_powershell_parse": "pass"
+  },
+  "limits": [
+    "Causal arena test and broad arm/pose controls retain their pre-flash-tag-correction binary hashes. Final-source tests supplement them; no historical receipt was relabeled.",
+    "Unknown scenes/assets or referenced spare native-bank regions are declined; broader SP/family coverage remains open.",
+    "Physical flash/impact acceptance and linked live NPC damage remain open.",
+    "Native overlay integration and view-dependent fog remain open."
+  ],
+  "next": [
+    "R4b native hook/codegen integration with real stereo parity",
+    "R5 measured SP fog/depth",
+    "R6 linked SP NPC damage/isolation and family coverage",
+    "R7 bounded physical batch"
+  ],
+  "flash_eye_detail": {
+    "path": "analysis/vr-baseline/sp-flash-corrected-eye-detail.png",
+    "sha256": "bd5fc4dd79f13cc4957c25320a3a371be54700a1b8d033388ec9d5f6d9e6e4fc",
+    "kind": "Unmodified crops of final displaced-hand left/right eye captures, labeled for review"
+  }
+}

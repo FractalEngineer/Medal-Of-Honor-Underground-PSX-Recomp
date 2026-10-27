@@ -88,6 +88,13 @@ size_t mohu_vr_weapon_profile_count(void);
 const MohuVrWeaponProfile* mohu_vr_weapon_profile_at(size_t index);
 const MohuVrWeaponProfile* mohu_vr_weapon_profile_find(uint8_t id);
 const MohuVrWeaponCalibration* mohu_vr_weapon_calibration_find(uint8_t id);
+/* Uniform power-of-two precision lift, preserving ratios and Q12 bounds.
+ * Apply the returned factor to the render-view eye translation as well. */
+int mohu_vr_weapon_precision_control(uint32_t control[8], double* factor);
+/* Candidate only: the caller must also prove that the eye OT and model
+ * sources do not reference this native double-buffer region before writing. */
+uint32_t mohu_vr_weapon_spare_bank(uint32_t base, uint32_t bytes,
+                                 uint32_t cursor, uint32_t end);
 /* Preserve the focused P38 contract as a named wrapper for existing tests. */
 int mohu_vr_p38_gun_vertex(unsigned node, unsigned vertex);
 int mohu_vr_weapon_mesh_layout_valid(const MohuVrWeaponProfile* profile,

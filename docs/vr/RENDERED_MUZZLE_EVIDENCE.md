@@ -4,7 +4,9 @@ Updated: 2026-10-27. Current operator policy is explicit: the laser indicates
 where the bullet goes, fixed to the hand. Native recoil/reload animation plays
 normally and does not steer this ray. This supersedes earlier W5/W6 plans that
 required aim to follow the animated barrel. W6.1 is complete; W6.2 verified
-triangle/vertex bindings is next under [HANDOFF.md](HANDOFF.md).
+triangle/vertex work is deferred behind the SP repairs/native-hook performance
+work in [HANDOFF.md](HANDOFF.md). The native visible-flash correction and its
+actual packet bindings are in [SP_PARITY_REPAIR.md](SP_PARITY_REPAIR.md).
 
 ## Shared aim contract
 

@@ -3,6 +3,23 @@
 Updated: 2026-10-28. This is a desktop synthetic result, not physical
 acceptance.
 
+## Current correction: SP parity repair
+
+The operator rejected the earlier visible alignment. The implementation and
+one-pose conclusions below are historical. Current code reads the actual projected
+animated tip vertices from the same eye's weapon buffer, in both SP and MP; it
+also removes SP arms and recovers slot-3 allocation failure. See
+[SP_PARITY_REPAIR.md](SP_PARITY_REPAIR.md) and its compact receipt.
+
+In particular, `projection_h_ref=400` is not a universal focal length. The old
+SP calculation omitted the renderer's eye projection/H-reference behavior and
+used fixed calibration points. Native weapon H is 133 at the measured project
+seam. The SP packet tags are `player+0x5FC` / `player+0x624` (40-byte stride);
+`+0x600` is the first color word, not its tag. The old guard silently declined
+that bank while aligning only the other one. The old flat/stereo copy labels
+were also incorrect: these are native buffered packets. Counter movement or one selected screenshot did not establish robust
+attachment. The old raw captures and receipt hashes are retained unchanged.
+
 ## Observation
 
 The operator reported that the P38 muzzle flash stayed near the centre of the

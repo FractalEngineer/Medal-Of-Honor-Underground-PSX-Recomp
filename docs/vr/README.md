@@ -1,5 +1,9 @@
 # VR Port Documentation
 
+Current SP repair and next priorities: [SP_PARITY_REPAIR.md](SP_PARITY_REPAIR.md).
+The operator reopened muzzle placement, arms, slot-3 visibility and performance;
+R1-R7 in VR_PLAN supersede old W6-first or headset-first continuation text.
+
 Medal of Honor: Underground is being ported from the current Medal of Honor
 PSXRecomp VR implementation. The target must remain playable without a headset,
 and every Underground-specific hook must be verified against this game's own

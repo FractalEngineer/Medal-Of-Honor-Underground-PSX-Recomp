@@ -1,6 +1,6 @@
 # Underground VR execution plan
 
-Updated: 2026-10-27. Working branch: `feature/vr-port`.
+Updated: 2026-10-28. Working branch: `feature/vr-port`.
 
 This is the current checkbox plan, not the original proposal. Start with
 [HANDOFF.md](HANDOFF.md) for exact instructions. Checked means the stated
@@ -8,13 +8,13 @@ scope has evidence; it never implies broader headset or gameplay acceptance.
 Historical design and prior attempts belong in
 [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md) and the evidence documents.
 
-**W6.1 COMPLETE. NEXT SESSION: S1-S5 smoke follow-up; then W6.2.**
+**NEXT: R4 native-hook/performance integration, then R5 fog and R6 SP impact.
+W6.2 and another headset batch are deferred.**
 
-The 2026-10-27 checkpoint is documentation/push only. The operator reported MP
-edge culling, good SP edges, no SP weapon control, about 35 FPS and
-view-dependent distant fog. See [HEADSET_SMOKE_EVIDENCE.md](HEADSET_SMOKE_EVIDENCE.md).
-Already made MP-profile/camera fixes passed build/syntax/11 focused tests but
-have not been runtime/headset retested. No physical acceptance gate is closed.
+The owner rejected SP muzzle placement, poor performance, slot-3 weapon loss
+and visible arms. The prior "physical pass next" order was premature. See
+[SP_PARITY_REPAIR.md](SP_PARITY_REPAIR.md). R1-R3 below reopen only the failed
+SP render paths; earlier MP/combat/math evidence retains its historical scope.
 
 Operator policy: the laser indicates the bullet's hand-fixed aim ray. Native
 recoil/reload remains visual. The shot candidate and future laser use the same
@@ -45,9 +45,9 @@ converted post-respawn P38 shot. It runs with stereo inactive; it adds lifecycle
 evidence, not a new eye-rollback result. W5.4d physical hand-aim/impact
 confirmation stays open. W6.1 now passes ten per-eye rendered-muzzle snapshots,
 native recoil/reload, ownership/load/tracking rejection and live pair refusal/
-recovery with actual stereo verification. W6.2 is the next desktop task.
-W5.2 remains open because no compatible copied live NPC/SP
-fixture and independently measured SP binding was available. W3.3/W3.5 remain
+recovery with actual stereo verification. W6.2 is deferred behind the reported SP defects.
+SP P38 render/shot bindings are measured; W5.2 remains open for linked live-NPC
+damage/isolation, broader SP families and physical impact. W3.3/W3.5 remain
 physical acceptance gates. Current evidence and exact continuation:
 [WEAPON_COMPLETE_PROFILES.md](WEAPON_COMPLETE_PROFILES.md),
 [SHOT_FAMILY_EVIDENCE.md](SHOT_FAMILY_EVIDENCE.md),
@@ -77,6 +77,38 @@ strict W1->W6/hardware-first sequence.
 - Update the handoff's next task ID, last result and next experiment at session
   end. An incomplete task needs a precise continuation, not "continue mapping".
 
+## R - 2026-10-28 SP parity repair (current execution order)
+
+- [x] R1. Audit actual reference/current sources and correct stale plan/handoff
+  readiness claims. Weapon-only rendering, post-animation placement, precision
+  and production/debug separation are reusable. Target flash packets, strip data,
+  SP ownership and arena limits require Underground bindings, not new architecture.
+- [x] R2. Replace separate flash projection with the same-eye projected animated
+  muzzle vertices, correct both 40-byte FT4 packet tags (`+0x5FC`/`+0x624`),
+  and apply SP gun-only filtering after projection. Preserve
+  all 96 P38 gun vertices and remove 142 arm vertices, including on tracking loss.
+  Desktop baseline, displaced hand, head-follow, close and lateral-eye controls
+  are recorded in `sp-parity-repair-receipt.json`; physical acceptance stays open.
+- [x] R3. Reproduce slot-3 allocation failure and restore the gun with guarded
+  spare native-buffer use. Same binary, pose and fixture: disabled path loses
+  the gun; enabled path renders 96 vertices per eye. Preserve source data,
+  reload compatibility, arena pointers and eye rollback. Broader scenes remain open.
+- [ ] R4. Complete production performance/native overlay integration. Separate
+  measured debug overhead from the remaining interpreter cost. Native cached
+  config currently bypasses VR hooks and produces zero pairs; it cannot be
+  called a faster VR result. Exact continuation is HANDOFF section 1.
+- [x] R4a. Remove detailed debug recording from the playable build, retain
+  diagnostic ON only for TCP tools, and measure matched quiet SP controls.
+  Final-source debug ON: 18.2 new pairs/s; OFF: 29.2 pairs/s (no XR, native-hand
+  fallback, 1080p, VERIFY OFF). This is a build-overhead result, not headset FPS.
+- [ ] R4b. Instrument the existing native overlay hooks and pass stereo/weapon
+  parity before comparing native throughput; zero-pair cached-native runs fail.
+- [ ] R5. Resolve SP view-dependent fog from measured depth/transform ownership.
+- [ ] R6. Pass real SP NPC P38 damage/isolation and extend SP weapon families;
+  reuse the already measured P38 shot basis and fixed hand ray.
+- [ ] R7. Obtain bounded physical gun-only, both-eye flash/impact and performance
+  feedback after desktop fixes. This does not gate R4-R6 desktop work.
+
 ## S - follow up the 2026-10-27 physical smoke
 
 Follow the ordered contract in HANDOFF; preserve prior receipts and fixture hashes.
@@ -90,7 +122,8 @@ Follow the ordered contract in HANDOFF; preserve prior receipts and fixture hash
   eye-replay packet to the projected animated muzzle on desktop. Evidence:
   [NATIVE_MUZZLE_FLASH_EVIDENCE.md](NATIVE_MUZZLE_FLASH_EVIDENCE.md) and
   `native-flash-alignment-receipt.json`. Physical visibility remains in S2.
-- [x] S1b. Bind the actual SP held-weapon draw, guard the measured SP P38
+- [x] S1b. Historical one-pose binding control (superseded by R2/R3 for visual
+  readiness). Bind the actual SP held-weapon draw, guard the measured SP P38
   basis caller and translate both SP flash copies with the `H=400` weapon
   projection. Baseline flash `(355,225)` moved to `(454,225)` after +150 mm
   hand X; each control wrote 2/2 aimed P38 shots with zero shot/flash
@@ -114,9 +147,9 @@ Follow the ordered contract in HANDOFF; preserve prior receipts and fixture hash
 - [ ] S5. Resolve/record bounded MP shutdown with a real clean child exit;
   nonzero exit or forced cleanup cannot produce complete acceptance.
 
-SP tracked P38 render/aim now has desktop evidence; physical and non-P38 SP
-coverage remain open. W6.2 remains the next weapon feature once the physical
-follow-up is handled.
+S1b records historical one-pose evidence. R2/R3 supersede its SP render and
+flash implementation. Physical and non-P38 SP coverage remain open; R4-R6 come
+before another physical batch or W6.2.
 
 ## C - cross-game consistency pass (complete; no feature rediscovery)
 
@@ -546,7 +579,7 @@ Desktop dependencies: declared W3.1 rendered-muzzle contract and verified target
 geometry layout. Reuse reference ray/triangle math, bounded traversal, beam/dot
 projection and tests; port target data readers. Hardware acceptance is W6.4.
 The hand-fixed ray is shared with W5; native recoil animation does not steer it. Physical testing need not block code.
-W6.2 is the next task. The handoff's six-step reader contract specifies the
+W6.2 is deferred behind R4-R6. The handoff's retained reader contract specifies the
 reference algorithm, known MP callback, missing geometry bindings and controls.
 Do not reopen the completed W5 matrices or call the old box pointer exact.
 

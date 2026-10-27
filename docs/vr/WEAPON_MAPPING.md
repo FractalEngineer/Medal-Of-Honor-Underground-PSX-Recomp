@@ -1,10 +1,11 @@
 # Weapon Mapping Handoff
 
-Last updated: 2026-10-27
+Last updated: 2026-10-28
 
 Execution order and stop/recovery rules are in [HANDOFF.md](HANDOFF.md).
-Checkbox status is in [VR_PLAN.md](VR_PLAN.md). **NEXT desktop: W6.2
-verified triangle/vertex bindings.** W3.4, W4 P38 native mapping, W5.1,
+Checkbox status is in [VR_PLAN.md](VR_PLAN.md). **NEXT desktop: R4 native-hook/performance integration, then SP fog and
+live NPC impact.** See [SP_PARITY_REPAIR.md](SP_PARITY_REPAIR.md) for the
+current muzzle/arm/slot-3 fixes; W6.2 is deferred. W3.4, W4 P38 native mapping, W5.1,
 W5.3/W5.4 desktop gates and W6.1 hand-fixed ray capture pass;
 physical acceptance remains open. All 13 IDs now have measured
 complete-gun topology, animated captures, provisional calibration, passing
@@ -29,8 +30,8 @@ vertices with a temporary GTE rotation/translation, then restores all eight
 RT/TR words before returning. The default path keeps native shots. The separate P38 diagnostic candidate
 now uses a calibrated grip and rendered-muzzle native-shot override; see the
 current evidence linked above. The world view remains independent.
-The production launcher still leaves `PSX_VR_WEAPON_POSE` and the separate
-`MOHU_VR_MP_CONTROL` bench off.
+The VR launcher enables calibrated gun-only SP/P38 control. The separate
+`MOHU_VR_MP_CONTROL` bench remains opt-in. Native/flat launch is separate.
 
 W1 is also complete for the P38 synthetic spatial contract. The real right-hand
 path now supplies absolute placement for ID 0 only; the first-accepted neutral

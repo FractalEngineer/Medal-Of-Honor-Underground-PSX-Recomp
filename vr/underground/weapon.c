@@ -233,6 +233,42 @@ static const uint16_t k_node_counts[MOHU_VR_WEAPON_NODE_COUNT] = {
     0u, 0u, 39u, 1u, 11u, 6u, 8u, 1u, 11u, 6u, 8u,
 };
 
+uint32_t mohu_vr_weapon_spare_bank(uint32_t base, uint32_t bytes,
+                                 uint32_t cursor, uint32_t end) {
+    if (bytes < 32768u || bytes > 0x40000u || ((base | bytes) & 3u) ||
+        base < 0x800B0000u || base > 0x80200000u - 2u * bytes ||
+        (end + 1u != base + bytes && end + 1u != base + 2u * bytes) ||
+        cursor > end || cursor < end + 1u - bytes) return 0u;
+    return end + 1u == base + bytes ? base + 2u * bytes - 32768u
+                                    : base + bytes - 32768u;
+}
+
+int mohu_vr_weapon_precision_control(uint32_t control[8], double* factor) {
+    if (!control || !factor) return 0;
+    double scale = 16.0;
+    for (unsigned i = 0; i < 9u; ++i) {
+        const int16_t value = (int16_t)(control[i / 2u] >> ((i & 1u) * 16u));
+        while (fabs(value * scale) > 32767.0) scale *= 0.5;
+    }
+    for (unsigned i = 5u; i < 8u; ++i)
+        while ((int32_t)control[i] * scale > INT32_MAX ||
+               (int32_t)control[i] * scale < INT32_MIN) scale *= 0.5;
+    if (scale < 1.0) return 0;
+    uint32_t result[8];
+    memcpy(result, control, sizeof result);
+    for (unsigned i = 0; i < 9u; ++i) {
+        const unsigned shift = (i & 1u) * 16u;
+        const int16_t value = (int16_t)(control[i / 2u] >> shift);
+        result[i / 2u] = (result[i / 2u] & ~(0xFFFFu << shift)) |
+            ((uint32_t)(uint16_t)(int16_t)lround(value * scale) << shift);
+    }
+    for (unsigned i = 5u; i < 8u; ++i)
+        result[i] = (uint32_t)(int32_t)llround((int32_t)control[i] * scale);
+    memcpy(control, result, sizeof result);
+    *factor = scale;
+    return 1;
+}
+
 int mohu_vr_weapon_calibrated_control(
     uint32_t control[8], const double hand_rotation[9],
     const double hand_translation[3], double units_per_metre,
