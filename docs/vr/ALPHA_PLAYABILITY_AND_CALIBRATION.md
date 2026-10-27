@@ -2,6 +2,10 @@
 
 Date: 2026-10-28. **Study/documentation only. No feature implementation, game
 launch, build, new framework branch or dependency update is authorized by this task.**
+This opening describes the original study request. Later operator instruction
+"commit push and start work on it" authorized implementation: A7 is now ported
+and desktop/null-HMD validated in [PAUSE_MENU_PARITY.md](PAUSE_MENU_PARITY.md).
+The optional calibration editor remains unimplemented.
 This document supersedes the earlier blanket visual-acceptance wording and the
 strict R5 -> R6 -> W6 ordering where those conflict with the operator's alpha goal.
 

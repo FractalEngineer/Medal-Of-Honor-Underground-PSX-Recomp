@@ -224,6 +224,8 @@ static bool g_native_tail_mismatch;
 static int32_t g_clear_rgb;
 static bool g_no_native_surface;
 static int g_openxr_native_surface = -1;
+static bool g_pause_menu_enabled = true;
+static bool g_pause_menu_active;
 static uint32_t g_native_surface_seen_attempts;
 static uint32_t g_native_surface_idle_vblanks =
     MOHU_VR_NATIVE_SURFACE_IDLE_VBLANKS;
@@ -441,6 +443,18 @@ static bool vr_input_response_load(uint32_t axes_address, unsigned config,
 /* The game rebuilds the selected calibration after DualShock presentation.
  * Measured boot/load layouts swap entries 1/3; native LX/LY/RX retain their
  * turn/forward/strafe roles. Never force a guest configuration or table. */
+static bool vr_native_paused(bool multiplayer) {
+    if (!g_pause_menu_enabled) return false;
+    const MohuVrPauseBinding* binding = mohu_vr_pause_binding(multiplayer);
+    uint32_t read_words[4], enter_words[3];
+    for (unsigned i = 0; i < 4u; ++i)
+        read_words[i] = psx_mod_read_word(binding->read_address + i * 4u);
+    for (unsigned i = 0; i < 3u; ++i)
+        enter_words[i] = psx_mod_read_word(binding->enter_address + i * 4u);
+    return mohu_vr_pause_state(binding, read_words, enter_words,
+                               psx_mod_read_word(binding->state_address)) == 1;
+}
+
 static int vr_controller_source(PSXModControllerState* pad) {
     psx_mod_counter_add("mohu.vr.input.callback", 1);
     if (g_stereo_active) {
@@ -465,7 +479,8 @@ static int vr_controller_source(PSXModControllerState* pad) {
     MohuVrMpInputState mp;
     const bool multiplayer = vr_mp_input_snapshot(&mp);
     uint32_t player = psx_mod_read_word(MOHU_VR_SP_PLAYER_POINTER_ADDR);
-    const int input_mode = g_openxr_native_surface == 1 ? 2 : multiplayer ? 1 : 0;
+    const bool paused = vr_native_paused(multiplayer);
+    const int input_mode = (paused || g_openxr_native_surface == 1) ? 2 : multiplayer ? 1 : 0;
     psx_mod_counter_add(
         input_mode == 2 ? "mohu.vr.input.mode.menu"
                         : input_mode == 1 ? "mohu.vr.input.mode.mp"
@@ -480,7 +495,7 @@ static int vr_controller_source(PSXModControllerState* pad) {
                 multiplayer ? mp.current_player : 0u);
         fflush(stdout);
     }
-    if (g_openxr_native_surface == 1 ||
+    if (paused || g_openxr_native_surface == 1 ||
         (!multiplayer &&
          (player < 0x80000000u || player >= 0x801FFC00u)))
         return mohu_vr_menu_input_map(&input, g_move_deadzone, pad);
@@ -3097,6 +3112,27 @@ static void run_stereo_proof(CPUState* cpu) {
     if (!g_stereo_proof || g_stereo_active) {
         return;
     }
+    const bool paused = vr_native_paused(g_stereo_mp);
+    if (paused != g_pause_menu_active) {
+        g_pause_menu_active = paused;
+        psx_mod_counter_add(paused ? "mohu.vr.pause.enter" : "mohu.vr.pause.leave", 1);
+        fprintf(stdout, "mohu-vr-menu: mode=%s paused=%d source=native\n",
+                g_stereo_mp ? "mp" : "sp", paused ? 1 : 0);
+        fflush(stdout);
+        if (!g_openxr) (void)psx_mod_set_stereo_presentation(paused ? 0u : 1u);
+    }
+    if (paused) {
+        /* Reuse the reference's native menu plane path. The canonical present
+         * includes pause artwork that the MP P1-only scene replay does not.
+         * The framework submits this fresh native image as a head-relative
+         * quad, with live XR tracking, rather than retaining a gameplay pair.
+         * No replay means no HUD stripping, hand pose, or laser over the menu. */
+        g_laser_grip = false;
+        set_openxr_native_surface(true);
+        psx_mod_counter_add(g_stereo_mp ? "mohu.vr.pause.frame.mp"
+                                       : "mohu.vr.pause.frame.sp", 1);
+        return;
+    }
     uint32_t index = psx_mod_read_word((g_stereo_mp ? MOHU_VR_MP_CONTEXT :
                                              MOHU_VR_FRAME_CONTEXT_ADDR) + 0x2204u);
     if (index > 1u) {
@@ -4392,6 +4428,9 @@ static void vr_diagnostic_activate(void) {
         }
     }
     const char* mp = getenv("MOHU_VR_MP_CONTROL");
+    const char* pause_menu = getenv("MOHU_VR_PAUSE_MENU");
+    g_pause_menu_enabled = !pause_menu || *pause_menu != '0';
+    g_pause_menu_active = false;
     g_mp_control = mp && *mp == '1';
     const char* mp_frustum_capture =
         getenv("MOHU_VR_MP_FRUSTUM_CAPTURE");

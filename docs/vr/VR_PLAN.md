@@ -8,11 +8,14 @@ scope has evidence; it never implies broader headset or gameplay acceptance.
 Historical design and prior attempts belong in
 [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md) and the evidence documents.
 
-**CURRENT: study/documentation only. The operator's detailed feedback reopens
+**CURRENT: checkpoint `ee848cd` pushed; subsequent implementation authorized.
+A7 pause-menu port passes SP/MP desktop and null-HMD XR controls; physical
+readability/comfort still needs a short check. See [PAUSE_MENU_PARITY.md](PAUSE_MENU_PARITY.md).
+NEXT is A2 reference weapon parity. The operator's detailed feedback reopens
 weapon calibration, StG hand masking, high firing and floating laser endpoints.
 Read [ALPHA_PLAYABILITY_AND_CALIBRATION.md](ALPHA_PLAYABILITY_AND_CALIBRATION.md)
-for the runtime menu design and alpha-first A1-A6 sequence. When implementation
-is authorized, start A1/S5 exit classification and A2 default profile/aim fixes.
+for the runtime menu design and alpha-first sequence. A1 exit triage found native
+window-close/atexit reports; production clean-close S5 remains open.
 Headset launches must run outside the sandbox; R5 still needs its matching fixture.**
 
 The owner rejected SP muzzle placement, poor performance, slot-3 weapon loss
@@ -96,10 +99,15 @@ A3's runtime editor is optional follow-up unless a remaining calibration blocker
 actually requires it. The numbered items below are stable IDs, not serial mandates.
 
 - [ ] A1. Classify/fix active-play versus close-only process exits (S5/Q1).
-- [ ] A7. Restore native pause-menu presentation/navigation/resume by porting
-  the first game's explicit pause-state + quad/identity-view + menu-input path.
-  Reuse the existing local mapper; bind native Underground pause state. Test SP
-  and MP separately. Start delivery/frozen movement alone does not close this.
+- [x] A1a. Classify the six physical batch exit reports: all record
+  `sdl_window_close` followed by `atexit`; no active-play exception is reported
+  there. Nonzero final process codes still leave S5 open.
+- [x] A7. Port explicit native pause-state + existing native quad presentation
+  and menu-input routing. SP/MP each pass two navigation/resume cycles plus
+  load-while-paused recovery, fresh native XR quads, stereo recovery, zero XR
+  failures and zero rollback mismatches. [Evidence](PAUSE_MENU_PARITY.md).
+- [ ] A7a. Operator confirms native pause-menu readability/comfort, navigation
+  and resume in SP and MP. Desktop/null-HMD results do not close this physical gate.
 - [ ] A2. Correct grenade held orientation, StG gun-only mask, oversized defaults
   and shared shot/sight alignment; pass representative live SP NPC impact (R6).
 - [ ] A3. Add effective per-ID calibration state, versioned persistence and a

@@ -1,6 +1,10 @@
 # VR Port Documentation
 
-Current SP repair and next priorities: [SP_PARITY_REPAIR.md](SP_PARITY_REPAIR.md).
+Current priorities: [alpha port plan](ALPHA_PLAYABILITY_AND_CALIBRATION.md).
+The native pause-menu port passes SP/MP desktop and null-HMD XR controls;
+[PAUSE_MENU_PARITY.md](PAUSE_MENU_PARITY.md) records its bindings and remaining
+physical check. NEXT is A2 reference weapon parity. Earlier SP repair:
+[SP_PARITY_REPAIR.md](SP_PARITY_REPAIR.md).
 The operator reopened muzzle placement, arms, slot-3 visibility and performance;
 R1-R7 in VR_PLAN supersede old W6-first or headset-first continuation text.
 
@@ -15,9 +19,10 @@ Shared framework branches, the merged upstream VR stack and the three pending
 generic changes are tracked in [FRAMEWORK_UPSTREAM_TRACKER.md](FRAMEWORK_UPSTREAM_TRACKER.md).
 Framework development uses `vr/shared-development`; master mirrors upstream.
 
-1. [HANDOFF.md](HANDOFF.md) is the current execution contract: R4 native hooks
-   and stereo parity are complete. R5 fog is paused pending the correct street
-   fixture; R6 linked live SP impact is the next independent desktop task.
+1. [HANDOFF.md](HANDOFF.md) is the current execution contract: A7 pause port is
+   desktop/null-HMD validated; A2 weapon parity is next. R4 native hooks/stereo
+   parity are complete. R5 fog needs its matching street fixture;
+   R6 linked live SP impact remains open within weapon playability work.
    W6.1 hand-fixed ray capture is complete, while W6.2 target triangle binding is
    deferred. Physical hand-aim/impact acceptance and live NPC/SP
    isolation remain separate open gates.

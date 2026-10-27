@@ -24,24 +24,28 @@ except the demonstrated SP regressions explicitly reopened in R1-R3.
 
 ## 1. Start here - SP repair before new features
 
-**CURRENT: study/documentation only, per the latest operator request. Read
+**CURRENT: checkpoint `ee848cd` is pushed. The operator then authorized work;
+A7 native pause-menu port now passes SP/MP desktop and null-HMD XR controls.
+Read [PAUSE_MENU_PARITY.md](PAUSE_MENU_PARITY.md) for bindings, implementation
+and remaining physical acceptance. NEXT is A2 weapon parity using
 [ALPHA_PLAYABILITY_AND_CALIBRATION.md](ALPHA_PLAYABILITY_AND_CALIBRATION.md).
 Detailed feedback reopens calibration/gun-only acceptance: upright grenades,
 oversized profiles, attached StG hand, high shots and false laser endpoints.
-The prior "Looks good" answers remain history, not blanket readiness. No further
-implementation or game launch in this documentation task. When authorized, do
-A1/S5 exit classification, then restore the native pause menu from the first game
-(A7), followed by its working weapon behavior (A2),
+The prior "Looks good" answers remain history, not blanket readiness. A1 triage
+found all six physical reports identify `sdl_window_close`/`atexit`; S5 still
+needs a clean production close. Continue with the reference's weapon behavior (A2),
 exact laser (A4) and native hand HUD (A5), with local bindings/assets verified.
 The study names exact source functions; do not rebuild those features from scratch.
 A3's new runtime menu is optional follow-up, not a blocker for A6 alpha validation
 and packaging. All headset launches must be unsandboxed. R5 needs its real fixture.**
 
-Pause-menu report is an alpha blocker. The study names the reference
+Pause-menu physical acceptance remains open. The study names the reference
 `vr_scene_entry` explicit native pause/`g_menu_flat`/quad/identity-view branch and
 menu controller routing. Underground already has the menu mapper and idle native
-surface fallback; adapt the missing explicit paused-scene path after measuring
-its local pause state. Do not copy reference `0x8009A61C` or treat W2.5's Start/
+surface fallback. The new explicit pause path uses measured SP `0x800A70F0`
+and MP `0x800A0A84`, guarded by their native reader/writer words, and presents
+the complete fresh native menu through the existing head-relative quad path.
+Do not copy reference `0x8009A61C` or treat W2.5's Start/
 frozen-position receipt as proof of a readable/navigable headset pause menu.
 
 Read [SP_PARITY_REPAIR.md](SP_PARITY_REPAIR.md) and
@@ -765,9 +769,8 @@ Failure handling is deterministic:
 
 Before ending an implementation session:
 
-- [ ] Keep `PSX_DEBUG_TOOLS=ON` in the active desktop build by current operator
-  direction. Only for a requested public/release checkpoint, configure the same
-  build with debug OFF and build successfully:
+- [ ] Restore the playable build to `PSX_DEBUG_TOOLS=OFF` after TCP probes.
+  Use ON only for a bounded diagnostic run, then configure the same build OFF:
 
 ```powershell
 cmake -S . -B build-release -DPSX_DEBUG_TOOLS=OFF

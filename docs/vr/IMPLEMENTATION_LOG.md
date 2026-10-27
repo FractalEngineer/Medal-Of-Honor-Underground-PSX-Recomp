@@ -1682,3 +1682,32 @@ source saves, defaults, historical receipts and unrelated `.commandcode/`.
   ownership, separate SP/MP contracts and both-eye navigation/resume acceptance.
   Kept existing W2.5 native Start/frozen-position evidence in its original scope.
 - Study/docs only; no game launch, implementation or build.
+
+## 2026-10-28 - A7 native pause-menu port and bounded A1 triage
+
+- Committed/pushed the study and physical findings as `ee848cd`, then began the
+  operator-authorized implementation. Six physical last-run reports all identify
+  `sdl_window_close` / `atexit`; nonzero teardown remains S5, with no active-play
+  exception demonstrated by those reports.
+- Measured SP pause `0x800A70F0`, writer `0x8006EA0C`; MP pause `0x800A0A84`,
+  writer `0x80064AC4`. Native Start/resume traces prove state changes. Exact
+  reader/writer words guard both overlay generations and reject unknown state.
+- Adapted the first game's native menu-plane and menu-input paths. Pause now
+  selects the existing menu mapper and fresh native presentation, suppressing
+  world/P1-only replay until resume. This preserves the complete native pause
+  artwork in MP as well as SP. The existing framework submits the native image
+  as a tracked head-relative quad; no new renderer, UI or pause system was added.
+- SP/MP desktop controls pass two navigation/resume cycles, focus release,
+  Start and Confirm resume, restoration and clean child exits. Final null-HMD
+  XR controls additionally pass load-while-paused recovery, fresh native quad
+  submissions and source/layer 2->1 stereo recovery, with zero XR failures or
+  rollback mismatches. SteamVR settings/source saves/preferences are unchanged.
+- Focused MP P38 native stereo/fire/refusal/recovery passes after the menu
+  routing change. 123 Python tests, strict C menu binding/fallback fixture and
+  strict diagnostic syntax pass. A7 implementation gate is complete; A7a
+  operator comfort/readability remains open. No physical headset was used.
+- Active build is restored to production debug OFF. No framework/UI pins,
+  generated guest code, reference source or original saves changed.
+  [Pause-menu evidence](PAUSE_MENU_PARITY.md) and
+  [receipt](../../vr/proof/pause-menu-parity-receipt.json) retain actual scopes.
+  NEXT is A2 reference weapon-pose/filter parity; optional calibration menu stays later.
