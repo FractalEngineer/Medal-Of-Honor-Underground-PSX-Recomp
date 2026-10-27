@@ -48,6 +48,19 @@ class P38HeadsetTests(unittest.TestCase):
         for mode in tool.MODES:
             self.assertEqual(tool.environment(mode, True)["PSX_DITHERING"], "0")
 
+    def test_mp_smoke_enables_the_measured_mp_frustum(self):
+        for mode in tool.MODES:
+            self.assertEqual(tool.environment(mode, True)["MOHU_VR_MP_FRUSTUM"], "1")
+
+    def test_hand_fixed_smoke_explicitly_selects_current_aim(self):
+        env = tool.environment("tracked", True, hand_fixed=True)
+        self.assertEqual(env["MOHU_VR_WEAPON_AIM"], "1")
+        self.assertEqual(env["MOHU_VR_WEAPON_CALIBRATED"], "1")
+        self.assertEqual(env["MOHU_VR_WEAPON_GUN_ONLY"], "1")
+        self.assertEqual(env["MOHU_VR_P38_AIM"], "0")
+        native = tool.environment("native", True, hand_fixed=True)
+        self.assertEqual(native.get("MOHU_VR_WEAPON_AIM", "0"), "0")
+
     def test_tracked_comparison_explicitly_selects_calibrated_combat_candidate(self):
         for mode in tool.MODES:
             env = tool.environment(mode, True)

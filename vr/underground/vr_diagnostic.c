@@ -1991,7 +1991,7 @@ static bool g_shot_capture_p1_only;
 
 static void vr_shot_camera_entry(CPUState* cpu, uint32_t address) {
     (void)address;
-    if ((!g_shot_capture && !g_p38_aim) || !cpu || g_stereo_active) return;
+    if ((!g_shot_capture && !g_p38_aim && !g_weapon_aim) || !cpu || g_stereo_active) return;
     MohuVrMpState state;
     const uint32_t owner = psx_mod_read_word(MOHU_VR_MP_P1_ROOT);
     if (psx_mod_read_word(MOHU_VR_MP_CURRENT_PLAYER) != owner ||

@@ -1,0 +1,82 @@
+{
+  "schema": 1,
+  "date": "2026-10-27",
+  "kind": "Operator headset smoke checkpoint; unresolved issues, not full acceptance",
+  "headset_acceptance": false,
+  "tested_revision": "29f71577621f3d13b1832b622020d9f792e2eceb",
+  "tested_executable_sha256": "4204a6f3e2ca2037cfc1e7bc2987399f524e1e12156511eb8501c57d1e3a74d6",
+  "runtime": "C:\\Program Files\\Virtual Desktop Streamer\\OpenXR\\virtualdesktop-openxr.json",
+  "execution_account": "fractal-power\\titan",
+  "mp": {
+    "raw_directory": "analysis/vr-baseline/headset-hand-fixed-smoke-20261027a",
+    "sample_summary": {
+      "samples": 59,
+      "live_hand_samples": 59,
+      "pose_ready_samples": 59,
+      "focused_samples": 59,
+      "right_hand_travel_m": 0.46552557481314816,
+      "user_input_observed": true
+    },
+    "xr_submitted_delta": 1131,
+    "stereo_pair_delta": 1125,
+    "failed_eyes": 0,
+    "rollback_verify_checks": 0,
+    "operator_report": "looks okay only seeing heavy world culling on the edges of fov; was not present in single player",
+    "mp_frustum_opt_in_present": false,
+    "shot_observer": {
+      "recorded_shots": 12,
+      "aimed_hand_fixed_shots": 12,
+      "p2_health_initial_fixture": 32,
+      "p2_health_before_observer": 29,
+      "p2_health_after_observer": 29,
+      "linked_health_writes_during_observation": 0,
+      "limitation": "Overall health decreased before recording armed. Do not attribute damage to the 12 recorded shots. Camera refresh depended on debug recording; this was a mixed-policy smoke."
+    },
+    "exit_code": 1,
+    "exit_origin": "tcp_quit",
+    "forced_cleanup": "unknown; old runner did not record it",
+    "raw_complete_flag_superseded": true,
+    "limitation": "Old raw receipt says complete=true despite exit 1. This checkpoint does not accept clean shutdown or rollback verification."
+  },
+  "sp": {
+    "raw_directory": "analysis/vr-baseline/headset-sp-smoke-20261027a",
+    "fixture": "isolated analysis/vr-baseline/saves/openbios slot 2; not root MP slot 2",
+    "fixture_pst_sha256": "2824c5505d9dabf5901fe47a385035d54ac9e87bc79502e8ba2328e88e5e0367",
+    "startup_ready": true,
+    "startup_fresh_pairs": 27,
+    "startup_xr_failures": 0,
+    "sample_only_submitted": 932,
+    "sample_only_pairs": 930,
+    "operator_report": "SP FOV edges look good; no weapon control; approximately 35 FPS; distant fog/draw distance shortest straight ahead, farther visible at FOV edge when turning head.",
+    "fps_independently_measured": false,
+    "tracked_weapon_support": "Not implemented/validated in this SP fixture; W5.2 remains open",
+    "source_saves_and_preferences_unchanged": true,
+    "limitation": "Bounded launcher completion is not evidence of clean child exit or broad physical acceptance."
+  },
+  "already_made_changes": {
+    "executable_sha256": "924691b65b561c4aefe0ea135953b3181dc55e8f7f24e0d1112fa19d33808f2c",
+    "changes": [
+      "Camera observer includes g_weapon_aim without requiring debug shot recording",
+      "MP headset probe enables MOHU_VR_MP_FRUSTUM=1",
+      "Probe --hand-fixed explicitly selects current candidate",
+      "Probe refuses complete acceptance after nonzero exit or forced cleanup"
+    ],
+    "validation": [
+      "Active Release build passed",
+      "Strict C syntax passed",
+      "11 focused headset-probe unit tests passed"
+    ],
+    "runtime_retested": false,
+    "headset_retested": false
+  },
+  "scope": "User requested documentation and push only; no further implementation or runtime/headset tests at checkpoint",
+  "raw_sha256": {
+    "analysis/vr-baseline/headset-hand-fixed-smoke-20261027a/receipt.json": "49e1f7d78d7b934fa48406bab463f260c1c699d5bbdcff2512542f88bb10170c",
+    "analysis/vr-baseline/headset-hand-fixed-smoke-20261027a/live-observation-before.json": "ac5548a16637c890ea76f20eccde4e76c045923f0b38dd3d885957d9920060e2",
+    "analysis/vr-baseline/headset-hand-fixed-smoke-20261027a/live-shot-observation.json": "91a926f8fadec3b9ecece7e96d7e8d49c5df75e00aedb1f0805231d6c3ccfb83",
+    "analysis/vr-baseline/headset-sp-smoke-20261027a/preflight.json": "20f320dbcd334036b0df64c69aaeaa085eb87409c676df8a71f080448c3c42db",
+    "analysis/vr-baseline/headset-sp-smoke-20261027a/startup.json": "3576329743ed0e3958a42936830be02513e37484371e6194dc954a22f4176263",
+    "analysis/vr-baseline/headset-sp-smoke-20261027a/openxr-smoke.json": "dfbf4d6b570b69cd1aa6b690074297912c6a32a3687e70d55b42f24db8057d83",
+    "analysis/vr-baseline/headset-sp-smoke-20261027a/live-observations.json": "74efb4acba8c8d70777838205275e10fe8ec30b44ad554552edf321bba7b74a3"
+  }
+}

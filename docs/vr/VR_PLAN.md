@@ -8,7 +8,13 @@ scope has evidence; it never implies broader headset or gameplay acceptance.
 Historical design and prior attempts belong in
 [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md) and the evidence documents.
 
-**W6.1 COMPLETE. NEXT: W6.2 verified triangle/vertex bindings.**
+**W6.1 COMPLETE. NEXT SESSION: S1-S5 smoke follow-up; then W6.2.**
+
+The 2026-10-27 checkpoint is documentation/push only. The operator reported MP
+edge culling, good SP edges, no SP weapon control, about 35 FPS and
+view-dependent distant fog. See [HEADSET_SMOKE_EVIDENCE.md](HEADSET_SMOKE_EVIDENCE.md).
+Already made MP-profile/camera fixes passed build/syntax/11 focused tests but
+have not been runtime/headset retested. No physical acceptance gate is closed.
 
 Operator policy: the laser indicates the bullet's hand-fixed aim ray. Native
 recoil/reload remains visual. The shot candidate and future laser use the same
@@ -70,6 +76,27 @@ strict W1->W6/hardware-first sequence.
   completed work repeatedly while leaving the current task unchanged.
 - Update the handoff's next task ID, last result and next experiment at session
   end. An incomplete task needs a precise continuation, not "continue mapping".
+
+## S - follow up the 2026-10-27 physical smoke
+
+These are next-session tasks, not authorization for more work at this checkpoint.
+Follow the ordered contract in HANDOFF; preserve prior receipts and fixture hashes.
+
+- [ ] S1. Validate the all-family camera refresh with shot recording OFF and
+  legacy P38 aim OFF; recording must not hide the startup dependency. Capture
+  current-binary evidence before calling the predicate fix runtime-validated.
+- [ ] S2. Retest physical MP FOV edges with the separate MP frustum opt-in ON
+  and the explicit hand-fixed probe profile. Configuration fix alone is not
+  proof of visual correction or complete weapon acceptance.
+- [ ] S3. Measure the SP view-dependent fog/distance defect and its actual
+  producer, reusing first-game fog/depth work before changing target bindings.
+- [ ] S4. Capture SP guest/world-pair cadence and timing versus XR refresh for
+  the operator-reported approximately 35 FPS; feed measured bottlenecks into Q2.
+- [ ] S5. Resolve/record bounded MP shutdown with a real clean child exit;
+  nonzero exit or forced cleanup cannot produce complete acceptance.
+
+SP tracked weapon control remains W5.2; it is not implemented by the smoke.
+W6.2 remains the next weapon feature once this reported-issue follow-up is handled.
 
 ## C - cross-game consistency pass (complete; no feature rediscovery)
 

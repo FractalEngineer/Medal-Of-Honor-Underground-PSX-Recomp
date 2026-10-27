@@ -1425,3 +1425,33 @@ source saves, defaults, historical receipts and unrelated `.commandcode/`.
   triangle/vertex bindings is NEXT. No exact-triangle beam or physical
   acceptance is claimed. Earlier moving-barrel aiming requirements are
   superseded by the operator policy in the current handoff/plan.
+
+## 2026-10-27 - Physical MP/SP smoke and documentation-only checkpoint
+
+- Ran bounded interactive VDXR MP P38 and isolated SP slot-2 headset smokes on
+  committed `29f7157` / executable `4204a6f3...`. MP observed 59 live hand
+  samples, 1,131 new submissions and 1,125 new pairs; zero failed eyes,
+  verification OFF. Operator said gun looked okay but reported MP edge culling.
+- The MP profile omitted `MOHU_VR_MP_FRUSTUM`. All-family camera refresh also
+  depended on debug capture/legacy P38 aim. After the observer armed, 12 shots
+  reported hand-fixed aim; P2 health was already 29 before recording, versus
+  fixture 32. No linked damage occurred during these 12 shots. Do not conflate
+  whole-run health change with verified tracked-shot damage.
+- MP exit was 1 with `tcp_quit`/`atexit` report. Old runner's complete flag is
+  not clean acceptance; forced cleanup was not recorded. Owned game closed.
+- SP edges looked good to the operator; tracked weapon control is still W5.2.
+  Operator reported about 35 FPS and view-dependent distant fog, with greater
+  visibility at FOV edges than straight ahead. Neither an independently
+  measured FPS benchmark nor a confirmed fog cause is claimed. Startup had
+  27 fresh pairs / zero XR failures. Source saves/preferences unchanged.
+- Before the stop request, changed camera predicate to include `g_weapon_aim`;
+  MP probe now opts into MP frustum, offers explicit `--hand-fixed`, records
+  account/forced cleanup and rejects nonzero/forced exit as complete acceptance.
+  Strict C syntax, active Release build and 11 focused probe unit tests passed.
+  New executable `924691b6...` is NOT runtime/headset retested.
+- User requested only documentation and push because usage is low. No further
+  implementation or runtime/headset tests at this checkpoint. Added S1-S5 and
+  exact ordered continuation in HANDOFF, ahead of W6.2; physical gates stay open.
+  Framework pins/defaults and reference checkout unchanged; `.commandcode/`
+  remains untouched. Evidence: [headset smoke](HEADSET_SMOKE_EVIDENCE.md) and
+  [checkpoint receipt](../../vr/proof/headset-smoke-20261027-receipt.json).

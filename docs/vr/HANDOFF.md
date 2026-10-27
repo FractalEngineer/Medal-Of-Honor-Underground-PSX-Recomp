@@ -23,7 +23,55 @@ the earlier hardware-first sequence; no completed box is reopened.
 
 ## 1. Start here - one next task
 
-**W6.1 COMPLETE. NEXT TASK: W6.2 verified triangle/vertex bindings.**
+**W6.1 COMPLETE. NEXT SESSION: S1-S5 headset-smoke follow-up; then W6.2.**
+
+The operator requested **document and push only** at this checkpoint. Stop after
+that; do not launch more tests or implement more changes this session.
+Read [HEADSET_SMOKE_EVIDENCE.md](HEADSET_SMOKE_EVIDENCE.md) and
+[the checkpoint receipt](../../vr/proof/headset-smoke-20261027-receipt.json)
+first. These physical observations supersede older statements that no headset
+run occurred, but do not close W3.3/W3.5/W5.4d or W5.2.
+
+On a later instruction to resume implementation, follow this order:
+
+1. **S1, camera without recording:** use the already changed camera predicate;
+   do not rediscover shot bindings. Run one focused copied-MP P38 control with
+   all-family aim/calibration/gun-only ON, legacy P38 aim OFF, and shot capture
+   OFF. Verify canonical camera/eligible hand-fixed aim updates before arming
+   recording; arming `shot start-p1` first would hide the original defect.
+   Record fallback/ownership and actual damage separately. The rebuilt
+   `924691b6...` passed build/syntax/11 unit tests only; do not relabel the
+   earlier `4204a6f3...` headset result as validation of this fix.
+2. **S2, MP edges:** the existing MP probe now enables
+   `MOHU_VR_MP_FRUSTUM=1`; the physical smoke omitted it. Verify the effective
+   flag in the receipt, then use `probe_p38_headset.py --hand-fixed` with the
+   copied MP fixture for a bounded operator retest when ready. Run as the
+   interactive Titan account with VDXR, not the offline sandbox account.
+   SP's `PSX_VR_HEAD_FRUSTUM` is a different switch. No selector rediscovery.
+3. **S3, SP fog:** use the isolated analysis SP slot 2, never root MP slot 2.
+   Operator reports good edges but shorter visibility straight ahead than at
+   the FOV edge while turning the head. Inspect the first game's existing
+   fog/depth implementation and docs before adding code; capture the actual SP
+   fog/depth producer and compare fixed world points under head rotation.
+   Determine whether clipping, fog depth or transform ownership is responsible
+   before changing any distance/FOV constants. Cause is currently unconfirmed.
+4. **S4, performance:** operator reports about 35 FPS in SP. Capture unique
+   guest/world-pair cadence separately from XR submissions, plus render/guest/
+   restore timing in the same copied fixture. Reuse reference profiling tools.
+   Do not call the reported number a measured benchmark or optimize blindly.
+5. **S5, cleanup:** old MP smoke exited 1 despite raw `complete=true`.
+   `tcp_quit` was reported; forced cleanup was not recorded. The probe now
+   rejects nonzero/forced cleanup as acceptance. Retain the old raw evidence;
+   investigate shutdown only with bounded owned-process cleanup, and record a
+   real clean exit before claiming it. No unrelated VD service termination.
+
+SP tracked weapon control remains the independently open W5.2 binding task,
+not a feature expected from this SP smoke. Do not borrow MP actor/camera
+addresses or claim live NPC damage from it. The 12 recorded MP aimed shots
+caused no observed linked health writes; health 32->29 happened before recording.
+After this follow-up, continue the W6.2 reader contract below without reopening
+completed matrices. The older instruction against premature performance work
+below applies to W6.2 discovery; these new operator-reported S tasks take priority.
 
 **Operator contract: the laser points along the bullet's hand-fixed aim ray.**
 Native recoil/reload animation plays normally and does not steer that ray.
@@ -168,7 +216,8 @@ candidate calibration is in
 [the complete-gun receipt](../../vr/proof/weapon-p38-complete-calibration-receipt.json):
 true tip `(81.8,110.6,447.6)`, barrel axis from node-11 rings, provisional
 `760.489674616524` units/metre. Preserve historical W3.1/W3.2 receipts. No new
-physical acceptance is claimed; no headset/runtime was launched for this work.
+physical acceptance was claimed by that desktop work. The later headset smoke
+is recorded separately in HEADSET_SMOKE_EVIDENCE.md.
 The frozen-frame matrix characterizes the visible P38 tip at node-11 indices
 24..28. The current hand-fixed aim intentionally does not follow that motion.
 

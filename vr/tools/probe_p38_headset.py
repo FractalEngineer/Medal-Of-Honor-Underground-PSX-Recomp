@@ -216,7 +216,7 @@ def resolve_vdxr_manifest():
     raise FileNotFoundError("Virtual Desktop OpenXR runtime manifest not found")
 
 
-def environment(mode, desktop, runtime_manifest=None):
+def environment(mode, desktop, runtime_manifest=None, *, hand_fixed=False):
     env = clean_environment(os.environ)
     env.update(
         PSX_DEV_INPUT="0",
@@ -233,11 +233,16 @@ def environment(mode, desktop, runtime_manifest=None):
         MOHU_VR_P38_CALIBRATED=str(int(mode == "tracked")),
         MOHU_VR_P38_AIM=str(int(mode == "tracked")),
         MOHU_VR_MP_CONTROL="1",
+        MOHU_VR_MP_FRUSTUM="1",
         MOHU_VR_STEREO_PROOF="1",
         MOHU_VR_EYE_RENDER_VIEW="1",
         MOHU_VR_EYE_GUEST_SUBMIT="1",
         MOHU_VR_EYE_OFFSET="0",
     )
+    if hand_fixed and mode == "tracked":
+        env.update(MOHU_VR_WEAPON_CALIBRATED="1", MOHU_VR_WEAPON_AIM="1",
+                   MOHU_VR_WEAPON_GUN_ONLY="1", MOHU_VR_P38_CALIBRATED="0",
+                   MOHU_VR_P38_AIM="0")
     if desktop:
         env["PSX_OPENXR_ENABLE"] = "0"
     else:
@@ -377,7 +382,7 @@ def wait_for_headset(process, mode):
     )
 
 
-def run_case(out, mode, seconds, desktop, runtime_manifest):
+def run_case(out, mode, seconds, desktop, runtime_manifest, *, hand_fixed=False):
     case_dir = out / mode
     session = case_dir / "session"
     saves = session / "saves/openbios"
@@ -396,7 +401,7 @@ def run_case(out, mode, seconds, desktop, runtime_manifest):
         ROOT
         / "build-release/Medal_of_Honor_Underground_Recompiled.exe"
     )
-    env = environment(mode, desktop, runtime_manifest)
+    env = environment(mode, desktop, runtime_manifest, hand_fixed=hand_fixed)
     command_line = [
         str(executable),
         "--no-launcher",
@@ -428,6 +433,10 @@ def run_case(out, mode, seconds, desktop, runtime_manifest):
                 "PSX_VR_MOVEMENT",
                 "PSX_VR_HEAD_FRUSTUM",
                 "MOHU_VR_MP_CONTROL",
+                "MOHU_VR_MP_FRUSTUM",
+                "MOHU_VR_WEAPON_CALIBRATED",
+                "MOHU_VR_WEAPON_AIM",
+                "MOHU_VR_WEAPON_GUN_ONLY",
                 "PSX_VR_WEAPON_POSE",
                 "PSX_VR_LASER",
                 "PSX_DITHERING",
@@ -437,6 +446,9 @@ def run_case(out, mode, seconds, desktop, runtime_manifest):
             if key in env
         },
         "complete": False,
+        "forced_cleanup": False,
+        "aim_policy": "hand-fixed all-family" if hand_fixed else "legacy P38/native",
+        "execution_account": subprocess.check_output(["whoami"], text=True).strip(),
     }
     with (
         (case_dir / "stdout.log").open("w", encoding="utf-8") as stdout,
@@ -570,9 +582,14 @@ def run_case(out, mode, seconds, desktop, runtime_manifest):
                 try:
                     process.wait(timeout=8)
                 except subprocess.TimeoutExpired:
+                    case["forced_cleanup"] = True
                     process.terminate()
                     process.wait(timeout=8)
             case["exit_code"] = process.returncode
+            if case["forced_cleanup"] or case["exit_code"] != 0:
+                case["transport_complete"] = bool(case["complete"])
+                case["complete"] = False
+                case["cleanup_error"] = "Nonzero exit or forced cleanup; not clean headset acceptance"
             save_json(case_dir / "receipt.json", case)
     return case
 
@@ -595,6 +612,8 @@ def main():
         help="Explicit OpenXR runtime manifest; defaults to Virtual Desktop",
     )
     parser.add_argument("--proof", type=Path)
+    parser.add_argument("--hand-fixed", action="store_true",
+                        help="Test the current hand-fixed all-family candidate on P38")
     args = parser.parse_args()
     try:
         seconds = validate_seconds(args.seconds)
@@ -675,10 +694,11 @@ def main():
         for mode in modes:
             receipt["cases"].append(
                 run_case(
-                    out, mode, seconds, args.desktop, runtime_manifest
+                    out, mode, seconds, args.desktop, runtime_manifest,
+                    hand_fixed=args.hand_fixed
                 )
             )
-        receipt["complete"] = True
+        receipt["complete"] = all(case["complete"] for case in receipt["cases"])
     except BaseException as error:
         receipt["error"] = str(error)
         raise
