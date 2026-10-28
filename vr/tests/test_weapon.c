@@ -45,6 +45,9 @@ int main(void) {
         const MohuVrWeaponProfile* profile = mohu_vr_weapon_profile_at(i);
         CHECK(profile && profile->name && mohu_vr_weapon_profile_find(profile->id));
         CHECK(profile->geometry_fnv32 && profile->node_count <= 32u);
+        CHECK(mohu_vr_weapon_sp_geometry_valid(profile, profile->geometry_fnv32));
+        CHECK(mohu_vr_weapon_sp_geometry_valid(profile, 0x408599ACu) == (profile->id == 15u));
+        CHECK(!mohu_vr_weapon_sp_geometry_valid(profile, 0x408599ADu));
         CHECK(profile->calibration && profile->calibration->provisional == 1u);
         CHECK(profile->calibration->model_units_per_metre > 1.0);
         CHECK(profile->calibration->reference_length_m > 0.0);

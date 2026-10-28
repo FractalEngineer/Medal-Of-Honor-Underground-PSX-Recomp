@@ -1,11 +1,30 @@
 # VR Port Documentation
 
+**Current checkpoint (2026-10-29):** operator headset smoke confirms world,
+music, pause and Sten are OK with the clean image. Performance remains the
+alpha blocker. Start with the rewritten [HANDOFF.md](HANDOFF.md), then execute
+[PERFORMANCE_NEXT_STEPS.md](PERFORMANCE_NEXT_STEPS.md). Historical reports and
+the archived handoff are evidence, not alternate task queues.
+
 Current priorities: [alpha port plan](ALPHA_PLAYABILITY_AND_CALIBRATION.md).
+[New disc-image comparison](DISC_IMAGE_COMPARISON.md): both replacements are
+identical and sector-valid, with unchanged executable/overlays. The remaining
+clean image is active for existing RunVR batch files; old-image recovery is disabled.
+2026-10-29: [SP gameplay repairs](SP_GAMEPLAY_REPAIRS.md) records the Sten fix,
+the shared cause of the music loop/missing slot-5 world (an empty disc sector),
+the exact-image runtime recovery, thrown-laser checks and production timings.
+The original image stays untouched. Performance remains the alpha blocker;
+the measured draw-skip candidate is opt-in and 60/90 FPS is unproven.
+Latest operator priority: [SP performance and petrol repair](SP_PERFORMANCE_AND_PETROL.md).
+Current comparative audit and exact next experiments:
+[first-game performance comparison](SP_PERFORMANCE_COMPARISON.md).
+Petrol visibility and production-launch defaults are repaired; minimum 60 fresh
+VR frames/s (90 preferred) is the current alpha blocker, ahead of R6 expansion.
 The native pause-menu port passes SP/MP desktop and null-HMD XR controls;
 [PAUSE_MENU_PARITY.md](PAUSE_MENU_PARITY.md) records its bindings and remaining
 physical check. Weapon pose/mask and exact laser desktop fixes are recorded in
 [ALPHA_WEAPON_REPAIRS.md](ALPHA_WEAPON_REPAIRS.md). Native hand HUD is ported:
-[NATIVE_HAND_HUD.md](NATIVE_HAND_HUD.md). NEXT is R6 real SP NPC damage/isolation
+[NATIVE_HAND_HUD.md](NATIVE_HAND_HUD.md). After the performance blocker, R6 is real SP NPC damage/isolation
 and broader SP shot families, then SP alpha playability/performance/recovery.
 SP is the release target; MP only supplies quick weapon calibration.
 Headset calibration remains deferred. Earlier SP repair:
@@ -24,10 +43,12 @@ Shared framework branches, the merged upstream VR stack and the three pending
 generic changes are tracked in [FRAMEWORK_UPSTREAM_TRACKER.md](FRAMEWORK_UPSTREAM_TRACKER.md).
 Framework development uses `vr/shared-development`; master mirrors upstream.
 
-1. [HANDOFF.md](HANDOFF.md) is the current execution contract: A7 pause port is
-   desktop/null-HMD validated; A2 defaults/masks and A4 laser have desktop evidence.
-   H1/A5a native hand HUD is desktop/null-HMD validated; R6 SP damage and broader
-   SP families are next. R4 native hooks/stereo
+1. [HANDOFF.md](HANDOFF.md) is the current execution contract: world/music,
+   SP pause and Sten have operator headset smoke acceptance. A2 defaults/masks,
+   A4 laser and H1/A5a native hand HUD retain their scoped desktop evidence.
+   P3b native cost attribution and P3c implementation are next via the exact
+   performance runbook, ahead of R6 SP
+   damage and broader SP families. R4 native hooks/stereo
    parity are complete. R5 fog needs its matching street fixture;
    R6 linked live SP impact remains open within weapon playability work.
    W6.1-W6.3 fixed-ray/triangle gates are desktop complete. Physical hand-aim/impact acceptance and live NPC/SP

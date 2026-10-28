@@ -1,6 +1,6 @@
 # Underground VR execution plan
 
-Updated: 2026-10-28. Working branch: `feature/vr-port`.
+Updated: 2026-10-29. Working branch: `feature/vr-port`.
 
 **Release scope is SP. MP is only a quick all-weapon calibration fixture.
 Historical MP evidence remains useful; new MP feature/acceptance work must not
@@ -12,17 +12,23 @@ scope has evidence; it never implies broader headset or gameplay acceptance.
 Historical design and prior attempts belong in
 [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md) and the evidence documents.
 
-**CURRENT: A7 native pause is implemented; A2 weapon-default/mask repairs and
-A4 exact triangle laser pass desktop controls. Read
-[ALPHA_WEAPON_REPAIRS.md](ALPHA_WEAPON_REPAIRS.md) for current bindings/evidence.
-A2 still needs real SP NPC damage and physical calibration; W6.4 is physical.
-H1/A5a native hand HUD is implemented and SP desktop/null-HMD validated; read
-[NATIVE_HAND_HUD.md](NATIVE_HAND_HUD.md). H2 transitions/readability remain open.
-NEXT desktop work: R6 real SP NPC damage/isolation and broader SP shot families,
-then the focused SP alpha route/performance/recovery.
-The operator deferred headset testing until fixes are ready. A3's optional editor
-remains a study. S5 physical teardown/performance and R5's matching fog fixture
-remain open. All game launches must run outside the sandbox.**
+**CURRENT CHECKPOINT (2026-10-29): the operator personally ran the clean image
+and confirms missing-level/music issues are gone, pause is OK and Sten is OK.
+Performance remains unsatisfactory. These are physical smoke results, not
+60/90-FPS, all-ID damage or whole-campaign acceptance. The damaged image and
+duplicate were deleted; the clean image is active and historical recovery OFF.**
+
+**Next: P3b native replay attribution → P3c measured optimization → P4/P5 fresh
+view cadence/recovery → P6 focused SP performance acceptance.** Execute
+[PERFORMANCE_NEXT_STEPS.md](PERFORMANCE_NEXT_STEPS.md), with one game, two
+compile jobs and unsandboxed launches. Do not restart image audits, world/
+music/culling, Sten basis mapping, pause ports or unchanged MP matrices.
+P0b's remaining two-title/XR dataset must not become a study that blocks P3b.
+
+A7 now has SP physical smoke acceptance. H1/A5a HUD is implemented; detailed
+transitions/readability, broader SP damage, clean-close and matching-fixture
+fog scopes remain distinct. The optional A3 editor is not on the alpha critical
+path. Finish desktop implementation before another targeted headset request.
 
 The owner rejected SP muzzle placement, poor performance, slot-3 weapon loss
 and visible arms. The prior "physical pass next" order was premature. See
@@ -91,19 +97,108 @@ strict W1->W6/hardware-first sequence.
 - Update the handoff's next task ID, last result and next experiment at session
   end. An incomplete task needs a precise continuation, not "continue mapping".
 
-## A - Alpha playability order (studied; implementation pending)
+## P - SP performance blocker (operator priority, 2026-10-28)
 
-This sequence controls priority over the older serial weapon/port ordering.
-The [study](ALPHA_PLAYABILITY_AND_CALIBRATION.md) gives source entry points,
-menu behavior, calibration/persistence contracts and scope limits.
-Latest operator clarification: **port the working first-game implementations**.
-The study's concrete source-to-source table owns reuse: A1 triage -> A2 weapon
-parity -> A4 exact laser -> A5 native HUD -> A6 alpha validation/package.
-The operator additionally reports broken native pause: insert A7 immediately
-after A1 triage and before A2. This is a required reference-game port, separate
-from the optional A3 settings editor.
-A3's runtime editor is optional follow-up unless a remaining calibration blocker
-actually requires it. The numbered items below are stable IDs, not serial mandates.
+The current clean-image headset smoke closes the reported missing world/music,
+SP pause and Sten functionality checks. The stable IDs below retain their exact
+scopes; the [smoke receipt](../../vr/proof/clean-disc-headset-smoke-receipt.json)
+records the human observations and unmeasured limits. Performance is next; old
+damaged-image regressions are closed, not an alternate work queue.
+
+- [x] G1. Repair slot-4 Sten/common firearm aiming. Rotated native first motion,
+  native/loss fallback and P38 regression pass; operator confirms Sten in headset.
+  Live all-ID SP damage remains R6.
+- [x] G2. Restore slot-5 world loading: clean image replaces the damaged input.
+  Desktop native load/both-eye/independent-hit proof plus operator headset
+  confirmation: no more missing level. Historical recovery is disabled.
+- [x] G3. Recover the stuck stream: operator confirms music is fixed on the clean
+  image. Earlier payload/refill controls advance after a controlled hitch.
+  Historical recovery alone did not recover the old image's zeroed payload.
+  Both supplied replacements now pass all 318,028
+  sector checks and contain the actual payload; executable/overlays match and
+  a copied slot-5 smoke passes without recovery. The remaining clean image is
+  now active and the old repair disabled. See [disc comparison](DISC_IMAGE_COMPARISON.md).
+- [ ] G4. Enable the hand-fixed surface laser for grenade and petrol, validate
+  both eyes and grip/loss controls; this is an aiming ray, not a ballistic arc.
+  Implementation and full SP petrol surface/loss/release checks pass. Grenade
+  rays match in MP calibration, but two runs fail VRAM restoration (2/3
+  mismatches); SP grenade acceptance remains unproven. Preserve failed evidence.
+- [x] G4a. Enable grenade/petrol hand-fixed surface rays in the shared path.
+- [x] G4b. Validate SP petrol eight directions/both eyes/independent hits and
+  grip release/tracking loss; zero VERIFY mismatches.
+- [ ] G4c. Obtain/validate the native SP grenade case and preserve restoration;
+  do this in the broader SP weapon scope after the performance blocker. An MP
+  feature expansion is not an alpha prerequisite.
+
+Current production desktop evidence and exact next steps are in
+[SP_GAMEPLAY_REPAIRS.md](SP_GAMEPLAY_REPAIRS.md). Release/debug-OFF is restored.
+The optional native-world copy skip passes fallback controls and three A/B
+repeats but remains OFF; it saves native-frame work, not the 17.6-ms stereo
+traversal budget. Resolution reduction does not remove that cost. These controls
+exclude XR/hand-HUD work and do not complete P0b's two-title/full-XR comparison,
+P3c's shipping optimization or P4's independent fresh-view cadence.
+
+Read [SP_PERFORMANCE_AND_PETROL.md](SP_PERFORMANCE_AND_PETROL.md) and the current
+[first-game comparison](SP_PERFORMANCE_COMPARISON.md). This order supersedes
+older R6-first pointers. MP remains calibration only. The operator's first-game
+60-FPS experience is the playability reference; 90 is preferred.
+
+- [x] P0a. Compare current first-game/Underground sources, launch/build defaults
+  and preserved traces. Same shared framework/checkpoint/readback implementation;
+  Underground's tested scene draws 65–69% more primitives per eye. Different
+  historical scenes/builds/backends prevent a matched FPS/speedup conclusion.
+- [ ] P0b. Capture controlled current production baselines for both titles:
+  fixed copied fixture per title, warm native calls, equal effective resolution,
+  projection/runtime/HUD/weapon/laser options, fresh pairs and guest VBlanks.
+  No physical headset. Preserve reference source/settings/saves; see comparison
+  report for exact provenance, workload and cleanup requirements.
+- [x] P0b1. Clean-image Underground default-config slot-5 desktop baseline/smoke:
+  activation receipt, 120 valid exported records, normal close. No XR/hand-HUD
+  cost, no matched two-title or fresh 60/90 acceptance implied. Refresh once
+  when beginning the next candidate; do not repeat the image audit.
+- [x] P1. Reproduce SP slot-3 petrol loss with one native switch. Accept its
+  exact measured metadata variant; verify 99 visible / 97 masked vertices in
+  both eyes, no new guard failure, P38 fire/reload/load and rollback regression.
+- [x] P2. Fix RunVR default to production `game.toml`; explicit diagnostics only.
+  Matched debug-OFF native overlays reduce guest work about 16.5%, but measured
+  desktop fresh pair cadence remains about 30/s. No 60-FPS claim.
+- [x] P3a. Port reference stage brackets; isolate traversal, submission, exact
+  laser, visibility and HUD capture/readback. Persistent pre-null settings
+  backup and sufficient cleanup timeout; production trace export without TCP.
+- [ ] P3b. Profile native replay using the first game's existing phase/host/
+  guest-cycle tools and split the wrapper's child draw stages. Resolve native
+  overlay DLL samples; measure full guard/hook cost outside the collection span.
+  Name the top three host costs; do not substitute guest cycles for host time.
+  Exact commands, nested trace shape, module caveats, attribution targets,
+  exit criteria and failure handling: [runbook](PERFORMANCE_NEXT_STEPS.md).
+- [ ] P3c. Implement a measured replay or HUD synchronization improvement and
+  validate at least three alternating production baseline/candidate windows.
+  Preserve native HUD/fallback, geometry/FOV, weapons, laser and guest timing.
+  Generic changes need both-game checks before either pin changes. Completed
+  first-game checkpoint/readback work is already shared; do not redo it.
+- [x] P3c1. Qualify bounded native-copy candidate controls and three diagnostic/
+  production A/B repeats; it remains OFF. Small desktop cadence gain does not
+  remove the approximately 17.6-ms pair cost or close P3c/P3/P4.
+- [ ] P3. Reduce measured production scene-replay/HUD cost to the complete
+  16.67 ms/frame budget; 11.11 ms preferred. Keep weapon/laser/HUD and correct FOV.
+- [ ] P4. Implement safe render-only cadence independent of native 30 Hz draw.
+  Preserve simulation/audio/shot timing and rollback/save ABI. No turbo,
+  native VBlank-rate change or stale-pair/reprojection FPS substitution.
+- [ ] P5. Pass desktop/null-HMD freshness, pacing, rollback, pause/load/recovery
+  and guest-timing controls; restore debug-OFF production build.
+- [ ] P6. One bounded SP headset check: steady minimum 60 fresh application
+  frames/s, preferred 90; record CPU/GPU frame times and compositor repeats.
+
+## A - Alpha playability backlog after the performance blocker
+
+P3b/P3c/P4/P5 currently take priority over this backlog unless a new SP regression
+blocks their controls. A7 is implemented and physically accepted for SP; do not
+port it again. A2 defaults/masks, A4 exact ray and A5 native HUD retain the scoped
+evidence linked below. Continue only their explicitly open parts after performance.
+The [original study](ALPHA_PLAYABILITY_AND_CALIBRATION.md) supplies reuse leads,
+not a fresh implementation order. Port working reference behavior where relevant;
+do not invent a settings framework. A3's runtime editor remains optional. These
+are stable scope IDs, not instructions to redo already accepted work or require MP.
 
 - [ ] A1. Classify/fix active-play versus close-only process exits (S5/Q1).
 - [x] A1a. Classify the six physical batch exit reports: all record
@@ -113,8 +208,9 @@ actually requires it. The numbered items below are stable IDs, not serial mandat
   and menu-input routing. SP/MP each pass two navigation/resume cycles plus
   load-while-paused recovery, fresh native XR quads, stereo recovery, zero XR
   failures and zero rollback mismatches. [Evidence](PAUSE_MENU_PARITY.md).
-- [ ] A7a. Operator confirms native pause-menu readability/comfort, navigation
-  and resume in SP and MP. Desktop/null-HMD results do not close this physical gate.
+- [x] A7a. Operator confirms SP native pause is OK in the headset (2026-10-29).
+  This closes the SP functional smoke, not exhaustive comfort/menu edge cases.
+  MP physical pause acceptance is not required for the SP alpha.
 - [ ] A2. Correct grenade held orientation, StG gun-only mask, oversized defaults
   and shared shot/sight alignment; pass representative live SP NPC impact (R6).
 - [x] A2a. Authored axes/upright props, reference firearm scale and semantic StG

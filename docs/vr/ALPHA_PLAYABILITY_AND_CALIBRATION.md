@@ -1,5 +1,19 @@
 # Playable alpha priorities and runtime weapon calibration study
 
+**2026-10-29 current checkpoint:** clean image is active; the operator confirms
+world/music fixed, SP pause OK and Sten OK in headset. Performance is still
+unsatisfactory. Follow [HANDOFF.md](HANDOFF.md) and
+[PERFORMANCE_NEXT_STEPS.md](PERFORMANCE_NEXT_STEPS.md): native replay
+attribution/optimization, fresh-view cadence/recovery, then focused performance
+acceptance. The original study below is reference material, not a new work
+queue or a prohibition on the already authorized implementation. Do not rebuild
+pause/weapon calibration or an optional editor before addressing performance.
+
+**Latest operator priority (2026-10-28): SP performance blocks alpha: minimum
+60 fresh VR frames/s, preferred 90. SP petrol visibility/default launcher config
+are repaired. [Current evidence and next steps](SP_PERFORMANCE_AND_PETROL.md)
+and P1-P6 in VR_PLAN supersede older R6-first ordering in this study.**
+
 Date: 2026-10-28. **Study/documentation only. No feature implementation, game
 launch, build, new framework branch or dependency update is authorized by this task.**
 This opening describes the original study request. Later operator instruction

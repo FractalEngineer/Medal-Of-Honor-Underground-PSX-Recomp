@@ -91,6 +91,9 @@ size_t mohu_vr_weapon_profile_count(void);
 const MohuVrWeaponProfile* mohu_vr_weapon_profile_at(size_t index);
 const MohuVrWeaponProfile* mohu_vr_weapon_profile_find(uint8_t id);
 const MohuVrWeaponCalibration* mohu_vr_weapon_calibration_find(uint8_t id);
+/* Exact SP asset variants retain full geometry/metadata identity checks. */
+int mohu_vr_weapon_sp_geometry_valid(const MohuVrWeaponProfile* profile,
+                                     uint32_t geometry_fnv32);
 /* Uniform power-of-two precision lift, preserving ratios and Q12 bounds.
  * Apply the returned factor to the render-view eye translation as well. */
 int mohu_vr_weapon_precision_control(uint32_t control[8], double* factor);

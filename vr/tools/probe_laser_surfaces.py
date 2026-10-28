@@ -12,6 +12,7 @@ import shutil
 import socket
 import struct
 import subprocess
+import time
 
 import numpy as np
 import inspect_weapon_sets as n
@@ -66,14 +67,33 @@ def command(args):
     return json.loads(r['reply'])
 
 
-def geometry(mode,out):
-    def word(a):return int.from_bytes(n.read(a,4),'little')
+def valid_pair():
+    # Queries run on the debug thread. A replay clears each working result
+    # before drawing, so an in-flight read is not a published invalid ray.
+    deadline=time.monotonic()+3
+    while time.monotonic()<deadline:
+        eyes=[command(f'eye={i}') for i in range(2)]
+        if all(e['valid'] for e in eyes) and all(
+            np.max(abs(np.asarray(eyes[0][key])-eyes[1][key]))<1e-6
+            for key in ('origin','direction')):
+            return eyes
+        time.sleep(.01)
+    raise RuntimeError('No coherent valid laser pair within three seconds')
+
+
+def geometry(mode,out,levels=None):
+    ram=n.read(0x80000000,0x200000)
+    def read(a,size):
+        offset=a&0x1fffffff
+        if not 0<=offset<=len(ram)-size:raise ValueError('Mesh outside captured RAM')
+        return ram[offset:offset+size]
+    def word(a):return int.from_bytes(read(a,4),'little')
     result=[];chunks=[]
     def mesh(table,count,lists,matrix=None,translation=None,base_bytes=8):
-        raw=n.read(table,count*8)
+        raw=read(table,count*8)
         xyz=np.frombuffer(raw,dtype='<i2').reshape(-1,4)[:,:3].astype(float)
         for address,faces in lists:
-            data=n.read(address,faces*20)
+            data=read(address,faces*20)
             indices,used=decode_strip(data,faces,count,base_bytes)
             tris=xyz[np.asarray(indices)]
             if matrix is not None:tris=tris@matrix.T+translation
@@ -88,15 +108,22 @@ def geometry(mode,out):
                 a=stack.pop()
                 if a in seen:raise ValueError('Cyclic level tree')
                 seen.add(a);assert len(seen)<8192
-                data=n.read(a,36);count=struct.unpack_from('<i',data,12)[0]
+                data=read(a,36);count=struct.unpack_from('<i',data,12)[0]
                 if count:lists.append((struct.unpack_from('<I',data,24)[0],count))
                 else:stack.extend(x for x in struct.unpack_from('<3I',data,24) if x)
             mesh(g['table'],g['count'],lists)
     if mode=='sp':
-        for i in range(8):
-            g=command(f'level={i}')
-            if not g['valid']:break
-            level_mesh(g)
+        if levels is None:
+            levels=[]
+            count=word(0x800a5384)
+            if not 1<=count<=8:raise ValueError('Invalid native SP arena count')
+            skip=word(0x800b749c)
+            for i in range(count):
+                if i==skip:continue
+                record=0x800a57dc+i*0xc4
+                levels.append(dict(root=word(word(record+8)+20),
+                                   table=word(record+44),count=word(record+60)))
+        for g in levels:level_mesh(g)
     else:
         for i in range(word(0x8009ECE4)):
             st=0x8009F13C+i*196;sub=word(st+8)
@@ -104,9 +131,9 @@ def geometry(mode,out):
         a=word(0x800A35CC);seen=set()
         while a:
             assert a not in seen and len(seen)<64;seen.add(a)
-            data=n.read(a,0x388)
+            data=read(a,0x388)
             if struct.unpack_from('<I',data,0x384)[0]==0x8006C61C and not struct.unpack_from('<I',data,12)[0]&1:
-                obj=struct.unpack_from('<I',data,0x114)[0];m=n.read(obj,0xb8)
+                obj=struct.unpack_from('<I',data,0x114)[0];m=read(obj,0xb8)
                 matrix=np.asarray(struct.unpack_from('<9h',data,0x354),float).reshape(3,3)/4096
                 tr=np.asarray(struct.unpack_from('<3i',data,0x368),float)
                 mesh(struct.unpack_from('<I',m,0x2c)[0],struct.unpack_from('<I',m,0x3c)[0],
@@ -118,7 +145,10 @@ def geometry(mode,out):
 
 def main():
     ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('out',type=Path)
-    ap.add_argument('--mode',choices=('sp','mp'),required=True);args=ap.parse_args()
+    ap.add_argument('--mode',choices=('sp','mp'),required=True)
+    ap.add_argument('--switch',type=int,choices=range(4),default=0)
+    ap.add_argument('--skip-shot',action='store_true')
+    args=ap.parse_args()
     assert not n.game_pids(),'Close existing game first'
     with socket.socket() as s:s.bind(('127.0.0.1',4372))
     out=args.out.resolve();out.mkdir(parents=True,exist_ok=False)
@@ -138,6 +168,7 @@ def main():
             '--memcard-dir',str(out/'saves'),'--debug-port','4372'],cwd=out,env=env,stdout=so,stderr=se,creationflags=subprocess.CREATE_NO_WINDOW)
         try:
             p.wait_for_ping(proc);n.load(slot);p.release_load_override();p.set_desktop_hands()
+            for _ in range(args.switch):n.switch()
             n.command('openxr_input_override',right_squeeze=1000);n.frames(8)
             first=command('eye=0');r['first']=first
             assert first['valid'],first
@@ -150,7 +181,7 @@ def main():
                 pose.set_hand_pair(grip=(.15,-.15,-.4),aim=(.15,-.15,-.45),
                                    aim_q=(cy*sp,sy*cp,-sy*sp,cy*cp))
                 n.command('openxr_input_override',right_squeeze=1000);n.frames(6)
-                eyes=[command(f'eye={i}') for i in range(2)]
+                eyes=valid_pair()
                 for eye in eyes:
                     assert eye['valid'],eye
                     hit=nearest(tris,np.asarray(eye['origin']),np.asarray(eye['direction']),50*238.80597014925373)
@@ -164,7 +195,7 @@ def main():
             assert sum(c['eyes'][0]['hit'] for c in r['cases'])>=3
             # One native MP projectile must use precisely the previewed ray.
             # Recoil may move the visual flash/mesh, never this fixed affine.
-            if args.mode=='mp':
+            if args.mode=='mp' and not args.skip_shot:
                 pose.set_head();p.set_desktop_hands()
                 n.command('openxr_input_override',right_squeeze=1000);n.frames(6)
                 before=command('eye=0');p.shot_command('start')

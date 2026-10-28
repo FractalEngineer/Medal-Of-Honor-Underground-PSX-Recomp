@@ -145,6 +145,16 @@ static const MohuVrWeaponCalibration k_petrol_bomb_calibration = {
     1u,
 };
 
+int mohu_vr_weapon_sp_geometry_valid(const MohuVrWeaponProfile* profile,
+                                     uint32_t geometry_fnv32) {
+    if (!profile) return 0;
+    if (geometry_fnv32 == profile->geometry_fnv32) return 1;
+    /* SP slot-3 petrol has identical XYZ and topology to the MP calibration
+     * asset. All 196 vertices carry metadata 128 rather than MP's 129. Keep
+     * an exact second hash; do not ignore metadata or accept arbitrary assets. */
+    return profile->id == 15u && geometry_fnv32 == 0x408599ACu;
+}
+
 static const MohuVrWeaponCalibration k_sten_calibration = {
     {77.484848484848, 110.939393939394, 324.969696969697},
     {115.600000000000, 109.800000000000, 508.200000000000},

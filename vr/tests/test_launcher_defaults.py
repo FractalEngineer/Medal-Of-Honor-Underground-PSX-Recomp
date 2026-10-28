@@ -15,6 +15,13 @@ class LauncherDefaultsTest(unittest.TestCase):
         self.assertEqual(int(match.group(1)), -1)
         self.assertIn("PSX_LOAD_SLOT = $(if ($Slot -ge 0)", script)
 
+    def test_playable_launch_does_not_auto_select_interpreter(self) -> None:
+        script = LAUNCHER.read_text(encoding="utf-8")
+        block = re.search(r"if \(-not \$GameConfig\) \{(.*?)\n\}", script, re.S)
+        self.assertIsNotNone(block)
+        self.assertIn("$GameConfig = Join-Path $repoRoot 'game.toml'", block.group(1))
+        self.assertNotIn('game-interp.toml', block.group(1))
+
     def test_flat_launch_clears_weapon_experiment_activation(self) -> None:
         script = (ROOT / "RunFlat.bat").read_text(encoding="utf-8")
         cleared = re.search(r"for %%V in \((.*?)\) do set", script, re.S)

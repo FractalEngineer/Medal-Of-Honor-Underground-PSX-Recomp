@@ -1,0 +1,821 @@
+{
+  "updated": "2026-10-29",
+  "complete": true,
+  "configured_image_changed": false,
+  "source_images_modified": false,
+  "original_saves_modified": false,
+  "headset_used": false,
+  "source_images": [
+    {
+      "path": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\Medal Of Honor Underground (USA)\\MOHU (USA).bin",
+      "sha256": "0951683ffd1bc2db1094ef3b0e142df6741efe2a5f95ad13bb5f2813a6c252d9"
+    },
+    {
+      "path": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\Medal of Honor - Underground\\Medal of Honor - Underground.bin",
+      "sha256": "2aed19d588f69274f8be70001eaa9b6400240b62088da72bace815ab902d56ed"
+    },
+    {
+      "path": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\MOH_Underground\\Medal of Honor - Underground (USA).bin",
+      "sha256": "2aed19d588f69274f8be70001eaa9b6400240b62088da72bace815ab902d56ed"
+    }
+  ],
+  "new_image_hashes": {
+    "sha256": "2aed19d588f69274f8be70001eaa9b6400240b62088da72bace815ab902d56ed",
+    "md5": "9b5f6e9ed0ced26fda1bfb7cdd2b7a01",
+    "sha1": "3d4ed9b1c7fb99acd96dd9c6ce2749a40cb8a1c2",
+    "crc32": "19a9614b"
+  },
+  "new_images_byte_identical": true,
+  "sector_checks_new": {
+    "sectors": 318028,
+    "form1": 286542,
+    "form2": 31486,
+    "form2_edc_absent": 0,
+    "invalid_header": {
+      "count": 0,
+      "first_lbas": []
+    },
+    "invalid_subheader": {
+      "count": 0,
+      "first_lbas": []
+    },
+    "invalid_edc": {
+      "count": 0,
+      "first_lbas": []
+    },
+    "invalid_ecc_p": {
+      "count": 0,
+      "first_lbas": []
+    },
+    "invalid_ecc_q": {
+      "count": 0,
+      "first_lbas": []
+    }
+  },
+  "sector_checks_old": {
+    "sectors": 318028,
+    "form1": 286464,
+    "form2": 31500,
+    "form2_edc_absent": 0,
+    "invalid_header": {
+      "count": 64,
+      "first_lbas": [
+        9469,
+        154500,
+        155571,
+        188287,
+        188487,
+        188960,
+        196780,
+        196836,
+        196872,
+        196873,
+        196910,
+        196928,
+        196965,
+        201287,
+        201324,
+        201342,
+        201343,
+        201349,
+        201360,
+        201361,
+        201376,
+        201377,
+        201378,
+        201379,
+        201380,
+        201392,
+        201398,
+        201399,
+        201405,
+        201406,
+        201408,
+        201409
+      ]
+    },
+    "invalid_subheader": {
+      "count": 63,
+      "first_lbas": [
+        143644,
+        150324,
+        151133,
+        151808,
+        154160,
+        154432,
+        157823,
+        159399,
+        159811,
+        160171,
+        160808,
+        165495,
+        170175,
+        171827,
+        177172,
+        179687,
+        185495,
+        185911,
+        188087,
+        188687,
+        188851,
+        190491,
+        191587,
+        192191,
+        196799,
+        196817,
+        196818,
+        196854,
+        196855,
+        196909,
+        196946,
+        197436
+      ]
+    },
+    "invalid_edc": {
+      "count": 994,
+      "first_lbas": [
+        141296,
+        141312,
+        141428,
+        142832,
+        142948,
+        142964,
+        143080,
+        143180,
+        143196,
+        143296,
+        143312,
+        143328,
+        143428,
+        143444,
+        143544,
+        143644,
+        143660,
+        143676,
+        144756,
+        144772,
+        144872,
+        144888,
+        144972,
+        144988,
+        145188,
+        145204,
+        145220,
+        145288,
+        145304,
+        145388,
+        145404,
+        145504
+      ]
+    },
+    "invalid_ecc_p": {
+      "count": 4,
+      "first_lbas": [
+        9427,
+        188086,
+        192191,
+        201510
+      ]
+    },
+    "invalid_ecc_q": {
+      "count": 442,
+      "first_lbas": [
+        354,
+        467,
+        610,
+        1210,
+        1744,
+        2051,
+        2329,
+        2518,
+        2797,
+        3127,
+        3156,
+        3236,
+        3256,
+        3266,
+        3326,
+        3436,
+        3456,
+        3506,
+        3526,
+        3546,
+        3576,
+        3596,
+        3917,
+        3937,
+        3957,
+        4722,
+        4742,
+        4782,
+        4833,
+        4843,
+        4853,
+        4974
+      ]
+    }
+  },
+  "old_zero_sectors": 64,
+  "new_zero_sectors": 0,
+  "raw_sector_differences": 1498,
+  "changed_sector_regions": {
+    "header": 64,
+    "subheader": 127,
+    "payload": 1058,
+    "edc_or_ecc": 536
+  },
+  "iso_layout_identical": true,
+  "iso_files": 835,
+  "changed_logical_files": [
+    {
+      "path": "/DATA/MSN2/LVL2/M2_2_1.VB;1",
+      "old": {
+        "lba": 9013,
+        "bytes": 2573136,
+        "sha256": "5c4c6346970792b96da0fcd07f08b07eab75efcd24137c5146a3b7816b228a1e"
+      },
+      "new": {
+        "lba": 9013,
+        "bytes": 2573136,
+        "sha256": "cbcca6b984ff1d76b26a01cb383102940e0f997cb37f210b6562df5630214940"
+      }
+    },
+    {
+      "path": "/MOVIE/INGAME/BRIEF/M1B.STR;1",
+      "old": {
+        "lba": 139957,
+        "bytes": 11444224,
+        "sha256": "0d90b85e1bd1d29698015a5e3360c349059bc0d6d97a12a81c595bbed20285ab"
+      },
+      "new": {
+        "lba": 139957,
+        "bytes": 11444224,
+        "sha256": "1e2e03f14f8fbf70cbe37bba7250862f85cd0ee0b14b32cee0bf040656066de7"
+      }
+    },
+    {
+      "path": "/MOVIE/INGAME/BRIEF/M2B.STR;1",
+      "old": {
+        "lba": 145545,
+        "bytes": 22362112,
+        "sha256": "45611aa65f211b8ab1f3a3e2e838261e480842fad3941200a52a129aaa0cee65"
+      },
+      "new": {
+        "lba": 145545,
+        "bytes": 22362112,
+        "sha256": "eeaca14a946e2bab9df63ed09cbc90b8be884c06f7907a59a2c37bc7d0b03c6f"
+      }
+    },
+    {
+      "path": "/MOVIE/INGAME/BRIEF/M3B.STR;1",
+      "old": {
+        "lba": 156464,
+        "bytes": 15360000,
+        "sha256": "0675b0238ce4b4fd12253bcd56c906434a795243fe77c4e9c8e0ec7230dc699d"
+      },
+      "new": {
+        "lba": 156464,
+        "bytes": 15360000,
+        "sha256": "ebf8fdf3e00a5194b7997ee2cdf3bad1a25f365069a8fbe9f5544d42d5131d91"
+      }
+    },
+    {
+      "path": "/MOVIE/INGAME/BRIEF/M4B.STR;1",
+      "old": {
+        "lba": 163964,
+        "bytes": 14598144,
+        "sha256": "99590c0095ea02a9197e9f3c2891861b399ff6709fec643493ca88c33d791dd8"
+      },
+      "new": {
+        "lba": 163964,
+        "bytes": 14598144,
+        "sha256": "71543c991231eee05f33d29aa772cd18d013b2db970fb6ceb7a43981d9b7b6f1"
+      }
+    },
+    {
+      "path": "/MOVIE/INGAME/BRIEF/M5B.STR;1",
+      "old": {
+        "lba": 171092,
+        "bytes": 17358848,
+        "sha256": "6dfb735e5abb100cc3dc828ba3c731916ba0f264e9df235789c06c563a2bf003"
+      },
+      "new": {
+        "lba": 171092,
+        "bytes": 17358848,
+        "sha256": "fd4e0b187ca584454a18dffde698ed3fc5bb3f723babfe756d0c9e37c374e3c2"
+      }
+    },
+    {
+      "path": "/MOVIE/INGAME/BRIEF/M6B.STR;1",
+      "old": {
+        "lba": 179568,
+        "bytes": 18513920,
+        "sha256": "174dc3b491baad66374f90b092d3a671eb0a2a1b4b75d2a76f0e8c04638d87b7"
+      },
+      "new": {
+        "lba": 179568,
+        "bytes": 18513920,
+        "sha256": "1c1c14afb688cdcdd56ae04d46ab1d7dfbe917abb8432ed74a3b37c83ce4b2f3"
+      }
+    },
+    {
+      "path": "/MOVIE/INGAME/BRIEF/M7B.STR;1",
+      "old": {
+        "lba": 188608,
+        "bytes": 7741440,
+        "sha256": "6f370cc815a1d79b08a42495e5d579108469609196de9a2125a206f996a5f1a7"
+      },
+      "new": {
+        "lba": 188608,
+        "bytes": 7741440,
+        "sha256": "348a2a553e0fb45be5afcbb240e837b23b6bb219f2aac80c50db122e1ada3832"
+      }
+    },
+    {
+      "path": "/MOVIE/INGAME/BRIEF/M8B.STR;1",
+      "old": {
+        "lba": 192388,
+        "bytes": 13058048,
+        "sha256": "351bd5a9ff17fb637971f898585550c227d983454bf49eb8eead975fc7eb005a"
+      },
+      "new": {
+        "lba": 192388,
+        "bytes": 13058048,
+        "sha256": "d2cad8d870f99d71fac0bb80b91a599f232ce652a950ed18b3d8682222aa6b71"
+      }
+    },
+    {
+      "path": "/MOVIE/INGAME/GAL/M1G.STR;1",
+      "old": {
+        "lba": 198765,
+        "bytes": 11681792,
+        "sha256": "de122d62341658a07718557eabb320f813ef186397e1cc0c0391c9b39f5132d8"
+      },
+      "new": {
+        "lba": 198765,
+        "bytes": 11681792,
+        "sha256": "b5884b2524bc5c18ab8acbf0c17f21815f6cf68e4c63a35156fc8fbdb3979b4b"
+      }
+    },
+    {
+      "path": "/MOVIE/INGAME/GAL/M2G.STR;1",
+      "old": {
+        "lba": 204469,
+        "bytes": 12091392,
+        "sha256": "ef767abcfae42962f85460a37ec6cc92ae462a605c89a0e99d5b5bc271b08e97"
+      },
+      "new": {
+        "lba": 204469,
+        "bytes": 12091392,
+        "sha256": "f235aafb69cfc2b89889b5f14f8aa431ff63571090b208f2d83679f9db9ec664"
+      }
+    },
+    {
+      "path": "/MOVIE/INGAME/GAL/M3G.STR;1",
+      "old": {
+        "lba": 210373,
+        "bytes": 12566528,
+        "sha256": "23cf58760da379223d45866ffcf0fb29c7766a9e566f1d6be383a589571b8719"
+      },
+      "new": {
+        "lba": 210373,
+        "bytes": 12566528,
+        "sha256": "862bfef9ef2449ca44cc9955a613637aff4550b9631898fd5daef6443b323e55"
+      }
+    },
+    {
+      "path": "/MOVIE/INGAME/GAL/M4G.STR;1",
+      "old": {
+        "lba": 216509,
+        "bytes": 17825792,
+        "sha256": "ae45bf1df59c7b48d44ede2d17aa85ee037001efcde39821f85fa81f01837da0"
+      },
+      "new": {
+        "lba": 216509,
+        "bytes": 17825792,
+        "sha256": "40030bba1783b503d95cd3506c8b89bc985e70e6b15802605d217c638f85667a"
+      }
+    },
+    {
+      "path": "/MOVIE/INGAME/GAL/M5G.STR;1",
+      "old": {
+        "lba": 225213,
+        "bytes": 13516800,
+        "sha256": "173fbbea35238c43c4eb385e107d0d98dd7283c1a6a0423c8d6bfc2177b4bd9a"
+      },
+      "new": {
+        "lba": 225213,
+        "bytes": 13516800,
+        "sha256": "0953b8d92a75302659d7594510217227fa06410d3fa88b58e2b76685b99b68fa"
+      }
+    },
+    {
+      "path": "/MOVIE/INGAME/GAL/M6G.STR;1",
+      "old": {
+        "lba": 231813,
+        "bytes": 16891904,
+        "sha256": "98524bf72ddcb12d9868f49e867e61e55f8e6d8ea7e5d4790919486352df5d07"
+      },
+      "new": {
+        "lba": 231813,
+        "bytes": 16891904,
+        "sha256": "969693e52073fa1e784430eccd86a011aafacbe58f36cf1fd238630e50cef292"
+      }
+    },
+    {
+      "path": "/MOVIE/INGAME/GAL/M7G.STR;1",
+      "old": {
+        "lba": 240061,
+        "bytes": 13221888,
+        "sha256": "e0c699eb3b654a1de3bab4e6e83dfb22b2e9b887b014f53b27d7cdd3ee74601e"
+      },
+      "new": {
+        "lba": 240061,
+        "bytes": 13221888,
+        "sha256": "db4c58124a35f0a4574f82359f5526d704b6960579083d1b224c81f474135427"
+      }
+    },
+    {
+      "path": "/MOVIE/INTRO/CREDITS.STR;1",
+      "old": {
+        "lba": 281726,
+        "bytes": 74039296,
+        "sha256": "d148ab766b51f2d4457f3f04808d40c12abbb6b0e4de119d4b4fd7d9de2dcc56"
+      },
+      "new": {
+        "lba": 281726,
+        "bytes": 74039296,
+        "sha256": "0d895acdd873ff387611ac727212ca2918056c9b5dde22df87aba2a389a89988"
+      }
+    },
+    {
+      "path": "/MOVIE/INTRO/DEMO1.STR;1",
+      "old": {
+        "lba": 246518,
+        "bytes": 17858560,
+        "sha256": "c4e05ee3cda88a00e6350a42435479dd49a41ce5219cb5ac97e1c45ec13658d2"
+      },
+      "new": {
+        "lba": 246518,
+        "bytes": 17858560,
+        "sha256": "89d53a5a283f48eaa8335c62f3008bfb7754d7be0181ca1533187a85bf77dde1"
+      }
+    },
+    {
+      "path": "/MOVIE/INTRO/DEMO3.STR;1",
+      "old": {
+        "lba": 255238,
+        "bytes": 16441344,
+        "sha256": "faa4515cd3593fac83a1eb31e49d30c1369b47e8970c4c0d2f56e6142e51d3f7"
+      },
+      "new": {
+        "lba": 255238,
+        "bytes": 16441344,
+        "sha256": "e394e094750a4bff528875f71b19543f74308a576ee70cb63ff3f5c9d6b0f290"
+      }
+    },
+    {
+      "path": "/MOVIE/INTRO/DWI.STR;1",
+      "old": {
+        "lba": 263266,
+        "bytes": 4816896,
+        "sha256": "575e7500040ebdface983f0cd46e8dcad0c6e1717cf36296d481c33a8b21b03a"
+      },
+      "new": {
+        "lba": 263266,
+        "bytes": 4816896,
+        "sha256": "cf9688afffd668148a8dd8ee6f7cdc095be462cc8522c1bf0b68530f7b5e0fa2"
+      }
+    },
+    {
+      "path": "/MOVIE/INTRO/EA_LOGO.STR;1",
+      "old": {
+        "lba": 265618,
+        "bytes": 1032192,
+        "sha256": "48dec67f873a3d32242dda63d7c44820013dca015708ca2aa12d097832a8acd2"
+      },
+      "new": {
+        "lba": 265618,
+        "bytes": 1032192,
+        "sha256": "ad2419b12755e821502046c0401745eb357e6136744096dad61f491c8dbc4894"
+      }
+    },
+    {
+      "path": "/MOVIE/INTRO/HONOR.STR;1",
+      "old": {
+        "lba": 266122,
+        "bytes": 6610944,
+        "sha256": "68cc80578335c73c1b3700e3e4f95ebd6ee6b8289c0bcd2f44d21036bfb79a5f"
+      },
+      "new": {
+        "lba": 266122,
+        "bytes": 6610944,
+        "sha256": "527ee6e1a475eef114bb8cf731c651e36fa3a0034246da416f08a81ecb073615"
+      }
+    },
+    {
+      "path": "/MOVIE/INTRO/MEDAL.STR;1",
+      "old": {
+        "lba": 269350,
+        "bytes": 19660800,
+        "sha256": "c5635a6c66d02afd4b7f5600ae25fc1be1d598de3f7467001656d9dbfc9d9e6c"
+      },
+      "new": {
+        "lba": 269350,
+        "bytes": 19660800,
+        "sha256": "e0a16f23911ee9c2bb72ce39b866cc3de91bc57a5b4b53ff07f13a2779b592b8"
+      }
+    },
+    {
+      "path": "/MOVIE/INTRO/VALOR.STR;1",
+      "old": {
+        "lba": 278950,
+        "bytes": 5685248,
+        "sha256": "5e513c1f0851193465d330b09655bf6ea6c3fd7d2e57d08b53d7828c8e9efc14"
+      },
+      "new": {
+        "lba": 278950,
+        "bytes": 5685248,
+        "sha256": "1003d5e8071da5c8e17cff18d9fc3b4e4106efbdc9c8cec8c67dac6829a4cdfb"
+      }
+    }
+  ],
+  "critical_files": [
+    {
+      "path": "/LEVEL.BIN;1",
+      "old": {
+        "lba": 299,
+        "bytes": 563288,
+        "sha256": "072095fe201516075e0dfeb5ff7970428fc5a3fe668d552f5f3c0809b3bd27eb"
+      },
+      "new": {
+        "lba": 299,
+        "bytes": 563288,
+        "sha256": "072095fe201516075e0dfeb5ff7970428fc5a3fe668d552f5f3c0809b3bd27eb"
+      },
+      "payload_identical": true
+    },
+    {
+      "path": "/LEVEL2P.BIN;1",
+      "old": {
+        "lba": 575,
+        "bytes": 547984,
+        "sha256": "71a71f42cd609656b1c2bc646e121a15dee149e7d73b10211ec0944d3d53d855"
+      },
+      "new": {
+        "lba": 575,
+        "bytes": 547984,
+        "sha256": "71a71f42cd609656b1c2bc646e121a15dee149e7d73b10211ec0944d3d53d855"
+      },
+      "payload_identical": true
+    },
+    {
+      "path": "/SHELL.BIN;1",
+      "old": {
+        "lba": 112,
+        "bytes": 381840,
+        "sha256": "1a25e342d0cf6249ddec2ca54ee18bf19395cf24dd52c19a4156af6c5db82f14"
+      },
+      "new": {
+        "lba": 112,
+        "bytes": 381840,
+        "sha256": "1a25e342d0cf6249ddec2ca54ee18bf19395cf24dd52c19a4156af6c5db82f14"
+      },
+      "payload_identical": true
+    },
+    {
+      "path": "/SLUS_012.70;1",
+      "old": {
+        "lba": 24,
+        "bytes": 180224,
+        "sha256": "5c4566b7264a29554abb9d868f23cc40e99ebf3b58b9776dfe2f4ae465bbd641"
+      },
+      "new": {
+        "lba": 24,
+        "bytes": 180224,
+        "sha256": "5c4566b7264a29554abb9d868f23cc40e99ebf3b58b9776dfe2f4ae465bbd641"
+      },
+      "payload_identical": true
+    },
+    {
+      "path": "/SYSTEM.CNF;1",
+      "old": {
+        "lba": 23,
+        "bytes": 68,
+        "sha256": "11b425f951d3f841d21361c771ca4f598cfc121dd7c5607f6533deb37f6d7173"
+      },
+      "new": {
+        "lba": 23,
+        "bytes": 68,
+        "sha256": "11b425f951d3f841d21361c771ca4f598cfc121dd7c5607f6533deb37f6d7173"
+      },
+      "payload_identical": true
+    }
+  ],
+  "formerly_empty_lbas": [
+    9469,
+    154500,
+    155571,
+    188287,
+    188487,
+    188960,
+    196780,
+    196836,
+    196872,
+    196873,
+    196910,
+    196928,
+    196965,
+    201287,
+    201324,
+    201342,
+    201343,
+    201349,
+    201360,
+    201361,
+    201376,
+    201377,
+    201378,
+    201379,
+    201380,
+    201392,
+    201398,
+    201399,
+    201405,
+    201406,
+    201408,
+    201409,
+    201417,
+    201424,
+    201435,
+    201436,
+    201473,
+    201474,
+    201491,
+    201492,
+    201529,
+    201566,
+    201584,
+    201585,
+    201640,
+    201641,
+    201678,
+    201715,
+    204255,
+    204256,
+    205733,
+    205734,
+    205752,
+    206701,
+    208188,
+    209660,
+    240492,
+    246104,
+    266342,
+    266383,
+    266466,
+    266714,
+    266735,
+    266942
+  ],
+  "music_sector": {
+    "lba": 9469,
+    "actual_payload_present": true,
+    "header_and_edc_ecc_valid": true
+  },
+  "checker_controls": {
+    "valid": {
+      "sectors": 1,
+      "form1": 1,
+      "form2": 0,
+      "form2_edc_absent": 0,
+      "invalid_header": {
+        "count": 0,
+        "first_lbas": []
+      },
+      "invalid_subheader": {
+        "count": 0,
+        "first_lbas": []
+      },
+      "invalid_edc": {
+        "count": 0,
+        "first_lbas": []
+      },
+      "invalid_ecc_p": {
+        "count": 0,
+        "first_lbas": []
+      },
+      "invalid_ecc_q": {
+        "count": 0,
+        "first_lbas": []
+      }
+    },
+    "bad-payload": {
+      "sectors": 1,
+      "form1": 1,
+      "form2": 0,
+      "form2_edc_absent": 0,
+      "invalid_header": {
+        "count": 0,
+        "first_lbas": []
+      },
+      "invalid_subheader": {
+        "count": 0,
+        "first_lbas": []
+      },
+      "invalid_edc": {
+        "count": 1,
+        "first_lbas": [
+          0
+        ]
+      },
+      "invalid_ecc_p": {
+        "count": 1,
+        "first_lbas": [
+          0
+        ]
+      },
+      "invalid_ecc_q": {
+        "count": 1,
+        "first_lbas": [
+          0
+        ]
+      }
+    },
+    "bad-header": {
+      "sectors": 1,
+      "form1": 1,
+      "form2": 0,
+      "form2_edc_absent": 0,
+      "invalid_header": {
+        "count": 1,
+        "first_lbas": [
+          0
+        ]
+      },
+      "invalid_subheader": {
+        "count": 0,
+        "first_lbas": []
+      },
+      "invalid_edc": {
+        "count": 0,
+        "first_lbas": []
+      },
+      "invalid_ecc_p": {
+        "count": 0,
+        "first_lbas": []
+      },
+      "invalid_ecc_q": {
+        "count": 0,
+        "first_lbas": []
+      }
+    }
+  },
+  "runtime_smoke": {
+    "complete": true,
+    "slot": 5,
+    "debug_tools": "OFF",
+    "binary_sha256": "035fe991d90673db38807b89a184d91fc33cfef6af721344512ede759f064eed",
+    "disc_override": {
+      "path": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\Medal of Honor - Underground\\Medal of Honor - Underground.cue",
+      "descriptor_sha256": "f307708bc5498aa1e3dd413e18d84000eab86ee6902c3be0fc08b33483df9099"
+    },
+    "valid_stereo_trace": true,
+    "recovery_disabled": true,
+    "mod_state": {
+      "original_sha256": "a58f7cffbd8064038eafb5cbebc2de6df5f1d08511a610a749aad98f558edefe",
+      "isolated_sha256": "fbcab55b4398001f4e9bf06ca3b3ec13c71003ea0d7d48a22fac3f1855fecd41",
+      "restored": true,
+      "recovery_enabled_during_test": false
+    },
+    "source_saves_unchanged": true,
+    "preferences_unchanged": true,
+    "exit_code": 0,
+    "remaining_game_pids": [],
+    "not_a_headset_visual_audio_or_performance_acceptance": true
+  },
+  "first_runtime_attempt": {
+    "complete": false,
+    "expected_refusal": "Old-image repair package does not target the clean image",
+    "path": "analysis/vr-baseline/disc-comparison-20261029/new-image-slot5/receipt.json"
+  },
+  "permanent_switch_requires": [
+    "Select new CUE and update recipe/image identities",
+    "Disable/remove old-image streaming repair; preserve its guards",
+    "Refresh image-dependent release/netplay identity using existing tools"
+  ],
+  "evidence_sha256": {
+    "analysis/vr-baseline/disc-comparison-20261029/original-vs-new-a.json": "d38f9f6360dd04ba92f856565c4583aaf697b7d47900ea2a6383e11eb236b95c",
+    "analysis/vr-baseline/disc-comparison-20261029/new-a-vs-new-b.json": "d364808538d43a8179ae9f5f5cd00bb2928b279207b367ab3f1208914edaf3f9",
+    "analysis/vr-baseline/disc-comparison-20261029/new-a-sectors.json": "62077fd89ff34711f1ae136e0ae41f2770574e8907009b0e4a1bdd6c2978104a",
+    "analysis/vr-baseline/disc-comparison-20261029/original-sectors.json": "2a91c6e281b752b29f51add8d3d7c854fac6f9c49078d78ba2e3e792d74365f3",
+    "analysis/vr-baseline/disc-comparison-20261029/checker-controls.json": "443ab4e4a4dfb9e1acc0c25243abca9a0eca53bdb562311f6ffb029151740d86",
+    "analysis/vr-baseline/disc-comparison-20261029/new-image-slot5-clean/receipt.json": "f37af34a615f359b09de612e0b4f537c6f2a3fb7bc02ee3b2d089da123f7a4c1"
+  },
+  "tools_sha256": {
+    "vr/tools/check_cd_sectors.c": "cb1be5dd1bc29172e669e0df3082e3d3435760a75aa3e64defb3a1a2183710a0",
+    "vr/tools/compare_sp_discs.py": "a6c5cb5679a45aab4d620c16f490304d392a4aba0a9738ee4ec8c7b1ca6d2361",
+    "vr/tools/audit_sp_disc.py": "d40ad96f7be2ce9573cd144d8bb09f93cc873796d0e90cbb1d3fcece34b14120",
+    "vr/tools/profile_sp_production.py": "d7926df6c9a6dcf05767736efb1b5b8ee917bcd0ba6678aa9d3dedfb35a71f4c"
+  }
+}

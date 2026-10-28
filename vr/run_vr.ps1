@@ -233,8 +233,9 @@ if ($Headless) {
     $Runtime = 'steamvr'
 }
 if (-not $GameConfig) {
-    $diagnosticConfig = Join-Path $repoRoot 'analysis\vr-baseline\game-interp.toml'
-    $GameConfig = if (Test-Path -LiteralPath $diagnosticConfig) { $diagnosticConfig } else { Join-Path $repoRoot 'game.toml' }
+    # Cached native overlays are required for normal play. Interpreter probes
+    # must select their diagnostic config explicitly with -GameConfig.
+    $GameConfig = Join-Path $repoRoot 'game.toml'
 }
 if (-not $MemcardDirectory) {
     $diagnosticSaves = Join-Path $repoRoot 'analysis\vr-baseline\saves'
@@ -284,6 +285,13 @@ try {
         }
 
         $steamVrOriginal = [IO.File]::ReadAllText($steamVrSettings)
+        # Persist recovery BEFORE changing the runtime, including on external
+        # termination where PowerShell's finally block cannot run.
+        [IO.File]::WriteAllText(
+            (Join-Path $logPath 'steamvr.vrsettings.pre-headless'),
+            $steamVrOriginal,
+            (New-Object Text.UTF8Encoding($false))
+        )
         $steamVrNullSettings = python (Join-Path $PSScriptRoot 'headless_steamvr.py') `
             --settings $steamVrSettings
         if ($LASTEXITCODE -ne 0) {

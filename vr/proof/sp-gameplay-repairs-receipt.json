@@ -1,0 +1,2129 @@
+{
+  "updated": "2026-10-29",
+  "physical_headset_used": false,
+  "alpha_complete": false,
+  "production_binary_sha256": "035fe991d90673db38807b89a184d91fc33cfef6af721344512ede759f064eed",
+  "debug_tools": "OFF",
+  "framework_changed": false,
+  "framework_pin": "555e1eabccc59b9b6ff0d9fca48aca783513dc86",
+  "package": {
+    "path": "vr/preloaded/packages/mohu.repair.music-sector/0.1.0/manifest.toml",
+    "sha256": "305df1884be5f495c01cde891bf1a79f57492cecbd68d0c17e9aaa284f2b0a36",
+    "source_image_sha256": "0951683ffd1bc2db1094ef3b0e142df6741efe2a5f95ad13bb5f2813a6c252d9",
+    "source_image_md5": "8a2e3361e8272ce09e9a4ea7bd0403ad",
+    "source_modified": false,
+    "raw_lba": 9469,
+    "byte_offset": 22271088,
+    "replaced_header_bytes": 24,
+    "missing_payload_recovered": false,
+    "other_zero_sectors_patched": false,
+    "wholly_zero_raw_sectors": [
+      {
+        "lba": 9469,
+        "allocated_files": [
+          "/DATA/MSN2/LVL2/M2_2_1.VB;1"
+        ]
+      },
+      {
+        "lba": 154500,
+        "allocated_files": [
+          "/MOVIE/INGAME/BRIEF/M2B.STR;1"
+        ]
+      },
+      {
+        "lba": 155571,
+        "allocated_files": [
+          "/MOVIE/INGAME/BRIEF/M2B.STR;1"
+        ]
+      },
+      {
+        "lba": 188287,
+        "allocated_files": [
+          "/MOVIE/INGAME/BRIEF/M6B.STR;1"
+        ]
+      },
+      {
+        "lba": 188487,
+        "allocated_files": [
+          "/MOVIE/INGAME/BRIEF/M6B.STR;1"
+        ]
+      },
+      {
+        "lba": 188960,
+        "allocated_files": [
+          "/MOVIE/INGAME/BRIEF/M7B.STR;1"
+        ]
+      },
+      {
+        "lba": 196780,
+        "allocated_files": [
+          "/MOVIE/INGAME/BRIEF/M8B.STR;1"
+        ]
+      },
+      {
+        "lba": 196836,
+        "allocated_files": [
+          "/MOVIE/INGAME/BRIEF/M8B.STR;1"
+        ]
+      },
+      {
+        "lba": 196872,
+        "allocated_files": [
+          "/MOVIE/INGAME/BRIEF/M8B.STR;1"
+        ]
+      },
+      {
+        "lba": 196873,
+        "allocated_files": [
+          "/MOVIE/INGAME/BRIEF/M8B.STR;1"
+        ]
+      },
+      {
+        "lba": 196910,
+        "allocated_files": [
+          "/MOVIE/INGAME/BRIEF/M8B.STR;1"
+        ]
+      },
+      {
+        "lba": 196928,
+        "allocated_files": [
+          "/MOVIE/INGAME/BRIEF/M8B.STR;1"
+        ]
+      },
+      {
+        "lba": 196965,
+        "allocated_files": [
+          "/MOVIE/INGAME/BRIEF/M8B.STR;1"
+        ]
+      },
+      {
+        "lba": 201287,
+        "allocated_files": [
+          "/MOVIE/INGAME/GAL/M1G.STR;1"
+        ]
+      },
+      {
+        "lba": 201324,
+        "allocated_files": [
+          "/MOVIE/INGAME/GAL/M1G.STR;1"
+        ]
+      },
+      {
+        "lba": 201342,
+        "allocated_files": [
+          "/MOVIE/INGAME/GAL/M1G.STR;1"
+        ]
+      },
+      {
+        "lba": 201343,
+        "allocated_files": [
+          "/MOVIE/INGAME/GAL/M1G.STR;1"
+        ]
+      },
+      {
+        "lba": 201349,
+        "allocated_files": [
+          "/MOVIE/INGAME/GAL/M1G.STR;1"
+        ]
+      },
+      {
+        "lba": 201360,
+        "allocated_files": [
+          "/MOVIE/INGAME/GAL/M1G.STR;1"
+        ]
+      },
+      {
+        "lba": 201361,
+        "allocated_files": [
+          "/MOVIE/INGAME/GAL/M1G.STR;1"
+        ]
+      },
+      {
+        "lba": 201376,
+        "allocated_files": [
+          "/MOVIE/INGAME/GAL/M1G.STR;1"
+        ]
+      },
+      {
+        "lba": 201377,
+        "allocated_files": [
+          "/MOVIE/INGAME/GAL/M1G.STR;1"
+        ]
+      },
+      {
+        "lba": 201378,
+        "allocated_files": [
+          "/MOVIE/INGAME/GAL/M1G.STR;1"
+        ]
+      },
+      {
+        "lba": 201379,
+        "allocated_files": [
+          "/MOVIE/INGAME/GAL/M1G.STR;1"
+        ]
+      },
+      {
+        "lba": 201380,
+        "allocated_files": [
+          "/MOVIE/INGAME/GAL/M1G.STR;1"
+        ]
+      },
+      {
+        "lba": 201392,
+        "allocated_files": [
+          "/MOVIE/INGAME/GAL/M1G.STR;1"
+        ]
+      },
+      {
+        "lba": 201398,
+        "allocated_files": [
+          "/MOVIE/INGAME/GAL/M1G.STR;1"
+        ]
+      },
+      {
+        "lba": 201399,
+        "allocated_files": [
+          "/MOVIE/INGAME/GAL/M1G.STR;1"
+        ]
+      },
+      {
+        "lba": 201405,
+        "allocated_files": [
+          "/MOVIE/INGAME/GAL/M1G.STR;1"
+        ]
+      },
+      {
+        "lba": 201406,
+        "allocated_files": [
+          "/MOVIE/INGAME/GAL/M1G.STR;1"
+        ]
+      },
+      {
+        "lba": 201408,
+        "allocated_files": [
+          "/MOVIE/INGAME/GAL/M1G.STR;1"
+        ]
+      },
+      {
+        "lba": 201409,
+        "allocated_files": [
+          "/MOVIE/INGAME/GAL/M1G.STR;1"
+        ]
+      },
+      {
+        "lba": 201417,
+        "allocated_files": [
+          "/MOVIE/INGAME/GAL/M1G.STR;1"
+        ]
+      },
+      {
+        "lba": 201424,
+        "allocated_files": [
+          "/MOVIE/INGAME/GAL/M1G.STR;1"
+        ]
+      },
+      {
+        "lba": 201435,
+        "allocated_files": [
+          "/MOVIE/INGAME/GAL/M1G.STR;1"
+        ]
+      },
+      {
+        "lba": 201436,
+        "allocated_files": [
+          "/MOVIE/INGAME/GAL/M1G.STR;1"
+        ]
+      },
+      {
+        "lba": 201473,
+        "allocated_files": [
+          "/MOVIE/INGAME/GAL/M1G.STR;1"
+        ]
+      },
+      {
+        "lba": 201474,
+        "allocated_files": [
+          "/MOVIE/INGAME/GAL/M1G.STR;1"
+        ]
+      },
+      {
+        "lba": 201491,
+        "allocated_files": [
+          "/MOVIE/INGAME/GAL/M1G.STR;1"
+        ]
+      },
+      {
+        "lba": 201492,
+        "allocated_files": [
+          "/MOVIE/INGAME/GAL/M1G.STR;1"
+        ]
+      },
+      {
+        "lba": 201529,
+        "allocated_files": [
+          "/MOVIE/INGAME/GAL/M1G.STR;1"
+        ]
+      },
+      {
+        "lba": 201566,
+        "allocated_files": [
+          "/MOVIE/INGAME/GAL/M1G.STR;1"
+        ]
+      },
+      {
+        "lba": 201584,
+        "allocated_files": [
+          "/MOVIE/INGAME/GAL/M1G.STR;1"
+        ]
+      },
+      {
+        "lba": 201585,
+        "allocated_files": [
+          "/MOVIE/INGAME/GAL/M1G.STR;1"
+        ]
+      },
+      {
+        "lba": 201640,
+        "allocated_files": [
+          "/MOVIE/INGAME/GAL/M1G.STR;1"
+        ]
+      },
+      {
+        "lba": 201641,
+        "allocated_files": [
+          "/MOVIE/INGAME/GAL/M1G.STR;1"
+        ]
+      },
+      {
+        "lba": 201678,
+        "allocated_files": [
+          "/MOVIE/INGAME/GAL/M1G.STR;1"
+        ]
+      },
+      {
+        "lba": 201715,
+        "allocated_files": [
+          "/MOVIE/INGAME/GAL/M1G.STR;1"
+        ]
+      },
+      {
+        "lba": 204255,
+        "allocated_files": [
+          "/MOVIE/INGAME/GAL/M1G.STR;1"
+        ]
+      },
+      {
+        "lba": 204256,
+        "allocated_files": [
+          "/MOVIE/INGAME/GAL/M1G.STR;1"
+        ]
+      },
+      {
+        "lba": 205733,
+        "allocated_files": [
+          "/MOVIE/INGAME/GAL/M2G.STR;1"
+        ]
+      },
+      {
+        "lba": 205734,
+        "allocated_files": [
+          "/MOVIE/INGAME/GAL/M2G.STR;1"
+        ]
+      },
+      {
+        "lba": 205752,
+        "allocated_files": [
+          "/MOVIE/INGAME/GAL/M2G.STR;1"
+        ]
+      },
+      {
+        "lba": 206701,
+        "allocated_files": [
+          "/MOVIE/INGAME/GAL/M2G.STR;1"
+        ]
+      },
+      {
+        "lba": 208188,
+        "allocated_files": [
+          "/MOVIE/INGAME/GAL/M2G.STR;1"
+        ]
+      },
+      {
+        "lba": 209660,
+        "allocated_files": [
+          "/MOVIE/INGAME/GAL/M2G.STR;1"
+        ]
+      },
+      {
+        "lba": 240492,
+        "allocated_files": [
+          "/MOVIE/INGAME/GAL/M7G.STR;1"
+        ]
+      },
+      {
+        "lba": 246104,
+        "allocated_files": [
+          "/MOVIE/INGAME/GAL/M7G.STR;1"
+        ]
+      },
+      {
+        "lba": 266342,
+        "allocated_files": [
+          "/MOVIE/INTRO/HONOR.STR;1"
+        ]
+      },
+      {
+        "lba": 266383,
+        "allocated_files": [
+          "/MOVIE/INTRO/HONOR.STR;1"
+        ]
+      },
+      {
+        "lba": 266466,
+        "allocated_files": [
+          "/MOVIE/INTRO/HONOR.STR;1"
+        ]
+      },
+      {
+        "lba": 266714,
+        "allocated_files": [
+          "/MOVIE/INTRO/HONOR.STR;1"
+        ]
+      },
+      {
+        "lba": 266735,
+        "allocated_files": [
+          "/MOVIE/INTRO/HONOR.STR;1"
+        ]
+      },
+      {
+        "lba": 266942,
+        "allocated_files": [
+          "/MOVIE/INTRO/HONOR.STR;1"
+        ]
+      }
+    ]
+  },
+  "shots": {
+    "sten-final-rotated": {
+      "evidence": {
+        "path": "analysis/vr-baseline/sp-issues-20261028/sten-final-rotated/receipt.json",
+        "sha256": "ab8c980a9602082ed65bcf1045a3213a73bf4e2a30b7e2609d1c34fd28cf03b3",
+        "complete": true,
+        "binary_sha256": "f990015770b107e36d700b27ada7de20e19da29c8b6f3578bf52e975c4082c8b",
+        "exit_code": 0,
+        "verify_mismatch": 0
+      },
+      "native_motion": [
+        {
+          "address": "0x800dabc0",
+          "native_motion": [
+            {
+              "seq": 23436,
+              "addr": "0x000DADE0",
+              "old": "0x0B5D3A3F",
+              "new": "0x090A5A3F",
+              "ra": "0x80079360",
+              "func": "0x000029CC",
+              "pc": "0x800793E4",
+              "cpu_pc": "0x00000000",
+              "sp": "0x801FFDB0",
+              "v0": "0x090A5A3F",
+              "v1": "0xFDAD2000",
+              "a0": "0x00000000",
+              "a1": "0x801FFD90",
+              "a2": "0x00000000",
+              "a3": "0x0B14150D",
+              "t0": "0x00000000",
+              "t1": "0x00000000",
+              "s0": "0x800DABC0",
+              "s1": "0x00000000",
+              "s2": "0x800DABC0",
+              "s3": "0x800A0000",
+              "s4": "0x00000000",
+              "s5": "0x800B0000",
+              "frame": 261,
+              "w": 4,
+              "dma_ch": -1
+            },
+            {
+              "seq": 23437,
+              "addr": "0x000DADE4",
+              "old": "0xFA481931",
+              "new": "0xFA53B931",
+              "ra": "0x80079360",
+              "func": "0x000029CC",
+              "pc": "0x80079400",
+              "cpu_pc": "0x00000000",
+              "sp": "0x801FFDB0",
+              "v0": "0xFA53B931",
+              "v1": "0x000BA000",
+              "a0": "0x00000000",
+              "a1": "0x801FFD90",
+              "a2": "0x00000000",
+              "a3": "0x0B14150D",
+              "t0": "0x00000000",
+              "t1": "0x00000000",
+              "s0": "0x800DABC0",
+              "s1": "0x00000000",
+              "s2": "0x800DABC0",
+              "s3": "0x800A0000",
+              "s4": "0x00000000",
+              "s5": "0x800B0000",
+              "frame": 261,
+              "w": 4,
+              "dma_ch": -1
+            },
+            {
+              "seq": 23438,
+              "addr": "0x000DADE8",
+              "old": "0xFCAE67EA",
+              "new": "0xFBCD17EA",
+              "ra": "0x80079360",
+              "func": "0x000029CC",
+              "pc": "0x8007941C",
+              "cpu_pc": "0x00000000",
+              "sp": "0x801FFDB0",
+              "v0": "0xFBCD17EA",
+              "v1": "0xFF1EB000",
+              "a0": "0x00000000",
+              "a1": "0x801FFD90",
+              "a2": "0x00000000",
+              "a3": "0x0B14150D",
+              "t0": "0x00000000",
+              "t1": "0x00000000",
+              "s0": "0x800DABC0",
+              "s1": "0x00000000",
+              "s2": "0x800DABC0",
+              "s3": "0x800A0000",
+              "s4": "0x00000000",
+              "s5": "0x800B0000",
+              "frame": 261,
+              "w": 4,
+              "dma_ch": -1
+            }
+          ],
+          "direction": [
+            -0.9350131848307853,
+            0.01827195339131394,
+            -0.3541418923424019
+          ],
+          "origin": [
+            2909.227523803711,
+            -1463.901596069336,
+            -849.5940856933594
+          ],
+          "laser_cosine": 0.9999255847126851,
+          "muzzle_max_error": 6.182640618135338e-06
+        },
+        {
+          "address": "0x800de430",
+          "native_motion": [
+            {
+              "seq": 92409,
+              "addr": "0x000DE650",
+              "old": "0x0B5D3A3F",
+              "new": "0x0918CA3F",
+              "ra": "0x80079360",
+              "func": "0x000029CC",
+              "pc": "0x800793E4",
+              "cpu_pc": "0x00000000",
+              "sp": "0x801FFDB0",
+              "v0": "0x0918CA3F",
+              "v1": "0xFDBB9000",
+              "a0": "0x00000000",
+              "a1": "0x801FFD90",
+              "a2": "0x00000000",
+              "a3": "0x0B10610D",
+              "t0": "0x00000000",
+              "t1": "0x00000000",
+              "s0": "0x800DE430",
+              "s1": "0x00000000",
+              "s2": "0x800DE430",
+              "s3": "0x800A0000",
+              "s4": "0x00000000",
+              "s5": "0x800B0000",
+              "frame": 273,
+              "w": 4,
+              "dma_ch": -1
+            },
+            {
+              "seq": 92410,
+              "addr": "0x000DE654",
+              "old": "0xFA481931",
+              "new": "0xFA4AF931",
+              "ra": "0x80079360",
+              "func": "0x000029CC",
+              "pc": "0x80079400",
+              "cpu_pc": "0x00000000",
+              "sp": "0x801FFDB0",
+              "v0": "0xFA4AF931",
+              "v1": "0x0002E000",
+              "a0": "0x00000000",
+              "a1": "0x801FFD90",
+              "a2": "0x00000000",
+              "a3": "0x0B10610D",
+              "t0": "0x00000000",
+              "t1": "0x00000000",
+              "s0": "0x800DE430",
+              "s1": "0x00000000",
+              "s2": "0x800DE430",
+              "s3": "0x800A0000",
+              "s4": "0x00000000",
+              "s5": "0x800B0000",
+              "frame": 273,
+              "w": 4,
+              "dma_ch": -1
+            },
+            {
+              "seq": 92411,
+              "addr": "0x000DE658",
+              "old": "0xFCAE67EA",
+              "new": "0xFBCE87EA",
+              "ra": "0x80079360",
+              "func": "0x000029CC",
+              "pc": "0x8007941C",
+              "cpu_pc": "0x00000000",
+              "sp": "0x801FFDB0",
+              "v0": "0xFBCE87EA",
+              "v1": "0xFF202000",
+              "a0": "0x00000000",
+              "a1": "0x801FFD90",
+              "a2": "0x00000000",
+              "a3": "0x0B10610D",
+              "t0": "0x00000000",
+              "t1": "0x00000000",
+              "s0": "0x800DE430",
+              "s1": "0x00000000",
+              "s2": "0x800DE430",
+              "s3": "0x800A0000",
+              "s4": "0x00000000",
+              "s5": "0x800B0000",
+              "frame": 273,
+              "w": 4,
+              "dma_ch": -1
+            }
+          ],
+          "direction": [
+            -0.9329960324491761,
+            0.004621278937510724,
+            -0.35985698161224816
+          ],
+          "origin": [
+            2909.227523803711,
+            -1463.901596069336,
+            -849.5940856933594
+          ],
+          "laser_cosine": 0.9999957204329605,
+          "muzzle_max_error": 6.182640618135338e-06
+        },
+        {
+          "address": "0x800df5d0",
+          "native_motion": [
+            {
+              "seq": 57332,
+              "addr": "0x000DF7F0",
+              "old": "0x0B5D3A3F",
+              "new": "0x091D3A3F",
+              "ra": "0x80079360",
+              "func": "0x000029CC",
+              "pc": "0x800793E4",
+              "cpu_pc": "0x00000000",
+              "sp": "0x801FFDB0",
+              "v0": "0x091D3A3F",
+              "v1": "0xFDC00000",
+              "a0": "0x00000000",
+              "a1": "0x801FFD90",
+              "a2": "0x00000000",
+              "a3": "0x0B099D0D",
+              "t0": "0x00000000",
+              "t1": "0x00000000",
+              "s0": "0x800DF5D0",
+              "s1": "0x00000000",
+              "s2": "0x800DF5D0",
+              "s3": "0x800A0000",
+              "s4": "0x00000000",
+              "s5": "0x800B0000",
+              "frame": 267,
+              "w": 4,
+              "dma_ch": -1
+            },
+            {
+              "seq": 57333,
+              "addr": "0x000DF7F4",
+              "old": "0xFA481931",
+              "new": "0xFA50B931",
+              "ra": "0x80079360",
+              "func": "0x000029CC",
+              "pc": "0x80079400",
+              "cpu_pc": "0x00000000",
+              "sp": "0x801FFDB0",
+              "v0": "0xFA50B931",
+              "v1": "0x0008A000",
+              "a0": "0x00000000",
+              "a1": "0x801FFD90",
+              "a2": "0x00000000",
+              "a3": "0x0B099D0D",
+              "t0": "0x00000000",
+              "t1": "0x00000000",
+              "s0": "0x800DF5D0",
+              "s1": "0x00000000",
+              "s2": "0x800DF5D0",
+              "s3": "0x800A0000",
+              "s4": "0x00000000",
+              "s5": "0x800B0000",
+              "frame": 267,
+              "w": 4,
+              "dma_ch": -1
+            },
+            {
+              "seq": 57334,
+              "addr": "0x000DF7F8",
+              "old": "0xFCAE67EA",
+              "new": "0xFBC907EA",
+              "ra": "0x80079360",
+              "func": "0x000029CC",
+              "pc": "0x8007941C",
+              "cpu_pc": "0x00000000",
+              "sp": "0x801FFDB0",
+              "v0": "0xFBC907EA",
+              "v1": "0xFF1AA000",
+              "a0": "0x00000000",
+              "a1": "0x801FFD90",
+              "a2": "0x00000000",
+              "a3": "0x0B099D0D",
+              "t0": "0x00000000",
+              "t1": "0x00000000",
+              "s0": "0x800DF5D0",
+              "s1": "0x00000000",
+              "s2": "0x800DF5D0",
+              "s3": "0x800A0000",
+              "s4": "0x00000000",
+              "s5": "0x800B0000",
+              "frame": 267,
+              "w": 4,
+              "dma_ch": -1
+            }
+          ],
+          "direction": [
+            -0.928955797262126,
+            0.013910145401711522,
+            -0.3699292291614586
+          ],
+          "origin": [
+            2909.227523803711,
+            -1463.901596069336,
+            -849.5940856933594
+          ],
+          "laser_cosine": 0.9999178328617059,
+          "muzzle_max_error": 6.182640618135338e-06
+        }
+      ]
+    },
+    "sten-final-native": {
+      "evidence": {
+        "path": "analysis/vr-baseline/sp-issues-20261028/sten-final-native/receipt.json",
+        "sha256": "ba6d211c1343843d64144c55d64ad34e2c8cc91d4f46eaa23f360918cca8a264",
+        "complete": true,
+        "binary_sha256": "f990015770b107e36d700b27ada7de20e19da29c8b6f3578bf52e975c4082c8b",
+        "exit_code": 0,
+        "verify_mismatch": 0
+      },
+      "native_motion": [
+        {
+          "address": "0x800dabc0",
+          "native_motion": [
+            {
+              "seq": 23417,
+              "addr": "0x000DADE0",
+              "old": "0x09BE0000",
+              "new": "0x0748F000",
+              "ra": "0x80079360",
+              "func": "0x000029CC",
+              "pc": "0x800793E4",
+              "cpu_pc": "0x00000000",
+              "sp": "0x801FFDB0",
+              "v0": "0x0748F000",
+              "v1": "0xFD8AF000",
+              "a0": "0x00000000",
+              "a1": "0x801FFD90",
+              "a2": "0x00000000",
+              "a3": "0xFC60E200",
+              "t0": "0x00000000",
+              "t1": "0x00000000",
+              "s0": "0x800DABC0",
+              "s1": "0x00000000",
+              "s2": "0x800DABC0",
+              "s3": "0x800A0000",
+              "s4": "0x00000000",
+              "s5": "0x800B0000",
+              "frame": 280,
+              "w": 4,
+              "dma_ch": -1
+            },
+            {
+              "seq": 23418,
+              "addr": "0x000DADE4",
+              "old": "0xFA840000",
+              "new": "0xFA6E9000",
+              "ra": "0x80079360",
+              "func": "0x000029CC",
+              "pc": "0x80079400",
+              "cpu_pc": "0x00000000",
+              "sp": "0x801FFDB0",
+              "v0": "0xFA6E9000",
+              "v1": "0xFFEA9000",
+              "a0": "0x00000000",
+              "a1": "0x801FFD90",
+              "a2": "0x00000000",
+              "a3": "0xFC60E200",
+              "t0": "0x00000000",
+              "t1": "0x00000000",
+              "s0": "0x800DABC0",
+              "s1": "0x00000000",
+              "s2": "0x800DABC0",
+              "s3": "0x800A0000",
+              "s4": "0x00000000",
+              "s5": "0x800B0000",
+              "frame": 280,
+              "w": 4,
+              "dma_ch": -1
+            },
+            {
+              "seq": 23419,
+              "addr": "0x000DADE8",
+              "old": "0xFD510000",
+              "new": "0xFDAE2000",
+              "ra": "0x80079360",
+              "func": "0x000029CC",
+              "pc": "0x8007941C",
+              "cpu_pc": "0x00000000",
+              "sp": "0x801FFDB0",
+              "v0": "0xFDAE2000",
+              "v1": "0x005D2000",
+              "a0": "0x00000000",
+              "a1": "0x801FFD90",
+              "a2": "0x00000000",
+              "a3": "0xFC60E200",
+              "t0": "0x00000000",
+              "t1": "0x00000000",
+              "s0": "0x800DABC0",
+              "s1": "0x00000000",
+              "s2": "0x800DABC0",
+              "s3": "0x800A0000",
+              "s4": "0x00000000",
+              "s5": "0x800B0000",
+              "frame": 280,
+              "w": 4,
+              "dma_ch": -1
+            }
+          ],
+          "direction": [
+            -0.9886576727454187,
+            -0.03369196043235754,
+            0.14635866193648026
+          ],
+          "origin": [
+            2494.0,
+            -1404.0,
+            -687.0
+          ]
+        },
+        {
+          "address": "0x800de4a0",
+          "native_motion": [
+            {
+              "seq": 92295,
+              "addr": "0x000DE6C0",
+              "old": "0x09DF0000",
+              "new": "0x07610000",
+              "ra": "0x80079360",
+              "func": "0x000029CC",
+              "pc": "0x800793E4",
+              "cpu_pc": "0x00000000",
+              "sp": "0x801FFDB0",
+              "v0": "0x07610000",
+              "v1": "0xFD820000",
+              "a0": "0x00000000",
+              "a1": "0x801FFD90",
+              "a2": "0x00000000",
+              "a3": "0xFC64DA00",
+              "t0": "0x00000000",
+              "t1": "0x00000000",
+              "s0": "0x800DE4A0",
+              "s1": "0x00000000",
+              "s2": "0x800DE4A0",
+              "s3": "0x800A0000",
+              "s4": "0x00000000",
+              "s5": "0x800B0000",
+              "frame": 292,
+              "w": 4,
+              "dma_ch": -1
+            },
+            {
+              "seq": 92296,
+              "addr": "0x000DE6C4",
+              "old": "0xFA820000",
+              "new": "0xFA654000",
+              "ra": "0x80079360",
+              "func": "0x000029CC",
+              "pc": "0x80079400",
+              "cpu_pc": "0x00000000",
+              "sp": "0x801FFDB0",
+              "v0": "0xFA654000",
+              "v1": "0xFFE34000",
+              "a0": "0x00000000",
+              "a1": "0x801FFD90",
+              "a2": "0x00000000",
+              "a3": "0xFC64DA00",
+              "t0": "0x00000000",
+              "t1": "0x00000000",
+              "s0": "0x800DE4A0",
+              "s1": "0x00000000",
+              "s2": "0x800DE4A0",
+              "s3": "0x800A0000",
+              "s4": "0x00000000",
+              "s5": "0x800B0000",
+              "frame": 292,
+              "w": 4,
+              "dma_ch": -1
+            },
+            {
+              "seq": 92297,
+              "addr": "0x000DE6C8",
+              "old": "0xFD4A0000",
+              "new": "0xFDAC9000",
+              "ra": "0x80079360",
+              "func": "0x000029CC",
+              "pc": "0x8007941C",
+              "cpu_pc": "0x00000000",
+              "sp": "0x801FFDB0",
+              "v0": "0xFDAC9000",
+              "v1": "0x00629000",
+              "a0": "0x00000000",
+              "a1": "0x801FFD90",
+              "a2": "0x00000000",
+              "a3": "0xFC64DA00",
+              "t0": "0x00000000",
+              "t1": "0x00000000",
+              "s0": "0x800DE4A0",
+              "s1": "0x00000000",
+              "s2": "0x800DE4A0",
+              "s3": "0x800A0000",
+              "s4": "0x00000000",
+              "s5": "0x800B0000",
+              "frame": 292,
+              "w": 4,
+              "dma_ch": -1
+            }
+          ],
+          "direction": [
+            -0.9872977940579544,
+            -0.04449030028082475,
+            0.1525243555279579
+          ],
+          "origin": [
+            2527.0,
+            -1406.0,
+            -694.0
+          ]
+        },
+        {
+          "address": "0x800df5d0",
+          "native_motion": [
+            {
+              "seq": 57354,
+              "addr": "0x000DF7F0",
+              "old": "0x09DE0000",
+              "new": "0x07780000",
+              "ra": "0x80079360",
+              "func": "0x000029CC",
+              "pc": "0x800793E4",
+              "cpu_pc": "0x00000000",
+              "sp": "0x801FFDB0",
+              "v0": "0x07780000",
+              "v1": "0xFD9A0000",
+              "a0": "0x00000000",
+              "a1": "0x801FFD90",
+              "a2": "0x00000000",
+              "a3": "0xFC596A00",
+              "t0": "0x00000000",
+              "t1": "0x00000000",
+              "s0": "0x800DF5D0",
+              "s1": "0x00000000",
+              "s2": "0x800DF5D0",
+              "s3": "0x800A0000",
+              "s4": "0x00000000",
+              "s5": "0x800B0000",
+              "frame": 286,
+              "w": 4,
+              "dma_ch": -1
+            },
+            {
+              "seq": 57355,
+              "addr": "0x000DF7F4",
+              "old": "0xFA810000",
+              "new": "0xFA6A2000",
+              "ra": "0x80079360",
+              "func": "0x000029CC",
+              "pc": "0x80079400",
+              "cpu_pc": "0x00000000",
+              "sp": "0x801FFDB0",
+              "v0": "0xFA6A2000",
+              "v1": "0xFFE92000",
+              "a0": "0x00000000",
+              "a1": "0x801FFD90",
+              "a2": "0x00000000",
+              "a3": "0xFC596A00",
+              "t0": "0x00000000",
+              "t1": "0x00000000",
+              "s0": "0x800DF5D0",
+              "s1": "0x00000000",
+              "s2": "0x800DF5D0",
+              "s3": "0x800A0000",
+              "s4": "0x00000000",
+              "s5": "0x800B0000",
+              "frame": 286,
+              "w": 4,
+              "dma_ch": -1
+            },
+            {
+              "seq": 57356,
+              "addr": "0x000DF7F8",
+              "old": "0xFD490000",
+              "new": "0xFD9D2000",
+              "ra": "0x80079360",
+              "func": "0x000029CC",
+              "pc": "0x8007941C",
+              "cpu_pc": "0x00000000",
+              "sp": "0x801FFDB0",
+              "v0": "0xFD9D2000",
+              "v1": "0x00542000",
+              "a0": "0x00000000",
+              "a1": "0x801FFD90",
+              "a2": "0x00000000",
+              "a3": "0xFC596A00",
+              "t0": "0x00000000",
+              "t1": "0x00000000",
+              "s0": "0x800DF5D0",
+              "s1": "0x00000000",
+              "s2": "0x800DF5D0",
+              "s3": "0x800A0000",
+              "s4": "0x00000000",
+              "s5": "0x800B0000",
+              "frame": 286,
+              "w": 4,
+              "dma_ch": -1
+            }
+          ],
+          "direction": [
+            -0.9900698395620522,
+            -0.03688574524427027,
+            0.13565085546116878
+          ],
+          "origin": [
+            2526.0,
+            -1407.0,
+            -695.0
+          ]
+        }
+      ]
+    },
+    "sten-final-loss": {
+      "evidence": {
+        "path": "analysis/vr-baseline/sp-issues-20261028/sten-final-loss/receipt.json",
+        "sha256": "aeed237a76a1b48f6a70fab6ed6137a6f5fe5360f8f714bf9640fca82926aded",
+        "complete": true,
+        "binary_sha256": "f990015770b107e36d700b27ada7de20e19da29c8b6f3578bf52e975c4082c8b",
+        "exit_code": 0,
+        "verify_mismatch": 0
+      },
+      "native_motion": [
+        {
+          "address": "0x800dabc0",
+          "native_motion": [
+            {
+              "seq": 20676,
+              "addr": "0x000DADE0",
+              "old": "0x09BC0000",
+              "new": "0x07474000",
+              "ra": "0x80079360",
+              "func": "0x000029CC",
+              "pc": "0x800793E4",
+              "cpu_pc": "0x00000000",
+              "sp": "0x801FFDB0",
+              "v0": "0x07474000",
+              "v1": "0xFD8B4000",
+              "a0": "0x00000000",
+              "a1": "0x801FFD90",
+              "a2": "0x00000000",
+              "a3": "0xFC62E200",
+              "t0": "0x00000000",
+              "t1": "0x00000000",
+              "s0": "0x800DABC0",
+              "s1": "0x00000000",
+              "s2": "0x800DABC0",
+              "s3": "0x800A0000",
+              "s4": "0x00000000",
+              "s5": "0x800B0000",
+              "frame": 197,
+              "w": 4,
+              "dma_ch": -1
+            },
+            {
+              "seq": 20677,
+              "addr": "0x000DADE4",
+              "old": "0xFA840000",
+              "new": "0xFA6E9000",
+              "ra": "0x80079360",
+              "func": "0x000029CC",
+              "pc": "0x80079400",
+              "cpu_pc": "0x00000000",
+              "sp": "0x801FFDB0",
+              "v0": "0xFA6E9000",
+              "v1": "0xFFEA9000",
+              "a0": "0x00000000",
+              "a1": "0x801FFD90",
+              "a2": "0x00000000",
+              "a3": "0xFC62E200",
+              "t0": "0x00000000",
+              "t1": "0x00000000",
+              "s0": "0x800DABC0",
+              "s1": "0x00000000",
+              "s2": "0x800DABC0",
+              "s3": "0x800A0000",
+              "s4": "0x00000000",
+              "s5": "0x800B0000",
+              "frame": 197,
+              "w": 4,
+              "dma_ch": -1
+            },
+            {
+              "seq": 20678,
+              "addr": "0x000DADE8",
+              "old": "0xFD4F0000",
+              "new": "0xFDAE0000",
+              "ra": "0x80079360",
+              "func": "0x000029CC",
+              "pc": "0x8007941C",
+              "cpu_pc": "0x00000000",
+              "sp": "0x801FFDB0",
+              "v0": "0xFDAE0000",
+              "v1": "0x005F0000",
+              "a0": "0x00000000",
+              "a1": "0x801FFD90",
+              "a2": "0x00000000",
+              "a3": "0xFC62E200",
+              "t0": "0x00000000",
+              "t1": "0x00000000",
+              "s0": "0x800DABC0",
+              "s1": "0x00000000",
+              "s2": "0x800DABC0",
+              "s3": "0x800A0000",
+              "s4": "0x00000000",
+              "s5": "0x800B0000",
+              "frame": 197,
+              "w": 4,
+              "dma_ch": -1
+            }
+          ],
+          "direction": [
+            -0.9882157614384178,
+            -0.03369363878462995,
+            0.14931291822926393
+          ],
+          "origin": [
+            2492.0,
+            -1404.0,
+            -689.0
+          ]
+        },
+        {
+          "address": "0x800de4a0",
+          "native_motion": [
+            {
+              "seq": 89554,
+              "addr": "0x000DE6C0",
+              "old": "0x09DF0000",
+              "new": "0x07610000",
+              "ra": "0x80079360",
+              "func": "0x000029CC",
+              "pc": "0x800793E4",
+              "cpu_pc": "0x00000000",
+              "sp": "0x801FFDB0",
+              "v0": "0x07610000",
+              "v1": "0xFD820000",
+              "a0": "0x00000000",
+              "a1": "0x801FFD90",
+              "a2": "0x00000000",
+              "a3": "0xFC64DA00",
+              "t0": "0x00000000",
+              "t1": "0x00000000",
+              "s0": "0x800DE4A0",
+              "s1": "0x00000000",
+              "s2": "0x800DE4A0",
+              "s3": "0x800A0000",
+              "s4": "0x00000000",
+              "s5": "0x800B0000",
+              "frame": 209,
+              "w": 4,
+              "dma_ch": -1
+            },
+            {
+              "seq": 89555,
+              "addr": "0x000DE6C4",
+              "old": "0xFA820000",
+              "new": "0xFA654000",
+              "ra": "0x80079360",
+              "func": "0x000029CC",
+              "pc": "0x80079400",
+              "cpu_pc": "0x00000000",
+              "sp": "0x801FFDB0",
+              "v0": "0xFA654000",
+              "v1": "0xFFE34000",
+              "a0": "0x00000000",
+              "a1": "0x801FFD90",
+              "a2": "0x00000000",
+              "a3": "0xFC64DA00",
+              "t0": "0x00000000",
+              "t1": "0x00000000",
+              "s0": "0x800DE4A0",
+              "s1": "0x00000000",
+              "s2": "0x800DE4A0",
+              "s3": "0x800A0000",
+              "s4": "0x00000000",
+              "s5": "0x800B0000",
+              "frame": 209,
+              "w": 4,
+              "dma_ch": -1
+            },
+            {
+              "seq": 89556,
+              "addr": "0x000DE6C8",
+              "old": "0xFD4A0000",
+              "new": "0xFDAC9000",
+              "ra": "0x80079360",
+              "func": "0x000029CC",
+              "pc": "0x8007941C",
+              "cpu_pc": "0x00000000",
+              "sp": "0x801FFDB0",
+              "v0": "0xFDAC9000",
+              "v1": "0x00629000",
+              "a0": "0x00000000",
+              "a1": "0x801FFD90",
+              "a2": "0x00000000",
+              "a3": "0xFC64DA00",
+              "t0": "0x00000000",
+              "t1": "0x00000000",
+              "s0": "0x800DE4A0",
+              "s1": "0x00000000",
+              "s2": "0x800DE4A0",
+              "s3": "0x800A0000",
+              "s4": "0x00000000",
+              "s5": "0x800B0000",
+              "frame": 209,
+              "w": 4,
+              "dma_ch": -1
+            }
+          ],
+          "direction": [
+            -0.9872977940579544,
+            -0.04449030028082475,
+            0.1525243555279579
+          ],
+          "origin": [
+            2527.0,
+            -1406.0,
+            -694.0
+          ]
+        },
+        {
+          "address": "0x800df5d0",
+          "native_motion": [
+            {
+              "seq": 54608,
+              "addr": "0x000DF7F0",
+              "old": "0x09DE0000",
+              "new": "0x07780000",
+              "ra": "0x80079360",
+              "func": "0x000029CC",
+              "pc": "0x800793E4",
+              "cpu_pc": "0x00000000",
+              "sp": "0x801FFDB0",
+              "v0": "0x07780000",
+              "v1": "0xFD9A0000",
+              "a0": "0x00000000",
+              "a1": "0x801FFD90",
+              "a2": "0x00000000",
+              "a3": "0xFC596A00",
+              "t0": "0x00000000",
+              "t1": "0x00000000",
+              "s0": "0x800DF5D0",
+              "s1": "0x00000000",
+              "s2": "0x800DF5D0",
+              "s3": "0x800A0000",
+              "s4": "0x00000000",
+              "s5": "0x800B0000",
+              "frame": 203,
+              "w": 4,
+              "dma_ch": -1
+            },
+            {
+              "seq": 54609,
+              "addr": "0x000DF7F4",
+              "old": "0xFA810000",
+              "new": "0xFA6A2000",
+              "ra": "0x80079360",
+              "func": "0x000029CC",
+              "pc": "0x80079400",
+              "cpu_pc": "0x00000000",
+              "sp": "0x801FFDB0",
+              "v0": "0xFA6A2000",
+              "v1": "0xFFE92000",
+              "a0": "0x00000000",
+              "a1": "0x801FFD90",
+              "a2": "0x00000000",
+              "a3": "0xFC596A00",
+              "t0": "0x00000000",
+              "t1": "0x00000000",
+              "s0": "0x800DF5D0",
+              "s1": "0x00000000",
+              "s2": "0x800DF5D0",
+              "s3": "0x800A0000",
+              "s4": "0x00000000",
+              "s5": "0x800B0000",
+              "frame": 203,
+              "w": 4,
+              "dma_ch": -1
+            },
+            {
+              "seq": 54610,
+              "addr": "0x000DF7F8",
+              "old": "0xFD490000",
+              "new": "0xFD9D2000",
+              "ra": "0x80079360",
+              "func": "0x000029CC",
+              "pc": "0x8007941C",
+              "cpu_pc": "0x00000000",
+              "sp": "0x801FFDB0",
+              "v0": "0xFD9D2000",
+              "v1": "0x00542000",
+              "a0": "0x00000000",
+              "a1": "0x801FFD90",
+              "a2": "0x00000000",
+              "a3": "0xFC596A00",
+              "t0": "0x00000000",
+              "t1": "0x00000000",
+              "s0": "0x800DF5D0",
+              "s1": "0x00000000",
+              "s2": "0x800DF5D0",
+              "s3": "0x800A0000",
+              "s4": "0x00000000",
+              "s5": "0x800B0000",
+              "frame": 203,
+              "w": 4,
+              "dma_ch": -1
+            }
+          ],
+          "direction": [
+            -0.9900698395620522,
+            -0.03688574524427027,
+            0.13565085546116878
+          ],
+          "origin": [
+            2526.0,
+            -1407.0,
+            -695.0
+          ]
+        }
+      ]
+    },
+    "p38-final": {
+      "evidence": {
+        "path": "analysis/vr-baseline/sp-issues-20261028/p38-final/receipt.json",
+        "sha256": "fa32b1bf6f205f6259ef25524a66c11c707ae92cc8e554f836c3c5b8e5f98949",
+        "complete": true,
+        "binary_sha256": "f990015770b107e36d700b27ada7de20e19da29c8b6f3578bf52e975c4082c8b",
+        "exit_code": 0,
+        "verify_mismatch": 0
+      },
+      "native_motion": [
+        {
+          "address": "0x800eced0",
+          "native_motion": [
+            {
+              "seq": 51526,
+              "addr": "0x000ED0F0",
+              "old": "0x415EEDD7",
+              "new": "0x3EE36DD7",
+              "ra": "0x80079360",
+              "func": "0x000029CC",
+              "pc": "0x800793E4",
+              "cpu_pc": "0x00000000",
+              "sp": "0x801FFDB0",
+              "v0": "0x3EE36DD7",
+              "v1": "0xFD848000",
+              "a0": "0x00000000",
+              "a1": "0x801FFD90",
+              "a2": "0x00000000",
+              "a3": "0x0CB949B2",
+              "t0": "0x00000000",
+              "t1": "0x00000000",
+              "s0": "0x800ECED0",
+              "s1": "0x00000000",
+              "s2": "0x800ECED0",
+              "s3": "0x800A0000",
+              "s4": "0x00000000",
+              "s5": "0x800B0000",
+              "frame": 183,
+              "w": 4,
+              "dma_ch": -1
+            },
+            {
+              "seq": 51527,
+              "addr": "0x000ED0F4",
+              "old": "0xFF3D8201",
+              "new": "0xFF43A201",
+              "ra": "0x80079360",
+              "func": "0x000029CC",
+              "pc": "0x80079400",
+              "cpu_pc": "0x00000000",
+              "sp": "0x801FFDB0",
+              "v0": "0xFF43A201",
+              "v1": "0x00062000",
+              "a0": "0x00000000",
+              "a1": "0x801FFD90",
+              "a2": "0x00000000",
+              "a3": "0x0CB949B2",
+              "t0": "0x00000000",
+              "t1": "0x00000000",
+              "s0": "0x800ECED0",
+              "s1": "0x00000000",
+              "s2": "0x800ECED0",
+              "s3": "0x800A0000",
+              "s4": "0x00000000",
+              "s5": "0x800B0000",
+              "frame": 183,
+              "w": 4,
+              "dma_ch": -1
+            },
+            {
+              "seq": 51528,
+              "addr": "0x000ED0F8",
+              "old": "0x00969BD3",
+              "new": "0x014FFBD3",
+              "ra": "0x80079360",
+              "func": "0x000029CC",
+              "pc": "0x8007941C",
+              "cpu_pc": "0x00000000",
+              "sp": "0x801FFDB0",
+              "v0": "0x014FFBD3",
+              "v1": "0x00B96000",
+              "a0": "0x00000000",
+              "a1": "0x801FFD90",
+              "a2": "0x00000000",
+              "a3": "0x0CB949B2",
+              "t0": "0x00000000",
+              "t1": "0x00000000",
+              "s0": "0x800ECED0",
+              "s1": "0x00000000",
+              "s2": "0x800ECED0",
+              "s3": "0x800A0000",
+              "s4": "0x00000000",
+              "s5": "0x800B0000",
+              "frame": 183,
+              "w": 4,
+              "dma_ch": -1
+            }
+          ],
+          "direction": [
+            -0.959950451170532,
+            0.009252079486104656,
+            0.2800170179161878
+          ],
+          "origin": [
+            16734.92906188965,
+            -194.49217224121094,
+            150.6086883544922
+          ],
+          "laser_cosine": 0.9999988899368053,
+          "muzzle_max_error": 6.439492182153117e-06
+        }
+      ]
+    }
+  },
+  "all_id_sp_damage_pass": false,
+  "sp_thrown_and_rocket_final_origin_converted": false,
+  "world": {
+    "evidence": {
+      "path": "analysis/vr-baseline/sp-issues-20261028/world-recovery-package/receipt.json",
+      "sha256": "6185fefc5adf96bae00fc15983c9a32fc9026dc37ecee072f0c2a15bd9037e03",
+      "complete": true,
+      "binary_sha256": "f990015770b107e36d700b27ada7de20e19da29c8b6f3578bf52e975c4082c8b",
+      "exit_code": 0,
+      "verify_mismatch": 0
+    },
+    "native_levels": [
+      {
+        "root": 2148663800,
+        "table": 2148683164,
+        "count": 1230
+      },
+      {
+        "root": 2148583304,
+        "table": 2148602420,
+        "count": 1307
+      },
+      {
+        "root": 2148502808,
+        "table": 2148524932,
+        "count": 1481
+      },
+      {
+        "root": 2148422312,
+        "table": 2148442980,
+        "count": 1538
+      }
+    ],
+    "independent_hit": {
+      "index": 1016,
+      "distance": 3330.2327460580073,
+      "vertices": [
+        [
+          1568.0,
+          -1522.0,
+          5019.0
+        ],
+        [
+          1846.0,
+          -1272.0,
+          5019.0
+        ],
+        [
+          1568.0,
+          -1272.0,
+          5019.0
+        ]
+      ],
+      "barycentric": [
+        0.3080401448185974,
+        0.06617098777671725
+      ]
+    },
+    "laser": {
+      "valid": 1,
+      "hit": 1,
+      "eye": 0,
+      "mp": 0,
+      "weapon": 0,
+      "levels": 4,
+      "level_valid": 1,
+      "weapon_valid": 1,
+      "grip": 1,
+      "surfaces": 4,
+      "distance": 3330.23274606,
+      "origin": [
+        1219.81813578,
+        -1461.05858379,
+        1717.30506695
+      ],
+      "direction": [
+        0.130266277933,
+        0.00979251884945,
+        0.991430685125
+      ],
+      "control": [
+        1151,
+        0,
+        1151,
+        0,
+        1151,
+        14,
+        8,
+        15
+      ]
+    },
+    "player_position_unchanged": true
+  },
+  "music": {
+    "evidence": {
+      "path": "analysis/vr-baseline/sp-issues-20261028/sten-copy-controller-fallback/receipt.json",
+      "sha256": "2b6dcdca6b28727dbd097abd2e563398acf19956a618ca97ce40ebedfd1a6cdf",
+      "complete": true,
+      "binary_sha256": "f990015770b107e36d700b27ada7de20e19da29c8b6f3578bf52e975c4082c8b",
+      "exit_code": 0,
+      "verify_mismatch": 0
+    },
+    "ring_changed": true,
+    "correlation_at_143360_samples": 0.025899937854401967,
+    "audio_slice": [
+      {
+        "id": 0,
+        "ok": true,
+        "tap": 0,
+        "frames": 220500,
+        "rate": 44100,
+        "tap_total": 526176
+      },
+      {
+        "id": 0,
+        "ok": true,
+        "tap": 2,
+        "frames": 220500,
+        "rate": 44100,
+        "tap_total": 677888
+      }
+    ],
+    "hitch": {
+      "thread_id": 113028,
+      "milliseconds": 1000
+    }
+  },
+  "prop_lasers": {
+    "petrol": {
+      "path": "analysis/vr-baseline/sp-issues-20261028/petrol-laser-final/receipt.json",
+      "sha256": "add0dc39ed48b177025b6b583dbec56d925be568a78785496e4e881a60f46b3a",
+      "complete": true,
+      "binary_sha256": "f990015770b107e36d700b27ada7de20e19da29c8b6f3578bf52e975c4082c8b",
+      "exit_code": 0,
+      "verify_mismatch": 0
+    },
+    "grenade_failed": [
+      {
+        "path": "analysis/vr-baseline/sp-issues-20261028/grenade-laser-final/receipt.json",
+        "sha256": "b69700c595797af73186341ab0067cb9a38f5777f27416ea406784e137860593",
+        "complete": false,
+        "binary_sha256": "f990015770b107e36d700b27ada7de20e19da29c8b6f3578bf52e975c4082c8b",
+        "exit_code": 0,
+        "verify_mismatch": 2
+      },
+      {
+        "path": "analysis/vr-baseline/sp-issues-20261028/grenade-laser-snapshot/receipt.json",
+        "sha256": "d389ea8b771f04f55067f59c4d5261acc3f9619a57ba3a3cdc51b296024f2f87",
+        "complete": false,
+        "binary_sha256": "f990015770b107e36d700b27ada7de20e19da29c8b6f3578bf52e975c4082c8b",
+        "exit_code": 0,
+        "verify_mismatch": 3
+      }
+    ],
+    "limitation": "Grenade rays match all eight directions; MP VRAM restore failures remain open. Do not call those runs clean."
+  },
+  "native_copy_candidate": {
+    "default_enabled": false,
+    "evidence": {
+      "path": "analysis/vr-baseline/sp-issues-20261028/sten-copy-controller-fallback/receipt.json",
+      "sha256": "2b6dcdca6b28727dbd097abd2e563398acf19956a618ca97ce40ebedfd1a6cdf",
+      "complete": true,
+      "binary_sha256": "f990015770b107e36d700b27ada7de20e19da29c8b6f3578bf52e975c4082c8b",
+      "exit_code": 0,
+      "verify_mismatch": 0
+    },
+    "fallback": {
+      "paused": 1458,
+      "paused_after": 1458,
+      "resumed": 1510,
+      "refused": 1510,
+      "refused_after": 1510,
+      "recovered": 1534,
+      "reloaded": 1616,
+      "camera": {
+        "valid": 1,
+        "owner": 2148412624,
+        "cycle": 21812825984,
+        "control": [
+          1968,
+          3022616,
+          4294185988,
+          5300464,
+          1966,
+          268,
+          1832,
+          6228
+        ]
+      },
+      "pause_counters": {
+        "startup.disc_hash": 1,
+        "mohu.vr.input.render_blocked": 0,
+        "mohu.vr.input.guard_fallback": 0,
+        "mohu.vr.input.callback": 529,
+        "mohu.vr.input.focus_lost": 38,
+        "mohu.vr.input.mode.sp": 492,
+        "vr.nclip.render.total": 399854,
+        "vr.nclip.render.precise": 399854,
+        "vr.nclip.render.positive": 232360,
+        "vr.nclip.render.negative": 167494,
+        "vr.nclip.render.corrected": 54214,
+        "mohu.vr.weapon.sp.tracking_fallback": 36,
+        "mohu.vr.weapon.sp.native_gun_only": 36,
+        "mohu.vr.flash.sp.projected_tip": 772,
+        "mohu.vr.weapon.sp.gun_only": 772,
+        "mohu.vr.flash.align": 1544,
+        "mohu.vr.flash.sp.bank0": 772,
+        "mohu.vr.flash.sp.bank1": 772,
+        "vr.projective.packet": 238320,
+        "vr.projective.draw": 235698,
+        "vr.projective.miss0": 2622,
+        "mohu.vr.shot.sp.camera": 1534,
+        "mohu.vr.world.native_copy_skipped": 1458,
+        "mohu.vr.weapon.sp.project": 736,
+        "mohu.vr.weapon.sp.apply": 736,
+        "mohu.vr.laser.hit": 730,
+        "mohu.vr.shot.sp.aimed": 3,
+        "mohu.vr.pause.enter": 1,
+        "mohu.vr.pause.frame.sp": 19,
+        "mohu.vr.input.mode.menu": 37
+      }
+    }
+  },
+  "production": {
+    "scope": "Desktop stereo, no OpenXR or injected hands. HUD/laser capture cost absent. Not headset FPS.",
+    "cases": {
+      "production-base-1": {
+        "evidence": {
+          "path": "analysis/vr-baseline/sp-issues-20261028/production-base-1/receipt.json",
+          "sha256": "91eefbf3af7ad7816a668eabd9894ed59e092dd70e88c0af9a9eecbd2ae41c5a",
+          "complete": true,
+          "binary_sha256": "035fe991d90673db38807b89a184d91fc33cfef6af721344512ede759f064eed",
+          "exit_code": 0,
+          "verify_mismatch": null
+        },
+        "pairs_per_second": 28.159015617605302,
+        "mean_stages_ms": {
+          "guest_sim": 35.483333333333334,
+          "pair_total": 17.732766666666667,
+          "eye_begin_l": 0.15821666666666667,
+          "eye_guest_l": 8.334700000000002,
+          "eye_end_l": 0.2901666666666667,
+          "eye_restore_l": 0.236525,
+          "eye_begin_r": 0.03911666666666667,
+          "eye_guest_r": 8.177341666666667,
+          "eye_end_r": 0.28263333333333335,
+          "eye_restore_r": 0.2085,
+          "xr_wait_frame": 0.0,
+          "xr_begin_frame": 0.0,
+          "xr_acquire": 0.0,
+          "xr_wait_image": 0.0,
+          "xr_copy": 0.0,
+          "xr_release": 0.0,
+          "xr_end_frame": 0.0,
+          "pose_age": 0.0,
+          "hud_capture": 0.0,
+          "hud_draw": 0.0,
+          "hud_readback": 0.0,
+          "game_env": 0.0,
+          "game_world": 0.0,
+          "game_text": 0.0,
+          "game_traverse": 15.746683333333333,
+          "game_icon": 0.0,
+          "game_submit": 0.649775,
+          "game_laser": 4.1666666666666665e-05,
+          "game_select": 0.05668333333333333
+        }
+      },
+      "production-skip-1": {
+        "evidence": {
+          "path": "analysis/vr-baseline/sp-issues-20261028/production-skip-1/receipt.json",
+          "sha256": "6f5f5a004ceaf6bc3f8b4e5d55e24e96aa43c3bdc86334494cb0e80d5cee3b11",
+          "complete": true,
+          "binary_sha256": "035fe991d90673db38807b89a184d91fc33cfef6af721344512ede759f064eed",
+          "exit_code": 0,
+          "verify_mismatch": null
+        },
+        "pairs_per_second": 29.944640161046806,
+        "mean_stages_ms": {
+          "guest_sim": 33.391666666666666,
+          "pair_total": 17.553258333333336,
+          "eye_begin_l": 0.16035,
+          "eye_guest_l": 8.220516666666667,
+          "eye_end_l": 0.271975,
+          "eye_restore_l": 0.22376666666666667,
+          "eye_begin_r": 0.036616666666666665,
+          "eye_guest_r": 8.161575,
+          "eye_end_r": 0.2768583333333334,
+          "eye_restore_r": 0.19648333333333332,
+          "xr_wait_frame": 0.0,
+          "xr_begin_frame": 0.0,
+          "xr_acquire": 0.0,
+          "xr_wait_image": 0.0,
+          "xr_copy": 0.0,
+          "xr_release": 0.0,
+          "xr_end_frame": 0.0,
+          "pose_age": 0.0,
+          "hud_capture": 0.0,
+          "hud_draw": 0.0,
+          "hud_readback": 0.0,
+          "game_env": 0.0,
+          "game_world": 0.0,
+          "game_text": 0.0,
+          "game_traverse": 15.626708333333333,
+          "game_icon": 0.0,
+          "game_submit": 0.6448916666666666,
+          "game_laser": 0.0,
+          "game_select": 0.05806666666666667
+        }
+      },
+      "production-base-2": {
+        "evidence": {
+          "path": "analysis/vr-baseline/sp-issues-20261028/production-base-2/receipt.json",
+          "sha256": "219dc1faecc1ca51ce63f98b9ca3603e9bf2a0bb478e8bc15ee922c04de510e5",
+          "complete": true,
+          "binary_sha256": "035fe991d90673db38807b89a184d91fc33cfef6af721344512ede759f064eed",
+          "exit_code": 0,
+          "verify_mismatch": null
+        },
+        "pairs_per_second": 27.648698884758364,
+        "mean_stages_ms": {
+          "guest_sim": 36.15,
+          "pair_total": 17.687716666666667,
+          "eye_begin_l": 0.163,
+          "eye_guest_l": 8.264216666666668,
+          "eye_end_l": 0.28886666666666666,
+          "eye_restore_l": 0.23355,
+          "eye_begin_r": 0.03908333333333334,
+          "eye_guest_r": 8.188391666666666,
+          "eye_end_r": 0.2981666666666667,
+          "eye_restore_r": 0.20705833333333334,
+          "xr_wait_frame": 0.0,
+          "xr_begin_frame": 0.0,
+          "xr_acquire": 0.0,
+          "xr_wait_image": 0.0,
+          "xr_copy": 0.0,
+          "xr_release": 0.0,
+          "xr_end_frame": 0.0,
+          "pose_age": 0.0,
+          "hud_capture": 0.0,
+          "hud_draw": 0.0,
+          "hud_readback": 0.0,
+          "game_env": 0.0,
+          "game_world": 0.0,
+          "game_text": 0.0,
+          "game_traverse": 15.68475,
+          "game_icon": 0.0,
+          "game_submit": 0.6471,
+          "game_laser": 2.5e-05,
+          "game_select": 0.055725000000000004
+        }
+      },
+      "production-skip-2": {
+        "evidence": {
+          "path": "analysis/vr-baseline/sp-issues-20261028/production-skip-2/receipt.json",
+          "sha256": "7339c6161871b02902bc6da528269303b6b9e8b3edb70aa2a306b510c8f5dc55",
+          "complete": true,
+          "binary_sha256": "035fe991d90673db38807b89a184d91fc33cfef6af721344512ede759f064eed",
+          "exit_code": 0,
+          "verify_mismatch": null
+        },
+        "pairs_per_second": 29.661016949152543,
+        "mean_stages_ms": {
+          "guest_sim": 33.708333333333336,
+          "pair_total": 17.64545833333333,
+          "eye_begin_l": 0.160175,
+          "eye_guest_l": 8.270191666666667,
+          "eye_end_l": 0.29085833333333333,
+          "eye_restore_l": 0.23875,
+          "eye_begin_r": 0.040141666666666666,
+          "eye_guest_r": 8.163275,
+          "eye_end_r": 0.2693333333333333,
+          "eye_restore_r": 0.20724166666666669,
+          "xr_wait_frame": 0.0,
+          "xr_begin_frame": 0.0,
+          "xr_acquire": 0.0,
+          "xr_wait_image": 0.0,
+          "xr_copy": 0.0,
+          "xr_release": 0.0,
+          "xr_end_frame": 0.0,
+          "pose_age": 0.0,
+          "hud_capture": 0.0,
+          "hud_draw": 0.0,
+          "hud_readback": 0.0,
+          "game_env": 0.0,
+          "game_world": 0.0,
+          "game_text": 0.0,
+          "game_traverse": 15.665524999999999,
+          "game_icon": 0.0,
+          "game_submit": 0.6533833333333333,
+          "game_laser": 0.0,
+          "game_select": 0.05596666666666667
+        }
+      },
+      "production-base-3": {
+        "evidence": {
+          "path": "analysis/vr-baseline/sp-issues-20261028/production-base-3/receipt.json",
+          "sha256": "b09655e64044dceca0c3b41c81827d51215fb1f4c3b69dfee49d681747d79bb5",
+          "complete": true,
+          "binary_sha256": "035fe991d90673db38807b89a184d91fc33cfef6af721344512ede759f064eed",
+          "exit_code": 0,
+          "verify_mismatch": null
+        },
+        "pairs_per_second": 29.324790537210447,
+        "mean_stages_ms": {
+          "guest_sim": 34.083333333333336,
+          "pair_total": 17.582375,
+          "eye_begin_l": 0.15639166666666668,
+          "eye_guest_l": 8.270425,
+          "eye_end_l": 0.2806416666666667,
+          "eye_restore_l": 0.2309,
+          "eye_begin_r": 0.037483333333333334,
+          "eye_guest_r": 8.12935,
+          "eye_end_r": 0.273125,
+          "eye_restore_r": 0.19867500000000002,
+          "xr_wait_frame": 0.0,
+          "xr_begin_frame": 0.0,
+          "xr_acquire": 0.0,
+          "xr_wait_image": 0.0,
+          "xr_copy": 0.0,
+          "xr_release": 0.0,
+          "xr_end_frame": 0.0,
+          "pose_age": 0.0,
+          "hud_capture": 0.0,
+          "hud_draw": 0.0,
+          "hud_readback": 0.0,
+          "game_env": 0.0,
+          "game_world": 0.0,
+          "game_text": 0.0,
+          "game_traverse": 15.644241666666666,
+          "game_icon": 0.0,
+          "game_submit": 0.6443083333333333,
+          "game_laser": 0.0,
+          "game_select": 0.056375
+        }
+      },
+      "production-skip-3": {
+        "evidence": {
+          "path": "analysis/vr-baseline/sp-issues-20261028/production-skip-3/receipt.json",
+          "sha256": "e0e7d734944aeaa7b8a7ff1b9bef2b6f19a044c0877cfaecbb8ead1784fa063a",
+          "complete": true,
+          "binary_sha256": "035fe991d90673db38807b89a184d91fc33cfef6af721344512ede759f064eed",
+          "exit_code": 0,
+          "verify_mismatch": null
+        },
+        "pairs_per_second": 29.698028450212128,
+        "mean_stages_ms": {
+          "guest_sim": 33.666666666666664,
+          "pair_total": 17.626775000000002,
+          "eye_begin_l": 0.16034166666666666,
+          "eye_guest_l": 8.277758333333333,
+          "eye_end_l": 0.2960583333333333,
+          "eye_restore_l": 0.2333916666666667,
+          "eye_begin_r": 0.03625,
+          "eye_guest_r": 8.138408333333334,
+          "eye_end_r": 0.27775833333333333,
+          "eye_restore_r": 0.20125833333333332,
+          "xr_wait_frame": 0.0,
+          "xr_begin_frame": 0.0,
+          "xr_acquire": 0.0,
+          "xr_wait_image": 0.0,
+          "xr_copy": 0.0,
+          "xr_release": 0.0,
+          "xr_end_frame": 0.0,
+          "pose_age": 0.0,
+          "hud_capture": 0.0,
+          "hud_draw": 0.0,
+          "hud_readback": 0.0,
+          "game_env": 0.0,
+          "game_world": 0.0,
+          "game_text": 0.0,
+          "game_traverse": 15.654158333333333,
+          "game_icon": 0.0,
+          "game_submit": 0.6453916666666667,
+          "game_laser": 0.0,
+          "game_select": 0.05625
+        }
+      },
+      "production-indoor-base": {
+        "evidence": {
+          "path": "analysis/vr-baseline/sp-issues-20261028/production-indoor-base/receipt.json",
+          "sha256": "4d6cab13a8c2bab24ed5674e4526fab5c30b4911e895273c43e943ad8cb45e58",
+          "complete": true,
+          "binary_sha256": "035fe991d90673db38807b89a184d91fc33cfef6af721344512ede759f064eed",
+          "exit_code": 0,
+          "verify_mismatch": null
+        },
+        "pairs_per_second": 29.10958904109589,
+        "mean_stages_ms": {
+          "guest_sim": 34.34166666666666,
+          "pair_total": 17.241866666666667,
+          "eye_begin_l": 0.16291666666666665,
+          "eye_guest_l": 8.017633333333333,
+          "eye_end_l": 0.3088666666666667,
+          "eye_restore_l": 0.247625,
+          "eye_begin_r": 0.039125,
+          "eye_guest_r": 7.942233333333333,
+          "eye_end_r": 0.296525,
+          "eye_restore_r": 0.22165,
+          "xr_wait_frame": 0.0,
+          "xr_begin_frame": 0.0,
+          "xr_acquire": 0.0,
+          "xr_wait_image": 0.0,
+          "xr_copy": 0.0,
+          "xr_release": 0.0,
+          "xr_end_frame": 0.0,
+          "pose_age": 0.0,
+          "hud_capture": 0.0,
+          "hud_draw": 0.0,
+          "hud_readback": 0.0,
+          "game_env": 0.0,
+          "game_world": 0.0,
+          "game_text": 0.0,
+          "game_traverse": 14.848758333333333,
+          "game_icon": 0.0,
+          "game_submit": 0.9899833333333333,
+          "game_laser": 0.0,
+          "game_select": 0.03844166666666667
+        }
+      },
+      "production-indoor-skip": {
+        "evidence": {
+          "path": "analysis/vr-baseline/sp-issues-20261028/production-indoor-skip/receipt.json",
+          "sha256": "74d93f0238d6e132f7452fc0ee1489d8bf605e2befd0fb5c0d0fe7a137c3532e",
+          "complete": true,
+          "binary_sha256": "035fe991d90673db38807b89a184d91fc33cfef6af721344512ede759f064eed",
+          "exit_code": 0,
+          "verify_mismatch": null
+        },
+        "pairs_per_second": 29.876977152899823,
+        "mean_stages_ms": {
+          "guest_sim": 33.475,
+          "pair_total": 17.199616666666664,
+          "eye_begin_l": 0.158725,
+          "eye_guest_l": 7.995341666666667,
+          "eye_end_l": 0.3142,
+          "eye_restore_l": 0.23968333333333333,
+          "eye_begin_r": 0.03890833333333333,
+          "eye_guest_r": 7.916225000000001,
+          "eye_end_r": 0.31478333333333336,
+          "eye_restore_r": 0.21655833333333332,
+          "xr_wait_frame": 0.0,
+          "xr_begin_frame": 0.0,
+          "xr_acquire": 0.0,
+          "xr_wait_image": 0.0,
+          "xr_copy": 0.0,
+          "xr_release": 0.0,
+          "xr_end_frame": 0.0,
+          "pose_age": 0.0,
+          "hud_capture": 0.0,
+          "hud_draw": 0.0,
+          "hud_readback": 0.0,
+          "game_env": 0.0,
+          "game_world": 0.0,
+          "game_text": 0.0,
+          "game_traverse": 14.816391666666666,
+          "game_icon": 0.0,
+          "game_submit": 0.9782000000000001,
+          "game_laser": 2.5e-05,
+          "game_select": 0.03855833333333333
+        }
+      },
+      "production-720p": {
+        "evidence": {
+          "path": "analysis/vr-baseline/sp-issues-20261028/production-720p/receipt.json",
+          "sha256": "2914a288a6838fd6fe3a9b9bd0c216e192cabac2f1ff1d3aa168c403b67537c4",
+          "complete": true,
+          "binary_sha256": "035fe991d90673db38807b89a184d91fc33cfef6af721344512ede759f064eed",
+          "exit_code": 0,
+          "verify_mismatch": null
+        },
+        "pairs_per_second": 29.997479203428284,
+        "mean_stages_ms": {
+          "guest_sim": 33.333333333333336,
+          "pair_total": 17.961591666666667,
+          "eye_begin_l": 0.166775,
+          "eye_guest_l": 8.332708333333334,
+          "eye_end_l": 0.3189416666666667,
+          "eye_restore_l": 0.25270833333333337,
+          "eye_begin_r": 0.04646666666666667,
+          "eye_guest_r": 8.278,
+          "eye_end_r": 0.31739999999999996,
+          "eye_restore_r": 0.24275833333333333,
+          "xr_wait_frame": 0.0,
+          "xr_begin_frame": 0.0,
+          "xr_acquire": 0.0,
+          "xr_wait_image": 0.0,
+          "xr_copy": 0.0,
+          "xr_release": 0.0,
+          "xr_end_frame": 0.0,
+          "pose_age": 0.0,
+          "hud_capture": 0.0,
+          "hud_draw": 0.0,
+          "hud_readback": 0.0,
+          "game_env": 0.0,
+          "game_world": 0.0,
+          "game_text": 0.0,
+          "game_traverse": 15.806516666666667,
+          "game_icon": 0.0,
+          "game_submit": 0.6808583333333333,
+          "game_laser": 0.0,
+          "game_select": 0.056541666666666664
+        }
+      },
+      "production-native-res": {
+        "evidence": {
+          "path": "analysis/vr-baseline/sp-issues-20261028/production-native-res/receipt.json",
+          "sha256": "f5d34614fc23366d629fc5e2d83e4e5744a4de02236cbcf49417751fad66ce0e",
+          "complete": true,
+          "binary_sha256": "035fe991d90673db38807b89a184d91fc33cfef6af721344512ede759f064eed",
+          "exit_code": 0,
+          "verify_mismatch": null
+        },
+        "pairs_per_second": 29.10958904109589,
+        "mean_stages_ms": {
+          "guest_sim": 34.34166666666666,
+          "pair_total": 17.759408333333333,
+          "eye_begin_l": 0.16522499999999998,
+          "eye_guest_l": 8.284991666666667,
+          "eye_end_l": 0.2911,
+          "eye_restore_l": 0.251425,
+          "eye_begin_r": 0.044116666666666665,
+          "eye_guest_r": 8.183408333333334,
+          "eye_end_r": 0.299375,
+          "eye_restore_r": 0.234,
+          "xr_wait_frame": 0.0,
+          "xr_begin_frame": 0.0,
+          "xr_acquire": 0.0,
+          "xr_wait_image": 0.0,
+          "xr_copy": 0.0,
+          "xr_release": 0.0,
+          "xr_end_frame": 0.0,
+          "pose_age": 0.0,
+          "hud_capture": 0.0,
+          "hud_draw": 0.0,
+          "hud_readback": 0.0,
+          "game_env": 0.0,
+          "game_world": 0.0,
+          "game_text": 0.0,
+          "game_traverse": 15.681933333333333,
+          "game_icon": 0.0,
+          "game_submit": 0.6646749999999999,
+          "game_laser": 0.0,
+          "game_select": 0.05631666666666667
+        }
+      }
+    },
+    "base_mean_pairs_s": 28.37750167985804,
+    "skip_mean_pairs_s": 29.767895186803827,
+    "target_60_met": false,
+    "target_90_met": false
+  },
+  "tests": {
+    "python": 127,
+    "python_pass": true,
+    "strict_shot_fixture_pass": true,
+    "strict_weapon_fixture_pass": true,
+    "strict_plugin_syntax_pass": true
+  },
+  "known_failed_controls": [
+    "indoor-audio-hitch: empty CD tap export",
+    "world-software: wrong frontend overrode requested software backend",
+    "world-header-control: transient laser-cache race interrupted geometry export; visual evidence retained",
+    "grenade-laser-surfaces: in-flight working-cache query",
+    "grenade-laser-final/grenade-laser-snapshot: MP VRAM restoration failure",
+    "sten-copy-hitch-fallback/sten-copy-hitch-fallback-final: invalid/short raw menu input windows; corrected controller-route control passes"
+  ],
+  "next_dump": "Operator can find another image after the next run; current original uses runtime recovery.",
+  "sources_sha256": {
+    "game.toml": "2c62b335c5871cbb385614ed7f9c62befd359de8abca4df86da33cfc57c5bf18",
+    "vr/underground/vr_diagnostic.c": "74e77984cb02b100a79448467ebfedc91fc8862a594fcb7fa65e3dd047a315ac",
+    "vr/underground/shot.h": "41bad480c37c774b9821d818c2bb351756ea1ddeac6a58d462273ab3e5e29d53",
+    "vr/preloaded/packages/mohu.repair.music-sector/0.1.0/manifest.toml": "305df1884be5f495c01cde891bf1a79f57492cecbd68d0c17e9aaa284f2b0a36"
+  }
+}

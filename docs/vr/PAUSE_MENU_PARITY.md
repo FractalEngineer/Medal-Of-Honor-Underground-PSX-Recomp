@@ -1,7 +1,13 @@
 # Native pause-menu port
 
-Date: 2026-10-28. A7 implementation and desktop/null-HMD validation. Physical
-headset readability/comfort remains unaccepted; no operator headset session ran.
+Updated 2026-10-29. A7 implementation and desktop/null-HMD validation were
+completed on 2026-10-28; the operator now confirms SP pause in the headset.
+
+The operator personally tested the activated clean image and reports “pause
+menu is ok.” SP pause functional headset smoke is accepted (A7a). This does
+not assert instrumented performance, exhaustive menu/comfort cases or an MP
+physical test. Do not repeat the pause port or make MP acceptance gate the SP
+alpha. Current work is [performance](PERFORMANCE_NEXT_STEPS.md).
 
 ## Reference and local binding
 
@@ -95,4 +101,6 @@ Next implementation is A2: compare the first game's preserved authored animated
 basis with Underground's normalized per-ID calibration at the known pose seams;
 fix upright grenade grip and retained StG hand, then verify the reported high-shot
 and scale cases. A4 exact laser and A5 native HUD remain direct ports. A short
-operator SP/MP pause check is still required before claiming physical acceptance.
+operator SP pause check has now passed. The earlier SP/MP physical requirement
+is superseded by the current SP-only release scope; exhaustive edge cases stay
+separate from that accepted functional smoke.

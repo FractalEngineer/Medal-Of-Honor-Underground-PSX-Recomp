@@ -1,0 +1,308 @@
+{
+  "schema": 1,
+  "date": "2026-10-28",
+  "new_runtime_measurements": false,
+  "matched_cross_game_benchmark": false,
+  "analysis_script_sha256": "8b7a9a68b73d4aad6cc0c14d7c41b1aa168011be5c257da5e778a3bb9bf8982f",
+  "operator_observation": "First game plays about fine at 60 FPS; 90 preferred",
+  "limits": [
+    "First trace: historical debug-ON interpreter, slot-2 indoor/crates.",
+    "Underground trace: debug-OFF native, slot-3 courtyard; no injected hands.",
+    "Both traces use null HMD, not the operator physical VDXR session.",
+    "Stage boundaries differ: Underground traversal includes the frame wrapper.",
+    "Ring count is not the number of rows exported.",
+    "Guest cycles and primitive counts are workload indicators, not host CPU time."
+  ],
+  "reference_checkout": {
+    "root": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-PSX-Recomp",
+    "head": "d82a5d0024570d7477db38d3cea5dfc59dd22035",
+    "framework": "555e1eabccc59b9b6ff0d9fca48aca783513dc86",
+    "working_files_may_be_uncommitted": true,
+    "sources_sha256": {
+      "game.toml": "f0c01d959a34132e80f169c9f4ecab4d94f9114f6eab6504f4189e308b17b997",
+      "CMakeLists.txt": "c54c06007e312dd0bd9d9ef5cc7cdcab1e7a536e101d8e3a1a64866e520125fb",
+      "vr/run_vr.ps1": "f57afbeecb8585220ca9224b790d0bc9f06927aa5cb8a6110a28ffab3fbb983a",
+      "psxrecomp/runtime/src/render_pass.c": "845d8fe33077e21ab9d39265174524597946722d6361e18e4d11a9190805771d",
+      "psxrecomp/runtime/src/gpu_gl_renderer.c": "5b6cd6b1dfeb197a9426151453e56da1969bf1134cdc48c2ceeccbea0cb3e0ae",
+      "psxrecomp/runtime/src/gte.cpp": "7685b43faee1c6c58de0dcf3fdb522a1de5a71f031831301fbdedcc63b228a30",
+      "vr/psx_vr_stereo.c": "b8eff329d7c269a485fcceb199692f9bdc4e2ed06b8bfa73a964672278e15655",
+      "vr/moh_vr_hud.c": "2c14feb9b3ea96f42ac645b6851cb8e1716092cc13c5938eae8b1a3b4ae66c57",
+      "RunVR-VDXR.bat": "62d4348f58318d8cdcd0c6299323794a0d01456860534075523afc6e4ce1f448",
+      "docs/reverse/VR_SLOT2_PERFORMANCE.md": "4eac393aaf51eb71aba779b6cf71bfdc6d92934c20fd8f67a70ad09818d5a27b",
+      "docs/reverse/VR_OPTIMIZATION_STATUS.md": "75317de0cca054d37b1d85acc03fc8c055aad2c4a1923d6d70a7ba88a3060cfd"
+    },
+    "current_build_options": {
+      "CMAKE_BUILD_TYPE": "Release",
+      "CMAKE_CXX_FLAGS_RELEASE": "-O3 -DNDEBUG",
+      "CMAKE_C_FLAGS_RELEASE": "-O3 -DNDEBUG",
+      "MOH_PGXP": "ON",
+      "PSX_DEBUG_TOOLS": "OFF",
+      "PSX_EXECUTION_PROFILE": "ENHANCED",
+      "PSX_GL_BATCH_IMPL": "LLE",
+      "PSX_OPENXR": "ON"
+    },
+    "current_binary_sha256": "d878c555ea2d5c034bda20d1b89dde2a98d5a7a31c0f8c85a218ca38d6b14726",
+    "current_binary_is_not_historical_trace_provenance": true
+  },
+  "underground_checkout": {
+    "root": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp",
+    "head": "a8e659610cc3cf85a871c7473da0a51c6094bfb8",
+    "framework": "555e1eabccc59b9b6ff0d9fca48aca783513dc86",
+    "working_files_may_be_uncommitted": true,
+    "sources_sha256": {
+      "game.toml": "9669410368d7c410916d1ddf21b7da230a7fddcb77ab6b5ae781fb0c93856c9f",
+      "CMakeLists.txt": "74f8f05853688ba4b5cc4f6d8f68b3effd6e31a354bc83cbf3a073014ca388f0",
+      "vr/run_vr.ps1": "86bbd4d092d932b285a41e209382d77bec1e76b541238393b64c6dbf28e2a00a",
+      "psxrecomp/runtime/src/render_pass.c": "845d8fe33077e21ab9d39265174524597946722d6361e18e4d11a9190805771d",
+      "psxrecomp/runtime/src/gpu_gl_renderer.c": "5b6cd6b1dfeb197a9426151453e56da1969bf1134cdc48c2ceeccbea0cb3e0ae",
+      "psxrecomp/runtime/src/gte.cpp": "7685b43faee1c6c58de0dcf3fdb522a1de5a71f031831301fbdedcc63b228a30",
+      "vr/underground/vr_diagnostic.c": "0bc3fa24900289636d6d08fc13924ceefc8ac5c91c2ea2ecdc39fd0bdb6a2dad",
+      "vr/underground/hud.c": "8632bfcf93b626b0098b7c15154f35656ea92a01e942486f5790c83db1210c49",
+      "vr/underground/engine_map.c": "00101f9888364312faf926266b31a8a1942731af4dcf5bca3ec46bbd883c9073"
+    },
+    "current_build_options": {
+      "CMAKE_BUILD_TYPE": "Release",
+      "CMAKE_CXX_FLAGS_RELEASE": "-O3 -DNDEBUG",
+      "CMAKE_C_FLAGS_RELEASE": "-O3 -DNDEBUG",
+      "MOHU_VR_DIAGNOSTICS": "ON",
+      "PSX_DEBUG_TOOLS": "OFF",
+      "PSX_EXECUTION_PROFILE": "ENHANCED",
+      "PSX_GL_BATCH_IMPL": "LLE",
+      "PSX_OPENXR": "ON"
+    },
+    "current_binary_sha256": "2049f17c23382bd143bc82b9ecd269cafca20a084888c05cceec3a1ae3b0b052",
+    "current_binary_is_not_historical_trace_provenance": true
+  },
+  "reference_diagnostic_trace": {
+    "path": "analysis/vr-proof/20261023-slot2-accepted-base/trace.json",
+    "sha256": "3c64574869091d0a5342163ec0a6b91bfd826407b0c350eeb8036c4259f48b7b",
+    "exported_rows": 555,
+    "ring_count": 1255,
+    "first_seq": 701,
+    "last_seq": 1255,
+    "runtime": "SteamVR/OpenXR",
+    "headset_acceptance": false,
+    "pair_intervals_per_second_in_export": 18.44023566221749,
+    "stages_ms": {
+      "pair_total": {
+        "mean": 27.57747,
+        "p50": 27.195,
+        "p95": 29.0931
+      },
+      "game_traverse": {
+        "mean": 24.840497,
+        "p50": 24.485,
+        "p95": 26.2386
+      },
+      "game_select": {
+        "mean": 0.180467,
+        "p50": 0.174,
+        "p95": 0.208
+      },
+      "game_submit": {
+        "mean": 0.982957,
+        "p50": 0.964,
+        "p95": 1.1018
+      },
+      "hud_capture": {
+        "mean": 4.593272,
+        "p50": 3.955,
+        "p95": 10.5845
+      },
+      "hud_draw": {
+        "mean": 1.174798,
+        "p50": 1.159,
+        "p95": 1.4036
+      },
+      "hud_readback": {
+        "mean": 3.417699,
+        "p50": 2.805,
+        "p95": 9.3146
+      },
+      "xr_wait_frame": {
+        "mean": 0.012067,
+        "p50": 0.012,
+        "p95": 0.013
+      },
+      "xr_copy": {
+        "mean": 0.186434,
+        "p50": 0.171,
+        "p95": 0.3152
+      },
+      "xr_end_frame": {
+        "mean": 1.03507,
+        "p50": 0.985,
+        "p95": 1.7537
+      }
+    },
+    "workload": {
+      "prims_l": {
+        "mean": 1251.0,
+        "p50": 1251.0,
+        "p95": 1251.0
+      },
+      "prims_r": {
+        "mean": 1280.0,
+        "p50": 1280.0,
+        "p95": 1280.0
+      },
+      "tex_prims_l": {
+        "mean": 1187.0,
+        "p50": 1187.0,
+        "p95": 1187.0
+      },
+      "tex_prims_r": {
+        "mean": 1216.0,
+        "p50": 1216.0,
+        "p95": 1216.0
+      },
+      "cycles_l": {
+        "mean": 1159053.209009,
+        "p50": 1159377.0,
+        "p95": 1164423.2
+      },
+      "cycles_r": {
+        "mean": 1036041.059459,
+        "p50": 1036041.0,
+        "p95": 1036041.0
+      },
+      "xr_display_delta_us": {
+        "mean": 54235.845045,
+        "p50": 50093.0,
+        "p95": 67190.5
+      }
+    }
+  },
+  "underground_production_trace": {
+    "path": "analysis/vr-baseline/operator-perf-20261028/production-final/frame-trace.json",
+    "sha256": "377f377e16f46229cd42bc8eba137eeb385b7c54a606bf9699ae9e625184c4fd",
+    "exported_rows": 120,
+    "ring_count": 181,
+    "first_seq": 62,
+    "last_seq": 181,
+    "runtime": "SteamVR/OpenXR",
+    "headset_acceptance": false,
+    "pair_intervals_per_second_in_export": 18.92192717443155,
+    "stages_ms": {
+      "pair_total": {
+        "mean": 32.789908,
+        "p50": 32.65,
+        "p95": 35.9648
+      },
+      "game_traverse": {
+        "mean": 28.986942,
+        "p50": 28.7955,
+        "p95": 32.16455
+      },
+      "game_select": {
+        "mean": 0.091542,
+        "p50": 0.089,
+        "p95": 0.10805
+      },
+      "game_submit": {
+        "mean": 1.69065,
+        "p50": 1.6655,
+        "p95": 1.83185
+      },
+      "hud_capture": {
+        "mean": 6.482,
+        "p50": 4.8195,
+        "p95": 12.4627
+      },
+      "hud_draw": {
+        "mean": 1.30615,
+        "p50": 1.315,
+        "p95": 1.52455
+      },
+      "hud_readback": {
+        "mean": 5.174717,
+        "p50": 3.509,
+        "p95": 11.1439
+      },
+      "xr_wait_frame": {
+        "mean": 0.014592,
+        "p50": 0.014,
+        "p95": 0.016
+      },
+      "xr_copy": {
+        "mean": 0.21345,
+        "p50": 0.175,
+        "p95": 0.45525
+      },
+      "xr_end_frame": {
+        "mean": 1.07215,
+        "p50": 0.8545,
+        "p95": 2.02215
+      }
+    },
+    "workload": {
+      "prims_l": {
+        "mean": 2180.325,
+        "p50": 2108.0,
+        "p95": 2297.0
+      },
+      "prims_r": {
+        "mean": 2178.266667,
+        "p50": 2106.0,
+        "p95": 2294.05
+      },
+      "tex_prims_l": {
+        "mean": 2116.325,
+        "p50": 2044.0,
+        "p95": 2233.0
+      },
+      "tex_prims_r": {
+        "mean": 2114.266667,
+        "p50": 2042.0,
+        "p95": 2230.05
+      },
+      "cycles_l": {
+        "mean": 1134551.908333,
+        "p50": 1088190.0,
+        "p95": 1213202.85
+      },
+      "cycles_r": {
+        "mean": 1134242.616667,
+        "p50": 1087895.0,
+        "p95": 1212907.85
+      },
+      "xr_display_delta_us": {
+        "mean": 52782.225,
+        "p50": 50016.5,
+        "p95": 67055.45
+      }
+    }
+  },
+  "reference_historical_production": {
+    "path": "analysis\\vr-proof\\20261023-slot2-release-final\\timing.json",
+    "sha256": "89e99514669e6ab054478e5ee64a5cf76e9617a69587f3b2e4e5e7f90e6e3259",
+    "weighted_guest_vblanks_per_second": 48.236092265943014,
+    "median_pair_ema_ms": 24.365000000000002,
+    "fresh_stereo_fps_is_not_guest_vblank_rate": true
+  },
+  "underground_production_receipt": {
+    "path": "analysis\\vr-baseline\\operator-perf-20261028\\production-final\\receipt.json",
+    "sha256": "ada9affcc1c92a6ae710f8ff47dc7dbf9b33fe65b82e678356c2714c86e10167",
+    "binary_sha256": "2049f17c23382bd143bc82b9ecd269cafca20a084888c05cceec3a1ae3b0b052",
+    "build": {
+      "PSX_DEBUG_TOOLS": "OFF",
+      "MOHU_VR_DIAGNOSTICS": "ON",
+      "PSX_OPENXR": "ON",
+      "configuration": "Release"
+    },
+    "bounded_launcher_stop": true
+  },
+  "descriptive_workload_ratios_not_speedup_predictions": {
+    "prims_l": 1.6850519584332535,
+    "prims_r": 1.6453125,
+    "cycles_l": 0.9385989199371731,
+    "cycles_r": 1.0500501428032287
+  },
+  "partial_pair_plus_hud_budget": {
+    "mean_ms": 39.271907999999996,
+    "excludes_canonical_guest_work_and_remaining_xr_stages": true,
+    "minimum_reduction_fraction_for_60": 0.5756084306709348,
+    "minimum_reduction_fraction_for_90": 0.7170722871139565,
+    "is_not_a_complete_frame_time_or_fps_prediction": true
+  }
+}

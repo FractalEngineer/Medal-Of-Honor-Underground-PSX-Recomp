@@ -1,5 +1,11 @@
 # Shared VR framework and upstream PR tracker
 
+2026-10-29 Underground checkpoint: clean-image world/music, SP pause and Sten
+have operator smoke acceptance; performance remains open. The accumulated game
+repairs, image/profiling tools and documentation contain no framework source or
+pin change. The three generic changes below retain their existing status; no
+new upstream PR or master commit is implied by pushing the game checkpoint.
+
 Updated: 2026-10-27. This file tracks framework delivery, not game feature
 acceptance. [VR_PLAN.md](VR_PLAN.md) owns Underground completion status.
 

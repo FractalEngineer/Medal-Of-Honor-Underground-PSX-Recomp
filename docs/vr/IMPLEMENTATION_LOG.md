@@ -1,5 +1,63 @@
 # VR Port Implementation Log
 
+## 2026-10-29 — operator accepts clean-image world/music, pause and Sten smoke
+
+- Operator: “smoke test passed, looking good no more missing level and music,”
+  then “pause menu is ok, sten is ok, performance still meh.” Recorded as human
+  SP headset smoke acceptance with no instrumented FPS or all-ID damage claim.
+  G1-G3 stay closed; A7a SP pause functional smoke is now checked. Broader SP
+  weapon/transition/release scopes and the performance target remain open.
+- Replaced the accumulated handoff with one current execution contract;
+  preserved the old version as `HANDOFF_HISTORY_20261029.md`, explicitly
+  non-authoritative history. Added `PERFORMANCE_NEXT_STEPS.md` with exact
+  fixture/build/probe commands, logging/trace/module caveats, P3b/P3c exit gates,
+  P4 freshness constraints, failure handling and production restore steps.
+- Next work is native replay attribution/optimization and independent fresh
+  view cadence, not another disc/culling/music/Sten/pause investigation or MP
+  feature matrix. No further headset run or gameplay implementation was done
+  during this documentation/delivery turn. Existing launchers remain unchanged.
+- Delivery includes the previously validated SP aiming/petrol/ray repairs,
+  native tracing/opt-in draw-skip candidate, clean-image metadata/activation,
+  read-only image/profiling tools and compact receipts. Local disc/BIOS/save/
+  analysis assets, binaries and unrelated `.commandcode/` remain excluded.
+
+## 2026-10-29 — activate remaining clean image for existing RunVR launchers
+
+- Operator deleted the old image and one duplicate, then requested activation.
+  Selected the remaining `Medal of Honor - Underground (USA).cue` in the
+  `Medal of Honor - Underground` folder; verified BIN SHA-256 `2aed19d5...`.
+- Updated source/staged game config, prepare filenames/digests, probe/catalog
+  identities and local launcher disc selection/cache. Existing framework probe
+  confirms the TOC fingerprint remains unchanged because layout is identical.
+- Disabled the historical recovery by default and in local mod state, retaining
+  its exact old-image/zero-byte guards. Restaged the catalog through CMake.
+- Existing batch files are unchanged; no LaunchVR alias was created. Default
+  slot-5 production smoke passes with no disc/recovery override, normal close,
+  and unchanged source saves. Production debug-OFF stays in place. No physical
+  headset launch, framework change, commit or push. Operator runs VR personally.
+  [Activation receipt](../../vr/proof/clean-disc-activation-receipt.json).
+
+## 2026-10-29 — replacement disc-image verification
+
+- Both newly supplied BINs are byte-identical: SHA-256 `2aed19d588f69274f8be70001eaa9b6400240b62088da72bace815ab902d56ed`,
+  MD5 `9b5f6e9ed0ced26fda1bfb7cdd2b7a01`. All 318,028 sectors pass header,
+  subheader, EDC and ECC P/Q checks, including corruption-negative controls.
+  Neither has wholly zero sectors.
+- The old image differs in 1,498 sectors; 1,058 include payload changes. All
+  64 empty sectors are populated in the replacements. Music file plus 23
+  videos differ; all 835 file locations/sizes, the executable and level
+  overlays match. No address rediscovery/codegen/cache reset is justified.
+- The exact-image repair guard correctly refused the clean image initially.
+  With only that feature temporarily disabled, a copied slot-5 production
+  smoke passes with 120 valid exported stereo records and normal shutdown.
+  Exact mod state is restored afterward; saves/preferences/source images stay
+  unchanged. No physical HMD run or permanent disc switch.
+- Added read-only sector/file comparison tools and the optional temporary
+  disc/recovery isolation in the production smoke tool. Source-image folders
+  are ignored as local assets. [Full comparison](DISC_IMAGE_COMPARISON.md) and
+  [receipt](../../vr/proof/disc-image-comparison-receipt.json) supersede the
+  earlier request for another dump. Performance remains a separate blocker.
+
 ## 2026-10-23
 
 ### Baseline and organization
@@ -1812,3 +1870,104 @@ source saves, defaults, historical receipts and unrelated `.commandcode/`.
   saves/preferences and no remaining game process. This does not measure headset
   FPS or HUD readback cost. [Receipt](../../vr/proof/native-hand-hud-receipt.json)
   records exact binaries and the later read-only diagnostic/constant-read hoist.
+
+### SP petrol repair and performance priority after operator play
+
+- Operator confirms accurate weapon tracking/laser, but SP petrol disappears
+  after one native switch in compatible slot 3 and performance is unacceptable
+  around 30 FPS. Minimum target is 60 fresh VR frames/s; 90 preferred. This
+  performance blocker now precedes R6 expansion; MP remains calibration only.
+- Reproduced missing petrol. SP's 196 vertex XYZ coordinates/topology match MP,
+  but the fourth halfword is 128 instead of 129: full FNV `408599AC` versus
+  `7CA0DBEC`. Added exact SP ID-15 identity without weakening other guards.
+  Actual stereo captures now show the bottle; both-eye 99 gun / 97 arm counts,
+  fresh projection, no new guard failure and zero rollback mismatch pass.
+- Fixed RunVR automatically selecting `game-interp.toml` when present. Default
+  is now production `game.toml`; diagnostic interpreter choice is explicit.
+  Matched production samples reduce guest work about 16.5% but fresh pairs still
+  top out near 30/s at the native draw-loop boundary. This is not a 60-FPS fix.
+- Ported reference traversal/submit/laser/selection trace spans. Added copied-save
+  stage probe and opt-in file export for debug-OFF builds. A production null-HMD
+  HUD sample measures 33.54 ms pair / 29.68 ms traversal plus 4.50 ms HUD capture;
+  native calls advance and XR/eye failures are zero. No physical headset used.
+- A named-counter pointer-cache experiment on a separate framework branch did
+  not establish a sufficient/stable gain; it was removed. Framework source and
+  all consumer pins remain unchanged. Master/shared-development untouched.
+- A null-HMD harness run exceeded its 15s parent cleanup timeout and was rejected.
+  Restored affected driver settings from the saved physical configuration while
+  retaining unrelated current preferences; exact prior bytes were unavailable.
+  Launcher now saves its pre-null backup before mutation and the probe allows
+  45s cleanup. The clean rerun preserves saves/preferences and exits 0.
+- 127 Python tests and strict C weapon tests pass. P38 fire/reload/load/native
+  call/visibility/rollback regression passes. Production debug-OFF restored.
+  [Current report](SP_PERFORMANCE_AND_PETROL.md) and
+  [compact receipt](../../vr/proof/sp-performance-petrol-receipt.json) preserve
+  exact sources, binaries, accepted controls, failed cleanup and remaining
+  60/90 render-cost/cadence work. Do not interpret guest VBlank or repeated
+  compositor frames as fresh application-frame acceptance.
+
+## 2026-10-28 — comparative SP performance audit
+
+- Operator reports the first game feels fine around 60 FPS and prefers 90.
+  Compared both current checkouts, normal `.bat`/PowerShell launchers, CMake
+  caches, game configs, stereo/HUD code and the first game's performance tools
+  and historical reports. No new game launch, headset test or runtime change.
+- Both use framework `555e1eab`; audited render-pass/GPU/GTE sources are identical.
+  Release/debug-OFF, PGXP, 1080p, normal hand HUD, shared stereo checkpoint reuse
+  and dual-matte single-readback optimization are already present in both.
+  The first game's shortcut explicitly enables HUD switches; its PowerShell
+  defaults are not evidence of a cheaper no-HUD normal launch.
+- Recomputed 555 reference diagnostic trace rows and 120 Underground production
+  rows with hashes. Median per-eye primitive counts are 1251/1280 versus
+  2108/2106 (65–69% more). Pair medians 27.195 versus 32.650 ms; HUD readback
+  medians 2.805 versus 3.509 ms. Scenes, historical builds/backends and input
+  differ: no matched speedup or physical headset FPS claim.
+- Source audit finds non-equivalent traversal/selection span scopes, full live
+  signature hashing, and shared synchronous GPU-to-CPU HUD readback. These are
+  attribution targets, not proven causes of the entire gap. The full frame
+  wrapper structurally mirrors the first game's selected draw stages; it is
+  not proof of duplicated simulation/traversal.
+- [Comparison report](SP_PERFORMANCE_COMPARISON.md) ranks native geometry/packet
+  profiling, explicit draw-stage attribution, HUD synchronization and measured
+  guard caching, then safe fresh-view pacing. Existing host/phase/guest-cycle
+  profilers should be reused; native DLL addresses need proper attribution.
+- Added read-only `compare_sp_performance.py` and its compact
+  [receipt](../../vr/proof/sp-performance-comparison-receipt.json). Updated plan
+  and handoff: P0a complete; P0b current controlled baselines, P3b native cost
+  attribution and P3c repeated A/B are next. P3/P4/P6 remain open; no performance
+  gain is claimed. Reference checkout, current binaries and framework pins
+  remain unchanged.
+
+## 2026-10-29 — SP Sten, stalled CD stream and slot-5 world recovery
+
+- Expanded the guarded SP P38-only shot seam to exact ID/type pairs for common
+  firearms. Slot-4 Sten construction/first motion agrees with the hand-fixed
+  muzzle/laser; native/loss controls and P38 regression pass. SP motion uses
+  `800793E4/80079400/8007941C`. Broader SP damage and prop/rocket origins remain open.
+- Traced the repeating music to all-zero raw sector 9469 inside
+  `DATA/MSN2/LVL2/M2_2_1.VB;1`. libDS retries forever, leaving the SPU ring stale
+  and blocking a world arena load. The same header recovery restores slot 5's
+  corridor at unchanged position in both eyes. The independent wall hit matches
+  the laser at 3330.23274606 guest units. Culling/codegen/software controls and
+  rejected clip bypasses are preserved as history, not tasks to repeat.
+- Added game-owned, exact-image/expected-byte guarded runtime package
+  `mohu.repair.music-sector`; only the 24-byte header changes during reads.
+  Original BIN/CUE are untouched; missing audio payload stays silent. Read-only
+  audit finds 64 zero raw sectors, despite matching the project's recorded MD5.
+  Operator will find another dump after the next run; no further request now.
+- Corrected queue sentinel `800C8458` -> `800B8458` (signed LO displacement),
+  derived from queue capacity with compile-time assertion. This alone did not
+  fix missing geometry. Removed every temporary triangle trace/clip hook.
+- Enabled prop lasers. SP petrol passes eight independent surface directions,
+  both eyes, grip release and tracking loss. MP grenade rays match, but two
+  calibration runs report 2/3 VRAM restore failures; keep these failures open.
+- Optional native-world copy skip passes Sten/music hitch, pause/resume,
+  render-refusal and reload controls. Three alternating production A/Bs measure
+  desktop cadence 28.378 -> 29.768 pairs/s, pair work 17.668 -> 17.608 ms.
+  No XR/hand-HUD cost in those samples, no 60/90 claim, candidate remains OFF.
+  720p/native resolution stays around 17.96/17.76 ms: CPU traversal dominates.
+- Restored Release/debug-OFF, 127 Python tests plus strict shot/weapon C and
+  plugin syntax pass; all owned processes close, saves/preferences unchanged.
+  No physical HMD launch, framework change, commit or push. See
+  [repair report](SP_GAMEPLAY_REPAIRS.md) and
+  [compact receipt](../../vr/proof/sp-gameplay-repairs-receipt.json).
