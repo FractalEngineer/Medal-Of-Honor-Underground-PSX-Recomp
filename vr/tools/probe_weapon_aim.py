@@ -1,6 +1,6 @@
-"""Exercise the opt-in W5.3d animated-marker shot candidate on desktop.
+"""Exercise the hand-fixed native shot candidate on desktop.
 
-Every pose is solved through that weapon's declared model axis. Native
+Every pose is solved through the current authored weapon defaults. Native
 construction, spread, ammunition, motion and damage remain active.
 """
 from __future__ import annotations
@@ -21,9 +21,9 @@ import inspect_weapon_sets as native
 import probe_native_shot as shot
 import probe_p38_headset as comparison
 import probe_shot_families as families
+from weapon_defaults import calibrations
 
 ROOT = native.ROOT
-CALIBRATION = ROOT / "vr/proof/weapon-provisional-calibrations-receipt.json"
 PSX_SIGNS = np.array([1.0, -1.0, -1.0])
 NON_SHOTGUN_AXIS_COSINE = 0.9995
 THROWN_AXIS_COSINE = 0.9945
@@ -42,14 +42,6 @@ def shot_command(args):
 
 def marker_command(args):
     return mod_command("mohu.vr.marker", args)
-
-
-def calibrations():
-    proof = json.loads(CALIBRATION.read_text(encoding="utf-8"))
-    return {
-        row["id"]: row["calibration"]
-        for row in proof["weapons"]
-    }
 
 
 def quat_from_matrix(matrix):
@@ -671,7 +663,7 @@ def main():
                 "--headless-opengl",
                 "--no-launcher",
                 "--game",
-                str(ROOT / "analysis/vr-baseline/game-interp.toml"),
+                str(ROOT / "game.toml"),
                 "--memcard-dir",
                 str(out / "saves"),
                 "--debug-port",

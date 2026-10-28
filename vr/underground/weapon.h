@@ -35,8 +35,10 @@
 /*
  * W3 calibration is measured in the animated-model output space produced by
  * 8008DB98. All marker and axis positions use that space's integer model units;
- * model_units_per_metre describes the nominal physical size only. P38 retains
- * its accepted desktop values; all other profiles remain provisional until W3.5.
+ * model_units_per_metre describes physical display size. The shipping candidate
+ * preserves authored axes and uses the reference firearm scale; old PCA/nominal
+ * calibration receipts describe the preceding candidate, not these defaults.
+ * All physical values remain provisional until the next headset batch.
  */
 typedef struct {
     double grip_pivot[3];
@@ -71,8 +73,9 @@ typedef struct {
 /*
  * Selected gun components are represented by whole nodes except for the P38
  * barrel and silenced-pistol suppressor, which share animated nodes with the
- * arms. The masks come from native triangle connectivity, not node-name
- * assumptions. Every index is still checked against the captured node count.
+ * arms. StG's fused hand needs a semantic partial-node mask as well: shared
+ * stock boundary vertices stay selected while private hand vertices reject
+ * mixed hand faces through native SZ. Every index is checked against node count.
  */
 static inline int mohu_vr_weapon_gun_vertex(
     const MohuVrWeaponProfile* profile, unsigned node, unsigned vertex) {
@@ -173,6 +176,10 @@ int mohu_vr_weapon_muzzle_shot(
     const uint32_t control[8], const MohuVrWeaponCalibration* calibration,
     const double camera_inverse[9], const double camera_translation[3],
     int32_t position[3], int32_t angles[3]);
+/* Shared unscaled fixed muzzle ray for native shots and per-eye laser.
+ * The caller supplies the same quantized calibration affine, never recoil. */
+int mohu_vr_weapon_model_ray(const uint32_t control[8], const double tip[3],
+    const double axis[3], double origin[3], double direction[3]);
 /* Convert one immutable animated marker tip and model-space axis through the
  * same quantized render affine. The static P38 muzzle helper above is the
  * compatibility wrapper for this path. */

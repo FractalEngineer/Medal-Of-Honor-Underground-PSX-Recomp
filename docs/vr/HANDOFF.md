@@ -22,22 +22,29 @@ units and assets. Its corrected desktop-versus-hardware dependencies supersede
 the earlier hardware-first sequence. Historical completed scopes stay closed
 except the demonstrated SP regressions explicitly reopened in R1-R3.
 
-## 1. Start here - SP repair before new features
+## 1. Current milestone and next work
 
-**CURRENT: checkpoint `ee848cd` is pushed. The operator then authorized work;
-A7 native pause-menu port now passes SP/MP desktop and null-HMD XR controls.
-Read [PAUSE_MENU_PARITY.md](PAUSE_MENU_PARITY.md) for bindings, implementation
-and remaining physical acceptance. NEXT is A2 weapon parity using
-[ALPHA_PLAYABILITY_AND_CALIBRATION.md](ALPHA_PLAYABILITY_AND_CALIBRATION.md).
-Detailed feedback reopens calibration/gun-only acceptance: upright grenades,
-oversized profiles, attached StG hand, high shots and false laser endpoints.
-The prior "Looks good" answers remain history, not blanket readiness. A1 triage
-found all six physical reports identify `sdl_window_close`/`atexit`; S5 still
-needs a clean production close. Continue with the reference's weapon behavior (A2),
-exact laser (A4) and native hand HUD (A5), with local bindings/assets verified.
-The study names exact source functions; do not rebuild those features from scratch.
-A3's new runtime menu is optional follow-up, not a blocker for A6 alpha validation
-and packaging. All headset launches must be unsandboxed. R5 needs its real fixture.**
+**CURRENT: A7 native pause is implemented (`8d42315`). A2 authored weapon
+defaults/StG mask and A4 exact laser now have desktop evidence in
+[ALPHA_WEAPON_REPAIRS.md](ALPHA_WEAPON_REPAIRS.md) and its receipt. All 13 IDs
+pass actual SDK calibration-affine checks; native representative firing passes.
+SP/MP lasers match independently decoded surfaces and a real MP projectile.
+Do not redo PCA calibration, StG connectivity discovery or box endpoints.
+A2 remains open for real SP NPC damage and physical calibration; W6.4 remains
+open for operator laser/shot agreement. NEXT desktop work is A5 reference native
+hand HUD, plus R6 SP NPC damage/isolation. A3's new calibration editor is optional.
+The operator explicitly deferred headset testing until the remaining fixes are
+ready; do not launch a physical test now. All game launches must be unsandboxed.
+S5 physical clean-close/performance remains open; R5 needs its matching fixture.**
+
+The new defaults preserve authored axes and the reference's 850 units/metre
+firearm convention. Upright props keep forward native launch; native recoil
+affects only the model/flash. StG's node-27 private hand vertices are masked,
+retaining shared stock edges and all 185 verified gun faces. Scale/sight comfort
+still needs the operator: the prior "Looks good" answers remain historical.
+Exact laser geometry is 8-byte arena bases + 4-byte strips in both games' local
+SP/MP arena readers, with 16-byte bases for Underground MP scene props.
+The old 21-node MP selector list alone does not contain the arena walls/floor.
 
 Pause-menu physical acceptance remains open. The study names the reference
 `vr_scene_entry` explicit native pause/`g_menu_flat`/quad/identity-view branch and
@@ -142,9 +149,8 @@ The task descriptions below retain their contracts, not a mandatory serial order
 - **R7 physical:** one bounded operator batch after desktop quality/performance
   fixes, for hand attachment, scale, both-eye flash and target impact. No hardware
   acceptance is claimed by these desktop controls.
-- **W6.2 / A4:** use the retained reader contract in section 6. The reported
-  floating laser makes this an alpha usability task after basic aim/menu work;
-  omit the laser from alpha if its validated surface reader is not ready.
+- **W6 / A4:** W6.2/W6.3 are desktop complete; preserve section 6's measured
+  readers. Only the operator acceptance gate remains. Do not restart box/ray mapping.
 
 ### Repeatable changed-path controls
 
@@ -300,7 +306,7 @@ Source ownership:
 | File / function | Change here for |
 | --- | --- |
 | `vr/underground/weapon.c`: `mohu_vr_weapon_track_delta`, `mohu_vr_weapon_relative_delta`, `mohu_vr_weapon_compose_gte_control` | Pure pose math / captured per-ID profiles |
-| `vr/underground/vr_diagnostic.c`: `vr_weapon_prepare_delta` | W1 P38 absolute placement; other real-hand IDs remain native until their calibration gates |
+| `vr/underground/vr_diagnostic.c`: `vr_weapon_prepare_delta` | Existing absolute SDK hand placement for all calibrated profiles; preserve the established sampler |
 | Same file: `vr_weapon_fp_enter`, `vr_weapon_viewmodel_project`, `vr_weapon_viewmodel_restore` | Existing guarded model scope; keep native animation, caller/mesh guards and common restore |
 | Same file: `vr_mp_snapshot`, `vr_mp_code_valid`, `vr_mp_frame_entry`, MP branch of `vr_stereo_eye_draw` | Existing MP replay; reuse, do not replace to fix a weapon pose |
 | `vr/underground/mp_view.h`, `vr/tests/test_mp_view.c` | MP mode, ownership, input/pointer and 512x120/H=400 guard |
@@ -309,7 +315,7 @@ Source ownership:
 | `vr/tools/probe_mp_level_selector.py` | W2.1 selector trace plus W2.2 live AABB/RT/TR/view measurement |
 | `vr/tools/inspect_weapon_sets.py` | Native inventory, actual first-person mesh capture, exact native damage trace |
 | `vr/underground/input.c` | Existing measured SP/MP mapper and converter/dispatcher adapters |
-| `vr/underground/raycast.h` | Current visibility-node-extents pointer, not an exact triangle/barrel solution |
+| `vr/underground/raycast.h` | Exact SP/MP arena/prop strip readers and reference triangle math; old AABB endpoint helper is not used by the laser |
 
 GTE TR uses integer camera units. The old affine helper packs translation in
 Q12; `compose_gte_control` cancels that packing. Do not reintroduce `*4096` for
@@ -467,44 +473,35 @@ contains historical SP scripts with hardcoded slot 0/run names: read them as
 leads, do not execute them unchanged for MP or adopt their fields as measured MP.
 Keep native speed/spread/ammo/reload/collision/damage/throw behavior.
 
-### Execute W6.2 before drawing a beam
+### W6.2/W6.3 complete: do not rediscover these readers
 
-1. Open the reference `vr/moh_vr_raycast.h` (`moh_vr_ray_tri`,
-   `moh_vr_ray_tree_tris`), `vr/test_moh_vr_raycast.c` and the reference
-   `vr_laser_draw` in `vr/psx_vr_stereo.c`. Reuse its triangle algorithm and
-   fixture cases. Its 16-byte records / 8-byte vertices are a measured
-   first-game lead, not an Underground layout or address contract. Test the
-   origin-inside case explicitly; do not blindly inherit its leaf-skip shortcut.
-2. Use copied root MP slot 1 and the existing owned-process/read-only tools.
-   Read [MP_LEVEL_SELECTOR_EVIDENCE.md](MP_LEVEL_SELECTOR_EVIDENCE.md) and
-   its saved complete callback disassembly first. The MP scene has 21 level
-   nodes with callback `8006C61C`, scene `8006E9D8` and list `[800A35CC]`.
-   Their center/radius fields are visibility bounds, not triangle records.
-   The known SP projector `80099960` and SP tree do not establish MP geometry.
-3. Follow the actual MP drawer/geometry reader from the measured callback,
-   comparing its loads/calls with the reference record reader. Capture complete
-   code units and hashes before trusting a binding. Record where the real vertex
-   and triangle counts, bases, strides, indices and object-to-world transform
-   come from. Reuse bounded code/trace snapshots; no broad RAM rediscovery,
-   generated-C edits, actor/health/ammo writes or source-save changes.
-4. Retain a bounded geometry snapshot and independently decode at least three
-   spatially distinct drawn triangles from the real index/vertex tables. State
-   their coordinate space and reconstruct their world positions. Validate counts,
-   alignment, overflow and every index against measured bounds. A visibility-box
-   hit or native damage alone is insufficient evidence for this reader.
-5. Adapt reference ray/triangle fixtures for nearest hit, both windings, miss,
-   range, parallel/degenerate triangles, edge hits, origin-inside bounds, malformed
-   pointers/indices and traversal budgets. Keep broad-phase boxes separate from
-   the final triangle test. Do not weaken bounds or substitute a different
-   overlay when a guard fails. Run shared parity if shared math/wrappers change.
-6. Close W6.2 only with the guarded reader, independent geometry reconstruction,
-   pure fixtures and source/binary/fixture receipt. Then NEXT is W6.3: consume
-   W6.1's current hand-fixed ray and per-eye view for beam/dot placement and nearest triangles.
-   Before screen projection, also retain actual guest OFX/OFY/H; W6.1 currently
-   records the affine and scoped view, not those extra projection registers.
-   Reuse existing projection/clip/beam code; do not promote the old right-aim
-   box pointer or borrow the reference's static pivot/muzzle/calibration.
+Read [ALPHA_WEAPON_REPAIRS.md](ALPHA_WEAPON_REPAIRS.md) and
+[weapon-alpha-repairs-receipt.json](../../vr/proof/weapon-alpha-repairs-receipt.json).
+The first game's triangle math is ported; Underground's compressed streams are
+verified. Arena bases are 8 bytes, MP prop bases 16 bytes; both use 4-byte strip
+extensions with masked 13-bit indices and native winding/terminators.
 
+- SP: the native selector caller returns at `8009A500`; live `s2` owns the
+  level structure. Root is `*(*(level+8)+14)`, vertices `*(level+2C)`, count
+  `*(level+3C)`. `80010CF0` draws its 8-byte base/4-byte strip stream.
+- MP arena: class-3 callback `80057920`, count `[8009ECE4]`, array `8009F13C`,
+  stride `C4`, drawer `80094680 -> 80012A90`. Same root/table/count fields.
+  The four arena trees supply walls/floor; do not substitute the 21 prop nodes.
+- MP props: list `[800A35CC]`, next `+4`, callback `8006C61C`; native model
+  `+B0` / halfword `+B4` owns the 16-byte stream. Vertices/count are `+2C/+3C`.
+  Actor `+354/+368` transforms local points into world. Use its full inverse.
+- `mohu_vr_weapon_model_ray` shares the unscaled quantized calibration affine
+  between native firing and laser. Native animated flash stays independent.
+  `vr_laser_draw` never calls the old AABB endpoint reader.
+- Final controls independently test 7,251 SP / 8,039 MP triangles, head turns,
+  both eyes, grip/tracking rejection and a real MP shot. C tests cover range,
+  misses, strips, origin-inside bounds, malformed data and bounded traversal.
+  Unknown/unsupported geometry suppresses the pointer instead of drawing a box hit.
+
+Only W6.4 physical laser acceptance remains in this sequence. Do not ask for it
+yet: the operator requested finishing the remaining fixes before a headset batch.
+A5 native HUD and R6 linked real SP NPC damage are the next desktop work. R5
+fog is still blocked on the matching street-wall fixture, not on more ray math.
 
 ## 7. Session preflight and bounded diagnostic commands
 
@@ -655,7 +652,8 @@ the W3.2 comparison. Therefore:
 1. Before headset work, verify `whoami` reports the interactive user, not
    `codexsandboxoffline`.
 2. Run the headset probe only from the interactive account or an explicitly
-   unsandboxed execution context. `--desktop` may remain sandboxed.
+   unsandboxed execution context. The operator also requires desktop game probes
+   outside the sandbox; do not launch a game in the sandbox.
 3. Pass the VDXR manifest with `XR_RUNTIME_JSON`; the working probe defaults to
    `C:\Program Files\Virtual Desktop Streamer\OpenXR\virtualdesktop-openxr.json`.
 4. Never ask the operator to reconnect a working headset solely because a

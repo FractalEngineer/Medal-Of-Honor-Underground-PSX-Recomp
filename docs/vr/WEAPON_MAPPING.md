@@ -4,9 +4,12 @@ Last updated: 2026-10-28
 
 Execution order and stop/recovery rules are in [HANDOFF.md](HANDOFF.md).
 Checkbox status is in [VR_PLAN.md](VR_PLAN.md). **NEXT desktop: R6 linked live
-SP NPC impact; R5 fog is paused on fixture selection.** See
+SP NPC impact and A5 native hand HUD; R5 fog is paused on fixture selection.** See
 [SP_PARITY_REPAIR.md](SP_PARITY_REPAIR.md) for the
-current muzzle/arm/slot-3 fixes; W6.2 is deferred. W3.4, W4 P38 native mapping, W5.1,
+current muzzle/arm/slot-3 fixes and
+[ALPHA_WEAPON_REPAIRS.md](ALPHA_WEAPON_REPAIRS.md) for authored orientation,
+scale, StG hand filtering and completed W6.2/W6.3 exact laser desktop evidence.
+W3.4, W4 P38 native mapping, W5.1,
 W5.3/W5.4 desktop gates and W6.1 hand-fixed ray capture pass;
 physical acceptance remains open. All 13 IDs now have measured
 complete-gun topology, animated captures, provisional calibration, passing

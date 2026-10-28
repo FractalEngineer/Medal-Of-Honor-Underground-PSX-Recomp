@@ -30,7 +30,7 @@ def affine(words):
     return rt / 4096.0, tr.astype(float)
 
 
-def verify_eye(row, hands):
+def verify_eye(row, hands, calibration=None):
     if not row["valid"] or not row["restored"] or row["id"] != 0 or \
             row["hash"] != 0x8544F8B9 or \
             row["input"] != row["owner"] + 0x400 or \
@@ -64,7 +64,7 @@ def verify_eye(row, hands):
         errors[name] = error
     # Independently predict the applied quantized calibrated affine from the
     # actual SDK-rounded hand sample. This checks attachment before eye pose.
-    calibration = combat.aim.calibrations()[0]
+    calibration = calibration or combat.aim.calibrations()[0]
     hand_rt, hand_tr = poses.hand_transform(hands)
     basis = np.array([calibration["right"], -np.array(calibration["up"]),
                       calibration["forward"]])

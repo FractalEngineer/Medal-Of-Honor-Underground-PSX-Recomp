@@ -5,6 +5,11 @@ runtime or hardware test. [VR_PLAN.md](VR_PLAN.md) owns task status;
 [HANDOFF.md](HANDOFF.md) owns the next experiment. No acceptance box was closed
 by this review.
 
+2026-10-28 implementation update: [authored weapon/exact laser repairs](ALPHA_WEAPON_REPAIRS.md)
+complete the desktop A2a/A4a port scopes. Native pause A7 is already ported.
+Do not repeat the former missing-reader/pose discovery queue below; A5 HUD and
+R6 real SP NPC damage are next. Physical acceptance remains separate.
+
 2026-10-28 operator clarification: the alpha work must start from the working
 first-game implementations. Current reference HEAD inspected is `d82a5d0`.
 [The concrete port table](ALPHA_PLAYABILITY_AND_CALIBRATION.md) names the exact

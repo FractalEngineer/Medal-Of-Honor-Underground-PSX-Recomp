@@ -17,6 +17,7 @@ import socket
 import struct
 import subprocess
 import time
+import numpy as np
 
 import check_mp_view as eye
 import check_p38_mesh as mesh
@@ -25,9 +26,12 @@ import check_weapon_pose_spaces as pose
 import inspect_weapon_sets as native
 import probe_native_shot as shot
 import probe_weapon_calibration as calibration
+from weapon_defaults import calibrations
 
 
 ROOT = native.ROOT
+CALIBRATED = False
+CALIBRATED_UNITS = 238.80597014925373
 CYCLES = {
     1: (0, 1, 17, 10),
     2: (8, 16, 4, 15),
@@ -48,7 +52,7 @@ def save(path, value):
 def set_profile_hand():
     return pose.set_hand_pair(
         grip=(0.0, 0.0, -0.7),
-        aim_q=pose.quat_axis(1, -70),
+        aim_q=(0,0,0,1) if CALIBRATED else pose.quat_axis(1, -70),
     )
 
 
@@ -95,6 +99,15 @@ def capture_nodes(model, out, weapon_id, slot):
             "local": local,
             "animated": animated,
         }
+        if CALIBRATED:
+            c=calibrations()[weapon_id]
+            expected_rt=np.rint(np.eye(3)*CALIBRATED_UNITS/c['model_units_per_metre']*4096)
+            expected_tr=np.rint(np.array([0,0,float(np.float32(.7))*CALIBRATED_UNITS])-
+                                  expected_rt/4096@np.asarray(c['grip_pivot']))
+            rt,tr=pose.decode_control(space['tracked_gte'])
+            if np.max(abs(rt-expected_rt))>1 or np.max(abs(tr-expected_tr))>1:
+                raise RuntimeError(f'ID {weapon_id} did not apply the actual calibrated SDK hand affine')
+            nodes[str(node)]['calibrated_control']=space['tracked_gte']
         (out / f"node-{node:02}.bin").write_bytes(local_bytes)
         (out / f"node-{node:02}-animated.bin").write_bytes(animated_bytes)
     return nodes
@@ -145,7 +158,7 @@ def validate_topology(profile, model, face_bytes, nodes):
         vertex for vertex in vertices
         if topology.selected(profile, *vertex)
     }
-    if mixed:
+    if mixed != topology.expected_mixed_hand_faces(profile['id'], triangles, profile):
         raise RuntimeError(f"ID {profile['id']} has mixed arm/gun triangles")
     if len(kept) != profile["faces"]:
         raise RuntimeError(
@@ -162,17 +175,22 @@ def validate_topology(profile, model, face_bytes, nodes):
         "faces": len(kept),
         "vertices": len(selected_vertices),
         "masked_vertices": len(vertices) - len(selected_vertices),
-        "mixed_triangles": 0,
+        "rejected_mixed_hand_triangles": len(mixed),
+        "mixed_triangles": 0,  # No mixed triangle survives native SZ rejection.
         "components": topology.triangle_components(kept, selected_vertices),
     }
 
 
 def main():
+    global CALIBRATED
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("directory", type=Path)
     parser.add_argument("--proof", type=Path)
     parser.add_argument("--ids", type=int, nargs="+")
+    parser.add_argument("--calibrated",action='store_true',
+                        help='Use production absolute SDK hand pose/defaults, and independently verify the applied affine')
     args = parser.parse_args()
+    CALIBRATED=args.calibrated
 
     selected_ids = set(args.ids or topology.PROFILES)
     unknown = selected_ids - set(topology.PROFILES)
@@ -216,6 +234,7 @@ def main():
     env.update(
         PSX_DEV_INPUT="0",
         PSX_VSYNC="0",
+        PSX_INTERNAL_RESOLUTION="native",
         PSX_OPENXR_ENABLE="0",
         PSX_STEREO_SHED="0",
         PSX_RENDER_PASS_VERIFY="1",
@@ -226,12 +245,16 @@ def main():
         MOHU_VR_EYE_GUEST_SUBMIT="1",
         MOHU_VR_EYE_OFFSET="0",
         MOHU_VR_WEAPON_GUN_ONLY="1",
+        MOHU_VR_WEAPON_CALIBRATED="1" if CALIBRATED else "0",
     )
+    if CALIBRATED:env['MOHU_VR_UNITS_PER_METER']=str(CALIBRATED_UNITS)
     receipt = {
         "schema": 1,
         "kind": "W3.4 complete viewmodel topology and animated profile capture",
         "complete": False,
         "headset_used": False,
+        "absolute_sdk_calibration":CALIBRATED,
+        "calibration_defaults":calibrations() if CALIBRATED else None,
         "fixture": "copied root MP slots 1-4, native cycles, no fire",
         "executable_sha256": native.digest(executable),
         "source_hashes": {
@@ -257,7 +280,7 @@ def main():
                 "--headless-opengl",
                 "--no-launcher",
                 "--game",
-                str(ROOT / "analysis/vr-baseline/game-interp.toml"),
+                str(ROOT / "game.toml"),
                 "--memcard-dir",
                 str(out / "saves"),
                 "--debug-port",

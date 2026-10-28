@@ -776,6 +776,8 @@ def main():
         help="Run W2.3 zero, +/-90-degree and near-wall selector controls",
     )
     args = parser.parse_args()
+    if args.all_weapons and args.fire_pistol:
+        parser.error('--fire-pistol is a separate focused slot-1 control; omit --all-weapons')
     effective_gun_only = args.gun_only or args.calibrated_all
     if args.visibility_controls and any((
         args.all_weapons, args.native_projection, args.reject_recover,

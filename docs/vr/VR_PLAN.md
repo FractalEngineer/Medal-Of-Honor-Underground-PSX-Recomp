@@ -8,15 +8,14 @@ scope has evidence; it never implies broader headset or gameplay acceptance.
 Historical design and prior attempts belong in
 [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md) and the evidence documents.
 
-**CURRENT: checkpoint `ee848cd` pushed; subsequent implementation authorized.
-A7 pause-menu port passes SP/MP desktop and null-HMD XR controls; physical
-readability/comfort still needs a short check. See [PAUSE_MENU_PARITY.md](PAUSE_MENU_PARITY.md).
-NEXT is A2 reference weapon parity. The operator's detailed feedback reopens
-weapon calibration, StG hand masking, high firing and floating laser endpoints.
-Read [ALPHA_PLAYABILITY_AND_CALIBRATION.md](ALPHA_PLAYABILITY_AND_CALIBRATION.md)
-for the runtime menu design and alpha-first sequence. A1 exit triage found native
-window-close/atexit reports; production clean-close S5 remains open.
-Headset launches must run outside the sandbox; R5 still needs its matching fixture.**
+**CURRENT: A7 native pause is implemented; A2 weapon-default/mask repairs and
+A4 exact triangle laser pass desktop controls. Read
+[ALPHA_WEAPON_REPAIRS.md](ALPHA_WEAPON_REPAIRS.md) for current bindings/evidence.
+A2 still needs real SP NPC damage and physical calibration; W6.4 is physical.
+NEXT desktop work: A5 reference hand HUD and R6 SP damage/isolation.
+The operator deferred headset testing until fixes are ready. A3's optional editor
+remains a study. S5 physical teardown/performance and R5's matching fog fixture
+remain open. All game launches must run outside the sandbox.**
 
 The owner rejected SP muzzle placement, poor performance, slot-3 weapon loss
 and visible arms. The prior "physical pass next" order was premature. See
@@ -52,7 +51,8 @@ converted post-respawn P38 shot. It runs with stereo inactive; it adds lifecycle
 evidence, not a new eye-rollback result. W5.4d physical hand-aim/impact
 confirmation stays open. W6.1 now passes ten per-eye rendered-muzzle snapshots,
 native recoil/reload, ownership/load/tracking rejection and live pair refusal/
-recovery with actual stereo verification. W6.2 now follows the A1-A3 playability work.
+recovery with actual stereo verification. W6.2/W6.3 are now desktop complete;
+the current authored-axis defaults supersede the historical PCA calibration.
 SP P38 render/shot bindings are measured; W5.2 remains open for linked live-NPC
 damage/isolation, broader SP families and physical impact. W3.3/W3.5 remain
 physical acceptance gates. Current evidence and exact continuation:
@@ -110,10 +110,18 @@ actually requires it. The numbered items below are stable IDs, not serial mandat
   and resume in SP and MP. Desktop/null-HMD results do not close this physical gate.
 - [ ] A2. Correct grenade held orientation, StG gun-only mask, oversized defaults
   and shared shot/sight alignment; pass representative live SP NPC impact (R6).
+- [x] A2a. Authored axes/upright props, reference firearm scale and semantic StG
+  mask; all 13 IDs pass actual SDK affine checks, changed topology and focused
+  native firing controls. [Evidence](ALPHA_WEAPON_REPAIRS.md).
+- [ ] A2b. Real SP NPC health/damage ownership and isolation (R6), then broader SP families.
+- [ ] A2c. Operator accepts the corrected scale, grip, sights and target impact.
 - [ ] A3. Add effective per-ID calibration state, versioned persistence and a
   minimal controller-operated in-headset menu using existing UI/XR surfaces.
 - [ ] A4. Share the shot ray and hit actual triangles for the laser (W6.2-W6.4),
   or omit it from alpha instead of presenting visibility-box hits as surfaces.
+- [x] A4a. Exact SP/MP arena + supported MP prop readers, shared fixed muzzle
+  ray, both-eye independent intersections, tracking/grip fallback and native
+  projectile agreement. Physical W6.4 remains open.
 - [ ] A5. Readable health/ammo/essential mission information with native fallback
   (H1/H2 minimum); wrist polish may follow alpha.
 - [ ] A6. Focused SP route, recovery/death/load, measured cadence and bounded
@@ -650,10 +658,9 @@ Desktop dependencies: declared W3.1 rendered-muzzle contract and verified target
 geometry layout. Reuse reference ray/triangle math, bounded traversal, beam/dot
 projection and tests; port target data readers. Hardware acceptance is W6.4.
 The hand-fixed ray is shared with W5; native recoil animation does not steer it. Physical testing need not block code.
-W6.2 is now A4 after weapon parity, porting the first game's existing exact laser;
-the new runtime menu does not block it. An alpha may omit the laser
-until it is accurate. The handoff's retained reader contract specifies the
-reference algorithm, known MP callback, missing geometry bindings and controls.
+W6.2/W6.3 are desktop complete under A4a. The handoff and
+ALPHA_WEAPON_REPAIRS document the actual local arena/prop bindings and controls.
+W6.4 remains physical; the optional settings editor does not block it.
 Do not reopen the completed W5 matrices or call the old box pointer exact.
 
 - [x] W6.1. Capture the hand-fixed aim ray, actual per-eye view/affine and optional
@@ -664,11 +671,13 @@ Do not reopen the completed W5 matrices or call the old box pointer exact.
   and the stereo pair completes. Evidence: `weapon-rendered-muzzle-receipt.json`
   and [RENDERED_MUZZLE_EVIDENCE.md](RENDERED_MUZZLE_EVIDENCE.md). Other-ID
   draw capture and physical alignment are not claimed by this P38 gate.
-- [ ] W6.2. Locate and verify Underground triangle/vertex table bindings, comparing
-  the reference drawer/record pattern first. Adapt its existing triangle raycast
-  and fixtures; local MP scene bounds are not proof of SP triangle layout.
-- [ ] W6.3. Beam origin/direction uses the same hand-fixed ray as shots; first triangle hit
-  gets the dot; native misses/range limit, weapon eligibility and rollback pass.
+- [x] W6.2. Verified local SP/MP arena and MP prop triangle readers, independent
+  7,251/8,039-triangle reconstruction, strict pointer/index/strip/budget tests;
+  no origin-inside leaf shortcut. [Evidence](ALPHA_WEAPON_REPAIRS.md).
+- [x] W6.3. Shared fixed calibration ray, actual nearest surface, both-eye
+  head/hand controls, range/miss fixtures, grip/tracking rejection, real MP shot
+  agreement and zero rollback mismatches. Static surfaces/props only; no NPC
+  hit-volume or ballistic-drop prediction is claimed.
 - [ ] W6.4. Operator accepts hand-fixed laser/shot agreement in both eyes. Clearly distinguish this from
   the existing right-aim/visibility-node-extents pointer.
 

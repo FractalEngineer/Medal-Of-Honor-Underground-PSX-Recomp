@@ -3,6 +3,10 @@
 Updated: 2026-10-27. This is desktop evidence only. W3.3/W3.5 physical
 acceptance remains open, and no headset was used for this pass.
 
+2026-10-28: this page's calibration tables and 215-face StG inventory are
+historical. Current authored axes/850-unit firearm defaults and the corrected
+185-face StG mask are in [ALPHA_WEAPON_REPAIRS.md](ALPHA_WEAPON_REPAIRS.md).
+
 Current operator policy: native recoil remains visual; shots and the future
 laser share a fixed reference in hand space. Moving-marker requirements in this
 historical model characterization are not current aiming requirements. See
@@ -54,7 +58,12 @@ and [all-node capture receipt](../../vr/proof/weapon-profile-captures-receipt.js
 The capture contains 16 slot appearances because IDs 10, 15 and 17 occur in
 more than one native cycle, but only 13 unique IDs.
 
-## Provisional calibration
+## Provisional calibration (historical PCA candidate)
+
+The current authored-axis/850-unit firearm candidate supersedes this table.
+See [ALPHA_WEAPON_REPAIRS.md](ALPHA_WEAPON_REPAIRS.md). StG now retains 185 faces/
+143 gun vertices after semantic hand filtering. The old captures and numerical
+derivation below remain historical evidence, not runtime defaults to restore.
 
 The accepted P38 grip, rendered muzzle, barrel axis and `760.489674616524`
 units/metre values are unchanged. The other profiles use one repeatable recovery

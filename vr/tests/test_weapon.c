@@ -120,13 +120,13 @@ int main(void) {
         };
         const double muzzle[3] = {81.8, 110.6, 447.6};
         const double right[3] = {
-            0.999745337201, 0.0, -0.022566806250,
+            1.0, 0.0, 0.0,
         };
         const double up[3] = {
-            0.000331387923, -0.999892173236, 0.014681010987,
+            0.0, -1.0, 0.0,
         };
         const double forward[3] = {
-            0.022564372944, 0.014684750646, 0.999637537897,
+            0.0, 0.0, 1.0,
         };
         CHECK(calibration && calibration->provisional == 1u);
         for (unsigned axis = 0; axis < 3u; ++axis) {
@@ -137,7 +137,7 @@ int main(void) {
             CHECK(fabs(calibration->forward[axis] - forward[axis]) < 1e-12);
         }
         CHECK(fabs(calibration->model_units_per_metre -
-                   760.489674616524) < 1e-11);
+                   850.0) < 1e-11);
         CHECK(fabs(calibration->reference_length_m - 0.216) < 1e-12);
         CHECK(fabs(calibration->forward_span_units -
                    164.265769717169) < 1e-11);
@@ -170,9 +170,9 @@ int main(void) {
             grip_to_muzzle[1] * forward[1] +
             grip_to_muzzle[2] * forward[2];
         CHECK(projected > 0.0);
-        CHECK(fabs(calibration->forward_span_units /
-                       calibration->model_units_per_metre -
-                   calibration->reference_length_m) < 1e-11);
+        /* Nominal real-world length no longer determines display scale: the
+         * alpha candidate uses the accepted reference model-unit convention. */
+        CHECK(calibration->forward_span_units / calibration->model_units_per_metre < .216);
         for (unsigned id = 0u; id < 255u; ++id) {
             const MohuVrWeaponProfile* profile =
                 mohu_vr_weapon_profile_find((uint8_t)id);

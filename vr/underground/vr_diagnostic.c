@@ -366,6 +366,11 @@ static double g_laser_range_m = 50.0;
 static double g_laser_dot_px = 2.0;
 static bool g_laser_level_valid;
 static uint32_t g_laser_level_root;
+static struct {uint32_t root,table,count;} g_laser_levels[8];
+static unsigned g_laser_level_count;
+static bool g_laser_geometry_failed;
+static bool g_laser_weapon_valid;
+static uint32_t g_laser_weapon_control[8], g_laser_weapon_id;
 static double g_laser_camera_rotation[9];
 static double g_laser_camera_inverse[9];
 static double g_laser_camera_translation[3];
@@ -375,6 +380,11 @@ static uint32_t g_laser_projection_h;
 static uint32_t g_laser_projection_h_ref;
 static uint32_t g_laser_hits[2];
 static uint32_t g_laser_misses[2];
+static struct {
+    int valid,hit,mp;
+    double origin[3],direction[3],distance;
+    unsigned surfaces;
+} g_laser_result[2];
 static int g_input_mode_reported = -1;
 static bool g_input_callback_reported;
 
@@ -719,11 +729,12 @@ static void vr_laser_mul3(const double matrix[9], const double vector[3],
 }
 
 static bool vr_laser_capture_level(CPUState* cpu) {
-    if (!g_laser || !g_stereo_active || g_laser_level_valid || !cpu) {
+    if (!g_laser || !g_stereo_active || !cpu) {
         return false;
     }
     const uint32_t root = cpu->gpr[4];
     if (root < 0x80000000u || root >= 0x801FFFC0u || (root & 3u)) {
+        g_laser_geometry_failed = true;
         return false;
     }
     int16_t bounds[6];
@@ -732,6 +743,7 @@ static bool vr_laser_capture_level(CPUState* cpu) {
     }
     for (unsigned axis = 0; axis < 3u; ++axis) {
         if (bounds[axis] > bounds[axis + 3u]) {
+            g_laser_geometry_failed = true;
             return false;
         }
     }
@@ -746,12 +758,35 @@ static bool vr_laser_capture_level(CPUState* cpu) {
     }
     if (!mohu_vr_laser_inverse(g_laser_camera_rotation,
                                g_laser_camera_inverse)) {
+        g_laser_geometry_failed = true;
         return false;
     }
     g_laser_offset_x = (int32_t)cpu->gte_ctrl[24];
     g_laser_offset_y = (int32_t)cpu->gte_ctrl[25];
     g_laser_projection_h = (uint32_t)cpu->gte_ctrl[26] & 0xFFFFu;
     g_laser_level_root = root;
+    /* Actual native caller carries the level structure in s2. Verify the
+     * reader's binding, not the reference game's global array/stride. */
+    uint32_t level=cpu->gpr[18];
+    if (cpu->gpr[31]==0x8009A500u &&
+        psx_mod_read_word(0x8009A4F8u)==0x0C026658u &&
+        psx_mod_read_word(0x80010D54u)==0x8CD1002Cu &&
+        psx_mod_read_word(0x80010E98u)==0x32881FFFu &&
+        mohu_vr_ray_span(level,0x40u)) {
+        uint32_t sub=psx_mod_read_word(level+8u);
+        uint32_t count=psx_mod_read_word(level+0x3cu);
+        uint32_t table=psx_mod_read_word(level+0x2cu);
+        if (mohu_vr_ray_span(sub,0x18u) && psx_mod_read_word(sub+0x14u)==root &&
+            count && count<=8192u && mohu_vr_ray_span(table,count*8u)) {
+            unsigned i=0;
+            while (i<g_laser_level_count && g_laser_levels[i].root!=root) ++i;
+            if (i<8u) {
+                g_laser_levels[i].root=root; g_laser_levels[i].table=table;
+                g_laser_levels[i].count=count;
+                if (i==g_laser_level_count) ++g_laser_level_count;
+            } else g_laser_geometry_failed=true;
+        } else g_laser_geometry_failed=true;
+    } else g_laser_geometry_failed=true;
     g_laser_level_valid = true;
     return true;
 }
@@ -840,10 +875,80 @@ static bool vr_laser_clip(double* x0, double* y0, double* x1, double* y1) {
     return true;
 }
 
+/* MP's class-3 world callback owns four level structures, independently of
+ * the flat scene props. Both are needed: the 21 selector nodes alone contain
+ * props and cannot establish arena wall/floor hits. Their native object matrix
+ * at actor+354 maps local vertices to world, before camera multiplication in
+ * 80095CB4. Reuse the same triangle test/strip decoder, without inventing PVS
+ * leaves or using the selector's sphere as a physical surface. */
+static int vr_laser_cast_mp(const double origin[3], const double direction[3],
+                            double range, double* distance, unsigned* surfaces) {
+    if (!g_mp_replay_guard_valid ||
+        psx_mod_read_word(0x80015630u)!=0x8CD100B0u ||
+        psx_mod_read_word(0x80015634u)!=0x8CD2002Cu ||
+        psx_mod_read_word(0x80015684u)!=0x31081FFFu ||
+        psx_mod_read_word(0x80015718u)!=0x26310010u) return -1;
+    uint32_t node=psx_mod_read_word(MOHU_VR_MP_SCENE_ROOT);
+    unsigned visited=0; double best=range; int found=0;
+    if (psx_mod_read_word(0x80057944u)!=0x8C42ECE4u ||
+        psx_mod_read_word(0x8005795Cu)!=0x2451F13Cu ||
+        psx_mod_read_word(0x80057994u)!=0x263100C4u ||
+        psx_mod_read_word(0x80057978u)!=0x0C0251A0u) return -1;
+    uint32_t levels=psx_mod_read_word(0x8009ECE4u);
+    if (!levels || levels>8u) return -1;
+    for (uint32_t i=0;i<levels;i++) {
+        uint32_t level=0x8009F13Cu+i*196u,sub=psx_mod_read_word(level+8u);
+        if (!mohu_vr_ray_span(sub,0x18u)) return -1;
+        double t;
+        int hit=mohu_vr_ray_tree_tris(psx_mod_read_word(sub+0x14u),
+            psx_mod_read_word(level+0x2cu),psx_mod_read_word(level+0x3cu),
+            origin,direction,best,&t);
+        if (hit<0) return -1;
+        ++*surfaces;
+        if (hit) {best=t;found=1;}
+    }
+    while (node) {
+        if (!mohu_vr_ray_span(node,0x388u) || ++visited>64u) return -1;
+        if (psx_mod_read_word(node+0x384u)==0x8006C61Cu &&
+            !(psx_mod_read_word(node+12u)&1u)) {
+            uint32_t model=psx_mod_read_word(node+0x114u);
+            if (!mohu_vr_ray_span(model,0xb8u)) return -1;
+            /* Other native geometry families need their own verified reader. */
+            if (psx_mod_read_word(model+0x20u) || psx_mod_read_word(model+0x28u) ||
+                psx_mod_read_word(model+0x74u) || psx_mod_read_word(model+0x54u) ||
+                psx_mod_read_word(model+0x58u)) return -1;
+            uint32_t count=psx_mod_read_half(model+0xb4u);
+            if (count) {
+                double matrix[9],inverse[9],translation[3],o[3]={0},d[3]={0};
+                for (unsigned i=0;i<9;i++)
+                    matrix[i]=(int16_t)psx_mod_read_half(node+0x354u+i*2u)/4096.0;
+                for (unsigned i=0;i<3;i++)
+                    translation[i]=(int32_t)psx_mod_read_word(node+0x368u+i*4u);
+                if (!mohu_vr_laser_inverse(matrix,inverse)) return -1;
+                for (unsigned i=0;i<3;i++) for (unsigned k=0;k<3;k++) {
+                    o[i]+=inverse[i*3+k]*(origin[k]-translation[k]);
+                    d[i]+=inverse[i*3+k]*direction[k];
+                }
+                double t;
+                int hit=mohu_vr_ray_strip_tris(psx_mod_read_word(model+0xb0u),count,
+                    psx_mod_read_word(model+0x2cu),psx_mod_read_word(model+0x3cu),
+                    16u,o,d,best,&t);
+                if (hit<0) return -1;
+                ++*surfaces;
+                if (hit) {best=t;found=1;}
+            }
+        }
+        node=psx_mod_read_word(node+4u);
+    }
+    if (!*surfaces) return -1;
+    if (found) *distance=best;
+    return found;
+}
+
 static void vr_laser_draw(void) {
     if (!g_laser || (!g_laser_grip && !g_laser_synthetic) ||
         !g_stereo_active ||
-        g_stereo_current_eye > 1u || !g_laser_level_valid) {
+        g_stereo_current_eye > 1u || !g_laser_level_valid || g_laser_geometry_failed) {
         return;
     }
     const PSXModRenderView* view = &g_stereo_eye_view;
@@ -877,45 +982,19 @@ static void vr_laser_draw(void) {
             }
         }
     } else {
-        PSXModOpenXRHands hands = {0};
-        hands.struct_size = sizeof hands;
-        if (!psx_mod_openxr_hands(&hands) || !hands.focused ||
-            !hands.origin_valid || hands.age_ms > 150u) {
-            return;
-        }
-        const PSXModTrackedPose* aim =
-            &hands.pose[1][PSX_MOD_XR_AIM_POSE];
-        if (!aim->active || (aim->flags & 3u) != 3u) {
-            return;
-        }
-        double aim_quaternion[4];
-        double aim_position[3];
-        double origin_quaternion[4];
-        double origin_position[3];
-        for (unsigned i = 0; i < 4u; ++i) {
-            aim_quaternion[i] = aim->orientation_xyzw[i];
-            origin_quaternion[i] = hands.origin_orientation_xyzw[i];
-        }
-        for (unsigned i = 0; i < 3u; ++i) {
-            aim_position[i] = aim->position_m[i];
-            origin_position[i] = hands.origin_position_m[i];
-        }
-        double local_rotation[9];
-        double local_translation[3];
-        if (!vr_pose_to_transform(aim_quaternion, aim_position,
-                                  origin_quaternion, origin_position,
-                                  g_openxr_units_per_meter, local_rotation,
-                                  local_translation)) {
-            return;
-        }
-        for (unsigned row = 0; row < 3u; ++row) {
-            origin[row] = eye_translation[row];
-            direction[row] = 0.0;
-            for (unsigned col = 0; col < 3u; ++col) {
-                origin[row] += eye_rotation[row * 3u + col] *
-                               local_translation[col];
-                direction[row] += eye_rotation[row * 3u + col] *
-                                  local_rotation[col * 3u + 2u];
+        const MohuVrWeaponCalibration* calibration =
+            mohu_vr_weapon_calibration_find((uint8_t)g_laser_weapon_id);
+        double local_origin[3], local_direction[3];
+        if (!g_laser_weapon_valid || !calibration ||
+            g_laser_weapon_id==10u || g_laser_weapon_id==15u ||
+            !mohu_vr_weapon_model_ray(g_laser_weapon_control,
+                calibration->muzzle, calibration->forward,
+                local_origin, local_direction)) return;
+        for (unsigned row=0; row<3u; ++row) {
+            origin[row]=eye_translation[row]; direction[row]=0;
+            for (unsigned col=0; col<3u; ++col) {
+                origin[row]+=eye_rotation[row*3u+col]*local_origin[col];
+                direction[row]+=eye_rotation[row*3u+col]*local_direction[col];
             }
         }
     }
@@ -938,7 +1017,7 @@ static void vr_laser_draw(void) {
                           g_openxr_units_per_meter;
     }
     bool have_hit = false;
-    if (g_laser_level_root) {
+    if (g_laser_level_count || g_stereo_mp) {
         double camera_offset[3];
         double world_origin[3];
         double world_direction[3];
@@ -967,11 +1046,30 @@ static void vr_laser_draw(void) {
                 world_direction[i] /= length;
             }
             double distance = 0.0;
-            if (mohu_vr_ray_tree(
-                    g_laser_level_root, world_origin, world_direction,
-                    NULL, 1,
-                    g_laser_range_m * g_openxr_units_per_meter,
-                    &distance, NULL)) {
+            bool exact_hit=false;
+            double best=g_laser_range_m*g_openxr_units_per_meter;
+            unsigned surfaces=0;
+            if (g_stereo_mp) {
+                int result=vr_laser_cast_mp(world_origin,world_direction,best,&distance,&surfaces);
+                if (result<0) return;
+                if (result>0) {best=distance;exact_hit=true;}
+            }
+            for (unsigned i=0; i<g_laser_level_count; ++i) {
+                double candidate;
+                int result=mohu_vr_ray_tree_tris(g_laser_levels[i].root,
+                    g_laser_levels[i].table,g_laser_levels[i].count,
+                    world_origin,world_direction,best,&candidate);
+                if (result<0) return; /* never substitute a box or stale dot */
+                if (result>0) {best=candidate;exact_hit=true;}
+                ++surfaces;
+            }
+            distance=best;
+            g_laser_result[eye].valid=1; g_laser_result[eye].hit=exact_hit;
+            g_laser_result[eye].mp=g_stereo_mp;
+            g_laser_result[eye].distance=best;g_laser_result[eye].surfaces=surfaces;
+            memcpy(g_laser_result[eye].origin,world_origin,sizeof world_origin);
+            memcpy(g_laser_result[eye].direction,world_direction,sizeof world_direction);
+            if (exact_hit) {
                 double world_hit[3];
                 double camera_hit[3];
                 for (unsigned i = 0; i < 3u; ++i) {
@@ -992,7 +1090,7 @@ static void vr_laser_draw(void) {
                 have_hit = true;
             }
         }
-    }
+    } else return;
 
     double screen_start_x = 0.0;
     double screen_start_y = 0.0;
@@ -1062,6 +1160,34 @@ static void vr_laser_draw(void) {
         ++g_laser_misses[eye];
         psx_mod_counter_add("mohu.vr.laser.miss", 1);
     }
+}
+
+static int vr_laser_command(const char* args, char* reply, int cap) {
+    unsigned eye=0;
+    if (args && !strncmp(args,"level=",6) && args[6]>='0' && args[6]<='7' && !args[7]) {
+        unsigned i=(unsigned)(args[6]-'0');
+        snprintf(reply,(size_t)cap,"{\"valid\":%d,\"root\":%u,\"table\":%u,\"count\":%u}",
+            i<g_laser_level_count,g_laser_levels[i].root,g_laser_levels[i].table,g_laser_levels[i].count);
+        return 1;
+    }
+    if (args && *args) {
+        if (!strcmp(args,"eye=1")) eye=1;
+        else if (strcmp(args,"eye=0")) return 0;
+    }
+    snprintf(reply,(size_t)cap,
+        "{\"valid\":%d,\"hit\":%d,\"eye\":%u,\"mp\":%d,\"weapon\":%u,"
+        "\"levels\":%u,\"level_valid\":%d,\"weapon_valid\":%d,\"grip\":%d,"
+        "\"surfaces\":%u,\"distance\":%.12g,\"origin\":[%.12g,%.12g,%.12g],"
+        "\"direction\":[%.12g,%.12g,%.12g],\"control\":[%u,%u,%u,%u,%u,%u,%u,%u]}",
+        g_laser_result[eye].valid,g_laser_result[eye].hit,eye,g_laser_result[eye].mp,
+        g_laser_weapon_id,g_laser_level_count,g_laser_level_valid,g_laser_weapon_valid,g_laser_grip,
+        g_laser_result[eye].surfaces,g_laser_result[eye].distance,
+        g_laser_result[eye].origin[0],g_laser_result[eye].origin[1],g_laser_result[eye].origin[2],
+        g_laser_result[eye].direction[0],g_laser_result[eye].direction[1],g_laser_result[eye].direction[2],
+        g_laser_weapon_control[0],g_laser_weapon_control[1],g_laser_weapon_control[2],
+        g_laser_weapon_control[3],g_laser_weapon_control[4],g_laser_weapon_control[5],
+        g_laser_weapon_control[6],g_laser_weapon_control[7]);
+    return 1;
 }
 
 static void vr_diagnostic_vblank(void) {
@@ -1540,8 +1666,11 @@ static void report_scene_roots(CPUState* cpu) {
     }
     fprintf(stdout,
             "mohu-vr-diag: scene_roots scene=0x%08X player=0x%08X "
-            "input=0x%08X level_root=0x%08X\n",
-            scene, player, input, cpu->gpr[4]);
+            "input=0x%08X level_root=0x%08X "
+            "ra=%08X args=%08X,%08X,%08X saved=%08X,%08X,%08X\n",
+            scene, player, input, cpu->gpr[4], cpu->gpr[31],
+            cpu->gpr[5], cpu->gpr[6], cpu->gpr[7],
+            cpu->gpr[16], cpu->gpr[17], cpu->gpr[18]);
     fflush(stdout);
 }
 
@@ -2952,6 +3081,10 @@ static int vr_stereo_eye_draw(CPUState* cpu, void* user, uint32_t eye) {
     g_mp_replay_guard_valid = false;
     g_laser_level_valid = false;
     g_laser_level_root = 0u;
+    g_laser_level_count = 0u;
+    g_laser_geometry_failed = false;
+    g_laser_weapon_valid = false;
+    memset(&g_laser_result[eye],0,sizeof g_laser_result[eye]);
 
     uint32_t ra = cpu->gpr[31];
     if (g_stereo_mp) {
@@ -3053,6 +3186,16 @@ static int vr_stereo_eye_draw(CPUState* cpu, void* user, uint32_t eye) {
         stereo_guest_call(cpu, draw->target_address, ot + 511u * 4u, 0u, 0u, ra);
         g_stereo_guest_submits++;
         psx_mod_counter_add(eye ? "mohu.vr.mp.draw.right" : "mohu.vr.mp.draw.left", 1);
+        if (g_laser && g_shot_camera_valid && g_shot_camera_owner==state.player &&
+            g_shot_camera_cycle<=psx_cycle_count &&
+            psx_cycle_count-g_shot_camera_cycle<=MOHU_VR_SHOT_MAX_CAMERA_AGE) {
+            for (unsigned i=0;i<9;i++) g_laser_camera_rotation[i]=
+                (int16_t)(g_shot_camera[i/2]>>((i&1u)*16u))/4096.0;
+            for (unsigned i=0;i<3;i++) g_laser_camera_translation[i]=(int32_t)g_shot_camera[5+i];
+            g_laser_level_valid=mohu_vr_laser_inverse(g_laser_camera_rotation,g_laser_camera_inverse)!=0;
+            g_laser_offset_x=256<<16;g_laser_offset_y=60<<16;g_laser_projection_h=400;
+            vr_laser_draw();
+        }
         return 1;
     }
 
@@ -3686,6 +3829,11 @@ static void vr_sp_weapon_project(CPUState* cpu, uint32_t address) {
     if (!mohu_vr_weapon_calibrated_control(
             tracked, g_weapon_delta_rotation, g_weapon_delta_translation,
             g_openxr_units_per_meter, profile->calibration)) return;
+    if (g_laser) {
+        memcpy(g_laser_weapon_control,tracked,sizeof tracked);
+        g_laser_weapon_id=profile->id;
+        g_laser_weapon_valid=true;
+    }
     double precision;
     if (!mohu_vr_weapon_precision_control(tracked, &precision)) return;
     g_sp_weapon_view = g_stereo_eye_view;
@@ -4217,6 +4365,11 @@ static void vr_weapon_viewmodel_project(CPUState* cpu, uint32_t address) {
         psx_mod_counter_add("mohu.vr.weapon.viewmodel_compose_fail", 1);
         return;
     }
+    if (g_laser && g_weapon_absolute && vr_weapon_calibrated_active()) {
+        memcpy(g_laser_weapon_control,tracked,sizeof tracked);
+        g_laser_weapon_id=g_weapon_profile_last_id;
+        g_laser_weapon_valid=true;
+    }
     for (unsigned i = 0; i < 8u; ++i) {
         cpu->gte_ctrl[i] = tracked[i];
     }
@@ -4570,6 +4723,8 @@ static void vr_diagnostic_activate(void) {
     g_laser_grip = false;
     g_laser_level_valid = false;
     g_laser_level_root = 0u;
+    g_laser_level_count = 0u;
+    g_laser_weapon_valid = false;
     if (g_replay_frame_driver) {
         g_frame_driver_args[0] = MOHU_VR_FRAME_CONTEXT_ADDR;
         g_frame_driver_args_valid = true;
@@ -4683,6 +4838,7 @@ PSX_MOD_CONSTRUCTOR(psx_register_mohu_vr_diagnostic_plugin) {
     (void)psx_mod_register_command("mohu.vr.shot", vr_shot_command);
     (void)psx_mod_register_command("mohu.vr.marker", vr_marker_command);
     (void)psx_mod_register_command("mohu.vr.muzzle", vr_muzzle_command);
+    (void)psx_mod_register_command("mohu.vr.laser", vr_laser_command);
     (void)psx_mod_register_savestate_plugin(MOHU_VR_DIAG_PLUGIN_ID,vr_marker_load);
     (void)psx_mod_register_instruction_plugin(MOHU_VR_DIAG_PLUGIN_ID,
         0x80084CDCu,0x0C0145EDu,vr_marker_origin_event);

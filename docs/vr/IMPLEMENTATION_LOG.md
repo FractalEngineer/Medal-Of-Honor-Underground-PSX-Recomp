@@ -1711,3 +1711,56 @@ source saves, defaults, historical receipts and unrelated `.commandcode/`.
   [Pause-menu evidence](PAUSE_MENU_PARITY.md) and
   [receipt](../../vr/proof/pause-menu-parity-receipt.json) retain actual scopes.
   NEXT is A2 reference weapon-pose/filter parity; optional calibration menu stays later.
+
+## 2026-10-28 - A2 authored defaults/StG hand and A4 exact laser
+
+- Continued the operator-authorized fixes without a physical headset. Preserved
+  authored axes as in the reference weapon transform, replacing whole-model
+  PCA normalization. StG's old PCA tilted the displayed barrel 4.62 degrees
+  below the shot axis; grenade/bottle PCA placed their cap forward. Props now
+  remain upright with forward native launch. Firearms use the reference's
+  provisional 850 model-units/metre convention; preferred physical sizes remain open.
+- Classified StG's fused hand from source faces, animated coordinates and
+  captured texture/palette assignments. Masked 18 private node-27 vertices,
+  removing 30 hand faces while retaining shared stock edges, barrel, magazine
+  and sight: 185 faces/143 gun vertices. Corrected its grip from the fore-end
+  heuristic to the hand-region centre. Source geometry/animation stays intact.
+- All 13 IDs / 16 slot rows pass actual SDK identity-hand calibration checks
+  against independently calculated RT/TR for every captured nonempty node.
+  Representative P38/StG/shotgun/grenade/petrol native firing passes; linked
+  damage is observed except the grenade release-only case. Six shotgun pellets
+  retain about 5.15-degree spread. Focused native MP fire/refusal/recovery and
+  SP slot-3 turned-head/fire/load controls pass separately.
+- Ported reference ray/triangle math and bounded traversal, adapting actual
+  Underground strip formats: 8-byte arena bases, 16-byte MP prop bases, 4-byte
+  extensions and masked 13-bit indices. Origin-inside leaves still test surfaces.
+  Malformed geometry/budgets suppress drawing; boxes are never hit endpoints.
+- Measured MP's main class-3 world callback `80057920`: four arena structures
+  at `8009F13C`, stride `C4`, count `[8009ECE4]`, drawer `80094680 -> 80012A90`.
+  The older 21-node selector list contains scene props and is incomplete for
+  wall/floor raycasts. Retained that intermediate failure rather than promoting
+  its incomplete oracle. SP uses measured live level ownership at `8009A500`.
+- Added the main arena plus transformed MP prop surfaces to the exact reader.
+  Final independent plane/barycentric checks cover 7,251 SP / 8,039 MP triangles,
+  both eyes, eight hand/head poses, grip release and tracking loss. A real MP
+  projectile matches the previewed fixed muzzle ray; native recoil leaves its
+  calibration affine unchanged. Reused existing projection/clip/line/dot code.
+- Current pose solvers read shipped defaults rather than the old PCA receipt.
+  Historical rendered-muzzle fixtures explicitly retain their recorded calibration.
+  Corrected a profile probe's inherited high-resolution setting/native-config
+  selection and added actual SDK calibration checks. A combined 64-case matrix
+  completed its draw cases but later failed an incompatible pistol-fire request;
+  it is not promoted as an overall pass. The runner now rejects that combination
+  before launch. Fresh SDK and focused firing controls provide accepted evidence.
+- SP/MP desktop native pause navigation/resume regressions pass. All 126 Python
+  tests and strict C weapon/calibration/raycast fixtures pass. Production Release,
+  OpenXR/PGXP, debug-OFF build is restored; an unsandboxed 8-second desktop SP
+  final smoke exits cleanly with 150 pairs and 1,051,519 native calls (the preceding
+  production smoke had 210 / 1,740,692). This startup-window variation is not a
+  physical FPS or teardown acceptance claim. Source saves/preferences are unchanged.
+- Updated plan/handoff/mapping/reuse status and retained
+  [repair evidence](ALPHA_WEAPON_REPAIRS.md) plus
+  [receipt](../../vr/proof/weapon-alpha-repairs-receipt.json). No framework/UI pin,
+  generated guest C, source-save or new calibration-menu changes. NEXT is A5
+  reference hand HUD and R6 actual SP NPC damage/isolation. Operator calibration,
+  physical S5 performance/close and R5's matching street-wall fixture remain open.

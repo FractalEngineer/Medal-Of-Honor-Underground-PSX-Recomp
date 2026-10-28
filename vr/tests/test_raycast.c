@@ -1,6 +1,7 @@
 #include "../underground/raycast.h"
 
 #include <assert.h>
+#include <math.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -104,6 +105,42 @@ int main(void) {
     assert(!mohu_vr_ray_tree(0x100u, origin, forward, NULL, 1, 1000.0,
                              &t, &leaf));
 
-    puts("PASS: raycast box and visibility-tree hit guards");
+    /* Exact surfaces differ from the broad-phase boxes. Exercise both native
+     * strip schemas, winding, the origin-inside case and atomic invalid data. */
+    memset(g_ram,0,sizeof g_ram);
+    const int16_t vertices[4][4]={{-10,-10,110,0},{10,-10,110,0},
+                                 {-10,10,110,0},{10,10,110,0}};
+    memcpy(g_ram+0x1000,vertices,sizeof vertices);
+    set_leaf(0x100,100,120);
+    set_word(0x118,0x80002000u);
+    set_word(0x2000,(1u<<16)|0x2000u); /* render flag masked from vertex 0 */
+    set_word(0x2004,2u);
+    set_word(0x2008,0x1fff1fffu);
+    const double left[3]={-5,-5,0}, in_surface_box[3]={-5,-5,105};
+    assert(mohu_vr_ray_tree_tris(0x80000100u,0x80001000u,4,left,forward,1000,&t)==1 && t==110);
+    assert(mohu_vr_ray_tree_tris(0x80000100u,0x80001000u,4,in_surface_box,forward,1000,&t)==1 && t==5);
+    assert(mohu_vr_ray_tree_tris(0x80000100u,0x80001000u,4,left,forward,100,&t)==0);
+    const double upper_right[3]={5,5,0};
+    assert(mohu_vr_ray_tree_tris(0x80000100u,0x80001000u,4,upper_right,forward,1000,&t)==0);
+    set_word(0x100+12,2u);
+    set_word(0x2008,3u);set_word(0x200c,0x1fffu);
+    assert(mohu_vr_ray_tree_tris(0x80000100u,0x80001000u,4,upper_right,forward,1000,&t)==1 && t==110);
+    set_word(0x2008,0x8003u); /* reversed strip winding, still two-sided */
+    assert(mohu_vr_ray_tree_tris(0x80000100u,0x80001000u,4,upper_right,forward,1000,&t)==1 && t==110);
+    /* MP's same indices have eight extra bytes in the base record. */
+    set_word(0x2010,3u);set_word(0x2014,0x1fffu);
+    assert(mohu_vr_ray_strip_tris(0x80002000u,2u,0x80001000u,4u,16u,upper_right,forward,1000,&t)==1 && t==110);
+    t=17;
+    set_word(0x2014,0u);
+    assert(mohu_vr_ray_strip_tris(0x80002000u,2u,0x80001000u,4u,16u,upper_right,forward,1000,&t)==-1 && t==17);
+    set_word(0x2008,4u); /* out-of-range extension vertex */
+    assert(mohu_vr_ray_tree_tris(0x80000100u,0x80001000u,4,left,forward,1000,&t)==-1 && t==17);
+    assert(mohu_vr_ray_tree_tris(0x80000100u,0x801ffffcu,4,left,forward,1000,&t)==-1);
+    assert(mohu_vr_ray_tree_tris(0x80000100u,0x80001000u,4,left,forward,NAN,&t)==-1);
+    assert(mohu_vr_ray_tree_tris(0x80000100u,0x80001000u,4,left,(double[3]){0},1000,&t)==-1);
+    set_spine(0x100);set_word(0x118,0x80000100u); /* cycle consumes bounded traversal budget */
+    assert(mohu_vr_ray_tree_tris(0x80000100u,0x80001000u,4,left,forward,1000,&t)==-1);
+
+    puts("PASS: raycast broad phase, exact SP/MP strips, inside, malformed and budget guards");
     return 0;
 }

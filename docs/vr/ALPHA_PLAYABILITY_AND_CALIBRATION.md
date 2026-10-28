@@ -6,6 +6,10 @@ This opening describes the original study request. Later operator instruction
 "commit push and start work on it" authorized implementation: A7 is now ported
 and desktop/null-HMD validated in [PAUSE_MENU_PARITY.md](PAUSE_MENU_PARITY.md).
 The optional calibration editor remains unimplemented.
+Later "continue with the fixes" authorization also produced A2 weapon defaults/
+StG filtering and A4 exact surface laser; current implementation evidence is in
+[ALPHA_WEAPON_REPAIRS.md](ALPHA_WEAPON_REPAIRS.md). This study's earlier source
+observations below are historical where that evidence supersedes them.
 This document supersedes the earlier blanket visual-acceptance wording and the
 strict R5 -> R6 -> W6 ordering where those conflict with the operator's alpha goal.
 
@@ -250,18 +254,22 @@ universal headset matrices, room-scale collision, virtual hands, physical throwi
 two-handed weapons and advanced menus can follow the alpha. Native progression,
 save/load, usable aiming, essential HUD and no active-play crashes cannot.
 
-## Implementation slices for a later authorized session
+## Implementation status (VR_PLAN owns current checkbox scopes)
 
 - [ ] A1. Exit classification and bounded stability correction (S5); record close
   cause separately from visual feedback and mid-play crashes.
-- [ ] A7. Port native pause presentation/input routing from the reference;
-  bind Underground pause state, then verify both-eye navigation/resume in SP and MP.
+- [x] A7. Native pause is implemented and desktop/null-HMD validated;
+  physical readability/comfort remains A7a.
 - [ ] A2. Correct default profiles/masks and align the firearm shot contract;
   validate P38/StG/grenade and live SP NPC impact before cosmetic expansion.
+- [x] A2a. Authored defaults, StG semantic mask, actual SDK checks for 13 IDs
+  and representative native firing. Real SP NPC and physical calibration remain open.
 - [ ] A3. Implement effective calibration state + persistence, then the minimal
   existing-UI/XR-surface menu. First prove production display/input before adding
   every adjustment. Do not assume desktop ImGui appears in XR.
 - [ ] A4. Shared-ray actual-surface laser, or explicitly remove it from alpha.
+- [x] A4a. Exact arena/prop readers, shared fixed ray, independent both-eye
+  intersections and real MP projectile agreement; W6.4 stays physical.
 - [ ] A5. Essential native HUD/mission information with tracking-loss fallback.
 - [ ] A6. Focused end-to-end route, recovery/performance evidence and alpha package.
 
@@ -272,6 +280,8 @@ menu input release/Cancel, malformed config handling and concrete wall-versus-em
 space laser tests. Run shared parity only if shared math/wrappers change. Reuse
 existing probes; do not add tests that merely mirror every UI row.
 
-The next prompt should authorize **A1/A7 first**, then A2 and direct A4/A5 ports.
-A3 is optional follow-up; the previous menu-first ordering is superseded.
-This study does not start those implementations and implies no commit/push.
+Implementation is now authorized and A7/A2a/A4a have evidence. NEXT is A5 native
+HUD and R6 real SP NPC damage/isolation, without a headset. Do not repeat pose,
+pause or triangle-reader discovery. A3 remains optional. The operator deferred
+the next headset batch until the remaining fixes are ready; no physical test is
+authorized by the study itself.

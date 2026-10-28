@@ -5,6 +5,13 @@ Date: 2026-10-26
 This is the W2.1 measurement only. It does not add an MP eye-frustum override,
 change the P1-only renderer, redirect shots or make a physical-headset claim.
 
+2026-10-28 clarification: the 21 ordinary `8006C61C` nodes measured here are
+scene props/entities. The separate class-3 `80057920` callback draws the main
+arena from four level structures. Its current exact-reader mapping is in
+[ALPHA_WEAPON_REPAIRS.md](ALPHA_WEAPON_REPAIRS.md). Do not cast only this flat
+selector list and call it complete wall/floor geometry. W2's captured selector
+bindings and bounded visibility controls retain their original scope.
+
 ## Fixture and invocation
 
 The probe used a fresh copy of root MP slot 1: P38 in loadout slot 0, zero

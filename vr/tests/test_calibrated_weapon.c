@@ -55,7 +55,8 @@ int main(void) {
     point(rotated,cal->grip_pivot,grip);
     point(rotated,cal->muzzle,muzzle);
     for (unsigned i=0; i<3; ++i) assert(fabs(grip[i]-hand[i])<=.5);
-    assert(muzzle[0]>grip[0]+200);
+    assert(fabs((muzzle[0]-grip[0])-
+        1000*(cal->muzzle[2]-cal->grip_pivot[2])/850.0)<.05);
     const double inv[9]={.5,0,0,0,.25,0,0,0,.5};
     const double tr[3]={-20,16,3042};
     int32_t position[3],angles[3];
@@ -75,7 +76,7 @@ int main(void) {
                                    cal->forward[2]};
     assert(mohu_vr_weapon_animated_shot(rotated,animated_tip,animated_axis,
         inv,tr,marker_position,marker_angles));
-    assert(marker_position[2]>position[2]);
+    assert(marker_position[0]>position[0]);
     int32_t marker_saved[3];
     memcpy(marker_saved,marker_position,sizeof marker_saved);
     const double zero_axis[3]={0,0,0};
@@ -107,6 +108,34 @@ int main(void) {
     int32_t saved[3];memcpy(saved,position,sizeof saved);
     assert(!mohu_vr_weapon_muzzle_shot(c,cal,bad,tr,position,angles));
     assert(!memcmp(saved,position,sizeof saved));
-    puts("calibrated grip/muzzle, rotation, translation, scaled native camera: PASS");
+    /* Every authored firearm bore remains +Z rather than a whole-model PCA
+     * axis. Held props stay upright while their launch axis stays forward. */
+    for (size_t i=0; i<mohu_vr_weapon_profile_count(); ++i) {
+        const MohuVrWeaponProfile* p=mohu_vr_weapon_profile_at(i);
+        const MohuVrWeaponCalibration* a=p->calibration;
+        uint32_t affine[8]={0};
+        assert(mohu_vr_weapon_calibrated_control(affine,identity,hand,1000,a));
+        double p0[3],p1[3];
+        point(affine,a->grip_pivot,p0);
+        const double up[3]={a->grip_pivot[0],a->grip_pivot[1]-100,a->grip_pivot[2]};
+        point(affine,up,p1);
+        assert(p1[1]<p0[1] && fabs(p1[2]-p0[2])<.001);
+        assert(mohu_vr_weapon_muzzle_shot(affine,a,identity,(double[3]){0},position,angles));
+        assert(angles[0]==0 && angles[1]==0 && angles[2]==0);
+        if (p->id!=10 && p->id!=15) assert(a->model_units_per_metre==850);
+        if (p->id==10 || p->id==15) {
+            point(affine,a->muzzle,p1);
+            assert(p1[1]<p0[1]-150); /* cap/neck above grip, not aimed ahead */
+        }
+    }
+    const MohuVrWeaponProfile* stg=mohu_vr_weapon_profile_find(17);
+    assert(!mohu_vr_weapon_gun_vertex(stg,27,0));
+    assert(!mohu_vr_weapon_gun_vertex(stg,27,110));
+    assert(mohu_vr_weapon_gun_vertex(stg,27,5)); /* shared stock edge */
+    assert(mohu_vr_weapon_gun_vertex(stg,27,10));
+    assert(mohu_vr_weapon_gun_vertex(stg,27,108)); /* muzzle */
+    assert(mohu_vr_weapon_gun_vertex(stg,29,15)); /* magazine */
+    assert(mohu_vr_weapon_gun_vertex(stg,31,12)); /* sight */
+    puts("calibrated grip/muzzle, authored bore, upright prop, StG semantic mask: PASS");
     return 0;
 }
