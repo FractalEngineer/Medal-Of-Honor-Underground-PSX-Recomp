@@ -122,7 +122,10 @@ All game launches run outside the sandbox.
   traversal budgets. Python tests retain old receipt validation separately.
 
 Do not repeat source mapping or unchanged combat inventories. Before alpha,
-continue A5 native HUD and R6 real SP NPC damage/isolation without a headset.
+H1/A5a native HUD is now ported and SP desktop/null-HMD validated; see
+[NATIVE_HAND_HUD.md](NATIVE_HAND_HUD.md). Continue R6 real SP NPC damage/isolation
+and broader SP families without a headset. SP is the release target; MP is only
+the quick all-weapon calibration fixture.
 R5 fog still requires the matching street-wall save; current courtyard/slot-3
 scenes cannot establish that report. S5 physical clean-close/performance and
 operator weapon/menu/laser acceptance remain open. A3's optional calibration

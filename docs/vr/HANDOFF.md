@@ -1,6 +1,8 @@
 # Underground VR implementation handoff
 
 Updated: 2026-10-28. This file is the execution contract for the next session.
+**Release scope: SP. MP is only a quick all-weapon calibration fixture. Do not
+add MP feature/acceptance milestones or make MP completeness gate the alpha.**
 [VR_PLAN.md](VR_PLAN.md) owns checkbox status. [WEAPON_MAPPING.md](WEAPON_MAPPING.md)
 owns the detailed measured weapon layout. [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md)
 owns history. [WEAPON_COMPLETE_PROFILES.md](WEAPON_COMPLETE_PROFILES.md)
@@ -31,8 +33,11 @@ pass actual SDK calibration-affine checks; native representative firing passes.
 SP/MP lasers match independently decoded surfaces and a real MP projectile.
 Do not redo PCA calibration, StG connectivity discovery or box endpoints.
 A2 remains open for real SP NPC damage and physical calibration; W6.4 remains
-open for operator laser/shot agreement. NEXT desktop work is A5 reference native
-hand HUD, plus R6 SP NPC damage/isolation. A3's new calibration editor is optional.
+open for operator laser/shot agreement. H1/A5a native hand HUD is now ported and
+SP desktop/null-HMD validated: [NATIVE_HAND_HUD.md](NATIVE_HAND_HUD.md).
+NEXT is R6 real SP NPC damage/isolation and broader SP shot families, then SP
+alpha playability/performance/recovery. H2/A5 transitions/physical readability
+remain open. A3's new calibration editor is optional.
 The operator explicitly deferred headset testing until the remaining fixes are
 ready; do not launch a physical test now. All game launches must be unsandboxed.
 S5 physical clean-close/performance remains open; R5 needs its matching fixture.**
@@ -500,7 +505,11 @@ extensions with masked 13-bit indices and native winding/terminators.
 
 Only W6.4 physical laser acceptance remains in this sequence. Do not ask for it
 yet: the operator requested finishing the remaining fixes before a headset batch.
-A5 native HUD and R6 linked real SP NPC damage are the next desktop work. R5
+H1 native HUD is implemented; read NATIVE_HAND_HUD.md for exact bindings,
+fallback and the bounded R6 discovery. SP damage store is `8004E144`, not MP's
+`8004EB80`; `mohu.vr.shot sp-camera` reads the SP cache. Do not rerun the old
+wrong-span trace or ABI-invalid analysis slot 0 unchanged. R6 linked real SP NPC
+damage and broader SP shot families are the next desktop work. R5
 fog is still blocked on the matching street-wall fixture, not on more ray math.
 
 ## 7. Session preflight and bounded diagnostic commands

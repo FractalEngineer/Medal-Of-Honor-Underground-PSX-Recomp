@@ -16,6 +16,13 @@ uint32_t psx_mod_read_word(uint32_t address) {
 }
 
 int main(void) {
+    assert(mohu_vr_owned_ammo_packet(0x800F109Cu,packets[0],0,0x800F0FDCu));
+    assert(mohu_vr_owned_ammo_packet(0x800F10C4u,packets[10],1,0x800F0FDCu));
+    assert(!mohu_vr_owned_ammo_packet(0x800F109Cu,packets[0],1,0x800F0FDCu));
+    assert(!mohu_vr_owned_ammo_packet(0x800F109Cu,packets[0],0,0));
+    packets[3]^=0xFFFFu; /* Different native UV/CLUT is still the owned icon. */
+    assert(mohu_vr_owned_ammo_packet(0x800F109Cu,packets[0],0,0x800F0FDCu));
+    packets[3]^=0xFFFFu;
     assert(mohu_vr_ammo_icon_packet(0x800F109Cu, packets[0], 0));
     assert(mohu_vr_ammo_icon_packet(0x800F10C4u, packets[10], 1));
     assert(!mohu_vr_ammo_icon_packet(0x800F109Cu, packets[0], 1));

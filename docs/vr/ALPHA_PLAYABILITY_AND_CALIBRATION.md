@@ -271,6 +271,9 @@ save/load, usable aiming, essential HUD and no active-play crashes cannot.
 - [x] A4a. Exact arena/prop readers, shared fixed ray, independent both-eye
   intersections and real MP projectile agreement; W6.4 stays physical.
 - [ ] A5. Essential native HUD/mission information with tracking-loss fallback.
+- [x] A5a. Native reference hand HUD port, measured SP artwork/values and
+  independent hand/focus/upload fallback pass desktop/null-HMD controls.
+  Physical readability and mission/briefing/movie transitions remain H2.
 - [ ] A6. Focused end-to-end route, recovery/performance evidence and alpha package.
 
 Validation should target failure modes: scale around a fixed grip, consistent muzzle
@@ -280,8 +283,12 @@ menu input release/Cancel, malformed config handling and concrete wall-versus-em
 space laser tests. Run shared parity only if shared math/wrappers change. Reuse
 existing probes; do not add tests that merely mirror every UI row.
 
-Implementation is now authorized and A7/A2a/A4a have evidence. NEXT is A5 native
-HUD and R6 real SP NPC damage/isolation, without a headset. Do not repeat pose,
+Implementation is now authorized and A7/A2a/A4a/A5a have evidence. SP is the
+release target; MP is only the quick all-weapon calibration fixture, with no
+separate feature or release-acceptance campaign. NEXT is R6 real SP NPC
+damage/isolation and broader SP families, then SP alpha playability/performance/
+recovery, without a headset. Read [NATIVE_HAND_HUD.md](NATIVE_HAND_HUD.md).
+Do not repeat pose,
 pause or triangle-reader discovery. A3 remains optional. The operator deferred
 the next headset batch until the remaining fixes are ready; no physical test is
 authorized by the study itself.

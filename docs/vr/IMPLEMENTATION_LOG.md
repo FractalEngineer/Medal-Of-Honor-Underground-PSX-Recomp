@@ -1764,3 +1764,51 @@ source saves, defaults, historical receipts and unrelated `.commandcode/`.
   generated guest C, source-save or new calibration-menu changes. NEXT is A5
   reference hand HUD and R6 actual SP NPC damage/isolation. Operator calibration,
   physical S5 performance/close and R5's matching street-wall fixture remain open.
+
+### 2026-10-28: reference native hand HUD port; SP release scope
+
+- Committed/pushed the preceding authored-pose/StG/exact-laser repairs as
+  `43dedda` on `feature/vr-port`. The operator clarified the release target is
+  SP; MP exists only for quickly calibrating all weapons. Updated plan/handoff
+  to prevent a separate MP feature/acceptance campaign.
+- Ported the reference native dual-matte extraction, per-hand fallback and
+  FACE_HEAD surface submission into `vr/underground/hud.c`. Measured SP native
+  health/compass, text and ammo-icon producers with complete function guards;
+  preserve native formatted values and artwork, not replacement text/bars.
+- Native RGB5 white is 248 on this renderer; reference's literal 255 leaves a
+  faint alpha-7 background. Validate the isolated matte corner and normalize
+  coverage against its measured white level. Exact native reconstruction error
+  is <=1, with zero captured content outside the owned regions. Preserve opaque
+  black. An invalid capture affects only that hand.
+- Replaced blanket SP text suppression with owned ammo-entry suppression;
+  unrelated native mission/notification text remains. Native icon ownership
+  uses `input+C0+40*bank`, not one fixture address or weapon UV. Corrected the
+  health ring's signed relocation to `800B8C88`. A surface's successful upload
+  alone permits its native counterpart to be suppressed; tracking/focus/stale/
+  upload failure restores that component. Native pause emits no hand requests.
+- SP desktop and real SteamVR null-HMD controls pass native fire/reload,
+  pause/Continue, save load and both surfaces; independent hand loss, recovery
+  and focus loss pass. The final null-HMD run has 760 restoration checks, zero
+  mismatches, zero aborted passes and a clean launcher exit. Source saves and
+  preferences are unchanged. No physical headset was launched.
+- Test development failures are retained in ignored analysis: first run found
+  RGB5 matte quantization; subsequent harness fixes corrected reload button,
+  release of the absolute pad override, native menu timing and focus-command
+  schema. These failures are not accepted runtime proof. All 126 Python tests
+  and strict C HUD/matte/packet-ownership fixtures pass.
+- R6 now has a read-only `mohu.vr.shot sp-camera` accessor and the correct
+  offline SP damage entry `8004E0C0` / subtraction `8004E13C` / store `8004E144`.
+  A bounded slot-3 target probe did not establish linked NPC damage; its initial
+  MP damage-PC filter was wrong and cannot prove absence. Analysis slot 0 failed
+  ABI load. Do not reuse either as accepted SP combat evidence or repeatedly run
+  those unchanged experiments. [NATIVE_HAND_HUD.md](NATIVE_HAND_HUD.md) specifies
+  the next native movement/compatible combat-fixture and isolation controls.
+- H1/A5a implemented; full A5/H2 physical readability and mission/briefing/movie
+  transitions remain open. NEXT: real SP NPC damage/isolation, broader SP shot
+  families, then focused SP alpha route/performance/recovery. R5 retains its
+  matching-fixture gate. Framework/UI pins, generated C and save layout unchanged.
+- Production Release/OpenXR/PGXP debug-OFF restored. Final unsandboxed 8-second
+  SP desktop smoke exits 0 with 210 pairs, 1,770,355 native calls, unchanged source
+  saves/preferences and no remaining game process. This does not measure headset
+  FPS or HUD readback cost. [Receipt](../../vr/proof/native-hand-hud-receipt.json)
+  records exact binaries and the later read-only diagnostic/constant-read hoist.

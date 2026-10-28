@@ -124,7 +124,7 @@ against the specific capture generation that will run in Underground.
 | Player/scene roots | `0x8009D64C` / `0x8009D654` | `0x800AA174` / `0x800AA17C` | Pointer globals | Read pointer, then actor fields | Live root/input trace | High | Read-only |
 | MP first-person geometry | `0x800892E8` | MP caller RA `0x8008A544` | Complete function/producer guards in `weapon.h` | `[actor+0x114] == input+0x9F0`; animated producer `0x8008DB98` | 13-ID flat and both-eye controls; WEAPON_MAPPING | High | Guarded opt-in implementation; not an open hook search |
 | Shot basis | TBD | TBD | TBD | TBD | TBD | None | Disabled |
-| Native HUD producers | TBD | TBD | TBD | TBD | TBD | None | Disabled |
+| Native HUD producers | Reference native HUD capture/hand surfaces | SP `8006C874`, `8006B64C`, `8008F9F4` | Full-span hashes; native owned text/packet banks | NATIVE_HAND_HUD regions and ownership | SP fire/reload/pause/load + null-HMD fallback | High for tested SP fixture | H1 implemented; H2 physical/transitions open |
 | PsyQ `VSync` wrapper | `0x800186A8` | Main EXE, `main-6ea5e7d0c719` | 26 instructions; `VSync` mode gate and BIOS vector calls | Static disassembly matches; broad call sites | No gameplay use | High | Static only |
 
 ## Guard policy

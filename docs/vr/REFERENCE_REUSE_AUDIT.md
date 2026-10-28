@@ -7,8 +7,10 @@ by this review.
 
 2026-10-28 implementation update: [authored weapon/exact laser repairs](ALPHA_WEAPON_REPAIRS.md)
 complete the desktop A2a/A4a port scopes. Native pause A7 is already ported.
-Do not repeat the former missing-reader/pose discovery queue below; A5 HUD and
-R6 real SP NPC damage are next. Physical acceptance remains separate.
+H1/A5a [native hand HUD](NATIVE_HAND_HUD.md) is also ported and SP desktop/null-HMD
+validated. Do not repeat missing-reader/pose/HUD discovery. R6 real SP NPC damage
+and broader SP shot families are next. Physical acceptance remains separate.
+SP is the release target; MP is only the quick weapon-calibration fixture.
 
 2026-10-28 operator clarification: the alpha work must start from the working
 first-game implementations. Current reference HEAD inspected is `d82a5d0`.
@@ -107,7 +109,7 @@ source and the latest outcome first.
 | W4: native shot binding | Reuse reference constructor-to-basis strategy, ownership/freshness guard structure and streaming trace analysis. | Locate the Underground MP equivalents and verify fields/units/first motion before writes. No need to discover the aiming architecture again. |
 | W5: tracked native aim | Adapt reference pure conversion and guarded basis-hook pattern, using a single declared mesh/muzzle-to-world contract. | Replace addresses/IDs/fields and validate opt-in desktop controls. Physical impact acceptance remains separate. |
 | W6: exact laser | Port `moh_vr_ray_tri`, appropriate bounded traversal and fixtures; reuse reference rendered-affine capture/project/clip/beam/dot structure. Local box raycast/project/clip already exist. | Bind actual Underground triangle records/vertex tables and capture the actual rendered weapon muzzle. MP bounds are not triangle records. |
-| H1-H2: hand HUD/native surfaces | Reuse dual-matte RGBA extraction, per-hand fallback and FACE_HEAD surface submission. Generic APIs are already present. | Bind Underground HUD producers, owned text/packets, cutout regions and mode support. Keep menus/subtitles separate. |
+| H1-H2: hand HUD/native surfaces | H1 ported: dual-matte extraction, per-hand fallback and FACE_HEAD submission. See NATIVE_HAND_HUD. | SP producers/ownership/regions measured; native fire/reload/pause/load and null-HMD loss/recovery pass. H2 readability and mission/briefing/movie scenarios remain. |
 | B9-B10, Q1-Q4: hardware, coverage, performance, release | Reuse reference trace/report/package workflow and existing framework readiness/copy/color behavior. | Test Underground scenes, transitions, runtimes and extracted package. First-game hardware/performance receipts do not certify this title. |
 
 ## Implementation entry points: open these before adding code
@@ -123,7 +125,7 @@ source entry points, not commands to run against Underground unchanged.
 | Aim math | [moh_vr_aim.c](../../../Medal-Of-Honor-PSX-Recomp/vr/moh_vr_aim.c): `moh_vr_matrix_inverse`, `moh_vr_aim_shot`; [aim fixtures](../../../Medal-Of-Honor-PSX-Recomp/vr/test_moh_vr_aim.c) | Existing `vr_laser_inverse`, local weapon math and [W1 contract](WEAPON_CALIBRATION.md); adapt bounded helpers instead of another matrix implementation |
 | Native shot hook | Reference plugin: `vr_cache_camera`, `vr_mp_level_entry`, `vr_shot_basis_entry`; [aim trace tool](../../../Medal-Of-Honor-PSX-Recomp/vr/check_weapon_aim.py) | Measured MP P1 ownership, native damage trace and local copied-save tools; shot constructor/basis binding remains unmeasured |
 | Laser | [moh_vr_raycast.h](../../../Medal-Of-Honor-PSX-Recomp/vr/moh_vr_raycast.h), [raycast fixtures](../../../Medal-Of-Honor-PSX-Recomp/vr/test_moh_vr_raycast.c); reference plugin `vr_laser_capture`/`vr_laser_draw` | [raycast.h](../../vr/underground/raycast.h), `vr_laser_project`/`vr_laser_clip`/`vr_laser_draw`; local path currently casts boxes and uses right aim |
-| HUD | [moh_vr_hud.c](../../../Medal-Of-Honor-PSX-Recomp/vr/moh_vr_hud.c), [HUD fixtures](../../../Medal-Of-Honor-PSX-Recomp/vr/test_native_hud.c), [matte verification](../../../Medal-Of-Honor-PSX-Recomp/vr/verify_native_hud.py), [gameplay checks](../../../Medal-Of-Honor-PSX-Recomp/vr/check_native_hud_gameplay.py) | [hud_packets.h](../../vr/underground/hud_packets.h), existing native-menu path; capture/surface APIs in [mod_plugins.h](../../psxrecomp/runtime/include/mod_plugins.h) |
+| HUD | [moh_vr_hud.c](../../../Medal-Of-Honor-PSX-Recomp/vr/moh_vr_hud.c), [HUD fixtures](../../../Medal-Of-Honor-PSX-Recomp/vr/test_native_hud.c), [matte verification](../../../Medal-Of-Honor-PSX-Recomp/vr/verify_native_hud.py), [gameplay checks](../../../Medal-Of-Honor-PSX-Recomp/vr/check_native_hud_gameplay.py) | Ported [hud.c](../../vr/underground/hud.c), [test_hud.c](../../vr/tests/test_hud.c), [probe_native_hud.py](../../vr/tools/probe_native_hud.py); measured capture/ownership in vr_diagnostic.c and [hud_packets.h](../../vr/underground/hud_packets.h). Existing framework capture/surface APIs unchanged. |
 | Coverage / performance | [world stability](../../../Medal-Of-Honor-PSX-Recomp/vr/check_world_stability.py), [trace exporter](../../../Medal-Of-Honor-PSX-Recomp/vr/trace_frames.py), [hitch report](../../../Medal-Of-Honor-PSX-Recomp/vr/hitch_report.py), [slot-2 findings](../../../Medal-Of-Honor-PSX-Recomp/docs/reverse/VR_SLOT2_PERFORMANCE.md) | Existing local headless helper, receipts and launcher; port reporting and configuration, not old FPS claims or alternate build folders |
 
 Do not copy reference scripts wholesale: they contain SLUS-00974 save names,

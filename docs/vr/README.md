@@ -4,8 +4,11 @@ Current priorities: [alpha port plan](ALPHA_PLAYABILITY_AND_CALIBRATION.md).
 The native pause-menu port passes SP/MP desktop and null-HMD XR controls;
 [PAUSE_MENU_PARITY.md](PAUSE_MENU_PARITY.md) records its bindings and remaining
 physical check. Weapon pose/mask and exact laser desktop fixes are recorded in
-[ALPHA_WEAPON_REPAIRS.md](ALPHA_WEAPON_REPAIRS.md). NEXT is A5 native HUD and
-R6 SP damage/isolation; headset calibration remains deferred. Earlier SP repair:
+[ALPHA_WEAPON_REPAIRS.md](ALPHA_WEAPON_REPAIRS.md). Native hand HUD is ported:
+[NATIVE_HAND_HUD.md](NATIVE_HAND_HUD.md). NEXT is R6 real SP NPC damage/isolation
+and broader SP shot families, then SP alpha playability/performance/recovery.
+SP is the release target; MP only supplies quick weapon calibration.
+Headset calibration remains deferred. Earlier SP repair:
 [SP_PARITY_REPAIR.md](SP_PARITY_REPAIR.md).
 The operator reopened muzzle placement, arms, slot-3 visibility and performance;
 R1-R7 in VR_PLAN supersede old W6-first or headset-first continuation text.
@@ -23,7 +26,8 @@ Framework development uses `vr/shared-development`; master mirrors upstream.
 
 1. [HANDOFF.md](HANDOFF.md) is the current execution contract: A7 pause port is
    desktop/null-HMD validated; A2 defaults/masks and A4 laser have desktop evidence.
-   A5 native HUD and R6 SP damage are next. R4 native hooks/stereo
+   H1/A5a native hand HUD is desktop/null-HMD validated; R6 SP damage and broader
+   SP families are next. R4 native hooks/stereo
    parity are complete. R5 fog needs its matching street fixture;
    R6 linked live SP impact remains open within weapon playability work.
    W6.1-W6.3 fixed-ray/triangle gates are desktop complete. Physical hand-aim/impact acceptance and live NPC/SP

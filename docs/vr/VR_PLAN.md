@@ -2,6 +2,10 @@
 
 Updated: 2026-10-28. Working branch: `feature/vr-port`.
 
+**Release scope is SP. MP is only a quick all-weapon calibration fixture.
+Historical MP evidence remains useful; new MP feature/acceptance work must not
+gate or displace SP alpha playability.**
+
 This is the current checkbox plan, not the original proposal. Start with
 [HANDOFF.md](HANDOFF.md) for exact instructions. Checked means the stated
 scope has evidence; it never implies broader headset or gameplay acceptance.
@@ -12,7 +16,10 @@ Historical design and prior attempts belong in
 A4 exact triangle laser pass desktop controls. Read
 [ALPHA_WEAPON_REPAIRS.md](ALPHA_WEAPON_REPAIRS.md) for current bindings/evidence.
 A2 still needs real SP NPC damage and physical calibration; W6.4 is physical.
-NEXT desktop work: A5 reference hand HUD and R6 SP damage/isolation.
+H1/A5a native hand HUD is implemented and SP desktop/null-HMD validated; read
+[NATIVE_HAND_HUD.md](NATIVE_HAND_HUD.md). H2 transitions/readability remain open.
+NEXT desktop work: R6 real SP NPC damage/isolation and broader SP shot families,
+then the focused SP alpha route/performance/recovery.
 The operator deferred headset testing until fixes are ready. A3's optional editor
 remains a study. S5 physical teardown/performance and R5's matching fog fixture
 remain open. All game launches must run outside the sandbox.**
@@ -683,10 +690,10 @@ Do not reopen the completed W5 matrices or call the old box pointer exact.
 
 ## Remaining port gates - after the weapon sequence, not alternate rabbit holes
 
-- [ ] H1. Capture native HUD producers for wrist/hand surfaces; current suppression
-  and native menu surface are not a completed wrist HUD. Adapt reference native
-  dual-matte capture, per-hand fallback and FACE_HEAD surface code through the
-  already available framework APIs; measure target ownership/ROIs/mode support.
+- [x] H1. Reference native dual-matte HUD, measured Underground producers/regions,
+  per-hand fallback and FACE_HEAD surfaces implemented. SP native values,
+  fire/reload/pause/save load and real null-HMD uploads/loss/recovery pass.
+  [Evidence](NATIVE_HAND_HUD.md); physical readability remains H2.
 - [ ] H2. Native HUD values/artwork/fallback and menu/briefing/movie transitions pass.
 - [ ] Q1. Multiple scenes, near walls, streaming areas, death/load, runtime recenter,
   headset disconnect/focus, dynamic effects and long-session gameplay pass.

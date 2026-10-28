@@ -1,0 +1,1151 @@
+{
+  "schema": 1,
+  "date": "2026-10-28",
+  "scope": "H1/A5a native hand HUD implementation and SP desktop/null-HMD controls",
+  "release_target": "single_player",
+  "multiplayer_role": "quick all-weapon calibration only; not a release gate",
+  "physical_acceptance": false,
+  "parent_commit": "43dedda8a4049d407a786cbf6081157b630ec82a",
+  "sources": {
+    "CMakeLists.txt": "74f8f05853688ba4b5cc4f6d8f68b3effd6e31a354bc83cbf3a073014ca388f0",
+    "vr/underground/hud.c": "8632bfcf93b626b0098b7c15154f35656ea92a01e942486f5790c83db1210c49",
+    "vr/underground/hud.h": "80b09e58fa8ac645d4d2b8d275448fa9afca038f544bc7f7afefe8ce3b28d52a",
+    "vr/underground/hud_packets.h": "5b46bad22a1c1442b299f3de83bded92febf7816242f51d3ae3e9a1f998034fa",
+    "vr/underground/vr_diagnostic.c": "107c1088d8cc0a69658a5dcfecc1c8658b30623f37214b8d784395abbfa95520",
+    "vr/tests/test_hud.c": "51762f8d486b2e1fe8ac68111e4bfb8b572aa37eab89a89130b0aaa1734aaa15",
+    "vr/tests/test_hud_packets.c": "6563cdff831c7a822dfd19c5ad5737bd40c341249f91b0f9cd52219b1ae42e40",
+    "vr/tools/probe_native_hud.py": "40142163ac7baa42edb3087a8918507f1c4b8972f3394e164a2ed7f9f62912f3"
+  },
+  "framework_pin": "555e1eabccc59b9b6ff0d9fca48aca783513dc86",
+  "reference_implementation": [
+    "vr/moh_vr_hud.c",
+    "vr/psx_vr_stereo.c::vr_capture_native_hud",
+    "vr/test_native_hud.c",
+    "vr/verify_native_hud.py",
+    "vr/check_native_hud_gameplay.py"
+  ],
+  "native_regions": [
+    [
+      8,
+      8,
+      112,
+      112
+    ],
+    [
+      368,
+      8,
+      136,
+      40
+    ]
+  ],
+  "native_white": 248,
+  "sp_bindings": {
+    "context": "800A7138",
+    "player_pointer": "800AA17C",
+    "health_compass": {
+      "entry": "8006C874",
+      "bytes": 1228,
+      "fnv1a": "3ACE0C9A"
+    },
+    "text": {
+      "entry": "8006B64C",
+      "bytes": 692,
+      "fnv1a": "7E13324D"
+    },
+    "ammo_icon": {
+      "entry": "8008F9F4",
+      "bytes": 164,
+      "fnv1a": "B142D786"
+    },
+    "text_table": "800A6A5C",
+    "text_count": "800A69E0",
+    "clip_offset": "input+110",
+    "reserve_offset": "input+114",
+    "icon": "input+C0+40*bank",
+    "health_ring": "800B8C88"
+  },
+  "controls": {
+    "sp_desktop": {
+      "raw_receipt": "analysis/vr-baseline/alpha-native-hud-desktop-sp-final-20261028/receipt.json",
+      "raw_sha256": "be00c525dd9d668a834bfbf5e5aa1486e2cff33222e36a111134caf1f2e1fe15",
+      "binary_sha256": "83a893820e2760bd7736709351e690457405ad3d78f291537b13510d37d76cf4",
+      "source_saves": {
+        "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\saves\\openbios\\state_8001F844_slot03.pst": "85ca88b1ca3f54856530f4af0495dfc2c990a8529d868c3c4a350ac27511cc7a",
+        "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\saves\\openbios\\state_8001F844_slot03.thumb": "92297c45e412148d652aaea843a59b16e5da7af35805a88851b6eb572ea32640"
+      },
+      "build": {
+        "PSX_DEBUG_TOOLS": "ON",
+        "MOHU_VR_DIAGNOSTICS": "ON",
+        "PSX_OPENXR": "ON",
+        "configuration": "Release"
+      },
+      "environment": {
+        "PSX_DEV_INPUT": "0",
+        "PSX_VSYNC": "0",
+        "PSX_DITHERING": "0",
+        "PSX_STEREO_SHED": "0",
+        "PSX_INTERNAL_RESOLUTION": "native",
+        "PSX_RENDER_PASS_VERIFY": "1",
+        "PSX_VR_MOVEMENT": "1",
+        "PSX_VR_HEAD_FRUSTUM": "1",
+        "PSX_VR_SUPPRESS_FLAT_HUD": "1",
+        "PSX_VR_LASER": "0",
+        "PSX_VR_WEAPON_POSE": "1",
+        "MOHU_VR_P38_CALIBRATED": "0",
+        "MOHU_VR_P38_AIM": "0",
+        "MOHU_VR_MP_CONTROL": "0",
+        "MOHU_VR_MP_FRUSTUM": "0",
+        "MOHU_VR_STEREO_PROOF": "1",
+        "MOHU_VR_EYE_RENDER_VIEW": "1",
+        "MOHU_VR_EYE_GUEST_SUBMIT": "1",
+        "MOHU_VR_EYE_OFFSET": "0",
+        "MOHU_VR_WEAPON_CALIBRATED": "1",
+        "MOHU_VR_WEAPON_AIM": "1",
+        "MOHU_VR_WEAPON_GUN_ONLY": "1",
+        "PSX_OPENXR_ENABLE": "0",
+        "PSX_VR_WRIST_HUD": "1",
+        "MOHU_VR_UNITS_PER_METER": "238.80597014925373"
+      },
+      "states": {
+        "loaded": {
+          "state": {
+            "actor": 2148469728,
+            "input": 2148470748,
+            "weapon": 0,
+            "clip": " 8",
+            "reserve": " 24"
+          },
+          "status": {
+            "ready": 3,
+            "replacement": 0,
+            "captures": 29,
+            "failures": 0
+          },
+          "art": {
+            "panels": [
+              {
+                "side": "left",
+                "covered": 1256,
+                "transparent": 10033,
+                "error": 1
+              },
+              {
+                "side": "right",
+                "covered": 268,
+                "transparent": 5172,
+                "error": 0
+              }
+            ],
+            "outside_pixels": 0
+          }
+        },
+        "fired": {
+          "state": {
+            "actor": 2148469728,
+            "input": 2148470748,
+            "weapon": 0,
+            "clip": " 7",
+            "reserve": " 24"
+          },
+          "status": {
+            "ready": 3,
+            "replacement": 0,
+            "captures": 47,
+            "failures": 0
+          },
+          "art": {
+            "panels": [
+              {
+                "side": "left",
+                "covered": 1256,
+                "transparent": 10033,
+                "error": 1
+              },
+              {
+                "side": "right",
+                "covered": 251,
+                "transparent": 5189,
+                "error": 0
+              }
+            ],
+            "outside_pixels": 0
+          }
+        },
+        "reloaded": {
+          "state": {
+            "actor": 2148469728,
+            "input": 2148470748,
+            "weapon": 0,
+            "clip": " 8",
+            "reserve": " 23"
+          },
+          "status": {
+            "ready": 3,
+            "replacement": 0,
+            "captures": 87,
+            "failures": 0
+          },
+          "art": {
+            "panels": [
+              {
+                "side": "left",
+                "covered": 1256,
+                "transparent": 10033,
+                "error": 1
+              },
+              {
+                "side": "right",
+                "covered": 276,
+                "transparent": 5164,
+                "error": 0
+              }
+            ],
+            "outside_pixels": 0
+          }
+        },
+        "resumed": {
+          "state": {
+            "actor": 2148469728,
+            "input": 2148470748,
+            "weapon": 0,
+            "clip": " 8",
+            "reserve": " 23"
+          },
+          "status": {
+            "ready": 3,
+            "replacement": 0,
+            "captures": 108,
+            "failures": 0
+          },
+          "art": {
+            "panels": [
+              {
+                "side": "left",
+                "covered": 1256,
+                "transparent": 10033,
+                "error": 1
+              },
+              {
+                "side": "right",
+                "covered": 276,
+                "transparent": 5164,
+                "error": 0
+              }
+            ],
+            "outside_pixels": 0
+          }
+        },
+        "save-reloaded": {
+          "state": {
+            "actor": 2148469728,
+            "input": 2148470748,
+            "weapon": 0,
+            "clip": " 8",
+            "reserve": " 24"
+          },
+          "status": {
+            "ready": 3,
+            "replacement": 0,
+            "captures": 140,
+            "failures": 0
+          },
+          "art": {
+            "panels": [
+              {
+                "side": "left",
+                "covered": 1256,
+                "transparent": 10033,
+                "error": 1
+              },
+              {
+                "side": "right",
+                "covered": 268,
+                "transparent": 5172,
+                "error": 0
+              }
+            ],
+            "outside_pixels": 0
+          }
+        }
+      },
+      "paused": {
+        "ready": 0,
+        "replacement": 0,
+        "captures": 91,
+        "failures": 0
+      },
+      "fallback": {},
+      "restoration": {
+        "id": 0,
+        "ok": true,
+        "plans": 0,
+        "planned": 0,
+        "wanted": 0,
+        "refused": 0,
+        "passes": 564,
+        "aborted": 0,
+        "discarded": 0,
+        "watchdog": 0,
+        "vram_leaks": 0,
+        "nesting_repairs": 0,
+        "device_reads": 0,
+        "last_device_read": "0x00000000",
+        "last_device_read_width": 0,
+        "verify_checks": 564,
+        "verify_mismatch": 0,
+        "dropped": {
+          "spu": 0,
+          "cd": 0,
+          "timer": 0,
+          "dma": 0,
+          "gpu": 0,
+          "other": 0
+        },
+        "last_pass_ms": 14.452,
+        "avg_pass_ms": 10.512,
+        "avg_begin_ms": 1.825,
+        "avg_guest_ms": 5.546,
+        "avg_end_ms": 2.687,
+        "avg_restore_ms": 0.224,
+        "guest_cycles_last": 765484,
+        "disabled": 0,
+        "promotions": 0,
+        "pass_presents": 0,
+        "blended_presents": 0,
+        "expired": 0,
+        "late_presents": 0,
+        "unmatched_flips": 0,
+        "early_presents": 0,
+        "cost_us": 0,
+        "cost_rewarms": 0,
+        "frame_images": 0,
+        "journaled": 280,
+        "image_textures": 0,
+        "image_bytes": 0,
+        "status": 1,
+        "backups_reused": 282,
+        "pass_attempts": 564,
+        "argument_refused": 0,
+        "status_refused": 0,
+        "begin_refused": 0,
+        "checkpoint_refused": 0,
+        "spans": 0,
+        "span_failures": 0,
+        "local_views": 0,
+        "local_attempts": 0,
+        "local_status": 4,
+        "admission": {
+          "plans": 0,
+          "frame": 0,
+          "zero_credit_refusals": 0,
+          "idle_ms": 0.0,
+          "present_ms": 0.0,
+          "prior_pass_ms": 0.0,
+          "present_reserve_ms": 0.0,
+          "spare_ms": 0.0,
+          "frame_ms": 0.0,
+          "cost_ms": 0.0,
+          "budget_ms": 0.0,
+          "wanted": 0,
+          "planned": 0
+        },
+        "last_failure": null,
+        "last_abort_detail": "",
+        "span_fail": {
+          "reason": 0,
+          "pc": "0x00000000",
+          "start": "0x00000000",
+          "stop": "0x00000000",
+          "ra": "0x00000000",
+          "after": "0x00000000",
+          "insns": 0
+        }
+      },
+      "stereo": {
+        "id": 0,
+        "ok": true,
+        "attempts": 141,
+        "pairs": 141,
+        "refused": 0,
+        "failed": 0,
+        "shed": 0,
+        "status": 0,
+        "last_pair_id": 141,
+        "last_guest_cycle": 3065930518,
+        "eye_cycles": [
+          3065930518,
+          3065930518
+        ],
+        "eye_hashes": [
+          "54d457023563b5c1",
+          "54d457023563b5c1"
+        ],
+        "eye_view": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ],
+        "last_eye": 1,
+        "last_failure": "",
+        "last_failed_attempt": 0,
+        "last_failed_eye": 0,
+        "last_failed_reason": "",
+        "retained_pair_id": 0,
+        "shedding": 0,
+        "shed_streak": 0,
+        "shed_streak_ms": 0,
+        "shed_streak_max": 0,
+        "stale_frames": 0,
+        "budget_resets": 0,
+        "budget_ms": 13.333,
+        "budget_source": 0,
+        "checkpoint_saves": 282,
+        "checkpoint_reuses": 282,
+        "checkpoint_ram_bytes": 591396864,
+        "last_pair_age_ms": 0,
+        "last_pair_ms": 28.233,
+        "avg_pair_ms": 30.256,
+        "published": {
+          "valid": 1,
+          "pair_id": 141,
+          "guest_cycle": 3065930518,
+          "width": 512,
+          "height": 240,
+          "staged_mask": 3,
+          "mode": 1,
+          "presents": 0
+        },
+        "captures": []
+      },
+      "exit_code": 0,
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true
+    },
+    "sp_null_hmd": {
+      "raw_receipt": "analysis/vr-baseline/alpha-native-hud-xr-sp-final-20261028/receipt.json",
+      "raw_sha256": "244faad9db3b3efee4c1070786a4f3927a600d460ac26384bafaac920fed506a",
+      "binary_sha256": "71f47612d1f889ae53164be58f394e80b84f9e9068cd9c3e496c68e7847a3a0d",
+      "source_saves": {
+        "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\saves\\openbios\\state_8001F844_slot03.pst": "85ca88b1ca3f54856530f4af0495dfc2c990a8529d868c3c4a350ac27511cc7a",
+        "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\saves\\openbios\\state_8001F844_slot03.thumb": "92297c45e412148d652aaea843a59b16e5da7af35805a88851b6eb572ea32640"
+      },
+      "build": {
+        "PSX_DEBUG_TOOLS": "ON",
+        "MOHU_VR_DIAGNOSTICS": "ON",
+        "PSX_OPENXR": "ON",
+        "configuration": "Release"
+      },
+      "environment": {
+        "PSX_DEV_INPUT": "0",
+        "PSX_VSYNC": "0",
+        "PSX_DITHERING": "0",
+        "PSX_STEREO_SHED": "0",
+        "PSX_INTERNAL_RESOLUTION": "native",
+        "PSX_RENDER_PASS_VERIFY": "1",
+        "PSX_VR_MOVEMENT": "1",
+        "PSX_VR_HEAD_FRUSTUM": "1",
+        "PSX_VR_SUPPRESS_FLAT_HUD": "1",
+        "PSX_VR_LASER": "0",
+        "PSX_VR_WEAPON_POSE": "1",
+        "MOHU_VR_P38_CALIBRATED": "0",
+        "MOHU_VR_P38_AIM": "0",
+        "MOHU_VR_MP_CONTROL": "0",
+        "MOHU_VR_MP_FRUSTUM": "0",
+        "MOHU_VR_STEREO_PROOF": "1",
+        "MOHU_VR_EYE_RENDER_VIEW": "1",
+        "MOHU_VR_EYE_GUEST_SUBMIT": "1",
+        "MOHU_VR_EYE_OFFSET": "0",
+        "MOHU_VR_WEAPON_CALIBRATED": "1",
+        "MOHU_VR_WEAPON_AIM": "1",
+        "MOHU_VR_WEAPON_GUN_ONLY": "1",
+        "PSX_OPENXR_ENABLE": "0",
+        "PSX_VR_WRIST_HUD": "1",
+        "MOHU_VR_UNITS_PER_METER": "238.80597014925373"
+      },
+      "states": {
+        "loaded": {
+          "state": {
+            "actor": 2148469728,
+            "input": 2148470748,
+            "weapon": 0,
+            "clip": " 8",
+            "reserve": " 24"
+          },
+          "status": {
+            "ready": 3,
+            "replacement": 3,
+            "captures": 67,
+            "failures": 0
+          },
+          "art": {
+            "panels": [
+              {
+                "side": "left",
+                "covered": 1256,
+                "transparent": 10033,
+                "error": 1
+              },
+              {
+                "side": "right",
+                "covered": 268,
+                "transparent": 5172,
+                "error": 0
+              }
+            ],
+            "outside_pixels": 0
+          },
+          "xr": {
+            "id": 0,
+            "ok": true,
+            "compiled": 1,
+            "enabled": 1,
+            "initialized": 1,
+            "running": 1,
+            "state": 5,
+            "tracking": 1,
+            "frame_open": 0,
+            "result": 0,
+            "stage": "submitted",
+            "runtime": "SteamVR/OpenXR",
+            "last_failure": "",
+            "last_failure_result": 0,
+            "view_flags": 15,
+            "waits": 69,
+            "submitted": 69,
+            "empty": 0,
+            "failures": 0,
+            "session_generation": 1,
+            "submitted_session_generation": 1,
+            "predicted_time": 1791828224671800,
+            "ipd_m": 0.063,
+            "origin_up_dot": 1.0,
+            "origin_inversion_streak": 0,
+            "origin_ambiguous": 0,
+            "units_per_meter": 238.80597,
+            "gl_version": 1125925676646400,
+            "min_gl_version": 1125912791744512,
+            "max_gl_version": 1125925676646400,
+            "swapchain_format": 35907,
+            "submitted_layer": 1,
+            "quad_submitted": 1,
+            "submitted_source": 1,
+            "native_submitted": 1,
+            "submitted_native_frame": 0,
+            "quad_distance_m": 2.0,
+            "quad_width_m": 2.0,
+            "quad_height_m": 1.5,
+            "losses": 0,
+            "submitted_surfaces": 2,
+            "surface_uploads": 23,
+            "surface_failures": 0
+          }
+        },
+        "fired": {
+          "state": {
+            "actor": 2148469728,
+            "input": 2148470748,
+            "weapon": 0,
+            "clip": " 7",
+            "reserve": " 24"
+          },
+          "status": {
+            "ready": 3,
+            "replacement": 3,
+            "captures": 84,
+            "failures": 0
+          },
+          "art": {
+            "panels": [
+              {
+                "side": "left",
+                "covered": 1256,
+                "transparent": 10033,
+                "error": 1
+              },
+              {
+                "side": "right",
+                "covered": 251,
+                "transparent": 5189,
+                "error": 0
+              }
+            ],
+            "outside_pixels": 0
+          },
+          "xr": {
+            "id": 0,
+            "ok": true,
+            "compiled": 1,
+            "enabled": 1,
+            "initialized": 1,
+            "running": 1,
+            "state": 5,
+            "tracking": 1,
+            "frame_open": 0,
+            "result": 0,
+            "stage": "submitted",
+            "runtime": "SteamVR/OpenXR",
+            "last_failure": "",
+            "last_failure_result": 0,
+            "view_flags": 15,
+            "waits": 87,
+            "submitted": 87,
+            "empty": 0,
+            "failures": 0,
+            "session_generation": 1,
+            "submitted_session_generation": 1,
+            "predicted_time": 1791829391632800,
+            "ipd_m": 0.063,
+            "origin_up_dot": 1.0,
+            "origin_inversion_streak": 0,
+            "origin_ambiguous": 0,
+            "units_per_meter": 238.80597,
+            "gl_version": 1125925676646400,
+            "min_gl_version": 1125912791744512,
+            "max_gl_version": 1125925676646400,
+            "swapchain_format": 35907,
+            "submitted_layer": 1,
+            "quad_submitted": 1,
+            "submitted_source": 1,
+            "native_submitted": 1,
+            "submitted_native_frame": 0,
+            "quad_distance_m": 2.0,
+            "quad_width_m": 2.0,
+            "quad_height_m": 1.5,
+            "losses": 0,
+            "submitted_surfaces": 2,
+            "surface_uploads": 59,
+            "surface_failures": 0
+          }
+        },
+        "reloaded": {
+          "state": {
+            "actor": 2148469728,
+            "input": 2148470748,
+            "weapon": 0,
+            "clip": " 8",
+            "reserve": " 23"
+          },
+          "status": {
+            "ready": 3,
+            "replacement": 3,
+            "captures": 123,
+            "failures": 0
+          },
+          "art": {
+            "panels": [
+              {
+                "side": "left",
+                "covered": 1256,
+                "transparent": 10033,
+                "error": 1
+              },
+              {
+                "side": "right",
+                "covered": 276,
+                "transparent": 5164,
+                "error": 0
+              }
+            ],
+            "outside_pixels": 0
+          },
+          "xr": {
+            "id": 0,
+            "ok": true,
+            "compiled": 1,
+            "enabled": 1,
+            "initialized": 1,
+            "running": 1,
+            "state": 5,
+            "tracking": 1,
+            "frame_open": 0,
+            "result": 0,
+            "stage": "submitted",
+            "runtime": "SteamVR/OpenXR",
+            "last_failure": "",
+            "last_failure_result": 0,
+            "view_flags": 15,
+            "waits": 126,
+            "submitted": 126,
+            "empty": 0,
+            "failures": 0,
+            "session_generation": 1,
+            "submitted_session_generation": 1,
+            "predicted_time": 1791832308438600,
+            "ipd_m": 0.063,
+            "origin_up_dot": 1.0,
+            "origin_inversion_streak": 0,
+            "origin_ambiguous": 0,
+            "units_per_meter": 238.80597,
+            "gl_version": 1125925676646400,
+            "min_gl_version": 1125912791744512,
+            "max_gl_version": 1125925676646400,
+            "swapchain_format": 35907,
+            "submitted_layer": 1,
+            "quad_submitted": 1,
+            "submitted_source": 1,
+            "native_submitted": 1,
+            "submitted_native_frame": 0,
+            "quad_distance_m": 2.0,
+            "quad_width_m": 2.0,
+            "quad_height_m": 1.5,
+            "losses": 0,
+            "submitted_surfaces": 2,
+            "surface_uploads": 137,
+            "surface_failures": 0
+          }
+        },
+        "resumed": {
+          "state": {
+            "actor": 2148469728,
+            "input": 2148470748,
+            "weapon": 0,
+            "clip": " 8",
+            "reserve": " 23"
+          },
+          "status": {
+            "ready": 3,
+            "replacement": 3,
+            "captures": 140,
+            "failures": 0
+          },
+          "art": {
+            "panels": [
+              {
+                "side": "left",
+                "covered": 1256,
+                "transparent": 10033,
+                "error": 1
+              },
+              {
+                "side": "right",
+                "covered": 276,
+                "transparent": 5164,
+                "error": 0
+              }
+            ],
+            "outside_pixels": 0
+          },
+          "xr": {
+            "id": 0,
+            "ok": true,
+            "compiled": 1,
+            "enabled": 1,
+            "initialized": 1,
+            "running": 1,
+            "state": 5,
+            "tracking": 1,
+            "frame_open": 0,
+            "result": 0,
+            "stage": "submitted",
+            "runtime": "SteamVR/OpenXR",
+            "last_failure": "",
+            "last_failure_result": 0,
+            "view_flags": 15,
+            "waits": 191,
+            "submitted": 191,
+            "empty": 0,
+            "failures": 0,
+            "session_generation": 1,
+            "submitted_session_generation": 1,
+            "predicted_time": 1791834458396700,
+            "ipd_m": 0.063,
+            "origin_up_dot": 1.0,
+            "origin_inversion_streak": 0,
+            "origin_ambiguous": 0,
+            "units_per_meter": 238.80597,
+            "gl_version": 1125925676646400,
+            "min_gl_version": 1125912791744512,
+            "max_gl_version": 1125925676646400,
+            "swapchain_format": 35907,
+            "submitted_layer": 1,
+            "quad_submitted": 49,
+            "submitted_source": 1,
+            "native_submitted": 49,
+            "submitted_native_frame": 0,
+            "quad_distance_m": 2.0,
+            "quad_width_m": 2.0,
+            "quad_height_m": 1.5,
+            "losses": 0,
+            "submitted_surfaces": 2,
+            "surface_uploads": 171,
+            "surface_failures": 0
+          }
+        },
+        "save-reloaded": {
+          "state": {
+            "actor": 2148469728,
+            "input": 2148470748,
+            "weapon": 0,
+            "clip": " 8",
+            "reserve": " 24"
+          },
+          "status": {
+            "ready": 3,
+            "replacement": 3,
+            "captures": 169,
+            "failures": 0
+          },
+          "art": {
+            "panels": [
+              {
+                "side": "left",
+                "covered": 1256,
+                "transparent": 10033,
+                "error": 1
+              },
+              {
+                "side": "right",
+                "covered": 268,
+                "transparent": 5172,
+                "error": 0
+              }
+            ],
+            "outside_pixels": 0
+          },
+          "xr": {
+            "id": 0,
+            "ok": true,
+            "compiled": 1,
+            "enabled": 1,
+            "initialized": 1,
+            "running": 1,
+            "state": 5,
+            "tracking": 1,
+            "frame_open": 0,
+            "result": 0,
+            "stage": "submitted",
+            "runtime": "SteamVR/OpenXR",
+            "last_failure": "",
+            "last_failure_result": 0,
+            "view_flags": 15,
+            "waits": 219,
+            "submitted": 219,
+            "empty": 0,
+            "failures": 0,
+            "session_generation": 1,
+            "submitted_session_generation": 1,
+            "predicted_time": 1791836258753300,
+            "ipd_m": 0.063,
+            "origin_up_dot": 1.0,
+            "origin_inversion_streak": 0,
+            "origin_ambiguous": 0,
+            "units_per_meter": 238.80597,
+            "gl_version": 1125925676646400,
+            "min_gl_version": 1125912791744512,
+            "max_gl_version": 1125925676646400,
+            "swapchain_format": 35907,
+            "submitted_layer": 1,
+            "quad_submitted": 49,
+            "submitted_source": 1,
+            "native_submitted": 49,
+            "submitted_native_frame": 0,
+            "quad_distance_m": 2.0,
+            "quad_width_m": 2.0,
+            "quad_height_m": 1.5,
+            "losses": 0,
+            "submitted_surfaces": 2,
+            "surface_uploads": 227,
+            "surface_failures": 0
+          }
+        }
+      },
+      "paused": {
+        "ready": 0,
+        "replacement": 0,
+        "captures": 127,
+        "failures": 0
+      },
+      "fallback": {
+        "left-lost": {
+          "ready": 3,
+          "replacement": 2,
+          "captures": 174,
+          "failures": 0
+        },
+        "right-lost": {
+          "ready": 3,
+          "replacement": 0,
+          "captures": 178,
+          "failures": 0
+        },
+        "recovered": {
+          "ready": 3,
+          "replacement": 3,
+          "captures": 182,
+          "failures": 0
+        },
+        "focus-lost": {
+          "ready": 3,
+          "replacement": 0,
+          "captures": 186,
+          "failures": 0
+        }
+      },
+      "restoration": {
+        "id": 0,
+        "ok": true,
+        "plans": 0,
+        "planned": 0,
+        "wanted": 0,
+        "refused": 0,
+        "passes": 760,
+        "aborted": 0,
+        "discarded": 0,
+        "watchdog": 0,
+        "vram_leaks": 0,
+        "nesting_repairs": 0,
+        "device_reads": 0,
+        "last_device_read": "0x00000000",
+        "last_device_read_width": 0,
+        "verify_checks": 760,
+        "verify_mismatch": 0,
+        "dropped": {
+          "spu": 0,
+          "cd": 0,
+          "timer": 0,
+          "dma": 0,
+          "gpu": 0,
+          "other": 0
+        },
+        "last_pass_ms": 19.294,
+        "avg_pass_ms": 11.779,
+        "avg_begin_ms": 0.72,
+        "avg_guest_ms": 9.755,
+        "avg_end_ms": 0.758,
+        "avg_restore_ms": 0.313,
+        "guest_cycles_last": 1210730,
+        "disabled": 0,
+        "promotions": 0,
+        "pass_presents": 0,
+        "blended_presents": 0,
+        "expired": 0,
+        "late_presents": 0,
+        "unmatched_flips": 0,
+        "early_presents": 0,
+        "cost_us": 0,
+        "cost_rewarms": 0,
+        "frame_images": 0,
+        "journaled": 376,
+        "image_textures": 0,
+        "image_bytes": 0,
+        "status": 1,
+        "backups_reused": 380,
+        "pass_attempts": 760,
+        "argument_refused": 0,
+        "status_refused": 0,
+        "begin_refused": 0,
+        "checkpoint_refused": 0,
+        "spans": 0,
+        "span_failures": 0,
+        "local_views": 0,
+        "local_attempts": 0,
+        "local_status": 4,
+        "admission": {
+          "plans": 0,
+          "frame": 0,
+          "zero_credit_refusals": 0,
+          "idle_ms": 0.0,
+          "present_ms": 0.0,
+          "prior_pass_ms": 0.0,
+          "present_reserve_ms": 0.0,
+          "spare_ms": 0.0,
+          "frame_ms": 0.0,
+          "cost_ms": 0.0,
+          "budget_ms": 0.0,
+          "wanted": 0,
+          "planned": 0
+        },
+        "last_failure": null,
+        "last_abort_detail": "",
+        "span_fail": {
+          "reason": 0,
+          "pc": "0x00000000",
+          "start": "0x00000000",
+          "stop": "0x00000000",
+          "ra": "0x00000000",
+          "after": "0x00000000",
+          "insns": 0
+        }
+      },
+      "stereo": {
+        "id": 0,
+        "ok": true,
+        "attempts": 190,
+        "pairs": 190,
+        "refused": 0,
+        "failed": 0,
+        "shed": 0,
+        "status": 0,
+        "last_pair_id": 190,
+        "last_guest_cycle": 3085122669,
+        "eye_cycles": [
+          3085122669,
+          3085122669
+        ],
+        "eye_hashes": [
+          "4a9702d70bbb5a70",
+          "4a9702d70bbb5a70"
+        ],
+        "eye_view": [
+          [
+            8,
+            0,
+            0
+          ],
+          [
+            -8,
+            0,
+            0
+          ]
+        ],
+        "last_eye": 1,
+        "last_failure": "",
+        "last_failed_attempt": 0,
+        "last_failed_eye": 0,
+        "last_failed_reason": "",
+        "retained_pair_id": 0,
+        "shedding": 0,
+        "shed_streak": 0,
+        "shed_streak_ms": 0,
+        "shed_streak_max": 0,
+        "stale_frames": 0,
+        "budget_resets": 0,
+        "budget_ms": 11.111,
+        "budget_source": 1,
+        "checkpoint_saves": 380,
+        "checkpoint_reuses": 380,
+        "checkpoint_ram_bytes": 796917760,
+        "last_pair_age_ms": 0,
+        "last_pair_ms": 38.867,
+        "avg_pair_ms": 39.366,
+        "published": {
+          "valid": 1,
+          "pair_id": 190,
+          "guest_cycle": 3085122669,
+          "width": 512,
+          "height": 240,
+          "staged_mask": 3,
+          "mode": 1,
+          "presents": 377
+        },
+        "captures": []
+      },
+      "exit_code": 0,
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true
+    }
+  },
+  "tests": {
+    "python_unittest": {
+      "passed": 126,
+      "command": "python -m unittest discover -s vr/tests -p 'test_*.py'"
+    },
+    "strict_c": [
+      "test_hud.c + hud.c",
+      "test_hud_packets.c"
+    ],
+    "compiler_flags": "-std=c11 -Wall -Wextra -Werror",
+    "py_compile": "vr/tools/probe_native_hud.py"
+  },
+  "production": {
+    "raw_receipt": "analysis/vr-baseline/alpha-hud-production-final-20261028/sp/desktop/receipt.json",
+    "raw_sha256": "3fa1eeb174f3c791fbbebcdfe763cc6cfbb6f09367e701428f56fcf429c15bad",
+    "result": {
+      "case": "sp",
+      "desktop_check": true,
+      "weapons": [
+        "P38 SP visibility / flash / movement smoke"
+      ],
+      "binary_sha256": "e34bffb996dca8d39520fbf692d9a8f760280ec55186a4644be648b22be670f6",
+      "config_sha256": "9669410368d7c410916d1ddf21b7da230a7fddcb77ab6b5ae781fb0c93856c9f",
+      "build": {
+        "PSX_DEBUG_TOOLS": "OFF",
+        "MOHU_VR_DIAGNOSTICS": "ON",
+        "PSX_OPENXR": "ON",
+        "configuration": "Release"
+      },
+      "source_hashes": {
+        "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\saves\\openbios\\state_8001F844_slot03.pst": "85ca88b1ca3f54856530f4af0495dfc2c990a8529d868c3c4a350ac27511cc7a",
+        "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\saves\\openbios\\state_8001F844_slot03.thumb": "92297c45e412148d652aaea843a59b16e5da7af35805a88851b6eb572ea32640"
+      },
+      "physical_acceptance": false,
+      "operator_feedback": null,
+      "forced_cleanup": false,
+      "environment": {
+        "PSX_DEV_INPUT": "0",
+        "PSX_VSYNC": "0",
+        "PSX_DITHERING": "0",
+        "PSX_STEREO_SHED": "0",
+        "PSX_INTERNAL_RESOLUTION": "1080p",
+        "PSX_RENDER_PASS_VERIFY": "0",
+        "PSX_VR_MOVEMENT": "1",
+        "PSX_VR_HEAD_FRUSTUM": "1",
+        "PSX_VR_SUPPRESS_FLAT_HUD": "1",
+        "PSX_VR_LASER": "0",
+        "PSX_VR_WEAPON_POSE": "1",
+        "MOHU_VR_P38_CALIBRATED": "0",
+        "MOHU_VR_P38_AIM": "0",
+        "MOHU_VR_MP_CONTROL": "0",
+        "MOHU_VR_MP_FRUSTUM": "0",
+        "MOHU_VR_STEREO_PROOF": "1",
+        "MOHU_VR_EYE_RENDER_VIEW": "1",
+        "MOHU_VR_EYE_GUEST_SUBMIT": "1",
+        "MOHU_VR_EYE_OFFSET": "0",
+        "MOHU_VR_WEAPON_CALIBRATED": "1",
+        "MOHU_VR_WEAPON_AIM": "1",
+        "MOHU_VR_WEAPON_GUN_ONLY": "1",
+        "PSX_OPENXR_ENABLE": "0",
+        "PSX_LOAD_SLOT": "3",
+        "PSX_FRAME_REPORT_MS": "1000",
+        "PSX_RUNTIME_PERF_DIAG": "1",
+        "PSX_RUNTIME_PERF_DIAG_MS": "1000",
+        "MOHU_VR_UNITS_PER_METER": "238.80597014925373",
+        "MOHU_VR_WEAPON_TRACE": "0",
+        "MOHU_VR_SP_WEAPON_SPARE_ARENA": "1",
+        "PSX_OPENXR_READY_FILE": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\alpha-hud-production-final-20261028\\sp\\desktop\\startup.json"
+      },
+      "exit_code": 0,
+      "elapsed_seconds": 8.181967800017446,
+      "headset_ready": false,
+      "final_stereo": [
+        "210",
+        "210",
+        "1"
+      ],
+      "native_calls": 1770355,
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "transport_passed": true
+    },
+    "binary_sha256": "e34bffb996dca8d39520fbf692d9a8f760280ec55186a4644be648b22be670f6"
+  },
+  "post_xr_control_changes": [
+    "Added read-only SP camera diagnostic and exercised it in bounded SP discovery.",
+    "Hoisted constant player/input/replacement reads out of the HUD OT loop; production rebuilt and SP smoke rerun."
+  ],
+  "next_sp_combat": {
+    "status": "open, no accepted linked NPC damage/isolation",
+    "offline_damage_entry": "8004E0C0",
+    "offline_subtract": "8004E13C",
+    "offline_store": "8004E144",
+    "camera_command": "mohu.vr.shot sp-camera",
+    "slot3_discovery": "analysis/vr-baseline/alpha-sp-npc-discovery-20261028/receipt.json",
+    "slot3_limit": "Initial damage filter used wrong MP span; not damage absence evidence; no clear-line-of-sight target established.",
+    "slot0_limit": "analysis/vr-baseline/alpha-sp-npc-slot0-20261028 failed compatible save load; do not repeat unchanged."
+  },
+  "limits": [
+    "No physical headset used; comfort/readability remain open.",
+    "Briefing/movie/native mission-text scenarios and sustained production headset performance remain open.",
+    "Production smoke has no XR surface uploads or matte readback; it is startup/clean-close evidence only.",
+    "R6 real SP NPC damage/isolation and broader SP shot-family adapter remain open.",
+    "MP calibration checks do not establish SP combat or release acceptance.",
+    "Unaccepted discovery/harness runs are retained in ignored analysis and not promoted to pass evidence."
+  ]
+}
