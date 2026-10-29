@@ -1,16 +1,17 @@
 {
-  "schema": 1,
+  "schema": 2,
   "date": "2026-10-30",
   "scope": "M1 real SP 80010CF0/80011424 input capture",
   "build": {
-    "binary_sha256": "4f21331cbb14f08a0a1c9af3bb37b583f527f213943cae46f9cec93a293139be",
+    "binary_sha256": "e928dd146571fe7849d37907153c003d4b962bfc97872c5b16e1e31e34789218",
     "option": "MOHU_VR_WORLD_CAPTURE=ON (diagnostic link-wrap build)",
-    "normal_play_default": "option OFF; hooks inert unless MOHU_SP_WORLD_CAPTURE is set",
-    "reason": "generated CPS bodies call psx_mod_function_entry only for the game.toml hook list, which does not include 0x80010CF0/0x80011424"
+    "normal_play_default": "option OFF; capture is inert unless MOHU_SP_WORLD_CAPTURE is set",
+    "reason": "generated CPS bodies call psx_mod_function_entry only for the game.toml hook list, which does not include 0x80010CF0/80011424"
   },
   "capture_contract": {
     "packet_entry": "0x80010CF0 with ra=0x8009A51C",
     "face_entry": "0x80011424 with ra=0x80011008, gpr19=0x1F800000",
+    "face_packet_ptr": "gpr[4] at face entry; dumped after the real 80011424 returns",
     "record_index": "upper 16 bits of base_word[1] (half[face+6])",
     "record_address": "word[0x1F8003E8] + index*12",
     "face_window": "[s7-8, s7+8), s7 = face+8, 16 bytes",
@@ -21,31 +22,33 @@
     "Caller is 0x8009A51C; packet range begin=0x80138390, limit=0x80144FA7 on both scenes.",
     "Level pointer in s2 resolves sub/root/vertex table/count using the decoder layout (slot 2 draw 0: root 0x8010BA48, count 1444, table 0x8010FE4C).",
     "The per-face lookup is index = half[face+6] = upper 16 bits of the second 8-byte strip word, and the record is table[index]+index*12.",
-    "The 12-byte record is six independent 16-bit fields. The packet body uses its low halves at packet +0x38/+0x3C/+0x40 and its high halves through other packet fields after adding a base.",
+    "The 12-byte record is six 16-bit fields.",
+    "Slot 2: the three record words appear verbatim in the face packet at offsets 3, 6 and 9 (20 of 32 captured faces), alongside words such as 0x007B00E2 that look like packed UVs.",
     "The record table base is a runtime pointer (0x801259BC for slot 2 draw 0), not a static level field."
   ],
   "not_proven": [
-    "Whether each 16-bit half is a UV, a coordinate delta or another parameter.",
-    "Texture page, CLUT, shading and semi-transparency fields; they are not in the 12-byte record.",
+    "The mapping is not universal: slot 5 contains the record word in the captured packet for only 3 of 32 faces, and its packet layout differs.",
+    "Whether each 16-bit half is a UV, a color or another parameter.",
+    "Texture page, CLUT, shading and semi-transparency fields; they are not in the 12-byte record and were not found as GP0 draw-mode words in the captured packet window.",
     "Decoded triangle counts/winding/bounds against the captured arena: the capture does not dump the full tree/vertex table."
   ],
   "runs": [
     {
       "slot": 2,
       "fixture": "slot02",
-      "runtime_receipt": "analysis\\vr-captures\\slot2-wrap-20261030\\receipt.json",
-      "capture": "analysis\\vr-captures\\slot2-wrap-20261030\\world-capture.txt",
-      "summary": "analysis\\vr-captures\\slot2-wrap-20261030\\summary.json",
-      "binary_sha256": "4f21331cbb14f08a0a1c9af3bb37b583f527f213943cae46f9cec93a293139be",
+      "runtime_receipt": "analysis\\vr-captures\\slot2-ptr-20261030\\receipt.json",
+      "capture": "analysis\\vr-captures\\slot2-ptr-20261030\\world-capture.txt",
+      "summary": "analysis\\vr-captures\\slot2-ptr-20261030\\summary.json",
+      "binary_sha256": "e928dd146571fe7849d37907153c003d4b962bfc97872c5b16e1e31e34789218",
       "config_sha256": "34ea40ba6c65ec3e8d4a7b5a50537e07ed731cb00244b99414f92b113240b2c7",
       "source_hashes": {
         "state_8001F844_slot02.pst": "dd1c87925c8480198d04e8d7b38c67c0099ed4985463f7dc4e46731c80f90ceb",
         "state_8001F844_slot02.thumb": "332196dd7003ad841e25a9320fc138d2a5886ce9a5e47a494894c16c178e9b55"
       },
       "complete": true,
-      "canonical_guest_hz": 60.00272727272727,
+      "canonical_guest_hz": 59.999545454545455,
       "capture_env": {
-        "MOHU_SP_WORLD_CAPTURE": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-captures\\slot2-wrap-20261030\\world-capture.txt",
+        "MOHU_SP_WORLD_CAPTURE": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-captures\\slot2-ptr-20261030\\world-capture.txt",
         "MOHU_SP_WORLD_CAPTURE_DRAWS": "3",
         "MOHU_SP_WORLD_CAPTURE_FACES": "32"
       },
@@ -95,71 +98,96 @@
       ],
       "faces": 32,
       "distinct_records": 17,
-      "record_examples": [
+      "faces_with_record_word_in_packet": 20,
+      "matches": [
         {
-          "hash": "0x10201334",
-          "indices": [
-            207,
-            207
+          "face": 0,
+          "offsets": [
+            3,
+            6,
+            9
           ],
-          "half_words": [
-            16256,
-            31939,
-            191,
-            12302,
-            16319,
-            0
-          ],
-          "record_hex": "803fc37cbf000e30bf3f0000"
+          "packet_ptr": "0x801321C0"
         },
         {
-          "hash": "0x5A9A9DAE",
-          "indices": [
-            208
+          "face": 1,
+          "offsets": [
+            3,
+            6,
+            9
           ],
-          "half_words": [
-            16256,
-            31939,
-            128,
-            12302,
-            191,
-            0
-          ],
-          "record_hex": "803fc37c80000e30bf000000"
+          "packet_ptr": "0x801321E8"
         },
         {
-          "hash": "0xE350B5FB",
-          "indices": [
-            209
+          "face": 2,
+          "offsets": [
+            3,
+            6,
+            9
           ],
-          "half_words": [
-            65471,
-            31810,
-            65408,
-            12300,
-            49343,
-            0
+          "packet_ptr": "0x80132210"
+        },
+        {
+          "face": 3,
+          "offsets": [
+            3,
+            6,
+            9
           ],
-          "record_hex": "bfff427c80ff0c30bfc00000"
+          "packet_ptr": "0x80132238"
+        },
+        {
+          "face": 4,
+          "offsets": [
+            3,
+            6,
+            9
+          ],
+          "packet_ptr": "0x80132260"
+        },
+        {
+          "face": 5,
+          "offsets": [
+            3,
+            6,
+            9
+          ],
+          "packet_ptr": "0x80132288"
+        },
+        {
+          "face": 7,
+          "offsets": [
+            3,
+            6,
+            9
+          ],
+          "packet_ptr": "0x801322B0"
+        },
+        {
+          "face": 9,
+          "offsets": [
+            3
+          ],
+          "packet_ptr": "0x801322D8"
         }
       ]
     },
     {
       "slot": 5,
       "fixture": "slot05",
-      "runtime_receipt": "analysis\\vr-captures\\slot5-wrap-20261030\\receipt.json",
-      "capture": "analysis\\vr-captures\\slot5-wrap-20261030\\world-capture.txt",
-      "summary": "analysis\\vr-captures\\slot5-wrap-20261030\\summary.json",
-      "binary_sha256": "4f21331cbb14f08a0a1c9af3bb37b583f527f213943cae46f9cec93a293139be",
+      "runtime_receipt": "analysis\\vr-captures\\slot5-ptr-20261030\\receipt.json",
+      "capture": "analysis\\vr-captures\\slot5-ptr-20261030\\world-capture.txt",
+      "summary": "analysis\\vr-captures\\slot5-ptr-20261030\\summary.json",
+      "binary_sha256": "e928dd146571fe7849d37907153c003d4b962bfc97872c5b16e1e31e34789218",
       "config_sha256": "34ea40ba6c65ec3e8d4a7b5a50537e07ed731cb00244b99414f92b113240b2c7",
       "source_hashes": {
         "state_8001F844_slot05.pst": "d60a32a58b59fa012f9853c16e65f47ad3990680a1bd77869ffb4c5a992663fe",
         "state_8001F844_slot05.thumb": "b3a4099c76c0ce025076113f37322f2b2b08219c4696050140818bd624e48951"
       },
       "complete": true,
-      "canonical_guest_hz": 59.995,
+      "canonical_guest_hz": 60.02727272727273,
       "capture_env": {
-        "MOHU_SP_WORLD_CAPTURE": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-captures\\slot5-wrap-20261030\\world-capture.txt",
+        "MOHU_SP_WORLD_CAPTURE": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-captures\\slot5-ptr-20261030\\world-capture.txt",
         "MOHU_SP_WORLD_CAPTURE_DRAWS": "3",
         "MOHU_SP_WORLD_CAPTURE_FACES": "32"
       },
@@ -209,51 +237,32 @@
       ],
       "faces": 32,
       "distinct_records": 28,
-      "record_examples": [
+      "faces_with_record_word_in_packet": 3,
+      "matches": [
         {
-          "hash": "0x30D0FFCD",
-          "indices": [
-            636
+          "face": 24,
+          "offsets": [
+            13,
+            16,
+            19
           ],
-          "half_words": [
-            65344,
-            32641,
-            49216,
-            12299,
-            65407,
-            0
-          ],
-          "record_hex": "40ff817f40c00b307fff0000"
+          "packet_ptr": "0x80148C10"
         },
         {
-          "hash": "0xB0BA4527",
-          "indices": [
-            637
+          "face": 28,
+          "offsets": [
+            13,
+            16,
+            19
           ],
-          "half_words": [
-            65407,
-            32641,
-            49216,
-            12299,
-            49279,
-            0
-          ],
-          "record_hex": "7fff817f40c00b307fc00000"
+          "packet_ptr": "0x80148C38"
         },
         {
-          "hash": "0x4AE23C19",
-          "indices": [
-            638
+          "face": 31,
+          "offsets": [
+            13
           ],
-          "half_words": [
-            65406,
-            32641,
-            49278,
-            12299,
-            65088,
-            0
-          ],
-          "record_hex": "7eff817f7ec00b3040fe0000"
+          "packet_ptr": "0x80148D78"
         }
       ]
     }
@@ -261,6 +270,7 @@
   "limits": [
     "Diagnostic wrap build; not the production binary.",
     "Three draws and 32 faces per scene.",
+    "The packet dump is gpr[4] at the face entry after 80011424 returns; a path that writes elsewhere is not captured.",
     "Scratch/range dumps are read at the next packet entry and describe the prior draw.",
     "One canonical run per scene; no XR/HUD/hands."
   ]

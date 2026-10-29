@@ -16,4 +16,5 @@ void __wrap_func_80010CF0(CPUState* cpu) {
 void __wrap_func_80011424(CPUState* cpu) {
     mohu_world_capture_face(cpu);
     __real_func_80011424(cpu);
+    mohu_world_capture_face_done();
 }

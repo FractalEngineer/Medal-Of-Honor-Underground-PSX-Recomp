@@ -44,6 +44,21 @@ class CaptureSummaryTest(unittest.TestCase):
         self.assertEqual(report['draws'][0]['root'], '0x8010BA48')
         self.assertEqual(report['draws'][0]['vertex_count'], 1444)
 
+    def test_packet_evidence_is_checked(self):
+        packet = bytes(range(0x60))
+        text = HEADER + (
+            f'face=0 packet_captured=1 packet_hash=0x'
+            f'{capture.fnv1a(packet):08X} packet={packet.hex()}\n')
+        report = capture.summarize(self.write(text))
+        evidence = report['face_evidence'][0]
+        self.assertTrue(evidence['packet_captured'])
+        self.assertEqual(len(evidence['packet_words']), 24)
+        self.assertEqual(evidence['packet_words'][0], '0x03020100')
+
+        bad = text.replace(f'{capture.fnv1a(packet):08X}', '00000000')
+        with self.assertRaises(ValueError):
+            capture.summarize(self.write(bad))
+
     def test_wrong_record_base_is_refused(self):
         text = HEADER.replace('record_base=0x8011003C',
                               'record_base=0x80110040')

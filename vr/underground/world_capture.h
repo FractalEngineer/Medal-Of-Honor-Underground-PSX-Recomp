@@ -12,5 +12,6 @@ void mohu_world_capture_register(void);
 void mohu_world_capture_activate(void);
 void mohu_world_capture_packet(struct CPUState* cpu);
 void mohu_world_capture_face(struct CPUState* cpu);
+void mohu_world_capture_face_done(void);
 
 #endif

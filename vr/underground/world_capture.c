@@ -32,6 +32,7 @@
 #define CAPTURE_FACE_WINDOW 16u
 #define CAPTURE_TABLE_ENTRIES 16u
 #define CAPTURE_TABLE_SIZE (CAPTURE_TABLE_ENTRIES * CAPTURE_RECORD_SIZE)
+#define CAPTURE_PACKET_SIZE 0x60u
 
 typedef struct {
     uint32_t ra, begin, limit, a2, a3, sp, gp, level, sub, root, count, table;
@@ -49,6 +50,10 @@ typedef struct {
     uint8_t face_bytes[CAPTURE_FACE_WINDOW];
     uint8_t record[CAPTURE_RECORD_SIZE];
     uint8_t table[CAPTURE_TABLE_SIZE];
+    uint32_t packet_ptr;                  /* gpr[4] at face entry */
+    uint8_t packet[CAPTURE_PACKET_SIZE];  /* packet bytes after this face */
+    uint32_t packet_hash;
+    int packet_dumped;
 } FaceCapture;
 
 static DrawCapture g_draws[CAPTURE_MAX_DRAWS];
@@ -110,6 +115,20 @@ static void capture_previous_scratch(void) {
     }
 }
 
+/* Dump the face's packet destination (gpr[4] at its entry). The wrapper calls
+ * this immediately after 80011424 returns; the fallback call at the next face
+ * entry only runs if the wrapper was not used. */
+static void capture_previous_face_packet(void) {
+    if (g_face_count == 0) return;
+    FaceCapture* face = &g_faces[g_face_count - 1u];
+    if (face->packet_dumped) return;
+    if (!face->packet_ptr || !span(face->packet_ptr, CAPTURE_PACKET_SIZE))
+        return;
+    copy_span(face->packet, face->packet_ptr, CAPTURE_PACKET_SIZE);
+    face->packet_hash = fnv1a(face->packet, CAPTURE_PACKET_SIZE);
+    face->packet_dumped = 1;
+}
+
 static void write_hex(FILE* file, const uint8_t* data, unsigned size) {
     static const char hex[] = "0123456789abcdef";
     for (unsigned i = 0; i < size; ++i) {
@@ -156,10 +175,11 @@ static void flush_capture(void) {
         fprintf(file,
                 "face=%u draw=%u ra=0x%08X s7=0x%08X face=0x%08X "
                 "index=%u table_base=0x%08X record_base=0x%08X ok=%u "
-                "flags=0x%08X gpr27=0x%08X d8=0x%08X dc=0x%08X\n",
+                "flags=0x%08X gpr27=0x%08X d8=0x%08X dc=0x%08X "
+                "packet_ptr=0x%08X\n",
                 i, f->draw, f->ra, f->s7, f->face, f->index, f->table_base,
                 f->record_base, f->record_ok, f->flags, f->gpr27, f->table_d8,
-                f->table_dc);
+                f->table_dc, f->packet_ptr);
         fprintf(file, "face=%u gpr=", i);
         for (unsigned r = 0; r < 32; ++r)
             fprintf(file, "%08X", f->gpr[r]);
@@ -170,6 +190,11 @@ static void flush_capture(void) {
         write_hex(file, f->record, CAPTURE_RECORD_SIZE);
         fprintf(file, " table=");
         write_hex(file, f->table, f->table_ok * CAPTURE_TABLE_SIZE);
+        fputc('\n', file);
+        fprintf(file, "face=%u packet_captured=%d packet_hash=0x%08X packet=",
+                i, f->packet_dumped, f->packet_hash);
+        write_hex(file, f->packet,
+                  f->packet_dumped ? CAPTURE_PACKET_SIZE : 0u);
         fputc('\n', file);
     }
     fclose(file);
@@ -217,8 +242,10 @@ static void capture_packet(CPUState* cpu, uint32_t address) {
 
 static void capture_face(CPUState* cpu, uint32_t address) {
     (void)address;
-    if (!g_enabled || !cpu || g_face_count >= g_face_limit) return;
+    if (!g_enabled || !cpu) return;
     if (cpu->gpr[31] != 0x80011008u || cpu->gpr[19] != 0x1F800000u) return;
+    capture_previous_face_packet();
+    if (g_face_count >= g_face_limit) return;
 
     FaceCapture* face = &g_faces[g_face_count];
     memset(face, 0, sizeof *face);
@@ -228,6 +255,7 @@ static void capture_face(CPUState* cpu, uint32_t address) {
     face->face = face->s7 - 8u;
     face->flags = cpu->gpr[22];
     face->gpr27 = cpu->gpr[27];
+    face->packet_ptr = cpu->gpr[4];
     memcpy(face->gpr, cpu->gpr, sizeof face->gpr);
 
     int window_ok = 0;
@@ -305,6 +333,11 @@ void mohu_world_capture_packet(CPUState* cpu) {
 
 void mohu_world_capture_face(CPUState* cpu) {
     capture_face(cpu, 0x80011424u);
+}
+
+void mohu_world_capture_face_done(void) {
+    if (!g_enabled) return;
+    capture_previous_face_packet();
 }
 
 void mohu_world_capture_register(void) {

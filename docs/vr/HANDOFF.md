@@ -67,9 +67,11 @@ Materials are **not** decoded
 slot-2/slot-5 capture (`MOHU_VR_WORLD_CAPTURE`, default OFF) confirms the
 `0x8009A51C` caller, the packet range, the level root/vertex table/count, and
 that `record_index` is the upper half of base word 1; its 12-byte table entry
-is six 16-bit parameter halves, **not** a material descriptor. Texture
-page/CLUT fields remain unmapped, and the capture does not yet include the
-full tree. [Receipt](../../vr/proof/sp-world-capture-receipt.json).
+is six 16-bit parameter halves, **not** a material descriptor. A per-face
+packet dump finds those words at packet offsets 3/6/9 for 20/32 slot-2 faces
+but only 3/32 slot-5 faces, so the relationship is real but not universal.
+Texture page/CLUT fields remain unmapped, and the capture does not yet include
+the full tree. [Receipt](../../vr/proof/sp-world-capture-receipt.json).
 Strict fixture `vr/tests/test_world_decode.c`; contract in
 [STATIC_WORLD_DECODER](STATIC_WORLD_DECODER.md). Next: map texpage/CLUT and
 dump the full tree for a count/winding/bounds comparison.

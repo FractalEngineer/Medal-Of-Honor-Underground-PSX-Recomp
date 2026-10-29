@@ -30,9 +30,13 @@ FACE_RE = re.compile(
     r"s7=0x([0-9A-Fa-f]{8}) face=0x([0-9A-Fa-f]{8}) index=(\d+) "
     r"table_base=0x([0-9A-Fa-f]{8}) record_base=0x([0-9A-Fa-f]{8}) "
     r"ok=(\d) flags=0x([0-9A-Fa-f]{8}) gpr27=0x([0-9A-Fa-f]{8}) "
-    r"d8=0x([0-9A-Fa-f]{8}) dc=0x([0-9A-Fa-f]{8})")
+    r"d8=0x([0-9A-Fa-f]{8}) dc=0x([0-9A-Fa-f]{8})"
+    r"(?: packet_ptr=0x([0-9A-Fa-f]{8}))?")
 FACE_BYTES_RE = re.compile(
     r"face=(\d+) face_bytes=([0-9a-f]+) record=([0-9a-f]+) table=([0-9a-f]*)")
+FACE_PACKET_RE = re.compile(
+    r"face=(\d+) packet_captured=(\d) packet_hash=0x([0-9A-Fa-f]+) "
+    r"packet=([0-9a-f]*)")
 
 
 def fnv1a(data):
@@ -90,6 +94,7 @@ def summarize(path):
 
     faces = {}
     blobs = {}
+    packets = {}
     for line in lines:
         m = FACE_RE.match(line)
         if m:
@@ -109,12 +114,20 @@ def summarize(path):
                 "gpr27": int(m.group(11), 16),
                 "d8": int(m.group(12), 16),
                 "dc": int(m.group(13), 16),
+                "packet_ptr": (int(m.group(14), 16)
+                               if m.group(14) else None),
             }
             continue
         m = FACE_BYTES_RE.match(line)
         if m:
             blobs[int(m.group(1))] = (bytes.fromhex(m.group(2)),
                                       bytes.fromhex(m.group(3)))
+            continue
+        m = FACE_PACKET_RE.match(line)
+        if m:
+            packets[int(m.group(1))] = (int(m.group(2)),
+                                        bytes.fromhex(m.group(4)),
+                                        int(m.group(3), 16))
 
     if not summary:
         fail("no draw records")
@@ -150,6 +163,29 @@ def summarize(path):
         if entry["record"] != record:
             fail("record hash collision")
         entry["half_words"] = list(struct.unpack("<6H", record))
+
+    face_evidence = []
+    for index in sorted(faces):
+        record = blobs[index][1]
+        captured, data, stored_hash = packets.get(index, (0, b'', 0))
+        if captured:
+            if len(data) != 0x60:
+                fail(f"face {index}: expected 96 packet bytes")
+            if fnv1a(data) != stored_hash:
+                fail(f"face {index}: packet hash mismatch")
+        face_evidence.append({
+            "face": index,
+            "index": faces[index]["index"],
+            "packet_ptr": (f"0x{faces[index]['packet_ptr']:08X}"
+                           if faces[index]["packet_ptr"] is not None else None),
+            "record_hash": f"0x{fnv1a(record):08X}",
+            "record_half_words": list(struct.unpack("<6H", record)),
+            "packet_captured": bool(captured),
+            "packet_hash": f"0x{stored_hash:08X}" if captured else None,
+            "packet_words": ([f"0x{word:08X}" for word in
+                              struct.unpack("<%dI" % (len(data) // 4), data)]
+                             if captured else []),
+        })
 
     report = {
         "schema": 1,
@@ -187,6 +223,7 @@ def summarize(path):
              "record_hex": value["record"].hex()}
             for key, value in distinct.items()
         ],
+        "face_evidence": face_evidence,
     }
     for index in sorted(summary):
         draw = summary[index]

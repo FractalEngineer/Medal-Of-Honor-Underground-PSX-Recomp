@@ -126,9 +126,17 @@ environment variable.
 | `gpr[27]+0xD8/+0xDC` | `0x0B`, `0x0` | read before the 40-entry compare at `0x80010F7C` | value captured, meaning open |
 | texture page / CLUT / shading / semi-transparency | absent | not in the 12-byte record | open |
 
+A second capture dumped `gpr[4]` at the face entry after `80011424` returned.
+In slot 2 the three record words appear verbatim in the face packet at word
+offsets 3, 6 and 9 for **20 of 32** captured faces, interleaved with words such
+as `0x007B00E2` that look like packed UVs. Slot 5 matches only **3 of 32** and
+uses a different packet layout, so this is a captured relationship, not a
+universal one. No GP0 `0xE1..0xE6` draw-mode word appeared in the 96-byte
+window, so texture page/CLUT stay unmapped.
+
 **Correction:** the 12-byte record is not a material descriptor. Whether each
-half is a UV, a coordinate delta or another parameter is still unproven, so it
-is deliberately not named. Do not use these fields to select a texture.
+half is a UV, a color or another parameter is still unproven, so it is
+deliberately not named. Do not use these fields to select a texture.
 
 Still open: the packet/preflight fields that carry texture page, CLUT, shading
 and semi-transparency, and a full tree/vertex dump to compare decoded triangle
