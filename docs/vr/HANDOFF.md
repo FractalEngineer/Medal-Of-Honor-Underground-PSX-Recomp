@@ -70,8 +70,12 @@ that `record_index` is the upper half of base word 1; its 12-byte table entry
 is six 16-bit parameter halves, **not** a material descriptor. A per-face
 packet dump finds those words at packet offsets 3/6/9 for 20/32 slot-2 faces
 but only 3/32 slot-5 faces, so the relationship is real but not universal.
-Texture page/CLUT fields remain unmapped, and the capture does not yet include
-the full tree. [Receipt](../../vr/proof/sp-world-capture-receipt.json).
+The decoder also runs once on each live arena with masks bypassed and returns
+`status=ok`: slot 2 decodes 203 nodes / 134 leaves / 1756 triangles, slot 5
+237 / 155 / 1932. The global masks prune slot 2 to 25 leaves and slot 5 to
+zero, so they are view-specific, not a resource filter.
+Texture page/CLUT fields remain unmapped, and no native culling count exists
+yet. [Receipt](../../vr/proof/sp-world-capture-receipt.json).
 Strict fixture `vr/tests/test_world_decode.c`; contract in
 [STATIC_WORLD_DECODER](STATIC_WORLD_DECODER.md). Next: map texpage/CLUT and
 dump the full tree for a count/winding/bounds comparison.

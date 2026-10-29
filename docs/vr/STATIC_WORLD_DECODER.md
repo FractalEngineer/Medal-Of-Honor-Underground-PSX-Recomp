@@ -139,8 +139,26 @@ half is a UV, a color or another parameter is still unproven, so it is
 deliberately not named. Do not use these fields to select a texture.
 
 Still open: the packet/preflight fields that carry texture page, CLUT, shading
-and semi-transparency, and a full tree/vertex dump to compare decoded triangle
-counts, winding and bounds against the captured arena.
+and semi-transparency, and a native reference count for culling/subdivision.
+
+## Real-arena census (2026-10-30)
+
+When capture is armed, the decoder runs once on the live root/table/count from
+the first packet entry, with masks bypassed so every resident leaf is decoded.
+Both scenes returned `status=ok` with no rejection:
+
+| Scene | Root | Vertices | Nodes | Leaves | Triangles | Bounds min..max |
+|---|---|---:|---:|---:|---:|---|
+| slot 2 | `0x8010BA48` | 1444 | 203 | 134 | 1756 | `-904,-1829,961..2887,518,9137` |
+| slot 5 | `0x8010C788` | 1307 | 237 | 155 | 1932 | `-6245,-2428,-9468..1760,-1248,-3988` |
+
+With the global masks at `0x800B7490/0x800B7494` applied, slot 2 prunes to
+25 leaves / 324 triangles and slot 5 to zero leaves. The masks are
+view-specific, so a complete census must bypass them; the per-eye selector is
+the place to apply visibility.
+
+This proves the tree/strip walk terminates and covers the resident leaves on
+real data. It is **not** a native culling or subdivision comparison.
 
 ## Rejections (atomic, named)
 
@@ -181,8 +199,9 @@ arena, texture-page/CLUT mapping, subdivision decisions and textured output.
 
 1. Map the packet/preflight fields that carry texture page, CLUT, shading and
    semi-transparency; the 12-byte record is not one of them.
-2. Dump the full arena tree and vertex table for one captured draw, then run
-   the decoder on that dump and compare counts, winding and bounds.
+2. Capture a native triangle/face count from the packet builder or OT and
+   compare it with the 1756/1932 decoded triangles; the census proves the walk
+   terminates, not that native culling/subdivision matches.
 3. Wire the decoder into a default-OFF native census so the real arena root,
    record table and resource generation are recorded before the host renderer
    consumes it.

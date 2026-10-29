@@ -1,5 +1,5 @@
 {
-  "schema": 2,
+  "schema": 3,
   "date": "2026-10-30",
   "scope": "M1 real SP 80010CF0/80011424 input capture",
   "build": {
@@ -24,13 +24,15 @@
     "The per-face lookup is index = half[face+6] = upper 16 bits of the second 8-byte strip word, and the record is table[index]+index*12.",
     "The 12-byte record is six 16-bit fields.",
     "Slot 2: the three record words appear verbatim in the face packet at offsets 3, 6 and 9 (20 of 32 captured faces), alongside words such as 0x007B00E2 that look like packed UVs.",
-    "The record table base is a runtime pointer (0x801259BC for slot 2 draw 0), not a static level field."
+    "The record table base is a runtime pointer (0x801259BC for slot 2 draw 0), not a static level field.",
+    "The decoder decoded both real arenas with masks bypassed and no rejection: slot 2 54/25/324 with masks (203/134/1756 bypassed), slot 5 1/0/0 with masks (237/155/1932 bypassed). Counts are nodes/leaves/triangles."
   ],
   "not_proven": [
     "The mapping is not universal: slot 5 contains the record word in the captured packet for only 3 of 32 faces, and its packet layout differs.",
     "Whether each 16-bit half is a UV, a color or another parameter.",
     "Texture page, CLUT, shading and semi-transparency fields; they are not in the 12-byte record and were not found as GP0 draw-mode words in the captured packet window.",
-    "Decoded triangle counts/winding/bounds against the captured arena: the capture does not dump the full tree/vertex table."
+    "Decoded triangle counts/winding/bounds against the captured arena: the capture does not dump the full tree/vertex table.",
+    "No native triangle-count reference is captured yet; the census proves the tree/strip decode terminates and covers the resident leaves, not that native culling or subdivision matches."
   ],
   "runs": [
     {
@@ -273,5 +275,96 @@
     "The packet dump is gpr[4] at the face entry after 80011424 returns; a path that writes elsewhere is not captured.",
     "Scratch/range dumps are read at the next packet entry and describe the prior draw.",
     "One canonical run per scene; no XR/HUD/hands."
+  ],
+  "binary_sha256_current_normal_build": "bbcff007ff294ea6bcb645a94e39d1a32151a5a54e4df80b8a9505f9c23418dc",
+  "census_runs": [
+    {
+      "slot": 2,
+      "fixture": "slot02",
+      "runtime_receipt": "analysis\\vr-captures\\slot2-census2-20261030\\receipt.json",
+      "stdout": "analysis\\vr-captures\\slot2-census2-20261030\\stdout.log",
+      "binary_sha256": "bbcff007ff294ea6bcb645a94e39d1a32151a5a54e4df80b8a9505f9c23418dc",
+      "config_sha256": "34ea40ba6c65ec3e8d4a7b5a50537e07ed731cb00244b99414f92b113240b2c7",
+      "source_hashes": {
+        "state_8001F844_slot02.pst": "dd1c87925c8480198d04e8d7b38c67c0099ed4985463f7dc4e46731c80f90ceb",
+        "state_8001F844_slot02.thumb": "332196dd7003ad841e25a9320fc138d2a5886ce9a5e47a494894c16c178e9b55"
+      },
+      "complete": true,
+      "canonical_guest_hz": 59.99619047619048,
+      "mask_bypass": true,
+      "status": "ok",
+      "root": "0x8010BA48",
+      "vertex_table": "0x8010FE4C",
+      "vertex_count": 1444,
+      "masks": [
+        "0x03FF8000",
+        "0x00080000"
+      ],
+      "nodes_visited": 203,
+      "leaves_visited": 134,
+      "triangles": 1756,
+      "material_tokens": 1756,
+      "bounds": {
+        "min": [
+          -904,
+          -1829,
+          961
+        ],
+        "max": [
+          2887,
+          518,
+          9137
+        ]
+      },
+      "reject": [
+        "0x00000000",
+        "0x00000000",
+        0
+      ]
+    },
+    {
+      "slot": 5,
+      "fixture": "slot05",
+      "runtime_receipt": "analysis\\vr-captures\\slot5-census2-20261030\\receipt.json",
+      "stdout": "analysis\\vr-captures\\slot5-census2-20261030\\stdout.log",
+      "binary_sha256": "bbcff007ff294ea6bcb645a94e39d1a32151a5a54e4df80b8a9505f9c23418dc",
+      "config_sha256": "34ea40ba6c65ec3e8d4a7b5a50537e07ed731cb00244b99414f92b113240b2c7",
+      "source_hashes": {
+        "state_8001F844_slot05.pst": "d60a32a58b59fa012f9853c16e65f47ad3990680a1bd77869ffb4c5a992663fe",
+        "state_8001F844_slot05.thumb": "b3a4099c76c0ce025076113f37322f2b2b08219c4696050140818bd624e48951"
+      },
+      "complete": true,
+      "canonical_guest_hz": 60.00476190476191,
+      "mask_bypass": true,
+      "status": "ok",
+      "root": "0x8010C788",
+      "vertex_table": "0x80111234",
+      "vertex_count": 1307,
+      "masks": [
+        "0x3E00000F",
+        "0x08000000"
+      ],
+      "nodes_visited": 237,
+      "leaves_visited": 155,
+      "triangles": 1932,
+      "material_tokens": 1932,
+      "bounds": {
+        "min": [
+          -6245,
+          -2428,
+          -9468
+        ],
+        "max": [
+          1760,
+          -1248,
+          -3988
+        ]
+      },
+      "reject": [
+        "0x00000000",
+        "0x00000000",
+        0
+      ]
+    }
   ]
 }

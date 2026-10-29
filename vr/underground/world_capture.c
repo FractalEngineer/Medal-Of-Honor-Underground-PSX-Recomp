@@ -17,6 +17,11 @@
 #include "cpu_state.h"
 #include "mod_plugins.h"
 #include "raycast.h"
+#include "world_decode.h"
+
+#define CAPTURE_MASK0 0x800B7490u
+#define CAPTURE_MASK1 0x800B7494u
+#define CAPTURE_MASK_BYPASS 0x800B7498u
 
 #include <stdint.h>
 #include <stdio.h>
@@ -63,6 +68,7 @@ static unsigned g_draw_limit, g_face_limit;
 static int g_enabled, g_written;
 static const char* g_path;
 static int g_has_previous;
+static int g_census_done;
 
 static int span(uint32_t p, uint32_t size) {
     if (p & 3u) return 0;
@@ -127,6 +133,41 @@ static void capture_previous_face_packet(void) {
     copy_span(face->packet, face->packet_ptr, CAPTURE_PACKET_SIZE);
     face->packet_hash = fnv1a(face->packet, CAPTURE_PACKET_SIZE);
     face->packet_dumped = 1;
+}
+
+/* Decode the real arena once, from the captured root/table/count, so the
+ * decoder is exercised against actual guest data rather than a synthetic
+ * fixture. Diagnostic only; no mesh escapes this function. */
+static void capture_census(const DrawCapture* draw) {
+    if (g_census_done || !draw->root || !draw->table || !draw->count) return;
+    g_census_done = 1;
+    MohuWorldRequest request;
+    memset(&request, 0, sizeof request);
+    request.root = draw->root;
+    request.vertex_table = draw->table;
+    request.vertex_count = draw->count;
+    request.masks[0] = psx_mod_read_word(CAPTURE_MASK0);
+    request.masks[1] = psx_mod_read_word(CAPTURE_MASK1);
+    /* Census intent: every resident leaf, before view-dependent culling. */
+    request.bypass_masks = 1;
+    request.generation = 1;
+    MohuWorldMesh mesh;
+    MohuWorldReport report;
+    const MohuWorldStatus status = mohu_world_decode(&request, &mesh, &report);
+    fprintf(stdout,
+            "mohu-vr-world-census: status=%s root=0x%08X table=0x%08X "
+            "count=%u masks=0x%08X,0x%08X nodes=%u leaves=%u triangles=%u "
+            "tokens=%u bounds=%d,%d,%d..%d,%d,%d "
+            "reject=0x%08X/0x%08X/%u\n",
+            mohu_world_status_name(status), request.root, request.vertex_table,
+            request.vertex_count, request.masks[0], request.masks[1],
+            report.nodes_visited, report.leaves_visited,
+            report.triangles_decoded, mesh.material_tokens,
+            mesh.bounds_min[0], mesh.bounds_min[1], mesh.bounds_min[2],
+            mesh.bounds_max[0], mesh.bounds_max[1], mesh.bounds_max[2],
+            report.node, report.leaf, report.detail);
+    fflush(stdout);
+    mohu_world_mesh_free(&mesh);
 }
 
 static void write_hex(FILE* file, const uint8_t* data, unsigned size) {
@@ -236,6 +277,7 @@ static void capture_packet(CPUState* cpu, uint32_t address) {
         if (mohu_vr_ray_span(draw->sub, 0x18u))
             draw->root = psx_mod_read_word(draw->sub + 0x14u);
     }
+    capture_census(draw);
     g_has_previous = 1;
     ++g_draw_count;
 }
@@ -293,6 +335,7 @@ void mohu_world_capture_activate(void) {
     g_draw_count = g_face_count = 0;
     g_written = 0;
     g_has_previous = 0;
+    g_census_done = 0;
 
     g_path = getenv("MOHU_SP_WORLD_CAPTURE");
     g_enabled = g_path && *g_path;
