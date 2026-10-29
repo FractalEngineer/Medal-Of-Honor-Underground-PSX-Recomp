@@ -3592,18 +3592,33 @@ static int vr_head_frustum_filter_impl(CPUState* cpu, uint32_t address) {
         psx_mod_read_word(MOHU_VR_LEVEL_MASK1_ADDR),
     };
 
+    /* The native selector reads its far plane from the active camera's view
+     * descriptor, not the SP player's input. Preserve that range while the
+     * eye transform supplies head rotation, translation and angular frustum. */
+    const uint32_t camera = psx_mod_read_word(0x800AA160u);
+    const uint32_t input = mohu_vr_ray_span(camera, 0x3A0u)
+        ? psx_mod_read_word(camera + 0x39Cu) : 0u;
+    const uint32_t descriptor = mohu_vr_ray_span(input, 0xCCu)
+        ? psx_mod_read_word(input + 0xC8u) : 0u;
+    const int32_t far_q16 = mohu_vr_ray_span(descriptor, 0x44u)
+        ? (int32_t)psx_mod_read_word(descriptor + 0x40u) : 0;
+    if (far_q16 <= 0) {
+        g_head_frustum_fallbacks[g_stereo_current_eye]++;
+        return 0;
+    }
     uint32_t queue[MOHU_VR_LEVEL_TREE_LEAF_CAPACITY];
     unsigned count = 0;
     VR_SPAN_BEGIN(PSX_TRACE_GAME_SELECT);
     const int collected = mohu_vr_collect_tree(
             root, queue, &count, matrix, tr, &g_stereo_eye_view, cx, cy,
             masks, psx_mod_read_word(MOHU_VR_LEVEL_MASK_BYPASS_ADDR) != 0u,
-            g_head_frustum_keep_all);
+            g_head_frustum_keep_all, far_q16 / 65536.0);
     VR_SPAN_END(PSX_TRACE_GAME_SELECT);
     if (!collected) {
         g_head_frustum_fallbacks[g_stereo_current_eye]++;
         return 0;
     }
+
 
     for (unsigned i = 0; i < count; ++i) {
         psx_mod_write_word(
@@ -3877,10 +3892,113 @@ static bool vr_weapon_prepare_delta(void) {
     return true;
 }
 
+static bool vr_sp_weapon_model_valid(uint32_t input, uint32_t object,
+                                     uint8_t* id_out,
+                                     const MohuVrWeaponProfile** profile_out);
+
+static bool vr_sp_shot_pose(const MohuVrWeaponCalibration* calibration,
+                           int32_t position[3], int32_t angles[3]) {
+    uint32_t affine[8];
+    for (unsigned i = 0; i < 8u; ++i)
+        affine[i] = 0x00000000u;
+    double camera[9], inverse[9];
+    const double camera_translation[3] = {
+        (int32_t)g_sp_camera[5], (int32_t)g_sp_camera[6],
+        (int32_t)g_sp_camera[7],
+    };
+    for (unsigned i = 0; i < 9u; ++i)
+        camera[i] = (int16_t)(g_sp_camera[i / 2u] >>
+                              ((i & 1u) * 16u)) / 4096.0;
+    if (!mohu_vr_weapon_calibrated_control(
+            affine, g_weapon_delta_rotation, g_weapon_delta_translation,
+            g_openxr_units_per_meter, calibration) ||
+        !mohu_vr_laser_inverse(camera, inverse) ||
+        !mohu_vr_weapon_muzzle_shot(
+            affine, calibration, inverse, camera_translation,
+            position, angles)) {
+        return false;
+    }
+    return true;
+}
+
+/* Shared pose conversion for the two measured SP release branches. Both
+ * run after their final native origin writes. Never admit thrown types at
+ * the initial constructor, where the release can still overwrite the pose. */
+static bool vr_sp_petrol_release_pose(CPUState* cpu, uint32_t shot) {
+    const uint32_t owner = psx_mod_read_word(MOHU_VR_SP_PLAYER_POINTER_ADDR);
+    if (owner < 0x800B0000u || owner > 0x801FC000u ||
+        !mohu_vr_sp_petrol_release_valid(
+            shot, cpu->gpr[17], owner, cpu->gpr[21], cpu->gpr[18],
+            cpu->gpr[31]) ||
+        psx_mod_read_word(owner + 8u) != 1u ||
+        psx_mod_read_word(owner + 0x39Cu) != owner + 0x3FCu ||
+        psx_mod_read_word(shot + 8u) != MOHU_VR_SHOT_TYPE_THROWN ||
+        psx_mod_read_half(shot + 0x3E2u) != 15u ||
+        guest_range_fnv1a(MOHU_VR_SP_THROW_FLOW,
+            MOHU_VR_SP_THROW_FLOW_SIZE) != MOHU_VR_SP_THROW_FLOW_FNV ||
+        guest_range_fnv1a(MOHU_VR_SP_SHOT_BASIS,
+            MOHU_VR_SP_SHOT_BASIS_SIZE) != MOHU_VR_SP_SHOT_BASIS_FNV) return false;
+    const uint32_t input = owner + 0x3FCu;
+    const uint32_t object = psx_mod_read_word(owner + 0x114u);
+    uint8_t id;
+    const MohuVrWeaponProfile* profile;
+    if (object != input + 0x330u ||
+        !vr_sp_weapon_model_valid(input, object, &id, &profile) || id != 15u ||
+        !g_sp_camera_valid || g_sp_camera_owner != owner ||
+        g_sp_camera_cycle > psx_cycle_count ||
+        psx_cycle_count - g_sp_camera_cycle > MOHU_VR_SHOT_MAX_CAMERA_AGE) {
+        psx_mod_counter_add("mohu.vr.shot.sp.fallback", 1);
+        return false;
+    }
+    int32_t position[3], angles[3];
+    if (!vr_weapon_prepare_delta() ||
+        !vr_sp_shot_pose(profile->calibration, position, angles)) {
+        psx_mod_counter_add("mohu.vr.shot.sp.tracking_fallback", 1);
+        return false;
+    }
+    vr_write_shot_pose(shot, position, angles);
+    /* The native release just reset position to its saved sweep origin.
+     * Keep that same zero-length initial history at the calibrated origin. */
+    for (unsigned i = 0; i < 3u; ++i)
+        psx_mod_write_word(shot + 0x26Cu + 4u * i, (uint32_t)position[i]);
+    psx_mod_counter_add("mohu.vr.shot.sp.aimed", 1);
+    psx_mod_counter_add("mohu.vr.shot.sp.petrol_release", 1);
+    return true;
+}
+
+/* Safe function entry after the no-contact branch has completed its final
+ * origin/history and ammo stores. Instruction callbacks cannot re-enter guest
+ * execution. This verified sound caller is the release's last native call;
+ * its original arguments/registers survive both native rebuild calls. */
+static void vr_sp_petrol_release_complete(CPUState* cpu, uint32_t address) {
+    if (!cpu || !g_weapon_aim || !g_active || g_stereo_active ||
+        address != MOHU_VR_SP_RELEASE_COMPLETE ||
+        cpu->gpr[31] != MOHU_VR_SP_RELEASE_COMPLETE_RA || cpu->gpr[19] != 0u ||
+        cpu->gpr[6] != psx_mod_read_word(MOHU_VR_SP_PLAYER_POINTER_ADDR) ||
+        guest_range_fnv1a(MOHU_VR_SP_RELEASE_COMPLETE,
+            MOHU_VR_SP_RELEASE_COMPLETE_SIZE) != MOHU_VR_SP_RELEASE_COMPLETE_FNV ||
+        guest_range_fnv1a(MOHU_VR_SP_SHOT_GEOMETRY,
+            MOHU_VR_SP_SHOT_GEOMETRY_SIZE) != MOHU_VR_SP_SHOT_GEOMETRY_FNV) return;
+    const uint32_t shot = cpu->gpr[17];
+    if (!vr_sp_petrol_release_pose(cpu, shot)) return;
+    /* Reuse the native angle/basis and collision-geometry builders. These are
+     * ordinary charged guest calls; no simulation clock or native physics
+     * parameter is replaced. The service restores GPRs/PC/HI/LO for sound. */
+    (void)psx_mod_call_guest(cpu, MOHU_VR_SP_SHOT_BASIS,
+        MOHU_VR_SP_RELEASE_COMPLETE_RA, shot, 0u, 0u, 0u);
+    (void)psx_mod_call_guest(cpu, MOHU_VR_SP_SHOT_GEOMETRY,
+        MOHU_VR_SP_RELEASE_COMPLETE_RA, shot, 0u, 0u, 0u);
+    psx_mod_counter_add("mohu.vr.shot.sp.petrol_no_contact", 1);
+}
+
 static void vr_sp_shot_basis_entry(CPUState* cpu, uint32_t address) {
     (void)address;
     vr_sp_shot_basis_trace(cpu, address);
     if (!g_weapon_aim || !cpu || g_stereo_active || !g_active) return;
+    if (cpu->gpr[31] == MOHU_VR_SP_PETROL_RELEASE_RA) {
+        (void)vr_sp_petrol_release_pose(cpu, cpu->gpr[4]);
+        return;
+    }
     const uint32_t shot = cpu->gpr[4];
     const uint32_t owner = cpu->gpr[18];
     const uint32_t player =
@@ -3910,25 +4028,8 @@ static void vr_sp_shot_basis_entry(CPUState* cpu, uint32_t address) {
         psx_mod_counter_add("mohu.vr.shot.sp.tracking_fallback", 1);
         return;
     }
-    uint32_t affine[8];
-    for (unsigned i = 0; i < 8u; ++i)
-        affine[i] = 0x00000000u;
-    double camera[9], inverse[9];
-    const double camera_translation[3] = {
-        (int32_t)g_sp_camera[5], (int32_t)g_sp_camera[6],
-        (int32_t)g_sp_camera[7],
-    };
-    for (unsigned i = 0; i < 9u; ++i)
-        camera[i] = (int16_t)(g_sp_camera[i / 2u] >>
-                              ((i & 1u) * 16u)) / 4096.0;
     int32_t position[3], angles[3];
-    if (!mohu_vr_weapon_calibrated_control(
-            affine, g_weapon_delta_rotation, g_weapon_delta_translation,
-            g_openxr_units_per_meter, calibration) ||
-        !mohu_vr_laser_inverse(camera, inverse) ||
-        !mohu_vr_weapon_muzzle_shot(
-            affine, calibration, inverse, camera_translation,
-            position, angles)) {
+    if (!vr_sp_shot_pose(calibration, position, angles)) {
         psx_mod_counter_add("mohu.vr.shot.sp.tracking_fallback", 1);
         return;
     }
@@ -5080,6 +5181,9 @@ PSX_MOD_CONSTRUCTOR(psx_register_mohu_vr_diagnostic_plugin) {
     (void)psx_mod_register_function_entry_plugin(
         MOHU_VR_DIAG_PLUGIN_ID, MOHU_VR_SP_SHOT_BASIS,
         vr_sp_shot_basis_entry);
+    (void)psx_mod_register_function_entry_plugin(
+        MOHU_VR_DIAG_PLUGIN_ID, MOHU_VR_SP_RELEASE_COMPLETE,
+        vr_sp_petrol_release_complete);
     (void)psx_mod_register_function_filter_plugin(
         MOHU_VR_DIAG_PLUGIN_ID, 0x8009A478u, vr_native_world_copy_filter);
     (void)psx_mod_register_instruction_plugin(MOHU_VR_DIAG_PLUGIN_ID,

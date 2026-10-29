@@ -20,6 +20,19 @@
 #define MOHU_VR_SP_SHOT_BASIS_CALL 0x80048604u
 #define MOHU_VR_SP_SHOT_BASIS_CALL_WORD 0x0C01DB0Au
 #define MOHU_VR_SP_SHOT_BASIS_CALL_RA 0x8004860Cu
+#define MOHU_VR_SP_SHOT_BASIS_SIZE 260u
+#define MOHU_VR_SP_SHOT_BASIS_FNV 0xD4FD2F11u
+#define MOHU_VR_SP_THROW_FLOW 0x8008C620u
+#define MOHU_VR_SP_THROW_FLOW_SIZE 0x71Cu
+#define MOHU_VR_SP_THROW_FLOW_FNV 0x4A5D3295u
+#define MOHU_VR_SP_PETROL_RELEASE_RA 0x8008CC3Cu
+#define MOHU_VR_SP_RELEASE_COMPLETE 0x80043FB0u
+#define MOHU_VR_SP_RELEASE_COMPLETE_RA 0x8008CD10u
+#define MOHU_VR_SP_RELEASE_COMPLETE_SIZE 0x2D4u
+#define MOHU_VR_SP_RELEASE_COMPLETE_FNV 0x6E3A3758u
+#define MOHU_VR_SP_SHOT_GEOMETRY 0x80050C20u
+#define MOHU_VR_SP_SHOT_GEOMETRY_SIZE 0x154u
+#define MOHU_VR_SP_SHOT_GEOMETRY_FNV 0x2C50B4B6u
 #define MOHU_VR_SHOT_THROW_FLOW 0x8008468Cu
 #define MOHU_VR_SHOT_THROW_FLOW_SIZE 0x750u
 #define MOHU_VR_SHOT_THROW_FLOW_FNV 0xE77DB501u
@@ -105,6 +118,19 @@ static inline int mohu_vr_sp_tracked_type_valid(uint32_t id, uint32_t type) {
             type == MOHU_VR_SHOT_TYPE_REPEATING ||
             type == MOHU_VR_SHOT_TYPE_BOLT ||
             type == MOHU_VR_SHOT_TYPE_ROCKET);
+}
+
+/* Only the independently observed SP petrol release register contract.
+ * The caller additionally checks live model/type/code/camera/tracking. */
+static inline int mohu_vr_sp_petrol_release_valid(
+    uint32_t shot, uint32_t saved_shot, uint32_t player,
+    uint32_t owner, uint32_t input, uint32_t caller) {
+    return mohu_vr_mp_actor_address(player) &&
+           mohu_vr_mp_actor_address(shot) && shot != player &&
+           !(shot & 3u) && !(player & 3u) && shot == saved_shot &&
+           owner == player && input == player + 0x3FCu &&
+           (caller == MOHU_VR_SP_PETROL_RELEASE_RA ||
+            caller == MOHU_VR_SP_RELEASE_COMPLETE_RA);
 }
 
 static inline int mohu_vr_shot_guard(const MohuVrShotGuard* s) {

@@ -1,16 +1,16 @@
 # Current SP regression cases
 
 Recorded 2026-10-29 from the operator's report: “save 1 has missing level
-rendering again and save 2 has severe performance issues.” **These are open
-issues, not reproduced or diagnosed by this documentation update.** No FPS
-measurement, exact head pose, runtime/mode, trigger or common cause was supplied.
+rendering again and save 2 has severe performance issues.” **The original report supplied no numeric FPS or exact trigger.** The new
+desktop reproduction/repair and production baseline below supersede that
+initial lack of diagnosis; physical acceptance remains separate.
 
 ## Case identity — do not mix up the slot numbers
 
 | Plan ID | Personal source | Symptom | Frozen reproduction input |
 |---|---|---|---|
 | G5 — internal slot 1 | `saves/openbios/state_8001F844_slot01.pst` and matching thumbnail | Level rendering is missing again | `analysis/fixtures/sp/openbios/state_8001F844_slot01.pst` / `.thumb` |
-| G6 — internal slot 2 | `saves/openbios/state_8001F844_slot02.pst` and matching thumbnail | Severe performance problems; FPS not yet measured | `analysis/fixtures/sp/openbios/state_8001F844_slot02.pst` / `.thumb` |
+| G6 — internal slot 2 | `saves/openbios/state_8001F844_slot02.pst` and matching thumbnail | Severe performance; current production desktop baseline 25.011 pairs/s | `analysis/fixtures/sp/openbios/state_8001F844_slot02.pst` / `.thumb` |
 
 **Numbering is explicit:** the operator confirmed that “slots” have meant the
 internal/file/tool indices **since the beginning**. Slot 1 means `slot01` /
@@ -29,19 +29,41 @@ It records the files present at documentation time. The current disk binary
 hash does not prove which exact executable/runtime was used for the report.
 Never edit personal states or rewrite old receipts to manufacture that proof.
 
-## Priority and the next concrete actions
+## Current result and priority
 
-**Latest operator order: G7 full MP-to-SP weapon parity FIRST**, including
-petrol bomb/Panzerfaust fixed-aim reports. See [SP_WEAPON_PARITY](SP_WEAPON_PARITY.md).
-G5/G6 stay open; after G7, G5 correctness precedes G6 performance measurement.
-This overrides this report's previous G5-first order. P3b remains completed for
-its original slot-5 fixture, and P3c2–P3c6
-remain the implementation runbook once the new cases are understood. No new
-general physical headset smoke is needed now.
+The owner requested a quick bounded weapon fix, then immediate return to
+missing-world and performance. Both live petrol branches now use existing MP
+values unchanged. Remaining G7 fixtures/physical gates do not gate G6.
 
-The actions below are the G5/G6 continuation **after G7**, except a specific
-rendering prerequisite needed to validate one SP weapon case. Do not use such a
-prerequisite to start a broad performance/renderer campaign before weapon parity.
+**G5b is complete; the visibility defect is repaired in code.** Native Flat
+renders the street while the old stereo path shows large black/missing sections.
+A matched selector comparison found 116 leaves admitted from root `8011D0D8`
+where native selected zero. The native selector compares MAC3 to the active
+camera view descriptor+40, a 16.16 far plane of 10,000 units in this fixture.
+The VR replacement omitted this test. Out-of-range primitives then overwrite
+nearer world geometry. Retaining the native far plane restores the street in
+both eyes, with per-eye primitives about 2,448 -> 1,513 in matched diagnostic
+captures. A 90-degree head view at 1080p also passes with actual geometry and
+268 VERIFY checks/zero mismatches. Angular FOV/PVS/shared math remain unchanged;
+this is not a permanent native-selector fallback or another disc repair.
+
+Pause/Continue, refusal recovery and real state reload recover the street.
+One HUD/pause stress run still records a VRAM-only restoration mismatch (CPU
+state hash equal); its 818 checks/one mismatch are retained as a failed control.
+Another fixed capture has 563 checks/zero mismatches. G5c's broader restoration
+acceptance remains open; do not claim the intermittent failure fixed.
+
+**G6b scoped baseline is complete.** Slot 2's street/tank scene is captured in
+both eyes, with 257 VERIFY checks/zero mismatches in its diagnostic run. Current
+Release/debug-OFF 1080p desktop production measures 20.139 ms/pair, 16.710 ms
+traversal, 1.028 ms submit and 0.066 ms full selector, at 25.011 fresh pairs/s.
+XR/hand HUD/laser work is not included. Native traversal remains dominant;
+continue G6c/P3c2–P3c6 preflight implementation through its real caller contract,
+then the independent fresh-view cadence work. No 60/90 FPS or paired speedup is
+claimed from these runs. [Compact receipt](../../vr/proof/sp-far-depth-world-receipt.json).
+
+The checklist below retains the reproduction/qualification contract. Completed
+G5b/G6b evidence need not be captured again unchanged.
 
 1. **G5b — reproduce/classify slot 1.** Use copied SP slot 1 on the current clean
    image and standard build. Compare native Flat against stereo replay under

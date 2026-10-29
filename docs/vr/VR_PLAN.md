@@ -12,27 +12,22 @@ scope has evidence; it never implies broader headset or gameplay acceptance.
 Historical design and prior attempts belong in
 [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md) and the evidence documents.
 
-**CURRENT CHECKPOINT (2026-10-29): G7a is complete. The frozen SP fixtures
-naturally expose only IDs 0, 13, 15 and 16. P38, Sten and Panzerfaust native
-first motion follows a 30-degree hand rotation within 0.13 degrees; the
-Panzerfaust is now admitted by the guarded SP basis path and falls back to native
-control on tracking loss. Petrol has a valid live model/ammo but no native throw
-constructor was observed; thrown and nine absent firearm/crossbow/StG rows remain
-open. New personal SP slot 1 has missing level rendering (G5); slot 2 has severe
-performance problems (G6). Earlier slot-5/music, pause and Sten smoke acceptance
-remains scoped historical evidence.**
+**CURRENT CHECKPOINT (2026-10-29): both measured SP petrol release branches
+now use the existing shared hand ray, with MP calibration unchanged. G5 slot-1
+missing world is reproduced and its missing native far-plane check repaired;
+zero/90-degree world views pass scoped desktop controls. A HUD/pause stress run
+still has one VRAM restoration mismatch, so G5c remains open. Slot 2's world is
+verified and G6b production baseline is 20.139 ms/pair, 16.710 ms traversal,
+25.011 fresh pairs/s, excluding XR/hand-surface cost. Performance is OPEN.**
 
-**Next: G7b–G7f all-MP-to-SP weapon parity FIRST → G5b/G5c slot-1 correctness →
-G6b/G6c slot-2 baseline/target selection →
-P3c2–P3c6 implementation/qualification when justified → measured budget
-decision (P3d / conditional P3e if needed) → P4/P5 fresh view cadence/recovery
-→ P6 focused SP performance acceptance.** Execute
-[SP_WEAPON_PARITY.md](SP_WEAPON_PARITY.md) first, then the G5/G6 triage and
-[PERFORMANCE_NEXT_STEPS.md](PERFORMANCE_NEXT_STEPS.md), with one game, two
-compile jobs and unsandboxed launches. Preserve earlier image/music/culling
-evidence; investigate the new G5 visibility report rather than replaying old
-studies. Do not restart Sten basis mapping, pause ports or unchanged MP matrices.
-P3b is complete. P0b's remaining two-title/XR dataset must not delay P3c.
+**Next: G6c/P3c2–P3c6 native preflight implementation and qualification → budget
+decision → P4/P5 independent fresh views → focused physical acceptance.**
+The owner explicitly requested a quick weapon fix and return to world/performance.
+Remaining G7 unavailable fixtures, exact rocket-origin/impact and physical gates
+stay recorded; they no longer gate performance work. Do not recalibrate or
+repeat inventory, MP discovery, passing direction controls or rejected compiler
+sweeps. P3b is complete. [Current cases](SP_CURRENT_REGRESSIONS.md) and
+[ordered implementation](PERFORMANCE_NEXT_STEPS.md) own the next work.
 
 A7 now has SP physical smoke acceptance. H1/A5a HUD is implemented; detailed
 transitions/readability, broader SP damage, clean-close and matching-fixture
@@ -121,8 +116,8 @@ Workspace prerequisite (2026-10-29): [layout and recovery map](WORKSPACE_LAYOUT.
 - [x] WS4. Archive superseded task queues, repair relative links and make one
   active documentation index. No performance implementation during cleanup.
 
-The operator's latest instruction puts G7 weapon parity before G5/G6 and the
-performance rewrite. See [SP weapon parity](SP_WEAPON_PARITY.md). Earlier smoke
+The operator's latest instruction returns to G5/G6 and performance after the
+bounded petrol fix; remaining G7 coverage does not gate that work. See [SP weapon parity](SP_WEAPON_PARITY.md). Earlier smoke
 closed only scoped historical slot-5/music, pause and Sten checks. G5/G6 remain
 open [current regressions](SP_CURRENT_REGRESSIONS.md). The stable IDs retain their exact
 scopes; the [smoke receipt](../../vr/proof/clean-disc-headset-smoke-receipt.json)
@@ -130,33 +125,42 @@ records the human observations and unmeasured limits. Performance is next; old
 damaged-image regressions remain scoped closed; new slot 1 is a separate open case.
 
 - [ ] G7. Complete all existing MP weapon calibration/control parity in SP
-  **first**, including the new apparent fixed-aim petrol/Panzerfaust reports.
+  including the apparent fixed-aim petrol/Panzerfaust reports. Remaining
+  unavailable/physical cases are deferred behind G5/G6 under latest owner priority.
   [Ordered runbook and 13-ID matrix](SP_WEAPON_PARITY.md); G7a is complete and
   the guarded Panzerfaust basis candidate has desktop direction/fallback
   evidence. Remaining live-ID and thrown-family coverage is open.
 - [x] G7a. Inventory each current MP profile and its actual SP render/aim/final
   origin consumption. The shared 13-profile adapter is mapped by ID, natural
   live fixture reachability is recorded, and P38/Sten/Panzerfaust origin and
-  first-motion seams are measured. Petrol construction and nine absent live IDs
-  remain explicit gaps. [Receipt](../../vr/proof/sp-weapon-parity-checkpoint-receipt.json).
+  first-motion seams are measured. The historical petrol-construction gap is
+  superseded by the new live throw proof; nine absent IDs remain unavailable. [Receipt](../../vr/proof/sp-weapon-parity-checkpoint-receipt.json).
 - [ ] G7b. Complete shared authored pose/scale/grip/mask integration and SP
   firearm coverage, preserving existing P38/Sten, scope and animation behavior.
   A tracked model/ray does not close native projectile control.
 - [ ] G7c. Adapt and verify the real SP thrown-family final writers: petrol
   first, then grenade. Prove calibrated final origin/initial direction after
   native overwrites; retain speed/spread/gravity/fuse/impact/ammo and fixed ray.
+  Natural Cross throws and the observed final contact/basis branch now pass
+  scoped desktop controls, using shared MP values unchanged. The no-contact
+  branch now also passes, with guarded native basis/geometry rebuilding at the
+  safe final caller. Grenade fixture and fuse/impact/physical gates remain open.
+  [New receipt](../../vr/proof/sp-petrol-release-complete-receipt.json).
 - [ ] G7d. Adapt and verify the real SP Panzerfaust rocket final writer/basis,
   ownership and first motion under independent head/hand controls. MP hook
   addresses are leads, not SP bindings; keep exact code/layout guards. The
   guarded candidate now rotates first motion with the hand, stays independent
   of 30-degree head yaw and falls back on tracking loss. Native speed/impact,
-  the constructor's calibrated-origin adjustment and broader lifecycle remain
-  open, so this step is not checked.
+  the constructor's calibrated-origin adjustment remain open. Rocket reload,
+  switch, pause/load and refusal recovery now pass; this step remains unchecked.
 - [ ] G7e. Pass the all-13-ID SP matrix: model completeness/gun-only grip/scale,
   animations, rotated/translated hand, final native origin/first motion/appropriate
   impact, fixed-ray agreement, scope, switch, loss/stale, pause/load/refusal and
   restoration. Record naturally unavailable SP cases rather than fabricating
   inventory or calling an MP test an SP pass. Check changed shared MP behavior only.
+  Reachable IDs 0/16/13/15 now have native lifecycle/restore evidence in the G7c
+  receipt. This advances that scope without repeating G7a's inventory or the
+  previously passing 30-degree firearm controls; absent IDs remain unavailable.
 - [ ] G7f. Record per-ID accepted/failed/unavailable coverage and restore normal
   production/personal-save/runtime state. Keep synthetic, physical and real
   live-NPC damage acceptance distinct; then return to G5/G6 and performance.
@@ -166,17 +170,20 @@ damaged-image regressions remain scoped closed; new slot 1 is a separate open ca
 - [x] G5a. Record the operator report and freeze byte-identical state/thumbnail
   in the existing SP fixture library, with source hashes and no personal writes.
   [Receipt](../../vr/proof/sp-current-regressions-receipt.json); no runtime diagnosis yet.
-- [ ] G5b. Reproduce/classify copied slot 1: native Flat versus stereo with
+- [x] G5b. Reproduce/classify copied slot 1: native Flat versus stereo with
   matched scene/camera, actual world-geometry evidence and selection/draw/load
-  state. Probe completion/nonblank enemies/pair counters alone do not pass this.
+  state. Native renders the street; VR wrongly admitted a 116-leaf far arena.
+  [Measured repair](../../vr/proof/sp-far-depth-world-receipt.json).
 - [ ] G5c. Fix the demonstrated cause and validate both eyes, relevant head poses,
   rollback, streaming/music, weapon/laser and pause/load recovery. If not
-  reproduced, record the missing condition and keep the issue open.
+  reproduced, record the missing condition and keep the issue open. The native
+  far-plane fix restores both eyes and a 90-degree view; pause/load/refusal
+  recover the street, but one HUD/pause VRAM mismatch keeps this full gate open.
 - [ ] G6. Resolve severe performance in personal **SP internal slot 2**, file
   `slot02` / tool index 2. No numeric FPS was reported; do not reuse slot-5 numbers.
 - [x] G6a. Record the report and freeze the byte-identical internal-slot-2 (`slot02`) pair in
   the existing SP library, preserving source hashes and all personal data.
-- [ ] G6b. Verify world rendering, then obtain a current production slot-2
+- [x] G6b. Verify world rendering, then obtain a current production slot-2
   baseline: pair work/fresh cadence/guest timing and relevant CPU/GPU stages.
   Diagnostic attribution and actual HUD/weapon/laser/XR scope are separate.
 - [ ] G6c. Confirm the dominant implementation target from this workload and
@@ -314,8 +321,8 @@ older R6-first pointers. MP remains calibration only. The operator's first-game
 
 ## A - Alpha playability backlog after the performance blocker
 
-G7 weapon parity is FIRST, including the SP family coverage referenced by A2.
-After G7 and G5/G6 triage, P3c/P4/P5 take priority over the remaining backlog
+The narrow petrol repair is complete for both measured branches. G6 performance
+and P3c/P4/P5 now take priority over the remaining weapon/alpha backlog
 unless a new SP regression blocks their controls. A7 is implemented and physically accepted for SP; do not
 port it again. A2 defaults/masks, A4 exact ray and A5 native HUD retain the scoped
 evidence linked below. Continue only their explicitly open parts; defer optional
@@ -342,7 +349,7 @@ are stable scope IDs, not instructions to redo already accepted work or require 
   mask; all 13 IDs pass actual SDK affine checks, changed topology and focused
   native firing controls. [Evidence](ALPHA_WEAPON_REPAIRS.md).
 - [ ] A2b. Real SP NPC health/damage ownership and isolation (R6). Broader SP
-  calibration/shot-family parity is G7 FIRST, not gated on this damage study.
+  calibration/shot-family coverage remains G7, deferred behind current G6 work.
 - [ ] A2c. Operator accepts the corrected scale, grip, sights and target impact.
 - [ ] A3. Add effective per-ID calibration state, versioned persistence and a
   minimal controller-operated in-headset menu using existing UI/XR surfaces.

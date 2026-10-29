@@ -110,6 +110,34 @@ static inline int mohu_vr_mp_view_valid(const PSXModRenderView* view,
  * node, cycle/visit overflow or full output queue rejects the override so the
  * native selector can run unchanged.
  */
+/* Native 8009A174 compares camera-space MAC3 against view+40 (16.16).
+ * Reject only boxes wholly beyond that plane after the same eye transform
+ * used for angular visibility. One unit retains the native integer boundary. */
+static inline int mohu_vr_box_within_far(
+    const int16_t bounds[6], const double matrix[9], const double tr[3],
+    const PSXModRenderView* view, double far_depth) {
+    if (!bounds || !matrix || !tr || !view ||
+        !isfinite(far_depth) || far_depth <= 0.0) return -1;
+    double minimum = INFINITY;
+    for (unsigned corner = 0; corner < 8u; ++corner) {
+        double world[3];
+        for (unsigned row = 0; row < 3u; ++row) {
+            world[row] = tr[row];
+            for (unsigned col = 0; col < 3u; ++col)
+                world[row] += matrix[row * 3u + col] *
+                    bounds[col + ((corner >> col) & 1u) * 3u];
+        }
+        double depth = view->precise ? view->translation_precise[2]
+                                     : view->translation[2];
+        for (unsigned col = 0; col < 3u; ++col)
+            depth += (view->precise ? view->rotation[6u + col]
+                                   : view->rotation_q12[6u + col] / 4096.0) * world[col];
+        if (!isfinite(depth)) return -1;
+        if (depth < minimum) minimum = depth;
+    }
+    return minimum <= far_depth + 1.0;
+}
+
 static inline int mohu_vr_collect_tree(uint32_t root, uint32_t queue[1000],
                                        unsigned* count,
                                        const double matrix[9],
@@ -118,7 +146,7 @@ static inline int mohu_vr_collect_tree(uint32_t root, uint32_t queue[1000],
                                        double cx, double cy,
                                        const uint32_t masks[2],
                                        int bypass_masks,
-                                       int keep_all) {
+                                       int keep_all, double far_depth) {
     uint32_t stack[256];
     unsigned top = 1;
     unsigned visited = 0;
@@ -147,9 +175,11 @@ static inline int mohu_vr_collect_tree(uint32_t root, uint32_t queue[1000],
                 return 0;
             }
         }
-        if (!keep_all && !mohu_vr_box_visible(
-                bounds, matrix, tr, view, cx, cy, 512, 240)) {
-            continue;
+        if (!keep_all) {
+            const int within_far = mohu_vr_box_within_far(bounds, matrix, tr, view, far_depth);
+            if (within_far < 0) return 0;
+            if (!within_far || !mohu_vr_box_visible(
+                    bounds, matrix, tr, view, cx, cy, 512, 240)) continue;
         }
 
         if ((int32_t)psx_mod_read_word(node + 12u) > 0) {

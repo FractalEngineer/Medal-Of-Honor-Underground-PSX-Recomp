@@ -1,0 +1,423 @@
+{
+  "schema": 1,
+  "kind": "G5 native far-depth world repair and G6 current valid-world production baseline",
+  "date": "2026-10-29",
+  "branch": "feature/vr-port",
+  "base_commit": "4cfe1d30b71d0d3e68f180f301a9f909ec1f5eb5",
+  "sources": {
+    "game.toml": "3f5d878c012ce6700b2fa69af981eab24d7db104b210132c59c6e07abd05c347",
+    "vr/underground/vr_diagnostic.c": "4648cb6bdca2454f36be0d17a5fd1cae11f7819e358161972a4164d4aa6a3121",
+    "vr/underground/shot.h": "bd9db60e7ebb5a76a6d14904d9a5a17ce329dbda32bd2f45d90a8b93d8a6873a",
+    "vr/underground/frustum.h": "64ca25860c64ed875b353bcee08dd918d58dcc1cfb551b23d3867d95685aaa63",
+    "vr/underground/weapon.c": "5a9072ae5bb646d9c76bfa09c42d141faa8d4bd497fc6d404d31f377db2336fe",
+    "vr/tools/probe_sp_shot_origins.py": "35e686a3004d1a757b0f2f2ecf8ea43ba2b1510f38d1333b614e449f62a1dc30",
+    "vr/tools/probe_sp_issues.py": "3e93419a20b08dc012d849422d68a6222f88a1dc2248347d12f8b9bed2e63a98",
+    "vr/tests/test_shot.c": "3ba4f51468c97a17d71a1bd8e84304ef4bdd635ed2c7b4bf2094da90f8053248",
+    "vr/tests/test_weapon.c": "b2a9aa44c60fedc74087f46641c9cc68792ec23799a40b42d90c7f44de6fd4c4",
+    "vr/tests/test_raycast.c": "201b6e26c0ec258420f2f9dc9c7b0e1e1b1dbc968b7907cec72f1813411afddb",
+    "vr/tests/test_frustum.c": "bb386e11065fd7c4154fb5e966f13ae841cf9c4f4278e8883ed37a513234e676",
+    "vr/tests/test_native_hooks.py": "c90570b1e56c9ccc036f38a365e2f70ecd0219fc64647374be480b2bef161fdc",
+    "vr/tests/test_sp_weapon_parity_tools.py": "c4673d58a4bbc00e6257b0af150ed47490db0af61e44883f93c6d798c7787f89"
+  },
+  "production_binary_sha256": "83d48a608e3602736b9267013835b4a96cceb1865af00fb082b2e9d78872b60b",
+  "production_build": {
+    "configuration": "Release",
+    "PSX_DEBUG_TOOLS": "OFF",
+    "PSX_OPENXR": "ON",
+    "PGXP_hook_flavor": 2,
+    "PSX_RUNTIME_IPO": "OFF",
+    "MOHU_VR_NATIVE_PROFILE": "OFF"
+  },
+  "physical_acceptance": false,
+  "headset_used": false,
+  "release_acceptance": false,
+  "framework_or_reference_changes": false,
+  "committed_or_pushed": false,
+  "post_run_changes": "Documentation and restoration of original game.toml line endings around the single added hook entry only; parsed config semantics unchanged.",
+  "runs": {
+    "g5-slot1-flat": {
+      "path": "analysis/runtime/g5-slot1-flat-20261029/receipt.json",
+      "sha256": "c8a48c78cdabde931192b2d5db13015cc099b1082cdee5983fce7db0486b7bda",
+      "complete": true,
+      "exit_code": 0,
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "remaining_game_pids": [],
+      "restoration": {
+        "verify_checks": 0,
+        "verify_mismatch": 0,
+        "aborted": 0,
+        "discarded": 0
+      }
+    },
+    "g5-slot1-stereo": {
+      "path": "analysis/runtime/g5-slot1-stereo-20261029/receipt.json",
+      "sha256": "34d0da837702aeb2e5736804803af83fbc24c6924074775f9f41e17e0232fcdb",
+      "complete": false,
+      "exit_code": 0,
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "remaining_game_pids": [],
+      "restoration": {
+        "verify_checks": 532,
+        "verify_mismatch": 2,
+        "aborted": 0,
+        "discarded": 0
+      }
+    },
+    "g5-slot1-native-selection": {
+      "path": "analysis/runtime/g5-slot1-native-selection-20261029/receipt.json",
+      "sha256": "a121e0d1be25e92de15fb801fad03fbdce49d2b938eb7125878d262d85ac6d31",
+      "complete": true,
+      "exit_code": 0,
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "remaining_game_pids": [],
+      "restoration": {
+        "verify_checks": 250,
+        "verify_mismatch": 0,
+        "aborted": 0,
+        "discarded": 0
+      }
+    },
+    "g5-slot1-selector-compare": {
+      "path": "analysis/runtime/g5-slot1-selector-compare-20261029/receipt.json",
+      "sha256": "6b76e9c312819948ff131f1e56af955376f77aef265e8e5f3fc7a41a96141459",
+      "complete": false,
+      "exit_code": 0,
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "remaining_game_pids": [],
+      "restoration": {
+        "verify_checks": 227,
+        "verify_mismatch": 2,
+        "aborted": 0,
+        "discarded": 0
+      }
+    },
+    "g5-slot1-far-plane-fixed": {
+      "path": "analysis/runtime/g5-slot1-far-plane-fixed-20261029/receipt.json",
+      "sha256": "9e46c7bf99b259d39bc000dab2db6e1dfb12959185f44bb61188349a7197e0e0",
+      "complete": false,
+      "exit_code": 0,
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "remaining_game_pids": [],
+      "restoration": {
+        "verify_checks": 563,
+        "verify_mismatch": 0,
+        "aborted": 0,
+        "discarded": 0
+      },
+      "fallback_controls": {
+        "paused": 0,
+        "paused_after": 0,
+        "resumed": 0,
+        "refused": 0,
+        "refused_after": 0,
+        "recovered": 0,
+        "reloaded": 0,
+        "camera": {
+          "valid": 1,
+          "owner": 2148427664,
+          "cycle": 34642204335,
+          "control": [
+            65410,
+            1581072,
+            5126,
+            2678778,
+            4294967172,
+            4294964695,
+            4294966935,
+            28772
+          ]
+        },
+        "pause_counters": {
+          "startup.disc_hash": 1,
+          "mohu.vr.input.render_blocked": 0,
+          "mohu.vr.input.guard_fallback": 0,
+          "mohu.vr.input.callback": 279,
+          "mohu.vr.input.focus_lost": 24,
+          "mohu.vr.input.mode.sp": 257,
+          "mohu.vr.shot.sp.camera": 617,
+          "vr.nclip.render.total": 676104,
+          "vr.nclip.render.precise": 676104,
+          "vr.nclip.render.corrected": 180812,
+          "vr.nclip.render.positive": 370560,
+          "vr.nclip.render.negative": 305540,
+          "vr.projective.packet": 386410,
+          "vr.projective.draw": 385838,
+          "vr.projective.miss0": 572,
+          "vr.nclip.render.zero": 4,
+          "mohu.vr.pause.enter": 1,
+          "mohu.vr.pause.frame.sp": 12,
+          "mohu.vr.input.mode.menu": 22
+        }
+      }
+    },
+    "g5-slot1-fixed-recovery": {
+      "path": "analysis/runtime/g5-slot1-fixed-recovery-20261029/receipt.json",
+      "sha256": "1d9b719c2105d9a85e271a283052d8aca6f5366708153e0ea43d475e6ad0acf6",
+      "complete": false,
+      "exit_code": 0,
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "remaining_game_pids": [],
+      "restoration": {
+        "verify_checks": 818,
+        "verify_mismatch": 1,
+        "aborted": 0,
+        "discarded": 0
+      },
+      "fallback_controls": {
+        "paused": 154,
+        "paused_after": 154,
+        "resumed": 165,
+        "refused": 165,
+        "refused_after": 165,
+        "recovered": 170,
+        "reloaded": 194,
+        "camera": {
+          "valid": 1,
+          "owner": 2148427664,
+          "cycle": 34643336171,
+          "control": [
+            65410,
+            1581072,
+            5126,
+            2678778,
+            4294967172,
+            4294964695,
+            4294966935,
+            28772
+          ]
+        },
+        "pause_counters": {
+          "startup.disc_hash": 1,
+          "mohu.vr.input.render_blocked": 0,
+          "mohu.vr.input.guard_fallback": 0,
+          "mohu.vr.input.callback": 313,
+          "mohu.vr.input.focus_lost": 31,
+          "mohu.vr.input.mode.sp": 282,
+          "mohu.vr.shot.sp.camera": 685,
+          "vr.nclip.render.total": 730476,
+          "vr.nclip.render.precise": 730476,
+          "vr.nclip.render.corrected": 195388,
+          "vr.nclip.render.positive": 400348,
+          "vr.nclip.render.negative": 330124,
+          "vr.projective.packet": 417581,
+          "vr.projective.draw": 416963,
+          "vr.projective.miss0": 618,
+          "vr.nclip.render.zero": 4,
+          "mohu.vr.pause.enter": 1,
+          "mohu.vr.pause.frame.sp": 16,
+          "mohu.vr.input.mode.menu": 31
+        },
+        "counter_scope": "stereo_pairs"
+      }
+    },
+    "g5-slot1-side-view": {
+      "path": "analysis/runtime/g5-slot1-side-view-20261029/receipt.json",
+      "sha256": "efa6c39940790bc71a1afb5f1a28711eee6d15dcec7db0befcf1d101f997138e",
+      "complete": true,
+      "exit_code": 0,
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "remaining_game_pids": [],
+      "restoration": {
+        "verify_checks": 268,
+        "verify_mismatch": 0,
+        "aborted": 0,
+        "discarded": 0
+      }
+    },
+    "g6-slot2-current": {
+      "path": "analysis/runtime/g6-slot2-current-20261029/receipt.json",
+      "sha256": "5857f6585a16f1efa0f0d040ecb068d709ca246335abce2b08fc2faf6e4a5833",
+      "complete": true,
+      "exit_code": 0,
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "remaining_game_pids": [],
+      "restoration": {
+        "verify_checks": 257,
+        "verify_mismatch": 0,
+        "aborted": 0,
+        "discarded": 0
+      }
+    },
+    "g6-slot2-production": {
+      "path": "analysis/runtime/g6-slot2-production-20261029/receipt.json",
+      "sha256": "423db25d6b62008e9fdb77084f86486c9751cd57f74787dd4bf0dd3ece11dcc0",
+      "complete": true,
+      "exit_code": 0,
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "remaining_game_pids": []
+    },
+    "g5-slot1-production": {
+      "path": "analysis/runtime/g5-slot1-production-20261029/receipt.json",
+      "sha256": "1ebacef44fea0c4ec87b725c7a9cf3003a7954f5690b7a5764b223d15084a86f",
+      "complete": true,
+      "exit_code": 0,
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "remaining_game_pids": []
+    }
+  },
+  "inspected_images": [
+    {
+      "path": "analysis/runtime/g5-slot1-flat-20261029/after.png",
+      "sha256": "cc9a45e4174a08d6d6dabddbb01b44661b67e84ff88304c04d0ca08c3964b237"
+    },
+    {
+      "path": "analysis/runtime/g5-slot1-stereo-20261029/after/p000087_sbs.png",
+      "sha256": "57022a3fd25ccea7ee570b65ddd113924391e772202e65304db48ff2545bed3a"
+    },
+    {
+      "path": "analysis/runtime/g5-slot1-far-plane-fixed-20261029/after/p000099_sbs.png",
+      "sha256": "7d036f2c087319cc37744eaa5342115c69cbdfa255f454b1503b5e1dcbf3196d"
+    },
+    {
+      "path": "analysis/runtime/g5-slot1-fixed-recovery-20261029/recovery/p000215_sbs.png",
+      "sha256": "7d036f2c087319cc37744eaa5342115c69cbdfa255f454b1503b5e1dcbf3196d"
+    },
+    {
+      "path": "analysis/runtime/g5-slot1-side-view-20261029/after/p000121_sbs.png",
+      "sha256": "e5074acd6b823c5c02d271b493da4b2a7ee01a8f44d392efbbd050a1b8f2b3c6"
+    },
+    {
+      "path": "analysis/runtime/g6-slot2-current-20261029/after/p000098_sbs.png",
+      "sha256": "1ed1e3fccc4524cad98bacad9384376ad95f38eab8e122ed950bc6d41895fe2a"
+    }
+  ],
+  "diagnosis": {
+    "native_world_present": true,
+    "old_stereo_world_missing": true,
+    "native_selector_disassembly": "analysis/runtime/g5-slot1-flat-20261029/selector.txt",
+    "comparison_log": {
+      "path": "analysis/runtime/g5-slot1-selector-compare-20261029/stdout.log",
+      "sha256": "9812094116cd1ea227edfe5590ec426a405c7b87de49e9e722adf6fa19fc2f46"
+    },
+    "far_arena_root": "8011D0D8",
+    "native_leaf_count": 0,
+    "old_vr_leaf_count": 116,
+    "native_far_check": "8009A174..8009A184, compare MAC3 shifted16 with camera descriptor+40",
+    "camera_chain": "[800AA160] -> actor+39C -> input+C8 -> descriptor+40",
+    "fixture_far_q16": 655360000,
+    "fixture_far_units": 10000,
+    "root_nearest_camera_z_units_approx": 11396,
+    "repair": "Guard camera/view pointer spans and positive native far range. Reject only AABBs wholly beyond the same far plane after the per-eye transform; one integer unit of conservative boundary tolerance. Preserve angular FOV, PVS, native full-function hash and malformed fallback.",
+    "shared_math_or_framework_change": false,
+    "temporary_compare_instrumentation_removed": true,
+    "matched_diagnostic_prims_per_eye": {
+      "before": 2448,
+      "after": 1513
+    },
+    "paired_production_speedup_claim": false
+  },
+  "scope": {
+    "G5b": "complete: native Flat/stereo reproduced and measured cause demonstrated",
+    "G5_visibility_fix": "implemented and visibly verified in both eyes, including 90-degree head turn and reload recovery",
+    "G5c": "open: broader HUD/pause restoration run retains one VRAM-only mismatch",
+    "G6b": "complete for valid-world scoped production desktop baseline",
+    "G6_performance_fixed": false
+  },
+  "remaining_failure": {
+    "raw": "analysis/runtime/g5-slot1-fixed-recovery-20261029/receipt.json",
+    "verify_checks": 818,
+    "verify_mismatch": 1,
+    "cpu_state_hash_equal": true,
+    "world_recovered_after_pause_load_refusal": true,
+    "reason": "VRAM-only verification failure; original cause not established; not suppressed or counted as a pass."
+  },
+  "harness_repair": "Initial --fallback-controls checked an optional draw-skip counter while the feature was OFF. It now checks stereo pairs unless that feature is enabled; original optional-feature controls retain their counter.",
+  "production_slot2": {
+    "raw": "analysis/runtime/g6-slot2-production-20261029/receipt.json",
+    "pairs_per_second": 25.010508617065994,
+    "mean_stages_ms": {
+      "guest_sim": 39.95,
+      "pair_total": 20.138891666666666,
+      "eye_begin_l": 0.17769166666666666,
+      "eye_guest_l": 8.925533333333332,
+      "eye_end_l": 0.68455,
+      "eye_restore_l": 0.2678833333333333,
+      "eye_begin_r": 0.049966666666666666,
+      "eye_guest_r": 8.948041666666667,
+      "eye_end_r": 0.8169,
+      "eye_restore_r": 0.26219166666666666,
+      "xr_wait_frame": 0.0,
+      "xr_begin_frame": 0.0,
+      "xr_acquire": 0.0,
+      "xr_wait_image": 0.0,
+      "xr_copy": 0.0,
+      "xr_release": 0.0,
+      "xr_end_frame": 0.0,
+      "pose_age": 0.0,
+      "hud_capture": 0.0,
+      "hud_draw": 0.0,
+      "hud_readback": 0.0,
+      "game_env": 0.0,
+      "game_world": 0.06591666666666667,
+      "game_text": 0.0,
+      "game_traverse": 16.710133333333335,
+      "game_icon": 0.0,
+      "game_submit": 1.0277666666666667,
+      "game_laser": 0.0,
+      "game_select": 0.042741666666666664
+    },
+    "scope": "Release/debug-OFF 1080p desktop, no physical HMD, no injected hand surfaces/laser execution; HUD/XR costs additional."
+  },
+  "production_slot1": {
+    "raw": "analysis/runtime/g5-slot1-production-20261029/receipt.json",
+    "pairs_per_second": 25.110782865583456,
+    "mean_stages_ms": {
+      "guest_sim": 39.80833333333334,
+      "pair_total": 21.518849999999997,
+      "eye_begin_l": 0.18966666666666665,
+      "eye_guest_l": 9.959850000000001,
+      "eye_end_l": 0.398075,
+      "eye_restore_l": 0.305125,
+      "eye_begin_r": 0.059241666666666665,
+      "eye_guest_r": 9.900825000000001,
+      "eye_end_r": 0.39601666666666663,
+      "eye_restore_r": 0.30364166666666664,
+      "xr_wait_frame": 0.0,
+      "xr_begin_frame": 0.0,
+      "xr_acquire": 0.0,
+      "xr_wait_image": 0.0,
+      "xr_copy": 0.0,
+      "xr_release": 0.0,
+      "xr_end_frame": 0.0,
+      "pose_age": 0.0,
+      "hud_capture": 0.0,
+      "hud_draw": 0.0,
+      "hud_readback": 0.0,
+      "game_env": 0.0,
+      "game_world": 0.06848333333333334,
+      "game_text": 0.0,
+      "game_traverse": 18.640691666666665,
+      "game_icon": 0.0,
+      "game_submit": 1.0755083333333335,
+      "game_laser": 0.0,
+      "game_select": 0.04591666666666666
+    }
+  },
+  "validation": {
+    "python_tests": 136,
+    "python_result": "pass",
+    "strict_shot": "pass",
+    "strict_weapon": "pass",
+    "strict_raycast": "pass",
+    "strict_frustum": "pass; new native-far rejection/intersection/NaN guards",
+    "git_diff_check": "pass",
+    "production_smokes": "slot1/slot2 pass; clean owned exits"
+  },
+  "cleanup": {
+    "no_owned_game_process": true,
+    "source_saves_unchanged": true,
+    "preferences_unchanged": true,
+    "XR_settings_changed": false
+  },
+  "next": "G6c/P3c2\u2013P3c6: real 80011424 caller contract, build-selected preflight implementation and qualification, then P4/P5 independent fresh views. Remaining G7 coverage does not gate performance."
+}

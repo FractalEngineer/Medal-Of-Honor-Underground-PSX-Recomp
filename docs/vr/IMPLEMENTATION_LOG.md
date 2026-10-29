@@ -1,5 +1,106 @@
 # VR Port Implementation Log
 
+## 2026-10-29 — documentation and delivery checkpoint
+
+- Updated the active handoff, plan, parity runbook and current-regression/
+  performance instructions to reflect both petrol release branches, the slot-1
+  native far-depth repair and the measured slot-2 production baseline.
+- Next work is G6c/P3c2–P3c6 native preflight implementation/qualification.
+  Existing MP calibration remains unchanged; remaining unavailable weapon
+  fixtures/physical gates do not delay performance work. The intermittent
+  HUD/pause VRAM mismatch and 60/90 fresh-frame target stay explicitly open.
+- This delivery includes the validated implementation/tools/tests and three
+  compact receipts. No further game launch or runtime change was made for the
+  documentation/push request. Personal saves, production debug-OFF binary,
+  framework/reference checkout and unrelated .commandcode/ are preserved.
+
+## 2026-10-29 — complete measured petrol branches; repair slot-1 far-depth omission
+
+- Owner clarified that existing MP calibration should carry over and requested
+  returning promptly to missing world/performance. No calibration data changed.
+  Remaining G7 unavailable/physical/rocket-origin gates no longer block G6.
+- Natural body turning exposes petrol's no-contact branch. It bypasses the
+  second basis call; final constructor origin is 80047F80/90/A0. Measured safe
+  final caller 80043FB0/RA8008CD10 after native origin/history/ammo stores.
+  Added one exact guarded entry callback and reused native basis/geometry
+  builders through the existing register-preserving guest-call service.
+  Contact/no-contact, hand/loss/native-motion controls pass; final world-fix
+  binary preservation check also passes. Existing MP values/ray and native
+  speed/gravity/fuse/effects stay unchanged; matched impact/physical gates open.
+  Read the previous game's grenade adapter directly. One missed-input candidate
+  run remains failed evidence. Hook count 26/11; supported generation changed
+  no game shard or execution identity, and frozen states load without bypass.
+- Reproduced G5: native Flat street present; stereo has black/missing sections.
+  Native selector rejects a far arena while VR admitted 116 leaves. Native
+  8009A174 compares MAC3 with active-camera descriptor+40; VR omitted this far
+  plane (10,000 units here). Added title-local conservative eye-space depth
+  rejection, retaining native range and head-turn FOV/PVS/full code guards.
+  No framework/shared math or disc change; removed temporary compare instrumentation.
+- Corrected slot-1 street is visible in both eyes and 90-degree head view.
+  Diagnostic primitives about 2,448 -> 1,513 per eye are scope-matched geometry
+  evidence, not a production FPS gain. 563-check fixed capture and 268-check
+  side view have zero mismatch. Pause/load/refusal recover world images, but
+  one HUD/pause run still has one VRAM-only mismatch in 818 checks. It remains
+  failed; broad G5c restoration acceptance stays open. The first recovery harness
+  incorrectly used an OFF draw-skip counter; it now uses stereo pairs unless
+  the feature is enabled. No runtime guard was weakened to hide either failure.
+- G6 slot-2 street/tank geometry is verified, 257 clean VERIFY checks. Final
+  production debug-OFF slot-2 baseline: 20.139 ms/pair, 16.710 traversal,
+  1.028 submit, 0.066 selector, 25.011 pairs/s; XR/hand work excluded. Performance
+  remains open. Next is the existing native preflight caller implementation and
+  qualification, then independent fresh-view cadence; no more weapon campaign.
+- 136 Python tests and strict shot/weapon/raycast/frustum fixtures pass.
+  Production Release/PGXP/OpenXR/debug-OFF/native-timers-OFF/IPO-OFF restored.
+  Slot-1/2 production smokes exit cleanly; saves/preferences unchanged and no
+  owned game remains. No HMD, framework pin, reference edit, commit or push.
+  [Petrol receipt](../../vr/proof/sp-petrol-release-complete-receipt.json),
+  [world/performance receipt](../../vr/proof/sp-far-depth-world-receipt.json).
+
+## 2026-10-29 — G7c natural SP petrol release; calibration unchanged
+
+- Continued solo from 4cfe1d3 after the required full documentation read.
+  Central Beads path F:/Software/beads/issues unavailable; no local DB created.
+- Native Cross and Cross+R2 now throw from naturally switched copied slot 3;
+  R2 alone does not. Five fresh-load fire cases constructed. The earlier
+  no-constructor failure was not reproduced and its cause remains unknown.
+- Measured SP throw flow 8008C620 (1,820 bytes/FNV 4A5D3295), eight-update
+  petrol delay, helper 800488F8, constructor/type 800484CC, final contact-origin
+  stores 8008CC20/2C/38, second basis RA 8008CC3C and initialization 80050C20.
+  Native scalar speed remains +214=004D0000; vertical evolution remains +230.
+- Added only the guarded observed release-branch adapter at the existing basis
+  callback. Full SP code/model/type/ID/register/owner/layout/camera/tracking
+  checks precede pose/history writes using the unchanged shared MP calibration
+  and hand-fixed muzzle/ray. Other branches stay native. No new hook, generated
+  code, framework pin, calibration/scale/grip/profile or initial thrown guard change.
+- Petrol first motion turns 29.914766 degrees for a 30-degree hand turn;
+  translation moves origin, head-only rotation changes neither origin nor motion,
+  loss restores exact native origin/motion. First-step length 77.166141/77.173961
+  and identical +5 vertical increments support scoped speed/gravity preservation.
+  Fuse/explosion/matched impact/damage and physical acceptance remain open.
+- Reachable P38/Sten/Panzerfaust/petrol pass native pause/Continue, real load
+  generation/camera recovery, reload/switch/refusal recovery and post-recovery
+  firing: 2,560 VERIFY checks, zero mismatches/aborts/discards. Source fixtures
+  and preferences unchanged; clean exit and no owned process. Completed G7a
+  inventory, MP discovery and firearm 30-degree controls were not repeated.
+- Probe retains construction before ring wrap, separates multiple XYZ groups
+  in one frame, and offers explicit native/input/translation/VERIFY/lifecycle
+  controls. Failed tracked controls can no longer report complete. Original
+  receipts retain their actual hashes/fields. Pre-adapter native construction
+  was not a tracked pass. Exploratory input wrapper presentation KeyError and
+  initial Sten Start-resume failure remain rejected; native Continue rerun passes.
+  First strict weapon link omitted vr_pose_math.c; corrected fixture passes.
+- G7c stays open for S3=0 at 8008CC10, skipping the final basis call. Next:
+  naturally turn/move away from contact and trace that branch before extending
+  the adapter. SP grenade/nine IDs remain unavailable without new natural
+  fixtures. G7d exact rocket origin/speed/impact remains open; lifecycle advances.
+- Final production smoke exits 0 at binary `4b8e7c56...`, with a valid
+  desktop trace and unchanged source saves/preferences. Its 26.44 pairs/s is
+  not a performance improvement or headset acceptance claim. No owned game remains.
+- [Receipt](../../vr/proof/sp-weapon-parity-g7c-receipt.json) records sources,
+  binaries, fixtures, controls, failures, final tests/smoke/cleanup. Restored
+  Release/debug-OFF/PGXP/OpenXR/native-timers-OFF/IPO-OFF; 136 Python tests and
+  strict shot/weapon/raycast fixtures pass. No physical launch, commit or push.
+
 ## 2026-10-29 - G7a SP inventory and guarded Panzerfaust basis
 
 - Added read-only `probe_sp_weapon_inventory.py` and

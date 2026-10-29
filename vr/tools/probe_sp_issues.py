@@ -34,7 +34,7 @@ def main():
     ap.add_argument('--software', action='store_true')
     ap.add_argument('--audio', action='store_true', help='Hidden SDL, paced, dummy audio sink')
     ap.add_argument('--music-trace', action='store_true', help='Native CD driver write trace')
-    ap.add_argument('--fallback-controls', action='store_true', help='Pause/refusal/reload control for optional draw filter')
+    ap.add_argument('--fallback-controls', action='store_true', help='Pause/refusal/reload recovery; also checks draw-filter counter when enabled')
     ap.add_argument('--tracking-loss', action='store_true')
     ap.add_argument('--hitch-ms', type=int, default=0)
     ap.add_argument('--hud', action='store_true')
@@ -274,7 +274,10 @@ def main():
             r['overlay'] = n.command('overlay_native_ring')
             if args.fallback_controls:
                 key='mohu.vr.world.native_copy_skipped'
-                def count():return p.counter_values().get(key,0)
+                filter_enabled = env.get('MOHU_VR_SKIP_NATIVE_WORLD_COPY') == '1'
+                def count():
+                    return (p.counter_values().get(key,0) if filter_enabled
+                            else n.command('stereo_stats')['pairs'])
                 n.command('clear_input')
                 def menu_button():
                     # Same controller route/window as probe_pause_menu.py.
@@ -298,11 +301,14 @@ def main():
                 r['fallback_controls']=dict(paused=paused,paused_after=paused_after,
                     resumed=resumed,refused=refused,refused_after=refused_after,
                     recovered=recovered,reloaded=count(),camera=p.shot_command('sp-camera'),
-                    pause_counters=pause_counters)
+                    pause_counters=pause_counters,
+                    counter_scope=key if filter_enabled else 'stereo_pairs')
                 if not (paused==paused_after and resumed>paused_after
                         and refused==refused_after and recovered>refused_after
                         and r['fallback_controls']['camera']['valid']):
                     raise RuntimeError('Native-copy filter fallback control failed')
+                r['recovery'] = snapshot('recovery')
+                r['restore'] = n.command('render_pass_stats')
             r['complete'] = ((args.flat and r['end_frame']['frame'] > r['start_frame']['frame']
                              or r['end']['pairs'] > r['start']['pairs']) and
                              r['end']['failed'] == r['start']['failed'] and

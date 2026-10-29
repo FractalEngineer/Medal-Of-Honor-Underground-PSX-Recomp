@@ -3,6 +3,25 @@
 #include <stdio.h>
 
 int main(void) {
+    const uint32_t sp_player = 0x800F0BE0u, petrol = 0x800ECB10u;
+    assert(mohu_vr_sp_petrol_release_valid(petrol, petrol, sp_player,
+        sp_player, sp_player + 0x3FCu, MOHU_VR_SP_PETROL_RELEASE_RA));
+    assert(mohu_vr_sp_petrol_release_valid(petrol, petrol, sp_player,
+        sp_player, sp_player + 0x3FCu, MOHU_VR_SP_RELEASE_COMPLETE_RA));
+    assert(!mohu_vr_sp_petrol_release_valid(petrol, petrol, sp_player,
+        sp_player, sp_player + 0x3FCu, 0x8008996Cu)); /* unrelated sound */
+    assert(!mohu_vr_sp_petrol_release_valid(petrol, petrol, sp_player,
+        sp_player, sp_player + 0x400u, MOHU_VR_SP_PETROL_RELEASE_RA));
+    assert(!mohu_vr_sp_petrol_release_valid(petrol, petrol, sp_player,
+        sp_player, sp_player + 0x3FCu, MOHU_VR_SP_SHOT_BASIS_CALL_RA));
+    assert(!mohu_vr_sp_petrol_release_valid(petrol, petrol + 4u, sp_player,
+        sp_player, sp_player + 0x3FCu, MOHU_VR_SP_PETROL_RELEASE_RA));
+    assert(!mohu_vr_sp_petrol_release_valid(petrol, petrol, sp_player,
+        sp_player + 4u, sp_player + 0x3FCu, MOHU_VR_SP_PETROL_RELEASE_RA));
+    assert(!mohu_vr_sp_petrol_release_valid(sp_player, sp_player, sp_player,
+        sp_player, sp_player + 0x3FCu, MOHU_VR_SP_PETROL_RELEASE_RA));
+    assert(!mohu_vr_sp_petrol_release_valid(0u, 0u, sp_player,
+        sp_player, sp_player + 0x3FCu, MOHU_VR_SP_PETROL_RELEASE_RA));
     const uint32_t single[] = {0u, 5u, 8u, 9u, 12u};
     const uint32_t repeating[] = {1u, 4u, 16u, 17u};
     for (unsigned i = 0; i < sizeof single / sizeof single[0]; ++i) {

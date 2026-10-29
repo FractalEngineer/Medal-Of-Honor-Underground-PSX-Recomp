@@ -106,8 +106,11 @@ def find_constructor(
 def position_groups(
     entries: list[dict], shot: int, start_sequence: int
 ) -> list[dict]:
-    by_frame = {}
-    for row in entries:
+    # Several complete position writes can occur in one frame (construction,
+    # release correction, tracked pose, then motion). Keep their order.
+    groups = []
+    pending = {}
+    for row in sorted(entries, key=lambda item: int(item["seq"])):
         if int(row["seq"]) <= start_sequence:
             continue
         low = int(row["addr"], 0) & 0x1FFFFFFF
@@ -115,20 +118,22 @@ def position_groups(
             if low == (
                 shot + POSITION_OFFSET + axis * 4
             ) & 0x1FFFFFFF:
-                by_frame.setdefault(int(row["frame"]), {})[axis] = row
-    groups = []
-    for frame in sorted(by_frame):
-        rows = by_frame[frame]
-        if set(rows) != {0, 1, 2}:
+                if axis == 0:
+                    pending = {}
+                pending[axis] = row
+        if set(pending) != {0, 1, 2}:
             continue
-        ordered = [rows[axis] for axis in range(3)]
+        ordered = [pending[axis] for axis in range(3)]
+        pending = {}
+        if len({row["frame"] for row in ordered}) != 1:
+            continue
         if len({row["seq"] for row in ordered}) != 3:
             continue
         before = [signed(row["old"]) / 65536 for row in ordered]
         after = [signed(row["new"]) / 65536 for row in ordered]
         delta = [new - old for old, new in zip(before, after)]
         groups.append({
-            "frame": frame,
+            "frame": int(ordered[0]["frame"]),
             "sequence": [int(row["seq"]) for row in ordered],
             "pc": [row["pc"] for row in ordered],
             "before": before,
@@ -191,20 +196,29 @@ def snapshot(weapon_id: int, switches: int) -> dict:
 
 def run_case(
     slot: int, switches: int, weapon_id: int, hand_yaw_deg: float,
-    head_yaw_deg: float, tracking_loss: bool,
+    head_yaw_deg: float, tracking_loss: bool, *, native_control: bool = False,
+    hand_x_mm: float = 0.0, fire_buttons: str | None = None,
+    lifecycle: bool = False, turn_frames: int = 0,
 ) -> dict:
     native.load(slot)
     comparison.release_load_override()
     for _ in range(switches):
         native.switch()
         comparison.release_load_override()
+    body_before = native.read(read_word(SP_PLAYER) + 0x220, 0x28).hex()
+    if turn_frames:
+        native.command("openxr_input_override", rx=1000 if turn_frames > 0 else -1000)
+        native.frames(abs(turn_frames))
+        native.command("openxr_input_override", clear=1)
+        native.frames(8)
+    body_after = native.read(read_word(SP_PLAYER) + 0x220, 0x28).hex()
     comparison.set_desktop_hands()
-    if hand_yaw_deg or tracking_loss:
+    if hand_yaw_deg or tracking_loss or hand_x_mm:
         angle = math.radians(hand_yaw_deg)
         q = (0.0, math.sin(angle / 2), 0.0, math.cos(angle / 2))
         poses.set_hand_pair(
-            grip=(0.15, -0.15, -0.4),
-            aim=(0.15, -0.15, -0.4),
+            grip=(0.15 + hand_x_mm / 1000, -0.15, -0.4),
+            aim=(0.15 + hand_x_mm / 1000, -0.15, -0.4),
             grip_q=q,
             aim_q=q,
             focused=0 if tracking_loss else 1,
@@ -217,6 +231,54 @@ def run_case(
         )
     native.frames(10)
     before = snapshot(weapon_id, switches)
+    lifecycle_result = None
+    if lifecycle:
+        def menu_button(*, confirm: bool = False) -> None:
+            comparison.release_load_override()
+            native.command("openxr_input_override", **(
+                {"right_buttons": 1} if confirm else {"left_buttons": 4}
+            ))
+            native.frames(6)
+            native.command("openxr_input_override", clear=1)
+            native.frames(10)
+
+        menu_button()
+        native.frames(25)
+        paused = read_word(0x800A70F0)
+        menu_button(confirm=True)
+        native.frames(20)
+        resumed = read_word(0x800A70F0)
+        pause_ammo = snapshot(weapon_id, switches)
+        old_generation = native.command("savestate_status")["generation"]
+        loaded = native.load(slot)
+        comparison.release_load_override()
+        for _ in range(switches):
+            native.switch()
+            comparison.release_load_override()
+        native.frames(10)
+        loaded_ammo = snapshot(weapon_id, switches)
+        camera = comparison.shot_command("sp-camera")
+        native.command("render_pass_refuse", on=1)
+        native.frames(8)
+        refused = native.command("stereo_stats")["pairs"]
+        native.command("render_pass_refuse", on=0)
+        native.frames(12)
+        recovered = native.command("stereo_stats")["pairs"]
+        lifecycle_result = {
+            "paused": paused, "resumed": resumed,
+            "pause_ammo": pause_ammo, "loaded_ammo": loaded_ammo,
+            "generation_before": old_generation,
+            "generation_after": loaded["generation"],
+            "camera_after_load": camera,
+            "refused_pairs": refused, "recovered_pairs": recovered,
+            "passed": paused == 1 and resumed == 0 and
+                loaded["generation"] > old_generation and camera["valid"] and
+                recovered > refused and
+                all(pause_ammo[key] == before[key] == loaded_ammo[key]
+                    for key in ("weapon_id", "clip", "reserve")),
+        }
+        if not lifecycle_result["passed"]:
+            raise RuntimeError(f"SP lifecycle prerequisite failed: {lifecycle_result}")
     before_counters = comparison.counter_values()
     native.command("wtrace_range", lo="0x800B0000", hi="0x801FF000")
     native.command("wtrace_clear")
@@ -226,6 +288,8 @@ def run_case(
          "0xf7ff", "0xfbff", "0xfdff", "0xfeff")
         if weapon_id in (10, 15) else ("0xbfff",)
     )
+    if fire_buttons is not None:
+        button_candidates = (fire_buttons,)
     constructor, constructor_trace, fire_buttons = find_constructor(
         weapon_id, button_candidates, press=weapon_id in (10, 15)
     )
@@ -241,7 +305,10 @@ def run_case(
         for axis in range(3)
     ]
     native.command("set_input", buttons="0xffff")
-    object_rows = {}
+    # Capture construction/release before advancing: the broad native write
+    # ring can wrap during the following flight window.
+    first_trace = trace_dump(addr_lo=hex(shot), addr_hi=hex(shot + 0x500))
+    object_rows = {int(row["seq"]): row for row in first_trace["entries"]}
     object_trace = {}
     for _ in range(8):
         native.frames(4)
@@ -254,7 +321,7 @@ def run_case(
         for row in object_trace["entries"]:
             object_rows[int(row["seq"])] = row
     entries = [object_rows[key] for key in sorted(object_rows)]
-    groups = position_groups(entries, shot, 0)
+    groups = position_groups(entries, shot, int(constructor["seq"]))
     motion = next(
         (
             group for group in groups
@@ -294,6 +361,7 @@ def run_case(
     checks = {
         "native_first_motion": motion is not None,
         "tracked_control": (
+            aimed == 0 if native_control else
             aimed == 0 and tracking_fallback > 0 if tracking_loss
             else aimed > 0 and tracking_fallback == 0
         ),
@@ -312,12 +380,33 @@ def run_case(
             "bytes": native.read(start, 48).hex(),
             "disasm": native.command("disasm", addr=hex(start), count=12)["lines"],
         }
+    if lifecycle_result is not None:
+        native.command("set_input", buttons="0x7fff")
+        native.frames(3)
+        native.command("set_input", buttons="0xffff")
+        native.frames(90)
+        lifecycle_result["after_reload"] = snapshot(weapon_id, switches)
+        native.switch()
+        comparison.release_load_override()
+        live_id = native.read(read_word(SP_PLAYER) + 0x3FC + 93, 1)[0]
+        lifecycle_result["after_switch"] = snapshot(live_id, switches + 1)
+        lifecycle_result["native_switch_changed_id"] = live_id != weapon_id
+        checks["lifecycle_recovery"] = (
+            lifecycle_result["passed"] and
+            lifecycle_result["native_switch_changed_id"]
+        )
     return {
         "slot": slot,
         "weapon_id": weapon_id,
         "weapon": native.WEAPONS[weapon_id],
         "type": shot_type(weapon_id),
         "fire_buttons": fire_buttons,
+        "native_body_turn": {
+            "frames": turn_frames, "before": body_before, "after": body_after,
+        },
+        "petrol_contact_branch": any(
+            int(pc, 0) == 0x8008CC20 for group in groups for pc in group["pc"]
+        ) if weapon_id == 15 else None,
         "before": before,
         "after": after,
         "shot_counters": {
@@ -326,6 +415,7 @@ def run_case(
             "tracking_fallback": tracking_fallback,
         },
         "checks": checks,
+        "lifecycle": lifecycle_result,
         "control_passed": all(checks.values()),
         "constructor": constructor,
         "constructor_trace_counts": {
@@ -348,7 +438,7 @@ def run_case(
                 for key in ("total", "available", "emitted")
             },
         },
-        "object_trace": entries if motion is None else None,
+        "object_trace": entries,
     }
 
 
@@ -359,11 +449,24 @@ def main() -> None:
     parser.add_argument("--hand-yaw", type=float, default=0.0)
     parser.add_argument("--head-yaw", type=float, default=0.0)
     parser.add_argument("--tracking-loss", action="store_true")
+    parser.add_argument("--native", action="store_true")
+    parser.add_argument("--verify", action="store_true")
+    parser.add_argument("--hand-x-mm", type=float, default=0.0)
+    parser.add_argument("--fire-buttons", type=lambda value: int(value, 0))
+    parser.add_argument("--lifecycle", action="store_true")
+    parser.add_argument("--turn-frames", type=int, default=0,
+                        help="Natural right-stick turn before firing; signed VBlanks")
     args = parser.parse_args()
     if not -180.0 <= args.hand_yaw <= 180.0:
         parser.error("hand yaw must be in -180..180 degrees")
     if not -180.0 <= args.head_yaw <= 180.0:
         parser.error("head yaw must be in -180..180 degrees")
+    if not math.isfinite(args.hand_x_mm) or abs(args.hand_x_mm) > 500:
+        parser.error("hand translation must be in -500..500 mm")
+    if args.fire_buttons is not None and not 0 <= args.fire_buttons <= 65535:
+        parser.error("fire buttons must be a 16-bit active-low native mask")
+    if not -240 <= args.turn_frames <= 240:
+        parser.error("native turn must be in -240..240 frames")
     selected = set(args.ids or DEFAULT_IDS)
     unknown = selected - {case[2] for case in CASES}
     if unknown:
@@ -390,10 +493,12 @@ def main() -> None:
     executable = (
         ROOT / "build-release/Medal_of_Honor_Underground_Recompiled.exe"
     )
-    env = comparison.environment("tracked", True, hand_fixed=True)
+    env = comparison.environment(
+        "native" if args.native else "tracked", True, hand_fixed=True
+    )
     env.update(
         PSX_INTERNAL_RESOLUTION="native",
-        PSX_RENDER_PASS_VERIFY="0",
+        PSX_RENDER_PASS_VERIFY=str(int(args.verify)),
         MOHU_VR_MP_CONTROL="0",
         MOHU_VR_MP_FRUSTUM="0",
         MOHU_VR_WEAPON_TRACE="0",
@@ -412,6 +517,12 @@ def main() -> None:
         "hand_yaw_deg": args.hand_yaw,
         "head_yaw_deg": args.head_yaw,
         "tracking_loss": args.tracking_loss,
+        "native_control": args.native,
+        "hand_x_mm": args.hand_x_mm,
+        "fire_buttons": args.fire_buttons,
+        "verify": args.verify,
+        "lifecycle": args.lifecycle,
+        "turn_frames": args.turn_frames,
         "limits": [
             "Natural SP fixtures cover only IDs 0, 13, 15 and 16.",
             "Tracing does not prove projectile direction under a changed hand pose.",
@@ -448,10 +559,20 @@ def main() -> None:
                     run_case(
                         slot, switches, weapon_id,
                         args.hand_yaw, args.head_yaw, args.tracking_loss,
+                        native_control=args.native, hand_x_mm=args.hand_x_mm,
+                        fire_buttons=(hex(args.fire_buttons)
+                                      if args.fire_buttons is not None else None),
+                        lifecycle=args.lifecycle,
+                        turn_frames=args.turn_frames,
                     )
                 )
                 comparison.save_json(out / "receipt.json", receipt)
-            receipt["complete"] = True
+            receipt["restore"] = native.command("render_pass_stats")
+            receipt["complete"] = all(
+                row["control_passed"] for row in receipt["cases"]
+            ) and receipt["restore"]["verify_mismatch"] == 0 and (
+                not args.verify or receipt["restore"]["verify_checks"] > 0
+            )
         except BaseException as error:
             receipt["error"] = str(error)
             raise

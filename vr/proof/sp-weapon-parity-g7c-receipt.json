@@ -1,0 +1,505 @@
+{
+  "schema": 1,
+  "date": "2026-10-29",
+  "kind": "G7c natural SP petrol contact-release branch integration and reachable lifecycle checkpoint",
+  "base_commit": "4cfe1d30b71d0d3e68f180f301a9f909ec1f5eb5",
+  "branch": "feature/vr-port",
+  "all_g7_complete": false,
+  "physical_acceptance": false,
+  "headset_used": false,
+  "release_acceptance": false,
+  "shared_mp_calibration_changed": false,
+  "new_inventory_or_mp_discovery_performed": false,
+  "central_beads": "F:/Software/beads/issues unavailable; no local DB created",
+  "debug_on_binary_sha256": "7776296b22f35afbe7a484d05c291caa6dde2e327395dd75094416d7062080b3",
+  "production_debug_off_binary_sha256": "4b8e7c56216b4ec1664f0b06bcbfdebb3e0b3ea959c91da2c92e34e3ae0c2ab3",
+  "sources": {
+    "vr/underground/shot.h": "d748722edd009515a6401b15477ae6a0ebf0fe4cc9bc1e508304d865645eddfd",
+    "vr/underground/vr_diagnostic.c": "f49405b53b36f9025b4de202c8c4ca897101cede40d5ed6f8d397e2cbd418fc7",
+    "vr/underground/weapon.c": "5a9072ae5bb646d9c76bfa09c42d141faa8d4bd497fc6d404d31f377db2336fe",
+    "vr/tools/probe_sp_shot_origins.py": "7c0cae684c1ef3680f6c701c5d776b125468b9b5a18d9ef640d580fc141827b1",
+    "vr/tests/test_shot.c": "2c9e895cf7ae2aed04af56e10dc98cb9c8fbb6caf3b62d2b3aee24f828fe05bf",
+    "vr/tests/test_sp_weapon_parity_tools.py": "c4673d58a4bbc00e6257b0af150ed47490db0af61e44883f93c6d798c7787f89",
+    "game.toml": "5ee404e92c16862ea101a6eafe6fe6f53278bb4745fed0447a33f7d0c9977e49"
+  },
+  "fixtures": {
+    "analysis\\fixtures\\sp\\openbios\\state_8001F844_slot02.pst": "dd1c87925c8480198d04e8d7b38c67c0099ed4985463f7dc4e46731c80f90ceb",
+    "analysis\\fixtures\\sp\\openbios\\state_8001F844_slot02.thumb": "332196dd7003ad841e25a9320fc138d2a5886ce9a5e47a494894c16c178e9b55",
+    "analysis\\fixtures\\sp\\openbios\\state_8001F844_slot03.pst": "85ca88b1ca3f54856530f4af0495dfc2c990a8529d868c3c4a350ac27511cc7a",
+    "analysis\\fixtures\\sp\\openbios\\state_8001F844_slot03.thumb": "92297c45e412148d652aaea843a59b16e5da7af35805a88851b6eb572ea32640",
+    "analysis\\fixtures\\sp\\openbios\\state_8001F844_slot04.pst": "e4b976b1ecde396842deb70ae81e4a5832fbd1fd04a0cb16ed3df4af6d2721f7",
+    "analysis\\fixtures\\sp\\openbios\\state_8001F844_slot04.thumb": "3d52e3134932e6bb09ba58c875d17205411068b51f9bc444ec58233b877bf96c"
+  },
+  "prior_inventory_receipt": "vr/proof/sp-weapon-parity-checkpoint-receipt.json",
+  "natural_input": {
+    "fixture_slot": 3,
+    "switches": 1,
+    "ordinary_fire": "0xBFFF",
+    "fire_plus_aim": "0xBDFF",
+    "aim_only": "0xFDFF; no constructor",
+    "successful_fresh_fire_cases": 5,
+    "raw": "analysis/runtime/g7c-petrol-input-controls-20261029/receipt.json",
+    "scope": "Per-input raw cases support natural construction only. Exploratory wrapper later raised presentation KeyError; its complete field is not accepted as an overall pass. Earlier absence was not reproduced; original cause unknown."
+  },
+  "sp_binding": {
+    "throw_flow": "8008C620",
+    "size": 1820,
+    "fnv32": "4A5D3295",
+    "delay_updates": 8,
+    "throw_helper": "800488F8",
+    "helper_call": "8008C854",
+    "type_store": "800484CC",
+    "contact_final_origin": [
+      "8008CC20",
+      "8008CC2C",
+      "8008CC38"
+    ],
+    "basis": "80076C28",
+    "basis_size": 260,
+    "basis_fnv32": "D4FD2F11",
+    "release_basis_return": "8008CC3C",
+    "native_geometry_initialization": "80050C20",
+    "native_speed_field": "shot+214 = 004D0000 (77, 16.16), writers 800485AC/80048CDC",
+    "native_vertical_evolution": "shot+230, writers 8004799C/80079288",
+    "motion_writers": [
+      "800793E4",
+      "80079400",
+      "8007941C"
+    ],
+    "registers": "A0=S1=shot, S5=SP player, S2=player+3FC, shot+3E2=15, type=13F3",
+    "adapter_writes": "pose +220/+224/+228 and +23C/+240/+244, release history +26C/+270/+274 only; native basis runs next",
+    "guards": [
+      "existing opt-in aim and active canonical callback; no eye replay",
+      "exact caller and aligned distinct SP shot/player pointers",
+      "register ownership and measured SP input/viewmodel layout",
+      "full SP throw-flow and basis hashes",
+      "exact live ID/type and guarded SP model geometry variant",
+      "fresh canonical camera owner/cycle and valid tracking"
+    ],
+    "hook_or_codegen_changes": false,
+    "unadapted_branch": "S3=0 at 8008CC10 skips second basis; stays native"
+  },
+  "controls": {
+    "native-v2": {
+      "raw": "analysis/runtime/g7c-petrol-native-v2-20261029/receipt.json",
+      "raw_sha256": "731b5d0e6890db409d3afef5aa2e95b51af780892d5ec73bfb8e41df8f9c818d",
+      "checks": {
+        "native_first_motion": true,
+        "tracked_control": true,
+        "native_ammo_consumed": true,
+        "no_other_fallback": true
+      },
+      "shot_counters": {
+        "aimed": 0,
+        "fallback": 0,
+        "tracking_fallback": 0
+      },
+      "origin": [
+        16796.0,
+        -215.0,
+        115.0
+      ],
+      "first_motion": [
+        -47.875,
+        5.0,
+        60.3125
+      ],
+      "first_step_length": 77.16614076944629,
+      "ammo_before": {
+        "clip": 1,
+        "reserve": 3
+      },
+      "ammo_after": {
+        "clip": 0,
+        "reserve": 3
+      },
+      "verify_checks": 0,
+      "verify_mismatch": 0
+    },
+    "baseline-v2": {
+      "raw": "analysis/runtime/g7c-petrol-baseline-v2-20261029/receipt.json",
+      "raw_sha256": "f6157b1cf05e33328e36642f069439786f0d82d7041aff3e9975fcd5dcca8acd",
+      "checks": {
+        "native_first_motion": true,
+        "tracked_control": true,
+        "native_ammo_consumed": true,
+        "no_other_fallback": true
+      },
+      "shot_counters": {
+        "aimed": 1,
+        "fallback": 0,
+        "tracking_fallback": 0
+      },
+      "origin": [
+        16717.196182250977,
+        -252.1944580078125,
+        236.85543823242188
+      ],
+      "first_motion": [
+        -48.1875,
+        5.8125,
+        60.0
+      ],
+      "first_step_length": 77.17396136327329,
+      "ammo_before": {
+        "clip": 1,
+        "reserve": 3
+      },
+      "ammo_after": {
+        "clip": 0,
+        "reserve": 3
+      },
+      "verify_checks": 308,
+      "verify_mismatch": 0
+    },
+    "hand30": {
+      "raw": "analysis/runtime/g7c-petrol-hand30-20261029/receipt.json",
+      "raw_sha256": "a54772a3c9877216c7d0249fa0729ce9dff6f0cff90f5d1e7ef44f3e5229a212",
+      "checks": {
+        "native_first_motion": true,
+        "tracked_control": true,
+        "native_ammo_consumed": true,
+        "no_other_fallback": true
+      },
+      "shot_counters": {
+        "aimed": 1,
+        "fallback": 0,
+        "tracking_fallback": 0
+      },
+      "origin": [
+        16720.107376098633,
+        -252.23440551757812,
+        233.92774963378906
+      ],
+      "first_motion": [
+        -71.75,
+        5.6875,
+        27.875
+      ],
+      "first_step_length": 77.18436228440318,
+      "ammo_before": {
+        "clip": 1,
+        "reserve": 3
+      },
+      "ammo_after": {
+        "clip": 0,
+        "reserve": 3
+      },
+      "verify_checks": 328,
+      "verify_mismatch": 0
+    },
+    "translated-v2": {
+      "raw": "analysis/runtime/g7c-petrol-translated-v2-20261029/receipt.json",
+      "raw_sha256": "45b84cfb9e2214924efeef1bd7b8782ccf84bc657fb6303f1389cf3931fb1154",
+      "checks": {
+        "native_first_motion": true,
+        "tracked_control": true,
+        "native_ammo_consumed": true,
+        "no_other_fallback": true
+      },
+      "shot_counters": {
+        "aimed": 1,
+        "fallback": 0,
+        "tracking_fallback": 0
+      },
+      "origin": [
+        16745.293991088867,
+        -252.18312072753906,
+        259.37925720214844
+      ],
+      "first_motion": [
+        -48.1875,
+        5.8125,
+        60.0
+      ],
+      "first_step_length": 77.17396136327329,
+      "ammo_before": {
+        "clip": 1,
+        "reserve": 3
+      },
+      "ammo_after": {
+        "clip": 0,
+        "reserve": 2
+      },
+      "verify_checks": 318,
+      "verify_mismatch": 0
+    },
+    "head30-v2": {
+      "raw": "analysis/runtime/g7c-petrol-head30-v2-20261029/receipt.json",
+      "raw_sha256": "8e01dcfd0d2af94d8428c76f5b9e390ab9a74102b34278f658926fe1cc185357",
+      "checks": {
+        "native_first_motion": true,
+        "tracked_control": true,
+        "native_ammo_consumed": true,
+        "no_other_fallback": true
+      },
+      "shot_counters": {
+        "aimed": 1,
+        "fallback": 0,
+        "tracking_fallback": 0
+      },
+      "origin": [
+        16717.196182250977,
+        -252.1944580078125,
+        236.85543823242188
+      ],
+      "first_motion": [
+        -48.1875,
+        5.8125,
+        60.0
+      ],
+      "first_step_length": 77.17396136327329,
+      "ammo_before": {
+        "clip": 1,
+        "reserve": 3
+      },
+      "ammo_after": {
+        "clip": 0,
+        "reserve": 3
+      },
+      "verify_checks": 0,
+      "verify_mismatch": 0
+    },
+    "loss-v2": {
+      "raw": "analysis/runtime/g7c-petrol-loss-v2-20261029/receipt.json",
+      "raw_sha256": "614ef034882a2237a1d09a3ceb2504f488e32dcf0180f10d4f1e20ffd8a4ebe7",
+      "checks": {
+        "native_first_motion": true,
+        "tracked_control": true,
+        "native_ammo_consumed": true,
+        "no_other_fallback": true
+      },
+      "shot_counters": {
+        "aimed": 0,
+        "fallback": 0,
+        "tracking_fallback": 1
+      },
+      "origin": [
+        16796.0,
+        -215.0,
+        115.0
+      ],
+      "first_motion": [
+        -47.875,
+        5.0,
+        60.3125
+      ],
+      "first_step_length": 77.16614076944629,
+      "ammo_before": {
+        "clip": 1,
+        "reserve": 3
+      },
+      "ammo_after": {
+        "clip": 0,
+        "reserve": 3
+      },
+      "verify_checks": 0,
+      "verify_mismatch": 0
+    }
+  },
+  "hand_rotation_degrees": 29.914765650036585,
+  "gravity_control": "native Y deltas 5,10,15,20; tracked 5.8125,10.8125,15.8125,20.8125; +5 increment unchanged",
+  "lifecycle": {
+    "raw": "analysis/runtime/g7-sp-lifecycle-reachable-v2-20261029/receipt.json",
+    "raw_sha256": "4c8eb9763b07d9c8631e3104a49557a0bdec2f5c5ed35e86c2a5f4a838863896",
+    "cases": [
+      {
+        "id": 0,
+        "checks": {
+          "native_first_motion": true,
+          "tracked_control": true,
+          "native_ammo_consumed": true,
+          "no_other_fallback": true
+        },
+        "load_generations": [
+          1,
+          2
+        ],
+        "pause_resume": [
+          1,
+          0
+        ],
+        "pairs_refused_recovered": [
+          80,
+          88
+        ],
+        "ammo_before": [
+          8,
+          24
+        ],
+        "ammo_after_fire": [
+          7,
+          24
+        ],
+        "ammo_after_reload": [
+          8,
+          23
+        ],
+        "switched_to": 15
+      },
+      {
+        "id": 16,
+        "checks": {
+          "native_first_motion": true,
+          "tracked_control": true,
+          "native_ammo_consumed": true,
+          "no_other_fallback": true
+        },
+        "load_generations": [
+          3,
+          4
+        ],
+        "pause_resume": [
+          1,
+          0
+        ],
+        "pairs_refused_recovered": [
+          309,
+          317
+        ],
+        "ammo_before": [
+          32,
+          300
+        ],
+        "ammo_after_fire": [
+          31,
+          300
+        ],
+        "ammo_after_reload": [
+          32,
+          299
+        ],
+        "switched_to": 15
+      },
+      {
+        "id": 13,
+        "checks": {
+          "native_first_motion": true,
+          "tracked_control": true,
+          "native_ammo_consumed": true,
+          "no_other_fallback": true
+        },
+        "load_generations": [
+          5,
+          6
+        ],
+        "pause_resume": [
+          1,
+          0
+        ],
+        "pairs_refused_recovered": [
+          748,
+          756
+        ],
+        "ammo_before": [
+          1,
+          1
+        ],
+        "ammo_after_fire": [
+          0,
+          1
+        ],
+        "ammo_after_reload": [
+          1,
+          0
+        ],
+        "switched_to": 15
+      },
+      {
+        "id": 15,
+        "checks": {
+          "native_first_motion": true,
+          "tracked_control": true,
+          "native_ammo_consumed": true,
+          "no_other_fallback": true
+        },
+        "load_generations": [
+          7,
+          8
+        ],
+        "pause_resume": [
+          1,
+          0
+        ],
+        "pairs_refused_recovered": [
+          1071,
+          1079
+        ],
+        "ammo_before": [
+          1,
+          3
+        ],
+        "ammo_after_fire": [
+          1,
+          2
+        ],
+        "ammo_after_reload": [
+          1,
+          2
+        ],
+        "switched_to": 0
+      }
+    ],
+    "verify_checks": 2560,
+    "verify_mismatch": 0,
+    "aborted": 0,
+    "discarded": 0
+  },
+  "rejected_runs": [
+    {
+      "raw": "analysis/runtime/g7c-petrol-reproduce-20261029/receipt.json",
+      "reason": "Native petrol constructed but tracked_control false before adapter; exit 1; old complete true was not acceptance."
+    },
+    {
+      "raw": "analysis/runtime/g7c-petrol-path-20261029/receipt.json",
+      "reason": "Read-only path capture; native construction, not tracked acceptance; exit 1."
+    },
+    {
+      "raw": "analysis/runtime/g7c-petrol-input-controls-20261029/receipt.json",
+      "reason": "Exploratory input wrapper ended with presentation KeyError; per-case data only."
+    },
+    {
+      "raw": "analysis/runtime/g7-sp-lifecycle-reachable-20261029/receipt.json",
+      "reason": "Start failed to resume Sten; not accepted; corrected native Continue input passes all four IDs."
+    },
+    {
+      "reason": "First strict weapon link omitted vr_pose_math.c; corrected strict command links it and passes."
+    }
+  ],
+  "validation": {
+    "python_tests": 136,
+    "python_result": "pass",
+    "strict_shot_c_fixture": "pass; SP release ownership/layout/caller negatives included",
+    "strict_weapon_c_fixture": "pass; links weapon.c and vr_pose_math.c",
+    "strict_raycast_c_fixture": "pass; links vr_geometry_math.c",
+    "production_smoke_raw": "analysis/runtime/g7c-production-final-20261029/receipt.json",
+    "production_smoke_raw_sha256": "3f6b8ca8a69499de53eba6539a2a7f057ea3e7da36cc294216fa81ddcadca0c4",
+    "production_smoke": "pass; clean exit and source saves/preferences unchanged",
+    "production_pairs_per_second": 26.438569206842924,
+    "git_diff_check": "pass",
+    "post_run_tool_changes": "Completion additionally checks lifecycle switch outcome and nonzero requested VERIFY count; receipts record those passing underlying facts. New CLI receipt verify/lifecycle booleans only; runtime C unchanged."
+  },
+  "production_build": {
+    "CMAKE_BUILD_TYPE": "Release",
+    "MOHU_VR_DIAGNOSTICS": "ON",
+    "PSX_DEBUG_TOOLS": "OFF",
+    "PSX_OPENXR": "ON",
+    "PSX_RUNTIME_IPO": "OFF",
+    "MOHU_VR_NATIVE_PROFILE": "OFF",
+    "PGXP": "active game hook flavor retained"
+  },
+  "cleanup": {
+    "source_saves_unchanged": true,
+    "preferences_unchanged": true,
+    "no_owned_game_remaining": true,
+    "xr_settings_changed": false,
+    "no_commit_or_push": true
+  },
+  "remaining": [
+    "G7c alternate petrol release without the final basis call remains native; naturally turn/move away from contact in copied slot 3, trace final writers before extending adapter.",
+    "SP stick grenade and IDs 1,4,5,8,9,10,12,14,17 lack natural frozen fixtures; reuse prior inventory provenance, no fabricated states.",
+    "Exact Panzerfaust calibrated final origin and native speed/impact qualification remain open; reload/switch/pause/load/refusal now have evidence.",
+    "Petrol fuse/explosion/matched impact/damage and physical hand alignment remain open.",
+    "G5/G6 and performance/physical acceptance remain separate."
+  ]
+}

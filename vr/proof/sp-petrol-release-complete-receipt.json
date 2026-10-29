@@ -1,0 +1,358 @@
+{
+  "schema": 1,
+  "kind": "SP petrol both measured release branches integrated; existing calibration retained",
+  "date": "2026-10-29",
+  "branch": "feature/vr-port",
+  "base_commit": "4cfe1d30b71d0d3e68f180f301a9f909ec1f5eb5",
+  "sources": {
+    "game.toml": "3f5d878c012ce6700b2fa69af981eab24d7db104b210132c59c6e07abd05c347",
+    "vr/underground/vr_diagnostic.c": "4648cb6bdca2454f36be0d17a5fd1cae11f7819e358161972a4164d4aa6a3121",
+    "vr/underground/shot.h": "bd9db60e7ebb5a76a6d14904d9a5a17ce329dbda32bd2f45d90a8b93d8a6873a",
+    "vr/underground/frustum.h": "64ca25860c64ed875b353bcee08dd918d58dcc1cfb551b23d3867d95685aaa63",
+    "vr/underground/weapon.c": "5a9072ae5bb646d9c76bfa09c42d141faa8d4bd497fc6d404d31f377db2336fe",
+    "vr/tools/probe_sp_shot_origins.py": "35e686a3004d1a757b0f2f2ecf8ea43ba2b1510f38d1333b614e449f62a1dc30",
+    "vr/tools/probe_sp_issues.py": "3e93419a20b08dc012d849422d68a6222f88a1dc2248347d12f8b9bed2e63a98",
+    "vr/tests/test_shot.c": "3ba4f51468c97a17d71a1bd8e84304ef4bdd635ed2c7b4bf2094da90f8053248",
+    "vr/tests/test_weapon.c": "b2a9aa44c60fedc74087f46641c9cc68792ec23799a40b42d90c7f44de6fd4c4",
+    "vr/tests/test_raycast.c": "201b6e26c0ec258420f2f9dc9c7b0e1e1b1dbc968b7907cec72f1813411afddb",
+    "vr/tests/test_frustum.c": "bb386e11065fd7c4154fb5e966f13ae841cf9c4f4278e8883ed37a513234e676",
+    "vr/tests/test_native_hooks.py": "c90570b1e56c9ccc036f38a365e2f70ecd0219fc64647374be480b2bef161fdc",
+    "vr/tests/test_sp_weapon_parity_tools.py": "c4673d58a4bbc00e6257b0af150ed47490db0af61e44883f93c6d798c7787f89"
+  },
+  "production_binary_sha256": "83d48a608e3602736b9267013835b4a96cceb1865af00fb082b2e9d78872b60b",
+  "production_build": {
+    "configuration": "Release",
+    "PSX_DEBUG_TOOLS": "OFF",
+    "PSX_OPENXR": "ON",
+    "PGXP_hook_flavor": 2,
+    "PSX_RUNTIME_IPO": "OFF",
+    "MOHU_VR_NATIVE_PROFILE": "OFF"
+  },
+  "physical_acceptance": false,
+  "headset_used": false,
+  "release_acceptance": false,
+  "framework_or_reference_changes": false,
+  "committed_or_pushed": false,
+  "post_run_changes": "Documentation and restoration of original game.toml line endings around the single added hook entry only; parsed config semantics unchanged.",
+  "shared_mp_calibration_changed": false,
+  "prior_contact_checkpoint": "vr/proof/sp-weapon-parity-g7c-receipt.json",
+  "controls": [
+    {
+      "path": "analysis/runtime/g7c-petrol-away-native-20261029/receipt.json",
+      "sha256": "9ce21f2b2a2e2ca58ec9c63bfe7b2c8db773a4362def7cb95d86a77c5e7798ea",
+      "debug_binary_sha256": "5238ea2b4beb8e72b26acdefb0c4e7928a4bafd5da277979e80e75ed5a705829",
+      "contact_branch": false,
+      "control_passed": true,
+      "shot_counters": {
+        "aimed": 0,
+        "fallback": 0,
+        "tracking_fallback": 0
+      },
+      "first_origin": [
+        17000.0,
+        -215.0,
+        157.0
+      ],
+      "first_delta": [
+        70.625,
+        5.0,
+        30.5
+      ],
+      "final_origin_pcs": [
+        "0x80047F80",
+        "0x80047F90",
+        "0x80047FA0"
+      ],
+      "ammo_before": [
+        1,
+        3
+      ],
+      "ammo_after": [
+        1,
+        2
+      ],
+      "verify_checks": 0,
+      "verify_mismatch": 0,
+      "shot_yaw_relative_to_measured_body_degrees": -0.050012235300641805
+    },
+    {
+      "path": "analysis/runtime/g7c-away-safe-entry-20261029/receipt.json",
+      "sha256": "c25d0dc66504e1b81fa87f7172a2a179c3857f9fd68dc9d7493c72999029cdec",
+      "debug_binary_sha256": "5238ea2b4beb8e72b26acdefb0c4e7928a4bafd5da277979e80e75ed5a705829",
+      "contact_branch": false,
+      "control_passed": true,
+      "shot_counters": {
+        "aimed": 0,
+        "fallback": 0,
+        "tracking_fallback": 0
+      },
+      "first_origin": [
+        17009.0,
+        -215.0,
+        100.0
+      ],
+      "first_delta": [
+        75.9375,
+        5.0,
+        12.4375
+      ],
+      "final_origin_pcs": [
+        "0x80047F80",
+        "0x80047F90",
+        "0x80047FA0"
+      ],
+      "ammo_before": [
+        1,
+        3
+      ],
+      "ammo_after": [
+        1,
+        2
+      ],
+      "verify_checks": 0,
+      "verify_mismatch": 0,
+      "shot_yaw_relative_to_measured_body_degrees": -0.0017320484033689354
+    },
+    {
+      "path": "analysis/runtime/g7c-away-guard-diagnostic-20261029/receipt.json",
+      "sha256": "72e190e08ac681a973563f2289353ea5d9da447d934ffe3a706bac6d74cb15e7",
+      "debug_binary_sha256": "1f2465a963d6fdcc305d69c0d2cf5e8ee3d141beb771242117846d329b4c3acb",
+      "contact_branch": false,
+      "control_passed": true,
+      "shot_counters": {
+        "aimed": 1,
+        "fallback": 0,
+        "tracking_fallback": 0
+      },
+      "first_origin": [
+        16923.85137939453,
+        -252.2805633544922,
+        91.51387023925781
+      ],
+      "first_delta": [
+        73.8125,
+        5.8125,
+        21.625
+      ],
+      "final_origin_pcs": [
+        "0x8008CD0C",
+        "0x8008CD0C",
+        "0x8008CD0C"
+      ],
+      "ammo_before": [
+        1,
+        3
+      ],
+      "ammo_after": [
+        0,
+        3
+      ],
+      "verify_checks": 356,
+      "verify_mismatch": 0,
+      "shot_yaw_relative_to_measured_body_degrees": -0.02539914752497907
+    },
+    {
+      "path": "analysis/runtime/g7c-turned-hand-final-20261029/receipt.json",
+      "sha256": "b99c4e071df419178d4858d60c8843ab995a5f22dfe5fb0584f77edeb62749a5",
+      "debug_binary_sha256": "1f2465a963d6fdcc305d69c0d2cf5e8ee3d141beb771242117846d329b4c3acb",
+      "contact_branch": false,
+      "control_passed": true,
+      "shot_counters": {
+        "aimed": 1,
+        "fallback": 0,
+        "tracking_fallback": 0
+      },
+      "first_origin": [
+        16919.921646118164,
+        -252.7625274658203,
+        107.94735717773438
+      ],
+      "first_delta": [
+        45.875,
+        5.6875,
+        61.6875
+      ],
+      "final_origin_pcs": [
+        "0x8008CD0C",
+        "0x8008CD0C",
+        "0x8008CD0C"
+      ],
+      "ammo_before": [
+        1,
+        3
+      ],
+      "ammo_after": [
+        0,
+        3
+      ],
+      "verify_checks": 354,
+      "verify_mismatch": 0,
+      "shot_yaw_relative_to_measured_body_degrees": -30.05551562688902
+    },
+    {
+      "path": "analysis/runtime/g7c-turned-loss-final-20261029/receipt.json",
+      "sha256": "b176e6e85f38efa07e7b9c65cd06514e90f2f86c11401ceed8a565463106d66e",
+      "debug_binary_sha256": "1f2465a963d6fdcc305d69c0d2cf5e8ee3d141beb771242117846d329b4c3acb",
+      "contact_branch": false,
+      "control_passed": true,
+      "shot_counters": {
+        "aimed": 0,
+        "fallback": 0,
+        "tracking_fallback": 1
+      },
+      "first_origin": [
+        17004.0,
+        -215.0,
+        143.0
+      ],
+      "first_delta": [
+        72.375,
+        5.0,
+        26.125
+      ],
+      "final_origin_pcs": [
+        "0x80047F80",
+        "0x80047F90",
+        "0x80047FA0"
+      ],
+      "ammo_before": [
+        1,
+        3
+      ],
+      "ammo_after": [
+        0,
+        3
+      ],
+      "verify_checks": 357,
+      "verify_mismatch": 0,
+      "shot_yaw_relative_to_measured_body_degrees": -0.04231592422718222
+    },
+    {
+      "path": "analysis/runtime/g7c-contact-regression-final-20261029/receipt.json",
+      "sha256": "076a6eb1418d7b42f973de8eb960d6634e4cae71fe28cc288cdd163f87fffe83",
+      "debug_binary_sha256": "1f2465a963d6fdcc305d69c0d2cf5e8ee3d141beb771242117846d329b4c3acb",
+      "contact_branch": true,
+      "control_passed": true,
+      "shot_counters": {
+        "aimed": 1,
+        "fallback": 0,
+        "tracking_fallback": 0
+      },
+      "first_origin": [
+        16717.196182250977,
+        -252.1944580078125,
+        236.85543823242188
+      ],
+      "first_delta": [
+        -48.1875,
+        5.8125,
+        60.0
+      ],
+      "final_origin_pcs": [
+        "0x8008CC38",
+        "0x8008CC38",
+        "0x8008CC38"
+      ],
+      "ammo_before": [
+        1,
+        3
+      ],
+      "ammo_after": [
+        0,
+        3
+      ],
+      "verify_checks": 258,
+      "verify_mismatch": 0,
+      "shot_yaw_relative_to_measured_body_degrees": -0.40456054505165184
+    },
+    {
+      "path": "analysis/runtime/g7c-final-world-fix-preservation-20261029/receipt.json",
+      "sha256": "7b91cc10ce86e0489c9a5a97125909e94086ff5259caf1ef6e6d1e828156c864",
+      "debug_binary_sha256": "88209a4321b619a927b397220ff0b215cb53ebbf9bc9063d5b1e68f7470fae12",
+      "contact_branch": false,
+      "control_passed": true,
+      "shot_counters": {
+        "aimed": 1,
+        "fallback": 0,
+        "tracking_fallback": 0
+      },
+      "first_origin": [
+        16923.516983032227,
+        -252.7223663330078,
+        109.97648620605469
+      ],
+      "first_delta": [
+        70.625,
+        5.8125,
+        30.5
+      ],
+      "final_origin_pcs": [
+        "0x8008CD0C",
+        "0x8008CD0C",
+        "0x8008CD0C"
+      ],
+      "ammo_before": [
+        1,
+        3
+      ],
+      "ammo_after": [
+        1,
+        2
+      ],
+      "verify_checks": 382,
+      "verify_mismatch": 0,
+      "shot_yaw_relative_to_measured_body_degrees": -0.050012235300641805
+    }
+  ],
+  "live_safe_entry": {
+    "path": "analysis/runtime/g7c-away-safe-entry-20261029/context.json",
+    "sha256": "20c9db641bbc8bfba2616b71d848eff76018397898ed22e451de09feb92b2e6b"
+  },
+  "binding": {
+    "natural_input": "copied slot 3, one native switch, Cross 0xBFFF; natural right-stick turn exposes no-contact branch",
+    "throw_flow": "8008C620, 1820 bytes, FNV 4A5D3295",
+    "initial_guard_still_excludes_thrown": true,
+    "contact_final_basis": "80076C28, RA 8008CC3C",
+    "no_contact_final_constructor_origin": [
+      "80047F80",
+      "80047F90",
+      "80047FA0"
+    ],
+    "safe_completion_entry": "80043FB0",
+    "safe_completion_return": "8008CD10",
+    "safe_completion_size": 724,
+    "safe_completion_fnv": "6E3A3758",
+    "no_contact_registers": "S1=shot, S2=player+3FC, S3=0, S5=A2=player",
+    "native_basis": "80076C28; 260 bytes/FNV D4FD2F11",
+    "native_geometry": "80050C20; 340 bytes/FNV 2C50B4B6",
+    "writes": "six pose fields plus release history +26C/+270/+274",
+    "guest_calls": "Ordinary charged native basis and geometry calls; existing service restores sound caller GPRs/PC/HI/LO. No instruction callback re-entry.",
+    "guards": [
+      "active canonical aim; no stereo/eye mutation",
+      "exact final caller and no-contact S3=0",
+      "SP player/register ownership and measured input/viewmodel layout",
+      "exact ID15/type13F3/SP mesh identity",
+      "complete throw, sound, basis and geometry code hashes",
+      "fresh owned canonical camera and valid tracking"
+    ],
+    "hook_count": {
+      "function": 26,
+      "instruction": 11
+    },
+    "supported_regeneration": "psxrecomp_cli generate; 0 main game shards updated; execution identity 8174a988661560c5297b4579eb11a9577ccd80a03ea5dfa794a84e21ca3c4361 retained"
+  },
+  "failed_runs": [
+    {
+      "raw": "analysis/runtime/g7c-away-adapter-20261029/receipt.json",
+      "reason": "First candidate input did not produce an observed constructor; failed and retained. Subsequent instrumented and final controls construct/aim normally; original miss not explained."
+    }
+  ],
+  "preservation": "Native throw scalar speed, gravity, fuse, effects and ammo code unchanged. Native first motion/ammo and tracking fallback observed; matched explosion/impact/damage and physical acceptance not inferred.",
+  "reference_reuse": "Read previous game vr/psx_vr_stereo.c grenade-capable vr_shot_basis_entry and moh_vr_weapons.h; same policy of pose into native builders. Underground later-origin writes handled explicitly.",
+  "remaining": [
+    "SP grenade/nine IDs need natural fixtures if resumed; no invented inventory/save.",
+    "Matched petrol impact/fuse/damage and physical acceptance unmeasured.",
+    "Panzerfaust exact final origin/native impact remains open; prior hand-direction/loss/lifecycle behavior preserved."
+  ],
+  "priority": "Owner requested prompt return to missing-world/performance; remaining G7 coverage does not gate G6."
+}

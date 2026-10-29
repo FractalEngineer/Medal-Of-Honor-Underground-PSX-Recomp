@@ -58,6 +58,7 @@ mod_function_entry_funcs = [
   "0x8006C61C", # multiplayer camera entry
   "0x8006C8B0", # multiplayer shot basis
   "0x80076C28", # single-player shot basis
+  "0x80043FB0", # SP petrol safe post-release caller; exact RA guard
   "0x80054BC4", # multiplayer frame entry
   "0x80096EF4", # multiplayer frustum selector
   "0x80053CFC", # native submit tail

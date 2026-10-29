@@ -5,22 +5,27 @@ root `saves`; automated sources are frozen `analysis/fixtures/sp` and
 `analysis/fixtures/mp`, copied to disposable outputs. Retired benchmark aliases
 and the old flat-check build are archived, not runnable alternate play targets.
 
-Updated 2026-10-29. **G7 full MP-to-SP weapon calibration/control parity is FIRST**
-under the latest operator instruction: [SP_WEAPON_PARITY](SP_WEAPON_PARITY.md).
-This performance runbook is deferred until that scoped port/coverage decision.
-Petrol bomb/Panzerfaust apparent fixed aiming is an open report, not a repair.
-After G7, G5/G6 precede preflight optimization: reproduce
-and classify personal SP slot 1 missing-world rendering, then baseline personal
-SP slot 2 severe performance and confirm the implementation target. Then use
-[SP_CURRENT_REGRESSIONS](SP_CURRENT_REGRESSIONS.md). No game was launched while
-recording these reports; causes/FPS are unknown. P3b remains complete for its
-historical fixture; P3c and P4/P5 remain open. After the new-case triage, read the
-[native profile and rejected experiments](NATIVE_REPLAY_PROFILE.md) first.
-Its final section specifies the next `80011424` caller-contract implementation.
-Do not repeat P3b or compiler sweeps. The operator's clean
-image headset smoke accepted world rendering, music, pause and Sten. Performance
-is still “meh.” Minimum 60 fresh application frames/s, preferred 90, remains
-the alpha blocker. This file supersedes older NEXT pointers in evidence logs.
+Updated 2026-10-29. **Performance is the active priority after the bounded
+petrol and missing-world repairs.** Both measured petrol branches now use the
+unchanged shared MP calibration. Remaining G7 fixtures/physical gates no longer
+delay G6 under the owner's latest instruction.
+
+Slot 1's missing world is reproduced and its omitted native far-plane check is
+repaired, with populated zero/90-degree views. One HUD/pause VRAM restoration
+failure remains recorded separately. Slot 2's world is verified; the current
+production 1080p desktop baseline is **20.139 ms/pair, 16.710 ms traversal and
+25.011 fresh pairs/s**, excluding XR/hand surfaces/laser cost. Full selector is
+only 0.066 ms. [Current cases](SP_CURRENT_REGRESSIONS.md) and
+[receipt](../../vr/proof/sp-far-depth-world-receipt.json).
+
+**NEXT: G6c/P3c2–P3c6, real preflight implementation and qualification**, following
+[NATIVE_REPLAY_PROFILE](NATIVE_REPLAY_PROFILE.md). P3b and rejected compiler
+sweeps remain complete. Do not start another weapon calibration/inventory,
+visibility survey, generic attribution run or lower-resolution experiment.
+The native `80011424` caller contract/harness is the next implementation step;
+capture alone does not close it. Preserve valid execution identities and the
+runnable reference. P4/P5 independent fresh views remains necessary afterward.
+Minimum 60 fresh application frames/s, preferred 90, stays open.
 
 All operator slot references are internal/file/tool indices, as confirmed by
 the operator. Select `--slot 1` for G5 and `--slot 2` for G6. Do not reinterpret

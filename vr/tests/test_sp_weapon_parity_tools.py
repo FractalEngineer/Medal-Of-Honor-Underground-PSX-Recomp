@@ -46,6 +46,11 @@ class SpWeaponParityToolsTest(unittest.TestCase):
 
         groups = origins.position_groups(entries[:2], shot, 0)
         self.assertEqual(groups, [])
+        # A release correction and first integration in the same frame must
+        # remain distinct, rather than overwriting the earlier XYZ group.
+        second = [dict(row, seq=row["seq"] + 3) for row in entries]
+        groups = origins.position_groups(entries + second, shot, 0)
+        self.assertEqual([row["sequence"] for row in groups], [[1, 2, 3], [4, 5, 6]])
 
 
 if __name__ == "__main__":

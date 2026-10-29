@@ -90,32 +90,43 @@ int main(void) {
     write_word(0x11c, 0x800001c0u);
     assert(mohu_vr_collect_tree(
         0x80000100u, queue, &count, matrix, tr, &view, 256, 120,
-        masks, 0, 0));
+        masks, 0, 0, 1000.0));
     assert(count == 3u);
     assert(queue[0] == 0x800001c0u);
     assert(queue[1] == 0x80000180u);
     assert(queue[2] == 0x80000140u);
+    assert(mohu_vr_collect_tree(
+        0x80000100u, queue, &count, matrix, tr, &view, 256, 120,
+        masks, 0, 0, 85.0));
+    assert(count == 0u); /* wholly beyond native far depth */
+    assert(mohu_vr_collect_tree(
+        0x80000100u, queue, &count, matrix, tr, &view, 256, 120,
+        masks, 0, 0, 100.0));
+    assert(count == 3u); /* crossing boxes stay conservative */
+    assert(!mohu_vr_collect_tree(
+        0x80000100u, queue, &count, matrix, tr, &view, 256, 120,
+        masks, 0, 0, NAN));
 
     write_word(0x1d0, 0u);
     assert(mohu_vr_collect_tree(
         0x80000100u, queue, &count, matrix, tr, &view, 256, 120,
-        masks, 0, 0));
+        masks, 0, 0, 1000.0));
     assert(count == 2u);
     assert(mohu_vr_collect_tree(
         0x80000100u, queue, &count, matrix, tr, &view, 256, 120,
-        masks, 1, 0));
+        masks, 1, 0, 1000.0));
     assert(count == 3u);
 
     write_word(0x118, 0x801ffffcu);
     assert(!mohu_vr_collect_tree(
         0x80000100u, queue, &count, matrix, tr, &view, 256, 120,
-        masks, 1, 0));
+        masks, 1, 0, 1000.0));
     write_word(0x118, 0x80000100u);
     write_word(0x11c, 0u);
     write_word(0x120, 0u);
     assert(!mohu_vr_collect_tree(
         0x80000100u, queue, &count, matrix, tr, &view, 256, 120,
-        masks, 1, 0));
+        masks, 1, 0, 1000.0));
 
     memset(ram, 0, sizeof(ram));
     for (unsigned i = 0; i < 1001u; ++i) {
@@ -129,6 +140,6 @@ int main(void) {
     }
     assert(!mohu_vr_collect_tree(
         0x80000100u, queue, &count, matrix, tr, &view, 256, 120,
-        masks, 1, 0));
+        masks, 1, 0, 1000.0));
     return 0;
 }
