@@ -1,5 +1,5 @@
 {
-  "schema": 3,
+  "schema": 4,
   "date": "2026-10-30",
   "scope": "M1 real SP 80010CF0/80011424 input capture",
   "build": {
@@ -25,14 +25,16 @@
     "The 12-byte record is six 16-bit fields.",
     "Slot 2: the three record words appear verbatim in the face packet at offsets 3, 6 and 9 (20 of 32 captured faces), alongside words such as 0x007B00E2 that look like packed UVs.",
     "The record table base is a runtime pointer (0x801259BC for slot 2 draw 0), not a static level field.",
-    "The decoder decoded both real arenas with masks bypassed and no rejection: slot 2 54/25/324 with masks (203/134/1756 bypassed), slot 5 1/0/0 with masks (237/155/1932 bypassed). Counts are nodes/leaves/triangles."
+    "The decoder decoded both real arenas with masks bypassed and no rejection: slot 2 54/25/324 with masks (203/134/1756 bypassed), slot 5 1/0/0 with masks (237/155/1932 bypassed). Counts are nodes/leaves/triangles.",
+    "Native face addresses are s7-8 at 80011424 and are directly comparable with decoded triangle source_address values; 11/16 and 70/91 matched."
   ],
   "not_proven": [
     "The mapping is not universal: slot 5 contains the record word in the captured packet for only 3 of 32 faces, and its packet layout differs.",
     "Whether each 16-bit half is a UV, a color or another parameter.",
     "Texture page, CLUT, shading and semi-transparency fields; they are not in the 12-byte record and were not found as GP0 draw-mode words in the captured packet window.",
     "Decoded triangle counts/winding/bounds against the captured arena: the capture does not dump the full tree/vertex table.",
-    "No native triangle-count reference is captured yet; the census proves the tree/strip decode terminates and covers the resident leaves, not that native culling or subdivision matches."
+    "No native triangle-count reference is captured yet; the census proves the tree/strip decode terminates and covers the resident leaves, not that native culling or subdivision matches.",
+    "Native face coverage: slot 2 11/16 matched, slot 5 70/91 matched. The missing faces are real strips whose owner is not an absolute pointer in the captured level range."
   ],
   "runs": [
     {
@@ -366,5 +368,156 @@
         0
       ]
     }
-  ]
+  ],
+  "binary_sha256_current_capture_build": "1027d464a151373ed423a3a58fc3b1c4469db7f93061d76591edfa31a4561ae1",
+  "native_face_comparison": {
+    "method": "record s7-8 on every 80011424 entry (independent of the 32-face dump cap); at the next 80010CF0 entry decode the same root/table/count with masks bypassed and match native face addresses against decoded triangle source_address values",
+    "runs": [
+      {
+        "slot": 2,
+        "fixture": "slot02",
+        "runtime_receipt": "analysis\\vr-captures\\slot2-native-final\\receipt.json",
+        "capture": "analysis\\vr-captures\\slot2-native-final\\world-capture.txt",
+        "summary": "analysis\\vr-captures\\slot2-native-final\\summary.json",
+        "stdout": "analysis\\vr-captures\\slot2-native-final\\stdout.log",
+        "binary_sha256": "1027d464a151373ed423a3a58fc3b1c4469db7f93061d76591edfa31a4561ae1",
+        "config_sha256": "34ea40ba6c65ec3e8d4a7b5a50537e07ed731cb00244b99414f92b113240b2c7",
+        "source_hashes": {
+          "state_8001F844_slot02.pst": "dd1c87925c8480198d04e8d7b38c67c0099ed4985463f7dc4e46731c80f90ceb",
+          "state_8001F844_slot02.thumb": "332196dd7003ad841e25a9320fc138d2a5886ce9a5e47a494894c16c178e9b55"
+        },
+        "complete": true,
+        "canonical_guest_hz": 59.99809523809524,
+        "draw": 2,
+        "status": "ok",
+        "native_faces": 16,
+        "overflow": 0,
+        "unique_native": 16,
+        "matched": 11,
+        "missing": 5,
+        "decoded_only": 1575,
+        "duplicate_calls": 0,
+        "multi_source": 0,
+        "multi_source_triangles": 0,
+        "decoded_triangles": 1586,
+        "first_missing": "0x800EA920",
+        "first_duplicate_call": "0x00000000",
+        "first_multi_source": "0x00000000",
+        "missing_in_span": 5,
+        "missing_addrs": [
+          "0x800EA920",
+          "0x800EA93C",
+          "0x800EA958",
+          "0x800EA978",
+          "0x800EA988"
+        ],
+        "missing_owners": [
+          "0x00000000",
+          "0x00000000",
+          "0x00000000",
+          "0x00000000",
+          "0x00000000"
+        ],
+        "missing_word_sample": [
+          "0068055D,006943C1,1FFF1FFF,055C0534",
+          "006D053A,006E4539,00001FFF,05620563",
+          "003C03D9,003A43D7,00001FFF,03D603DB",
+          "004302BD,004442BC,00001FFF,02BE02BF",
+          "007002AF,007142AD,00001FFF,02B002B1"
+        ],
+        "missing_reg_sample": [
+          "800EA928,006943C1,300B3F40,7DC13F7E,1F800000,00302823,00343937,00353B3A,800F0B18,00000348,800F17FC,00000001,801FFE80,8003739C,80138390,80144FA7",
+          "800EA944,006E4539,300C7F3F,7CC14000,1F800000,00486B72,0041585C,00496E76,800F10F8,00000370,800F1838,00000001,801FFE80,8003739C,80138390,80144FA7",
+          "800EA960,003A43D7,300BBF00,7D418000,1F800000,003B5A61,002C3536,002C3333,800F0B70,000001D0,800F15C8,00000001,801FFE80,8003739C,80138390,80144FA7",
+          "800EA980,004442BC,300B8000,7D41BF3F,1F800000,006A704F,006B6F4C,006A7150,800F0704,00000220,800F1640,00000001,801FFE80,8003739C,80138390,80144FA7",
+          "800EA990,007142AD,300B3F40,7DC10075,1F800000,005B5323,005A5120,006C704E,800F06C8,00000388,800F185C,00000001,801FFE80,8003739C,80138390,80144FA7"
+        ]
+      },
+      {
+        "slot": 5,
+        "fixture": "slot05",
+        "runtime_receipt": "analysis\\vr-captures\\slot5-native-final\\receipt.json",
+        "capture": "analysis\\vr-captures\\slot5-native-final\\world-capture.txt",
+        "summary": "analysis\\vr-captures\\slot5-native-final\\summary.json",
+        "stdout": "analysis\\vr-captures\\slot5-native-final\\stdout.log",
+        "binary_sha256": "1027d464a151373ed423a3a58fc3b1c4469db7f93061d76591edfa31a4561ae1",
+        "config_sha256": "34ea40ba6c65ec3e8d4a7b5a50537e07ed731cb00244b99414f92b113240b2c7",
+        "source_hashes": {
+          "state_8001F844_slot05.pst": "d60a32a58b59fa012f9853c16e65f47ad3990680a1bd77869ffb4c5a992663fe",
+          "state_8001F844_slot05.thumb": "b3a4099c76c0ce025076113f37322f2b2b08219c4696050140818bd624e48951"
+        },
+        "complete": true,
+        "canonical_guest_hz": 60.00363636363637,
+        "draw": 2,
+        "status": "ok",
+        "native_faces": 91,
+        "overflow": 0,
+        "unique_native": 91,
+        "matched": 70,
+        "missing": 21,
+        "decoded_only": 2027,
+        "duplicate_calls": 0,
+        "multi_source": 0,
+        "multi_source_triangles": 0,
+        "decoded_triangles": 2097,
+        "first_missing": "0x800E9594",
+        "first_duplicate_call": "0x00000000",
+        "first_multi_source": "0x00000000",
+        "missing_in_span": 16,
+        "missing_addrs": [
+          "0x800E9594",
+          "0x800E95AC",
+          "0x800E9544",
+          "0x800E955C",
+          "0x800E971C",
+          "0x800E973C",
+          "0x800E9784",
+          "0x800E97AC",
+          "0x800E97C0",
+          "0x800E97D4",
+          "0x800E975C",
+          "0x800E9770",
+          "0x800E96B4",
+          "0x800E96F4",
+          "0x800EA010",
+          "0x800EA020"
+        ],
+        "missing_owners": [
+          "0x00000000",
+          "0x00000000",
+          "0x00000000",
+          "0x00000000",
+          "0x00000000",
+          "0x00000000",
+          "0x00000000",
+          "0x00000000",
+          "0x00000000",
+          "0x00000000",
+          "0x00000000",
+          "0x00000000",
+          "0x00000000",
+          "0x00000000",
+          "0x00000000",
+          "0x00000000"
+        ],
+        "missing_word_sample": [
+          "027C0014,027D8010,1FFF1FFF,000D0011",
+          "013A02B3,005782B0,00001FFF,029C02B5",
+          "013A02B4,005782B1,1FFF1FFF,02AF02B2",
+          "001A0011,0020800D,00001FFF,000E0012",
+          "02850027,02864022,1FFF1FFF,00210026"
+        ],
+        "missing_reg_sample": [
+          "800E959C,027D8010,300BC040,7F81FF7F,1F800000,00375059,00537F91,002E4147,800ED3B4,000013E8,800F0958,00000001,801FFE80,8003739C,80148C10,8015AF07",
+          "800E95B4,005782B0,300D8080,7EC5BFBF,1F800000,004C7384,00222D30,002A3A3F,800EDE34,000002B8,800EEF90,00000001,801FFE80,8003739C,80148C10,8015AF07",
+          "800E954C,005782B1,300D8080,7EC5BFBF,1F800000,00202A2D,002E4047,001C2325,800EDE38,000002B8,800EEF90,00000001,801FFE80,8003739C,80148C10,8015AF07",
+          "800E9564,0020800D,300BBF40,7F41807F,1F800000,00537F91,001E2527,00446573,800ED3A8,00000100,800EECFC,00000001,801FFE80,8003739C,80148C10,8015AF07",
+          "800E9724,02864022,3089098E,7B00208E,1F800000,000E0C09,000E0C09,000E0C09,800ED3FC,00001430,800F09C4,00000001,801FFE80,8003739C,80148C10,8015AF07"
+        ]
+      }
+    ],
+    "conclusion": "The decoder matched 11/16 native faces on slot 2 draw 2 and 70/91 on slot 5 draw 2. The missing addresses are valid base words preceded by 0x1FFF terminators, with valid vertex indices and records, so they are real faces, not culling artifacts. No absolute pointer to any missing list exists in 0x800A0000..0x80100000, so the loop reaches those lists by a mechanism not yet identified. Geometry parity is not established; do not treat the census triangle count as complete.",
+    "decoded_only_note": "Expected: the census bypasses camera culling, so the decoded mesh contains leaves the native view did not submit.",
+    "multi_source_note": "No native address was submitted more than once, and no matched source carried more than one decoded triangle in these draws."
+  }
 }

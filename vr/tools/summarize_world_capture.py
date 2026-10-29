@@ -37,6 +37,13 @@ FACE_BYTES_RE = re.compile(
 FACE_PACKET_RE = re.compile(
     r"face=(\d+) packet_captured=(\d) packet_hash=0x([0-9A-Fa-f]+) "
     r"packet=([0-9a-f]*)")
+NATIVE_COMPARE_RE = re.compile(
+    r"draw=(\d+) native_compare=1 native=(\d+) overflow=(\d+) unique=(\d+) "
+    r"matched=(\d+) missing=(\d+) decoded_only=(\d+) dup=(\d+) "
+    r"multi=(\d+) multi_count=(\d+) triangles=(\d+) status=(\d+) "
+    r"first_missing=0x([0-9A-Fa-f]{8}) first_dup=0x([0-9A-Fa-f]{8}) "
+    r"first_multi=0x([0-9A-Fa-f]{8})"
+    r"(?: missing_in_range=(\d+) missing_addrs=([0-9a-fx,]*))?")
 
 
 def fnv1a(data):
@@ -77,6 +84,33 @@ def summarize(path):
                 "record_base": None,
                 "record_entries": 0,
                 "records": b"",
+                "native_compare": None,
+            }
+            continue
+        m = NATIVE_COMPARE_RE.match(line)
+        if m:
+            index = int(m.group(1))
+            if index not in summary:
+                fail(f"native compare before draw {index}")
+            summary[index]["native_compare"] = {
+                "native": int(m.group(2)),
+                "overflow": int(m.group(3)),
+                "unique": int(m.group(4)),
+                "matched": int(m.group(5)),
+                "missing": int(m.group(6)),
+                "decoded_only": int(m.group(7)),
+                "duplicate_calls": int(m.group(8)),
+                "multi_source": int(m.group(9)),
+                "multi_source_triangles": int(m.group(10)),
+                "decoded_triangles": int(m.group(11)),
+                "status": int(m.group(12)),
+                "first_missing": f"0x{m.group(13).upper()}",
+                "first_duplicate_call": f"0x{m.group(14).upper()}",
+                "first_multi_source": f"0x{m.group(15).upper()}",
+                "missing_in_range": (int(m.group(16))
+                                     if m.group(16) else None),
+                "missing_addrs": (m.group(17).split(",")
+                                  if m.group(17) else []),
             }
             continue
         m = DRAW_TABLE_RE.match(line)
@@ -250,6 +284,7 @@ def summarize(path):
             "record_table_entries_before_call": draw["record_entries"],
             "record_table_hash_before_call": (
                 f"0x{fnv1a(draw['records']):08X}" if draw["records"] else None),
+            "native_compare": draw["native_compare"],
         })
     return report
 

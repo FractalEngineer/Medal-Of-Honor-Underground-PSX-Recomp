@@ -59,6 +59,26 @@ class CaptureSummaryTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             capture.summarize(self.write(bad))
 
+    def test_native_compare_is_parsed(self):
+        text = HEADER + (
+            'draw=0 native_compare=1 native=12 overflow=0 unique=10 '
+            'matched=9 missing=1 decoded_only=30 dup=2 multi=4 '
+            'multi_count=11 triangles=40 status=0 first_missing=0x80123456 '
+            'first_dup=0x80123400 first_multi=0x80120000 '
+            'missing_in_range=1 missing_addrs=0x80123456,0x80123490\n')
+        report = capture.summarize(self.write(text))
+        compare = report['draws'][0]['native_compare']
+        self.assertEqual(compare['native'], 12)
+        self.assertEqual(compare['matched'], 9)
+        self.assertEqual(compare['missing'], 1)
+        self.assertEqual(compare['first_missing'], '0x80123456')
+        self.assertEqual(compare['first_duplicate_call'], '0x80123400')
+        self.assertEqual(compare['multi_source'], 4)
+        self.assertEqual(compare['status'], 0)
+        self.assertEqual(compare['missing_in_range'], 1)
+        self.assertEqual(compare['missing_addrs'],
+                         ['0x80123456', '0x80123490'])
+
     def test_wrong_record_base_is_refused(self):
         text = HEADER.replace('record_base=0x8011003C',
                               'record_base=0x80110040')

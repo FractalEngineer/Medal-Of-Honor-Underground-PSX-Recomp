@@ -38,11 +38,28 @@
 #define CAPTURE_TABLE_ENTRIES 16u
 #define CAPTURE_TABLE_SIZE (CAPTURE_TABLE_ENTRIES * CAPTURE_RECORD_SIZE)
 #define CAPTURE_PACKET_SIZE 0x60u
+#define CAPTURE_NATIVE_FACES 4096u
+#define CAPTURE_NATIVE_REGS 512u
 
 typedef struct {
     uint32_t ra, begin, limit, a2, a3, sp, gp, level, sub, root, count, table;
     uint32_t scratch_hash, range_len, range_hash;
     uint32_t record_base, record_entries;
+    uint32_t native_faces[CAPTURE_NATIVE_FACES];
+    uint32_t native_regs[CAPTURE_NATIVE_REGS][16];
+    uint32_t native_count, native_overflow;
+    int compare_valid;
+    uint32_t compare_status;
+    uint32_t cmp_native, cmp_unique, cmp_matched, cmp_missing;
+    uint32_t cmp_decoded_only, cmp_dup, cmp_multi, cmp_multi_count;
+    uint32_t cmp_triangles, cmp_first_missing, cmp_first_dup;
+    uint32_t cmp_first_multi;
+    uint32_t cmp_missing_addrs[16];
+    uint32_t cmp_missing_words[16][4];
+    uint32_t cmp_missing_regs[16][16];
+    uint32_t cmp_missing_owner[16];
+    uint8_t cmp_missing_consulted[16];
+    uint32_t cmp_missing_list_count, cmp_missing_in_range;
     uint8_t scratch[CAPTURE_SCRATCH_SIZE];
     uint8_t range[CAPTURE_RANGE_MAX];
     uint8_t records[CAPTURE_TABLE_SIZE];
@@ -170,6 +187,170 @@ static void capture_census(const DrawCapture* draw) {
     mohu_world_mesh_free(&mesh);
 }
 
+/* Compare the face addresses the native loop actually processed with the
+ * source addresses the decoder produced for the same root. Decoded-only
+ * addresses are expected because the census bypasses camera culling. A native
+ * address absent from the decoded mesh is a decoder failure, not a cull. */
+static void capture_compare(DrawCapture* draw) {
+    if (draw->compare_valid || draw->native_count == 0) return;
+    draw->compare_valid = 1;
+    draw->cmp_native = draw->native_count;
+    if (!draw->root || !draw->table || !draw->count) {
+        draw->compare_status = MOHU_WORLD_REJECT_ARGUMENT;
+        return;
+    }
+    MohuWorldRequest request;
+    memset(&request, 0, sizeof request);
+    request.root = draw->root;
+    request.vertex_table = draw->table;
+    request.vertex_count = draw->count;
+    request.masks[0] = psx_mod_read_word(CAPTURE_MASK0);
+    request.masks[1] = psx_mod_read_word(CAPTURE_MASK1);
+    request.bypass_masks = 1;
+    request.generation = 1;
+    MohuWorldMesh mesh;
+    MohuWorldReport report;
+    const MohuWorldStatus status = mohu_world_decode(&request, &mesh, &report);
+    draw->compare_status = status;
+    if (status == MOHU_WORLD_OK) {
+        draw->cmp_triangles = mesh.triangle_count;
+        for (uint32_t i = 0; i < draw->native_count; ++i) {
+            const uint32_t address = draw->native_faces[i];
+            int seen = 0;
+            for (uint32_t j = 0; j < i; ++j) {
+                if (draw->native_faces[j] == address) {
+                    seen = 1;
+                    break;
+                }
+            }
+            if (seen) {
+                ++draw->cmp_dup;
+                if (!draw->cmp_first_dup) draw->cmp_first_dup = address;
+                continue;
+            }
+            ++draw->cmp_unique;
+            uint32_t decoded = 0;
+            for (uint32_t t = 0; t < mesh.triangle_count; ++t) {
+                if (mesh.triangles[t].source_address == address) ++decoded;
+            }
+            if (!decoded) {
+                ++draw->cmp_missing;
+                if (!draw->cmp_first_missing)
+                    draw->cmp_first_missing = address;
+                if (draw->cmp_missing_list_count < 16) {
+                    const uint32_t k = draw->cmp_missing_list_count++;
+                    const int consulted = address >= mesh.source_start &&
+                                          address < mesh.source_end;
+                    draw->cmp_missing_addrs[k] = address;
+                    draw->cmp_missing_words[k][0] =
+                        span(address, 8u) ? psx_mod_read_word(address)
+                                          : 0xFFFFFFFFu;
+                    draw->cmp_missing_words[k][1] =
+                        span(address, 8u) ? psx_mod_read_word(address + 4u)
+                                          : 0xFFFFFFFFu;
+                    draw->cmp_missing_words[k][2] =
+                        (address >= 8u && span(address - 8u, 8u))
+                            ? psx_mod_read_word(address - 8u) : 0xFFFFFFFFu;
+                    draw->cmp_missing_words[k][3] =
+                        (address >= 4u && span(address - 4u, 8u))
+                            ? psx_mod_read_word(address - 4u) : 0xFFFFFFFFu;
+                    for (uint32_t j = 0; j < draw->native_count; ++j) {
+                        if (draw->native_faces[j] == address) {
+                            if (j < CAPTURE_NATIVE_REGS)
+                                memcpy(draw->cmp_missing_regs[k],
+                                       draw->native_regs[j],
+                                       sizeof draw->cmp_missing_regs[k]);
+                            break;
+                        }
+                    }
+                    for (uint32_t p = draw->root;
+                         draw->table > draw->root && p + 4u <= draw->table;
+                         p += 4u) {
+                        if (psx_mod_read_word(p) == address) {
+                            draw->cmp_missing_owner[k] = p;
+                            break;
+                        }
+                    }
+                    if (!draw->cmp_missing_owner[k]) {
+                        for (uint32_t p = 0x800A0000u;
+                             p + 4u <= 0x80100000u; p += 4u) {
+                            if (p >= draw->root && p < draw->table) continue;
+                            if (psx_mod_read_word(p) == address) {
+                                draw->cmp_missing_owner[k] = p;
+                                break;
+                            }
+                        }
+                    }
+                    draw->cmp_missing_consulted[k] = (uint8_t)consulted;
+                    draw->cmp_missing_in_range += (uint32_t)consulted;
+                }
+            } else {
+                ++draw->cmp_matched;
+                if (decoded > 1) {
+                    ++draw->cmp_multi;
+                    draw->cmp_multi_count += decoded;
+                    if (!draw->cmp_first_multi)
+                        draw->cmp_first_multi = address;
+                }
+            }
+        }
+        for (uint32_t t = 0; t < mesh.triangle_count; ++t) {
+            const uint32_t source = mesh.triangles[t].source_address;
+            int seen = 0;
+            for (uint32_t k = 0; k < t; ++k) {
+                if (mesh.triangles[k].source_address == source) {
+                    seen = 1;
+                    break;
+                }
+            }
+            if (seen) continue;
+            int found = 0;
+            for (uint32_t i = 0; i < draw->native_count; ++i) {
+                if (draw->native_faces[i] == source) {
+                    found = 1;
+                    break;
+                }
+            }
+            if (!found) ++draw->cmp_decoded_only;
+        }
+    }
+    fprintf(stdout,
+            "mohu-vr-native-faces: draw=%u status=%s native=%u overflow=%u "
+            "unique=%u matched=%u missing=%u decoded_only=%u dup=%u "
+            "multi=%u multi_count=%u triangles=%u first_missing=0x%08X "
+            "first_dup=0x%08X first_multi=0x%08X missing_in_range=%u "
+            "missing_addrs=",
+            (unsigned)(draw - g_draws), mohu_world_status_name(status),
+            draw->cmp_native, draw->native_overflow, draw->cmp_unique,
+            draw->cmp_matched, draw->cmp_missing, draw->cmp_decoded_only,
+            draw->cmp_dup, draw->cmp_multi, draw->cmp_multi_count,
+            draw->cmp_triangles, draw->cmp_first_missing,
+            draw->cmp_first_dup, draw->cmp_first_multi,
+            draw->cmp_missing_in_range);
+    for (uint32_t k = 0; k < draw->cmp_missing_list_count; ++k)
+        fprintf(stdout, "%s0x%08X", k ? "," : "",
+                draw->cmp_missing_addrs[k]);
+    fprintf(stdout, " missing_words=");
+    for (uint32_t k = 0; k < draw->cmp_missing_list_count; ++k)
+        fprintf(stdout, "%s%08X,%08X,%08X,%08X", k ? ";" : "",
+                draw->cmp_missing_words[k][0], draw->cmp_missing_words[k][1],
+                draw->cmp_missing_words[k][2], draw->cmp_missing_words[k][3]);
+    fprintf(stdout, " missing_regs=");
+    for (uint32_t k = 0; k < draw->cmp_missing_list_count; ++k) {
+        fprintf(stdout, "%s", k ? ";" : "");
+        for (unsigned r = 0; r < 16; ++r)
+            fprintf(stdout, "%s%08X", r ? "," : "",
+                    draw->cmp_missing_regs[k][r]);
+    }
+    fprintf(stdout, " missing_owners=");
+    for (uint32_t k = 0; k < draw->cmp_missing_list_count; ++k)
+        fprintf(stdout, "%s0x%08X", k ? "," : "",
+                draw->cmp_missing_owner[k]);
+    fputc('\n', stdout);
+    fflush(stdout);
+    mohu_world_mesh_free(&mesh);
+}
+
 static void write_hex(FILE* file, const uint8_t* data, unsigned size) {
     static const char hex[] = "0123456789abcdef";
     for (unsigned i = 0; i < size; ++i) {
@@ -210,6 +391,42 @@ static void flush_capture(void) {
         write_hex(file, d->records,
                   d->record_entries * CAPTURE_RECORD_SIZE);
         fputc('\n', file);
+        if (d->compare_valid) {
+            fprintf(file,
+                    "draw=%u native_compare=1 native=%u overflow=%u "
+                    "unique=%u matched=%u missing=%u decoded_only=%u dup=%u "
+                    "multi=%u multi_count=%u triangles=%u status=%u "
+                    "first_missing=0x%08X first_dup=0x%08X "
+                    "first_multi=0x%08X missing_in_range=%u missing_addrs=",
+                    i, d->cmp_native, d->native_overflow, d->cmp_unique,
+                    d->cmp_matched, d->cmp_missing, d->cmp_decoded_only,
+                    d->cmp_dup, d->cmp_multi, d->cmp_multi_count,
+                    d->cmp_triangles, d->compare_status, d->cmp_first_missing,
+                    d->cmp_first_dup, d->cmp_first_multi,
+                    d->cmp_missing_in_range);
+            for (uint32_t k = 0; k < d->cmp_missing_list_count; ++k)
+                fprintf(file, "%s0x%08X", k ? "," : "",
+                        d->cmp_missing_addrs[k]);
+            fprintf(file, " missing_words=");
+            for (uint32_t k = 0; k < d->cmp_missing_list_count; ++k)
+                fprintf(file, "%s%08X,%08X,%08X,%08X", k ? ";" : "",
+                        d->cmp_missing_words[k][0],
+                        d->cmp_missing_words[k][1],
+                        d->cmp_missing_words[k][2],
+                        d->cmp_missing_words[k][3]);
+            fprintf(file, " missing_regs=");
+            for (uint32_t k = 0; k < d->cmp_missing_list_count; ++k) {
+                fprintf(file, "%s", k ? ";" : "");
+                for (unsigned r = 0; r < 16; ++r)
+                    fprintf(file, "%s%08X", r ? "," : "",
+                            d->cmp_missing_regs[k][r]);
+            }
+            fprintf(file, " missing_owners=");
+            for (uint32_t k = 0; k < d->cmp_missing_list_count; ++k)
+                fprintf(file, "%s0x%08X", k ? "," : "",
+                        d->cmp_missing_owner[k]);
+            fputc('\n', file);
+        }
     }
     for (unsigned i = 0; i < g_face_count; ++i) {
         const FaceCapture* f = &g_faces[i];
@@ -253,6 +470,7 @@ static void capture_packet(CPUState* cpu, uint32_t address) {
 
     capture_previous_range();
     capture_previous_scratch();
+    if (g_draw_count) capture_compare(&g_draws[g_draw_count - 1u]);
     g_has_previous = 0;
 
     if (g_draw_count == g_draw_limit) {
@@ -286,12 +504,42 @@ static void capture_face(CPUState* cpu, uint32_t address) {
     (void)address;
     if (!g_enabled || !cpu) return;
     if (cpu->gpr[31] != 0x80011008u || cpu->gpr[19] != 0x1F800000u) return;
+    if (g_draw_count) {
+        DrawCapture* draw = &g_draws[g_draw_count - 1u];
+        const uint32_t slot = draw->native_count;
+        if (slot < CAPTURE_NATIVE_FACES) {
+            draw->native_faces[slot] = cpu->gpr[23] - 8u;
+            if (slot < CAPTURE_NATIVE_REGS) {
+                draw->native_regs[slot][0] = cpu->gpr[23];  /* s7 */
+                draw->native_regs[slot][1] = cpu->gpr[22];  /* s6 */
+                draw->native_regs[slot][2] = cpu->gpr[21];  /* s5 */
+                draw->native_regs[slot][3] = cpu->gpr[20];  /* s4 */
+                draw->native_regs[slot][4] = cpu->gpr[19];  /* s3 */
+                draw->native_regs[slot][5] = cpu->gpr[18];  /* s2 */
+                draw->native_regs[slot][6] = cpu->gpr[17];  /* s1 */
+                draw->native_regs[slot][7] = cpu->gpr[16];  /* s0 */
+                draw->native_regs[slot][8] = cpu->gpr[11];  /* t3 */
+                draw->native_regs[slot][9] = cpu->gpr[10];  /* t2 */
+                draw->native_regs[slot][10] = cpu->gpr[9];  /* t1 */
+                draw->native_regs[slot][11] = cpu->gpr[8];  /* t0 */
+                draw->native_regs[slot][12] = cpu->gpr[29]; /* sp */
+                draw->native_regs[slot][13] = cpu->gpr[28]; /* gp */
+                draw->native_regs[slot][14] = cpu->gpr[4];  /* a0 */
+                draw->native_regs[slot][15] = cpu->gpr[5];  /* a1 */
+            }
+            ++draw->native_count;
+        } else {
+            ++draw->native_overflow;
+        }
+    }
     capture_previous_face_packet();
     if (g_face_count >= g_face_limit) return;
 
     FaceCapture* face = &g_faces[g_face_count];
     memset(face, 0, sizeof *face);
-    face->draw = g_draw_count ? g_draw_count - 1u : 0u;
+    /* Faces can run before the first captured packet entry; label those
+     * 0xFFFFFFFF instead of pretending they belong to draw 0. */
+    face->draw = g_draw_count ? g_draw_count - 1u : 0xFFFFFFFFu;
     face->ra = cpu->gpr[31];
     face->s7 = cpu->gpr[23];
     face->face = face->s7 - 8u;

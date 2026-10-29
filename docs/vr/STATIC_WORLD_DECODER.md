@@ -160,6 +160,35 @@ the place to apply visibility.
 This proves the tree/strip walk terminates and covers the resident leaves on
 real data. It is **not** a native culling or subdivision comparison.
 
+## Native face comparison (2026-10-30)
+
+The probe now records `s7-8` on **every** `80011424` entry, independently of
+the 32-face dump cap. At the next `80010CF0` entry it decodes the same
+root/table/count with masks bypassed and matches each native face address
+against decoded triangle `source_address` values.
+
+| Scene | Draw root | Native faces | Matched | Missing | Decoded triangles | Decoded-only |
+|---|---|---:|---:|---:|---:|---:|
+| slot 2 | `0x800E8D28` | 16 | 11 | 5 | 1586 | 1575 |
+| slot 5 | `0x800E52A8` | 91 | 70 | 21 | 2097 | 2027 |
+
+Decoded-only is expected: the census bypasses camera culling. No native
+address was submitted twice, and no matched source carried more than one
+decoded triangle in these draws.
+
+The missing addresses are **valid base words** preceded by `0x1FFF` terminators
+(for example `0x800EA920`: `0068055D 006943C1`, preceded by `1FFF1FFF`), with
+in-range vertex indices and record values. They are real faces, not culling
+artifacts. A scan of `0x800A0000..0x80100000` found **no absolute pointer** to
+any missing list, and none exists between the root and vertex table. The owner
+is reached by a mechanism not yet identified (relative pointer, index, or a
+second source list), so decoder coverage is incomplete and the census triangle
+count must not be treated as native-complete. Geometry parity is **not**
+established.
+
+Faces can run before the first captured packet entry; those are labelled
+`0xFFFFFFFF` rather than being attributed to draw 0.
+
 ## Rejections (atomic, named)
 
 `argument`, `vertex_table`, `tree_root`, `node_bounds`, `leaf_count`,
@@ -192,16 +221,17 @@ non-finite/malformed polygons, capacity overflow and argument guards.
 proven draw/face fields, six-half record layout, material fields staying null,
 and refusals for a wrong record base, wrong index or missing header.
 
-Not yet demonstrated: decoded triangle counts/winding/bounds against the real
-arena, texture-page/CLUT mapping, subdivision decisions and textured output.
+Not yet demonstrated: full native face coverage (11/16 and 70/91 matched),
+texture-page/CLUT mapping, subdivision decisions and textured output.
 
 ## Next
 
 1. Map the packet/preflight fields that carry texture page, CLUT, shading and
    semi-transparency; the 12-byte record is not one of them.
-2. Capture a native triangle/face count from the packet builder or OT and
-   compare it with the 1756/1932 decoded triangles; the census proves the walk
-   terminates, not that native culling/subdivision matches.
+2. Close the native face coverage gap: 5/16 and 21/91 native faces are real
+   strips whose owner is not an absolute pointer in the captured level range.
+   Identify the second source list or relative/indexed owner before claiming
+   geometry parity; do not widen the scan blindly.
 3. Wire the decoder into a default-OFF native census so the real arena root,
    record table and resource generation are recorded before the host renderer
    consumes it.

@@ -74,11 +74,16 @@ The decoder also runs once on each live arena with masks bypassed and returns
 `status=ok`: slot 2 decodes 203 nodes / 134 leaves / 1756 triangles, slot 5
 237 / 155 / 1932. The global masks prune slot 2 to 25 leaves and slot 5 to
 zero, so they are view-specific, not a resource filter.
-Texture page/CLUT fields remain unmapped, and no native culling count exists
-yet. [Receipt](../../vr/proof/sp-world-capture-receipt.json).
+Native face coverage is now measured against every `80011424` submission:
+slot 2 matched 11 of 16, slot 5 matched 70 of 91. The missing faces are valid
+base strips with valid indices and records, but no absolute pointer to their
+lists exists in `0x800A0000..0x80100000`, so their owner is still unidentified
+and the decoder is incomplete. Geometry parity is **not** established.
+Texture page/CLUT fields remain unmapped.
+[Receipt](../../vr/proof/sp-world-capture-receipt.json).
 Strict fixture `vr/tests/test_world_decode.c`; contract in
-[STATIC_WORLD_DECODER](STATIC_WORLD_DECODER.md). Next: map texpage/CLUT and
-dump the full tree for a count/winding/bounds comparison.
+[STATIC_WORLD_DECODER](STATIC_WORLD_DECODER.md). Next: identify the second
+face-list owner; map texpage/CLUT.
 
 Petrol now follows the shared hand ray in both measured SP release branches.
 Slot 1's missing street is reproduced and repaired in both eyes: the VR selector
