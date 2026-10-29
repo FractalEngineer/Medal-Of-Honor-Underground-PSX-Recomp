@@ -43,27 +43,45 @@ def main():
     ap.add_argument('--switch', type=int, default=0)
     ap.add_argument('--env-json', type=Path)
     ap.add_argument('--native-profile', action='store_true', help='Capture diagnostic CPS segment timers')
+    ap.add_argument('--preflight-cases', type=int, default=0,
+                    help='Arm isolated diagnostic native/host caller comparisons (maximum 4096)')
+    ap.add_argument('--preflight-stride', type=int, default=127)
+    ap.add_argument('--packet-cases', type=int, default=0)
+    ap.add_argument('--fresh-60', action='store_true')
+    ap.add_argument('--world-cache', action='store_true', help='Exact-pose world packet prototype; motion falls back')
+    ap.add_argument('--build-dir', type=Path, default=ROOT/'build-release',
+                    help='Complete isolated runtime build/assets directory')
+    ap.add_argument('--fixtures', type=Path, default=ROOT/'analysis/fixtures/sp',
+                    help='Validated per-execution fixture root containing openbios/')
     ap.add_argument('--disc', type=Path, help='Explicit disposable diagnostic disc override')
     args = ap.parse_args()
     if n.game_pids():
         raise RuntimeError('Close existing game before this owned probe')
     if not 2 <= args.seconds <= 30 or not 0 <= args.switch <= 3 or not 0 <= args.hitch_ms <= 2000:
         raise ValueError('seconds 2..30; switch 0..3')
+    if not 0 <= args.preflight_cases <= 4096 or not 1 <= args.preflight_stride <= 4096:
+        raise ValueError('preflight cases 0..4096; stride 1..4096')
+    if not 0 <= args.packet_cases <= 4096:
+        raise ValueError('packet cases 0..4096')
     out = args.out.resolve()
     out.mkdir(parents=True, exist_ok=False)
     saves = out/'saves/openbios'
     saves.mkdir(parents=True)
-    sources = list((ROOT/'analysis/fixtures/sp/openbios').glob(f'*slot{args.slot:02}.*'))
+    sources = list((args.fixtures.resolve()/'openbios').glob(f'*slot{args.slot:02}.*'))
     if len(sources) != 2:
         raise RuntimeError('Expected state and thumbnail in analysis SP fixtures')
     hashes = {str(f): n.digest(f) for f in sources}
     for f in sources:
         shutil.copyfile(f, saves/f.name)
-    prefs = p.hash_existing(p.preference_paths())
+    pref_paths = list(dict.fromkeys([*p.preference_paths(),
+        args.build_dir.resolve()/'settings.toml', args.build_dir.resolve()/'keybinds.ini']))
+    prefs = p.hash_existing(pref_paths)
     env = p.environment('native' if args.native else 'tracked', True, hand_fixed=True)
     env.update(MOHU_VR_MP_CONTROL='0', MOHU_VR_MP_FRUSTUM='0',
                PSX_RENDER_PASS_VERIFY=str(int(args.verify)), PSX_FRAME_TRACE='1',
                PSX_VR_WRIST_HUD=str(int(args.hud)), PSX_VR_LASER=str(int(args.laser)),
+               MOHU_VR_FRESH_60=str(int(args.fresh_60)),
+               MOHU_VR_WORLD_CACHE=str(int(args.world_cache)),
                PSX_VR_HEAD_FRUSTUM=str(args.frustum), MOHU_VR_WEAPON_TRACE='1',
                MOHU_VR_EYE_YAW_MDEG=str(args.head_yaw*1000),
                PSX_INTERNAL_RESOLUTION=args.resolution,
@@ -75,16 +93,24 @@ def main():
                for k, v in extra.items()):
             raise ValueError('Diagnostic overrides must be string PSX_/MOHU_ flags')
         env.update(extra)
+    if args.preflight_cases:
+        env['MOHU_VR_PREFLIGHT_CAPTURE_FILE'] = str(out/'preflight-calls.bin')
     if args.flat:
         env.update(MOHU_VR_STEREO_PROOF='0', PSX_VR_WEAPON_POSE='0',
                    MOHU_VR_WEAPON_AIM='0', PSX_VR_LASER='0')
     if args.audio:
         env['SDL_AUDIODRIVER'] = 'dummy'
-    exe = ROOT/'build-release/Medal_of_Honor_Underground_Recompiled.exe'
+    build_dir = args.build_dir.resolve()
+    exe = build_dir/'Medal_of_Honor_Underground_Recompiled.exe'
+    config = build_dir/'game.toml'
+    if not config.is_file() or not exe.with_suffix('.execution.json').is_file():
+        raise RuntimeError('Requires a complete staged build/config/execution manifest')
     r = dict(complete=False, headset_acceptance=False,
              request={k: str(v) if isinstance(v, Path) else v for k, v in vars(args).items()},
              source_hashes=hashes, binary_sha256=n.digest(exe),
-             build=p.build_configuration(ROOT/'build-release/CMakeCache.txt'),
+             build=p.build_configuration(build_dir/'CMakeCache.txt'),
+             build_directory=str(build_dir), fixture_root=str(args.fixtures.resolve()),
+             execution_manifest=json.loads(exe.with_suffix('.execution.json').read_text()),
              environment={k: v for k, v in env.items() if k.startswith(('PSX_', 'MOHU_'))})
 
     def word(addr):
@@ -123,7 +149,7 @@ def main():
     with (out/'stdout.log').open('w') as so, (out/'stderr.log').open('w') as se:
         frontend = '--hidden-window' if args.audio else ('--headless' if args.software else '--headless-opengl')
         launch = [str(exe), frontend, '--no-launcher',
-            '--game', str(ROOT/'game.toml'), '--memcard-dir', str(out/'saves'),
+            '--game', str(config), '--memcard-dir', str(out/'saves'),
             '--debug-port', '4372']
         if args.disc:
             launch += ['--disc', str(args.disc.resolve())]
@@ -148,6 +174,26 @@ def main():
             n.frames(10)
             r['before'] = snapshot('before')
             (out/'ram.bin').write_bytes(n.read(0x80000000, 0x200000))
+            if args.preflight_cases:
+                result = n.command('mod_cmd', name='mohu.vr.preflight-harness',
+                    args=f'arm {args.preflight_cases} {args.preflight_stride}')
+                deadline = time.monotonic()+30
+                while json.loads(result['reply'])['remaining']:
+                    if time.monotonic()>deadline:
+                        raise TimeoutError('Preflight caller comparisons did not finish')
+                    time.sleep(.1)
+                    result = n.command('mod_cmd', name='mohu.vr.preflight-harness', args='status')
+                r['preflight_harness'] = json.loads(result['reply'])
+            if args.packet_cases:
+                result = n.command('mod_cmd', name='mohu.vr.packet-harness',
+                    args=f'arm {args.packet_cases} {args.preflight_stride}')
+                deadline = time.monotonic()+30
+                while json.loads(result['reply'])['remaining']:
+                    if time.monotonic()>deadline:
+                        raise TimeoutError('Packet caller comparisons did not finish')
+                    time.sleep(.1)
+                    result = n.command('mod_cmd', name='mohu.vr.packet-harness', args='status')
+                r['packet_harness'] = json.loads(result['reply'])
             r['start'] = n.command('stereo_stats')
             r['start_frame'] = n.command('frame')
             if args.native_profile:
@@ -313,6 +359,14 @@ def main():
                              or r['end']['pairs'] > r['start']['pairs']) and
                              r['end']['failed'] == r['start']['failed'] and
                              r['restore']['verify_mismatch'] == 0)
+            if args.preflight_cases:
+                r['complete'] = bool(r['complete'] and
+                    r['preflight_harness']['checks'] == args.preflight_cases and
+                    r['preflight_harness']['failed'] == 0 and
+                    r['preflight_harness']['refused'] == 0)
+            if args.packet_cases:
+                r['complete'] = bool(r['complete'] and r['packet_harness']['checks'] == args.packet_cases
+                    and r['packet_harness']['failed'] == 0 and r['packet_harness']['refused'] == 0)
         finally:
             try:
                 n.command('set_input', buttons='0xffff')
@@ -329,7 +383,7 @@ def main():
                 proc.wait(timeout=8)
             r.update(exit_code=proc.returncode, remaining_game_pids=n.game_pids(),
                      source_saves_unchanged=all(n.digest(Path(k)) == v for k, v in hashes.items()),
-                     preferences_unchanged=p.hash_existing(p.preference_paths()) == prefs)
+                     preferences_unchanged=p.hash_existing(pref_paths) == prefs)
             r['complete'] = bool(r['complete'] and proc.returncode == 0 and not r.get('forced_cleanup')
                                  and not r['remaining_game_pids'] and r['source_saves_unchanged']
                                  and r['preferences_unchanged'])

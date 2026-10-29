@@ -1,10 +1,30 @@
 # Underground VR execution handoff
 
-Updated 2026-10-29 after petrol release integration and the slot-1 far-depth repair.
-**NEXT: G6/P3c2 — implement the measured native preflight optimization through
-its real caller contract, then qualify it.** The owner explicitly prioritized
-getting back to missing world/performance; remaining G7 fixture/physical gates
-must not delay this. Existing MP calibration stays unchanged.
+Updated 2026-10-30 after render-kernel implementation and stereo cache controls.
+**Latest physical performance trial FAILED.** Operator reports unplayable
+motion despite VDXR panel 90 FPS / 45-ms latency / 15-ms game rendering. Its
+trace measures 44.139 fresh pairs/s, 22.081 native scene draws/s and 44.139
+native VBlank counts/s. VDXR supplies a 22.222-ms application period (~45 Hz).
+Pair work is 12.264 ms, native HUD capture 2.407 ms, mean pose age 15.420 ms.
+The synchronous extra-view prototype slows the native wall-time clock; this
+fails native-real-time and 60-FPS gates. All 120 captured pairs were fresh, so
+successful submission/restoration does not certify playable throughput.
+
+Existing RunVR BATs are restored to the normal production build/personal saves.
+The opt-in `-PerformanceTest` route remains diagnostic and rejected for normal
+play; do not suggest another trial of this unchanged candidate. Isolated test
+progress and timestamped logs remain preserved. No game is left running.
+143 Python tests and diff checks pass; no new game was launched for diagnosis.
+[Physical failure receipt](../../vr/proof/sp-performance-headset-rejection-receipt.json)
+supersedes the earlier launcher-ready checkpoint for acceptance.
+
+**NEXT: G6/P4 — implement reusable world-space geometry, projected for each
+current eye/head pose, with render deadlines that cannot slow native simulation.
+60 fresh application FPS first; 90 later.** Preflight
+and packet kernels exist with passing bounded comparisons. Exact-pose packet
+reuse is rejected as the VR solution: coincident-eye desktop gains disappear
+with separated eyes. All experiments remain OFF in normal play.
+[Current results and one next implementation](RENDER_KERNEL_CHECKPOINT.md).
 
 Petrol now follows the shared hand ray in both measured SP release branches.
 Slot 1's missing street is reproduced and repaired in both eyes: the VR selector
@@ -121,116 +141,58 @@ for G6. G7a and earlier P38/Sten/Panzerfaust direction controls remain complete.
 
 ## 4. The next implementation, with evidence boundaries
 
-Read [the performance runbook](PERFORMANCE_NEXT_STEPS.md) and current G6/P3c
-items. The bounded weapon repair is complete for the two live petrol branches;
-reuse the existing calibration unchanged. A natural 60-frame body turn proves
-the no-contact branch; its safe final caller is `80043FB0`, RA `8008CD10`.
-The guarded adapter reuses native basis/geometry builders after final writes.
-[Receipt](../../vr/proof/sp-petrol-release-complete-receipt.json).
+Read [RENDER_KERNEL_CHECKPOINT](RENDER_KERNEL_CHECKPOINT.md) and
+[PREFLIGHT_KERNEL_CONTRACT](PREFLIGHT_KERNEL_CONTRACT.md). The first target is
+60 fresh application frames/s. Do not reopen weapon calibration, inventory,
+compiler sweeps or the completed preflight caller capture.
 
-G5b is complete and the visibility fix is implemented. Native Flat shows the
-street; the old VR selector drew 116 leaves from an out-of-range arena. Native
-`8009A174` compares MAC3 to the active camera descriptor+40 (16.16), 10,000 units
-here. The title selector now applies that same far plane after the eye transform.
-Shared geometry math, angular FOV and PVS/identity guards are unchanged.
-[Receipt](../../vr/proof/sp-far-depth-world-receipt.json).
-The corrected zero/90-degree views pass scoped restoration. Pause/load/refusal
-recover world images, but one HUD/pause run reports a VRAM-only mismatch;
-G5c remains open for that specific failure. Do not discard it or disable VERIFY.
+- P3c2/P3c3 implementation scope is complete: structured `80011424` host core,
+  runnable original, 100,000 standalone comparisons, live 128/1,024-call
+  captures with zero numeric/precision differences. Canonical/internal resume
+  calls retain the original. Three alternating preflight-only mission-start
+  A/Bs reduce desktop pair work about 9%; second workload/full XR promotion
+  remains open.
+- P3d has a build-selected batched `80010CF0` packet core retaining every native
+  math/PGXP operation and CPS continuation. A live 512-call comparison covers
+  entry/resumes and 8,091 writes without differences. REFERENCE builds. No
+  full-path or heavy-slot-2 packet qualification is implied.
+- P4 has a default-OFF one-extra-view SP VSync prototype. It does not advance
+  native time. Latest traces alternate 60 native/60 extra pairs with distinct
+  native counter/cycle stamps, but CPU saturation still slows wall-time guest
+  cadence. Native-entry projection is retained for desktop intermediate views.
+- Exact-pose world packet cache has 1,176 VERIFY checks with zero mismatches,
+  HUD/laser, pause/refusal/load recovery. Its 56.3–57.0 desktop pairs/s depend on
+  coincident eyes. Separated eyes yield 47.62 with cache versus 48.69 without,
+  so keep it OFF and do not tune its pose keys again. No 60-FPS pass exists.
 
-G6b now has a valid-world production slot-2 baseline. Native traversal remains
-the dominant measured cost; continue the existing `80011424` caller-contract,
-implementation and qualification route. Do not substitute a new capture-only
-checkpoint, compiler sweep, lower resolution or disabled PGXP for implementation.
-Keep the runnable reference and valid per-execution fixture policy. Broad G7
-coverage no longer gates this work under the latest owner instruction.
+**One next task:** replace repeated world packet interpretation with reusable
+source geometry/material/topology at the real `80010CF0` caller, before camera
+culling/projection. Reuse the existing strip/vertex readers and shared GPU,
+precision, clipping and transaction services. Start with one bounded arena
+family and retain native fallback; preserve texture/CLUT/tpage, ordering/depth,
+near clipping, fog, subdivision, separated eyes and 0/90-degree world views.
+Keep moving entities/weapon/laser/HUD on their existing paths initially. Measure
+separated-eye cadence before extending coverage. Final screen packets are not
+a complete mesh and cannot provide fresh-pose unseen geometry.
 
-The operator uses internal/file/tool slot indices throughout. Use
-`probe_sp_issues.py --slot 1` for G5 and production `--slot 2` for G6.
-Do not shift these reports to 0/1 using menu display labels or renumber history.
+Tool selectors now exist: `--build-dir` chooses a complete isolated runtime,
+`--fixtures` a genuine per-execution fixture root. Production profiler also has
+`--eye-offset`; zero is the historical coincident-eye desktop baseline. The
+current experimental build is `analysis/builds/preflight-enhanced`; its matching
+fixture root is `analysis/fixtures/sp-cache-view-key`. This is a newly saved
+mission-start scene, **not the operator's heavier frozen slot 2**. Obtain states
+through copied-card normal boot/input; never convert cookies/headers. No new
+user save is needed for this work. Do not repeat refused fixture loads or spend
+manual time in menus. Native boot receipts/input sequences remain ignored in
+`analysis/runtime/`.
 
-After weapon parity and that triage, follow [runbook section 3.1](PERFORMANCE_NEXT_STEPS.md#31-ordered-execution-checklist--start-at-p3c2)
-if preflight remains the measured target. Read the
-complete `80011424` helper, caller and dispatch entries; begin the standalone
-caller-contract harness and proceed into implementation. Capture alone is not
-the requested deliverable. P3c2–P3c6 need no physical headset.
-
-1. Preserve the accepted clean-image checkpoint. The current clean production
-   baseline and completed P3b evidence are in [NATIVE_REPLAY_PROFILE.md](NATIVE_REPLAY_PROFILE.md).
-   Do not restart attribution or compiler sweeps. For a genuinely new candidate,
-   obtain one current clean
-   production baseline with the existing tool. Do not rerun disc audits, all-ID
-   matrices or old render-clip experiments. No physical HMD launch.
-2. **P3b is complete:** exclusive packet/preflight/GPU-command segments cost
-   5.729/3.805/1.143 ms per pair; full visibility hook only 0.068 ms. Loaded
-   native DLL samples resolve against their own PE tables. Timings are
-   diagnostic; raw host top-400 covers 1,881/3,085 samples. See the report for
-   canonical/eye separation, resolved callers and limitations.
-3. **P3c:** target `80011424` (668 bytes, FNV `C38CDCC1`), called by the packet
-   builder at `80011000`, return `80011008`. Read the report's exact five-step
-   implementation contract first. Capture its custom register/scratchpad/GTE/
-   PGXP inputs/results before replacement; `$v0` alone is insufficient. Start
-   with the standalone caller harness, then obtain valid per-execution game
-   fixtures for integration; never bypass existing state identity guards.
-   Optimize through the real caller
-   interface, reusing the reference/shared services. Verify unchanged image/FOV,
-   aiming, audio/simulation timing, pause/loss/load and original save contracts.
-   Run three alternating production A/Bs before promoting an improvement.
-4. **Budget decision after the preflight result:** if still too expensive,
-   continue the larger packet builder P3d through the same qualification gates.
-   P3e HUD work is conditional on a measured remaining stall. Read the existing
-   dirty/change detection and shared capture first; do not port checkpoint or
-   paired readback again. Use the [decision table](PERFORMANCE_NEXT_STEPS.md#33-what-follows-preflight--choose-by-measured-full-path-budget).
-5. **P4/P5:** remove the native ~30-Hz fresh-view ceiling safely, retaining native
-   simulation/audio timing. A cheaper pair alone does not produce 60/90 fresh
-   views. No turbo, VBlank-rate change or compositor-repeat substitution.
-6. Only then request a bounded SP headset performance check (P6). The last smoke
-   accepted functionality; it did not certify FPS or every gameplay scope.
-
-| Ordered task | Done only when |
-|---|---|
-| P3c2 — caller contract/fixtures | Real input/output cases, supported entry/resume contract and valid harness/fixture strategy exist |
-| P3c3 — implementation | A build-selected faster helper exists, original reference runs, paired caller-result tests pass |
-| P3c4 — correctness | Relevant world/FOV/PGXP/weapon/laser/timing and pause/loss/refusal/load controls pass separately from timing |
-| P3c5 — production desktop A/B | Three alternating windows plus the second workload show a useful consistent gain, with exact binary/fixture/flags |
-| P3c6 — full path/decision | Actual HUD/weapon/laser/XR work is measured, failures retained, candidate qualified or explicitly rejected; a desktop gain is insufficient |
-
-**Fixture/tool trap:** a new execution family changes identity. Current probes
-assume frozen SP fixtures and `build-release`; the old sibling executable-name
-and profiler `--exe` launch overrides were removed during cleanup. Before cross-profile game timing,
-extend the existing probes to select separate valid fixture roots and complete
-build/assets/config/cache directories. Those selectors do not exist yet. See
-[section 3.2](PERFORMANCE_NEXT_STEPS.md#32-execution-identity-and-fixture-handling--resolve-before-integration).
-Never fake compatible states, overwrite shared fixtures, copy a candidate into
-another profile's cache, or count a refused load as a pass. Continue independent
-harness/implementation work if an integration fixture is unavailable.
-
-**Larger fallback:** cached scene geometry may support fresh-pose rendering if
-targeted replay work cannot meet the budget/cadence. It is a conditional design
-decision, not the next task or a required alpha feature. Preserve the replay
-reference and validate moving geometry/weapon/controller poses and FOV before
-claiming success. Record one exact next task after each retain/reject/defer
-decision; do not start helper, HUD, scheduler and renderer redesign in parallel.
-
-Known measurements are leads, not a new matched-HMD benchmark:
-
-- Older desktop A/B: pair work 17.668 → 17.608 ms, cadence 28.378 → 29.768/s.
-  `MOHU_VR_SKIP_NATIVE_WORLD_COPY=1` skips only an unused canonical world draw.
-  It passes Sten/pause/refusal/reload/hitch controls but stays OFF; it does not
-  materially reduce stereo replay cost or close 60/90 acceptance.
-- Traversal about 15.65 ms; submit 0.65 ms; tree collection 0.056 ms per pair.
-  720p/native resolution still about 17.96/17.76 ms. Do not start by reducing
-  resolution, caching tree collection or retuning frustum bounds.
-- These desktop records have no XR copy/hand-HUD capture cost; full XR/HUD is
-  additional. Use current clean image for new A/Bs. Historical two-title scenes
-  differ; 65–69% more primitives is workload attribution, not a speed ratio.
-- Clean-default slot-5 smoke: 17.391-ms desktop pair work, no HMD cost included.
-  No minimum/steady 60-Hz or 90-Hz pass exists.
-- Three inlining variants are rejected/removed. Shared IPO reduces desktop
-  pair work about 4.3%, but one unchanged-binary null-HMD run regresses badly.
-  Full-path gain is unqualified; **PSX_RUNTIME_IPO remains OFF**. Do not average
-  away that run or repeat tuning sweeps. Native timers are diagnostic-only;
-  restore `MOHU_VR_NATIVE_PROFILE=OFF` alongside debug OFF after their use.
+Normal `build-release` remains Release/debug OFF, PGXP flavor 2/OpenXR ON,
+IPO/timers/harnesses/host kernels OFF, unchanged execution identity and normal
+saves. Final copied heavy slot-2 production smoke passes at 19.994 ms/pair and
+23.848 pairs/s; this is a smoke, not a matched candidate speed comparison.
+Actual XR/hand surfaces, second-scene equivalence, timing/audio and physical
+acceptance remain open. Request a targeted headset check only after a candidate
+meets independent desktop gates. Preserve the historical HUD/pause VRAM failure.
 
 ## 5. Closed investigations and separate open scopes
 
@@ -248,10 +210,11 @@ Do not reopen these without new contrary evidence:
   Panzerfaust final origin is written at `8004874C/80048774/8004879C`; native
   first motion stores are `800793E4/80079400/8007941C`. Do not rediscover the
   Sten/P38 basis or move aim with recoil.
-- Entry-hook config is now **26 entries / 11 instruction sites**. The arena-wrapper
+- Entry-hook config is now **27 entries / 11 instruction sites**. The arena-wrapper
   entry supports the default-OFF native-copy candidate; the petrol completion
-  entry is restricted to its verified SP release caller. No
-  temporary clipping/triangle trace hook remains; generated game C is unchanged.
+  entry is restricted to its verified SP release caller. The extra VSync entry supports the default-OFF cadence prototype. No
+  temporary clipping/triangle trace hook remains; supported generation adds
+  only that callback to shard 02; original packet/preflight bodies are unchanged.
 - SP petrol uses an exact known metadata variant, 99 visible bottle / 97 masked
   arm vertices. Do not weaken all model guards or repeat PCA calibration.
 - Checkpoint reuse and paired native HUD readback are already shared. Do not
@@ -273,11 +236,12 @@ the SP work/fixture, without expanding MP scope.
 - Restore/rebuild production debug-OFF after diagnostic builds. End with no
   owned game process/overrides left behind and no persistent XR settings change.
   Current production executable is
-  `83d48a608e3602736b9267013835b4a96cceb1865af00fb082b2e9d78872b60b`.
+  `49936ea2ce270c8066738513d58dcca0cf23c9ba3df648fb069880b640c93753`.
 - Run focused checks appropriate to changes and `git diff --check`. Current
-  baseline: 136 Python tests, including shared save-route and SP weapon-tool coverage.
-  Earlier strict plugin/native-timer syntax and 480 focused slot-5 rollback
-  checks remain historical; the playable executable is unchanged by cleanup.
+  baseline: 140 Python tests, including shared save-route and SP weapon-tool coverage.
+  Strict shot/weapon/raycast/frustum/cadence/cache-key C fixtures and 100,000
+  preflight comparisons pass. Current production smoke and both profile builds
+  pass; exact provenance is in the render-kernel receipt.
 - Update stable IDs in VR_PLAN, the current handoff and compact receipts with
   actual source/binary/fixture provenance. Preserve failed controls and scope.
 - Keep dumps, disc/BIOS data, saves and generated screenshots in ignored local

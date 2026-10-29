@@ -1,5 +1,12 @@
 # Reuse MP calibration and complete SP projectile control
 
+2026-10-30 performance continuation: weapon calibration/shot adapters are
+unchanged. Strict shot/weapon/raycast controls pass; experimental rendering has
+scoped gun/laser and restoration checks. These do not close new projectile,
+impact, unavailable-fixture or physical gates. Performance now targets 60 fresh
+application FPS first, with 90 deferred. [Current renderer checkpoint](RENDER_KERNEL_CHECKPOINT.md)
+owns continuation; remaining G7 work does not block it.
+
 2026-10-29 operator priority: **port all existing MP weapon calibrations and
 tracked control paths to SP first**. This is G7 in VR_PLAN and supersedes the
 earlier G5/G6-first and performance-first orders. This runbook records the

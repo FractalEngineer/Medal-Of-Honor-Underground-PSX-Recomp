@@ -5,10 +5,16 @@ the capture date. Retired executables are preserved under
 `analysis/archive/workspace-cleanup-20261029/retired-executables`. Normal launchers
 now share root saves and one standard executable; see [WORKSPACE_LAYOUT](WORKSPACE_LAYOUT.md).
 
-2026-10-29 continuation. P3b is complete. P3c remains open: **no compiler
-candidate is promoted and no headset performance improvement is certified**.
-The accepted clean-disc, pause and Sten behavior remains the baseline.
-Evidence: [receipt](../../vr/proof/native-replay-profile-receipt.json).
+2026-10-30 continuation: P3b is complete; P3c2/P3c3 now have experimental
+implementations and passing caller comparisons. Full-path/second-workload
+promotion remains open. See [current renderer checkpoint](RENDER_KERNEL_CHECKPOINT.md)
+and [kernel contract](PREFLIGHT_KERNEL_CONTRACT.md). First target is 60 fresh
+application FPS, 90 later. Exact-pose packet caching failed separated-eye benefit
+and stays OFF. The next implementation is reusable source geometry projected
+for each fresh eye/head pose. The measurements below are historical attribution,
+not the latest candidate qualification. Existing [profile receipt](../../vr/proof/native-replay-profile-receipt.json)
+is preserved; [new receipt](../../vr/proof/render-kernel-checkpoint-receipt.json)
+records the implementations and their limits.
 
 ## Measured work
 
@@ -84,6 +90,10 @@ The inlining source changes were removed. The framework's existing optional
 IPO facility is unchanged.
 
 ## Exact next implementation
+
+The following is the original implementation assignment, now completed through
+the bounded caller and limited desktop stages. Do not restart it. The active
+next task and open promotion gates are in [RENDER_KERNEL_CHECKPOINT](RENDER_KERNEL_CHECKPOINT.md).
 
 P3c now targets **`80011424` through its real packet-builder interface**. It is
 a bounded 668-byte leaf helper (FNV `C38CDCC1`) with one normal return and about

@@ -3,6 +3,19 @@
 Updated 2026-10-29. This file owns the active filesystem/launcher policy.
 [HANDOFF](HANDOFF.md) owns the next task; [VR_PLAN](VR_PLAN.md) owns status.
 
+2026-10-30 operator-requested performance trial **failed physical acceptance**.
+Default RunVR BATs are restored to production/personal saves. The explicit
+`-PerformanceTest` route remains diagnostic, not recommended normal play.
+It routes to the complete
+`analysis/builds/preflight-enhanced` runtime and isolated persistent playtest
+saves at `analysis/playtest/render-kernels/saves`. It boots normally for a new
+game, enables host kernels and extra fresh views, leaves packet caching OFF,
+and records a trace under timestamped `analysis/runtime/vr-performance-test`.
+Plain RunVR (and its explicit `-Baseline` option) uses the normal
+production route described below. RunFlat remains unchanged. No executable,
+state header or personal save is replaced. Preparation verifies the tested
+binary/execution identity and never overwrites existing playtest progress.
+
 ## Normal play — one build, one save store
 
 | Purpose | Location relative to repository root |

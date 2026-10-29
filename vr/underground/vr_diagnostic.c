@@ -1,5 +1,6 @@
 #include "cpu_state.h"
 #include "camera_map.h"
+#include "cadence.h"
 #include "engine_map.h"
 #include "frustum.h"
 #include "hud_packets.h"
@@ -218,6 +219,13 @@ static bool g_stereo_ot_only;
 static bool g_frame_driver_args_valid;
 static uint32_t g_frame_driver_args[4];
 static bool g_frame_render_args_valid;
+static bool g_fresh_60;
+static MohuVrCadence g_fresh_cadence;
+static bool g_fresh_mid_view;
+static uint64_t g_trace_source_cycle;
+static uint32_t g_trace_source_vblank;
+static uint32_t g_frame_projection[3];
+static bool g_frame_projection_valid;
 static uint32_t g_frame_render_args[4];
 static bool g_openxr;
 static bool g_clear_only;
@@ -599,12 +607,21 @@ static uint32_t vr_controller_mode(const PSXModControllerInput* input) {
 
 static void vr_diagnostic_entry(CPUState* cpu, uint32_t address);
 static void run_stereo_proof(CPUState* cpu);
+static void vr_world_cache_reset(void);
 /* Same opt-in stage brackets as the reference stereo hook. */
 static bool g_trace_spans;
 static const char* g_trace_file;
 static bool g_trace_written;
 #ifdef MOHU_VR_NATIVE_PROFILE
 extern int mohu_vr_native_profile_command(const char*, char*, int);
+#endif
+#ifdef MOHU_VR_PREFLIGHT_HARNESS
+extern int mohu_preflight_harness_command(const char*, char*, int);
+#endif
+#ifdef MOHU_VR_PACKET_HARNESS
+extern int mohu_packet_harness_command(const char*, char*, int);
+#endif
+#if defined(MOHU_VR_NATIVE_PROFILE) || defined(MOHU_VR_PREFLIGHT_HARNESS) || defined(MOHU_VR_PACKET_HARNESS)
 unsigned mohu_vr_native_profile_scope(void) {
     return g_stereo_active && g_stereo_current_eye < 2u
         ? 1u + g_stereo_current_eye : 0u;
@@ -2158,6 +2175,10 @@ static int vr_marker_model_key(MohuVrMarkerKey* key) {
 }
 
 static void vr_marker_load(void) {
+    vr_world_cache_reset();
+    memset(&g_fresh_cadence,0,sizeof g_fresh_cadence);
+    g_frame_render_args_valid=false;
+    g_frame_projection_valid=false;
     vr_muzzle_invalidate();
     ++g_marker_generation;
     ++g_marker_loads;
@@ -2977,7 +2998,9 @@ static void stereo_quat_multiply(const double a[4], const double b[4],
 
 static bool build_stereo_render_view(CPUState* cpu, uint32_t eye,
                                      PSXModRenderView* view) {
-    double focal = (uint16_t)cpu->gte_ctrl[26];
+    const uint32_t *projection=g_fresh_mid_view && g_frame_projection_valid
+        ? g_frame_projection : cpu->gte_ctrl+24;
+    double focal = (uint16_t)projection[2];
     const double width = (double)g_stereo_frame_w;
     const double height = (double)g_stereo_frame_h;
     if (!view || width <= 0.0 || height <= 0.0) {
@@ -2989,10 +3012,10 @@ static bool build_stereo_render_view(CPUState* cpu, uint32_t eye,
         focal = MOHU_VR_FALLBACK_PROJECTION_H;
     }
     double ofx = guest_projection
-                     ? (double)(int32_t)cpu->gte_ctrl[24] / 65536.0
+                     ? (double)(int32_t)projection[0] / 65536.0
                      : width * 0.5;
     double ofy = guest_projection
-                     ? (double)(int32_t)cpu->gte_ctrl[25] / 65536.0
+                     ? (double)(int32_t)projection[1] / 65536.0
                      : height * 0.5;
     if (ofx <= 0.0 || ofx >= width) {
         ofx = width * 0.5;
@@ -3121,10 +3144,21 @@ static int vr_native_flash_align(uint32_t actor, unsigned eye) {
     return first || second;
 }
 
+#ifdef MOHU_VR_HOST_PACKET_BUILD
+#include "world_cache.inc"
+#else
+/* No packet-cache implementation or allocations in normal/reference builds. */
+static bool g_world_cache_enabled,g_world_cache_nested;
+static void vr_world_cache_reset(void) {}
+#endif
 static int vr_stereo_eye_draw(CPUState* cpu, void* user, uint32_t eye) {
     (void)user;
     if (!g_stereo_proof || !g_stereo_active || eye > 1u) {
         return 0;
+    }
+    if(g_trace_spans && !eye) {
+        psx_frame_trace_ids(g_trace_source_vblank,g_trace_source_cycle);
+        psx_frame_trace_note(g_fresh_mid_view?"fresh60":"native-draw");
     }
     g_weapon_viewmodel_pending = false;
     g_weapon_viewmodel_applied = false;
@@ -3499,6 +3533,8 @@ static void run_stereo_proof(CPUState* cpu) {
     vr_capture_native_hud(cpu);
     if(g_openxr)mohu_vr_hud_prepare();
     g_stereo_attempts++;
+    g_trace_source_cycle=psx_cycle_count;
+    g_trace_source_vblank=psx_mod_read_word(0x80031A6Cu);
     vr_muzzle_begin();
     g_stereo_active = true;
     int rendered = psx_mod_render_stereo(cpu, &frame, vr_stereo_eye_draw, NULL);
@@ -3509,6 +3545,7 @@ static void run_stereo_proof(CPUState* cpu) {
     g_weapon_viewmodel_applied = false;
     g_weapon_viewmodel_view = false;
     g_stereo_active = false;
+    g_world_cache_nested=false;
     g_sp_weapon_outer = false;
     g_sp_weapon_projected = false;
     g_sp_weapon_output = 0u;
@@ -3557,6 +3594,27 @@ static void run_stereo_proof(CPUState* cpu) {
             fflush(stdout);
         }
     }
+}
+
+static void vr_fresh_view_query(CPUState *cpu,uint32_t address) {
+    (void)address;
+    if(!g_fresh_60 || !g_active || !g_stereo_proof || g_stereo_active ||
+       g_stereo_mp || !g_frame_render_args_valid || !g_frame_projection_valid || !g_fresh_cadence.ready ||
+       !cpu || cpu->gpr[4]!=UINT32_MAX) return;
+    const uint32_t ra=cpu->gpr[31];
+    if(ra!=0x8009D85Cu && ra!=0x8009D884u && ra!=0x8009D8B8u && ra!=0x8009D8F0u) return;
+    const MohuVrEngineBinding *wait=mohu_vr_engine_map_find(MOHU_VR_ROLE_GAMEPLAY_RENDER_WAIT);
+    if(!wait || !ensure_binding_verified(wait) || vr_native_paused(false)) {
+        g_fresh_cadence.ready=0;return;
+    }
+    const uint32_t owner=psx_mod_read_word(MOHU_VR_SP_PLAYER_POINTER_ADDR);
+    if(!mohu_vr_cadence_take(&g_fresh_cadence,psx_mod_read_word(0x80031A6Cu),
+                            owner,g_marker_generation)) return;
+    const uint32_t pairs=g_stereo_pairs;
+    g_fresh_mid_view=true;
+    run_stereo_proof(cpu);
+    g_fresh_mid_view=false;
+    psx_mod_counter_add(g_stereo_pairs>pairs?"mohu.vr.fresh60.pair":"mohu.vr.fresh60.refused",1);
 }
 
 static int vr_head_frustum_filter_impl(CPUState* cpu, uint32_t address) {
@@ -3795,11 +3853,21 @@ static void vr_diagnostic_entry(CPUState* cpu, uint32_t address) {
         g_frame_driver_args_valid = true;
     }
     if (role == MOHU_VR_ROLE_FRAME_RENDER) {
+        if(!g_stereo_active) {
+            vr_world_cache_reset();
+            memcpy(g_frame_projection,cpu->gte_ctrl+24,sizeof g_frame_projection);
+            g_frame_projection_valid=true;
+        }
         for (size_t i = 0; i < 4u; ++i) {
             g_frame_render_args[i] = cpu->gpr[4u + i];
         }
         g_frame_render_args_valid = true;
         run_stereo_proof(cpu);
+        if(g_fresh_60 && !g_stereo_active && !g_stereo_mp &&
+           guest_range_fnv1a(0x80017628u,376u)==0xC04D3214u) {
+            mohu_vr_cadence_arm(&g_fresh_cadence,psx_mod_read_word(0x80031A6Cu),
+                psx_mod_read_word(MOHU_VR_SP_PLAYER_POINTER_ADDR),g_marker_generation);
+        }
     }
     if (g_stereo_active && g_stereo_current_eye < 2u &&
         !g_stereo_role_reported[index]) {
@@ -4915,6 +4983,10 @@ static void vr_diagnostic_activate(void) {
     if (g_trace_file && !*g_trace_file) g_trace_file = NULL;
     g_trace_written = false;
     g_stereo_proof = stereo && *stereo && *stereo != '0';
+    const char *fresh_60=getenv("MOHU_VR_FRESH_60");
+    g_fresh_60=fresh_60 && *fresh_60 && *fresh_60!='0';
+    const char *world_cache=getenv("MOHU_VR_WORLD_CACHE");
+    g_world_cache_enabled=world_cache && *world_cache && *world_cache!='0';
     const char* replay_driver = getenv(MOHU_VR_REPLAY_DRIVER_ENV);
     g_replay_frame_driver = replay_driver && *replay_driver &&
                             *replay_driver != '0';
@@ -5167,7 +5239,15 @@ PSX_MOD_CONSTRUCTOR(psx_register_mohu_vr_diagnostic_plugin) {
 #ifdef MOHU_VR_NATIVE_PROFILE
     (void)psx_mod_register_command("mohu.vr.native-profile", mohu_vr_native_profile_command);
 #endif
+#ifdef MOHU_VR_PREFLIGHT_HARNESS
+    (void)psx_mod_register_command("mohu.vr.preflight-harness", mohu_preflight_harness_command);
+#endif
+#ifdef MOHU_VR_PACKET_HARNESS
+    (void)psx_mod_register_command("mohu.vr.packet-harness", mohu_packet_harness_command);
+#endif
     (void)psx_mod_register_savestate_plugin(MOHU_VR_DIAG_PLUGIN_ID,vr_marker_load);
+    (void)psx_mod_register_function_entry_plugin(MOHU_VR_DIAG_PLUGIN_ID,
+        0x80017628u,vr_fresh_view_query);
     (void)psx_mod_register_instruction_plugin(MOHU_VR_DIAG_PLUGIN_ID,
         0x80084CDCu,0x0C0145EDu,vr_marker_origin_event);
     (void)psx_mod_register_instruction_plugin(MOHU_VR_DIAG_PLUGIN_ID,

@@ -1,6 +1,12 @@
 # Underground VR execution plan
 
-Updated: 2026-10-29. Working branch: `feature/vr-port`.
+Updated: 2026-10-30. Working branch: `feature/vr-port`.
+
+**Latest headset performance trial rejected:** panel 90 FPS is not fresh app
+throughput. Trace: 44.139 fresh pairs/s, 22.081 native draws/s, VDXR application
+period 22.222 ms. Native VBlank progress also falls to 44.139/s, so extra renders
+slow gameplay. Default RunVR reverted to baseline; isolated progress retained.
+No further trial of this unchanged candidate. [Failure receipt](../../vr/proof/sp-performance-headset-rejection-receipt.json).
 
 **Release scope is SP. MP is only a quick all-weapon calibration fixture.
 Historical MP evidence remains useful; new MP feature/acceptance work must not
@@ -20,8 +26,15 @@ still has one VRAM restoration mismatch, so G5c remains open. Slot 2's world is
 verified and G6b production baseline is 20.139 ms/pair, 16.710 ms traversal,
 25.011 fresh pairs/s, excluding XR/hand-surface cost. Performance is OPEN.**
 
-**Next: G6c/P3c2–P3c6 native preflight implementation and qualification → budget
-decision → P4/P5 independent fresh views → focused physical acceptance.**
+**Next: G6/P4 reusable world-space geometry projected per current eye/head
+pose. 60 fresh application FPS first; 90 later.** P3c2/P3c3 kernels and caller
+comparisons now exist. Three preflight A/Bs show about 9% less pair work;
+second-workload/full XR promotion remains open. Exact-pose packet caching
+reaches 56–57 only with coincident desktop eyes; separated eyes give 47.62
+versus 48.69 without cache. Keep experiments OFF; no 60 pass. Read
+[current checkpoint](RENDER_KERNEL_CHECKPOINT.md) and
+[contract](PREFLIGHT_KERNEL_CONTRACT.md), not the old capture-first queue.
+
 The owner explicitly requested a quick weapon fix and return to world/performance.
 Remaining G7 unavailable fixtures, exact rocket-origin/impact and physical gates
 stay recorded; they no longer gate performance work. Do not recalibrate or
@@ -266,20 +279,21 @@ older R6-first pointers. MP remains calibration only. The operator's first-game
   Preserve native HUD/fallback, geometry/FOV, weapons, laser and guest timing.
   Generic changes need both-game checks before either pin changes. Completed
   first-game checkpoint/readback work is already shared; do not redo it.
-  Next: the real `80011424` caller contract and a qualified preflight kernel.
+  Implemented: experimental preflight and parent packet kernels. Next:
+  reusable world-space geometry; remaining promotion gates stay open.
   Three compiler-inlining experiments are rejected. Existing IPO improves
   desktop pair work about 4.3% but fails stable full-path qualification; OFF.
 - [x] P3c1. Qualify bounded native-copy candidate controls and three diagnostic/
   production A/B repeats; it remains OFF. Small desktop cadence gain does not
   remove the approximately 17.6-ms pair cost or close P3c/P3/P4.
-- [ ] P3c2. Capture the full real `80011424` caller contract, including live
+- [x] P3c2. Capture the full real `80011424` caller contract, including live
   registers, scratchpad, GTE/PGXP and internal resume entries. Start a standalone
   caller harness and establish valid per-execution integration fixtures before
-  changing execution identity. Existing probes need build/fixture selection
-  support for new families; old sibling launch overrides are retired. Exact deliverables:
+  changing execution identity. Probes now have build/fixture selection; native copied-card boot/input yields
+  genuine per-execution fixtures. Old sibling launch overrides remain retired. Exact deliverables:
   [ordered runbook](PERFORMANCE_NEXT_STEPS.md#31-ordered-execution-checklist--start-at-p3c2)
   and [fixture rules](PERFORMANCE_NEXT_STEPS.md#32-execution-identity-and-fixture-handling--resolve-before-integration).
-- [ ] P3c3. Implement the faster preflight helper through the real caller
+- [x] P3c3. Implement the faster preflight helper through the real caller
   interface, selected at build time, with the original runnable REFERENCE.
   Pass paired caller-result tests for accept/reject, winding, clipping/depth
   and subdivision, including observable memory and precision effects.
@@ -295,7 +309,9 @@ older R6-first pointers. MP remains calibration only. The operator's first-game
   next task. No physical headset needed for this gate. Synthetic/null-HMD
   evidence has its own limits; a limited no-hand run is not complete coverage.
   A rejected candidate leaves P3c open. No 60/90 claim follows from cost alone.
-- [ ] P3d. Decide whether parent packet-builder work is still needed after the
+- [ ] P3d. Experimental parent kernel implemented with 512 exact live comparisons;
+  full-path/second-workload promotion remains open. Original decision rule:
+  decide whether parent packet-builder work is still needed after the
   preflight result. If over budget, optimize measured `80010CF0` through its
   caller using the same contract/correctness/A-B/full-path gates. Otherwise
   record why it is deferred. This is a conditional budget decision, not a
@@ -306,8 +322,14 @@ older R6-first pointers. MP remains calibration only. The operator's first-game
   measured optimization, preserving native updates/fallback; otherwise record
   the reason to defer. Do not count old shared ports as new work.
 - [ ] P3. Reduce measured production scene-replay/HUD cost to the complete
-  16.67 ms/frame budget; 11.11 ms preferred. Keep weapon/laser/HUD and correct FOV.
+  16.67 ms/frame budget. The 11.11-ms/90-Hz target is deferred. Keep weapon/laser/HUD and correct FOV.
 - [ ] P4. Implement safe render-only cadence independent of native 30 Hz draw.
+  One-extra-view SP VSync prototype exists, default OFF; native-entry projection,
+  counter/owner/generation guards and distinct source stamps pass bounded tests.
+  CPU saturation still slows wall-time guest cadence. Exact-pose cache rejected
+  for stereo benefit; next is reusable world-space geometry per current eye.
+  Physical full-path trial confirms unplayable cadence and native clock slowdown;
+  synchronous extra render in the guest wait is rejected for normal play.
   Preserve simulation/audio/shot timing and rollback/save ABI. No turbo,
   native VBlank-rate change or stale-pair/reprojection FPS substitution.
   A cached-scene path is a larger conditional fallback if targeted replay cannot
@@ -317,7 +339,7 @@ older R6-first pointers. MP remains calibration only. The operator's first-game
 - [ ] P5. Pass desktop/null-HMD freshness, pacing, rollback, pause/load/recovery
   and guest-timing controls; restore debug-OFF production build.
 - [ ] P6. One bounded SP headset check: steady minimum 60 fresh application
-  frames/s, preferred 90; record CPU/GPU frame times and compositor repeats.
+  frames/s first; 90 later. Record CPU/GPU frame times and compositor repeats.
 
 ## A - Alpha playability backlog after the performance blocker
 

@@ -25,6 +25,10 @@ set(PSX_SETUP_WIZARD ON CACHE BOOL
     "Advertise first-run setup wizard + Generate & rebuild in recomp-ui" FORCE)
 option(MOHU_VR_DIAGNOSTICS "Build the guarded Underground VR diagnostic plugin" OFF)
 option(MOHU_VR_NATIVE_PROFILE "Time native CPS function segments (diagnostic only)" OFF)
+option(MOHU_VR_PREFLIGHT_HARNESS "Isolated native/host preflight caller comparisons (diagnostic only)" OFF)
+option(MOHU_VR_HOST_PREFLIGHT "Build-selected host preflight for render-only eye passes (experimental)" OFF)
+option(MOHU_VR_PACKET_HARNESS "Isolated native/host packet comparisons (diagnostic only)" OFF)
+option(MOHU_VR_HOST_PACKET "Batch native packet CPS segments in render-only passes (experimental)" OFF)
 include("${PSXRECOMP_ROOT}/runtime/runtime.cmake")
 
 # This project's own mod catalog. The FRAMEWORK stages it -- together with its
@@ -64,6 +68,61 @@ psxrecomp_add_game_runtime(psx-runtime
     CODEGEN_SETUP_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/codegen_setup.c"
 )
 
+get_target_property(_mohu_execution_profile psx-runtime PSX_EXECUTION_PROFILE)
+set(_mohu_packet_core "${CMAKE_CURRENT_BINARY_DIR}/mohu_packet_core.c")
+if(MOHU_VR_PACKET_HARNESS OR
+   (MOHU_VR_HOST_PACKET AND _mohu_execution_profile STREQUAL "ENHANCED"))
+    find_package(Python3 COMPONENTS Interpreter REQUIRED)
+    execute_process(COMMAND "${Python3_EXECUTABLE}"
+        "${CMAKE_CURRENT_SOURCE_DIR}/vr/tools/build_packet_kernel.py"
+        --source "${CMAKE_CURRENT_SOURCE_DIR}/generated/SLUS_012.70_full_00.c"
+        --out "${_mohu_packet_core}" COMMAND_ERROR_IS_FATAL ANY)
+    set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
+        vr/tools/build_packet_kernel.py generated/SLUS_012.70_full_00.c)
+    target_include_directories(psx-runtime PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/generated")
+endif()
+if(MOHU_VR_HOST_PACKET AND NOT MOHU_VR_HOST_PREFLIGHT)
+    message(FATAL_ERROR "Host packet currently requires the qualified preflight kernel")
+endif()
+if(MOHU_VR_HOST_PREFLIGHT)
+    if(NOT MOHU_VR_DIAGNOSTICS OR MOHU_VR_PREFLIGHT_HARNESS OR MOHU_VR_NATIVE_PROFILE)
+        message(FATAL_ERROR "Host preflight requires VR and cannot be combined with diagnostic wrappers")
+    endif()
+    set(_mohu_preflight_shard "${CMAKE_CURRENT_SOURCE_DIR}/generated/SLUS_012.70_full_00.c")
+    foreach(_mohu_target psx-runtime psx-runtime-pgxp)
+        if(TARGET ${_mohu_target})
+            get_target_property(_mohu_sources ${_mohu_target} SOURCES)
+            list(REMOVE_ITEM _mohu_sources "${_mohu_preflight_shard}")
+            set_property(TARGET ${_mohu_target} PROPERTY SOURCES "${_mohu_sources}")
+        endif()
+    endforeach()
+    set(_mohu_hle_sources vr/underground/preflight_entry.c vr/underground/preflight.c)
+    set(_mohu_hle_contract mohu-vr-preflight)
+    set(_mohu_hle_files vr/underground/preflight.h)
+    if(MOHU_VR_HOST_PACKET)
+        list(APPEND _mohu_hle_sources vr/underground/packet_entry.c "${_mohu_packet_core}")
+        list(APPEND _mohu_hle_files vr/tools/build_packet_kernel.py vr/underground/world_cache.inc
+            vr/underground/world_cache_key.h)
+        set(_mohu_hle_contract mohu-vr-render-kernels)
+        set_property(SOURCE vr/underground/preflight_entry.c APPEND PROPERTY
+            COMPILE_DEFINITIONS MOHU_VR_HOST_PACKET_BUILD=1)
+        if(_mohu_execution_profile STREQUAL "ENHANCED")
+            set_property(SOURCE vr/underground/vr_diagnostic.c APPEND PROPERTY
+                COMPILE_DEFINITIONS MOHU_VR_HOST_PACKET_BUILD=1)
+        endif()
+    endif()
+    if(_mohu_execution_profile STREQUAL "REFERENCE")
+        # A reference build must not require private HLE headers or recipes.
+        set(_mohu_hle_files)
+    endif()
+    psxrecomp_add_implementation(psx-runtime
+        NAME ${_mohu_hle_contract} CONTRACT slus01270-render-kernels-v1
+        HLE_SOURCES ${_mohu_hle_sources}
+        LLE_SOURCES "${_mohu_preflight_shard}"
+        CONTRACT_FILES ${_mohu_hle_files} "${_mohu_preflight_shard}"
+            generated/SLUS_012.70_decls.h)
+endif()
+
 if(MOHU_VR_DIAGNOSTICS)
     target_sources(psx-runtime PRIVATE
         "${CMAKE_CURRENT_SOURCE_DIR}/vr/underground/engine_map.c"
@@ -71,6 +130,27 @@ if(MOHU_VR_DIAGNOSTICS)
         "${CMAKE_CURRENT_SOURCE_DIR}/vr/underground/weapon.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/vr/underground/hud.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/vr/underground/vr_diagnostic.c")
+    if(MOHU_VR_PACKET_HARNESS)
+        if(NOT WIN32 OR MSVC OR NOT PSX_DEBUG_TOOLS OR MOHU_VR_NATIVE_PROFILE)
+            message(FATAL_ERROR "Packet harness requires Windows GNU ABI, debug tools, native timers OFF")
+        endif()
+        set_property(SOURCE vr/underground/vr_diagnostic.c APPEND PROPERTY
+            COMPILE_DEFINITIONS MOHU_VR_PACKET_HARNESS=1)
+        if(MOHU_VR_HOST_PACKET)
+            message(FATAL_ERROR "Packet harness and live packet implementation must be separate builds")
+        endif()
+        target_sources(psx-runtime PRIVATE "${_mohu_packet_core}" vr/underground/packet_harness.c)
+        target_link_options(psx-runtime PRIVATE "-Wl,--wrap=func_80010CF0")
+    endif()
+    if(MOHU_VR_PREFLIGHT_HARNESS)
+        if(NOT WIN32 OR MSVC OR NOT PSX_DEBUG_TOOLS OR MOHU_VR_NATIVE_PROFILE)
+            message(FATAL_ERROR "Preflight harness requires Windows GNU ABI, debug tools, native timers OFF")
+        endif()
+        set_property(SOURCE vr/underground/vr_diagnostic.c APPEND PROPERTY
+            COMPILE_DEFINITIONS MOHU_VR_PREFLIGHT_HARNESS=1)
+        target_sources(psx-runtime PRIVATE vr/underground/preflight.c vr/underground/preflight_harness.c)
+        target_link_options(psx-runtime PRIVATE "-Wl,--wrap=func_80011424")
+    endif()
     if(MOHU_VR_NATIVE_PROFILE)
         if(NOT WIN32 OR MSVC OR NOT PSX_DEBUG_TOOLS)
             message(FATAL_ERROR "Native segment profiling requires Windows GNU ABI and debug tools")

@@ -1,5 +1,80 @@
 # VR Port Implementation Log
 
+## 2026-10-30 — reject the full VDXR performance playtest
+
+- Operator reports unplayable motion despite panel 90 FPS, 45-ms latency and
+  15-ms game rendering. Read the actual completed playtest trace/logs without
+  launching another game or changing runtime settings.
+- 120 fresh submitted pairs over 2.696 seconds measure 44.139 pairs/s, 22.081
+  native scene draws/s and 44.139 native VBlank counts/s. VDXR supplies a
+  22.222-ms application period (~45 Hz). Mean pair work 12.264 ms, HUD capture
+  2.407 ms and pose age 15.420 ms. No missing/dropped trace records. This is one
+  physical run, not a matched physical baseline A/B or a 60-FPS pass.
+- The extra render synchronously consumes time in the native wait, slowing
+  guest wall-time progress. Pair completion and a high compositor/panel rate
+  do not certify native-speed gameplay. `guest_sim` is a frame interval, not
+  exclusive simulation CPU work; avoid adding it to nested render stages.
+- Restored all existing RunVR BATs to production/personal saves. Experimental
+  source, opt-in diagnostic route, isolated progress and failed evidence remain
+  preserved. No game/runtime session was started or stopped by this diagnosis;
+  no owned game remains. 143 Python tests, both route preparations and diff check
+  pass. Production binary unchanged, no commit/push. Next renderer work must
+  preserve independent native simulation while projecting reusable world-space
+  geometry per current eye/head pose. Do not repeat the same headset trial.
+
+## 2026-10-30 — operator performance playtest launcher
+
+- Operator requested testing the performance changes and chose a new game.
+  Existing RunVR BATs now pass `-PerformanceTest`; `-Baseline` restores normal
+  production/personal saves. The experimental complete runtime is selected
+  without copying it into production or bypassing execution identity checks.
+- Enabled host kernels + fresh-view scheduler, kept rejected packet caching
+  OFF, and added timestamped FPS trace output. Default boot stays the native
+  menu, with no savestate autoload. Copied cards and new states stay in the
+  isolated persistent playtest store; repeated setup preserves progress.
+- Dry-ran both BAT routes without launching a game. Three new executable
+  PowerShell isolation tests cover progress preservation, identity mismatch and
+  refusal to adopt unknown saves. All 143 Python tests and diff checks pass.
+  Production binary unchanged; no headset acceptance, commit or push claimed.
+
+## 2026-10-30 — render kernels, fresh-view prototype and stereo cache rejection
+
+- Implemented a structured native preflight core and build-derived batched
+  packet core, selected only for render transactions; original canonical/resume
+  paths and build-selected REFERENCE remain available. No framework/pin change.
+  Added isolated explicitly armed caller harnesses and pointer-free captures.
+- Preflight: 100,000 standalone comparisons, live 128 + 1,024 calls with zero
+  numeric/precision differences/refusals. Packet: final 512 calls, one entry,
+  511 resumes and 8,091 writes match. Earlier entry refusal is retained; the
+  prologue establishes scratch base before resume-only guards apply.
+- Genuine per-execution fixtures come from disposable copied-card native boot
+  and input, without cookies/header edits or inventory mutation. Extended the
+  existing probes with complete build/fixture selectors. No new user save is
+  required. New mission-start slot 2 differs from the heavy frozen slot 2.
+- Three alternating preflight-only production comparisons reduce pair work
+  about 9%. Added default-OFF extra-view SP VSync scheduler with exact caller,
+  native-counter and ownership/generation guards; native timing is not advanced.
+  Fixed intermediate desktop projection to retain native frame-entry H/OFX/OFY.
+  Distinct native-draw/extra source stamps do not imply 60 real-time FPS.
+- Prototyped exact-pose world packet reuse with public precision transport.
+  Initial old-generation precision receipts were correctly refused; retain the
+  failed run and shared guard. Latest controls: 1,176 VERIFY checks, zero
+  mismatches, HUD/laser and pause/refusal/load recovery. Signed zero view-key
+  equality is exact numerically and still rejects real pose/lens changes.
+- Three cache/coincident-eye runs yield 56.345/57.047/56.856 pairs/s, versus
+  48.354/48.770/48.178 without. Added explicit profiler eye offset: separated
+  eyes yield 47.619 with cache versus 48.691 without. Reject final-packet reuse
+  as the VR architecture; no headset or 60-FPS gain claimed. All experiments OFF
+  in normal play. Next is reusable source geometry projected per fresh eye.
+- 140 Python tests, strict shot/weapon/raycast/frustum/cadence/cache-key C and
+  100,000 preflight comparisons pass. Both execution profiles build. Normal
+  Release/debug-OFF/PGXP/OpenXR/IPO-OFF restored, copied heavy slot-2 production
+  smoke complete, exit 0, saves/preferences unchanged and no owned process.
+  Detailed results, retained failures and hashes are in
+  [RENDER_KERNEL_CHECKPOINT](RENDER_KERNEL_CHECKPOINT.md) and its compact receipt.
+  Full XR/hand path, second workload, historical HUD/pause failure and broader
+  weapon/physical gates remain open. No commit/push in this continuation.
+
 ## 2026-10-29 — documentation and delivery checkpoint
 
 - Updated the active handoff, plan, parity runbook and current-regression/

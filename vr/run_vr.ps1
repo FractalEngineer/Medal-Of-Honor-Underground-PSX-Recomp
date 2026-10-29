@@ -33,11 +33,31 @@ param(
     [double]$MoveDeadzone = 0.2,
     [ValidateRange(0, 2)]
     [double]$TurnGain = 0.65,
-    [switch]$Build
+    [switch]$Build,
+    [switch]$PerformanceTest,
+    [switch]$Baseline,
+    [switch]$PrepareOnly
 )
 
 $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path $PSScriptRoot -Parent
+if ($Baseline) { $PerformanceTest = $false }
+$performanceProfile = $null
+if ($PerformanceTest) {
+    if ($Build -or $DebugPort -gt 0 -or $GameConfig -or $MemcardDirectory -or
+        $BuildDirectory -notin @('build-release', 'analysis\builds\preflight-enhanced',
+                               'analysis/builds/preflight-enhanced')) {
+        throw 'PerformanceTest uses the tested prebuilt runtime and its isolated saves; omit build/debug/config/save overrides.'
+    }
+    . (Join-Path $PSScriptRoot 'performance_test.ps1')
+    $performanceProfile = Initialize-PerformancePlaytest -RepositoryRoot $repoRoot
+    $BuildDirectory = $performanceProfile.build_directory
+    $GameConfig = $performanceProfile.game_config
+    $MemcardDirectory = $performanceProfile.memcard_directory
+    if (-not $PSBoundParameters.ContainsKey('LogDirectory')) {
+        $LogDirectory = 'analysis\runtime\vr-performance-test\' + (Get-Date -Format 'yyyyMMdd-HHmmss-fff')
+    }
+}
 $buildPath = Join-Path $repoRoot $BuildDirectory
 $exePath = Join-Path $buildPath 'Medal_of_Honor_Underground_Recompiled.exe'
 $logPath = if ([IO.Path]::IsPathRooted($LogDirectory)) { $LogDirectory } else { Join-Path $repoRoot $LogDirectory }
@@ -248,9 +268,27 @@ if ($MemcardDirectory) {
     New-Item -ItemType Directory -Path $MemcardDirectory -Force | Out-Null
     $MemcardDirectory = (Resolve-Path -LiteralPath $MemcardDirectory).Path
 }
+if ($PrepareOnly) {
+    [pscustomobject]@{
+        executable = $exePath
+        game_config = $GameConfig
+        memcard_directory = $MemcardDirectory
+        slot = $Slot
+        performance_test = [bool]$PerformanceTest
+        fresh_60 = [bool]$PerformanceTest
+        world_cache = $false
+        log_directory = $logPath
+        execution_identity = $(if ($performanceProfile) { $performanceProfile.execution_identity } else { $null })
+    } | ConvertTo-Json -Depth 3
+    return
+}
 $runtimeManifest = Resolve-RuntimeManifest -Name $Runtime -ExplicitPath $RuntimeJson
 Write-Host "Game: $exePath"
 Write-Host "Saves: $MemcardDirectory"
+if ($PerformanceTest) {
+    Write-Host 'PERFORMANCE TEST: host render kernels + fresh-view scheduler ON; packet cache OFF.'
+    Write-Host 'Start a new game normally. Personal save states remain in the normal build.'
+}
 [IO.Directory]::CreateDirectory($logPath) | Out-Null
 
 Push-Location $repoRoot
@@ -347,6 +385,14 @@ try {
         MOHU_VR_P38_CALIBRATED = '0'
         MOHU_VR_P38_AIM = '0'
         PSX_OPENXR_READY_FILE = $readyPath
+        MOHU_VR_FRESH_60 = $(if ($PerformanceTest) { '1' } else { '0' })
+        MOHU_VR_WORLD_CACHE = '0'
+        MOHU_VR_SKIP_NATIVE_WORLD_COPY = '0'
+    }
+    if ($PerformanceTest) {
+        $environment.PSX_RENDER_PASS_VERIFY = '0'
+        $environment.PSX_FRAME_TRACE = '1'
+        $environment.MOHU_VR_FRAME_TRACE_FILE = Join-Path $logPath 'frame-trace.json'
     }
     if ($null -ne $runtimeManifest) {
         $environment.XR_RUNTIME_JSON = $runtimeManifest
@@ -357,6 +403,9 @@ try {
     }
 
     $arguments = '--game "{0}" --no-launcher' -f $GameConfig
+    if ($performanceProfile) {
+        $arguments += ' --disc "{0}"' -f $performanceProfile.disc
+    }
     if ($MemcardDirectory) {
         $arguments += ' --memcard-dir "{0}"' -f $MemcardDirectory
     }

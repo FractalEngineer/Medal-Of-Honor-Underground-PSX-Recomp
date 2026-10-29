@@ -38,6 +38,7 @@ strict = true
 # the verified engine-map bindings, mode-specific shot/camera callbacks,
 # native submit/HUD filters, and the multiplayer frame/selector hooks.
 mod_function_entry_funcs = [
+  "0x80017628", # native VSync query: guarded render-only fresh-view candidate
   "0x80093830", # entity transform
   "0x80013B40", # entity node transformer
   "0x80013EB4", # GTE RT/TR loader

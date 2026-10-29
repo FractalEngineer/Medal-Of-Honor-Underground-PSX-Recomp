@@ -1,0 +1,45 @@
+{
+  "schema": 1,
+  "date": "2026-10-30",
+  "operator_requested": true,
+  "default_runvr_mode": "performance_test",
+  "baseline_argument": "-Baseline",
+  "new_game": true,
+  "personal_saves_replaced": false,
+  "game_launched_by_agent": false,
+  "headset_acceptance": false,
+  "python_tests": 143,
+  "production_sha256": "49936ea2ce270c8066738513d58dcca0cf23c9ba3df648fb069880b640c93753",
+  "routes": {
+    "performance": {
+      "executable": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\builds\\preflight-enhanced\\Medal_of_Honor_Underground_Recompiled.exe",
+      "game_config": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\builds\\preflight-enhanced\\game.toml",
+      "memcard_directory": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\playtest\\render-kernels\\saves",
+      "slot": -1,
+      "performance_test": true,
+      "fresh_60": true,
+      "world_cache": false,
+      "log_directory": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\runtime\\vr-performance-test\\20261030-022458-600",
+      "execution_identity": "1b2f45c2ed83546d119ac31c37dcc6746d5a954ccbf763b8634f8815b7910ccb"
+    },
+    "baseline": {
+      "executable": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\build-release\\Medal_of_Honor_Underground_Recompiled.exe",
+      "game_config": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\game.toml",
+      "memcard_directory": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\saves",
+      "slot": -1,
+      "performance_test": false,
+      "fresh_60": false,
+      "world_cache": false,
+      "log_directory": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\runtime\\vr",
+      "execution_identity": null
+    }
+  },
+  "source_sha256": {
+    "RunVR-VDXR.bat": "b3b49237a28f036f28c8c93b1a2d7ab5c356aea19747126898aa0bbab0e4a83f",
+    "RunVR-Oculus.bat": "5fab57e859a66e77249bca047054beb6ff94b376ecb1430f7fb443ae31f33275",
+    "RunVR-SteamVR.bat": "40c86c7074cc574d4a1c917c63d746094f6b54f41ccabf3405a7b7e9e6adcb49",
+    "vr/run_vr.ps1": "55ce1e015284915bf4be12e6cb3b04dce33d8ec6200f91fd5c11608ac0a3151d",
+    "vr/performance_test.ps1": "c652396a79ceb31086d43967d137dfb78162754981a61ed896e1650ecf6492e2",
+    "vr/tests/test_performance_playtest.py": "1f9821df847c77acf90a75aa52227d320162fd1b88b17a983cc29a48298d6c92"
+  }
+}

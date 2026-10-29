@@ -5,10 +5,16 @@ root `saves`; automated sources are frozen `analysis/fixtures/sp` and
 `analysis/fixtures/mp`, copied to disposable outputs. Retired benchmark aliases
 and the old flat-check build are archived, not runnable alternate play targets.
 
-Updated 2026-10-29. **Performance is the active priority after the bounded
+Updated 2026-10-30. **Performance is the active priority after the bounded
 petrol and missing-world repairs.** Both measured petrol branches now use the
 unchanged shared MP calibration. Remaining G7 fixtures/physical gates no longer
 delay G6 under the owner's latest instruction.
+
+The operator's full VDXR trial has now failed: 44.139 fresh pairs/s, 22.081 native
+draws/s, 22.222-ms runtime application period and native clock slowdown. A panel
+90-FPS report does not certify fresh game views. Default RunVR is back on
+baseline; the unchanged extra-view prototype is not ready for another headset
+trial. See [physical rejection](../../vr/proof/sp-performance-headset-rejection-receipt.json).
 
 Slot 1's missing world is reproduced and its omitted native far-plane check is
 repaired, with populated zero/90-degree views. One HUD/pause VRAM restoration
@@ -18,14 +24,13 @@ production 1080p desktop baseline is **20.139 ms/pair, 16.710 ms traversal and
 only 0.066 ms. [Current cases](SP_CURRENT_REGRESSIONS.md) and
 [receipt](../../vr/proof/sp-far-depth-world-receipt.json).
 
-**NEXT: G6c/P3c2–P3c6, real preflight implementation and qualification**, following
-[NATIVE_REPLAY_PROFILE](NATIVE_REPLAY_PROFILE.md). P3b and rejected compiler
-sweeps remain complete. Do not start another weapon calibration/inventory,
-visibility survey, generic attribution run or lower-resolution experiment.
-The native `80011424` caller contract/harness is the next implementation step;
-capture alone does not close it. Preserve valid execution identities and the
-runnable reference. P4/P5 independent fresh views remains necessary afterward.
-Minimum 60 fresh application frames/s, preferred 90, stays open.
+**NEXT: G6/P4 reusable world-space geometry**, using the completed experimental
+preflight/packet kernels as reference work. [Current checkpoint](RENDER_KERNEL_CHECKPOINT.md)
+and [caller contract](PREFLIGHT_KERNEL_CONTRACT.md) supersede the original
+P3c2-first assignment below. P3c2/P3c3 are implemented; full-path/second-workload
+promotion remains open. Exact-pose packet caching is rejected as the VR
+architecture after separated-eye controls. Do not repeat it or compiler sweeps.
+**60 fresh application FPS is first; 90 is deferred.** No 60 pass exists.
 
 All operator slot references are internal/file/tool indices, as confirmed by
 the operator. Select `--slot 1` for G5 and `--slot 2` for G6. Do not reinterpret
@@ -178,18 +183,19 @@ already shared; do not implement them again.
 
 ## 3. Implement the measured improvement (P3c)
 
-Start at [the preflight caller contract](NATIVE_REPLAY_PROFILE.md#exact-next-implementation).
-Read/capture `80011424` and its continuation `80011008`; do not treat `$v0`
-as its entire custom ABI. Plan valid caller fixtures before an execution-family
-identity change. The selected helper costs about 3.8 ms/pair and is a smaller
-first implementation than the 1840-byte parent packet builder.
+The preflight and parent packet implementation now exist. Read
+[PREFLIGHT_KERNEL_CONTRACT](PREFLIGHT_KERNEL_CONTRACT.md) for actual ABI, guards,
+captured comparisons and build identity. Read [RENDER_KERNEL_CHECKPOINT](RENDER_KERNEL_CHECKPOINT.md)
+for production results and the next world-space implementation. The checklist
+below remains the promotion standard; it is not an instruction to redo completed
+caller capture or block new architecture work on unavailable headset evidence.
 
 ### 3.1 Ordered execution checklist — start at P3c2
 
 These IDs match VR_PLAN. P3c1 is the old native-copy experiment, already done
 and OFF; it is **not** the first step of this new implementation. P3b is done.
-Complete this sequence for the preflight helper before starting packet-builder,
-HUD or cached-scene work. This is an implementation assignment: capture alone
+The implementation and bounded caller stages are complete; second-workload
+and actual XR/hand-path promotion remain open. This is an implementation assignment: capture alone
 does not finish it. No physical headset is required for P3c2–P3c6.
 
 | Order / plan ID | Required action | Evidence needed before advancing |
@@ -273,16 +279,14 @@ with harness success and call the full integration validated.
   to hide a mismatch. Use separate full runtime assets and overlay caches per
   execution profile; never copy a candidate executable into another profile's
   cache/assets and treat the result as qualified.
-- The current `profile_sp_production.py` and `probe_sp_issues.py` select the
-  frozen SP fixture tree and normal `build-release`. The former sibling `--exe`
-  profiler launch override was removed during cleanup; normal play/probes use
-  the standard game executable name. Offline symbol inspection can still read
-  an archived binary by hash. New-family fixtures/builds still need isolation.
-- Before cross-profile gameplay timing, minimally extend the existing tools
-  to select the intended build/assets/config and a separate validated copied
-  fixture root, recording both in the receipt. Such build/fixture selectors
-  are **not implemented yet**; do not invoke invented CLI options or overwrite
-  the shared source-save tree to trick the existing tools.
+- `profile_sp_production.py` and `probe_sp_issues.py` now accept `--build-dir`
+  and `--fixtures`. Each chooses a complete staged runtime/config/assets/cache
+  directory and a separate genuine fixture root, recorded with execution
+  manifest, binary and fixture hashes. These are diagnostic selectors, not
+  alternate normal-play launchers. The old executable-name override stays retired.
+- Production profiler `--eye-offset 8` supplies distinct diagnostic eye views.
+  Historical offset zero gives coincident eyes and cannot qualify stereo cache
+  performance. Existing traces remain valid for their stated limited scope.
 - Genuine reference/candidate states must come from supported normal boot,
   gameplay or memory-card load paths for each execution identity. Record scene
   differences; use matched caller captures for isolation. If suitable game
