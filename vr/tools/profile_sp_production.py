@@ -15,6 +15,7 @@ import subprocess
 import time
 import tomllib
 
+import analyze_vr_measurement as measurement
 import inspect_weapon_sets as n
 import probe_p38_headset as p
 from run_headset_batch import close_owned_window
@@ -31,6 +32,8 @@ def main():
     ap.add_argument('--world-cache', action='store_true', help='Exact-pose world packet prototype; motion falls back')
     ap.add_argument('--eye-offset', type=int, default=0,
                     help='Signed per-eye diagnostic offset in guest units; zero is coincident-eye baseline')
+    ap.add_argument('--runtime-perf', action='store_true',
+                    help='Opt in to PSX_RUNTIME_PERF_DIAG cadence lines and the M0 classification report')
     ap.add_argument('--resolution', default='1080p')
     ap.add_argument('--build-dir', type=Path, default=ROOT/'build-release',
                     help='Complete isolated runtime build/assets directory')
@@ -108,6 +111,8 @@ def run(args):
         MOHU_VR_WORLD_CACHE=str(int(args.world_cache)),
         MOHU_VR_EYE_OFFSET=str(args.eye_offset),
         SDL_AUDIODRIVER='dummy')
+    if args.runtime_perf:
+        env.update(PSX_RUNTIME_PERF_DIAG='1', PSX_RUNTIME_PERF_DIAG_MS='1000')
     r = dict(complete=False, headset_acceptance=False, injected_hands=False,
         build=build, binary_sha256=n.digest(exe), source_hashes=hashes,
         build_directory=str(build_dir), fixture_root=str(args.fixtures.resolve()),
@@ -141,6 +146,11 @@ def run(args):
                 (rows[-1]['guest_frame']-rows[0]['guest_frame'])*1000/span if span else 0)
             r['mean_stages_ms'] = {k: statistics.mean(x['stages_us'][k] for x in rows)/1000
                                    for k in rows[0]['stages_us']}
+            if args.runtime_perf:
+                cadence = measurement.parse_runtime_cadence(
+                    (out/'stdout.log').read_text(errors='replace'))
+                r['measurement'] = measurement.analyze_trace(
+                    data, cadence, 60, measurement.NOMINAL_NTSC_VBLANK_HZ, trace)
         finally:
             if proc.poll() is None:
                 close_owned_window(proc)

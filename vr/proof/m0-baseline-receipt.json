@@ -1,0 +1,423 @@
+{
+  "schema": 1,
+  "date": "2026-10-30",
+  "milestone": "M0",
+  "scope": "Frozen heavy slot-2 (analysis/fixtures/sp/openbios slot02), copied to disposable outputs; production Release, debug OFF, diagnostics ON, OpenXR compiled ON but no headset; hidden window, dummy audio, separated diagnostic eyes (offset 8).",
+  "headset_acceptance": false,
+  "physical_headset_measured": false,
+  "new_implementation": "M0 measurement contract tooling: profile_sp_production.py --runtime-perf embeds analyze_vr_measurement.py; this receipt records its first real baseline.",
+  "build": {
+    "PSX_DEBUG_TOOLS": "OFF",
+    "MOHU_VR_DIAGNOSTICS": "ON",
+    "PSX_OPENXR": "ON",
+    "configuration": "Release"
+  },
+  "binary_sha256": "49936ea2ce270c8066738513d58dcca0cf23c9ba3df648fb069880b640c93753",
+  "execution_manifest": {
+    "profile": "ENHANCED",
+    "identity": "8174a988661560c5297b4579eb11a9577ccd80a03ea5dfa794a84e21ca3c4361",
+    "implementations": []
+  },
+  "fixture_source_hashes": {
+    "state_8001F844_slot02.pst": "dd1c87925c8480198d04e8d7b38c67c0099ed4985463f7dc4e46731c80f90ceb",
+    "state_8001F844_slot02.thumb": "332196dd7003ad841e25a9320fc138d2a5886ce9a5e47a494894c16c178e9b55"
+  },
+  "request": {
+    "slot": 2,
+    "eye_offset": 8,
+    "runtime_perf": true,
+    "resolution": "1080p",
+    "skip_native_world_copy": false,
+    "fresh_60": false,
+    "world_cache": false
+  },
+  "environment": {
+    "PSX_DEV_INPUT": "0",
+    "PSX_VSYNC": "0",
+    "PSX_DITHERING": "0",
+    "PSX_STEREO_SHED": "0",
+    "PSX_INTERNAL_RESOLUTION": "1080p",
+    "PSX_RENDER_PASS_VERIFY": "0",
+    "PSX_VR_MOVEMENT": "1",
+    "PSX_VR_HEAD_FRUSTUM": "1",
+    "PSX_VR_SUPPRESS_FLAT_HUD": "1",
+    "PSX_VR_LASER": "1",
+    "PSX_VR_WEAPON_POSE": "1",
+    "MOHU_VR_P38_CALIBRATED": "0",
+    "MOHU_VR_P38_AIM": "0",
+    "MOHU_VR_MP_CONTROL": "0",
+    "MOHU_VR_MP_FRUSTUM": "0",
+    "MOHU_VR_STEREO_PROOF": "1",
+    "MOHU_VR_EYE_RENDER_VIEW": "1",
+    "MOHU_VR_EYE_GUEST_SUBMIT": "1",
+    "MOHU_VR_EYE_OFFSET": "8",
+    "MOHU_VR_WEAPON_CALIBRATED": "1",
+    "MOHU_VR_WEAPON_AIM": "1",
+    "MOHU_VR_WEAPON_GUN_ONLY": "1",
+    "PSX_OPENXR_ENABLE": "0",
+    "PSX_LOAD_SLOT": "2",
+    "PSX_FRAME_TRACE": "1",
+    "MOHU_VR_FRAME_TRACE_FILE": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\m0-baseline-20261030\\frame-trace.json",
+    "MOHU_VR_WEAPON_TRACE": "0",
+    "PSX_VR_WRIST_HUD": "1",
+    "MOHU_VR_UNITS_PER_METER": "238.80597014925373",
+    "MOHU_VR_SKIP_NATIVE_WORLD_COPY": "0",
+    "MOHU_VR_FRESH_60": "0",
+    "MOHU_VR_WORLD_CACHE": "0",
+    "PSX_RUNTIME_PERF_DIAG": "1",
+    "PSX_RUNTIME_PERF_DIAG_MS": "1000"
+  },
+  "windows": [
+    {
+      "evidence": "analysis/vr-baseline/m0-baseline-20261030/receipt.json",
+      "complete": true,
+      "pairs_per_second": 22.7403,
+      "native_vblanks_per_second": 45.4806,
+      "pair_total_ms": {
+        "count": 120,
+        "mean": 19.837267,
+        "p50": 19.702,
+        "p95": 20.8723,
+        "p99": 21.81637,
+        "max": 23.018
+      },
+      "game_traverse_ms": {
+        "count": 120,
+        "mean": 16.521442,
+        "p50": 16.443,
+        "p95": 17.22775,
+        "p99": 17.87933,
+        "max": 19.074
+      },
+      "game_submit_ms": {
+        "count": 120,
+        "mean": 1.002217,
+        "p50": 0.9895,
+        "p95": 1.08275,
+        "p99": 1.26987,
+        "max": 1.369
+      },
+      "eye_guest_ms": {
+        "left": 8.91665,
+        "right": 8.737775
+      },
+      "pair_plus_hud_ms": {
+        "p50": 19.702,
+        "p95": 20.8723,
+        "p99": 21.81637,
+        "hud_capture_included": false,
+        "excludes_nested_stages": true
+      },
+      "verdict": "both_simulation_and_presentation",
+      "rates": {
+        "native_vblank_hz_from_trace": 45.4806,
+        "native_vblank_hz_from_cadence": 48.3429,
+        "fresh_pairs_per_second": 22.7403,
+        "published_pairs_per_second": 22.7403,
+        "target_hz": 59.9988,
+        "repeated_submissions": 0,
+        "missed_periods_per_frame": 0.0
+      },
+      "runtime_cadence": {
+        "samples": 7,
+        "guest_hz_mean": 48.3429,
+        "work_guest_ms_per_s_mean": 961.6429,
+        "pacer_ms_per_s_mean": 8.3,
+        "work_guest_is_inter_frame_interval_not_exclusive": true
+      },
+      "findings": [
+        "native VBlank progression 48.34 Hz is below 59.23 Hz; simulation is not real-time",
+        "pair+hud p95 20.872 ms exceeds the 16.667 ms display period",
+        "no XR submission occurred; this is a desktop control and cannot certify headset cadence",
+        "HUD capture never ran; its cost is unmeasured here"
+      ]
+    },
+    {
+      "evidence": "analysis/vr-baseline/m0-baseline-20261030-b/receipt.json",
+      "complete": true,
+      "pairs_per_second": 23.4114,
+      "native_vblanks_per_second": 46.8227,
+      "pair_total_ms": {
+        "count": 120,
+        "mean": 19.790883,
+        "p50": 19.6905,
+        "p95": 21.07445,
+        "p99": 21.8417,
+        "max": 22.528
+      },
+      "game_traverse_ms": {
+        "count": 120,
+        "mean": 16.529042,
+        "p50": 16.423,
+        "p95": 17.391,
+        "p99": 17.85843,
+        "max": 18.97
+      },
+      "game_submit_ms": {
+        "count": 120,
+        "mean": 0.994742,
+        "p50": 0.9845,
+        "p95": 1.0962,
+        "p99": 1.17239,
+        "max": 1.232
+      },
+      "eye_guest_ms": {
+        "left": 8.930525,
+        "right": 8.722292
+      },
+      "pair_plus_hud_ms": {
+        "p50": 19.6905,
+        "p95": 21.07445,
+        "p99": 21.8417,
+        "hud_capture_included": false,
+        "excludes_nested_stages": true
+      },
+      "verdict": "both_simulation_and_presentation",
+      "rates": {
+        "native_vblank_hz_from_trace": 46.8227,
+        "native_vblank_hz_from_cadence": 49.4786,
+        "fresh_pairs_per_second": 23.4114,
+        "published_pairs_per_second": 23.4114,
+        "target_hz": 59.9988,
+        "repeated_submissions": 0,
+        "missed_periods_per_frame": 0.0
+      },
+      "runtime_cadence": {
+        "samples": 7,
+        "guest_hz_mean": 49.4786,
+        "work_guest_ms_per_s_mean": 970.9714,
+        "pacer_ms_per_s_mean": 8.4143,
+        "work_guest_is_inter_frame_interval_not_exclusive": true
+      },
+      "findings": [
+        "native VBlank progression 49.48 Hz is below 59.23 Hz; simulation is not real-time",
+        "pair+hud p95 21.074 ms exceeds the 16.667 ms display period",
+        "no XR submission occurred; this is a desktop control and cannot certify headset cadence",
+        "HUD capture never ran; its cost is unmeasured here"
+      ]
+    },
+    {
+      "evidence": "analysis/vr-baseline/m0-baseline-20261030-c/receipt.json",
+      "complete": true,
+      "pairs_per_second": 21.9476,
+      "native_vblanks_per_second": 43.8952,
+      "pair_total_ms": {
+        "count": 120,
+        "mean": 20.861417,
+        "p50": 20.3645,
+        "p95": 24.0596,
+        "p99": 27.88279,
+        "max": 28.853
+      },
+      "game_traverse_ms": {
+        "count": 120,
+        "mean": 17.211958,
+        "p50": 16.759,
+        "p95": 19.71435,
+        "p99": 22.78105,
+        "max": 23.154
+      },
+      "game_submit_ms": {
+        "count": 120,
+        "mean": 1.081758,
+        "p50": 1.0345,
+        "p95": 1.31435,
+        "p99": 1.59137,
+        "max": 1.61
+      },
+      "eye_guest_ms": {
+        "left": 9.341542,
+        "right": 9.107
+      },
+      "pair_plus_hud_ms": {
+        "p50": 20.3645,
+        "p95": 24.0596,
+        "p99": 27.88279,
+        "hud_capture_included": false,
+        "excludes_nested_stages": true
+      },
+      "verdict": "both_simulation_and_presentation",
+      "rates": {
+        "native_vblank_hz_from_trace": 43.8952,
+        "native_vblank_hz_from_cadence": 47.1286,
+        "fresh_pairs_per_second": 21.9476,
+        "published_pairs_per_second": 21.9476,
+        "target_hz": 59.9988,
+        "repeated_submissions": 0,
+        "missed_periods_per_frame": 0.0
+      },
+      "runtime_cadence": {
+        "samples": 7,
+        "guest_hz_mean": 47.1286,
+        "work_guest_ms_per_s_mean": 963.9,
+        "pacer_ms_per_s_mean": 8.9429,
+        "work_guest_is_inter_frame_interval_not_exclusive": true
+      },
+      "findings": [
+        "native VBlank progression 47.13 Hz is below 59.23 Hz; simulation is not real-time",
+        "pair+hud p95 24.060 ms exceeds the 16.667 ms display period",
+        "no XR submission occurred; this is a desktop control and cannot certify headset cadence",
+        "HUD capture never ran; its cost is unmeasured here"
+      ]
+    }
+  ],
+  "spread": {
+    "pairs_per_second": {
+      "min": 21.9476,
+      "mean": 22.6998,
+      "max": 23.4114
+    },
+    "pair_total_ms_mean": {
+      "min": 19.790883,
+      "mean": 20.1632,
+      "max": 20.861417
+    },
+    "runs": 3
+  },
+  "classification": {
+    "all_windows": "both_simulation_and_presentation",
+    "native_clock_below_nominal": true,
+    "pair_p95_above_60hz_period": true,
+    "compute_bound_not_pacing_bound": {
+      "pacer_ms_per_second_mean": 8.552,
+      "work_guest_ms_per_second_mean": 965.5,
+      "note": "pacer wait is a few ms/s; the inter-frame work interval is ~96% of wall time. Do not relabel it as exclusive simulation time."
+    }
+  },
+  "limitations": [
+    "Desktop no-XR control; it cannot certify headset cadence.",
+    "No HUD capture, hand surfaces, weapon or laser work executed.",
+    "No injected hands; controller input is synthetic/fixed by the owned probe.",
+    "One workload (frozen slot-2); a second materially different scene is still required for any gain claim.",
+    "No candidate comparison is implied: all three windows are the same production binary.",
+    "Stage means are not a predicted FPS and nested stages are not summed."
+  ],
+  "next": "Add canonical/snapshot-extract/async-GPU spans, then compare candidate kernels against this baseline with alternating windows.",
+  "canonical_control": {
+    "evidence": "analysis/vr-baseline/m0-canonical-20261030/receipt.json",
+    "complete": true,
+    "mode": "hidden SDL window, no XR, canonical native only; stereo/hand paths disabled",
+    "stereo_and_hand_keys_removed": true,
+    "bench_window_frames": 600,
+    "wall_ms": 9999.472,
+    "frames_per_second": 60.0032,
+    "guest_work_ms": 4127.766,
+    "guest_work_percent_of_wall": 41.28,
+    "pacer_ms": 5802.596,
+    "pacer_percent_of_wall": 58.029,
+    "quiet_cadence": {
+      "samples": 21,
+      "guest_hz": 59.997142857142855,
+      "guest_work_ms_s": 407.0857142857143,
+      "pacer_ms_s": 586.552380952381
+    },
+    "note": "guest_work is the inter-present work interval, not exclusive simulation time; it includes the native render path but no stereo replay in this control."
+  },
+  "attribution": {
+    "canonical_native_hz": 59.9971,
+    "stereo_native_hz_range": [
+      47.1286,
+      49.4786
+    ],
+    "canonical_work_interval_percent": 41.28,
+    "stereo_work_interval_percent_mean": 96.55,
+    "canonical_pacer_percent": 58.029,
+    "stereo_pacer_percent_mean": 0.855,
+    "same_scene_and_config": true,
+    "conclusion": "Native simulation is real-time with stereo disabled (60.00 Hz, ~41% work interval). Adding the per-eye replay lifts the work interval to ~96% of wall and drags the native clock to ~44-49 Hz. The slowdown is caused by the added stereo work, not by native execution or pacing; threading alone does not remove that work.",
+    "limits": [
+      "One canonical window; run it alternating with a stereo window for a matched comparison.",
+      "Different run length and no frame trace in the canonical control.",
+      "No XR/HUD/hands in either mode."
+    ]
+  },
+  "conclusion": "Both scenes show the same shape: canonical native is real-time (~60 Hz, ~41% work interval) while the per-eye replay is over the 60 Hz pair budget and slows the native clock. Reducing per-eye work is the required direction.",
+  "second_scene": {
+    "fixture": "slot05 (indoor/streaming), copied from analysis/fixtures/sp/openbios",
+    "fixture_source_hashes": {
+      "state_8001F844_slot05.pst": "d60a32a58b59fa012f9853c16e65f47ad3990680a1bd77869ffb4c5a992663fe",
+      "state_8001F844_slot05.thumb": "b3a4099c76c0ce025076113f37322f2b2b08219c4696050140818bd624e48951"
+    },
+    "stereo": {
+      "evidence": "analysis/vr-baseline/m0-slot5-20261030/receipt.json",
+      "complete": true,
+      "pairs_per_second": 27.6809,
+      "native_vblanks_per_second": 55.3617,
+      "pair_total_ms": {
+        "count": 120,
+        "mean": 16.988283,
+        "p50": 16.894,
+        "p95": 18.3961,
+        "p99": 18.7776,
+        "max": 19.198
+      },
+      "game_traverse_ms": {
+        "count": 120,
+        "mean": 14.714375,
+        "p50": 14.636,
+        "p95": 15.9418,
+        "p99": 16.36277,
+        "max": 16.809
+      },
+      "pair_plus_hud_ms": {
+        "p50": 16.894,
+        "p95": 18.3961,
+        "p99": 18.7776,
+        "hud_capture_included": false,
+        "excludes_nested_stages": true
+      },
+      "verdict": "both_simulation_and_presentation",
+      "rates": {
+        "native_vblank_hz_from_trace": 55.3617,
+        "native_vblank_hz_from_cadence": 57.1033,
+        "fresh_pairs_per_second": 27.6809,
+        "published_pairs_per_second": 27.6809,
+        "target_hz": 59.9988,
+        "repeated_submissions": 0,
+        "missed_periods_per_frame": 0.0
+      },
+      "runtime_cadence": {
+        "samples": 6,
+        "guest_hz_mean": 57.1033,
+        "work_guest_ms_per_s_mean": 927.25,
+        "pacer_ms_per_s_mean": 62.25,
+        "work_guest_is_inter_frame_interval_not_exclusive": true
+      },
+      "findings": [
+        "native VBlank progression 57.10 Hz is below 59.23 Hz; simulation is not real-time",
+        "pair+hud p95 18.396 ms exceeds the 16.667 ms display period",
+        "no XR submission occurred; this is a desktop control and cannot certify headset cadence",
+        "HUD capture never ran; its cost is unmeasured here"
+      ]
+    },
+    "canonical": {
+      "evidence": "analysis/vr-baseline/m0-slot5-canonical-20261030/receipt.json",
+      "complete": true,
+      "mode": "hidden SDL window, no XR, canonical native only; stereo/hand paths disabled",
+      "bench_window_frames": 600,
+      "wall_ms": 10222.091,
+      "guest_work_percent_of_wall": 41.747,
+      "pacer_percent_of_wall": 54.526,
+      "quiet_cadence": {
+        "samples": 21,
+        "guest_hz": 59.99,
+        "guest_work_ms_s": 413.4095238095238,
+        "pacer_ms_s": 570.552380952381
+      },
+      "bench_frames_per_second": 58.6964,
+      "steady_guest_hz": 59.99,
+      "note": "The 600-frame bench window includes a streaming hitch (one 48.68 Hz cadence sample at ~7.9 s), so its frames/wall is 58.70 Hz. The steady-state cadence is 59.99 Hz.",
+      "hitch": {
+        "seconds": 7.9,
+        "guest_hz": 48.68,
+        "evidence": "analysis/vr-baseline/m0-slot5-canonical-20261030/receipt.json cadence_samples"
+      }
+    },
+    "limitations": [
+      "One stereo window for this scene; it confirms the shape, not a gain claim.",
+      "Second scene is indoor/streaming and smaller than heavy slot 2.",
+      "No XR/HUD/hands in either mode."
+    ],
+    "conclusion": "Same shape as slot 2: steady canonical native is real-time (59.99 Hz, ~41% work interval) while stereo pair work is 16.99 ms and native VBlank falls below nominal. The indoor scene also shows a one-sample streaming hitch in the bench window; it is recorded, not averaged away."
+  }
+}

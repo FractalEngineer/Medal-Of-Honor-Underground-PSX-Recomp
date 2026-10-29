@@ -5,7 +5,7 @@ This no-XR, native-hand-fallback control measures build overhead, not physical
 tracked performance. Captures no screenshots and never enables VERIFY.
 """
 import argparse
-import sys,json,subprocess,time,threading,re,ctypes,shutil
+import sys,json,subprocess,time,threading,re,ctypes,shutil,statistics
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2]
 sys.path.insert(0,str(ROOT/'vr/tools'))
@@ -22,6 +22,8 @@ def main():
     a.add_argument('--config',type=Path,default=ROOT/'analysis/vr-baseline/game-interp.toml')
     a.add_argument('--bench-window',default='300:900')
     a.add_argument('--require-native',action='store_true')
+    a.add_argument('--canonical-only',action='store_true',
+                   help='Disable stereo/hand paths: measure native canonical cadence only')
     args=a.parse_args()
     if not 25<=args.seconds<=60:raise ValueError('seconds must be 25..60')
     config=args.config.resolve()
@@ -37,9 +39,15 @@ def main():
     env=p.environment('tracked',False,runtime_manifest=Path('unused'),hand_fixed=True)
     for key in ('MOHU_VR_MP_CONTROL','MOHU_VR_MP_FRUSTUM','XR_RUNTIME_JSON','MOHU_VR_OPENXR'):
      env.pop(key,None)
+    if args.canonical_only:
+     for key in ('MOHU_VR_STEREO_PROOF','MOHU_VR_EYE_RENDER_VIEW','MOHU_VR_EYE_GUEST_SUBMIT','MOHU_VR_EYE_OFFSET',
+                 'MOHU_VR_WEAPON_POSE','MOHU_VR_WEAPON_CALIBRATED','MOHU_VR_WEAPON_AIM','MOHU_VR_WEAPON_GUN_ONLY',
+                 'MOHU_VR_P38_CALIBRATED','MOHU_VR_P38_AIM','PSX_VR_MOVEMENT','PSX_VR_HEAD_FRUSTUM',
+                 'PSX_VR_SUPPRESS_FLAT_HUD','PSX_VR_LASER','PSX_VR_WEAPON_POSE'):
+      env.pop(key,None)
     env.update(PSX_OPENXR_ENABLE='0',PSX_LOAD_SLOT=str(args.slot),PSX_RENDER_PASS_VERIFY='0',PSX_RUNTIME_PERF_DIAG='1',PSX_RUNTIME_PERF_DIAG_MS='1000',PSX_FRAME_REPORT_MS='1000',PSX_INTERNAL_RESOLUTION='1080p',PSX_BENCH_WINDOW=args.bench_window,SDL_AUDIODRIVER='dummy')
     exe=ROOT/'build-release/Medal_of_Honor_Underground_Recompiled.exe'
-    r=dict(schema=1,binary_sha256=n.digest(exe),config=str(config.relative_to(ROOT)),config_sha256=n.digest(config),build=p.build_configuration(ROOT/'build-release/CMakeCache.txt'),environment={k:v for k,v in env.items() if k.startswith(('MOHU','PSX','SDL_AUDIO'))},source_hashes=hashes,headset_acceptance=False,mode='hidden SDL window, no XR, native fallback hand; matched build-overhead control',require_native=args.require_native,samples=[],cadence_samples=[])
+    r=dict(schema=1,binary_sha256=n.digest(exe),config=str(config.relative_to(ROOT)),config_sha256=n.digest(config),build=p.build_configuration(ROOT/'build-release/CMakeCache.txt'),environment={k:v for k,v in env.items() if k.startswith(('MOHU','PSX','SDL_AUDIO'))},source_hashes=hashes,headset_acceptance=False,mode=('hidden SDL window, no XR, canonical native only; stereo/hand paths disabled' if args.canonical_only else 'hidden SDL window, no XR, native fallback hand; matched build-overhead control'),canonical_only=args.canonical_only,require_native=args.require_native,samples=[],cadence_samples=[])
     with (out/'stdout.log').open('w') as log,(out/'stderr.log').open('w') as err:
      start=time.monotonic()
      proc=subprocess.Popen([str(exe),'--hidden-window','--no-launcher','--game',str(config),'--memcard-dir',str(out/'saves')],cwd=out,env=env,stdout=subprocess.PIPE,stderr=err,creationflags=subprocess.CREATE_NO_WINDOW)
@@ -72,6 +80,11 @@ def main():
       quiet=[x for x in r['samples'] if 8<=x['seconds']<=args.seconds-2]
       r['quiet_samples']=quiet
       if len(quiet)>1:r['quiet_pairs_per_second']=(quiet[-1]['pairs']-quiet[0]['pairs'])/(quiet[-1]['seconds']-quiet[0]['seconds'])
+      cadence=[x for x in r['cadence_samples'] if 8<=x['seconds']<=args.seconds-2]
+      r['quiet_cadence']=dict(samples=len(cadence),
+          guest_hz=statistics.mean(x['guest_hz'] for x in cadence) if cadence else None,
+          guest_work_ms_s=statistics.mean(x['guest_work_ms_s'] for x in cadence) if cadence else None,
+          pacer_ms_s=statistics.mean(x['pacer_ms_s'] for x in cadence) if cadence else None)
       r['overlay_native_calls']=sum(x['overlay_native'] for x in r['cadence_samples'])
       r['overlay_interp_calls']=sum(x['overlay_interp'] for x in r['cadence_samples'])
       r['overlay_loads']=sum(x['overlay_loads'] for x in r['cadence_samples'])
@@ -80,9 +93,14 @@ def main():
       native_ok=not args.require_native or (
           r['overlay_native_calls']>0 and
           bool(r.get('bench')) and r['bench']['overlay_native']>0)
-      r['complete']=bool(proc.returncode==0 and not r.get('forced_cleanup') and len(quiet)>1 and bool(r.get('bench')) and not r['remaining_game_pids'] and r['source_saves_unchanged'] and r['preferences_unchanged'] and native_ok)
+      if args.canonical_only:
+       r['complete']=bool(proc.returncode==0 and not r.get('forced_cleanup') and len(cadence)>1
+           and bool(r.get('bench')) and not r['remaining_game_pids']
+           and r['source_saves_unchanged'] and r['preferences_unchanged'])
+      else:
+       r['complete']=bool(proc.returncode==0 and not r.get('forced_cleanup') and len(quiet)>1 and bool(r.get('bench')) and not r['remaining_game_pids'] and r['source_saves_unchanged'] and r['preferences_unchanged'] and native_ok)
       (out/'receipt.json').write_text(json.dumps(r,indent=2)+'\n')
-    print(json.dumps({k:r.get(k) for k in ('complete','exit_code','forced_cleanup','quiet_pairs_per_second')}))
+    print(json.dumps({k:r.get(k) for k in ('complete','exit_code','forced_cleanup','canonical_only','quiet_pairs_per_second','quiet_cadence')}))
     if not r['complete']:raise RuntimeError('Profile transport/cadence incomplete; inspect receipt')
 
 

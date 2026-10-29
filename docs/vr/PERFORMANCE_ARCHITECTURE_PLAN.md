@@ -13,9 +13,9 @@ This document records the agreed architecture and execution gates. Read [HANDOFF
 
 | Milestone | State | Evidence / remaining blocker |
 | --- | --- | --- |
-| M0: baseline and measurement contract | Not started | No new measurements for this plan |
-| M1: static-world resource decoder | Not started | Full material contract required |
-| M2: host GPU static-scene rendering | Not started | Separated-eye visual and performance gates |
+| M0: baseline and measurement contract | In progress | Two scenes: canonical-only real-time (~60 Hz, 41% work interval); stereo 21.95–27.68 pairs/s, native clock below nominal, 96% work interval. Snapshot/async-GPU spans and alternating matched windows open |
+| M1: static-world resource decoder | In progress | Geometry/topology decoder, snapshot cache, conservative per-eye selection + named rejections landed; material mapping and reference captures open |
+| M2: host GPU static-scene rendering | In progress | Host reference transform/projection + real-view adapter landed; retained GPU buffers, shaders, ordering and separated-eye visual/performance gates open |
 | M3: complete dynamic scene snapshots | Not started | All encountered producer families |
 | M4: GPU HUD and resource transport | Not started | Existing HUD/pause restoration regression remains open |
 | M5: independent XR scheduling | Not started | Ownership and injected-stall gates |
@@ -26,6 +26,14 @@ This document records the agreed architecture and execution gates. Read [HANDOFF
 | Date | Work / gate | Receipt | Next action |
 | --- | --- | --- | --- |
 | 2026-10-30 | Plan saved; implementation not started | Existing evidence linked below | Begin M0 when implementation is requested |
+| 2026-10-30 | M0 measurement contract: offline classifier, opt-in cadence capture, tests | [MEASUREMENT_CONTRACT](MEASUREMENT_CONTRACT.md); `analyze_vr_measurement.py` + 10 tests pass | Capture three slot-2 `--runtime-perf` windows, then add canonical/snapshot/async-GPU spans |
+| 2026-10-30 | M1 geometry/topology decoder + strict fixture | [STATIC_WORLD_DECODER](STATIC_WORLD_DECODER.md); `world_decode.c`, `test_world_decode.c`, 155 Python tests pass | Map real `80010CF0` materials, then compare an arena capture |
+| 2026-10-30 | M1 snapshot cache: identity+generation key, source-span fingerprint revalidated once per snapshot | Same fixture; cache tests cover hit/revalidate/stale/generation/reset | Wire a default-OFF native census for the real arena root/generation |
+| 2026-10-30 | M1 conservative per-eye selection over retained geometry | `world_select.c` + fixture; rotated/translated/UNKNOWN/budget controls | Compare selection counts against a native eye capture |
+| 2026-10-30 | M2 host reference transform/projection + `PSXModRenderView` adapter + screen draw list | `world_project.c` + fixture; exact coords, near clip, triangle/quad triangulation, guards | Add retained GPU buffers/shaders and compare projected output against a native capture |
+| 2026-10-30 | M0 baseline: three production slot-2 windows with `--runtime-perf` | [receipt](../../vr/proof/m0-baseline-receipt.json); 21.95–23.41 pairs/s, native VBlank 43.9–46.8 Hz | Add canonical/snapshot/async-GPU spans; capture a second scene |
+| 2026-10-30 | M0 canonical-only control on the same slot-2 scene | Same receipt; native 60.00 Hz, work interval 41% vs stereo 96%, pacer 58% vs ~0.8% | Run canonical/stereo alternating; then add snapshot/async-GPU spans |
+| 2026-10-30 | M0 second scene (slot 5 indoor/streaming) stereo + canonical | Same receipt; stereo 27.68 pairs/s at 16.99 ms, canonical steady 59.99 Hz (~41% work); one streaming hitch recorded | Run alternating matched windows on both scenes |
 
 ## 1. Decision and evidence
 

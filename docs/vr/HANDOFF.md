@@ -26,6 +26,50 @@ reuse is rejected as the VR solution: coincident-eye desktop gains disappear
 with separated eyes. All experiments remain OFF in normal play.
 [Current results and one next implementation](RENDER_KERNEL_CHECKPOINT.md).
 
+**The independent renderer plan now owns the work:**
+[PERFORMANCE_ARCHITECTURE_PLAN](PERFORMANCE_ARCHITECTURE_PLAN.md) M0–M6. M0
+tooling landed: `vr/tools/analyze_vr_measurement.py` classifies
+simulation-bound versus presentation-bound runs from the existing frame trace
+plus opt-in `PSX_RUNTIME_PERF_DIAG` lines
+([contract](MEASUREMENT_CONTRACT.md)); `profile_sp_production.py
+--runtime-perf` embeds it. The first real baseline is recorded below. Next: add
+canonical, snapshot-extract/publish and asynchronous GPU-query spans, then take
+a second workload. Do not restart cache-pose, compiler or calibration sweeps.
+
+**M0 baseline measured:** three production slot-2 windows
+(`--runtime-perf --eye-offset 8`, frozen slot02 copied, debug OFF, no
+XR/HUD/hands) give 21.95–23.41 fresh pairs/s, pair_total 19.79–20.86 ms, p95
+pair+hud 20.87–24.06 ms and native VBlank 43.9–46.8 Hz. The classifier reports
+both simulation and presentation failure, but it is compute-bound: pacer waits
+are only ~8 ms/s while the inter-frame work interval is ~96% of wall time.
+A canonical-only control on the same scene
+(`profile_sp_runtime.py --canonical-only`) is real-time: **60.00 Hz, 41% work
+interval, 58% pacer**, versus 44–49 Hz at ~96% work and ~0.8% pacer with stereo.
+The added per-eye work — not native execution or pacing — causes the slowdown.
+Second scene (slot 5, indoor/streaming) matches: stereo 27.68 pairs/s at
+16.99 ms, canonical steady 59.99 Hz at ~41% work; one streaming hitch is
+recorded, not averaged away. [Receipt](../../vr/proof/m0-baseline-receipt.json).
+Not a headset pass; the snapshot/async-GPU spans and alternating matched
+windows remain open.
+
+**M1 started:** `vr/underground/world_decode.{h,c}` decodes the measured SP
+arena tree and strip lists into an owned, deterministic mesh with named,
+atomic rejections and raw material tokens. A bounded snapshot cache keys on
+request identity plus generation (never pose) and revalidates a source-span
+fingerprint at most once per native snapshot. `world_select.{h,c}` adds a
+conservative per-eye candidate list over the retained triangles using the
+framework's `psx_vr_box_visible` (UNKNOWN kept, capacity overflow explicit).
+`world_project.{h,c}` adds the host reference transform, near-plane clipping,
+screen projection and a fan-triangulated screen draw list, plus an adapter from
+the real `PSXModRenderView`.
+Materials are **not** decoded
+(`materials_decoded == 0`); textured rendering must refuse the mesh until the
+packet/preflight/subdivision fields are mapped. Strict fixture
+`vr/tests/test_world_decode.c`; contract in
+[STATIC_WORLD_DECODER](STATIC_WORLD_DECODER.md). Next: capture real
+`80010CF0` material fields, then compare an arena capture's triangle counts,
+winding and bounds.
+
 Petrol now follows the shared hand ray in both measured SP release branches.
 Slot 1's missing street is reproduced and repaired in both eyes: the VR selector
 omitted the native camera's far-depth plane and admitted 116 distant leaves from
