@@ -132,8 +132,8 @@ Extend existing profiling tools rather than creating another launcher.
 - [ ] Record XR wait, pose location, host preparation, GPU work and submission spans.
 - [ ] Record native VBlank progression, native scene updates, snapshot age, fresh-pose renders, repeated images and missed deadlines.
 - [ ] Use asynchronous GPU queries and retrieve results later. Do not add nested spans together or relabel historical `guest_sim` inter-frame intervals as exclusive simulation time.
-- [ ] Measure canonical-only execution with stereo replay disabled on the heavy scene. If it still falls behind, attribute the remaining canonical cost separately; do not claim threading solves it.
-- [ ] Preserve the existing heavy slot-2 reference. For changed execution identities, obtain candidate scenes through copied-card native boot/input and genuine saves. Record mission, location, camera and scene contents.
+- [x] Measure canonical-only execution with stereo replay disabled on the heavy scene. If it still falls behind, attribute the remaining canonical cost separately; do not claim threading solves it.
+- [x] Preserve the existing heavy slot-2 reference. For changed execution identities, obtain candidate scenes through copied-card native boot/input and genuine saves. Record mission, location, camera and scene contents.
 - [ ] **M0 exit:** reproducible reference measurements, valid fixture strategy and a report distinguishing simulation slowdown from presentation overload.
 
 A mission-start scene cannot replace the heavy-scene acceptance gate.
@@ -152,7 +152,7 @@ Reuse the bounds and strip-reading knowledge in `vr/underground/raycast.h`:
 
 - [ ] Complete material extraction from the original packet/preflight/subdivision bodies before rendering textured output. Produce a mapping table linking every decoded field to its native read/use and a captured fixture.
 - [ ] Decode all resident leaves before view-dependent culling, including geometry outside the native camera's current view. Preserve masks, far-plane policy and spatial bounds separately for per-eye selection.
-- [ ] Cache by resource identity, generation and validated source content, not eye pose or final screen coordinates. Initially validate relevant source spans once per native snapshot; do not hash the entire resource per eye.
+- [x] Cache by resource identity, generation and validated source content, not eye pose or final screen coordinates. Initially validate relevant source spans once per native snapshot; do not hash the entire resource per eye.
 - [ ] Reject malformed counts, cycles, invalid indices and unsupported materials explicitly. Never silently omit faces.
 - [ ] **M1 exit:** one arena family decodes deterministically; triangle counts, winding, materials and bounds agree with reference captures. Unsupported cases have named rejection reasons.
 
