@@ -2,8 +2,13 @@
 
 2026-10-29 operator priority: **port all existing MP weapon calibrations and
 tracked control paths to SP first**. This is G7 in VR_PLAN and supersedes the
-earlier G5/G6-first and performance-first orders. This update documents work;
-it does not implement, launch, test or certify new weapon behavior.
+earlier G5/G6-first and performance-first orders. This runbook records the
+verified source bindings and the remaining acceptance work.
+
+Status 2026-10-29: **G7a is complete.** Natural frozen SP fixture coverage is
+IDs 0, 13, 15 and 16 only. The guarded Panzerfaust basis candidate now follows
+desktop hand rotation and tracking-loss fallback; petrol throw construction and
+the other nine live-ID rows remain open. See the measured checkpoint below.
 
 The operator reports that petrol bomb and Panzerfaust “seem to have fixed
 aiming.” Record this as apparent fixed/native-direction aiming instead of hand
@@ -56,9 +61,9 @@ SP evidence and remaining coverage; it does not mark any new work accepted.
 | 9 | Silenced pistol | Reuse profile; retain complete suppressor/gun and prove SP shot control |
 | 10 | Stick grenade | Prove SP held orientation, throw final origin/initial direction, hand-fixed ray and restoration |
 | 12 | M1 Garand | Reuse profile; prove SP tracked fire plus native reload behavior |
-| 13 | Panzerfaust | New apparent fixed-aim report; bind/prove SP final rocket origin and initial direction |
+| 13 | Panzerfaust | Guarded SP basis candidate turns native first motion with the hand and survives head-only/loss controls; exact calibrated final origin, speed/impact and lifecycle remain open |
 | 14 | Crossbow | Reuse profile; prove native bolt follows SP hand basis and preserves native flight |
-| 15 | Petrol bomb | SP bottle mask/laser checks exist; new apparent fixed-aim report leaves SP throw direction/final origin open |
+| 15 | Petrol bomb | Model/laser and ammo are present, but no native SP throw constructor was observed; direction/final origin remain open |
 | 16 | Sten | Scoped SP native-motion and operator aim pass exists; preserve it in the full parity regression |
 | 17 | StG44 | Reuse current hand-removal/profile data; prove gun-only SP model and tracked fire |
 
@@ -68,9 +73,77 @@ game limitation; continue the other rows. Do not fabricate inventory or label
 an MP run SP evidence. Full parity remains open until required coverage exists
 or the operator explicitly accepts a documented scope exception.
 
+## Measured SP inventory checkpoint (2026-10-29)
+
+G7a is complete for the frozen fixture library and the current shared source.
+This does not imply live SP coverage for profiles that are absent from those
+fixtures. The checkpoint binary is debug-ON
+`5DCE6B94C8DC3366029E3193267C37E1401A85CF90DD81F70851BFC0380B2CDE`.
+All listed runs used one owned process, copied fixtures, ordinary switching and
+the current `game.toml`; source saves and preferences were unchanged.
+
+| Native ID | Shared SP model path | Natural frozen fixture | Measured native construction/motion | Remaining SP gap |
+| ---: | --- | --- | --- | --- |
+| 0 P38 | calibrated profile and gun-only mask | slots 3, 4, 5 | basis `80048604 -> 80076C28`; origin `80048608`; motion `800793E4/80079400/8007941C` | broader lifecycle and real NPC impact |
+| 1 MP40 | calibrated profile and complete mask | none | MP only | live SP model, basis, origin and motion |
+| 4 Shotgun | calibrated profile and complete mask | none | MP only | live SP model plus six-pellet direction/origin |
+| 5 Scoped rifle | calibrated profile, complete mask and scope path | none | MP only | live SP scope/model and shot controls |
+| 8 Colt .45 | calibrated profile and complete mask | none | MP only | live SP model, basis, origin and motion |
+| 9 Silenced pistol | calibrated profile, complete mask and suppressor | none | MP only | live SP model, basis, origin and motion |
+| 10 Stick grenade | calibrated profile and complete mask | none | MP final-origin adapters only | native SP throw construction and release path |
+| 12 M1 Garand | calibrated profile and complete mask | none | MP only | live SP model, reload and shot controls |
+| 13 Panzerfaust | calibrated profile and complete mask | slot 2, switch 2 | basis `80048604 -> 80076C28`; final native origin `8004874C/80048774/8004879C`; motion `800793E4/80079400/8007941C` | exact calibrated final origin, native speed/impact and broader lifecycle |
+| 14 Crossbow | calibrated profile and complete mask | none | MP only | live SP bolt construction and first motion |
+| 15 Petrol bomb | calibrated SP geometry variant and complete mask | slots 3, 4, 5 | model/laser only; no native throw constructor observed | SP throw input/context and final origin/velocity |
+| 16 Sten | calibrated profile and complete mask | slots 1, 4, 5 | basis `80048604 -> 80076C28`; origin `80048608`; motion `800793E4/80079400/8007941C` | broader lifecycle and real NPC impact |
+| 17 StG44 | calibrated profile and semantic hand mask | none | MP only | live SP gun-only model and shot controls |
+
+The shared model guard and post-animation adapter already resolve all 13
+profiles through `mohu_vr_weapon_profile_find` and
+`mohu_vr_weapon_calibration_find`; no second SP calibration table was added.
+The live inventory is in
+[the compact checkpoint receipt](../../vr/proof/sp-weapon-parity-checkpoint-receipt.json)
+and its ignored raw runs.
+
+The current candidate now admits the measured rocket type through a separate
+`mohu_vr_sp_tracked_type_valid` predicate. Thrown types remain excluded. With a
+30-degree synthetic hand rotation, native first motion rotated by:
+
+| ID | Baseline clip | Rotated-hand clip | Tracked shots | Measured direction change |
+| ---: | ---: | ---: | ---: | ---: |
+| 0 P38 | 8 -> 7 | 8 -> 7 | 1 per run | `29.970469°` |
+| 16 Sten | 32 -> 30 | 32 -> 30 | 2-3 per run | `29.953052°` |
+| 13 Panzerfaust | 1 -> 0 | 1 -> 0 | 1 per run | `29.874661°` |
+
+A 30-degree head-only control left the Panzerfaust world direction byte-for-byte
+unchanged in the sampled first motion. Unfocused tracking produced zero tracked
+shots, one native tracking fallback, and preserved native motion. These are
+desktop synthetic controls, not physical headset acceptance.
+
+Petrol is not blocked by ammo or model identity: the tested fixture reported
+one loaded bomb and three reserve, with 397 faces and the expected SP geometry
+hash. No projectile constructor appeared after the tested fire/use/aim button
+set or ordinary switching in slots 3, 4 and 5. Do not infer that the current
+adapter fixed its throw; retain G7c as open and obtain a naturally compatible SP
+throw context before changing that family.
+
+Reproduce the inventory and the passing controls with:
+
+```powershell
+python vr/tools/probe_sp_weapon_inventory.py analysis/runtime/g7-inventory --slots 1 2 3 4 5
+python vr/tools/probe_sp_shot_origins.py analysis/runtime/g7-origin --ids 0 16 13
+python vr/tools/probe_sp_shot_origins.py analysis/runtime/g7-yaw --ids 0 16 13 --hand-yaw 30
+python vr/tools/probe_sp_shot_origins.py analysis/runtime/g7-head --ids 13 --head-yaw 30
+python vr/tools/probe_sp_shot_origins.py analysis/runtime/g7-loss --ids 13 --tracking-loss
+```
+
+The origin probe defaults to IDs 0, 16 and 13 because those controls construct
+native projectiles in the frozen fixtures. Pass `--ids 15` to reproduce the
+currently missing petrol construction rather than treating it as a pass.
+
 ## Ordered implementation and acceptance — G7a through G7f
 
-1. **G7a: inventory existing SP consumption and gaps.** Build one per-ID/family
+1. **G7a: inventory existing SP consumption and gaps (COMPLETE).** Build one per-ID/family
    table naming shared calibration/mask/control code, live SP binding, available
    frozen fixture and missing evidence. Distinguish model pose, hand-fixed ray,
    native construction, final origin and first motion. Read the actual current

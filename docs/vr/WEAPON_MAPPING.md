@@ -3,8 +3,8 @@
 Last updated: 2026-10-29
 
 Execution order and stop/recovery rules are in [HANDOFF.md](HANDOFF.md).
-Checkbox status is in [VR_PLAN.md](VR_PLAN.md). **NEXT implementation: G7, all
-existing MP weapon calibrations/control paths into SP first**, especially the
+Checkbox status is in [VR_PLAN.md](VR_PLAN.md). **G7a is complete; continue G7b,
+all existing MP weapon calibrations/control paths into SP first**, especially the
 reported petrol bomb/Panzerfaust fixed aiming. Follow the
 [SP parity runbook and 13-ID matrix](SP_WEAPON_PARITY.md). Native hand HUD is
 already ported; do not port it again or treat MP all-ID controls as SP acceptance. See
@@ -112,6 +112,15 @@ behavior. The separate default-OFF W5.3d `MOHU_VR_WEAPON_AIM` candidate now
 converts all five families from animated markers. W5.3e paired preservation and
 P2 impact pass on the copied MP fixture; physical and NPC/SP acceptance remain
 separate.
+
+SP has a separate measured caller `80048604 -> 80076C28`, return `8004860C`.
+Firearm families retain `mohu_vr_sp_firearm_type_valid`; the additional
+`mohu_vr_sp_tracked_type_valid` admits the exact rocket pair `ID 13 / 0x13F1`
+and keeps thrown IDs 10/15 native. P38/Sten origin stores are at `80048608`;
+Panzerfaust's native post-basis origin adjustment is
+`8004874C/80048774/8004879C`. Native first motion for all three is
+`800793E4/80079400/8007941C`. Do not apply the MP late-origin addresses or hook
+where the SP segment is not actually captured and dispatched.
 
 ## P1-only multiplayer eye replay
 

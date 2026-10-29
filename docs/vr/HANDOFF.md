@@ -1,9 +1,12 @@
 # Underground VR execution handoff
 
-Updated 2026-10-29 after the operator's weapon-priority instruction. **NEXT: G7a–G7f,
-complete all existing MP weapon calibrations and tracked weapon-family control
-in SP first.** Petrol bomb and Panzerfaust appear to retain fixed/native aiming;
-this is an open report, not a repair. Start with [SP_WEAPON_PARITY](SP_WEAPON_PARITY.md).
+Updated 2026-10-29 after the G7a inventory and reachable SP shot-control pass.
+**NEXT: finish G7b–G7f in SP.** G7a is complete. The frozen SP fixtures naturally
+expose only IDs 0, 13, 15 and 16. P38, Sten and Panzerfaust first motion follows
+hand rotation; Panzerfaust now uses the guarded SP basis and falls back on
+tracking loss. Petrol remains open because no native throw constructor appeared,
+and nine IDs have no SP fixture. Start with
+[SP_WEAPON_PARITY](SP_WEAPON_PARITY.md).
 Then resume G5 slot-1 missing world, G6 slot-2 performance and measured optimization.
 P3b remains complete for its old fixture. Follow
 [PERFORMANCE_NEXT_STEPS.md](PERFORMANCE_NEXT_STEPS.md) after G7 and G5/G6. Do not resume a
@@ -32,9 +35,9 @@ these as human headset observations, not instrumented timing or all-ID tests.
 | Stuck repeating music | Resolved; stream/refill proof plus operator headset pass |
 | SP Sten hand aiming | Native construction/motion/loss controls pass; operator headset pass |
 | SP pause menu | Native desktop/null-HMD controls pass; operator now confirms headset behavior |
-| SP petrol model / laser | Earlier model/ray checks pass; they do not close the new fixed-aim throw report |
-| Petrol bomb / Panzerfaust SP aim | OPEN: apparent fixed/native direction; no new trace/root cause or fix yet |
-| Full MP-to-SP weapon calibration/control parity — G7 | OPEN, FIRST: all 13 source profiles and SP shot-family/final-origin behavior |
+| SP petrol model / laser | Model/ray checks pass; no native SP throw constructor was observed, so G7c remains open |
+| Panzerfaust SP aim | Desktop synthetic candidate passes 30-degree hand rotation, head independence and tracking-loss fallback; physical/impact/final-origin controls remain open |
+| Full MP-to-SP weapon calibration/control parity — G7 | OPEN: G7a complete; live SP fixtures cover IDs 0, 13, 15 and 16 only |
 | Performance | Still unsatisfactory; 60 fresh application frames/s minimum, 90 preferred; OPEN |
 | All-SP-ID live NPC damage/isolation | Not implied by smoke or G7 direction checks; R6 retains its separate scope |
 
@@ -53,7 +56,9 @@ Latest operator steering supersedes that report's old execution order: **G7
 weapon parity first**, including petrol/grenade throw and Panzerfaust final
 origin/initial direction. Existing MP poses/profiles are the source; do not
 recalibrate them or port the HUD again. A model and laser following the hand
-does not prove the native projectile follows it. This turn is document/push only.
+does not prove the native projectile follows it. The G7a checkpoint records
+desktop origin/motion evidence and the guarded rocket candidate; it does not
+close full parity.
 
 ## 2. Active checkout, disc and launch
 
@@ -113,13 +118,13 @@ does not prove the native projectile follows it. This turn is document/push only
 
 Read the weapon parity contract and execute its first unchecked step. In brief:
 
-**The next implementation agent starts with [G7](SP_WEAPON_PARITY.md).** Inventory
-which MP calibration/render/shot code SP already consumes, then fill verified
-SP family/adaptor gaps. Prioritize petrol/grenade final throw writers and the
-Panzerfaust rocket path while completing all 13-ID SP coverage. Reuse authored
-grip/scale/orientation, complete gun-only masks and the fixed hand basis; no new
-calibration editor, MP campaign or duplicated profile table. Preserve current
-P38/Sten behavior, native ballistics/timing and loss/load/rollback guards.
+**G7a is complete; continue [G7](SP_WEAPON_PARITY.md) with the measured gaps.**
+The shared 13-profile adapter already consumes one authoritative calibration and
+mask table. Continue with petrol construction/throw in a genuine SP context,
+then obtain naturally reachable fixtures for IDs 1, 4, 5, 8, 9, 10, 12, 14 and
+17. Do not fabricate inventory or treat MP-only traces as SP evidence. Keep the
+new SP rocket basis guard exact and preserve native P38/Sten behavior,
+ballistics/timing and loss/load/rollback guards.
 
 G7a–G7f define inventory, shared/firearm parity, thrown parity, rocket parity,
 all-ID SP controls and honest acceptance/production restore. Use a valid visible
@@ -230,9 +235,11 @@ Do not reopen these without new contrary evidence:
   That acceptance does not close new personal slot-1 case G5; its cause is unknown.
 - Queue terminator is `800B8458 = 800B74B8 + 1000*4`, not `800C8458` (signed
   displacement). Corrected/asserted; this alone was not the world fix.
-- Common SP shot seam: `80048604 → 80076C28`, RA `8004860C`; exact firearm
-  ID/type guard. Native SP motion stores `800793E4/80079400/8007941C` differ
-  from MP's. Do not rediscover the Sten/P38 basis or move aim with recoil.
+- Common SP shot seam: `80048604 → 80076C28`, RA `8004860C`; exact ID/type guard
+  admits firearms plus rocket ID 13, while thrown IDs 10/15 remain native.
+  Panzerfaust final origin is written at `8004874C/80048774/8004879C`; native
+  first motion stores are `800793E4/80079400/8007941C`. Do not rediscover the
+  Sten/P38 basis or move aim with recoil.
 - Entry-hook config is now **25 entries / 11 instruction sites**. The extra
   arena-wrapper entry supports the default-OFF native-copy candidate. No
   temporary clipping/triangle trace hook remains; generated game C is unchanged.
@@ -256,8 +263,10 @@ the SP work/fixture, without expanding MP scope.
 
 - Restore/rebuild production debug-OFF after diagnostic builds. End with no
   owned game process/overrides left behind and no persistent XR settings change.
+  Current production executable is
+  `a54f6ccade89925399a4593748f226e6b3c1c3c48de05cb30b9c1f1b828d4bda`.
 - Run focused checks appropriate to changes and `git diff --check`. Current
-  baseline: 134 Python tests, including shared save-route regression coverage.
+  baseline: 136 Python tests, including shared save-route and SP weapon-tool coverage.
   Earlier strict plugin/native-timer syntax and 480 focused slot-5 rollback
   checks remain historical; the playable executable is unchanged by cleanup.
 - Update stable IDs in VR_PLAN, the current handoff and compact receipts with

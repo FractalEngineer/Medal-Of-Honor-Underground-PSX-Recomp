@@ -3902,8 +3902,8 @@ static void vr_sp_shot_basis_entry(CPUState* cpu, uint32_t address) {
         return;
     }
     const uint8_t weapon_id = psx_mod_read_byte(input + 93u);
-    if (!mohu_vr_sp_firearm_type_valid(weapon_id,
-                                      psx_mod_read_word(shot + 8u))) return;
+    const uint32_t type = psx_mod_read_word(shot + 8u);
+    if (!mohu_vr_sp_tracked_type_valid(weapon_id, type)) return;
     const MohuVrWeaponCalibration* calibration =
         mohu_vr_weapon_calibration_find(weapon_id);
     if (!calibration || !vr_weapon_prepare_delta()) {

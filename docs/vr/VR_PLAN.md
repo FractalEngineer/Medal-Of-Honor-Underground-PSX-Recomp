@@ -12,15 +12,17 @@ scope has evidence; it never implies broader headset or gameplay acceptance.
 Historical design and prior attempts belong in
 [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md) and the evidence documents.
 
-**CURRENT CHECKPOINT (2026-10-29): petrol bomb and Panzerfaust appear to have
-fixed/native aiming in SP; full MP-to-SP weapon calibration/control parity is
-now the operator's FIRST priority (G7). New personal SP slot 1 has missing level
-rendering again (G5); slot 2 has severe performance problems (G6). Both are
-operator reports awaiting reproduction/measurement. Earlier slot-5/music,
-pause and Sten smoke acceptance remains scoped historical evidence. The clean
-image is active and historical recovery OFF; no 60/90-FPS or campaign pass exists.**
+**CURRENT CHECKPOINT (2026-10-29): G7a is complete. The frozen SP fixtures
+naturally expose only IDs 0, 13, 15 and 16. P38, Sten and Panzerfaust native
+first motion follows a 30-degree hand rotation within 0.13 degrees; the
+Panzerfaust is now admitted by the guarded SP basis path and falls back to native
+control on tracking loss. Petrol has a valid live model/ammo but no native throw
+constructor was observed; thrown and nine absent firearm/crossbow/StG rows remain
+open. New personal SP slot 1 has missing level rendering (G5); slot 2 has severe
+performance problems (G6). Earlier slot-5/music, pause and Sten smoke acceptance
+remains scoped historical evidence.**
 
-**Next: G7a–G7f all-MP-to-SP weapon parity FIRST → G5b/G5c slot-1 correctness →
+**Next: G7b–G7f all-MP-to-SP weapon parity FIRST → G5b/G5c slot-1 correctness →
 G6b/G6c slot-2 baseline/target selection →
 P3c2–P3c6 implementation/qualification when justified → measured budget
 decision (P3d / conditional P3e if needed) → P4/P5 fresh view cadence/recovery
@@ -129,11 +131,14 @@ damaged-image regressions remain scoped closed; new slot 1 is a separate open ca
 
 - [ ] G7. Complete all existing MP weapon calibration/control parity in SP
   **first**, including the new apparent fixed-aim petrol/Panzerfaust reports.
-  [Ordered runbook and 13-ID matrix](SP_WEAPON_PARITY.md); no new implementation
-  or game test was performed in this documentation update.
-- [ ] G7a. Inventory each current MP profile and its actual SP render/aim/final
-  origin consumption. Name verified SP bindings, available fixtures and gaps;
-  do not duplicate tables or repeat completed MP calibration discovery.
+  [Ordered runbook and 13-ID matrix](SP_WEAPON_PARITY.md); G7a is complete and
+  the guarded Panzerfaust basis candidate has desktop direction/fallback
+  evidence. Remaining live-ID and thrown-family coverage is open.
+- [x] G7a. Inventory each current MP profile and its actual SP render/aim/final
+  origin consumption. The shared 13-profile adapter is mapped by ID, natural
+  live fixture reachability is recorded, and P38/Sten/Panzerfaust origin and
+  first-motion seams are measured. Petrol construction and nine absent live IDs
+  remain explicit gaps. [Receipt](../../vr/proof/sp-weapon-parity-checkpoint-receipt.json).
 - [ ] G7b. Complete shared authored pose/scale/grip/mask integration and SP
   firearm coverage, preserving existing P38/Sten, scope and animation behavior.
   A tracked model/ray does not close native projectile control.
@@ -142,7 +147,11 @@ damaged-image regressions remain scoped closed; new slot 1 is a separate open ca
   native overwrites; retain speed/spread/gravity/fuse/impact/ammo and fixed ray.
 - [ ] G7d. Adapt and verify the real SP Panzerfaust rocket final writer/basis,
   ownership and first motion under independent head/hand controls. MP hook
-  addresses are leads, not SP bindings; keep exact code/layout guards.
+  addresses are leads, not SP bindings; keep exact code/layout guards. The
+  guarded candidate now rotates first motion with the hand, stays independent
+  of 30-degree head yaw and falls back on tracking loss. Native speed/impact,
+  the constructor's calibrated-origin adjustment and broader lifecycle remain
+  open, so this step is not checked.
 - [ ] G7e. Pass the all-13-ID SP matrix: model completeness/gun-only grip/scale,
   animations, rotated/translated hand, final native origin/first motion/appropriate
   impact, fixed-ray agreement, scope, switch, loss/stale, pause/load/refusal and

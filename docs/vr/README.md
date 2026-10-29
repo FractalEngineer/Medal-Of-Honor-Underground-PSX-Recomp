@@ -1,8 +1,11 @@
 # Underground VR documentation
 
-**FIRST: complete all MP weapon calibration/control parity in SP — G7.** The
-operator reports petrol bomb and Panzerfaust apparent fixed aiming. Follow
-[SP_WEAPON_PARITY](SP_WEAPON_PARITY.md); this is an unimplemented/open scope.
+**FIRST: continue MP weapon calibration/control parity in SP, G7b–G7f.** G7a
+inventoried the shared 13-profile path and the frozen SP fixtures; naturally
+reachable IDs are only 0, 13, 15 and 16. Panzerfaust first motion now follows the
+hand under synthetic desktop controls, while petrol has no observed native throw
+constructor and nine IDs lack SP fixtures. Follow
+[SP_WEAPON_PARITY](SP_WEAPON_PARITY.md); the remaining parity scope is open.
 Then return to the other reports: personal SP slot 1 is missing level rendering again; slot 2
 has severe performance problems. Start with [current regressions](SP_CURRENT_REGRESSIONS.md)
 and the updated HANDOFF. These open G5/G6 cases precede the preflight replacement;

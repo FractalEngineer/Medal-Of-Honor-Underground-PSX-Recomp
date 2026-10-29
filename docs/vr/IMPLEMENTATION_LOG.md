@@ -1,5 +1,44 @@
 # VR Port Implementation Log
 
+## 2026-10-29 - G7a SP inventory and guarded Panzerfaust basis
+
+- Added read-only `probe_sp_weapon_inventory.py` and
+  `probe_sp_shot_origins.py`. Copied-fixture runs found only IDs 0 P38, 13
+  Panzerfaust, 15 petrol and 16 Sten through ordinary SP weapon switching; the
+  other nine IDs are absent from the frozen SP library.
+- Measured the live SP common basis call `80048604 -> 80076C28`, return
+  `8004860C`. P38/Sten final-origin writes are at `80048608`; Panzerfaust's
+  post-basis native origin adjustment is at `8004874C/80048774/8004879C`. All
+  three use the same first-motion stores
+  `800793E4/80079400/8007941C`.
+- Added `mohu_vr_sp_tracked_type_valid`, keeping `mohu_vr_sp_firearm_type_valid`
+  unchanged while admitting only the measured rocket type `0x13F1` at the SP
+  basis seam. A 30-degree synthetic hand rotation changed first motion by
+  29.970469 degrees for P38, 29.953052 for Sten and 29.874661 for Panzerfaust.
+  A 30-degree head-only yaw did not change the Panzerfaust direction. Unfocused
+  tracking produced zero tracked shots, one tracking fallback and native motion.
+  Each run consumed native ammo and exited cleanly; source saves/preferences
+  were unchanged.
+- Petrol has the expected live model and geometry hash and reported 1 loaded /
+  3 reserve, but no native projectile constructor appeared after tested
+  fire/use/aim buttons or ordinary switching in slots 3, 4 and 5. G7c remains
+  open; its model/laser evidence is not treated as a throw fix.
+- The Panzerfaust constructor applies a native post-basis origin adjustment.
+  Exact calibrated-muzzle final origin, speed/impact and broader lifecycle
+  controls remain open. An instruction hook in the uncaptured `80048xxx`
+  segment was registered but never dispatched, so it was removed rather than
+  retained as dead code.
+- Debug-ON checkpoint binary `5dce6b94...` produced the compact
+  [SP weapon parity receipt](../../vr/proof/sp-weapon-parity-checkpoint-receipt.json).
+  The focused P38 control retained 96/96 gun vertices, 142/142 masked arms,
+  one tracked shot and 176 rollback checks with zero mismatches. The 136-test
+  Python suite and strict shot/weapon/raycast C fixtures pass. Physical headset
+  and all-SP-ID NPC damage acceptance remain separate.
+- Production is restored to Release/debug-OFF/PGXP/OpenXR/IPO-OFF at
+  `a54f6ccade89925399a4593748f226e6b3c1c3c48de05cb30b9c1f1b828d4bda`.
+  A 120-record production smoke completed with a clean exit and unchanged
+  source saves/preferences. No owned game process remains.
+
 ## 2026-10-29 — operator puts complete SP weapon parity first; document/push only
 
 - Operator reports apparent fixed aiming for petrol bomb and Panzerfaust and
