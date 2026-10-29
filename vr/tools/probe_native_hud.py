@@ -54,7 +54,7 @@ def main():
     out=args.out.resolve();out.mkdir(parents=True,exist_ok=False)
     if n.game_pids():raise RuntimeError('Close existing game before owned HUD probe')
     with socket.socket() as sock:sock.bind(('127.0.0.1',4372))
-    src=ROOT/('saves/openbios' if mp else 'analysis/vr-baseline/saves/openbios');dst=out/'saves/openbios';dst.mkdir(parents=True)
+    src=ROOT/('analysis/fixtures/mp/openbios' if mp else 'analysis/fixtures/sp/openbios');dst=out/'saves/openbios';dst.mkdir(parents=True)
     paths=list(src.glob(f'*slot{slot:02}.*'));assert len(paths)==2
     hashes={str(f):n.digest(f) for f in paths}
     for f in paths:shutil.copyfile(f,dst/f.name)

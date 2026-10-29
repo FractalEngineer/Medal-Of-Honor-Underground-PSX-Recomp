@@ -53,7 +53,7 @@ def main():
     out.mkdir(parents=True, exist_ok=False)
     saves = out/'saves/openbios'
     saves.mkdir(parents=True)
-    sources = list((ROOT/'analysis/vr-baseline/saves/openbios').glob(f'*slot{args.slot:02}.*'))
+    sources = list((ROOT/'analysis/fixtures/sp/openbios').glob(f'*slot{args.slot:02}.*'))
     if len(sources) != 2:
         raise RuntimeError('Expected state and thumbnail in analysis SP fixtures')
     hashes = {str(f): n.digest(f) for f in sources}

@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import json
 import os
+import shutil
 from pathlib import Path
 import socket
 import struct
@@ -37,12 +38,17 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("directory", type=Path)
     parser.add_argument(
-        "--slot", type=int, default=2,
-        help="isolated saves/openbios slot to load (default: SP regression slot 2)",
+        "--slot", type=int, default=3,
+        help="frozen SP fixture slot to copy (default: slot 3)",
     )
     args = parser.parse_args()
     output = args.directory.resolve()
     output.mkdir(parents=True, exist_ok=False)
+    copied = output/'saves/openbios'
+    copied.mkdir(parents=True)
+    sources = list((ROOT/'analysis/fixtures/sp/openbios').glob(f'*slot{args.slot:02}.*'))
+    if len(sources) != 2: raise RuntimeError('Expected a frozen SP state/thumbnail pair')
+    for source in sources: shutil.copyfile(source, copied/source.name)
     with socket.socket() as probe:
         if probe.connect_ex(("127.0.0.1", 4372)) == 0:
             raise RuntimeError("Diagnostic port already occupied")
@@ -59,7 +65,7 @@ def main():
     launch = ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File",
               str(ROOT / "vr/run_vr.ps1"), "-Headless", "-Seconds", "40",
               "-DebugPort", "4372", "-LogDirectory", str(output),
-              "-Slot", str(args.slot)]
+              "-Slot", str(args.slot), "-MemcardDirectory", str(output/'saves')]
     with (output / "launcher.stdout.log").open("w") as stdout, (output / "launcher.stderr.log").open("w") as stderr:
         process = subprocess.Popen(launch, cwd=ROOT, env=env, stdout=stdout, stderr=stderr,
                                    creationflags=subprocess.CREATE_NO_WINDOW)

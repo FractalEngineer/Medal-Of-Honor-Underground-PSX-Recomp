@@ -3,8 +3,6 @@ param(
     [string]$Runtime = 'current',
     [string]$RuntimeJson = '',
     [string]$BuildDirectory = 'build-release',
-    [ValidatePattern('^[A-Za-z0-9_.-]+\.exe$')]
-    [string]$ExecutableName = 'Medal_of_Honor_Underground_Recompiled.exe',
     [ValidateRange(-1, 99)]
     [int]$Slot = -1,
     [ValidateRange(40, 80)]
@@ -20,7 +18,7 @@ param(
     [double]$MenuWidth = 2,
     [string]$GameConfig = '',
     [string]$MemcardDirectory = '',
-    [string]$LogDirectory = 'analysis\vr-baseline',
+    [string]$LogDirectory = 'analysis\runtime\vr',
     [ValidateRange(0, 65535)]
     [int]$DebugPort = 0,
     [int]$Seconds = 0,
@@ -41,7 +39,7 @@ param(
 $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path $PSScriptRoot -Parent
 $buildPath = Join-Path $repoRoot $BuildDirectory
-$exePath = Join-Path $buildPath $ExecutableName
+$exePath = Join-Path $buildPath 'Medal_of_Honor_Underground_Recompiled.exe'
 $logPath = if ([IO.Path]::IsPathRooted($LogDirectory)) { $LogDirectory } else { Join-Path $repoRoot $LogDirectory }
 $stdoutLog = Join-Path $logPath 'vr-launch.stdout.log'
 $stderrLog = Join-Path $logPath 'vr-launch.stderr.log'
@@ -240,16 +238,19 @@ if (-not $GameConfig) {
     $GameConfig = Join-Path $repoRoot 'game.toml'
 }
 if (-not $MemcardDirectory) {
-    $diagnosticSaves = Join-Path $repoRoot 'analysis\vr-baseline\saves'
-    if (Test-Path -LiteralPath $diagnosticSaves) {
-        $MemcardDirectory = $diagnosticSaves
+    if ($Headless) {
+        throw 'Headless diagnostics require -MemcardDirectory pointing to a disposable fixture copy.'
     }
+    $MemcardDirectory = Join-Path $repoRoot 'saves'
 }
 $GameConfig = (Resolve-Path -LiteralPath $GameConfig).Path
 if ($MemcardDirectory) {
+    New-Item -ItemType Directory -Path $MemcardDirectory -Force | Out-Null
     $MemcardDirectory = (Resolve-Path -LiteralPath $MemcardDirectory).Path
 }
 $runtimeManifest = Resolve-RuntimeManifest -Name $Runtime -ExplicitPath $RuntimeJson
+Write-Host "Game: $exePath"
+Write-Host "Saves: $MemcardDirectory"
 [IO.Directory]::CreateDirectory($logPath) | Out-Null
 
 Push-Location $repoRoot
@@ -363,7 +364,7 @@ try {
         $arguments += ' --debug-port {0}' -f $DebugPort
     }
     $process = Start-Process -FilePath $exePath -ArgumentList $arguments `
-        -WorkingDirectory $repoRoot -WindowStyle Hidden -PassThru `
+        -WorkingDirectory $logPath -WindowStyle Hidden -PassThru `
         -RedirectStandardOutput $stdoutLog -RedirectStandardError $stderrLog
 
     $deadline = [DateTime]::UtcNow.AddSeconds($StartupTimeoutSeconds)

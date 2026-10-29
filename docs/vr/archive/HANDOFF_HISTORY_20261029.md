@@ -1,3 +1,5 @@
+> Archived evidence only. Use [HANDOFF](../HANDOFF.md), [VR_PLAN](../VR_PLAN.md) and the [current runbook](../PERFORMANCE_NEXT_STEPS.md). Old NEXT pointers, save/build paths and proposed steps below are historical.
+
 # Archived handoff - superseded on 2026-10-29
 
 Historical evidence only. Its NEXT pointers, acceptance status and restrictions
@@ -11,21 +13,21 @@ PERFORMANCE_NEXT_STEPS.md instead.
 Updated: 2026-10-29. This file is the execution contract for the next session.
 **Release scope: SP. MP is only a quick all-weapon calibration fixture. Do not
 add MP feature/acceptance milestones or make MP completeness gate the alpha.**
-[VR_PLAN.md](VR_PLAN.md) owns checkbox status. [WEAPON_MAPPING.md](WEAPON_MAPPING.md)
-owns the detailed measured weapon layout. [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md)
-owns history. [WEAPON_COMPLETE_PROFILES.md](WEAPON_COMPLETE_PROFILES.md)
+[VR_PLAN.md](../VR_PLAN.md) owns checkbox status. [WEAPON_MAPPING.md](../WEAPON_MAPPING.md)
+owns the detailed measured weapon layout. [IMPLEMENTATION_LOG.md](../IMPLEMENTATION_LOG.md)
+owns history. [WEAPON_COMPLETE_PROFILES.md](../WEAPON_COMPLETE_PROFILES.md)
 owns the all-ID topology, provisional calibration and moving-marker result.
 History is not a
 queue of tasks to repeat.
 
-[FRAMEWORK_UPSTREAM_TRACKER.md](FRAMEWORK_UPSTREAM_TRACKER.md) owns shared
+[FRAMEWORK_UPSTREAM_TRACKER.md](../FRAMEWORK_UPSTREAM_TRACKER.md) owns shared
 framework branches and PR delivery. Develop generic changes on
 `vr/shared-development`; fork master mirrors upstream. Both games retain tested
 pin `555e1eab`. The earlier eight VR PRs are merged; the three later generic
 commits await separate PR branches after implementation is complete. Do not
 update either game to moving master or resubmit the old stack.
 
-Read [REFERENCE_REUSE_AUDIT.md](REFERENCE_REUSE_AUDIT.md) before introducing
+Read [REFERENCE_REUSE_AUDIT.md](../REFERENCE_REUSE_AUDIT.md) before introducing
 new code. It lists the first-game implementation and the local counterpart for
 each task. Reuse their algorithms/tools and verify only Underground's bindings,
 units and assets. Its corrected desktop-versus-hardware dependencies supersede
@@ -56,7 +58,7 @@ sectors pass header/EDC/ECC checks; no zeroed sectors. The old image differs in
 SP/MP level overlays and ISO layout are unchanged. A copied slot-5 production
 smoke passes with the old-image recovery disabled, then exact mod settings
 are restored. The subsequent requested permanent activation is complete as
-recorded above; use [DISC_IMAGE_COMPARISON.md](DISC_IMAGE_COMPARISON.md).
+recorded above; use [DISC_IMAGE_COMPARISON.md](../DISC_IMAGE_COMPARISON.md).
 Do not repeat address mapping/codegen work or ask the operator to find a dump.**
 
 **2026-10-29 RESULT: the SP Sten common firearm adapter now passes rotated
@@ -69,7 +71,7 @@ now restores the corridor in both eyes, at unchanged player position, with a
 surface ray independently matching the restored wall. No culling bypass or
 shared CD timing change is retained. The image has 64 wholly zero raw sectors;
 lost payload is not reconstructed, so do not call content integrity repaired.
-Read the CURRENT RESULT in [SP_GAMEPLAY_REPAIRS.md](SP_GAMEPLAY_REPAIRS.md) before
+Read the CURRENT RESULT in [SP_GAMEPLAY_REPAIRS.md](../SP_GAMEPLAY_REPAIRS.md) before
 the historical investigations below. Do not repeat frustum/clip/codegen studies
 for slot 5. SP petrol laser passes all eight surface directions and loss/release;
 the longer MP grenade calibration exposes a separate VRAM restore failure.
@@ -83,13 +85,13 @@ when the unused native world copy is skipped. These exclude XR/hand-HUD cost;
 do not quote them as headset FPS. 720p/native-resolution controls remain about
 17.96/17.76 ms. Most cost is the 15.65-ms native traversal, not 0.056-ms tree
 collection. Attribute arena draw/subdivision/entity work using the exact next
-steps in [SP_GAMEPLAY_REPAIRS.md](SP_GAMEPLAY_REPAIRS.md), then optimize the
+steps in [SP_GAMEPLAY_REPAIRS.md](../SP_GAMEPLAY_REPAIRS.md), then optimize the
 measured operation. The draw-skip candidate remains OFF. Its Sten/pause/refusal/
 reload and music-hitch controls pass; no 60/90 result is claimed. Production
 Release/debug-OFF is restored. Two replacement dumps have now been verified;
 the remaining clean image is active as described above. Do not ask for more
 dumps or repeat the image audit. Compact gameplay evidence:
-[sp-gameplay-repairs-receipt.json](../../vr/proof/sp-gameplay-repairs-receipt.json).
+[sp-gameplay-repairs-receipt.json](../../../vr/proof/sp-gameplay-repairs-receipt.json).
 
 **2026-10-28 ACTIVE GAMEPLAY REGRESSIONS supersede the serial P0b-first order
 below. The operator supplied fresh SP slots 4 (Sten model tracks, shots don't)
@@ -98,7 +100,7 @@ stuck music after a lag spike, and requests lasers for thrown weapons. The
 music and missing-world incidents are explicitly SEPARATE. Fix these alongside
 performance before another headset batch. Root `saves` is not the current SP
 fixture tree; the new states are in `analysis/vr-baseline/saves/openbios`.
-Read [SP_GAMEPLAY_REPAIRS.md](SP_GAMEPLAY_REPAIRS.md) for current reproduction,
+Read [SP_GAMEPLAY_REPAIRS.md](../SP_GAMEPLAY_REPAIRS.md) for current reproduction,
 retained changes, rejected controls and the next experiment. Broader SP shot
 conversion was still open: the old adapter admitted only P38. Do not call MP
 all-ID calibration or the earlier P38 smoke complete SP weapon acceptance.**
@@ -139,13 +141,13 @@ new runtime/headset test or performance fix was made by this comparative audit.*
 
 **CURRENT: A7 native pause is implemented (`8d42315`). A2 authored weapon
 defaults/StG mask and A4 exact laser now have desktop evidence in
-[ALPHA_WEAPON_REPAIRS.md](ALPHA_WEAPON_REPAIRS.md) and its receipt. All 13 IDs
+[ALPHA_WEAPON_REPAIRS.md](../ALPHA_WEAPON_REPAIRS.md) and its receipt. All 13 IDs
 pass actual SDK calibration-affine checks; native representative firing passes.
 SP/MP lasers match independently decoded surfaces and a real MP projectile.
 Do not redo PCA calibration, StG connectivity discovery or box endpoints.
 A2 remains open for real SP NPC damage and physical calibration; W6.4 remains
 open for operator laser/shot agreement. H1/A5a native hand HUD is now ported and
-SP desktop/null-HMD validated: [NATIVE_HAND_HUD.md](NATIVE_HAND_HUD.md).
+SP desktop/null-HMD validated: [NATIVE_HAND_HUD.md](../NATIVE_HAND_HUD.md).
 After P0b/P3-P6 performance work, resume R6 real SP NPC damage/isolation and
 broader SP shot families. H2/A5 transitions/physical readability
 remain open. A3's new calibration editor is optional.
@@ -171,8 +173,8 @@ the complete fresh native menu through the existing head-relative quad path.
 Do not copy reference `0x8009A61C` or treat W2.5's Start/
 frozen-position receipt as proof of a readable/navigable headset pause menu.
 
-Read [SP_PARITY_REPAIR.md](SP_PARITY_REPAIR.md) and
-[sp-parity-repair-receipt.json](../../vr/proof/sp-parity-repair-receipt.json).
+Read [SP_PARITY_REPAIR.md](../SP_PARITY_REPAIR.md) and
+[sp-parity-repair-receipt.json](../../../vr/proof/sp-parity-repair-receipt.json).
 The operator rejected the earlier SP flash/visibility result. S1b's old counters
 proved movement in one pose, not robust muzzle attachment or SP readiness.
 The first game's post-animation transform, arm filtering and precision pattern
@@ -186,8 +188,8 @@ production window is neutral in wall time: 600 guest frames took 9.9435 s
 native versus 9.8978 s interpreted, while measured guest work fell 18.2% in
 the native sample. Do not repeat the all-ID matrices or call this a uniform
 FPS gain.
-Evidence: [SP_NATIVE_HOOK_EVIDENCE.md](SP_NATIVE_HOOK_EVIDENCE.md) and
-[sp-native-hooks-receipt.json](../../vr/proof/sp-native-hooks-receipt.json).
+Evidence: [SP_NATIVE_HOOK_EVIDENCE.md](../SP_NATIVE_HOOK_EVIDENCE.md) and
+[sp-native-hooks-receipt.json](../../../vr/proof/sp-native-hooks-receipt.json).
 
 ### What is fixed, and what remains open
 
@@ -233,7 +235,7 @@ Evidence: [SP_NATIVE_HOOK_EVIDENCE.md](SP_NATIVE_HOOK_EVIDENCE.md) and
 - Production/debug separation remains: normal play uses `PSX_DEBUG_TOOLS=OFF`;
   TCP probes need ON. The production binary is now restored to OFF. The active
   build provenance and raw receipts are in
-  [sp-native-hooks-receipt.json](../../vr/proof/sp-native-hooks-receipt.json).
+  [sp-native-hooks-receipt.json](../../../vr/proof/sp-native-hooks-receipt.json).
 - `PSX_NATIVE_BLOCK` remains a localization control, not the shipping solution.
   Do not repeat the focused MP or full weapon matrices for this configuration
   change unless a later source change touches those paths.
@@ -310,36 +312,36 @@ Evidence at each receipt's recorded revision (not blanket current-binary accepta
 
 | Scope | Receipt / practical limit |
 | --- | --- |
-| Flat first-person meshes | [weapon-viewmodel-receipt.json](../../vr/proof/weapon-viewmodel-receipt.json): all 13 IDs; visible pose controls; not physical calibration |
-| P1-only MP eyes | [weapon-mp-eye-receipt.json](../../vr/proof/weapon-mp-eye-receipt.json): 1,215 pairs, 2,430 rollback checks, zero errors; both eyes and all 13 IDs |
+| Flat first-person meshes | [weapon-viewmodel-receipt.json](../../../vr/proof/weapon-viewmodel-receipt.json): all 13 IDs; visible pose controls; not physical calibration |
+| P1-only MP eyes | [weapon-mp-eye-receipt.json](../../../vr/proof/weapon-mp-eye-receipt.json): 1,215 pairs, 2,430 rollback checks, zero errors; both eyes and all 13 IDs |
 | MP lateral / native fire | Same MP receipt: 52,136 differing pixels; pistol clip 8->7 and P2 health 32->31.25; not tracked-shot alignment |
-| W1 P38 absolute spatial controls | [weapon-pose-space-receipt.json](../../vr/proof/weapon-pose-space-receipt.json): 29 cases, 10 head-only, five invalid; both eyes populated; no fire |
-| W1 build / regressions | [weapon-pose-build-receipt.json](../../vr/proof/weapon-pose-build-receipt.json): source/binary hashes, 18 Python tests, strict fixtures, MP/flat/SP regressions, debug OFF |
-| W2.1 native MP selector | [weapon-mp-level-selector-receipt.json](../../vr/proof/weapon-mp-level-selector-receipt.json) and [build receipt](../../vr/proof/weapon-mp-level-selector-build-receipt.json): five complete functions, both natural callers, 21-node flat queue/masks; no fire |
-| W2.2 MP eye frustum | [frustum measurement](../../vr/proof/weapon-mp-frustum-measurement.json), [zero control](../../vr/proof/weapon-mp-frustum-controls.png) and [build receipt](../../vr/proof/weapon-mp-frustum-build-receipt.json): 21 live samples, guarded both-eye override, zero fallback/rollback errors |
-| W2.3 MP head/near-wall visibility | [control receipt](../../vr/proof/weapon-mp-visibility-receipt.json), [control sheet](../../vr/proof/weapon-mp-visibility-controls.png) and [build regressions](../../vr/proof/weapon-mp-visibility-build-receipt.json): zero, +/-90-degree and near-wall; both eyes, per-eye selector comparison, populated top-screen world geometry, no fallback and clean rollback |
-| W2.4 MP native input | [control receipt](../../vr/proof/weapon-mp-input-receipt.json) and [build regressions](../../vr/proof/weapon-mp-input-build-receipt.json): P1 actor/input/current ownership, live converter and table hashes, six synthetic controls, SP slot-2 regression, 23 Python tests and 33-case parity |
-| W2.5 MP lifecycle / recovery | [control receipt](../../vr/proof/weapon-mp-lifecycle-receipt.json) and [build receipt](../../vr/proof/weapon-mp-lifecycle-build-receipt.json): 17 MP input/button cases, native Start pause/resume, zero render-time sampling, 13 SP cases, inherited-flag flat startup |
-| S1 camera without recording | [proof](../../vr/proof/headset-s1-camera-receipt.json): 30 live samples, capture OFF, 13,524 camera callbacks, 20 eligible hand-fixed aim updates, zero fallbacks and linked P2 damage 32->14; shutdown still fails S5 |
-| S1a native muzzle flash | [evidence](NATIVE_MUZZLE_FLASH_EVIDENCE.md) and [receipt](../../vr/proof/native-flash-alignment-receipt.json): existing 32x32 flash packet tracked in eye replay; baseline `(287,92)`, +150 mm hand X `(320,92)`, zero fallbacks; physical visibility open |
-| Historical S1b SP binding / P38 aim (visual claim superseded by R2) | [SP receipt](../../vr/proof/sp-weapon-aim-flash-receipt.json): held-weapon dispatch active; flash `(355,225)` -> `(454,225)` after +150 mm hand X; 2/2 shots aimed in each control with zero shot/flash fallbacks and clean exit; physical acceptance open |
-| S2 MP frustum desktop | [receipt](../../vr/proof/headset-s2-mp-frustum-receipt.json): 1,638 overrides per eye, zero fallbacks, 201 rollback checks, zero mismatches and clean exit; physical edges remain open |
-| W3.1 P38 calibration | [calibration receipt](../../vr/proof/weapon-p38-calibration-receipt.json), [capture receipt](../../vr/proof/weapon-p38-calibration-capture-receipt.json) and [build receipt](../../vr/proof/weapon-p38-calibration-build-receipt.json): 69 atomic source/animated vertices, orthonormal axes, grip and muzzle markers, nominal-size scale, focused tests and 33-case parity |
-| W3.2 P38 headset comparison | [headset comparison](../../vr/proof/weapon-p38-headset-receipt.json) and [complete build receipt](../../vr/proof/weapon-p38-headset-complete-build-receipt.json): 30 seconds native plus 30 seconds tracked, 30/30 live hand samples per mode, fresh VDXR submissions and stereo pairs, zero final failures; no operator acceptance claim |
-| W3.4 all-ID profiles | [topology](../../vr/proof/weapon-complete-gun-topology-receipt.json), [animated capture](../../vr/proof/weapon-profile-captures-receipt.json), [provisional calibration](../../vr/proof/weapon-provisional-calibrations-receipt.json), [calibrated controls](../../vr/proof/weapon-complete-gun-controls-receipt.json) and [control sheet](../../vr/proof/weapon-complete-gun-controls.png): 13 unique IDs / 16 slot rows, 64 cases, 804 eye masks on its recorded binary, zero mixed gun/arm triangles and zero rollback errors |
-| W3.4 moving marker | [moving-marker receipt](../../vr/proof/weapon-moving-muzzle-receipt.json) and [control sheet](../../vr/proof/weapon-moving-muzzle-controls.png): frozen all-vertex samples, 13 confirmed switches, nine recoil paths, seven confirmed reloads, three prop actions, scoped hidden-model states; all IDs require an animated marker recomputation |
-| W5.3 shot families | [family receipt](../../vr/proof/weapon-shot-families-receipt.json) and [evidence](SHOT_FAMILY_EVIDENCE.md): historical read-only map of 13 IDs, common basis caller, types `13F1/13F3/13F6/13F7/13FA`, six shotgun pellets and native ammo/slot changes |
-| W5.3 native lifecycle | [lifecycle receipt](../../vr/proof/weapon-shot-lifecycle-receipt.json), [evidence](SHOT_LIFECYCLE_EVIDENCE.md) and [tool validation](../../vr/proof/weapon-shot-lifecycle-validation-receipt.json): all 13 IDs, 22 lifetimes, 147 XYZ groups, 19 native damage writes, six distinct pellet directions and safe address reuse; no override enabled |
-| W5.3c origin writers | [origin receipt](../../vr/proof/weapon-projectile-origin-writers-receipt.json): three actual objects, full object-address-filtered histories, last XYZ writers equal first-motion origins, live code windows; grenade has a second basis/init call after constructor |
-| W5.3c canonical markers | [marker receipt](../../vr/proof/weapon-canonical-markers-receipt.json), [evidence](CANONICAL_MARKERS_EVIDENCE.md) and [build/regressions](../../vr/proof/weapon-canonical-markers-build-receipt.json): 13 IDs, 18 constructor events, three final-origin stages, independent vertex means, stale/load/recovery/P2/disabled controls; no new shot writes |
-| W5.3d all-family conversion | [all-family receipt](../../vr/proof/weapon-aim-all-receipt.json): 13 IDs, 23 converted events, zero candidate fallbacks, six-pellet shotgun with 5.18-degree native spread, expected real damage, complete guarded projectile stages, stereo failure/recovery recorded |
-| W5.3d build/regressions | [build receipt](../../vr/proof/weapon-aim-all-build-receipt.json): 81 Python tests, strict C/syntax, 64-case MP matrix, lateral/fire, flat pose, SP zero, 14 legacy P38 controls, 33-case parity and debug-off flat startup |
-| W5.3e paired preservation/impact | [paired receipt](../../vr/proof/weapon-preservation-receipt.json) and [evidence](WEAPON_PRESERVATION_EVIDENCE.md): 13 IDs, common-prefix lifetimes/release/history/stages, exact shotgun RNG and six-pellet distribution, native damage plus animated-axis/target residuals, five P38 fallback controls |
-| W5.3e build/regressions | [build receipt](../../vr/proof/weapon-preservation-build-receipt.json): 86 Python tests, affected C fixtures, strict diagnostic syntax, two-ID focused pair and the complete 13-ID pair |
-| Earlier native damage | [WEAPON_SET_EVIDENCE.md](WEAPON_SET_EVIDENCE.md), [weapon-alignment-receipt.json](../../vr/proof/weapon-alignment-receipt.json): all 13 IDs, damage-only pose reachability |
-| Current all-ID controls | [weapon-complete-gun-controls.png](../../vr/proof/weapon-complete-gun-controls.png) |
-| SP world / visibility | [PGXP_RENDER_VIEW_EVIDENCE.md](PGXP_RENDER_VIEW_EVIDENCE.md), [HEAD_TURN_HUD_EVIDENCE.md](HEAD_TURN_HUD_EVIDENCE.md), [SKY_GHOST_EVIDENCE.md](SKY_GHOST_EVIDENCE.md) |
-| Native input | [MOVEMENT_EVIDENCE.md](MOVEMENT_EVIDENCE.md): synthetic SP and MP controls; physical acceptance remains open |
+| W1 P38 absolute spatial controls | [weapon-pose-space-receipt.json](../../../vr/proof/weapon-pose-space-receipt.json): 29 cases, 10 head-only, five invalid; both eyes populated; no fire |
+| W1 build / regressions | [weapon-pose-build-receipt.json](../../../vr/proof/weapon-pose-build-receipt.json): source/binary hashes, 18 Python tests, strict fixtures, MP/flat/SP regressions, debug OFF |
+| W2.1 native MP selector | [weapon-mp-level-selector-receipt.json](../../../vr/proof/weapon-mp-level-selector-receipt.json) and [build receipt](../../../vr/proof/weapon-mp-level-selector-build-receipt.json): five complete functions, both natural callers, 21-node flat queue/masks; no fire |
+| W2.2 MP eye frustum | [frustum measurement](../../../vr/proof/weapon-mp-frustum-measurement.json), [zero control](../../../vr/proof/weapon-mp-frustum-controls.png) and [build receipt](../../../vr/proof/weapon-mp-frustum-build-receipt.json): 21 live samples, guarded both-eye override, zero fallback/rollback errors |
+| W2.3 MP head/near-wall visibility | [control receipt](../../../vr/proof/weapon-mp-visibility-receipt.json), [control sheet](../../../vr/proof/weapon-mp-visibility-controls.png) and [build regressions](../../../vr/proof/weapon-mp-visibility-build-receipt.json): zero, +/-90-degree and near-wall; both eyes, per-eye selector comparison, populated top-screen world geometry, no fallback and clean rollback |
+| W2.4 MP native input | [control receipt](../../../vr/proof/weapon-mp-input-receipt.json) and [build regressions](../../../vr/proof/weapon-mp-input-build-receipt.json): P1 actor/input/current ownership, live converter and table hashes, six synthetic controls, SP slot-2 regression, 23 Python tests and 33-case parity |
+| W2.5 MP lifecycle / recovery | [control receipt](../../../vr/proof/weapon-mp-lifecycle-receipt.json) and [build receipt](../../../vr/proof/weapon-mp-lifecycle-build-receipt.json): 17 MP input/button cases, native Start pause/resume, zero render-time sampling, 13 SP cases, inherited-flag flat startup |
+| S1 camera without recording | [proof](../../../vr/proof/headset-s1-camera-receipt.json): 30 live samples, capture OFF, 13,524 camera callbacks, 20 eligible hand-fixed aim updates, zero fallbacks and linked P2 damage 32->14; shutdown still fails S5 |
+| S1a native muzzle flash | [evidence](../NATIVE_MUZZLE_FLASH_EVIDENCE.md) and [receipt](../../../vr/proof/native-flash-alignment-receipt.json): existing 32x32 flash packet tracked in eye replay; baseline `(287,92)`, +150 mm hand X `(320,92)`, zero fallbacks; physical visibility open |
+| Historical S1b SP binding / P38 aim (visual claim superseded by R2) | [SP receipt](../../../vr/proof/sp-weapon-aim-flash-receipt.json): held-weapon dispatch active; flash `(355,225)` -> `(454,225)` after +150 mm hand X; 2/2 shots aimed in each control with zero shot/flash fallbacks and clean exit; physical acceptance open |
+| S2 MP frustum desktop | [receipt](../../../vr/proof/headset-s2-mp-frustum-receipt.json): 1,638 overrides per eye, zero fallbacks, 201 rollback checks, zero mismatches and clean exit; physical edges remain open |
+| W3.1 P38 calibration | [calibration receipt](../../../vr/proof/weapon-p38-calibration-receipt.json), [capture receipt](../../../vr/proof/weapon-p38-calibration-capture-receipt.json) and [build receipt](../../../vr/proof/weapon-p38-calibration-build-receipt.json): 69 atomic source/animated vertices, orthonormal axes, grip and muzzle markers, nominal-size scale, focused tests and 33-case parity |
+| W3.2 P38 headset comparison | [headset comparison](../../../vr/proof/weapon-p38-headset-receipt.json) and [complete build receipt](../../../vr/proof/weapon-p38-headset-complete-build-receipt.json): 30 seconds native plus 30 seconds tracked, 30/30 live hand samples per mode, fresh VDXR submissions and stereo pairs, zero final failures; no operator acceptance claim |
+| W3.4 all-ID profiles | [topology](../../../vr/proof/weapon-complete-gun-topology-receipt.json), [animated capture](../../../vr/proof/weapon-profile-captures-receipt.json), [provisional calibration](../../../vr/proof/weapon-provisional-calibrations-receipt.json), [calibrated controls](../../../vr/proof/weapon-complete-gun-controls-receipt.json) and [control sheet](../../../vr/proof/weapon-complete-gun-controls.png): 13 unique IDs / 16 slot rows, 64 cases, 804 eye masks on its recorded binary, zero mixed gun/arm triangles and zero rollback errors |
+| W3.4 moving marker | [moving-marker receipt](../../../vr/proof/weapon-moving-muzzle-receipt.json) and [control sheet](../../../vr/proof/weapon-moving-muzzle-controls.png): frozen all-vertex samples, 13 confirmed switches, nine recoil paths, seven confirmed reloads, three prop actions, scoped hidden-model states; all IDs require an animated marker recomputation |
+| W5.3 shot families | [family receipt](../../../vr/proof/weapon-shot-families-receipt.json) and [evidence](../SHOT_FAMILY_EVIDENCE.md): historical read-only map of 13 IDs, common basis caller, types `13F1/13F3/13F6/13F7/13FA`, six shotgun pellets and native ammo/slot changes |
+| W5.3 native lifecycle | [lifecycle receipt](../../../vr/proof/weapon-shot-lifecycle-receipt.json), [evidence](../SHOT_LIFECYCLE_EVIDENCE.md) and [tool validation](../../../vr/proof/weapon-shot-lifecycle-validation-receipt.json): all 13 IDs, 22 lifetimes, 147 XYZ groups, 19 native damage writes, six distinct pellet directions and safe address reuse; no override enabled |
+| W5.3c origin writers | [origin receipt](../../../vr/proof/weapon-projectile-origin-writers-receipt.json): three actual objects, full object-address-filtered histories, last XYZ writers equal first-motion origins, live code windows; grenade has a second basis/init call after constructor |
+| W5.3c canonical markers | [marker receipt](../../../vr/proof/weapon-canonical-markers-receipt.json), [evidence](../CANONICAL_MARKERS_EVIDENCE.md) and [build/regressions](../../../vr/proof/weapon-canonical-markers-build-receipt.json): 13 IDs, 18 constructor events, three final-origin stages, independent vertex means, stale/load/recovery/P2/disabled controls; no new shot writes |
+| W5.3d all-family conversion | [all-family receipt](../../../vr/proof/weapon-aim-all-receipt.json): 13 IDs, 23 converted events, zero candidate fallbacks, six-pellet shotgun with 5.18-degree native spread, expected real damage, complete guarded projectile stages, stereo failure/recovery recorded |
+| W5.3d build/regressions | [build receipt](../../../vr/proof/weapon-aim-all-build-receipt.json): 81 Python tests, strict C/syntax, 64-case MP matrix, lateral/fire, flat pose, SP zero, 14 legacy P38 controls, 33-case parity and debug-off flat startup |
+| W5.3e paired preservation/impact | [paired receipt](../../../vr/proof/weapon-preservation-receipt.json) and [evidence](../WEAPON_PRESERVATION_EVIDENCE.md): 13 IDs, common-prefix lifetimes/release/history/stages, exact shotgun RNG and six-pellet distribution, native damage plus animated-axis/target residuals, five P38 fallback controls |
+| W5.3e build/regressions | [build receipt](../../../vr/proof/weapon-preservation-build-receipt.json): 86 Python tests, affected C fixtures, strict diagnostic syntax, two-ID focused pair and the complete 13-ID pair |
+| Earlier native damage | [WEAPON_SET_EVIDENCE.md](../WEAPON_SET_EVIDENCE.md), [weapon-alignment-receipt.json](../../../vr/proof/weapon-alignment-receipt.json): all 13 IDs, damage-only pose reachability |
+| Current all-ID controls | [weapon-complete-gun-controls.png](../../../vr/proof/weapon-complete-gun-controls.png) |
+| SP world / visibility | [PGXP_RENDER_VIEW_EVIDENCE.md](../PGXP_RENDER_VIEW_EVIDENCE.md), [HEAD_TURN_HUD_EVIDENCE.md](../HEAD_TURN_HUD_EVIDENCE.md), [SKY_GHOST_EVIDENCE.md](../SKY_GHOST_EVIDENCE.md) |
+| Native input | [MOVEMENT_EVIDENCE.md](../MOVEMENT_EVIDENCE.md): synthetic SP and MP controls; physical acceptance remains open |
 
 The historical W5.3e Release/debug-on executable SHA-256 is
 `8d0db60626bd516e91a342f648b22579e07b7ad3339ac104637774e1a71bc20d`.
@@ -347,10 +349,10 @@ The W5.3d historical tested executable remains
 `4a17ce5cdc83533bb23f8c85ccdcd9834289ec7c8a32e45d162c291099c74d00`,
 and its debug-off release was
 `e2103a9ffb3696188b8cb405978bde587d17ea63cead196bddb007b029eb9fa1`.
-See the historical [build receipt](../../vr/proof/weapon-aim-all-build-receipt.json)
+See the historical [build receipt](../../../vr/proof/weapon-aim-all-build-receipt.json)
 for runtime source hashes, 81 Python tests, focused C/syntax/build checks, the
 all-ID matrix and five native / 14 tracked legacy P38 regressions. The earlier
-[lifecycle validation receipt](../../vr/proof/weapon-shot-lifecycle-validation-receipt.json)
+[lifecycle validation receipt](../../../vr/proof/weapon-shot-lifecycle-validation-receipt.json)
 records the preceding binary, trace-tool hashes, 72 Python tests and 33-case
 parity for that earlier tooling/documentation pass. Historical receipts retain
 their original hashes.
@@ -591,8 +593,8 @@ Keep native speed/spread/ammo/reload/collision/damage/throw behavior.
 
 ### W6.2/W6.3 complete: do not rediscover these readers
 
-Read [ALPHA_WEAPON_REPAIRS.md](ALPHA_WEAPON_REPAIRS.md) and
-[weapon-alpha-repairs-receipt.json](../../vr/proof/weapon-alpha-repairs-receipt.json).
+Read [ALPHA_WEAPON_REPAIRS.md](../ALPHA_WEAPON_REPAIRS.md) and
+[weapon-alpha-repairs-receipt.json](../../../vr/proof/weapon-alpha-repairs-receipt.json).
 The first game's triangle math is ported; Underground's compressed streams are
 verified. Arena bases are 8 bytes, MP prop bases 16 bytes; both use 4-byte strip
 extensions with masked 13-bit indices and native winding/terminators.

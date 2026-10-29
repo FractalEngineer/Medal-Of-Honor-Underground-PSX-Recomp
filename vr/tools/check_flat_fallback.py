@@ -3,6 +3,7 @@ import argparse
 import hashlib
 import json
 import os
+import shutil
 from pathlib import Path
 import subprocess
 import time
@@ -22,7 +23,8 @@ def main():
     parser.add_argument(
         "--build-directory",
         type=Path,
-        default=ROOT / "build-flat-check",
+        required=True,
+        help="Explicit isolated OpenXR-OFF build; no stale default build is selected",
     )
     args = parser.parse_args()
     output = args.directory.resolve()
@@ -51,8 +53,12 @@ def main():
     }:
         raise RuntimeError(f"Unexpected flat build options: {options}")
 
-    saves = sorted((ROOT / "saves/openbios").glob("state_*"))
+    saves = sorted((ROOT / "analysis/fixtures/mp/openbios").glob("state_*"))
     save_hashes = {str(path): digest(path) for path in saves}
+    copied = output / 'saves/openbios'
+    copied.mkdir(parents=True)
+    for path in saves:
+        shutil.copyfile(path, copied/path.name)
     env = {
         key: value
         for key, value in os.environ.items()
@@ -97,6 +103,7 @@ def main():
                 "--no-launcher",
                 "--game",
                 str(game),
+                "--memcard-dir", str(output/'saves'),
             ],
             cwd=output,
             env=env,

@@ -799,7 +799,7 @@ def main():
     sources = []
     for slot in slots:
         for suffix in ("pst", "thumb"):
-            source = native.ROOT / f"saves/openbios/state_8001F844_slot{slot:02}.{suffix}"
+            source = native.ROOT / f"analysis/fixtures/mp/openbios/state_8001F844_slot{slot:02}.{suffix}"
             shutil.copyfile(source, copies / source.name)
             sources.append(source)
     hashes = {str(p): native.digest(p) for p in sources}

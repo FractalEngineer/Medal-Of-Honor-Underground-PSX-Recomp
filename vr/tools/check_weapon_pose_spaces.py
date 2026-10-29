@@ -606,7 +606,7 @@ def main():
     copies.mkdir(parents=True)
     sources = []
     for suffix in ("pst", "thumb"):
-        source = ROOT / f"saves/openbios/state_8001F844_slot01.{suffix}"
+        source = ROOT / f"analysis/fixtures/mp/openbios/state_8001F844_slot01.{suffix}"
         sources.append(source)
         shutil.copyfile(source, copies / source.name)
     preferences = [

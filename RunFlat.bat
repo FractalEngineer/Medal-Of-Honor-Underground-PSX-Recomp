@@ -19,16 +19,23 @@ for %%V in (
   MOHU_VR_P38_CALIBRATED MOHU_VR_P38_AIM MOHU_VR_WEAPON_GUN_ONLY
   MOHU_VR_WEAPON_CALIBRATED MOHU_VR_WEAPON_AIM
   MOHU_VR_MP_CONTROL MOHU_VR_MP_FRUSTUM MOHU_VR_MP_FRUSTUM_CAPTURE
+  PSX_FRAME_TRACE MOHU_VR_FRAME_TRACE_FILE MOHU_VR_SKIP_NATIVE_WORLD_COPY
 ) do set "%%V="
-set "FLAT_EXE=%~dp0Medal_of_Honor_Underground_Recompiled.exe"
-if not exist "%FLAT_EXE%" set "FLAT_EXE=%~dp0build-release\Medal_of_Honor_Underground_Recompiled.exe"
+set "FLAT_EXE=%~dp0build-release\Medal_of_Honor_Underground_Recompiled.exe"
+rem A packaged flat release has no build-release directory.
+if not exist "%~dp0build-release\" set "FLAT_EXE=%~dp0Medal_of_Honor_Underground_Recompiled.exe"
 if not exist "%FLAT_EXE%" (
     echo Game executable missing. Build build-release first.
     pause
     exit /b 1
 )
-pushd "%~dp0"
-"%FLAT_EXE%" --game game.toml --no-launcher %*
+if not exist "%~dp0analysis\runtime\flat" mkdir "%~dp0analysis\runtime\flat"
+pushd "%~dp0analysis\runtime\flat"
+if errorlevel 1 exit /b 1
+echo Game: %FLAT_EXE%
+echo Saves: %~dp0saves
+rem Flat and VR share this explicit user store, independent of exe location.
+"%FLAT_EXE%" --game "%~dp0game.toml" --memcard-dir "%~dp0saves" --no-launcher %*
 set "FLAT_EXIT_CODE=%ERRORLEVEL%"
 popd
 if not "%FLAT_EXIT_CODE%"=="0" (

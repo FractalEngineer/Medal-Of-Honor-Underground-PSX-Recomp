@@ -519,7 +519,7 @@ def run_case(out, mode, seconds, desktop, runtime_manifest, *, hand_fixed=False)
     shutil.copyfile(ROOT / "analysis/vr-baseline/game-interp.toml", config)
     copied = []
     for suffix in ("pst", "thumb"):
-        source = ROOT / f"saves/openbios/state_8001F844_slot01.{suffix}"
+        source = ROOT / f"analysis/fixtures/mp/openbios/state_8001F844_slot01.{suffix}"
         if not source.is_file():
             raise FileNotFoundError(source)
         shutil.copyfile(source, saves / source.name)
@@ -871,8 +871,8 @@ def main():
         raise RuntimeError(f"W3.2 requires diagnostic build flags: {config}")
 
     source_saves = [
-        ROOT / "saves/openbios/state_8001F844_slot01.pst",
-        ROOT / "saves/openbios/state_8001F844_slot01.thumb",
+        ROOT / "analysis/fixtures/mp/openbios/state_8001F844_slot01.pst",
+        ROOT / "analysis/fixtures/mp/openbios/state_8001F844_slot01.thumb",
     ]
     source_hashes = hash_existing(source_saves)
     preferences = hash_existing(preference_paths())

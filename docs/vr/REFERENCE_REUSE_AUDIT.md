@@ -14,7 +14,7 @@ SP is the release target; MP is only the quick weapon-calibration fixture.
 
 2026-10-28 operator clarification: the alpha work must start from the working
 first-game implementations. Current reference HEAD inspected is `d82a5d0`.
-[The concrete port table](ALPHA_PLAYABILITY_AND_CALIBRATION.md) names the exact
+[The concrete port table](archive/ALPHA_PLAYABILITY_AND_CALIBRATION.md) names the exact
 weapon transform/filter/aim, triangle laser and native hand HUD functions and
 local adaptation boundaries. Port those before a new runtime calibration editor.
 Both games already combine aim orientation with grip position; the next pose

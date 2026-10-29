@@ -8,6 +8,7 @@ import argparse
 import hashlib
 import json
 import os
+import shutil
 from pathlib import Path
 import socket
 import subprocess
@@ -55,6 +56,11 @@ def main():
     args = parser.parse_args()
     output = args.directory.resolve()
     output.mkdir(parents=True, exist_ok=False)
+    copied = output/'saves/openbios'
+    copied.mkdir(parents=True)
+    sources = list((ROOT/'analysis/fixtures/sp/openbios').glob('*slot03.*'))
+    if len(sources) != 2: raise RuntimeError('Expected frozen SP slot-3 state/thumbnail')
+    for source in sources: shutil.copyfile(source, copied/source.name)
     with socket.socket() as probe:
         if probe.connect_ex(("127.0.0.1", 4372)) == 0:
             raise RuntimeError("Refusing occupied diagnostic port 4372")
@@ -88,7 +94,8 @@ def main():
     if xr:
         launch = ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File",
                   str(ROOT / "vr/run_vr.ps1"), "-Headless", "-Seconds", "12",
-                  "-DebugPort", "4372", "-LogDirectory", str(output)]
+                  "-DebugPort", "4372", "-LogDirectory", str(output),
+                  "-Slot", "3", "-MemcardDirectory", str(output/'saves')]
         if args.case == "keep-hud":
             launch += ["-KeepFlatHud"]
         if args.case == "native-frustum":
@@ -97,14 +104,14 @@ def main():
         env.update(MOHU_VR_STEREO_PROOF="1", MOHU_VR_EYE_RENDER_VIEW="1",
                    MOHU_VR_EYE_GUEST_SUBMIT="1", MOHU_VR_EYE_OFFSET="0" if args.case == "zero" else "24",
                    PSX_VR_HEAD_FRUSTUM="1", PSX_VR_SUPPRESS_FLAT_HUD="1",
-                   PSX_INTERNAL_RESOLUTION="1080p", PSX_LOAD_SLOT="2", PSX_VSYNC="0",
+                   PSX_INTERNAL_RESOLUTION="1080p", PSX_LOAD_SLOT="3", PSX_VSYNC="0",
                    PSX_DITHERING="0")
         env["MOHU_VR_EYE_YAW_MDEG"] = {"replay-only": "0", "sky": "0", "zero": "0", "yaw-positive": "90000", "yaw-negative": "-90000"}[args.case]
         env["MOHU_VR_EYE_PITCH_MDEG"] = str(args.pitch_mdeg)
         launch = [str(ROOT / "build-release/Medal_of_Honor_Underground_Recompiled.exe"),
                   "--headless-opengl", "--no-launcher", "--debug-port", "4372",
                   "--game", str(ROOT / "analysis/vr-baseline/game-interp.toml"),
-                  "--memcard-dir", str(ROOT / "analysis/vr-baseline/saves")]
+                  "--memcard-dir", str(output/'saves')]
     result = {"case": args.case, "revision": subprocess.check_output(
         ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
         "controls": {"pitch_mdeg": args.pitch_mdeg, "clear_before_submit": args.clear_before_submit,

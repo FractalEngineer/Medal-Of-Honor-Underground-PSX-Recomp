@@ -6,7 +6,7 @@ feedback. **Later detailed feedback supersedes blanket acceptance:** grenades
 face forward instead of upright, some scales are too large, StG44 retains a hand,
 several weapons shoot high and the laser stops in empty space. Tracking/access
 worked, but calibration, gun-only masks and aim/laser acceptance remain open.
-See [the alpha/calibration study](ALPHA_PLAYABILITY_AND_CALIBRATION.md).
+See [the alpha/calibration study](archive/ALPHA_PLAYABILITY_AND_CALIBRATION.md).
 
 Use **unsandboxed execution in the interactive desktop session** for every
 game launch. The first sandbox headset attempt failed OpenXR startup and is

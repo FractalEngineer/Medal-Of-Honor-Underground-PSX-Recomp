@@ -19,11 +19,11 @@ import probe_p38_headset as shared
 
 ROOT = Path(__file__).resolve().parents[2]
 CASES = {
-    "mp1": ("saves", 1, ["P38", "MP40", "StG44", "Stick grenade"]),
-    "mp2": ("saves", 2, ["Colt .45", "Sten", "Shotgun", "Petrol bomb"]),
-    "mp3": ("saves", 3, ["Silenced pistol", "Crossbow", "Scoped rifle", "Stick grenade"]),
-    "mp4": ("saves", 4, ["M1 Garand", "StG44", "Panzerfaust", "Petrol bomb"]),
-    "sp": ("analysis/vr-baseline/saves", 3, ["P38 SP visibility / flash / movement smoke"]),
+    "mp1": ("analysis/fixtures/mp", 1, ["P38", "MP40", "StG44", "Stick grenade"]),
+    "mp2": ("analysis/fixtures/mp", 2, ["Colt .45", "Sten", "Shotgun", "Petrol bomb"]),
+    "mp3": ("analysis/fixtures/mp", 3, ["Silenced pistol", "Crossbow", "Scoped rifle", "Stick grenade"]),
+    "mp4": ("analysis/fixtures/mp", 4, ["M1 Garand", "StG44", "Panzerfaust", "Petrol bomb"]),
+    "sp": ("analysis/fixtures/sp", 3, ["P38 SP visibility / flash / movement smoke"]),
 }
 
 

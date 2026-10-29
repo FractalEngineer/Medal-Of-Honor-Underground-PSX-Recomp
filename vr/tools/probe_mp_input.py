@@ -394,7 +394,7 @@ def main():
     copies.mkdir(parents=True)
     sources = []
     for suffix in ("pst", "thumb"):
-        source = native.ROOT / f"saves/openbios/state_8001F844_slot01.{suffix}"
+        source = native.ROOT / f"analysis/fixtures/mp/openbios/state_8001F844_slot01.{suffix}"
         shutil.copyfile(source, copies / source.name)
         sources.append(source)
     source_hashes = {str(path): native.digest(path) for path in sources}

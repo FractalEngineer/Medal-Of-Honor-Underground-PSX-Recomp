@@ -1,11 +1,21 @@
 # Underground VR execution handoff
 
-Updated 2026-10-29 after native profiling and compiler controls. **P3b complete;
-next task: P3c2–P3c6 preflight implementation and qualification, then the budget
-decision and P4/P5.** Follow
-[PERFORMANCE_NEXT_STEPS.md](PERFORMANCE_NEXT_STEPS.md) in order. Do not resume a
+Updated 2026-10-29 after the operator's weapon-priority instruction. **NEXT: G7a–G7f,
+complete all existing MP weapon calibrations and tracked weapon-family control
+in SP first.** Petrol bomb and Panzerfaust appear to retain fixed/native aiming;
+this is an open report, not a repair. Start with [SP_WEAPON_PARITY](SP_WEAPON_PARITY.md).
+Then resume G5 slot-1 missing world, G6 slot-2 performance and measured optimization.
+P3b remains complete for its old fixture. Follow
+[PERFORMANCE_NEXT_STEPS.md](PERFORMANCE_NEXT_STEPS.md) after G7 and G5/G6. Do not resume a
 NEXT pointer from an archived report. [VR_PLAN.md](VR_PLAN.md) owns status;
 [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md) owns history.
+
+**Workspace cleanup checkpoint:** read [WORKSPACE_LAYOUT](WORKSPACE_LAYOUT.md)
+before launching or creating a build. Both normal launchers now use the same
+standard `build-release` executable and absolute root `saves/`. Current operator
+VR slots 0–6/cards are there; all original Flat/VR files and retired executables
+are preserved in `analysis/archive/workspace-cleanup-20261029`. No performance
+implementation was done during cleanup. Historical paths below remain evidence.
 
 ## 1. Accepted checkpoint — do not reopen without a new regression
 
@@ -16,18 +26,34 @@ these as human headset observations, not instrumented timing or all-ID tests.
 | Scope | Current acceptance |
 |---|---|
 | Clean image activation / existing launchers | Complete; operator launched it personally |
-| SP missing world, including the reported slot-5 symptom | Resolved; desktop proof plus operator headset pass |
+| Historical SP slot-5 loading failure | Resolved for that case; desktop proof plus earlier operator headset pass |
+| Current personal SP slot 1 / file slot01 visibility — G5 | OPEN: missing level rendering again; not yet reproduced/diagnosed |
+| Current personal SP slot 2 / file slot02 performance — G6 | OPEN: severe performance; no measured FPS or attribution for this case yet |
 | Stuck repeating music | Resolved; stream/refill proof plus operator headset pass |
 | SP Sten hand aiming | Native construction/motion/loss controls pass; operator headset pass |
 | SP pause menu | Native desktop/null-HMD controls pass; operator now confirms headset behavior |
-| SP petrol model / laser | Exact model repair and eight-direction/loss/release desktop checks pass |
+| SP petrol model / laser | Earlier model/ray checks pass; they do not close the new fixed-aim throw report |
+| Petrol bomb / Panzerfaust SP aim | OPEN: apparent fixed/native direction; no new trace/root cause or fix yet |
+| Full MP-to-SP weapon calibration/control parity — G7 | OPEN, FIRST: all 13 source profiles and SP shot-family/final-origin behavior |
 | Performance | Still unsatisfactory; 60 fresh application frames/s minimum, 90 preferred; OPEN |
-| All-SP-ID native damage / grenade / rocket acceptance | Not implied by this smoke; still open behind performance |
+| All-SP-ID live NPC damage/isolation | Not implied by smoke or G7 direction checks; R6 retains its separate scope |
 
 Human report and its limits:
 [clean-disc-headset-smoke-receipt.json](../../vr/proof/clean-disc-headset-smoke-receipt.json).
 Do not ask for another general headset smoke now. Finish independent desktop
 work; request a focused physical check only when its candidate is ready.
+
+The latest report reopens overall world-visibility acceptance. Preserve the
+historical slot-5/music fix without assuming it explains slot 1. Two reported
+cases and their exact current source/fixture hashes are in the
+[new receipt](../../vr/proof/sp-current-regressions-receipt.json). No new game
+launch or performance measurement was done while recording this report.
+
+Latest operator steering supersedes that report's old execution order: **G7
+weapon parity first**, including petrol/grenade throw and Panzerfaust final
+origin/initial direction. Existing MP poses/profiles are the source; do not
+recalibrate them or port the HUD again. A model and laser following the hand
+does not prove the native projectile follows it. This turn is document/push only.
 
 ## 2. Active checkout, disc and launch
 
@@ -67,9 +93,13 @@ work; request a focused physical check only when its candidate is ready.
 - Work solo. Read applicable `AGENTS.md`; new HLE must follow
   `psxrecomp/docs/HLE_EXECUTION.md`. Do not create a local Beads DB if the
   configured central DB/path is unavailable; record that fact once.
-- Current SP fixtures: `analysis/vr-baseline/saves/openbios/`:
-  `state_8001F844_slot03.pst/.thumb`, slot04 (Sten), slot05 (indoor/old world-loss
-  repro). Root `saves/` is not the current SP fixture tree.
+- Frozen SP fixtures: `analysis/fixtures/sp/openbios/`:
+  new slot01 (missing world), new slot02 (severe performance),
+  slot03 (P38/petrol), slot04 (Sten), slot05 (indoor/old world-loss
+  repro). Frozen MP calibration inputs: `analysis/fixtures/mp/openbios/`.
+  Root `saves/` is the personal shared Flat/VR store; never use it as an
+  implicit test fixture. Probes must copy fixtures into disposable outputs.
+  Headless RunVR requires an explicit `-MemcardDirectory`.
 - Existing probes copy fixtures to a unique analysis directory. Preserve source
   states/thumbnails, personal saves, keybinds/settings and XR runtime settings.
   Never edit health/ammo/inventory, fabricate compatible saves or patch headers.
@@ -81,10 +111,34 @@ work; request a focused physical check only when its candidate is ready.
 
 ## 4. The next implementation, with evidence boundaries
 
-Read the performance runbook and execute its first unchecked step. In brief:
+Read the weapon parity contract and execute its first unchecked step. In brief:
 
-**The next agent starts at [runbook section 3.1](PERFORMANCE_NEXT_STEPS.md#31-ordered-execution-checklist--start-at-p3c2),
-not at its historical baseline/profile reproduction commands.** Read the
+**The next implementation agent starts with [G7](SP_WEAPON_PARITY.md).** Inventory
+which MP calibration/render/shot code SP already consumes, then fill verified
+SP family/adaptor gaps. Prioritize petrol/grenade final throw writers and the
+Panzerfaust rocket path while completing all 13-ID SP coverage. Reuse authored
+grip/scale/orientation, complete gun-only masks and the fixed hand basis; no new
+calibration editor, MP campaign or duplicated profile table. Preserve current
+P38/Sten behavior, native ballistics/timing and loss/load/rollback guards.
+
+G7a–G7f define inventory, shared/firearm parity, thrown parity, rocket parity,
+all-ID SP controls and honest acceptance/production restore. Use a valid visible
+SP fixture for each available weapon. If G5 blocks one control, record/fix that
+specific prerequisite or continue independent cases; do not replace the overall
+weapon-first order with a broad rendering/performance detour.
+
+**After G7, resume [G5/G6](SP_CURRENT_REGRESSIONS.md).** Compare copied slot 1 in native Flat
+and stereo; require actual world geometry evidence, not just successful load or
+pair counters. Then baseline copied slot 2 with its world present, identify the
+dominant cost, and confirm/update the implementation target. Do not assume a
+shared cause, damaged image or a culling-angle fix. Preserve both personal saves.
+
+The operator uses internal/file/tool slot indices throughout. Use
+`probe_sp_issues.py --slot 1` for G5 and production `--slot 2` for G6.
+Do not shift these reports to 0/1 using menu display labels or renumber history.
+
+After weapon parity and that triage, follow [runbook section 3.1](PERFORMANCE_NEXT_STEPS.md#31-ordered-execution-checklist--start-at-p3c2)
+if preflight remains the measured target. Read the
 complete `80011424` helper, caller and dispatch entries; begin the standalone
 caller-contract harness and proceed into implementation. Capture alone is not
 the requested deliverable. P3c2–P3c6 need no physical headset.
@@ -130,8 +184,8 @@ the requested deliverable. P3c2–P3c6 need no physical headset.
 | P3c6 — full path/decision | Actual HUD/weapon/laser/XR work is measured, failures retained, candidate qualified or explicitly rejected; a desktop gain is insufficient |
 
 **Fixture/tool trap:** a new execution family changes identity. Current probes
-assume the fixed source-save tree and `build-release`; sibling `--exe` selection
-only served same-identity compiler controls. Before cross-profile game timing,
+assume frozen SP fixtures and `build-release`; the old sibling executable-name
+and profiler `--exe` launch overrides were removed during cleanup. Before cross-profile game timing,
 extend the existing probes to select separate valid fixture roots and complete
 build/assets/config/cache directories. Those selectors do not exist yet. See
 [section 3.2](PERFORMANCE_NEXT_STEPS.md#32-execution-identity-and-fixture-handling--resolve-before-integration).
@@ -170,9 +224,10 @@ Known measurements are leads, not a new matched-HMD benchmark:
 
 Do not reopen these without new contrary evidence:
 
-- Slot-5 missing world/music: damaged image stalled at raw sector 9469 and
+- Historical slot-5 missing world/music: damaged image stalled at raw sector 9469 and
   blocked a native arena load. Replacement passes all 318,028 sector checks;
   operator confirms resolution. No rendering/fog/CD timing bypass is needed.
+  That acceptance does not close new personal slot-1 case G5; its cause is unknown.
 - Queue terminator is `800B8458 = 800B74B8 + 1000*4`, not `800C8458` (signed
   displacement). Corrected/asserted; this alone was not the world fix.
 - Common SP shot seam: `80048604 → 80076C28`, RA `8004860C`; exact firearm
@@ -186,8 +241,8 @@ Do not reopen these without new contrary evidence:
 - Checkpoint reuse and paired native HUD readback are already shared. Do not
   port them again or update the framework merely because master moved.
 
-Still open after performance: real SP NPC damage/isolation; broader live SP
-weapon/final-origin coverage (especially thrown/rocket); focused HUD/transition
+G7 now owns broader live SP calibration/weapon/final-origin coverage first,
+especially thrown/rocket. Still separate: real SP NPC damage/isolation; focused HUD/transition
 and clean-close acceptance; matching-fixture fog investigation only if still
 reported. Pause and Sten physical smoke are now accepted. Do not require an MP
 physical pause pass for the SP release.
@@ -202,8 +257,9 @@ the SP work/fixture, without expanding MP scope.
 - Restore/rebuild production debug-OFF after diagnostic builds. End with no
   owned game process/overrides left behind and no persistent XR settings change.
 - Run focused checks appropriate to changes and `git diff --check`. Current
-  baseline: 132 Python tests; strict plugin/native-timer syntax and 480 focused
-  slot-5 rollback checks pass. Earlier shot/weapon C controls remain unchanged.
+  baseline: 134 Python tests, including shared save-route regression coverage.
+  Earlier strict plugin/native-timer syntax and 480 focused slot-5 rollback
+  checks remain historical; the playable executable is unchanged by cleanup.
 - Update stable IDs in VR_PLAN, the current handoff and compact receipts with
   actual source/binary/fixture provenance. Preserve failed controls and scope.
 - Keep dumps, disc/BIOS data, saves and generated screenshots in ignored local
@@ -213,4 +269,4 @@ the SP work/fixture, without expanding MP scope.
 Detailed bindings remain in [WEAPON_MAPPING.md](WEAPON_MAPPING.md),
 [SP_GAMEPLAY_REPAIRS.md](SP_GAMEPLAY_REPAIRS.md),
 [PAUSE_MENU_PARITY.md](PAUSE_MENU_PARITY.md) and their receipts. The superseded
-[old handoff](HANDOFF_HISTORY_20261029.md) is evidence only, not a task queue.
+[old handoff](archive/HANDOFF_HISTORY_20261029.md) is evidence only, not a task queue.

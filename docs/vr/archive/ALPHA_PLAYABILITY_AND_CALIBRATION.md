@@ -1,9 +1,11 @@
+> Archived evidence only. Use [HANDOFF](../HANDOFF.md), [VR_PLAN](../VR_PLAN.md) and the [current runbook](../PERFORMANCE_NEXT_STEPS.md). Old NEXT pointers, save/build paths and proposed steps below are historical.
+
 # Playable alpha priorities and runtime weapon calibration study
 
 **2026-10-29 current checkpoint:** clean image is active; the operator confirms
 world/music fixed, SP pause OK and Sten OK in headset. Performance is still
-unsatisfactory. Follow [HANDOFF.md](HANDOFF.md) and
-[PERFORMANCE_NEXT_STEPS.md](PERFORMANCE_NEXT_STEPS.md): native replay
+unsatisfactory. Follow [HANDOFF.md](../HANDOFF.md) and
+[PERFORMANCE_NEXT_STEPS.md](../PERFORMANCE_NEXT_STEPS.md): native replay
 attribution/optimization, fresh-view cadence/recovery, then focused performance
 acceptance. The original study below is reference material, not a new work
 queue or a prohibition on the already authorized implementation. Do not rebuild
@@ -18,11 +20,11 @@ Date: 2026-10-28. **Study/documentation only. No feature implementation, game
 launch, build, new framework branch or dependency update is authorized by this task.**
 This opening describes the original study request. Later operator instruction
 "commit push and start work on it" authorized implementation: A7 is now ported
-and desktop/null-HMD validated in [PAUSE_MENU_PARITY.md](PAUSE_MENU_PARITY.md).
+and desktop/null-HMD validated in [PAUSE_MENU_PARITY.md](../PAUSE_MENU_PARITY.md).
 The optional calibration editor remains unimplemented.
 Later "continue with the fixes" authorization also produced A2 weapon defaults/
 StG filtering and A4 exact surface laser; current implementation evidence is in
-[ALPHA_WEAPON_REPAIRS.md](ALPHA_WEAPON_REPAIRS.md). This study's earlier source
+[ALPHA_WEAPON_REPAIRS.md](../ALPHA_WEAPON_REPAIRS.md). This study's earlier source
 observations below are historical where that evidence supersedes them.
 This document supersedes the earlier blanket visual-acceptance wording and the
 strict R5 -> R6 -> W6 ordering where those conflict with the operator's alpha goal.
@@ -301,7 +303,7 @@ Implementation is now authorized and A7/A2a/A4a/A5a have evidence. SP is the
 release target; MP is only the quick all-weapon calibration fixture, with no
 separate feature or release-acceptance campaign. NEXT is R6 real SP NPC
 damage/isolation and broader SP families, then SP alpha playability/performance/
-recovery, without a headset. Read [NATIVE_HAND_HUD.md](NATIVE_HAND_HUD.md).
+recovery, without a headset. Read [NATIVE_HAND_HUD.md](../NATIVE_HAND_HUD.md).
 Do not repeat pose,
 pause or triangle-reader discovery. A3 remains optional. The operator deferred
 the next headset batch until the remaining fixes are ready; no physical test is

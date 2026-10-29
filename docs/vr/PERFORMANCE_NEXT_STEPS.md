@@ -1,6 +1,20 @@
 # Performance implementation runbook
 
-Updated 2026-10-29. **P3b is complete; execute P3c, then P4/P5.** Read the
+Workspace policy: [WORKSPACE_LAYOUT](WORKSPACE_LAYOUT.md). Normal play shares
+root `saves`; automated sources are frozen `analysis/fixtures/sp` and
+`analysis/fixtures/mp`, copied to disposable outputs. Retired benchmark aliases
+and the old flat-check build are archived, not runnable alternate play targets.
+
+Updated 2026-10-29. **G7 full MP-to-SP weapon calibration/control parity is FIRST**
+under the latest operator instruction: [SP_WEAPON_PARITY](SP_WEAPON_PARITY.md).
+This performance runbook is deferred until that scoped port/coverage decision.
+Petrol bomb/Panzerfaust apparent fixed aiming is an open report, not a repair.
+After G7, G5/G6 precede preflight optimization: reproduce
+and classify personal SP slot 1 missing-world rendering, then baseline personal
+SP slot 2 severe performance and confirm the implementation target. Then use
+[SP_CURRENT_REGRESSIONS](SP_CURRENT_REGRESSIONS.md). No game was launched while
+recording these reports; causes/FPS are unknown. P3b remains complete for its
+historical fixture; P3c and P4/P5 remain open. After the new-case triage, read the
 [native profile and rejected experiments](NATIVE_REPLAY_PROFILE.md) first.
 Its final section specifies the next `80011424` caller-contract implementation.
 Do not repeat P3b or compiler sweeps. The operator's clean
@@ -8,7 +22,17 @@ image headset smoke accepted world rendering, music, pause and Sten. Performance
 is still “meh.” Minimum 60 fresh application frames/s, preferred 90, remains
 the alpha blocker. This file supersedes older NEXT pointers in evidence logs.
 
+All operator slot references are internal/file/tool indices, as confirmed by
+the operator. Select `--slot 1` for G5 and `--slot 2` for G6. Do not reinterpret
+the report as menu labels or shift indices to 0/1.
+
 ## 0. Do not restart solved work
+
+The old slot-5 damaged-image case remains historical; the new slot-1 rendering
+report is legitimate new evidence and must be investigated. Compare native
+Flat/stereo on that exact copied fixture before assuming a disc, frustum or
+preflight cause. Do not narrow the visible FOV or start the planned optimization
+blindly. A successful probe/load does not demonstrate complete world rendering.
 
 Read [HANDOFF.md](HANDOFF.md), current P/G items in [VR_PLAN.md](VR_PLAN.md),
 then this file. Read [REFERENCE_REUSE_AUDIT.md](REFERENCE_REUSE_AUDIT.md) before
@@ -245,9 +269,10 @@ with harness success and call the full integration validated.
   execution profile; never copy a candidate executable into another profile's
   cache/assets and treat the result as qualified.
 - The current `profile_sp_production.py` and `probe_sp_issues.py` select the
-  fixed source-save tree and normal `build-release`. Their `--exe` benchmark
-  override, where offered, was built for same-identity compiler controls. It
-  does **not** solve new-family fixture compatibility or build isolation.
+  frozen SP fixture tree and normal `build-release`. The former sibling `--exe`
+  profiler launch override was removed during cleanup; normal play/probes use
+  the standard game executable name. Offline symbol inspection can still read
+  an archived binary by hash. New-family fixtures/builds still need isolation.
 - Before cross-profile gameplay timing, minimally extend the existing tools
   to select the intended build/assets/config and a separate validated copied
   fixture root, recording both in the receipt. Such build/fixture selectors

@@ -1,10 +1,13 @@
 # Weapon Mapping Handoff
 
-Last updated: 2026-10-28
+Last updated: 2026-10-29
 
 Execution order and stop/recovery rules are in [HANDOFF.md](HANDOFF.md).
-Checkbox status is in [VR_PLAN.md](VR_PLAN.md). **NEXT desktop: R6 linked live
-SP NPC impact and A5 native hand HUD; R5 fog is paused on fixture selection.** See
+Checkbox status is in [VR_PLAN.md](VR_PLAN.md). **NEXT implementation: G7, all
+existing MP weapon calibrations/control paths into SP first**, especially the
+reported petrol bomb/Panzerfaust fixed aiming. Follow the
+[SP parity runbook and 13-ID matrix](SP_WEAPON_PARITY.md). Native hand HUD is
+already ported; do not port it again or treat MP all-ID controls as SP acceptance. See
 [SP_PARITY_REPAIR.md](SP_PARITY_REPAIR.md) for the
 current muzzle/arm/slot-3 fixes and
 [ALPHA_WEAPON_REPAIRS.md](ALPHA_WEAPON_REPAIRS.md) for authored orientation,

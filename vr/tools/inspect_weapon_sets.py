@@ -248,7 +248,7 @@ def main():
     sources = []
     for slot in args.slots:
         for suffix in ("pst", "thumb"):
-            path = ROOT / f"saves/openbios/state_8001F844_slot{slot:02}.{suffix}"
+            path = ROOT / f"analysis/fixtures/mp/openbios/state_8001F844_slot{slot:02}.{suffix}"
             if not path.is_file():
                 raise FileNotFoundError(path)
             sources.append(path)

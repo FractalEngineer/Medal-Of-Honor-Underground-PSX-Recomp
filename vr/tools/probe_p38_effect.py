@@ -33,7 +33,7 @@ def copy_fixture(out, slot):
     for extension in ("pst", "thumb"):
         source = (
             ROOT
-            / f"saves/openbios/state_8001F844_slot{slot:02}.{extension}"
+            / f"analysis/fixtures/mp/openbios/state_8001F844_slot{slot:02}.{extension}"
         )
         shutil.copyfile(source, destination / source.name)
         sources.append(

@@ -606,7 +606,7 @@ def main():
     for slot in families.CYCLES:
         for suffix in ("pst", "thumb"):
             source = ROOT / (
-                f"saves/openbios/state_8001F844_slot{slot:02}.{suffix}"
+                f"analysis/fixtures/mp/openbios/state_8001F844_slot{slot:02}.{suffix}"
             )
             shutil.copyfile(source, saves / source.name)
             source_hashes[str(source.relative_to(ROOT))] = native.digest(source)

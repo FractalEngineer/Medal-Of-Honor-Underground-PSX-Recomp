@@ -117,7 +117,7 @@ def main():
     hashes = {}
     for slot in (1,2,4):
         for suffix in ("pst","thumb"):
-            source=ROOT/f"saves/openbios/state_8001F844_slot{slot:02}.{suffix}"
+            source=ROOT/f"analysis/fixtures/mp/openbios/state_8001F844_slot{slot:02}.{suffix}"
             shutil.copyfile(source,saves/source.name);hashes[str(source)]=native.digest(source)
     preferences=comparison.hash_existing(comparison.preference_paths())
     exe=ROOT/"build-release/Medal_of_Honor_Underground_Recompiled.exe"

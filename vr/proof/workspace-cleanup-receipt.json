@@ -1,0 +1,58 @@
+{
+  "schema": 1,
+  "date": "2026-10-29",
+  "complete": true,
+  "root_cause": "Normal RunVR silently chose analysis/vr-baseline/saves; RunFlat used root saves",
+  "canonical_user_saves": "saves",
+  "state_subdirectory": "saves/openbios",
+  "promoted_vr_slots": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "sp_fixture_slots": [
+    3,
+    4,
+    5
+  ],
+  "sp_fixture_root": "analysis/fixtures/sp",
+  "mp_fixture_slots": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "mp_fixture_root": "analysis/fixtures/mp",
+  "local_archive": "analysis/archive/workspace-cleanup-20261029",
+  "original_flat_files_preserved": 13,
+  "original_vr_files_preserved": 17,
+  "retired_executable_and_manifest_files": 15,
+  "retired_build": "build-flat-check",
+  "primary_binary_sha256": "b00fc27187d232c42db66129d952b77bbfdd261e4b73d1b486335be019fba8b1",
+  "primary_binary_unchanged": true,
+  "no_save_headers_modified": true,
+  "all_original_files_verified": true,
+  "archived_docs": [
+    "HANDOFF_HISTORY_20261029.md",
+    "ALPHA_PLAYABILITY_AND_CALIBRATION.md",
+    "SP_PERFORMANCE_AND_PETROL.md",
+    "SP_PERFORMANCE_COMPARISON.md"
+  ],
+  "checks": {
+    "python_tests": 134,
+    "python_tools_parsed": 47,
+    "active_document_links": 168
+  },
+  "game_launched_for_cleanup": false,
+  "performance_or_headset_acceptance": false,
+  "source_hashes": {
+    "RunFlat.bat": "c4fea1698296a8bcfde13446c9c28de88df8f51abc60f38844b625c169dffe09",
+    "vr/run_vr.ps1": "66c6f2a1dc6a5c22281291affdc773cd13105483535d1da2c45674691ca9c445",
+    "vr/tests/test_launcher_defaults.py": "75859497a6edc770b0f609c24d303a5587a45a262cf8bb2f829dc950a1769ddc"
+  }
+}

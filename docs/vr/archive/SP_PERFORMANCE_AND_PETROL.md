@@ -1,9 +1,11 @@
+> Archived evidence only. Use [HANDOFF](../HANDOFF.md), [VR_PLAN](../VR_PLAN.md) and the [current runbook](../PERFORMANCE_NEXT_STEPS.md). Old NEXT pointers, save/build paths and proposed steps below are historical.
+
 # SP petrol visibility and VR frame-rate blocker
 
 Historical 2026-10-28 evidence. The operator has since accepted clean-image
 world/music, SP pause and Sten headset smoke; performance remains open. Current
-execution order and exact commands are in [HANDOFF.md](HANDOFF.md) and
-[PERFORMANCE_NEXT_STEPS.md](PERFORMANCE_NEXT_STEPS.md). Old “next” wording below
+execution order and exact commands are in [HANDOFF.md](../HANDOFF.md) and
+[PERFORMANCE_NEXT_STEPS.md](../PERFORMANCE_NEXT_STEPS.md). Old “next” wording below
 must not restart the image/weapon/pause work or delay native replay implementation.
 
 Date: 2026-10-28. The operator reports accurate weapon tracking and laser aim,
@@ -169,5 +171,5 @@ explicit limitations. It does not establish a new performance fix.
    steady 60; preferred 90. Then resume R6 NPC damage and broader SP families.
 
 Raw evidence is under `analysis/vr-baseline/operator-perf-20261028/`. The compact
-[receipt](../../vr/proof/sp-performance-petrol-receipt.json) preserves hashes and
+[receipt](../../../vr/proof/sp-performance-petrol-receipt.json) preserves hashes and
 the accepted/failed scopes. No physical headset was started by these probes.

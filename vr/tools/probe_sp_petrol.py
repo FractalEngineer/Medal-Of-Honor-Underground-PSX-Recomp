@@ -27,7 +27,7 @@ def main():
     out.mkdir(parents=True, exist_ok=False)
     saves = out/'saves/openbios'
     saves.mkdir(parents=True)
-    source = list((ROOT/'analysis/vr-baseline/saves/openbios').glob('*slot03.*'))
+    source = list((ROOT/'analysis/fixtures/sp/openbios').glob('*slot03.*'))
     assert len(source) == 2
     hashes = {str(f): n.digest(f) for f in source}
     for f in source:

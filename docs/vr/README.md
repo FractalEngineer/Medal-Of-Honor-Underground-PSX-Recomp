@@ -1,212 +1,60 @@
-# VR Port Documentation
+# Underground VR documentation
 
-**Current checkpoint (2026-10-29):** operator headset smoke confirms world,
-music, pause and Sten are OK with the clean image. Performance remains the
-alpha blocker. Start with the rewritten [HANDOFF.md](HANDOFF.md), then execute
-[PERFORMANCE_NEXT_STEPS.md](PERFORMANCE_NEXT_STEPS.md). Historical reports and
-the archived handoff are evidence, not alternate task queues.
+**FIRST: complete all MP weapon calibration/control parity in SP — G7.** The
+operator reports petrol bomb and Panzerfaust apparent fixed aiming. Follow
+[SP_WEAPON_PARITY](SP_WEAPON_PARITY.md); this is an unimplemented/open scope.
+Then return to the other reports: personal SP slot 1 is missing level rendering again; slot 2
+has severe performance problems. Start with [current regressions](SP_CURRENT_REGRESSIONS.md)
+and the updated HANDOFF. These open G5/G6 cases precede the preflight replacement;
+old slot-5 evidence does not establish their cause or acceptance.
+The operator means internal slots 1/2: files `slot01`/`slot02` and tool arguments
+1/2. Do not renumber these reports or any historical slot references.
 
-P3b is complete: [native attribution and compiler controls](NATIVE_REPLAY_PROFILE.md)
-identify packet/preflight work as the next implementation target. Compiler
-inlining is rejected; IPO's small desktop gain lacks stable full-path acceptance
-and remains OFF. Continue P3c2–P3c6 at the measured `80011424` caller boundary.
-The [ordered implementation checklist](PERFORMANCE_NEXT_STEPS.md#31-ordered-execution-checklist--start-at-p3c2)
-specifies artifacts, fixture/identity handling, correctness and performance
-gates, then the conditional packet/HUD work and fresh-view cadence decision.
+Updated 2026-10-29 after workspace/save cleanup. **Normal Flat and VR use the
+same `build-release` executable and root `saves/` store.** The previous silent
+VR redirect into analysis was removed; current VR saves were promoted with all
+old Flat/VR files preserved. See [WORKSPACE_LAYOUT](WORKSPACE_LAYOUT.md) for
+paths, recovery archives, frozen fixtures and the rules that prevent recurrence.
 
-Current priorities: [alpha port plan](ALPHA_PLAYABILITY_AND_CALIBRATION.md).
-[New disc-image comparison](DISC_IMAGE_COMPARISON.md): both replacements are
-identical and sector-valid, with unchanged executable/overlays. The remaining
-clean image is active for existing RunVR batch files; old-image recovery is disabled.
-2026-10-29: [SP gameplay repairs](SP_GAMEPLAY_REPAIRS.md) records the Sten fix,
-the shared cause of the music loop/missing slot-5 world (an empty disc sector),
-the exact-image runtime recovery, thrown-laser checks and production timings.
-The original image stays untouched. Performance remains the alpha blocker;
-the measured draw-skip candidate is opt-in and 60/90 FPS is unproven.
-Latest operator priority: [SP performance and petrol repair](SP_PERFORMANCE_AND_PETROL.md).
-Current comparative audit and exact next experiments:
-[first-game performance comparison](SP_PERFORMANCE_COMPARISON.md).
-Petrol visibility and production-launch defaults are repaired; minimum 60 fresh
-VR frames/s (90 preferred) is the current alpha blocker, ahead of R6 expansion.
-The native pause-menu port passes SP/MP desktop and null-HMD XR controls;
-[PAUSE_MENU_PARITY.md](PAUSE_MENU_PARITY.md) records its bindings and remaining
-physical check. Weapon pose/mask and exact laser desktop fixes are recorded in
-[ALPHA_WEAPON_REPAIRS.md](ALPHA_WEAPON_REPAIRS.md). Native hand HUD is ported:
-[NATIVE_HAND_HUD.md](NATIVE_HAND_HUD.md). After the performance blocker, R6 is real SP NPC damage/isolation
-and broader SP shot families, then SP alpha playability/performance/recovery.
-SP is the release target; MP only supplies quick weapon calibration.
-Headset calibration remains deferred. Earlier SP repair:
-[SP_PARITY_REPAIR.md](SP_PARITY_REPAIR.md).
-The operator reopened muzzle placement, arms, slot-3 visibility and performance;
-R1-R7 in VR_PLAN supersede old W6-first or headset-first continuation text.
+## Active instructions
 
-Medal of Honor: Underground is being ported from the current Medal of Honor
-PSXRecomp VR implementation. The target must remain playable without a headset,
-and every Underground-specific hook must be verified against this game's own
-executable and live overlay content.
+Read these in order. Older evidence is not another execution queue.
 
-## Start here
+1. [WORKSPACE_LAYOUT](WORKSPACE_LAYOUT.md): launch/save paths and cleanup map.
+2. [HANDOFF](HANDOFF.md): acceptance, boundaries and the next exact task.
+3. [VR_PLAN](VR_PLAN.md) and [SP_WEAPON_PARITY](SP_WEAPON_PARITY.md): authoritative
+   checkboxes and the FIRST implementation sequence, including all 13 IDs.
+4. [PERFORMANCE_NEXT_STEPS](PERFORMANCE_NEXT_STEPS.md): ordered P3c2-P3c6
+   implementation/qualification, fixture constraints and budget decisions.
+5. [NATIVE_REPLAY_PROFILE](NATIVE_REPLAY_PROFILE.md): completed attribution and
+   rejected compiler experiments. Evidence, not instructions to rerun them.
+6. [IMPLEMENTATION_LOG](IMPLEMENTATION_LOG.md): chronological changes and scope.
 
-Shared framework branches, the merged upstream VR stack and the three pending
-generic changes are tracked in [FRAMEWORK_UPSTREAM_TRACKER.md](FRAMEWORK_UPSTREAM_TRACKER.md).
-Framework development uses `vr/shared-development`; master mirrors upstream.
+World/music, SP pause and Sten have operator headset smoke acceptance.
+Performance remains unresolved: minimum 60 fresh application frames/s, 90
+preferred. G7 weapon parity precedes that work. P3b is complete; the later performance candidate is preflight
+`80011424`, then measured packet/HUD decisions and independent fresh views.
+Cleanup did not change the game executable or establish an FPS improvement.
+SP is the release target; MP is only a quick weapon-calibration fixture.
 
-1. [HANDOFF.md](HANDOFF.md) is the current execution contract: world/music,
-   SP pause and Sten have operator headset smoke acceptance. A2 defaults/masks,
-   A4 laser and H1/A5a native hand HUD retain their scoped desktop evidence.
-   P3b native cost attribution is complete; P3c implementation is next via the exact
-   performance runbook, ahead of R6 SP
-   damage and broader SP families. R4 native hooks/stereo
-   parity are complete. R5 fog needs its matching street fixture;
-   R6 linked live SP impact remains open within weapon playability work.
-   W6.1-W6.3 fixed-ray/triangle gates are desktop complete. Physical hand-aim/impact acceptance and live NPC/SP
-   isolation remain separate open gates.
-   [P38_NATIVE_AIM_EVIDENCE.md](P38_NATIVE_AIM_EVIDENCE.md) records the
-   restored barrel, complete calibration, W4/W5.1 and automated native damage.
-   [SHOT_FAMILY_EVIDENCE.md](SHOT_FAMILY_EVIDENCE.md) records the read-only
-   all-ID constructor map, native shot types and shotgun pellet count.
-   [SHOT_LIFECYCLE_EVIDENCE.md](SHOT_LIFECYCLE_EVIDENCE.md) records native
-   trajectories, spread, damage and the final-origin writer mapping.
-   [CANONICAL_MARKERS_EVIDENCE.md](CANONICAL_MARKERS_EVIDENCE.md) records the
-   completed natural P1 animated-marker/timing contract and final-origin stages.
-   [weapon-aim-all-receipt.json](../../vr/proof/weapon-aim-all-receipt.json)
-   records the all-family desktop conversion.
-   [WEAPON_PRESERVATION_EVIDENCE.md](WEAPON_PRESERVATION_EVIDENCE.md) and
-   [weapon-preservation-receipt.json](../../vr/proof/weapon-preservation-receipt.json)
-   record the paired native/tracked, fallback and impact acceptance.
-   [COMBAT_STATE_EVIDENCE.md](COMBAT_STATE_EVIDENCE.md) records the paired
-   reload/empty/switch/scoped/recoil/load desktop controls.
-   [DEATH_RESPAWN_EVIDENCE.md](DEATH_RESPAWN_EVIDENCE.md) closes the P1
-   death/native respawn/fresh-shot desktop supplement.
-   [RENDERED_MUZZLE_EVIDENCE.md](RENDERED_MUZZLE_EVIDENCE.md) records W6.1's
-   shared hand-fixed shot/laser ray, animation diagnostics and stereo controls. W6.2
-   triangle/vertex binding is next; physical barrel alignment remains open.
-   [WEAPON_COMPLETE_PROFILES.md](WEAPON_COMPLETE_PROFILES.md) records the
-   all-ID topology, provisional calibration, desktop controls and moving-marker
-   animation evidence.
-   Headset verification must run under the interactive Windows account; see
-   [the mandatory execution-context section](HANDOFF.md#headset-execution-context---mandatory).
-2. [VR_PLAN.md](VR_PLAN.md) is the checkbox/status list and dependency order.
-   Do not restart checked foundation/renderer work without a demonstrated regression.
-   [REFERENCE_REUSE_AUDIT.md](REFERENCE_REUSE_AUDIT.md) maps every workstream
-   to reusable first-game code and local counterparts; consult it before adding
-   a new implementation. Hardware acceptance does not block isolated desktop work.
-   [CONSISTENCY_HANDOFF.md](CONSISTENCY_HANDOFF.md) records the completed
-   three-operation shared math and both-game runtime evidence.
-3. [BASELINE.md](BASELINE.md) records the historical 2026-10-23 starting tree.
-   Its old framework pin and no-VR state do not override the current handoff.
-4. [ENGINE_EQUIVALENCE.md](ENGINE_EQUIVALENCE.md) tracks candidate function
-   mappings and the evidence required before a hook can be registered.
-5. [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md) records completed work and
-   reproducible checks.
-6. [CAMERA_EVIDENCE.md](CAMERA_EVIDENCE.md) records the historical camera-motion
-   probe. Use the current handoff/calibration documents for completed mappings;
-   its earlier unresolved notes do not reopen those tasks.
-7. [DRAW_BRIDGE_EVIDENCE.md](DRAW_BRIDGE_EVIDENCE.md) records the guarded
-   overlay draw bridge and the boundary between renderer output and camera
-   ownership.
-8. [STEREO_OT_EVIDENCE.md](STEREO_OT_EVIDENCE.md) records the corrected frame
-   entry, OT controls, and rejected eye-replay experiments.
-9. [STEREO_VIEW_EVIDENCE.md](STEREO_VIEW_EVIDENCE.md) records the accepted
-   same-checkpoint zero control and full-scene depth-parallax pair.
-10. [PGXP_RENDER_VIEW_EVIDENCE.md](PGXP_RENDER_VIEW_EVIDENCE.md) records the
-    full render-view, guest OT submission, projective near-plane path, and
-    PGXP save-state flavor requirement.
-11. [FLICKER_EVIDENCE.md](FLICKER_EVIDENCE.md) records the alternating
-    black-pair cause and corrective scratch-buffer replay.
-12. [OPENXR_EVIDENCE.md](OPENXR_EVIDENCE.md) records the opt-in headset frame
-    lifecycle, native menu surface, headless pair checks, and timed compositor
-    capture.
-13. [HEAD_TURN_HUD_EVIDENCE.md](HEAD_TURN_HUD_EVIDENCE.md) records the 1080p
-    default, per-eye level visibility, side-view coverage, and rollback-scoped
-    removal of the flat HUD projection.
-14. [SKY_GHOST_EVIDENCE.md](SKY_GHOST_EVIDENCE.md) isolates the extra native
-    OT submission inside eye replay and records the same-binary correction,
-    both HUD packet buffers, and submitted application-layer proof.
-15. [MOVEMENT_EVIDENCE.md](MOVEMENT_EVIDENCE.md) records the reference control
-    mappings, Underground calibration, input checks, and operator save workflow.
+## Reference and retained evidence
 
-16. [FLAT_LOCAL_INPUT.md](FLAT_LOCAL_INPUT.md) records P1 Steam Controller /
-    separate P2 keyboard setup for operator save preparation.
+| Topic | Documents |
+|---|---|
+| Shared framework branches / upstream work | [FRAMEWORK_UPSTREAM_TRACKER](FRAMEWORK_UPSTREAM_TRACKER.md) |
+| Previous-game reuse / completed common work | [REFERENCE_REUSE_AUDIT](REFERENCE_REUSE_AUDIT.md), [CONSISTENCY_HANDOFF](CONSISTENCY_HANDOFF.md) |
+| Weapon bindings and profiles | [WEAPON_MAPPING](WEAPON_MAPPING.md), [WEAPON_COMPLETE_PROFILES](WEAPON_COMPLETE_PROFILES.md), [ALPHA_WEAPON_REPAIRS](ALPHA_WEAPON_REPAIRS.md) |
+| SP repairs / input | [SP_GAMEPLAY_REPAIRS](SP_GAMEPLAY_REPAIRS.md), [SP_NATIVE_HOOK_EVIDENCE](SP_NATIVE_HOOK_EVIDENCE.md), [FLAT_LOCAL_INPUT](FLAT_LOCAL_INPUT.md) |
+| Pause / native hand HUD | [PAUSE_MENU_PARITY](PAUSE_MENU_PARITY.md), [NATIVE_HAND_HUD](NATIVE_HAND_HUD.md) |
+| Disc provenance | [DISC_IMAGE_COMPARISON](DISC_IMAGE_COMPARISON.md) |
+| Muzzle / shot / surface ray | [RENDERED_MUZZLE_EVIDENCE](RENDERED_MUZZLE_EVIDENCE.md), [SHOT_LIFECYCLE_EVIDENCE](SHOT_LIFECYCLE_EVIDENCE.md) |
+| Older proposals and superseded reports | [archive index](archive/README.md) |
 
-17. [WEAPON_MAPPING.md](WEAPON_MAPPING.md) is the current working handoff for
-    multiplayer-first weapon pose mapping and its validation matrix.
-    [WEAPON_COMPLETE_PROFILES.md](WEAPON_COMPLETE_PROFILES.md) owns the all-ID
-    assembly masks, provisional calibrations and desktop control evidence.
+Other evidence reports remain to preserve measured bindings, math, failures
+and completed gates. Historical paths/NEXT pointers describe their capture date.
+Current HANDOFF/VR_PLAN/runbook take precedence. Compact receipts in `vr/proof/`
+are immutable historical evidence; bulk captures remain local under `analysis/`.
 
-The latest machine-ranked function candidates are in
-[ENGINE_EQUIVALENCE_REPORT.md](ENGINE_EQUIVALENCE_REPORT.md). They are
-discovery evidence only and must not be registered as hooks.
-
-## Source of truth
-
-The adjacent `Medal-Of-Honor-PSX-Recomp` checkout is the behavioral reference.
-Its `AGENTS_VR.MD`, `docs/reverse/VR_HANDOFF.md`,
-`docs/reverse/VR_PROJECTIVE_RENDERING.md`,
-`docs/reverse/VR_SLOT2_PERFORMANCE.md`, and current `vr/` sources take priority
-over historical plans and receipts.
-
-The framework owns generic render transactions, PGXP projection, OpenXR, and
-state restoration. Underground owns title-specific addresses, overlay identity,
-player/camera layouts, hooks, input policy, weapon profiles, and HUD content.
-`generated/` is generated output and must not be edited to implement VR.
-
-All VR implementation and diagnostic files live under root `vr/`. VR sources are
-wired only into opt-in `MOHU_VR_DIAGNOSTICS=ON` builds; the default target stays
-on the base flavor and links no VR source. The existing flat executable, its
-launcher, config, keys, and save path must remain launchable without a headset
-or VR environment variable.
-
-## Current state
-
-Use the current framework/UI pins in HANDOFF, not the historical baseline.
-Underground now has a
-fail-closed engine map under `vr/underground/` with twenty live or
-statically confirmed mappings, including the natural frame entry, PutDrawEnv,
-the scene draw bridge, the render wait, and the first-person draw path. The
-default flat build does not include them. `MOHU_VR_DIAGNOSTICS=ON` builds the
-opt-in diagnostic plugin.
-Frame-render replay now produces a byte-identical zero-offset pair and
-full-scene parallax pairs from a complete `PSXModRenderView`. Guest `DrawOTag`
-preserves packet provenance for PGXP homogeneous clipping, including a tested
-forward/downward near-plane pose. Render-scoped signed-NCLIP counters now
-receipt zero, lateral, pitch, and yaw poses with no precise-projection misses.
-The OT-only and frame-driver paths remain controls, not stereo evidence. The
-diagnostic plugin can now opt into OpenXR, obtain headset eye views, and submit
-the verified pair. Normal VR launch now uses 1080p internal rendering, per-eye
-world selection, and a temporary stereo-only suppression of the head-locked
-flat HUD. The operator confirmed the sky fix. Reference movement/button maps
-now run through the offline input source; physical headset movement, physical
-multiplayer transitions and the hand/wrist HUD remain active work. The operator's four
-multiplayer fixtures now have closed native inventory cycles and damage
-receipts for 13 weapons. Weapon-position work uses those fixtures and the
-stationary P2 target one weapon at a time; see
-[WEAPON_MAPPING.md](WEAPON_MAPPING.md) and
-[WEAPON_SET_EVIDENCE.md](WEAPON_SET_EVIDENCE.md).
-
-The real first-person seam and P1-only MP desktop eye renderer are verified for
-all 13 measured IDs. All IDs now have complete-gun masks, animated node captures,
-provisional calibration and moving-marker animation evidence; 64 calibrated MP
-controls pass in both eyes. Native recoil, reload, switch, scope and prop-action
-samples show that the tip must be recomputed after animation. W1 is
-complete for the P38 absolute synthetic head/hand
-coordinate contract and is not a mesh-hook search. W2.1 measured the native MP
-flat scene-list selector. W2.2 added its measured, separately guarded
-eye-frustum override and passed a zero-angle both-eye control. W2.3 passed
-zero, +/-90-degree and near-wall controls with populated world geometry,
-per-eye selector decisions and clean rollback. W2.4 then verified the
-separate MP converter, dispatcher, P1 action mask, axis records and response
-curve. W2.5 expanded that path to both signs of every movement axis, seven
-native button masks, focus recovery and native Start pause/resume, with zero
-input samples during eye replay. Isolated SP and OpenXR-off flat controls also
-pass. W3.1 then measured all 69 P38 node-13 vertices atomically, stored a
-provisional animated-model grip/muzzle/axis/scale contract and kept it inert in
-the renderer. C1-C4 and the shared ownership/test workflow are complete.
-Physical size/attachment, physical MP controls, tracked shot alignment, exact
-barrel laser and wrist HUD remain open under the ordered plan. See
-[WEAPON_CALIBRATION.md](WEAPON_CALIBRATION.md),
-[MP_LEVEL_SELECTOR_EVIDENCE.md](MP_LEVEL_SELECTOR_EVIDENCE.md),
-[MP_EYE_FRUSTUM_EVIDENCE.md](MP_EYE_FRUSTUM_EVIDENCE.md),
-[P38 pose receipt](../../vr/proof/weapon-pose-space-receipt.json) and
-[P38 calibration receipt](../../vr/proof/weapon-p38-calibration-receipt.json),
-[MP eye receipt](../../vr/proof/weapon-mp-eye-receipt.json).
+Do not recreate benchmark executable aliases in `build-release`, launch tests
+against personal saves, regenerate unchanged guest code, revisit the damaged
+disc, or start a fresh MP feature campaign while following old reports.

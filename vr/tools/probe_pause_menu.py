@@ -37,7 +37,7 @@ def main():
     out.mkdir(parents=True, exist_ok=False)
     slot = 3 if args.mode == 'sp' else 1
     state = 0x800A70F0 if args.mode == 'sp' else 0x800A0A84
-    source = ROOT / ('analysis/vr-baseline/saves' if args.mode == 'sp' else 'saves') / 'openbios'
+    source = ROOT / ('analysis/fixtures/sp' if args.mode == 'sp' else 'analysis/fixtures/mp') / 'openbios'
     target = out / 'saves/openbios'
     target.mkdir(parents=True)
     sources = list(source.glob(f'*slot{slot:02}.*'))

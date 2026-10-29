@@ -153,7 +153,7 @@ def main():
     with socket.socket() as s:s.bind(('127.0.0.1',4372))
     out=args.out.resolve();out.mkdir(parents=True,exist_ok=False)
     slot=3 if args.mode=='sp' else 1
-    source=ROOT/('analysis/vr-baseline/saves' if args.mode=='sp' else 'saves')/'openbios'
+    source=ROOT/('analysis/fixtures/sp' if args.mode=='sp' else 'analysis/fixtures/mp')/'openbios'
     target=out/'saves/openbios';target.mkdir(parents=True)
     hashes={str(f):n.digest(f) for f in source.glob(f'*slot{slot:02}.*')}
     for f in hashes:shutil.copyfile(f,target/Path(f).name)

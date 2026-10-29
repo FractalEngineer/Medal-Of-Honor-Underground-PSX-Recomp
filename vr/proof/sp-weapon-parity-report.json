@@ -1,0 +1,44 @@
+{
+  "schema": 1,
+  "date": "2026-10-29",
+  "operator_report": "petrol bomb and panzerfaust seem to have fixed aiming; we need to port all MP weapon calibrations to SP first",
+  "status": "reported, not reproduced or diagnosed",
+  "interpretation": "Apparent fixed/native-direction aiming rather than following the tracked hand; exact behavior unverified",
+  "weapons": [
+    {
+      "id": 15,
+      "name": "Petrol bomb",
+      "family": "thrown"
+    },
+    {
+      "id": 13,
+      "name": "Panzerfaust",
+      "family": "rocket"
+    }
+  ],
+  "affected_save_slots": null,
+  "reported_binary_sha256": null,
+  "reported_runtime": null,
+  "priority": "G7 complete all existing MP weapon calibration/control parity in SP FIRST; then G5 slot1, G6 slot2 and measured performance work",
+  "source_profile_ids": [
+    0,
+    1,
+    4,
+    5,
+    8,
+    9,
+    10,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17
+  ],
+  "source_lead": "mohu_vr_sp_firearm_type_valid supports single/repeating/bolt and excludes thrown/rocket; live final-writer cause is unverified",
+  "implementation_complete": false,
+  "game_launched": false,
+  "new_runtime_test": false,
+  "personal_saves_modified": false,
+  "scope_of_this_turn": "documentation and push only; prior authorized cleanup included in checkpoint"
+}

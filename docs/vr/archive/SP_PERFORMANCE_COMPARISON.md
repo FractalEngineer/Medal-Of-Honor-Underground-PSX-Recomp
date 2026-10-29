@@ -1,8 +1,10 @@
+> Archived evidence only. Use [HANDOFF](../HANDOFF.md), [VR_PLAN](../VR_PLAN.md) and the [current runbook](../PERFORMANCE_NEXT_STEPS.md). Old NEXT pointers, save/build paths and proposed steps below are historical.
+
 # SP performance comparison with the first game
 
 Historical 2026-10-28 comparative evidence, not the active task queue. Clean
 image activation and world/music/pause/Sten headset smoke are now accepted.
-Execute P3b/P3c through [PERFORMANCE_NEXT_STEPS.md](PERFORMANCE_NEXT_STEPS.md);
+Execute P3b/P3c through [PERFORMANCE_NEXT_STEPS.md](../PERFORMANCE_NEXT_STEPS.md);
 do not turn the remaining matched two-title dataset into another study that
 blocks the measured native replay work. Existing framework ports stay closed.
 
@@ -15,7 +17,7 @@ numbers below describe particular scenes; they do not replace that observation.
 Reference checkout:
 `C:/Users/titan/Desktop/Github_Projects/Mine/Medal-Of-Honor-PSX-Recomp`.
 Current reference HEAD `d82a5d0`, Underground HEAD `a8e6596`; working source and
-build hashes are in the [comparison receipt](../../vr/proof/sp-performance-comparison-receipt.json).
+build hashes are in the [comparison receipt](../../../vr/proof/sp-performance-comparison-receipt.json).
 Both checkouts already contain local changes. This audit leaves the reference
 checkout, binaries, settings, saves, framework and generated guest code unchanged.
 

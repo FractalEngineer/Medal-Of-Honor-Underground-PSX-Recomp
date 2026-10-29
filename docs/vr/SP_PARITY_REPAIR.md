@@ -175,5 +175,5 @@ do not match the operator's street-wall case. Do not tune distance/fog values
 until a correct fixture is available. A later operator-requested MP/SP physical
 batch ran; specific grenade orientation, scale, StG hand, high-shot and laser
 failures reopen calibration/visual acceptance. The current alpha-first order and
-runtime menu study are in [ALPHA_PLAYABILITY_AND_CALIBRATION.md](ALPHA_PLAYABILITY_AND_CALIBRATION.md),
+runtime menu study are in [ALPHA_PLAYABILITY_AND_CALIBRATION.md](archive/ALPHA_PLAYABILITY_AND_CALIBRATION.md),
 which supersedes the earlier physical-batch/W6 priority here.

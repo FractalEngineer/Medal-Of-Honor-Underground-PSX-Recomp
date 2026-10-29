@@ -16,8 +16,6 @@ Static recompilation of **Medal of Honor Underground** built on
 [psxrecomp](https://github.com/mstan/psxrecomp) and
 [recomp-ui](https://github.com/RetroPortingToolKit/recomp-ui).
 
-_Add a short pitch in catalog_identity.json / README._
-
 | | |
 |---|---|
 | Players | 2 |
@@ -25,8 +23,8 @@ _Add a short pitch in catalog_identity.json / README._
 | Publisher | - |
 | Year | - |
 
-Scaffolded with the New Project Layout. See
-`psxrecomp/docs/GAME_PROJECT_SETUP.md` for the full flow.
+For the current local VR alpha, start with [workspace and save locations](docs/vr/WORKSPACE_LAYOUT.md).
+Development status and the next implementation are in [HANDOFF](docs/vr/HANDOFF.md).
 
 <!-- retcomm-readme-launcher -->
 ## Retro Launcher
@@ -71,32 +69,43 @@ Optional box art under `launcher_assets/img/` may come from
 
 ```bash
 git submodule update --init --recursive
-./psxrecomp/tools/ci/build_emitters.sh
-python3 psxrecomp/psxrecomp_cli.py generate \
-  --config game.toml --project-root . --disc disc/<your>.cue
-git add generated && git commit -m "Regenerate game C"
 cmake -S . -B build-release -G Ninja -DCMAKE_BUILD_TYPE=Release \
-  -DMOHU_VR_DIAGNOSTICS=ON -DPSX_OPENXR=ON -DPSX_DEBUG_TOOLS=OFF
-cmake --build build-release --target psx-runtime
+  -DMOHU_VR_DIAGNOSTICS=ON -DPSX_OPENXR=ON -DPSX_DEBUG_TOOLS=OFF \
+  -DMOHU_VR_NATIVE_PROFILE=OFF -DPSX_RUNTIME_IPO=OFF
+cmake --build build-release --target psx-runtime -j 2
 ```
+
+The generated game C is already committed; ordinary builds do not regenerate it.
 
 ## Launchers
 
 The repository uses one active build directory, `build-release`, for flat and
 VR launches:
 
-- `RunFlat.bat` clears VR environment variables and starts flat mode.
+- `RunFlat.bat` clears VR environment variables and uses the same playable
+  executable as VR: `build-release/Medal_of_Honor_Underground_Recompiled.exe`.
 - `RunVR-VDXR.bat`, `RunVR-Oculus.bat`, and `RunVR-SteamVR.bat` select and pin
   the corresponding OpenXR runtime.
-- `RunVR-SteamVR.bat -Headless` uses SteamVR's null HMD for no-headset OpenXR
-  acceptance, then restores SteamVR's settings and stops the runtime.
+- **All normal launchers use the same root `saves/` folder**, including memory
+  cards and `saves/openbios/state_8001F844_slotNN.pst` plus thumbnails. A save
+  created in VR is available in flat mode at the same slot number.
+- Runtime logs/dumps go to `analysis/runtime/flat` or `analysis/runtime/vr`.
+- `RunVR-SteamVR.bat -Headless` is an automated diagnostic mode: it requires
+  explicit `-MemcardDirectory` pointing to a disposable fixture copy, restores
+  SteamVR settings and stops its owned runtime. It does not select personal saves.
 - VR launchers default to a normal boot (`-Slot -1`); pass an explicit
   `-Slot N` to load a savestate or `-Build` to rebuild `build-release` before
   launch. The default visual-scale profile is `-IPDmm 67 -WorldScale 3`.
+  Project slot references are internal indices: slot 1 uses `-Slot 1` / `slot01`.
 - Eye replay uses a rollback-protected `y=0` scratch buffer so the game's
   double-buffered display origin cannot produce alternating black frames.
 - Additional PowerShell options such as `-Seconds`, `-GameConfig`, and
   `-MemcardDirectory` can be passed through the `.bat` wrappers.
+
+Old benchmark executables and the retired flat-check build were archived under
+`analysis/archive/workspace-cleanup-20261029`; they are not alternate launchers.
+Frozen SP/MP fixtures live under `analysis/fixtures/`. See
+[WORKSPACE_LAYOUT](docs/vr/WORKSPACE_LAYOUT.md) for the migration and backup map.
 
 Releases: tag `vX.Y.Z` (or run the *Release builds* workflow). CI builds the
 committed `generated/` C on Linux, Windows and macOS and attaches

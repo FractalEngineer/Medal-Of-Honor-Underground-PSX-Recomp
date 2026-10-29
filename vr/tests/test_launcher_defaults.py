@@ -22,6 +22,26 @@ class LauncherDefaultsTest(unittest.TestCase):
         self.assertIn("$GameConfig = Join-Path $repoRoot 'game.toml'", block.group(1))
         self.assertNotIn('game-interp.toml', block.group(1))
 
+    def test_flat_and_vr_share_explicit_user_saves(self) -> None:
+        script = LAUNCHER.read_text(encoding='utf-8')
+        flat = (ROOT/'RunFlat.bat').read_text(encoding='utf-8')
+        self.assertIn("$MemcardDirectory = Join-Path $repoRoot 'saves'", script)
+        self.assertIn('--memcard-dir "%~dp0saves"', flat)
+        self.assertNotIn('$diagnosticSaves', script)
+        self.assertNotIn('analysis\\vr-baseline\\saves', script)
+        self.assertIn('Headless diagnostics require -MemcardDirectory', script)
+        self.assertNotIn('$ExecutableName', script)
+
+    def test_automated_sources_are_fixtures_not_personal_saves(self) -> None:
+        # Prevent a future cleanup/launcher change from turning operator saves
+        # into implicit test input or a writable diagnostic destination again.
+        for name in ('inspect_weapon_sets.py','probe_p38_headset.py','profile_sp_production.py',
+                     'probe_sp_issues.py','probe_sp_performance.py','run_headset_batch.py'):
+            text = (ROOT/'vr/tools'/name).read_text(encoding='utf-8')
+            with self.subTest(tool=name):
+                self.assertNotIn('analysis/vr-baseline/saves', text)
+                self.assertNotRegex(text, r'''ROOT\s*/\s*f?["']saves/openbios''')
+
     def test_flat_launch_clears_weapon_experiment_activation(self) -> None:
         script = (ROOT / "RunFlat.bat").read_text(encoding="utf-8")
         cleared = re.search(r"for %%V in \((.*?)\) do set", script, re.S)

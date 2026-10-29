@@ -260,7 +260,7 @@ def main():
     for suffix in ("pst", "thumb"):
         source = (
             native.ROOT
-            / f"saves/openbios/state_8001F844_slot01.{suffix}"
+            / f"analysis/fixtures/mp/openbios/state_8001F844_slot01.{suffix}"
         )
         sources.append(source)
         shutil.copyfile(source, copies / source.name)

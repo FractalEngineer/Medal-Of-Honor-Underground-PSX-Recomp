@@ -131,7 +131,7 @@ def verify_muzzle(shot, motion):
 
 
 def source_hashes():
-    paths = [ROOT / f"saves/openbios/state_8001F844_slot01.{ext}"
+    paths = [ROOT / f"analysis/fixtures/mp/openbios/state_8001F844_slot01.{ext}"
              for ext in ("pst", "thumb")]
     paths += [path for path in comparison.preference_paths() if path.is_file()]
     return {str(path): native.digest(path) for path in paths}
@@ -308,7 +308,7 @@ def main():
     copies = out / "saves/openbios"
     copies.mkdir(parents=True)
     for ext in ("pst", "thumb"):
-        source = ROOT / f"saves/openbios/state_8001F844_slot01.{ext}"
+        source = ROOT / f"analysis/fixtures/mp/openbios/state_8001F844_slot01.{ext}"
         shutil.copyfile(source, copies / source.name)
     before_hashes = source_hashes()
     executable = ROOT / "build-release/Medal_of_Honor_Underground_Recompiled.exe"

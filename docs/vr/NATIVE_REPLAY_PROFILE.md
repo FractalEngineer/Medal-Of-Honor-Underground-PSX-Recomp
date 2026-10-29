@@ -1,5 +1,10 @@
 # Native replay attribution and compiler controls
 
+Workspace cleanup note: paths/benchmark launch overrides in this report describe
+the capture date. Retired executables are preserved under
+`analysis/archive/workspace-cleanup-20261029/retired-executables`. Normal launchers
+now share root saves and one standard executable; see [WORKSPACE_LAYOUT](WORKSPACE_LAYOUT.md).
+
 2026-10-29 continuation. P3b is complete. P3c remains open: **no compiler
 candidate is promoted and no headset performance improvement is certified**.
 The accepted clean-disc, pause and Sten behavior remains the baseline.
@@ -114,6 +119,7 @@ builder. Do not begin another outer-wrapper/visibility/renderer comparison.
 Diagnostic reproduction and production restore commands live in the current
 [runbook](PERFORMANCE_NEXT_STEPS.md). The optional native timers are title-owned,
 debug-only, Windows GNU-ABI link wrappers and absent from production. No new
-function-entry hooks or generated guest edits are needed. `-ExecutableName`
-on the existing launcher only supports preserved benchmark binaries beside
-the normal assets; all existing RunVR batch defaults are unchanged.
+function-entry hooks or generated guest edits are needed. The benchmark-only
+`-ExecutableName` / profiler `--exe` launch overrides used for these controls
+were removed during workspace cleanup. The offline symbol tool's `--exe`
+remains read-only and can resolve the preserved profile binary from the archive.

@@ -16,7 +16,7 @@ import probe_p38_headset as p
 def main():
     a=argparse.ArgumentParser(description=__doc__)
     a.add_argument('out',type=Path)
-    a.add_argument('--source',type=Path,default=ROOT/'analysis/vr-baseline/saves')
+    a.add_argument('--source',type=Path,default=ROOT/'analysis/fixtures/sp')
     a.add_argument('--slot',type=int,default=3)
     a.add_argument('--seconds',type=int,default=32)
     a.add_argument('--config',type=Path,default=ROOT/'analysis/vr-baseline/game-interp.toml')

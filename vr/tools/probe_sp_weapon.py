@@ -26,7 +26,7 @@ def overlay_native_summary(response):
 def main():
     a = argparse.ArgumentParser()
     a.add_argument('out', type=Path)
-    a.add_argument('--source', type=Path, default=ROOT/'analysis/vr-baseline/saves')
+    a.add_argument('--source', type=Path, default=ROOT/'analysis/fixtures/sp')
     a.add_argument('--slot', type=int, default=3)
     a.add_argument('--native', action='store_true')
     a.add_argument('--verify', action='store_true')

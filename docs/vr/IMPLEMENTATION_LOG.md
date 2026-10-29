@@ -1,5 +1,79 @@
 # VR Port Implementation Log
 
+## 2026-10-29 — operator puts complete SP weapon parity first; document/push only
+
+- Operator reports apparent fixed aiming for petrol bomb and Panzerfaust and
+  explicitly requests all MP weapon calibrations ported to SP first. Recorded
+  as open/unverified aiming behavior, not successful repairs, with no save-slot
+  attribution or new trajectory/FPS claim. No game run or implementation here.
+- Added G7a–G7f and SP_WEAPON_PARITY: reuse the 13 current MP profiles/algorithms,
+  audit existing SP consumption rather than duplicating data, complete firearm,
+  thrown and rocket final-writer adapters, and qualify the whole reachable SP
+  matrix with honest unavailable/failed cases. Existing SP firearm type guards
+  exclude thrown/rocket; that is a source lead, not a diagnosed runtime cause.
+- Handoff/plan/weapon mapping/index/performance and regression documents now
+  agree: G7 FIRST, then G5 slot-1 world correctness, G6 slot-2 measured performance
+  and the conditional optimization/fresh-view route. A specific rendering
+  prerequisite may unblock one weapon test; it is not a broad performance-first
+  detour. Slots remain the operator's internal indices 1/2 throughout.
+- Push checkpoint also carries the already-authorized workspace/save cleanup
+  and documented slot-1/2 reports. No new code/game/build work was started for
+  the latest document-and-push request. Personal saves, active game binary,
+  framework/generated sources and unrelated `.commandcode/` remain untouched.
+
+## 2026-10-29 — record new personal SP slot-1/2 regressions
+
+- Operator reports missing level rendering again in personal SP slot 1 and
+  severe performance in slot 2. Added open G5/G6 with explicit reproduction,
+  correctness, baseline and target-selection gates. No game was launched and
+  no new root cause, measured FPS or fix is claimed by this documentation turn.
+- Operator clarified that slot references have meant internal/file/tool indices
+  1/2 throughout. The temporary display-based reinterpretation was corrected;
+  no historical references were renumbered. Snapshotted `slot01`/`slot02` into the
+  existing SP library, verified hashes and left personal saves unchanged. New compact
+  receipt distinguishes observed on-disk identities from the unknown exact
+  binary/runtime used for the report. MP slot numbers and old SP slot 5 are
+  explicitly different cases. Historical receipts were not rewritten.
+- Updated handoff/plan/runbook/index/layout: classify slot 1 with native Flat
+  versus stereo and actual world evidence first; baseline slot 2 with world
+  present, then confirm the optimization target. Earlier preflight work remains
+  the candidate route if supported by the new workload. No disc/culling cause
+  is assumed; no broad headset smoke or rejected compiler sweep is requested.
+
+## 2026-10-29 — unify personal saves and clean the working directory
+
+- Root cause: normal RunVR silently preferred `analysis/vr-baseline/saves`,
+  while RunFlat used root `saves`. The operator's new VR slots were stored in
+  the former tree; this was a launcher-path split, not a per-executable state
+  identity change. Both launchers now pass the same absolute root save path,
+  select the standard playable executable and print both locations.
+- Promoted all current VR slots 0–6, thumbnails and cards to root `saves`.
+  Preserved every original Flat file before overlap replacement and retained
+  the complete old VR store. The VR card with progress was retained even though
+  the blank old Flat cards had newer write timestamps. Hashes checked; no save
+  headers, guest data or executable bytes edited.
+- Archived three benchmark binaries/six binary-manifest files in total, nine
+  compiled test executables, `build-flat-check`, and five root runtime dumps
+  under `analysis/archive/workspace-cleanup-20261029`. Primary executable and
+  dependencies are unchanged. Future runtime dumps/logs use `analysis/runtime`.
+- Frozen SP slots 3/4/5 and old MP slots 0–4 are now explicit sources under
+  `analysis/fixtures/sp` and `analysis/fixtures/mp`. Updated probes to copy those
+  into disposable outputs. Fixed older movement/sky/flat diagnostic tools that
+  relied on implicit shared saves. Headless RunVR requires a supplied save copy.
+- Removed benchmark executable-name launch overrides; offline archived-binary
+  symbol inspection remains available. No alternate personal build/save trees
+  are selected automatically. New execution-family comparisons still need
+  explicitly isolated full builds and valid fixture selection support.
+- Archived four superseded handoff/study/performance reports and repaired
+  relative links. Rewrote the current index, corrected stale source/build
+  guidance, and added WORKSPACE_LAYOUT as the authoritative path/recovery map.
+  Historical receipts retain their original provenance; no new FPS/headset or
+  gameplay acceptance is claimed by cleanup. No performance implementation.
+- 134 Python tests pass, including shared save-route regression checks; all
+  47 Python tools parse. Recovery/primary-binary/fixture checks and the compact
+  cleanup receipt record the final filesystem state. Unrelated `.commandcode/`,
+  the reference checkout, framework source/pin and disc data are untouched.
+
 ## 2026-10-29 — explicit performance implementation sequence and delivery
 
 - Expanded HANDOFF/VR_PLAN/runbook with matching P3c2–P3c6 checkboxes:
@@ -1758,7 +1832,7 @@ source saves, defaults, historical receipts and unrelated `.commandcode/`.
   calibration menu, accurate laser or omit it, essential HUD, then a focused
   gameplay/recovery/performance route and debug-off alpha package. Fog needs its
   correct fixture; wrist polish and broad optional features can follow alpha.
-- See [the study](ALPHA_PLAYABILITY_AND_CALIBRATION.md). No code, build, source
+- See [the study](archive/ALPHA_PLAYABILITY_AND_CALIBRATION.md). No code, build, source
   saves/preferences, framework pins or reference-game files changed in this task.
 
 ## 2026-10-28 - Make alpha continuation explicitly port-first
@@ -1950,7 +2024,7 @@ source saves, defaults, historical receipts and unrelated `.commandcode/`.
   45s cleanup. The clean rerun preserves saves/preferences and exits 0.
 - 127 Python tests and strict C weapon tests pass. P38 fire/reload/load/native
   call/visibility/rollback regression passes. Production debug-OFF restored.
-  [Current report](SP_PERFORMANCE_AND_PETROL.md) and
+  [Current report](archive/SP_PERFORMANCE_AND_PETROL.md) and
   [compact receipt](../../vr/proof/sp-performance-petrol-receipt.json) preserve
   exact sources, binaries, accepted controls, failed cleanup and remaining
   60/90 render-cost/cadence work. Do not interpret guest VBlank or repeated
@@ -1977,7 +2051,7 @@ source saves, defaults, historical receipts and unrelated `.commandcode/`.
   attribution targets, not proven causes of the entire gap. The full frame
   wrapper structurally mirrors the first game's selected draw stages; it is
   not proof of duplicated simulation/traversal.
-- [Comparison report](SP_PERFORMANCE_COMPARISON.md) ranks native geometry/packet
+- [Comparison report](archive/SP_PERFORMANCE_COMPARISON.md) ranks native geometry/packet
   profiling, explicit draw-stage attribution, HUD synchronization and measured
   guard caching, then safe fresh-view pacing. Existing host/phase/guest-cycle
   profilers should be reused; native DLL addresses need proper attribution.

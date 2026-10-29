@@ -19,7 +19,7 @@ def main():
     copies = out / "saves/openbios"
     copies.mkdir(parents=True)
     for suffix in ("pst", "thumb"):
-        source = native.ROOT / f"saves/openbios/state_8001F844_slot01.{suffix}"
+        source = native.ROOT / f"analysis/fixtures/mp/openbios/state_8001F844_slot01.{suffix}"
         shutil.copyfile(source, copies / source.name)
     if native.game_pids():
         raise RuntimeError("existing game before head worker")
