@@ -62,7 +62,7 @@ static void build_level(void) {
     put_word(NODE_LEAF_B + 24u, STRIP_B);
 
     put_word(STRIP_A, (1u << 16) | 0u);
-    put_word(STRIP_A + 4u, 2u);
+    put_word(STRIP_A + 4u, (0x00CFu << 16) | 2u);
     put_word(STRIP_A + 8u, (1u << 13) | 3u);
     put_word(STRIP_A + 12u, 0x8000u);
     put_word(STRIP_A + 16u, 0x1fffu);
@@ -117,6 +117,9 @@ static void test_full_decode(void) {
     assert(!mesh.triangles[0].is_extension && mesh.triangles[0].extension_word == 0u);
     assert(mesh.triangles[0].source_address == STRIP_A);
     assert(mesh.triangles[0].base_word[0] == ((1u << 16) | 0u));
+    assert(mesh.triangles[0].record_index == 0x00CFu);
+    assert(mesh.triangles[1].record_index == 0x00CFu);
+    assert(mesh.triangles[3].record_index == 0u);
     assert(mesh.triangles[1].is_extension);
     assert(mesh.triangles[1].extension_word == ((1u << 13) | 3u));
     assert(mesh.triangles[1].render_flags == 1u);

@@ -14,7 +14,7 @@ This document records the agreed architecture and execution gates. Read [HANDOFF
 | Milestone | State | Evidence / remaining blocker |
 | --- | --- | --- |
 | M0: baseline and measurement contract | In progress | Two scenes: canonical-only real-time (~60 Hz, 41% work interval); stereo 21.95–27.68 pairs/s, native clock below nominal, 96% work interval. Snapshot/async-GPU spans and alternating matched windows open |
-| M1: static-world resource decoder | In progress | Geometry/topology decoder, snapshot cache, conservative per-eye selection + named rejections landed; material mapping and reference captures open |
+| M1: static-world resource decoder | In progress | Decoder/cache/selection landed; real packet/face capture proves the 12-byte record is six parameter halves, not a material descriptor. Texture page/CLUT and decoded-vs-captured tree counts open |
 | M2: host GPU static-scene rendering | In progress | Host reference transform/projection + real-view adapter landed; retained GPU buffers, shaders, ordering and separated-eye visual/performance gates open |
 | M3: complete dynamic scene snapshots | Not started | All encountered producer families |
 | M4: GPU HUD and resource transport | Not started | Existing HUD/pause restoration regression remains open |
@@ -30,6 +30,7 @@ This document records the agreed architecture and execution gates. Read [HANDOFF
 | 2026-10-30 | M1 geometry/topology decoder + strict fixture | [STATIC_WORLD_DECODER](STATIC_WORLD_DECODER.md); `world_decode.c`, `test_world_decode.c`, 155 Python tests pass | Map real `80010CF0` materials, then compare an arena capture |
 | 2026-10-30 | M1 snapshot cache: identity+generation key, source-span fingerprint revalidated once per snapshot | Same fixture; cache tests cover hit/revalidate/stale/generation/reset | Wire a default-OFF native census for the real arena root/generation |
 | 2026-10-30 | M1 conservative per-eye selection over retained geometry | `world_select.c` + fixture; rotated/translated/UNKNOWN/budget controls | Compare selection counts against a native eye capture |
+| 2026-10-30 | M1 real `80010CF0`/`80011424` capture (slots 2 and 5) | [receipt](../../vr/proof/sp-world-capture-receipt.json); caller/range/level/root/table confirmed, `record_index` = base word 1 upper half, 12-byte record = six 16-bit fields (not material) | Map texpage/CLUT fields and dump the full tree for a count comparison |
 | 2026-10-30 | M2 host reference transform/projection + `PSXModRenderView` adapter + screen draw list | `world_project.c` + fixture; exact coords, near clip, triangle/quad triangulation, guards | Add retained GPU buffers/shaders and compare projected output against a native capture |
 | 2026-10-30 | M0 baseline: three production slot-2 windows with `--runtime-perf` | [receipt](../../vr/proof/m0-baseline-receipt.json); 21.95–23.41 pairs/s, native VBlank 43.9–46.8 Hz | Add canonical/snapshot/async-GPU spans; capture a second scene |
 | 2026-10-30 | M0 canonical-only control on the same slot-2 scene | Same receipt; native 60.00 Hz, work interval 41% vs stereo 96%, pacer 58% vs ~0.8% | Run canonical/stereo alternating; then add snapshot/async-GPU spans |

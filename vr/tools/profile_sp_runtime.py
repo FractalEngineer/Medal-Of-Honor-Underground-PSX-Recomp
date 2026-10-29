@@ -24,6 +24,10 @@ def main():
     a.add_argument('--require-native',action='store_true')
     a.add_argument('--canonical-only',action='store_true',
                    help='Disable stereo/hand paths: measure native canonical cadence only')
+    a.add_argument('--capture',type=Path,
+                   help='Arm the default-OFF 80010CF0/80011424 world capture at this file')
+    a.add_argument('--capture-draws',type=int,default=3)
+    a.add_argument('--capture-faces',type=int,default=32)
     args=a.parse_args()
     if not 25<=args.seconds<=60:raise ValueError('seconds must be 25..60')
     config=args.config.resolve()
@@ -46,6 +50,12 @@ def main():
                  'PSX_VR_SUPPRESS_FLAT_HUD','PSX_VR_LASER','PSX_VR_WEAPON_POSE'):
       env.pop(key,None)
     env.update(PSX_OPENXR_ENABLE='0',PSX_LOAD_SLOT=str(args.slot),PSX_RENDER_PASS_VERIFY='0',PSX_RUNTIME_PERF_DIAG='1',PSX_RUNTIME_PERF_DIAG_MS='1000',PSX_FRAME_REPORT_MS='1000',PSX_INTERNAL_RESOLUTION='1080p',PSX_BENCH_WINDOW=args.bench_window,SDL_AUDIODRIVER='dummy')
+    if args.capture:
+     if not 1<=args.capture_draws<=8 or not 1<=args.capture_faces<=128:
+      raise ValueError('capture draws must be 1..8 and faces 1..128')
+     env.update(MOHU_SP_WORLD_CAPTURE=str(args.capture.resolve()),
+                MOHU_SP_WORLD_CAPTURE_DRAWS=str(args.capture_draws),
+                MOHU_SP_WORLD_CAPTURE_FACES=str(args.capture_faces))
     exe=ROOT/'build-release/Medal_of_Honor_Underground_Recompiled.exe'
     r=dict(schema=1,binary_sha256=n.digest(exe),config=str(config.relative_to(ROOT)),config_sha256=n.digest(config),build=p.build_configuration(ROOT/'build-release/CMakeCache.txt'),environment={k:v for k,v in env.items() if k.startswith(('MOHU','PSX','SDL_AUDIO'))},source_hashes=hashes,headset_acceptance=False,mode=('hidden SDL window, no XR, canonical native only; stereo/hand paths disabled' if args.canonical_only else 'hidden SDL window, no XR, native fallback hand; matched build-overhead control'),canonical_only=args.canonical_only,require_native=args.require_native,samples=[],cadence_samples=[])
     with (out/'stdout.log').open('w') as log,(out/'stderr.log').open('w') as err:

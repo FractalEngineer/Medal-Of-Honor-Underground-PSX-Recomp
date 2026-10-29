@@ -89,6 +89,7 @@ static MohuWorldStatus append_triangle(MohuWorldMesh *mesh, uint32_t limit,
         return reject(report, report->status, source_address, report->leaf,
                       mesh->triangle_count + 1u);
     MohuWorldTriangle *t = &mesh->triangles[mesh->triangle_count++];
+    memset(t, 0, sizeof *t);
     for (unsigned i = 0; i < 3; ++i) {
         t->vertex[i] = idx[i];
         include_bounds(mesh, &mesh->vertices[idx[i]]);
@@ -96,6 +97,7 @@ static MohuWorldStatus append_triangle(MohuWorldMesh *mesh, uint32_t limit,
     t->source_address = source_address;
     t->base_word[0] = base_word[0];
     t->base_word[1] = base_word[1];
+    t->record_index = (uint16_t)(base_word[1] >> 16);
     t->extension_word = extension_word;
     t->render_flags = render_flags;
     t->winding_swapped = (uint8_t)(winding_swapped ? 1 : 0);

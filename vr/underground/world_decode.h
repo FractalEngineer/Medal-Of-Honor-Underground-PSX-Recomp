@@ -15,9 +15,12 @@
  *
  * MATERIALS ARE NOT DECODED. Every triangle retains the source words, but
  * `materials_decoded` stays 0 until the packet/preflight/subdivision bodies'
- * material fields are captured and mapped. Textured rendering must refuse this
- * mesh rather than guess. Unsupported or malformed input rejects the whole
- * decode with a named status; faces are never silently dropped.
+ * material fields are captured and mapped. The upper half of the second base
+ * word is captured as `record_index`; a real slot-2 capture resolved that
+ * index to a 12-byte table of three 16-bit UV pairs, so it is not a material
+ * descriptor. Textured rendering must refuse this mesh rather than guess.
+ * Unsupported or malformed input rejects the whole decode with a named status;
+ * faces are never silently dropped.
  */
 
 #define MOHU_WORLD_MAX_VERTICES   8192u
@@ -54,7 +57,8 @@ typedef struct {
 typedef struct {
     uint32_t vertex[3];       /* indices into MohuWorldMesh.vertices */
     uint32_t source_address;  /* guest word that introduced this triangle */
-    uint32_t base_word[2];    /* undecoded base material token */
+    uint32_t base_word[2];    /* raw base words; upper half of [1] is below */
+    uint16_t record_index;    /* upper half of base_word[1]: per-face UV record */
     uint32_t extension_word;  /* 0 for a base triangle */
     uint16_t render_flags;    /* extension bits 13..14; 0 when not decoded */
     uint8_t winding_swapped;  /* extension bit 15 */

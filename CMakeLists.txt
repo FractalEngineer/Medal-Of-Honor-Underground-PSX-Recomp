@@ -29,6 +29,12 @@ option(MOHU_VR_PREFLIGHT_HARNESS "Isolated native/host preflight caller comparis
 option(MOHU_VR_HOST_PREFLIGHT "Build-selected host preflight for render-only eye passes (experimental)" OFF)
 option(MOHU_VR_PACKET_HARNESS "Isolated native/host packet comparisons (diagnostic only)" OFF)
 option(MOHU_VR_HOST_PACKET "Batch native packet CPS segments in render-only passes (experimental)" OFF)
+option(MOHU_VR_WORLD_CAPTURE "Link-wrap 80010CF0/80011424 for the default-OFF SP world capture (diagnostic only)" OFF)
+if(MOHU_VR_WORLD_CAPTURE AND
+   (MOHU_VR_NATIVE_PROFILE OR MOHU_VR_PACKET_HARNESS OR
+    MOHU_VR_PREFLIGHT_HARNESS OR MOHU_VR_HOST_PACKET))
+    message(FATAL_ERROR "World capture wraps 80010CF0/80011424 and cannot share those diagnostic wrappers")
+endif()
 include("${PSXRECOMP_ROOT}/runtime/runtime.cmake")
 
 # This project's own mod catalog. The FRAMEWORK stages it -- together with its
@@ -130,9 +136,17 @@ if(MOHU_VR_DIAGNOSTICS)
         "${CMAKE_CURRENT_SOURCE_DIR}/vr/underground/world_decode.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/vr/underground/world_select.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/vr/underground/world_project.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/vr/underground/world_capture.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/vr/underground/weapon.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/vr/underground/hud.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/vr/underground/vr_diagnostic.c")
+    if(MOHU_VR_WORLD_CAPTURE)
+        target_sources(psx-runtime PRIVATE
+            "${CMAKE_CURRENT_SOURCE_DIR}/vr/underground/world_capture_wrap.c")
+        target_link_options(psx-runtime PRIVATE
+            "-Wl,--wrap=func_80010CF0"
+            "-Wl,--wrap=func_80011424")
+    endif()
     if(MOHU_VR_PACKET_HARNESS)
         if(NOT WIN32 OR MSVC OR NOT PSX_DEBUG_TOOLS OR MOHU_VR_NATIVE_PROFILE)
             message(FATAL_ERROR "Packet harness requires Windows GNU ABI, debug tools, native timers OFF")

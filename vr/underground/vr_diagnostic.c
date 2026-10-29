@@ -15,6 +15,7 @@
 #include "weapon.h"
 #include "weapon_markers.h"
 #include "rendered_muzzle.h"
+#include "world_capture.h"
 #include "gpu_gl_renderer.h"
 #include "mod_plugins.h"
 #include "frame_trace.h"
@@ -4932,6 +4933,7 @@ static void vr_diagnostic_activate(void) {
     g_marker_enabled=g_marker_frozen=g_marker_pending=false;
     memset(&g_marker_cache,0,sizeof g_marker_cache);
     g_active = true;
+    mohu_world_capture_activate();
     const char* clear_only = getenv("MOHU_VR_CLEAR_ONLY");
     g_clear_only = clear_only && *clear_only && *clear_only != '0';
     const char* skip_submit = getenv("MOHU_VR_SKIP_FINAL_SUBMIT");
@@ -5219,6 +5221,7 @@ static void vr_diagnostic_activate(void) {
 }
 
 PSX_MOD_CONSTRUCTOR(psx_register_mohu_vr_diagnostic_plugin) {
+    mohu_world_capture_register();
     (void)psx_mod_register_activation_plugin(
         MOHU_VR_DIAG_PLUGIN_ID, vr_diagnostic_activate);
     (void)psx_mod_register_vblank_plugin(

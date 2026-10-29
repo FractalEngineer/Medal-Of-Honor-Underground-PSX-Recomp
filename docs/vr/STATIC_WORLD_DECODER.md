@@ -27,8 +27,11 @@ Base/index masking and extension winding (`bit 15`) match
 
 `MohuWorldMesh` owns a copied vertex table and a deterministic triangle array.
 Each triangle carries its three vertex indices, the guest word that introduced
-it, the raw base words, the extension word, winding and render flags. Bounds are
+it, the raw base words, the upper 16 bits of the second base word as
+`record_index`, the extension word, winding and render flags. Bounds are
 reported twice: referenced-vertex bounds and the accepted leaf-box union.
+`record_index` is captured evidence (below), not a material and not resolved by
+the decoder.
 
 Decoding is complete for a root: leaves beyond the native camera view are
 included, nothing is projected or culled, and no GPU/VRAM state is touched.
@@ -57,10 +60,10 @@ next acquire/reset/free.
 ## Materials are not decoded
 
 `materials_decoded` is always `0`. Raw tokens are retained so the next step can
-map them without re-walking guests. Textured output must refuse this mesh:
-the packet/preflight/subdivision material fields have not been captured and
-mapped yet. Do not infer materials from the 8-byte index words — they contain
-no material fields.
+map them without re-walking guests. Textured output must refuse this mesh: the
+packet/preflight/subdivision material fields have not been captured and mapped
+yet. The 8-byte index words carry vertex indices and `record_index`, not a
+material descriptor.
 
 ## Per-eye selection
 
@@ -97,19 +100,39 @@ This is a deterministic CPU reference/comparison path. It is not the GPU
 renderer and does not yet carry textures, ordering, subdivision or PGXP
 precision.
 
-## Material leads (unverified — do not implement from this alone)
+## Captured packet/face inputs (2026-10-30)
 
-A static read of `80010CF0` shows a per-face loop that reads `half[face+6]`,
-scales it by 12, adds a table base loaded from scratch `0x1F8003E8`, then
-reads `word[+0]`, `word[+4]` and `half[+8]` into `gpr[20]`, `gpr[21]`, `gpr[1]`.
-That is a plausible 12-byte face/material record. `gpr[23] = face + 8` is
-established just before the `80011424` call, matching the documented `$s7`
-face pointer. A second table at `gpr[27]+0xD8`/`+0xDC` and a 40-entry compare
-at `0x80010F7C` are still unmapped.
+The earlier static lead was correct about the addressing but wrong about the
+payload. Two real captures (slots 2 and 5, three draws and 32 faces each)
+prove the following; the receipt is
+[`vr/proof/sp-world-capture-receipt.json`](../../vr/proof/sp-world-capture-receipt.json).
 
-None of this has been tied to packet output or verified against a capture, so
-it is a lead for the next session, not a decoder field. The material mapping
-still requires the captured fixture the plan demands.
+Method: `MOHU_VR_WORLD_CAPTURE` is a default-OFF diagnostic link-wrap build,
+because the generated CPS bodies only call `psx_mod_function_entry` for the
+`game.toml` list. `MOHU_SP_WORLD_CAPTURE=<file>` arms a bounded dump of the
+`0x80010CF0` entry (`ra=0x8009A51C`, `a0=begin`, `a1=limit`, `s2=level`) and
+the `0x80011424` entry (`ra=0x80011008`, `s7=face+8`). Normal builds do not
+contain the wrappers; the arm callback and flush command are inert without the
+environment variable.
+
+| Native read | Captured value | Proven meaning | Status |
+|---|---|---|---|
+| `ra` at `80010CF0` | `0x8009A51C` | real caller return | confirmed |
+| `a0`, `a1` | `0x80138390`, `0x80144FA7` | packet range, identical on both scenes | confirmed |
+| `s2` level `+8/+0x2C/+0x3C` | sub/table/count | same layout the decoder reads (slot 2 draw 0: root `0x8010BA48`, 1444 vertices, table `0x8010FE4C`) | confirmed |
+| `half[face+6]` | upper 16 bits of base word 1 | record index (e.g. `207`) | confirmed |
+| `word[0x1F8003E8]` | runtime pointer, e.g. `0x801259BC` | per-draw record-table base | confirmed |
+| table `+ index*12` | six 16-bit fields | per-face parameter record; packet body writes the low halves at packet `+0x38/+0x3C/+0x40` and the high halves through other fields after adding a base | structure confirmed |
+| `gpr[27]+0xD8/+0xDC` | `0x0B`, `0x0` | read before the 40-entry compare at `0x80010F7C` | value captured, meaning open |
+| texture page / CLUT / shading / semi-transparency | absent | not in the 12-byte record | open |
+
+**Correction:** the 12-byte record is not a material descriptor. Whether each
+half is a UV, a coordinate delta or another parameter is still unproven, so it
+is deliberately not named. Do not use these fields to select a texture.
+
+Still open: the packet/preflight fields that carry texture page, CLUT, shading
+and semi-transparency, and a full tree/vertex dump to compare decoded triangle
+counts, winding and bounds against the captured arena.
 
 ## Rejections (atomic, named)
 
@@ -125,10 +148,11 @@ the 8192-node budget.
 
 `vr/tests/test_world_decode.c` (compiled and run by
 `vr/tests/test_world_decode_fixture.py`) covers a two-leaf synthetic arena:
-triangle order, extension winding and render flags, mask selection, rendered
-bounds, deterministic re-decode, every rejection class, and the cache
-(same-snapshot hit, fingerprint revalidation, unrelated-byte tolerance,
-content invalidation, generation change, reset).
+triangle order, extension winding and render flags, `record_index` from the
+upper half of the second base word, mask selection, rendered bounds,
+deterministic re-decode (including struct padding), every rejection class, and
+the cache (same-snapshot hit, fingerprint revalidation, unrelated-byte
+tolerance, content invalidation, generation change, reset).
 
 `vr/tests/test_world_select.c` covers identity/rotated/translated eyes,
 conservative UNKNOWN retention, capacity overflow and argument guards.
@@ -138,14 +162,19 @@ fallbacks), exact screen coordinates, whole-triangle rejection, four-vertex
 near clipping, draw-list triangulation of triangles and clipped quads,
 non-finite/malformed polygons, capacity overflow and argument guards.
 
-Not yet demonstrated: a real captured arena, material mapping, subdivision
-decisions and reference triangle counts.
+`vr/tests/test_world_capture_summary.py` covers the offline capture validator:
+proven draw/face fields, six-half record layout, material fields staying null,
+and refusals for a wrong record base, wrong index or missing header.
+
+Not yet demonstrated: decoded triangle counts/winding/bounds against the real
+arena, texture-page/CLUT mapping, subdivision decisions and textured output.
 
 ## Next
 
-1. Capture the real `80010CF0` material fields (packet/preflight/subdivision
-   reads) into a mapping table and extend the decoder.
-2. Compare decoded triangle counts/winding/bounds against a reference capture
-   from the frozen slot-2 fixture.
-3. Wire the decoder into a default-OFF native census so the real arena root and
-   resource generation are recorded before the host renderer consumes it.
+1. Map the packet/preflight fields that carry texture page, CLUT, shading and
+   semi-transparency; the 12-byte record is not one of them.
+2. Dump the full arena tree and vertex table for one captured draw, then run
+   the decoder on that dump and compare counts, winding and bounds.
+3. Wire the decoder into a default-OFF native census so the real arena root,
+   record table and resource generation are recorded before the host renderer
+   consumes it.

@@ -63,12 +63,16 @@ framework's `psx_vr_box_visible` (UNKNOWN kept, capacity overflow explicit).
 screen projection and a fan-triangulated screen draw list, plus an adapter from
 the real `PSXModRenderView`.
 Materials are **not** decoded
-(`materials_decoded == 0`); textured rendering must refuse the mesh until the
-packet/preflight/subdivision fields are mapped. Strict fixture
-`vr/tests/test_world_decode.c`; contract in
-[STATIC_WORLD_DECODER](STATIC_WORLD_DECODER.md). Next: capture real
-`80010CF0` material fields, then compare an arena capture's triangle counts,
-winding and bounds.
+(`materials_decoded == 0`); textured rendering must refuse the mesh. A real
+slot-2/slot-5 capture (`MOHU_VR_WORLD_CAPTURE`, default OFF) confirms the
+`0x8009A51C` caller, the packet range, the level root/vertex table/count, and
+that `record_index` is the upper half of base word 1; its 12-byte table entry
+is six 16-bit parameter halves, **not** a material descriptor. Texture
+page/CLUT fields remain unmapped, and the capture does not yet include the
+full tree. [Receipt](../../vr/proof/sp-world-capture-receipt.json).
+Strict fixture `vr/tests/test_world_decode.c`; contract in
+[STATIC_WORLD_DECODER](STATIC_WORLD_DECODER.md). Next: map texpage/CLUT and
+dump the full tree for a count/winding/bounds comparison.
 
 Petrol now follows the shared hand ray in both measured SP release branches.
 Slot 1's missing street is reproduced and repaired in both eyes: the VR selector
