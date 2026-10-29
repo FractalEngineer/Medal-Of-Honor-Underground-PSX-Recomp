@@ -1,0 +1,1149 @@
+{
+  "schema": 1,
+  "date": "2026-10-29",
+  "base_commit": "c93441d",
+  "outcome": "P3b complete; P3c open. No compiler candidate promoted.",
+  "physical_headset_test": false,
+  "performance_target_met": false,
+  "framework_commit": "555e1eabccc59b9b6ff0d9fca48aca783513dc86",
+  "clean_disc_sha256": "2aed19d588f69274f8be70001eaa9b6400240b62088da72bace815ab902d56ed",
+  "attribution": {
+    "binary_sha256": "86b9230f6ef9c05880a3f89b63e777a439e64d286ff6a73e20fcdee101183852",
+    "source_hashes": {
+      "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\saves\\openbios\\state_8001F844_slot05.pst": "d60a32a58b59fa012f9853c16e65f47ad3990680a1bd77869ffb4c5a992663fe",
+      "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\saves\\openbios\\state_8001F844_slot05.thumb": "b3a4099c76c0ce025076113f37322f2b2b08219c4696050140818bd624e48951"
+    },
+    "quiet_seconds": 8.005338199902326,
+    "fresh_pairs_s": 25.60791248051222,
+    "stages_ms": {
+      "pair_total": 19.679005555555555,
+      "game_traverse": 16.78051111111111,
+      "game_world": 0.06758888888888889,
+      "game_select": 0.04312222222222222
+    },
+    "segments": {
+      "pairs": 205,
+      "rows": [
+        {
+          "scope": 0,
+          "address": "0x80010000",
+          "calls": 3264,
+          "ms_per_pair": 0.00934780487804878
+        },
+        {
+          "scope": 0,
+          "address": "0x80010508",
+          "calls": 408,
+          "ms_per_pair": 0.014309268292682926
+        },
+        {
+          "scope": 0,
+          "address": "0x80010CF0",
+          "calls": 197458,
+          "ms_per_pair": 3.1604190243902437
+        },
+        {
+          "scope": 0,
+          "address": "0x80011424",
+          "calls": 193397,
+          "ms_per_pair": 1.9355721951219513
+        },
+        {
+          "scope": 0,
+          "address": "0x80013B40",
+          "calls": 21689,
+          "ms_per_pair": 0.19773658536585367
+        },
+        {
+          "scope": 0,
+          "address": "0x80013EB4",
+          "calls": 7366,
+          "ms_per_pair": 0.038563414634146344
+        },
+        {
+          "scope": 0,
+          "address": "0x80017628",
+          "calls": 71846,
+          "ms_per_pair": 0.5673307317073171
+        },
+        {
+          "scope": 0,
+          "address": "0x8001A004",
+          "calls": 1230,
+          "ms_per_pair": 1.2592780487804878
+        },
+        {
+          "scope": 1,
+          "address": "0x80010000",
+          "calls": 3264,
+          "ms_per_pair": 0.01037219512195122
+        },
+        {
+          "scope": 1,
+          "address": "0x80010508",
+          "calls": 408,
+          "ms_per_pair": 0.020969756097560976
+        },
+        {
+          "scope": 1,
+          "address": "0x80010CF0",
+          "calls": 282170,
+          "ms_per_pair": 2.874511219512195
+        },
+        {
+          "scope": 1,
+          "address": "0x80011424",
+          "calls": 278109,
+          "ms_per_pair": 1.9019868292682924
+        },
+        {
+          "scope": 1,
+          "address": "0x80013B40",
+          "calls": 21624,
+          "ms_per_pair": 0.21930975609756098
+        },
+        {
+          "scope": 1,
+          "address": "0x80013EB4",
+          "calls": 7344,
+          "ms_per_pair": 0.05724048780487805
+        },
+        {
+          "scope": 1,
+          "address": "0x80017628",
+          "calls": 1020,
+          "ms_per_pair": 0.008084878048780487
+        },
+        {
+          "scope": 1,
+          "address": "0x8001A004",
+          "calls": 408,
+          "ms_per_pair": 0.5747565853658537
+        },
+        {
+          "scope": 2,
+          "address": "0x80010000",
+          "calls": 3264,
+          "ms_per_pair": 0.010201463414634147
+        },
+        {
+          "scope": 2,
+          "address": "0x80010508",
+          "calls": 408,
+          "ms_per_pair": 0.021540000000000004
+        },
+        {
+          "scope": 2,
+          "address": "0x80010CF0",
+          "calls": 282170,
+          "ms_per_pair": 2.8543882926829265
+        },
+        {
+          "scope": 2,
+          "address": "0x80011424",
+          "calls": 278109,
+          "ms_per_pair": 1.9032092682926829
+        },
+        {
+          "scope": 2,
+          "address": "0x80013B40",
+          "calls": 21624,
+          "ms_per_pair": 0.2171224390243903
+        },
+        {
+          "scope": 2,
+          "address": "0x80013EB4",
+          "calls": 7344,
+          "ms_per_pair": 0.057825853658536576
+        },
+        {
+          "scope": 2,
+          "address": "0x80017628",
+          "calls": 1020,
+          "ms_per_pair": 0.006780487804878049
+        },
+        {
+          "scope": 2,
+          "address": "0x8001A004",
+          "calls": 408,
+          "ms_per_pair": 0.5680029268292683
+        }
+      ],
+      "stereo_totals": [
+        {
+          "address": "0x80010CF0",
+          "ms_per_pair": 5.728899512195122
+        },
+        {
+          "address": "0x80011424",
+          "ms_per_pair": 3.8051960975609753
+        },
+        {
+          "address": "0x8001A004",
+          "ms_per_pair": 1.1427595121951222
+        },
+        {
+          "address": "0x80013B40",
+          "ms_per_pair": 0.4364321951219513
+        },
+        {
+          "address": "0x80013EB4",
+          "ms_per_pair": 0.11506634146341463
+        },
+        {
+          "address": "0x80010508",
+          "ms_per_pair": 0.04250975609756098
+        },
+        {
+          "address": "0x80010000",
+          "ms_per_pair": 0.020573658536585368
+        },
+        {
+          "address": "0x80017628",
+          "ms_per_pair": 0.014865365853658535
+        }
+      ],
+      "limitation": "Diagnostic exclusive CPS segments, excluding dispatch; scope snapshots bracket the quiet window approximately"
+    },
+    "host": {
+      "samples": 3085,
+      "binned_samples": 1881,
+      "unbinned": 0,
+      "samples_outside_reported_top": 1204,
+      "modules": [
+        [
+          "(exe)",
+          2481
+        ],
+        [
+          "ntdll.dll",
+          204
+        ],
+        [
+          "ucrtbase.dll",
+          239
+        ],
+        [
+          "0008C000_E1D1503C.dll",
+          99
+        ],
+        [
+          "00076000_3416446A.dll",
+          10
+        ],
+        [
+          "00097000_F08531A7.dll",
+          19
+        ],
+        [
+          "0006A000_75E9C1EA.dll",
+          5
+        ],
+        [
+          "nvoglv64.dll",
+          7
+        ],
+        [
+          "00050000_FC98D13B.dll",
+          14
+        ],
+        [
+          "00049000_D2F85A97.dll",
+          1
+        ],
+        [
+          "KERNEL32.DLL",
+          1
+        ],
+        [
+          "00059000_B7AE69E8.dll",
+          1
+        ],
+        [
+          "00056000_F89DD97F.dll",
+          1
+        ],
+        [
+          "00054000_3185D001.dll",
+          2
+        ],
+        [
+          "0008A000_257440FC.dll",
+          1
+        ]
+      ],
+      "functions": [
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:psx_pgxp_alu",
+          "samples": 231,
+          "share": 0.07487844408427877
+        },
+        {
+          "name": "ntdll.dll",
+          "samples": 195,
+          "share": 0.06320907617504051
+        },
+        {
+          "name": "ucrtbase.dll",
+          "samples": 191,
+          "share": 0.06191247974068071
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:psx_cyc_step",
+          "samples": 164,
+          "share": 0.05316045380875203
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:_ZL10pgxp_ptr_wj",
+          "samples": 132,
+          "share": 0.04278768233387358
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:psx_cyc_charge",
+          "samples": 118,
+          "share": 0.038249594813614264
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:psx_pgxp_load",
+          "samples": 92,
+          "share": 0.029821717990275526
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:psx_pgxp_store",
+          "samples": 92,
+          "share": 0.029821717990275526
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:_ZL11carry_fieldP9PGXPValuePKS_jji",
+          "samples": 62,
+          "share": 0.020097244732576985
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:psx_icache_fetch_miss",
+          "samples": 43,
+          "share": 0.01393841166936791
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:debug_server_cyc_observe",
+          "samples": 39,
+          "share": 0.012641815235008104
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:psx_cyc_load_timing",
+          "samples": 39,
+          "share": 0.012641815235008104
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:_ZL11alu_bitwiseP9PGXPValuePKS_jS2_jj",
+          "samples": 32,
+          "share": 0.010372771474878443
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:psx_pgxp_cop2",
+          "samples": 28,
+          "share": 0.00907617504051864
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:render_pass_store_to",
+          "samples": 27,
+          "share": 0.008752025931928687
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:psx_cyc_readmem",
+          "samples": 26,
+          "share": 0.008427876823338737
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:pgxp_checkpoint_rollback",
+          "samples": 25,
+          "share": 0.008103727714748784
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:psx_cyc_batch_flush",
+          "samples": 25,
+          "share": 0.008103727714748784
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:psx_read_word_raw",
+          "samples": 20,
+          "share": 0.006482982171799027
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:render_pass_store",
+          "samples": 20,
+          "share": 0.006482982171799027
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:_ZL11pv_validateP9PGXPValuej",
+          "samples": 16,
+          "share": 0.005186385737439222
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:psx_cyc_load_word",
+          "samples": 15,
+          "share": 0.004862236628849271
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:ldexp",
+          "samples": 14,
+          "share": 0.00453808752025932
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:overlay_cpu_charge",
+          "samples": 14,
+          "share": 0.00453808752025932
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:pgxp_load_projection",
+          "samples": 13,
+          "share": 0.004213938411669368
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:ls_at_leader",
+          "samples": 13,
+          "share": 0.004213938411669368
+        },
+        {
+          "name": "00050000_FC98D13B.dll:overlay_flush_cycles",
+          "samples": 12,
+          "share": 0.0038897893030794164
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:psx_check_interrupts",
+          "samples": 12,
+          "share": 0.0038897893030794164
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:_ZL28gte_cpu_canonicalize_backingP8CPUState",
+          "samples": 12,
+          "share": 0.0038897893030794164
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:overlay_loader_dispatch",
+          "samples": 11,
+          "share": 0.003565640194489465
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:strcmp",
+          "samples": 9,
+          "share": 0.002917341977309562
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:func_80011424",
+          "samples": 9,
+          "share": 0.002917341977309562
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:pgxp_gte_push_sxy",
+          "samples": 8,
+          "share": 0.002593192868719611
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:_ZL16gte_execute_implP8CPUStatejb",
+          "samples": 8,
+          "share": 0.002593192868719611
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:psx_icache_fetch",
+          "samples": 7,
+          "share": 0.00226904376012966
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:_ZN9PSXRecomp3GTE17gte_rtps_internalEPNS0_8GTEStateEPsbj",
+          "samples": 7,
+          "share": 0.00226904376012966
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:psx_dispatch_impl",
+          "samples": 6,
+          "share": 0.0019448946515397082
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:psx_mod_gpu_dma_resolve_address",
+          "samples": 6,
+          "share": 0.0019448946515397082
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:psx_game_text_native_ok",
+          "samples": 6,
+          "share": 0.0019448946515397082
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:gp0_execute_command",
+          "samples": 6,
+          "share": 0.0019448946515397082
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:psx_mod_counter_add",
+          "samples": 5,
+          "share": 0.0016207455429497568
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:__wrap_func_80011424",
+          "samples": 5,
+          "share": 0.0016207455429497568
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:psx_cyc_load_word_slow",
+          "samples": 5,
+          "share": 0.0016207455429497568
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:gpu_ll_read_word",
+          "samples": 4,
+          "share": 0.0012965964343598054
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:dirty_ram_text_native_ok_ranges_from",
+          "samples": 4,
+          "share": 0.0012965964343598054
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:native_wide_projective_draw",
+          "samples": 4,
+          "share": 0.0012965964343598054
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:dma_gpu_ll_advance",
+          "samples": 4,
+          "share": 0.0012965964343598054
+        },
+        {
+          "name": "0008C000_E1D1503C.dll:overlay_flush_cycles",
+          "samples": 3,
+          "share": 0.0009724473257698541
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:psx_write_half",
+          "samples": 3,
+          "share": 0.0009724473257698541
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:psx_read_word",
+          "samples": 3,
+          "share": 0.0009724473257698541
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:_ZN9PSXRecomp3GTE9gte_nclipEPNS0_8GTEStateEj",
+          "samples": 3,
+          "share": 0.0009724473257698541
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:gpu_write_gp0",
+          "samples": 3,
+          "share": 0.0009724473257698541
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:psx_slice_block_impl",
+          "samples": 2,
+          "share": 0.0006482982171799027
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:pgxp_gte_set_projection",
+          "samples": 2,
+          "share": 0.0006482982171799027
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:psx_write_word",
+          "samples": 2,
+          "share": 0.0006482982171799027
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:psx_check_interrupts_at",
+          "samples": 2,
+          "share": 0.0006482982171799027
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:pgxp_get_gte_projection",
+          "samples": 2,
+          "share": 0.0006482982171799027
+        },
+        {
+          "name": "nvoglv64.dll",
+          "samples": 2,
+          "share": 0.0006482982171799027
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:overlay_find_by_range",
+          "samples": 2,
+          "share": 0.0006482982171799027
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:psx_vr_box_visible",
+          "samples": 2,
+          "share": 0.0006482982171799027
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:psx_cyc_load_half",
+          "samples": 2,
+          "share": 0.0006482982171799027
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:g_xprobe_watch",
+          "samples": 2,
+          "share": 0.0006482982171799027
+        },
+        {
+          "name": "0008C000_E1D1503C.dll:func_80090760",
+          "samples": 2,
+          "share": 0.0006482982171799027
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:psx_gte_stall",
+          "samples": 2,
+          "share": 0.0006482982171799027
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:_ZL12derived_bitsPK9PGXPValuej",
+          "samples": 2,
+          "share": 0.0006482982171799027
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:gl_renderer_draw_projected_triangle",
+          "samples": 2,
+          "share": 0.0006482982171799027
+        },
+        {
+          "name": "Medal_of_Honor_Underground_Recompiled.exe:gp0_ring_record",
+          "samples": 2,
+          "share": 0.0006482982171799027
+        }
+      ],
+      "symbol_images": {
+        "build-release\\Medal_of_Honor_Underground_Recompiled_perf_profile.exe": "86b9230f6ef9c05880a3f89b63e777a439e64d286ff6a73e20fcdee101183852",
+        "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\build-release\\cache\\SLUS-01270\\gcc\\win-x64\\cg18_115b1739_gc128e6e31_f2\\00050000_FC98D13B.dll": "b2a559ecda3914c69e2a68e9d2eea9d754977fff791dbb0bd63fa5c0e68c7b5b",
+        "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\build-release\\cache\\SLUS-01270\\gcc\\win-x64\\cg18_115b1739_gc128e6e31_f2\\0008C000_E1D1503C.dll": "a33d621a672c2f2f487d10ef10683a0a196e4ddc5b5843e704a7a44b29d6c293"
+      }
+    },
+    "phase_profile": {
+      "id": 0,
+      "ok": true,
+      "window_s": 62,
+      "samples": 3950,
+      "interp_samples": 98,
+      "interp_share": 0.0248,
+      "native_samples": 1926,
+      "native_share": 0.4876,
+      "static_samples": 1447,
+      "static_share": 0.3663,
+      "gpu_samples": 96,
+      "gpu_share": 0.0243,
+      "other_samples": 383,
+      "other_share": 0.097,
+      "exc_samples": 100,
+      "exc_share": 0.0253,
+      "samples_total": 3984,
+      "interp_total": 98
+    },
+    "build": {
+      "PSX_DEBUG_TOOLS": "ON",
+      "MOHU_VR_DIAGNOSTICS": "ON",
+      "PSX_OPENXR": "ON",
+      "configuration": "Release"
+    },
+    "full_hook_stage": "game_world includes guards/camera/ray capture/collector/queue writes; nested in game_traverse",
+    "warning": "Instrumented diagnostic costs, approximate scope windows; no production gain or complete per-function sample census implied"
+  },
+  "compiler_controls": {
+    "threshold_1000": {
+      "baseline": [
+        {
+          "path": "analysis/vr-baseline/perf-20261029-next/inline5-b1/receipt.json",
+          "complete": true,
+          "binary_sha256": "631dbd541d033da039cec240adbee0965d160c13c7892fc4666500802240cfe1",
+          "pairs_s": 26.910900045228402,
+          "pair_ms": 17.120183333333333,
+          "traversal_ms": 14.770808333333333,
+          "hud_ms": 0.0,
+          "sources_unchanged": true,
+          "preferences_unchanged": true,
+          "exit_code": 0,
+          "forced_cleanup": false,
+          "bounded_launcher_stop": false
+        },
+        {
+          "path": "analysis/vr-baseline/perf-20261029-next/inline5-b2/receipt.json",
+          "complete": true,
+          "binary_sha256": "631dbd541d033da039cec240adbee0965d160c13c7892fc4666500802240cfe1",
+          "pairs_s": 28.25261158594492,
+          "pair_ms": 17.274583333333332,
+          "traversal_ms": 14.932549999999999,
+          "hud_ms": 0.0,
+          "sources_unchanged": true,
+          "preferences_unchanged": true,
+          "exit_code": 0,
+          "forced_cleanup": false,
+          "bounded_launcher_stop": false
+        },
+        {
+          "path": "analysis/vr-baseline/perf-20261029-next/inline5-b3/receipt.json",
+          "complete": true,
+          "binary_sha256": "631dbd541d033da039cec240adbee0965d160c13c7892fc4666500802240cfe1",
+          "pairs_s": 28.771760154738878,
+          "pair_ms": 17.329358333333335,
+          "traversal_ms": 14.895475000000001,
+          "hud_ms": 0.0,
+          "sources_unchanged": true,
+          "preferences_unchanged": true,
+          "exit_code": 0,
+          "forced_cleanup": false,
+          "bounded_launcher_stop": false
+        }
+      ],
+      "candidate": [
+        {
+          "path": "analysis/vr-baseline/perf-20261029-next/inline5-c1/receipt.json",
+          "complete": true,
+          "binary_sha256": "8aaecfef1b113ed056fdb73f7c64a667abd7a7e261f3998ad7d60c42ff72bf50",
+          "pairs_s": 28.31984769157544,
+          "pair_ms": 17.445566666666664,
+          "traversal_ms": 15.152041666666666,
+          "hud_ms": 0.0,
+          "sources_unchanged": true,
+          "preferences_unchanged": true,
+          "exit_code": 0,
+          "forced_cleanup": false,
+          "bounded_launcher_stop": false
+        },
+        {
+          "path": "analysis/vr-baseline/perf-20261029-next/inline5-c2/receipt.json",
+          "complete": true,
+          "binary_sha256": "8aaecfef1b113ed056fdb73f7c64a667abd7a7e261f3998ad7d60c42ff72bf50",
+          "pairs_s": 28.31984769157544,
+          "pair_ms": 17.463224999999998,
+          "traversal_ms": 15.026983333333334,
+          "hud_ms": 0.0,
+          "sources_unchanged": true,
+          "preferences_unchanged": true,
+          "exit_code": 0,
+          "forced_cleanup": false,
+          "bounded_launcher_stop": false
+        },
+        {
+          "path": "analysis/vr-baseline/perf-20261029-next/inline5-c3/receipt.json",
+          "complete": true,
+          "binary_sha256": "8aaecfef1b113ed056fdb73f7c64a667abd7a7e261f3998ad7d60c42ff72bf50",
+          "pairs_s": 28.695442488545936,
+          "pair_ms": 17.401066666666665,
+          "traversal_ms": 14.984075,
+          "hud_ms": 0.0,
+          "sources_unchanged": true,
+          "preferences_unchanged": true,
+          "exit_code": 0,
+          "forced_cleanup": false,
+          "bounded_launcher_stop": false
+        }
+      ],
+      "baseline_mean_ms": 17.241375,
+      "candidate_mean_ms": 17.436619444444442,
+      "pair_work_reduction_percent": -1.1324180608822676
+    },
+    "forced_step_charge": {
+      "baseline": [
+        {
+          "path": "analysis/vr-baseline/perf-20261029-next/targeted5-b1/receipt.json",
+          "complete": true,
+          "binary_sha256": "631dbd541d033da039cec240adbee0965d160c13c7892fc4666500802240cfe1",
+          "pairs_s": 28.862478777589136,
+          "pair_ms": 17.411058333333333,
+          "traversal_ms": 14.986133333333333,
+          "hud_ms": 0.0,
+          "sources_unchanged": true,
+          "preferences_unchanged": true,
+          "exit_code": 0,
+          "forced_cleanup": false,
+          "bounded_launcher_stop": false
+        }
+      ],
+      "candidate": [
+        {
+          "path": "analysis/vr-baseline/perf-20261029-next/targeted5-c1/receipt.json",
+          "complete": true,
+          "binary_sha256": "9cb5819a1448646f411b8b3da1c6953fae6284eb5d670efb5143a9903b0d5e48",
+          "pairs_s": 27.53354928273947,
+          "pair_ms": 17.446091666666668,
+          "traversal_ms": 14.846741666666667,
+          "hud_ms": 0.0,
+          "sources_unchanged": true,
+          "preferences_unchanged": true,
+          "exit_code": 0,
+          "forced_cleanup": false,
+          "bounded_launcher_stop": false
+        }
+      ],
+      "baseline_mean_ms": 17.411058333333333,
+      "candidate_mean_ms": 17.446091666666668,
+      "pair_work_reduction_percent": -0.20121311790830543
+    },
+    "forced_base_loads": {
+      "baseline": [
+        {
+          "path": "analysis/vr-baseline/perf-20261029-next/targeted2-5-b1/receipt.json",
+          "complete": true,
+          "binary_sha256": "631dbd541d033da039cec240adbee0965d160c13c7892fc4666500802240cfe1",
+          "pairs_s": 25.531001930916112,
+          "pair_ms": 18.322783333333334,
+          "traversal_ms": 15.770441666666667,
+          "hud_ms": 0.0,
+          "sources_unchanged": true,
+          "preferences_unchanged": true,
+          "exit_code": 0,
+          "forced_cleanup": false,
+          "bounded_launcher_stop": false
+        }
+      ],
+      "candidate": [
+        {
+          "path": "analysis/vr-baseline/perf-20261029-next/targeted2-5-c1/receipt.json",
+          "complete": true,
+          "binary_sha256": "bb60234553421af0260ea544a8268d48f3c2758d846cf9cbf23ae27b83057130",
+          "pairs_s": 22.88901711867667,
+          "pair_ms": 23.360558333333334,
+          "traversal_ms": 20.028558333333333,
+          "hud_ms": 0.0,
+          "sources_unchanged": true,
+          "preferences_unchanged": true,
+          "exit_code": 0,
+          "forced_cleanup": false,
+          "bounded_launcher_stop": false
+        }
+      ],
+      "baseline_mean_ms": 18.322783333333334,
+      "candidate_mean_ms": 23.360558333333334,
+      "pair_work_reduction_percent": -27.49459461672035
+    },
+    "ipo_slot5": {
+      "baseline": [
+        {
+          "path": "analysis/vr-baseline/perf-20261029-next/ipo5-b1/receipt.json",
+          "complete": true,
+          "binary_sha256": "631dbd541d033da039cec240adbee0965d160c13c7892fc4666500802240cfe1",
+          "pairs_s": 28.681610026512413,
+          "pair_ms": 17.780216666666668,
+          "traversal_ms": 15.235275,
+          "hud_ms": 0.0,
+          "sources_unchanged": true,
+          "preferences_unchanged": true,
+          "exit_code": 0,
+          "forced_cleanup": false,
+          "bounded_launcher_stop": false
+        },
+        {
+          "path": "analysis/vr-baseline/perf-20261029-next/ipo5-b2/receipt.json",
+          "complete": true,
+          "binary_sha256": "631dbd541d033da039cec240adbee0965d160c13c7892fc4666500802240cfe1",
+          "pairs_s": 28.48252752513164,
+          "pair_ms": 17.25029166666667,
+          "traversal_ms": 14.915125,
+          "hud_ms": 0.0,
+          "sources_unchanged": true,
+          "preferences_unchanged": true,
+          "exit_code": 0,
+          "forced_cleanup": false,
+          "bounded_launcher_stop": false
+        },
+        {
+          "path": "analysis/vr-baseline/perf-20261029-next/ipo5-b3/receipt.json",
+          "complete": true,
+          "binary_sha256": "631dbd541d033da039cec240adbee0965d160c13c7892fc4666500802240cfe1",
+          "pairs_s": 29.698028450212128,
+          "pair_ms": 17.520441666666667,
+          "traversal_ms": 15.037341666666666,
+          "hud_ms": 0.0,
+          "sources_unchanged": true,
+          "preferences_unchanged": true,
+          "exit_code": 0,
+          "forced_cleanup": false,
+          "bounded_launcher_stop": false
+        }
+      ],
+      "candidate": [
+        {
+          "path": "analysis/vr-baseline/perf-20261029-next/ipo5-c1/receipt.json",
+          "complete": true,
+          "binary_sha256": "55a7aafd0d64815e2ab0225a8d0b3d36f43ed41c512f93c4446092c5ddea63c7",
+          "pairs_s": 28.44848195075305,
+          "pair_ms": 17.213224999999998,
+          "traversal_ms": 14.649691666666667,
+          "hud_ms": 0.0,
+          "sources_unchanged": true,
+          "preferences_unchanged": true,
+          "exit_code": 0,
+          "forced_cleanup": false,
+          "bounded_launcher_stop": false
+        },
+        {
+          "path": "analysis/vr-baseline/perf-20261029-next/ipo5-c2/receipt.json",
+          "complete": true,
+          "binary_sha256": "55a7aafd0d64815e2ab0225a8d0b3d36f43ed41c512f93c4446092c5ddea63c7",
+          "pairs_s": 29.38997283279822,
+          "pair_ms": 16.730091666666667,
+          "traversal_ms": 14.246591666666667,
+          "hud_ms": 0.0,
+          "sources_unchanged": true,
+          "preferences_unchanged": true,
+          "exit_code": 0,
+          "forced_cleanup": false,
+          "bounded_launcher_stop": false
+        },
+        {
+          "path": "analysis/vr-baseline/perf-20261029-next/ipo5-c3/receipt.json",
+          "complete": true,
+          "binary_sha256": "55a7aafd0d64815e2ab0225a8d0b3d36f43ed41c512f93c4446092c5ddea63c7",
+          "pairs_s": 29.14523634582415,
+          "pair_ms": 16.357566666666667,
+          "traversal_ms": 14.076258333333334,
+          "hud_ms": 0.0,
+          "sources_unchanged": true,
+          "preferences_unchanged": true,
+          "exit_code": 0,
+          "forced_cleanup": false,
+          "bounded_launcher_stop": false
+        }
+      ],
+      "baseline_mean_ms": 17.516983333333336,
+      "candidate_mean_ms": 16.76696111111111,
+      "pair_work_reduction_percent": 4.281685995527528
+    },
+    "ipo_slot3": {
+      "baseline": [
+        {
+          "path": "analysis/vr-baseline/perf-20261029-next/ipo3-b1/receipt.json",
+          "complete": true,
+          "binary_sha256": "631dbd541d033da039cec240adbee0965d160c13c7892fc4666500802240cfe1",
+          "pairs_s": 30.575539568345324,
+          "pair_ms": 18.383958333333332,
+          "traversal_ms": 16.26021666666667,
+          "hud_ms": 0.0,
+          "sources_unchanged": true,
+          "preferences_unchanged": true,
+          "exit_code": 0,
+          "forced_cleanup": false,
+          "bounded_launcher_stop": false
+        }
+      ],
+      "candidate": [
+        {
+          "path": "analysis/vr-baseline/perf-20261029-next/ipo3-c1/receipt.json",
+          "complete": true,
+          "binary_sha256": "55a7aafd0d64815e2ab0225a8d0b3d36f43ed41c512f93c4446092c5ddea63c7",
+          "pairs_s": 30.256801423849478,
+          "pair_ms": 18.021125,
+          "traversal_ms": 15.760291666666665,
+          "hud_ms": 0.0,
+          "sources_unchanged": true,
+          "preferences_unchanged": true,
+          "exit_code": 0,
+          "forced_cleanup": false,
+          "bounded_launcher_stop": false
+        }
+      ],
+      "baseline_mean_ms": 18.383958333333332,
+      "candidate_mean_ms": 18.021125,
+      "pair_work_reduction_percent": 1.9736409686887169
+    },
+    "null_hmd_order": [
+      {
+        "path": "analysis/vr-baseline/perf-20261029-next/ipo-null-production/receipt.json",
+        "complete": true,
+        "binary_sha256": "55a7aafd0d64815e2ab0225a8d0b3d36f43ed41c512f93c4446092c5ddea63c7",
+        "pairs_s": 20.92491647617373,
+        "pair_ms": 31.216925,
+        "traversal_ms": 27.397125,
+        "hud_ms": 3.7624583333333335,
+        "sources_unchanged": true,
+        "preferences_unchanged": true,
+        "exit_code": 0,
+        "forced_cleanup": false,
+        "bounded_launcher_stop": true
+      },
+      {
+        "path": "analysis/vr-baseline/perf-20261029-next/baseline-null-production/receipt.json",
+        "complete": true,
+        "binary_sha256": "631dbd541d033da039cec240adbee0965d160c13c7892fc4666500802240cfe1",
+        "pairs_s": 17.319167515645468,
+        "pair_ms": 34.64568333333334,
+        "traversal_ms": 30.656924999999998,
+        "hud_ms": 8.495558333333333,
+        "sources_unchanged": true,
+        "preferences_unchanged": true,
+        "exit_code": 0,
+        "forced_cleanup": false,
+        "bounded_launcher_stop": true
+      },
+      {
+        "path": "analysis/vr-baseline/perf-20261029-next/ipo-null-production2/receipt.json",
+        "complete": true,
+        "binary_sha256": "55a7aafd0d64815e2ab0225a8d0b3d36f43ed41c512f93c4446092c5ddea63c7",
+        "pairs_s": 13.522727272727273,
+        "pair_ms": 46.47065,
+        "traversal_ms": 40.08258333333334,
+        "hud_ms": 8.286075,
+        "sources_unchanged": true,
+        "preferences_unchanged": true,
+        "exit_code": 0,
+        "forced_cleanup": false,
+        "bounded_launcher_stop": true
+      },
+      {
+        "path": "analysis/vr-baseline/perf-20261029-next/baseline-null-production2/receipt.json",
+        "complete": true,
+        "binary_sha256": "631dbd541d033da039cec240adbee0965d160c13c7892fc4666500802240cfe1",
+        "pairs_s": 18.590845180440557,
+        "pair_ms": 33.621900000000004,
+        "traversal_ms": 29.754058333333333,
+        "hud_ms": 5.994533333333334,
+        "sources_unchanged": true,
+        "preferences_unchanged": true,
+        "exit_code": 0,
+        "forced_cleanup": false,
+        "bounded_launcher_stop": true
+      }
+    ],
+    "ipo_decision": "OFF: desktop gain is unqualified on full path; same IPO binary regressed in second null-HMD control",
+    "null_scope": "Production no synthetic hands or laser; actual native HUD capture and XR work; exact SteamVR settings restored",
+    "execution_identity": "8174a988661560c5297b4579eb11a9577ccd80a03ea5dfa794a84e21ca3c4361"
+  },
+  "failed_controls": [
+    {
+      "path": "analysis/vr-baseline/perf-20261029-next/slot5-segments",
+      "complete": false,
+      "reason": "Initial 24-row command exceeded 1024-byte reply; corrected to one scope/eight rows per reply; original failed control preserved"
+    }
+  ],
+  "checks": {
+    "python_tests": 132,
+    "strict_c_syntax": [
+      "vr_diagnostic.c",
+      "native_profile.c"
+    ],
+    "verify_complete": true,
+    "verify_stats": {
+      "id": 0,
+      "ok": true,
+      "plans": 0,
+      "planned": 0,
+      "wanted": 0,
+      "refused": 0,
+      "passes": 480,
+      "aborted": 0,
+      "discarded": 0,
+      "watchdog": 0,
+      "vram_leaks": 0,
+      "nesting_repairs": 0,
+      "device_reads": 0,
+      "last_device_read": "0x00000000",
+      "last_device_read_width": 0,
+      "verify_checks": 480,
+      "verify_mismatch": 0,
+      "dropped": {
+        "spu": 0,
+        "cd": 0,
+        "timer": 0,
+        "dma": 0,
+        "gpu": 0,
+        "other": 0
+      },
+      "last_pass_ms": 17.788,
+      "avg_pass_ms": 17.326,
+      "avg_begin_ms": 4.975,
+      "avg_guest_ms": 5.07,
+      "avg_end_ms": 6.804,
+      "avg_restore_ms": 0.248,
+      "guest_cycles_last": 661039,
+      "disabled": 0,
+      "promotions": 0,
+      "pass_presents": 0,
+      "blended_presents": 0,
+      "expired": 0,
+      "late_presents": 0,
+      "unmatched_flips": 0,
+      "early_presents": 0,
+      "cost_us": 0,
+      "cost_rewarms": 0,
+      "frame_images": 0,
+      "journaled": 240,
+      "image_textures": 0,
+      "image_bytes": 0,
+      "status": 1,
+      "backups_reused": 240,
+      "pass_attempts": 480,
+      "argument_refused": 0,
+      "status_refused": 0,
+      "begin_refused": 0,
+      "checkpoint_refused": 0,
+      "spans": 0,
+      "span_failures": 0,
+      "local_views": 0,
+      "local_attempts": 0,
+      "local_status": 4,
+      "admission": {
+        "plans": 0,
+        "frame": 0,
+        "zero_credit_refusals": 0,
+        "idle_ms": 0.0,
+        "present_ms": 0.0,
+        "prior_pass_ms": 0.0,
+        "present_reserve_ms": 0.0,
+        "spare_ms": 0.0,
+        "frame_ms": 0.0,
+        "cost_ms": 0.0,
+        "budget_ms": 0.0,
+        "wanted": 0,
+        "planned": 0
+      },
+      "last_failure": null,
+      "last_abort_detail": "",
+      "span_fail": {
+        "reason": 0,
+        "pc": "0x00000000",
+        "start": "0x00000000",
+        "stop": "0x00000000",
+        "ra": "0x00000000",
+        "after": "0x00000000",
+        "insns": 0
+      }
+    },
+    "verify_sources_unchanged": true,
+    "verify_preferences_unchanged": true,
+    "verify_exit_code": 0,
+    "verify_forced_cleanup": false
+  },
+  "next_target": {
+    "address": "0x80011424",
+    "size_bytes": 668,
+    "fnv": "C38CDCC1",
+    "caller": "0x80011000",
+    "continuation": "0x80011008",
+    "action": "Capture full custom caller contract and plan valid harness/per-execution fixtures before build-selected preflight implementation"
+  },
+  "restored_production": {
+    "binary_sha256": "b00fc27187d232c42db66129d952b77bbfdd261e4b73d1b486335be019fba8b1",
+    "final_control": {
+      "path": "analysis/vr-baseline/perf-20261029-next/restored-production-final/receipt.json",
+      "complete": true,
+      "binary_sha256": "b00fc27187d232c42db66129d952b77bbfdd261e4b73d1b486335be019fba8b1",
+      "pairs_s": 28.70928829915561,
+      "pair_ms": 17.465375,
+      "traversal_ms": 15.042408333333332,
+      "hud_ms": 0.0,
+      "sources_unchanged": true,
+      "preferences_unchanged": true,
+      "exit_code": 0,
+      "forced_cleanup": false,
+      "bounded_launcher_stop": false
+    },
+    "build_cache_flags": {
+      "PSX_DEBUG_TOOLS": "OFF",
+      "MOHU_VR_NATIVE_PROFILE": "OFF",
+      "PSX_RUNTIME_IPO": "OFF"
+    }
+  },
+  "changed_source_sha256": {
+    "CMakeLists.txt": "5d00bd9104c8d1fee55775d134bc5dd382b7d4ab18be3f9b733010f0202ca2e7",
+    "vr/underground/vr_diagnostic.c": "835cfbfd8ae7bf793eba743d3be38db653ab141cc5fd4d56803aba9393f874c8",
+    "vr/underground/native_profile.c": "b4703cee4b2aa9b3f317b388eabefedab79227eeb3787f3e58dc78d60a185bba",
+    "vr/tools/summarize_native_profile.py": "ec83625efef969e1c0bf14627edb43aeadc222eb4b6912cc12edf0320927f60a",
+    "vr/run_vr.ps1": "daefb9e731a420c54d8d0f9c8dd1fb21cf7b896e79b19985a44c037256d9b7cd"
+  }
+}

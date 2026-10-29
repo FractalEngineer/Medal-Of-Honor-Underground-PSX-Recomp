@@ -603,6 +603,13 @@ static void run_stereo_proof(CPUState* cpu);
 static bool g_trace_spans;
 static const char* g_trace_file;
 static bool g_trace_written;
+#ifdef MOHU_VR_NATIVE_PROFILE
+extern int mohu_vr_native_profile_command(const char*, char*, int);
+unsigned mohu_vr_native_profile_scope(void) {
+    return g_stereo_active && g_stereo_current_eye < 2u
+        ? 1u + g_stereo_current_eye : 0u;
+}
+#endif
 #define VR_SPAN_BEGIN(stage) \
     do { if (g_trace_spans) psx_mod_frame_trace_stage_begin(stage); } while (0)
 #define VR_SPAN_END(stage) \
@@ -3552,7 +3559,7 @@ static void run_stereo_proof(CPUState* cpu) {
     }
 }
 
-static int vr_head_frustum_filter(CPUState* cpu, uint32_t address) {
+static int vr_head_frustum_filter_impl(CPUState* cpu, uint32_t address) {
     vr_diagnostic_entry(cpu, address);
     if (!g_head_frustum || !g_stereo_active || !g_stereo_eye_view_valid ||
         g_stereo_current_eye > 1u) {
@@ -3608,6 +3615,16 @@ static int vr_head_frustum_filter(CPUState* cpu, uint32_t address) {
         (uint16_t)psx_mod_read_word(MOHU_VR_LEVEL_H_ADDR);
     g_head_frustum_collects[g_stereo_current_eye]++;
     return 1;
+}
+
+static int vr_head_frustum_filter(CPUState* cpu, uint32_t address) {
+    /* Whole selector/filter cost, including guards/camera capture/queue writes;
+     * GAME_SELECT remains its nested pure collector. Neither is additive to
+     * GAME_TRAVERSE. Underground otherwise leaves GAME_WORLD unused. */
+    VR_SPAN_BEGIN(PSX_TRACE_GAME_WORLD);
+    const int result = vr_head_frustum_filter_impl(cpu, address);
+    VR_SPAN_END(PSX_TRACE_GAME_WORLD);
+    return result;
 }
 
 static int vr_flat_hud_filter(CPUState* cpu, uint32_t address) {
@@ -5046,6 +5063,9 @@ PSX_MOD_CONSTRUCTOR(psx_register_mohu_vr_diagnostic_plugin) {
     (void)psx_mod_register_command("mohu.vr.muzzle", vr_muzzle_command);
     (void)psx_mod_register_command("mohu.vr.laser", vr_laser_command);
     (void)psx_mod_register_command("mohu.vr.hud", vr_hud_command);
+#ifdef MOHU_VR_NATIVE_PROFILE
+    (void)psx_mod_register_command("mohu.vr.native-profile", mohu_vr_native_profile_command);
+#endif
     (void)psx_mod_register_savestate_plugin(MOHU_VR_DIAG_PLUGIN_ID,vr_marker_load);
     (void)psx_mod_register_instruction_plugin(MOHU_VR_DIAG_PLUGIN_ID,
         0x80084CDCu,0x0C0145EDu,vr_marker_origin_event);

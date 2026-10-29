@@ -24,6 +24,7 @@ project(Medal_of_Honor_Underground_Recomp LANGUAGES C CXX)
 set(PSX_SETUP_WIZARD ON CACHE BOOL
     "Advertise first-run setup wizard + Generate & rebuild in recomp-ui" FORCE)
 option(MOHU_VR_DIAGNOSTICS "Build the guarded Underground VR diagnostic plugin" OFF)
+option(MOHU_VR_NATIVE_PROFILE "Time native CPS function segments (diagnostic only)" OFF)
 include("${PSXRECOMP_ROOT}/runtime/runtime.cmake")
 
 # This project's own mod catalog. The FRAMEWORK stages it -- together with its
@@ -70,6 +71,17 @@ if(MOHU_VR_DIAGNOSTICS)
         "${CMAKE_CURRENT_SOURCE_DIR}/vr/underground/weapon.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/vr/underground/hud.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/vr/underground/vr_diagnostic.c")
+    if(MOHU_VR_NATIVE_PROFILE)
+        if(NOT WIN32 OR MSVC OR NOT PSX_DEBUG_TOOLS)
+            message(FATAL_ERROR "Native segment profiling requires Windows GNU ABI and debug tools")
+        endif()
+        set_property(SOURCE vr/underground/vr_diagnostic.c APPEND PROPERTY
+            COMPILE_DEFINITIONS MOHU_VR_NATIVE_PROFILE=1)
+        target_sources(psx-runtime PRIVATE vr/underground/native_profile.c)
+        foreach(_profile_address 80010000 80010508 80010CF0 80011424 80013B40 80013EB4 80017628 8001A004)
+            target_link_options(psx-runtime PRIVATE "-Wl,--wrap=func_${_profile_address}")
+        endforeach()
+    endif()
 endif()
 
 # Current psxrecomp embeds its UTF-8 manifest as an object library. recomp-ui

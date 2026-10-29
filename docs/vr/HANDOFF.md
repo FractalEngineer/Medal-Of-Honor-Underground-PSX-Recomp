@@ -1,7 +1,8 @@
 # Underground VR execution handoff
 
-Updated 2026-10-29 after the operator's headset smoke. **Next task: P3b → P3c
-performance work, then P4/P5.** Follow
+Updated 2026-10-29 after native profiling and compiler controls. **P3b complete;
+next task: P3c2–P3c6 preflight implementation and qualification, then the budget
+decision and P4/P5.** Follow
 [PERFORMANCE_NEXT_STEPS.md](PERFORMANCE_NEXT_STEPS.md) in order. Do not resume a
 NEXT pointer from an archived report. [VR_PLAN.md](VR_PLAN.md) owns status;
 [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md) owns history.
@@ -82,23 +83,68 @@ work; request a focused physical check only when its candidate is ready.
 
 Read the performance runbook and execute its first unchecked step. In brief:
 
-1. Preserve the accepted clean-image checkpoint and obtain one current clean
+**The next agent starts at [runbook section 3.1](PERFORMANCE_NEXT_STEPS.md#31-ordered-execution-checklist--start-at-p3c2),
+not at its historical baseline/profile reproduction commands.** Read the
+complete `80011424` helper, caller and dispatch entries; begin the standalone
+caller-contract harness and proceed into implementation. Capture alone is not
+the requested deliverable. P3c2–P3c6 need no physical headset.
+
+1. Preserve the accepted clean-image checkpoint. The current clean production
+   baseline and completed P3b evidence are in [NATIVE_REPLAY_PROFILE.md](NATIVE_REPLAY_PROFILE.md).
+   Do not restart attribution or compiler sweeps. For a genuinely new candidate,
+   obtain one current clean
    production baseline with the existing tool. Do not rerun disc audits, all-ID
    matrices or old render-clip experiments. No physical HMD launch.
-2. **P3b:** use existing host/phase profilers and bounded child spans to attribute
-   native arena draw, subdivision/preflight and entity work. Deliver the top
-   three host-time costs with source/caller, scope and evidence. Guest cycles
-   are supporting evidence, not host milliseconds. Keep canonical and eye work
-   distinct; fix module attribution before labeling outside-EXE samples waits.
-3. **P3c:** optimize the measured dominant operation through its real caller
+2. **P3b is complete:** exclusive packet/preflight/GPU-command segments cost
+   5.729/3.805/1.143 ms per pair; full visibility hook only 0.068 ms. Loaded
+   native DLL samples resolve against their own PE tables. Timings are
+   diagnostic; raw host top-400 covers 1,881/3,085 samples. See the report for
+   canonical/eye separation, resolved callers and limitations.
+3. **P3c:** target `80011424` (668 bytes, FNV `C38CDCC1`), called by the packet
+   builder at `80011000`, return `80011008`. Read the report's exact five-step
+   implementation contract first. Capture its custom register/scratchpad/GTE/
+   PGXP inputs/results before replacement; `$v0` alone is insufficient. Start
+   with the standalone caller harness, then obtain valid per-execution game
+   fixtures for integration; never bypass existing state identity guards.
+   Optimize through the real caller
    interface, reusing the reference/shared services. Verify unchanged image/FOV,
    aiming, audio/simulation timing, pause/loss/load and original save contracts.
    Run three alternating production A/Bs before promoting an improvement.
-4. **P4/P5:** remove the native ~30-Hz fresh-view ceiling safely, retaining native
+4. **Budget decision after the preflight result:** if still too expensive,
+   continue the larger packet builder P3d through the same qualification gates.
+   P3e HUD work is conditional on a measured remaining stall. Read the existing
+   dirty/change detection and shared capture first; do not port checkpoint or
+   paired readback again. Use the [decision table](PERFORMANCE_NEXT_STEPS.md#33-what-follows-preflight--choose-by-measured-full-path-budget).
+5. **P4/P5:** remove the native ~30-Hz fresh-view ceiling safely, retaining native
    simulation/audio timing. A cheaper pair alone does not produce 60/90 fresh
    views. No turbo, VBlank-rate change or compositor-repeat substitution.
-5. Only then request a bounded SP headset performance check (P6). The last smoke
+6. Only then request a bounded SP headset performance check (P6). The last smoke
    accepted functionality; it did not certify FPS or every gameplay scope.
+
+| Ordered task | Done only when |
+|---|---|
+| P3c2 — caller contract/fixtures | Real input/output cases, supported entry/resume contract and valid harness/fixture strategy exist |
+| P3c3 — implementation | A build-selected faster helper exists, original reference runs, paired caller-result tests pass |
+| P3c4 — correctness | Relevant world/FOV/PGXP/weapon/laser/timing and pause/loss/refusal/load controls pass separately from timing |
+| P3c5 — production desktop A/B | Three alternating windows plus the second workload show a useful consistent gain, with exact binary/fixture/flags |
+| P3c6 — full path/decision | Actual HUD/weapon/laser/XR work is measured, failures retained, candidate qualified or explicitly rejected; a desktop gain is insufficient |
+
+**Fixture/tool trap:** a new execution family changes identity. Current probes
+assume the fixed source-save tree and `build-release`; sibling `--exe` selection
+only served same-identity compiler controls. Before cross-profile game timing,
+extend the existing probes to select separate valid fixture roots and complete
+build/assets/config/cache directories. Those selectors do not exist yet. See
+[section 3.2](PERFORMANCE_NEXT_STEPS.md#32-execution-identity-and-fixture-handling--resolve-before-integration).
+Never fake compatible states, overwrite shared fixtures, copy a candidate into
+another profile's cache, or count a refused load as a pass. Continue independent
+harness/implementation work if an integration fixture is unavailable.
+
+**Larger fallback:** cached scene geometry may support fresh-pose rendering if
+targeted replay work cannot meet the budget/cadence. It is a conditional design
+decision, not the next task or a required alpha feature. Preserve the replay
+reference and validate moving geometry/weapon/controller poses and FOV before
+claiming success. Record one exact next task after each retain/reject/defer
+decision; do not start helper, HUD, scheduler and renderer redesign in parallel.
 
 Known measurements are leads, not a new matched-HMD benchmark:
 
@@ -114,6 +160,11 @@ Known measurements are leads, not a new matched-HMD benchmark:
   differ; 65–69% more primitives is workload attribution, not a speed ratio.
 - Clean-default slot-5 smoke: 17.391-ms desktop pair work, no HMD cost included.
   No minimum/steady 60-Hz or 90-Hz pass exists.
+- Three inlining variants are rejected/removed. Shared IPO reduces desktop
+  pair work about 4.3%, but one unchanged-binary null-HMD run regresses badly.
+  Full-path gain is unqualified; **PSX_RUNTIME_IPO remains OFF**. Do not average
+  away that run or repeat tuning sweeps. Native timers are diagnostic-only;
+  restore `MOHU_VR_NATIVE_PROFILE=OFF` alongside debug OFF after their use.
 
 ## 5. Closed investigations and separate open scopes
 
@@ -151,7 +202,8 @@ the SP work/fixture, without expanding MP scope.
 - Restore/rebuild production debug-OFF after diagnostic builds. End with no
   owned game process/overrides left behind and no persistent XR settings change.
 - Run focused checks appropriate to changes and `git diff --check`. Current
-  baseline: 127 Python tests plus strict shot/weapon C and plugin syntax pass.
+  baseline: 132 Python tests; strict plugin/native-timer syntax and 480 focused
+  slot-5 rollback checks pass. Earlier shot/weapon C controls remain unchanged.
 - Update stable IDs in VR_PLAN, the current handoff and compact receipts with
   actual source/binary/fixture provenance. Preserve failed controls and scope.
 - Keep dumps, disc/BIOS data, saves and generated screenshots in ignored local

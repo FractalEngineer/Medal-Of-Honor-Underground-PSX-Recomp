@@ -20,6 +20,7 @@ ROOT = Path(__file__).resolve().parents[2]
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('out', type=Path)
+    ap.add_argument('--exe', type=Path, help='Preserved binary beside the existing build assets')
     ap.add_argument('--hud', action='store_true')
     ap.add_argument('--laser', action='store_true')
     ap.add_argument('--headless-xr', action='store_true')
@@ -42,7 +43,10 @@ def main():
     for f in source:
         shutil.copyfile(f, saves/f.name)
     prefs = p.hash_existing(p.preference_paths())
-    exe = ROOT/'build-release/Medal_of_Honor_Underground_Recompiled.exe'
+    exe = (args.exe.resolve() if args.exe else
+           ROOT/'build-release/Medal_of_Honor_Underground_Recompiled.exe')
+    if exe.parent != ROOT/'build-release' or not exe.is_file():
+        raise RuntimeError('Binary must be beside the existing build assets')
     env = p.environment('tracked', True, hand_fixed=True)
     env.update(MOHU_VR_MP_CONTROL='0', MOHU_VR_MP_FRUSTUM='0',
                PSX_RENDER_PASS_VERIFY='0', PSX_FRAME_TRACE='1',
@@ -67,7 +71,8 @@ def main():
             proc = subprocess.Popen(['powershell', '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File',
                 str(ROOT/'vr/run_vr.ps1'), '-Headless', '-Slot', '3', '-MemcardDirectory', str(out/'saves'),
                 '-LogDirectory', str(out), '-InternalResolution', args.resolution, '-Seconds', str(args.seconds),
-                '-NoLaser'], cwd=out, env=env, stdout=so, stderr=se, creationflags=subprocess.CREATE_NO_WINDOW)
+                '-NoLaser', '-ExecutableName', exe.name], cwd=out, env=env,
+                stdout=so, stderr=se, creationflags=subprocess.CREATE_NO_WINDOW)
             proc.wait()
         if trace_file.exists():
             r['trace'] = json.loads(trace_file.read_text())
@@ -96,6 +101,7 @@ def main():
                   str(ROOT/'vr/run_vr.ps1'), '-Headless', '-Slot', '3',
                   '-MemcardDirectory', str(out/'saves'), '-DebugPort', '4372',
                   '-LogDirectory', str(out), '-InternalResolution', args.resolution, '-Seconds', '55']
+        launch += ['-ExecutableName', exe.name]
         if not args.laser:
             launch.append('-NoLaser')
     with (out/'stdout.log').open('w') as so, (out/'stderr.log').open('w') as se:

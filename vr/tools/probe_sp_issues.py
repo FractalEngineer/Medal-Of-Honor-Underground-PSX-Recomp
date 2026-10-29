@@ -42,6 +42,7 @@ def main():
     ap.add_argument('--geometry', action='store_true')
     ap.add_argument('--switch', type=int, default=0)
     ap.add_argument('--env-json', type=Path)
+    ap.add_argument('--native-profile', action='store_true', help='Capture diagnostic CPS segment timers')
     ap.add_argument('--disc', type=Path, help='Explicit disposable diagnostic disc override')
     args = ap.parse_args()
     if n.game_pids():
@@ -149,6 +150,8 @@ def main():
             (out/'ram.bin').write_bytes(n.read(0x80000000, 0x200000))
             r['start'] = n.command('stereo_stats')
             r['start_frame'] = n.command('frame')
+            if args.native_profile:
+                r['native_profile_before'] = [n.command('mod_cmd', name='mohu.vr.native-profile', args=str(i)) for i in range(3)]
             n.command('cdrom_trace_clear')
             n.command('dma_trace_clear')
             if args.music_trace:
@@ -186,9 +189,21 @@ def main():
             r['elapsed'] = time.monotonic()-t0
             r['end'] = n.command('stereo_stats')
             r['end_frame'] = n.command('frame')
+            if args.native_profile:
+                r['native_profile_after'] = [n.command('mod_cmd', name='mohu.vr.native-profile', args=str(i)) for i in range(3)]
             r['fresh_pairs_s'] = (r['end']['pairs']-r['start']['pairs'])/r['elapsed']
             r['trace'] = n.command('frame_trace', max=180)
-            r['host_profile'] = n.command('host_profile', frames=300, top=100, **{'pass': 1})
+            r['host_profile'] = n.command('host_profile', top=400,
+                frame_lo=r['start_frame']['frame'], frame_hi=r['end_frame']['frame'], **{'pass': 1})
+            # Capture outside the quiet interval, while the owned process still
+            # has its cached native DLLs loaded. Relative EXE addresses alone
+            # cannot distinguish those functions from system-module work.
+            module_script = (f'(Get-Process -Id {proc.pid}).Modules | ForEach-Object '
+                '{ [pscustomobject]@{ path=$_.FileName; base=$_.BaseAddress.ToInt64(); '
+                'size=$_.ModuleMemorySize } } | ConvertTo-Json -Compress')
+            r['host_modules'] = json.loads(subprocess.check_output(
+                ['powershell', '-NoProfile', '-Command', module_script], text=True,
+                creationflags=subprocess.CREATE_NO_WINDOW))
             r['phase_profile'] = n.command('phase_profile', window=300)
             r['phase_hot_native'] = n.command('phase_hot', top=30)
             r['phase_hot_static'] = n.command('phase_hot', set='static', top=30)

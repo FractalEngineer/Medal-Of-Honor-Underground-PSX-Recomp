@@ -33,7 +33,7 @@ def digest(path):
 
 def game_pids():
     result = subprocess.run(["powershell", "-NoProfile", "-Command",
-        "Get-Process Medal_of_Honor_Underground_Recompiled -ErrorAction SilentlyContinue | ForEach-Object { $_.Id }"],
+        "Get-Process Medal_of_Honor*Recompiled* -ErrorAction SilentlyContinue | ForEach-Object { $_.Id }"],
         capture_output=True, text=True, creationflags=subprocess.CREATE_NO_WINDOW)
     return [int(value) for value in result.stdout.split()]
 

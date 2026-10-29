@@ -25,6 +25,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('out', type=Path)
     ap.add_argument('--slot', type=int, default=3)
+    ap.add_argument('--exe', type=Path, help='Preserved production binary beside the normal build assets')
     ap.add_argument('--skip-native-world-copy', action='store_true')
     ap.add_argument('--resolution', default='1080p')
     ap.add_argument('--disc', type=Path, help='Temporary mounted image override; config is unchanged')
@@ -79,7 +80,10 @@ def run(args):
     for f in sources:
         shutil.copyfile(f, target/f.name)
     prefs = p.hash_existing(p.preference_paths())
-    exe = ROOT/'build-release/Medal_of_Honor_Underground_Recompiled.exe'
+    exe = (args.exe.resolve() if args.exe else
+           ROOT/'build-release/Medal_of_Honor_Underground_Recompiled.exe')
+    if exe.parent != ROOT/'build-release' or not exe.is_file():
+        raise RuntimeError('Production binary must be beside the existing build assets')
     trace = out/'frame-trace.json'
     env = p.environment('tracked', True, hand_fixed=True)
     env.update(PSX_LOAD_SLOT=str(args.slot), PSX_RENDER_PASS_VERIFY='0',

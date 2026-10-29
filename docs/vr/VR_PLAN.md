@@ -18,12 +18,13 @@ Performance remains unsatisfactory. These are physical smoke results, not
 60/90-FPS, all-ID damage or whole-campaign acceptance. The damaged image and
 duplicate were deleted; the clean image is active and historical recovery OFF.**
 
-**Next: P3b native replay attribution → P3c measured optimization → P4/P5 fresh
-view cadence/recovery → P6 focused SP performance acceptance.** Execute
+**Next: P3c2–P3c6 preflight implementation/qualification → measured budget
+decision (P3d / conditional P3e if needed) → P4/P5 fresh view cadence/recovery
+→ P6 focused SP performance acceptance.** Execute
 [PERFORMANCE_NEXT_STEPS.md](PERFORMANCE_NEXT_STEPS.md), with one game, two
 compile jobs and unsandboxed launches. Do not restart image audits, world/
 music/culling, Sten basis mapping, pause ports or unchanged MP matrices.
-P0b's remaining two-title/XR dataset must not become a study that blocks P3b.
+P3b is complete. P0b's remaining two-title/XR dataset must not delay P3c.
 
 A7 now has SP physical smoke acceptance. H1/A5a HUD is implemented; detailed
 transitions/readability, broader SP damage, clean-close and matching-fixture
@@ -165,25 +166,69 @@ older R6-first pointers. MP remains calibration only. The operator's first-game
 - [x] P3a. Port reference stage brackets; isolate traversal, submission, exact
   laser, visibility and HUD capture/readback. Persistent pre-null settings
   backup and sufficient cleanup timeout; production trace export without TCP.
-- [ ] P3b. Profile native replay using the first game's existing phase/host/
+- [x] P3b. Profile native replay using the first game's existing phase/host/
   guest-cycle tools and split the wrapper's child draw stages. Resolve native
   overlay DLL samples; measure full guard/hook cost outside the collection span.
   Name the top three host costs; do not substitute guest cycles for host time.
   Exact commands, nested trace shape, module caveats, attribution targets,
   exit criteria and failure handling: [runbook](PERFORMANCE_NEXT_STEPS.md).
+  Completed: [native attribution](NATIVE_REPLAY_PROFILE.md). Exclusive packet /
+  preflight / GPU-command segments cost 5.729 / 3.805 / 1.143 ms per pair;
+  full visibility hook 0.068 ms, collector 0.043 ms. Cached DLLs are resolved
+  with their own PE tables; system samples are not treated as waits.
 - [ ] P3c. Implement a measured replay or HUD synchronization improvement and
   validate at least three alternating production baseline/candidate windows.
   Preserve native HUD/fallback, geometry/FOV, weapons, laser and guest timing.
   Generic changes need both-game checks before either pin changes. Completed
   first-game checkpoint/readback work is already shared; do not redo it.
+  Next: the real `80011424` caller contract and a qualified preflight kernel.
+  Three compiler-inlining experiments are rejected. Existing IPO improves
+  desktop pair work about 4.3% but fails stable full-path qualification; OFF.
 - [x] P3c1. Qualify bounded native-copy candidate controls and three diagnostic/
   production A/B repeats; it remains OFF. Small desktop cadence gain does not
   remove the approximately 17.6-ms pair cost or close P3c/P3/P4.
+- [ ] P3c2. Capture the full real `80011424` caller contract, including live
+  registers, scratchpad, GTE/PGXP and internal resume entries. Start a standalone
+  caller harness and establish valid per-execution integration fixtures before
+  changing execution identity. Existing probes need build/fixture selection
+  support for new families; sibling `--exe` is insufficient. Exact deliverables:
+  [ordered runbook](PERFORMANCE_NEXT_STEPS.md#31-ordered-execution-checklist--start-at-p3c2)
+  and [fixture rules](PERFORMANCE_NEXT_STEPS.md#32-execution-identity-and-fixture-handling--resolve-before-integration).
+- [ ] P3c3. Implement the faster preflight helper through the real caller
+  interface, selected at build time, with the original runnable REFERENCE.
+  Pass paired caller-result tests for accept/reject, winding, clipping/depth
+  and subdivision, including observable memory and precision effects.
+- [ ] P3c4. Pass focused correctness/lifecycle controls separately from timing:
+  world/FOV/PGXP, gun-only weapon/laser, native gameplay/audio timing, pause,
+  tracking loss, render refusal/recovery and load. Use valid fixture equivalents;
+  leave unavailable integration coverage open instead of bypassing identity.
+- [ ] P3c5. Run three alternating production baseline/candidate desktop windows
+  and the second SP workload. Record actual binary/execution/fixture/flags and
+  require a useful consistent gain beyond run spread; retain failed controls.
+- [ ] P3c6. Qualify the actual HUD/weapon/laser/XR path with matched repeated
+  measurements and correctness, then record retained/rejected/deferred and one
+  next task. No physical headset needed for this gate. Synthetic/null-HMD
+  evidence has its own limits; a limited no-hand run is not complete coverage.
+  A rejected candidate leaves P3c open. No 60/90 claim follows from cost alone.
+- [ ] P3d. Decide whether parent packet-builder work is still needed after the
+  preflight result. If over budget, optimize measured `80010CF0` through its
+  caller using the same contract/correctness/A-B/full-path gates. Otherwise
+  record why it is deferred. This is a conditional budget decision, not a
+  requirement to rewrite the parent if the full budget already passes.
+- [ ] P3e. Decide whether a remaining HUD synchronization stall needs work from
+  current full-path evidence. Inspect existing local/shared change detection,
+  checkpoint reuse and paired capture/readback first. Implement only a missing
+  measured optimization, preserving native updates/fallback; otherwise record
+  the reason to defer. Do not count old shared ports as new work.
 - [ ] P3. Reduce measured production scene-replay/HUD cost to the complete
   16.67 ms/frame budget; 11.11 ms preferred. Keep weapon/laser/HUD and correct FOV.
 - [ ] P4. Implement safe render-only cadence independent of native 30 Hz draw.
   Preserve simulation/audio/shot timing and rollback/save ABI. No turbo,
   native VBlank-rate change or stale-pair/reprojection FPS substitution.
+  A cached-scene path is a larger conditional fallback if targeted replay cannot
+  meet budget/cadence, not a concurrent task or mandatory alpha feature. Follow
+  [the budget decision table](PERFORMANCE_NEXT_STEPS.md#33-what-follows-preflight--choose-by-measured-full-path-budget)
+  and preserve visibility, moving entities, weapon animation and fresh poses.
 - [ ] P5. Pass desktop/null-HMD freshness, pacing, rollback, pause/load/recovery
   and guest-timing controls; restore debug-OFF production build.
 - [ ] P6. One bounded SP headset check: steady minimum 60 fresh application
@@ -191,7 +236,7 @@ older R6-first pointers. MP remains calibration only. The operator's first-game
 
 ## A - Alpha playability backlog after the performance blocker
 
-P3b/P3c/P4/P5 currently take priority over this backlog unless a new SP regression
+P3c/P4/P5 currently take priority over this backlog unless a new SP regression
 blocks their controls. A7 is implemented and physically accepted for SP; do not
 port it again. A2 defaults/masks, A4 exact ray and A5 native HUD retain the scoped
 evidence linked below. Continue only their explicitly open parts after performance.

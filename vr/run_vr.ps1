@@ -3,6 +3,8 @@ param(
     [string]$Runtime = 'current',
     [string]$RuntimeJson = '',
     [string]$BuildDirectory = 'build-release',
+    [ValidatePattern('^[A-Za-z0-9_.-]+\.exe$')]
+    [string]$ExecutableName = 'Medal_of_Honor_Underground_Recompiled.exe',
     [ValidateRange(-1, 99)]
     [int]$Slot = -1,
     [ValidateRange(40, 80)]
@@ -39,7 +41,7 @@ param(
 $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path $PSScriptRoot -Parent
 $buildPath = Join-Path $repoRoot $BuildDirectory
-$exePath = Join-Path $buildPath 'Medal_of_Honor_Underground_Recompiled.exe'
+$exePath = Join-Path $buildPath $ExecutableName
 $logPath = if ([IO.Path]::IsPathRooted($LogDirectory)) { $LogDirectory } else { Join-Path $repoRoot $LogDirectory }
 $stdoutLog = Join-Path $logPath 'vr-launch.stdout.log'
 $stderrLog = Join-Path $logPath 'vr-launch.stderr.log'

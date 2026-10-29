@@ -1,5 +1,55 @@
 # VR Port Implementation Log
 
+## 2026-10-29 — explicit performance implementation sequence and delivery
+
+- Expanded HANDOFF/VR_PLAN/runbook with matching P3c2–P3c6 checkboxes:
+  real caller contract and fixture strategy, build-selected implementation,
+  paired results, focused correctness, production A/B and full-path qualification.
+  Capture alone is not the implementation milestone. No new runtime or headset
+  work was requested or performed for this documentation/delivery step.
+- Made two independent blockers explicit: expensive pairs and the native ~30-Hz
+  draw trigger. Added conditional P3d packet-builder and P3e HUD decisions;
+  P4/P5 remain necessary for fresh views. Cached scene geometry is a larger
+  fallback only with supporting evidence, not an immediate/concurrent project
+  or a mandatory alpha feature. Failed compiler paths stay closed/OFF.
+- Specified the current tooling gap: benchmark sibling `--exe` does not support
+  new-family execution identities, isolated assets/caches or separate valid
+  source fixtures. Start a standalone caller harness; extend existing probes
+  minimally before per-profile gameplay measurements. Never patch headers or
+  overwrite shared saves to create apparent compatibility. Preserve the accepted
+  playable build while testing real implementation profiles.
+- Delivery includes the preceding native timers, loaded-module symbolization,
+  benchmark alias/process guards, tests and receipt. No framework source/pin,
+  generated guest C, game assets or unrelated `.commandcode/` are included.
+
+## 2026-10-29 — P3b native costs resolved; compiler candidates not promoted
+
+- Added optional Windows GNU-ABI link wrappers around original generated CPS
+  segments. Kept canonical/eye scopes distinct and the wrappers absent from
+  production. Host profiling now captures the loaded module map and top 400
+  PCs over the actual quiet frame window; offline PE lookup resolves native
+  DLLs instead of calling outside-EXE work idle. Five summary tests added,
+  including preserved-binary hash refusal after source executable replacement.
+- Slot 5: exclusive packet/preflight/GPU-command segments 5.729/3.805/1.143 ms
+  per pair. Whole visibility hook including guards/capture/queue writes is
+  0.068 ms, nested collector 0.043 ms. P3b complete; supporting records and
+  exact limitations: `NATIVE_REPLAY_PROFILE.md` and its compact receipt.
+- Implemented/measured/removed three inlining variants. Existing shared IPO
+  reduced desktop pair work 17.517→16.767 ms across three alternating A/Bs,
+  with a smaller slot-3 gain. Null-HMD candidate pair work varied 31.217→46.471
+  ms for the same binary, versus baseline 34.646/33.622 ms. Full-path gain is
+  unqualified: IPO OFF, P3c/60/90 acceptance still open, no physical test.
+- Existing launcher gained a restricted executable-name diagnostic override;
+  existing RunVR batch defaults are unchanged. Both profilers can select a
+  preserved sibling benchmark binary, avoiding executable swaps. Process
+  guards now include benchmark aliases and the reference title.
+- Focused slot-5 VERIFY control, strict plugin/native-timer C syntax and
+  132 Python tests pass. Source fixtures/preferences and null-HMD settings
+  restore; no framework/generated code/pin change. Production restored with
+  debug/native timers/IPO OFF. Next is the bounded `80011424` caller contract,
+  valid fixture/harness plan and build-selected implementation; no repeat of
+  attribution, compiler sweeps, disc/culling/weapon/pause investigations.
+
 ## 2026-10-29 — operator accepts clean-image world/music, pause and Sten smoke
 
 - Operator: “smoke test passed, looking good no more missing level and music,”

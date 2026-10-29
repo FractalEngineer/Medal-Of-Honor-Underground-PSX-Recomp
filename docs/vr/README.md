@@ -6,6 +6,14 @@ alpha blocker. Start with the rewritten [HANDOFF.md](HANDOFF.md), then execute
 [PERFORMANCE_NEXT_STEPS.md](PERFORMANCE_NEXT_STEPS.md). Historical reports and
 the archived handoff are evidence, not alternate task queues.
 
+P3b is complete: [native attribution and compiler controls](NATIVE_REPLAY_PROFILE.md)
+identify packet/preflight work as the next implementation target. Compiler
+inlining is rejected; IPO's small desktop gain lacks stable full-path acceptance
+and remains OFF. Continue P3c2–P3c6 at the measured `80011424` caller boundary.
+The [ordered implementation checklist](PERFORMANCE_NEXT_STEPS.md#31-ordered-execution-checklist--start-at-p3c2)
+specifies artifacts, fixture/identity handling, correctness and performance
+gates, then the conditional packet/HUD work and fresh-view cadence decision.
+
 Current priorities: [alpha port plan](ALPHA_PLAYABILITY_AND_CALIBRATION.md).
 [New disc-image comparison](DISC_IMAGE_COMPARISON.md): both replacements are
 identical and sector-valid, with unchanged executable/overlays. The remaining
@@ -46,7 +54,7 @@ Framework development uses `vr/shared-development`; master mirrors upstream.
 1. [HANDOFF.md](HANDOFF.md) is the current execution contract: world/music,
    SP pause and Sten have operator headset smoke acceptance. A2 defaults/masks,
    A4 laser and H1/A5a native hand HUD retain their scoped desktop evidence.
-   P3b native cost attribution and P3c implementation are next via the exact
+   P3b native cost attribution is complete; P3c implementation is next via the exact
    performance runbook, ahead of R6 SP
    damage and broader SP families. R4 native hooks/stereo
    parity are complete. R5 fog needs its matching street fixture;
