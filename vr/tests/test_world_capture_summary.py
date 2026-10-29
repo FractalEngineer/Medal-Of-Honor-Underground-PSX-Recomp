@@ -96,6 +96,23 @@ class CaptureSummaryTest(unittest.TestCase):
             'first_missing': '0x00000000',
         })
 
+    def test_gp0_commands_are_parsed(self):
+        text = HEADER.replace(
+            'draw=0 record_base',
+            'gp0=0 src=0x80138390 op=0x34 n=4 '
+            'words=3400000000000000E2007B00BF3F0000\n'
+            'gp0_overflow=2 draw=0\n'
+            'draw=0 record_base')
+        draw = capture.summarize(self.write(text))['draws'][0]
+        self.assertEqual(draw['gp0'], [{
+            'src': '0x80138390',
+            'opcode': 0x34,
+            'n_words': 4,
+            'words': ['0x34000000', '0x00000000', '0xE2007B00',
+                      '0xBF3F0000'],
+        }])
+        self.assertEqual(draw['gp0_overflow'], 2)
+
     def test_entry_attribution_is_parsed(self):
         text = HEADER + (
             'entry=2 ra=0x8009A51C pc=0x00000000 level=0x800A5A28 '

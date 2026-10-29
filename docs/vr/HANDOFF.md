@@ -82,7 +82,10 @@ unreachable leaf. The visible-entry array at `0x800B74B8` is the submitted set,
 and `mohu_world_decode_visible` reproduces it exactly: slot 2 1 entry/16
 triangles, slot 5 7 entries/91 triangles, zero decoded-only, `status=ok`. Full
 resident-world geometry parity is **not** claimed.
-Texture page/CLUT fields remain unmapped.
+Texture page/CLUT fields remain unmapped. A default-OFF GP0 ring probe now
+captures in-range `0x34` commands under `PSX_DEBUG_TOOLS=ON`; per-face
+texpage/CLUT attribution is not established, so do not treat those words as a
+material.
 [Receipt](../../vr/proof/sp-world-capture-receipt.json).
 Strict fixture `vr/tests/test_world_decode.c`; contract in
 [STATIC_WORLD_DECODER](STATIC_WORLD_DECODER.md). Next: map texpage/CLUT; capture

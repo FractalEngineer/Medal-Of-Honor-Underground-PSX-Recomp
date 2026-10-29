@@ -48,6 +48,10 @@ VISIBLE_FACES_RE = re.compile(
     r"visible_faces=1 draw=(\d+) status=(\d+) native=(\d+) matched=(\d+) "
     r"missing=(\d+) decoded_only=(\d+) triangles=(\d+) "
     r"first_missing=0x([0-9A-F]{8})")
+GP0_RE = re.compile(
+    r"gp0=(\d+) src=0x([0-9A-F]{8}) op=0x([0-9A-F]{2}) n=(\d+) "
+    r"words=([0-9A-Fa-f]*)")
+GP0_OVERFLOW_RE = re.compile(r"gp0_overflow=(\d+) draw=(\d+)")
 ENTRY_RE = re.compile(
     r"entry=(\d+) ra=0x([0-9A-F]+) pc=0x([0-9A-F]+) level=0x([0-9A-F]+) "
     r"sub=0x([0-9A-F]+) root=0x([0-9A-F]+) table=0x([0-9A-F]+) count=(\d+) "
@@ -134,7 +138,29 @@ def summarize(path):
                 "records": b"",
                 "native_compare": None,
                 "visible_faces": None,
+                "gp0": [],
+                "gp0_overflow": 0,
             }
+            continue
+        m = GP0_RE.match(line)
+        if m:
+            index = int(m.group(1))
+            if index not in summary:
+                fail(f"GP0 command before draw {index}")
+            text = m.group(5)
+            summary[index]["gp0"].append({
+                "src": f"0x{m.group(2)}",
+                "opcode": int(m.group(3), 16),
+                "n_words": int(m.group(4)),
+                "words": [f"0x{text[i:i + 8]}" for i in range(0, len(text), 8)],
+            })
+            continue
+        m = GP0_OVERFLOW_RE.match(line)
+        if m:
+            index = int(m.group(2))
+            if index not in summary:
+                fail(f"GP0 overflow before draw {index}")
+            summary[index]["gp0_overflow"] = int(m.group(1))
             continue
         m = VISIBLE_FACES_RE.match(line)
         if m:
@@ -351,6 +377,8 @@ def summarize(path):
                 f"0x{fnv1a(draw['records']):08X}" if draw["records"] else None),
             "native_compare": draw["native_compare"],
             "visible_faces": draw["visible_faces"],
+            "gp0": draw["gp0"],
+            "gp0_overflow": draw["gp0_overflow"],
         })
     return report
 

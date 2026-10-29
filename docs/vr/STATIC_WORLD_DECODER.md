@@ -141,6 +141,16 @@ deliberately not named. Do not use these fields to select a texture.
 Still open: the packet/preflight fields that carry texture page, CLUT, shading
 and semi-transparency, and a native reference count for culling/subdivision.
 
+### GP0 command probe (2026-10-30)
+
+The capture can now dump the runtime's debug GP0 ring entries for the draw's
+packet range. This requires `PSX_DEBUG_TOOLS=ON`; release builds compile the
+ring out. Slot 2 captured 128 in-range entries (141 overflow) on the draw, all
+opcode `0x34`. Their 9-word groups interleave command, vertex and UV slots, so
+per-face texture-page/CLUT attribution is **not** established. The face-window
+dump is still preflight scratch, not the final packet. Texpage/CLUT stay
+unmapped; do not read a material from these words yet.
+
 ## Real-arena census (2026-10-30)
 
 When capture is armed, the decoder runs once on the live root/table/count from

@@ -281,7 +281,7 @@
     "Scratch/range dumps are read at the next packet entry and describe the prior draw.",
     "One canonical run per scene; no XR/HUD/hands."
   ],
-  "binary_sha256_current_normal_build": "e55d3fc5f47619388538d261f88e53c94dbd3b4ed700fefa35a1e21983626c38",
+  "binary_sha256_current_normal_build": "66064682f6234237e0a2cfca52438e5e81cf5fe5daa32981d6edae8a05f54ef8",
   "census_runs": [
     {
       "slot": 2,
@@ -372,7 +372,7 @@
       ]
     }
   ],
-  "binary_sha256_current_capture_build": "3359ff277804fa74eba5fbad5edeab452ef89c7c0b331855643d34db25b8ab2a",
+  "binary_sha256_current_capture_build": "66064682f6234237e0a2cfca52438e5e81cf5fe5daa32981d6edae8a05f54ef8",
   "native_face_comparison": {
     "method": "record s7-8 on every 80011424 entry (independent of the 32-face dump cap); at the next 80010CF0 entry decode the same root/table/count with masks bypassed and match native face addresses against decoded triangle source_address values",
     "runs": [
@@ -1478,5 +1478,19 @@
       }
     ],
     "conclusion": "With face_tag, the root walk matches every submitted native face on both captured views: slot 2 16/16 and slot 5 91/91, zero missing. The visible-entry decode also matches 16/16 and 91/91 with 16 and 91 triangles and zero decoded_only. The earlier 11/16 and 70/91 result was an extension-address tag mismatch, not an unreachable leaf."
+  },
+  "gp0_probe": {
+    "capture": "analysis\\vr-captures\\slot2-gp0d\\world-capture.txt",
+    "runtime_receipt": "analysis\\vr-captures\\slot2-gp0d\\receipt.json",
+    "requires": "PSX_DEBUG_TOOLS=ON (GP0 ring is compiled out otherwise)",
+    "binary_sha256": "d6d8933310d68fe886b39f53bbbbe76b1ab63b06ab952671b62ff500f81df895",
+    "config_sha256": "34ea40ba6c65ec3e8d4a7b5a50537e07ed731cb00244b99414f92b113240b2c7",
+    "complete": true,
+    "commands_in_packet_range": 128,
+    "overflow": 141,
+    "opcodes": {
+      "0x34": 128
+    },
+    "conclusion": "The draw packet range emits GP0 0x34 commands, but their 9-word groups interleave command, vertex and UV slots, so per-face texpage/CLUT attribution is not established. The face-window dump remains preflight scratch. Texture page/CLUT stay unmapped."
   }
 }

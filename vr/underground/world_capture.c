@@ -17,6 +17,7 @@
 #include "cpu_state.h"
 #include "mod_plugins.h"
 #include "raycast.h"
+#include "gpu.h"
 #include "world_decode.h"
 
 #define CAPTURE_MASK0 0x800B7490u
@@ -45,6 +46,12 @@
 #define CAPTURE_VISIBLE_MAX 512u
 #define CAPTURE_VISIBLE_COUNT 0x800B74B4u
 #define CAPTURE_VISIBLE_LIST 0x800B74B8u
+#define CAPTURE_GP0_MAX 128u
+#define CAPTURE_GP0_FRAME_ENTRIES 4096u
+
+typedef struct {
+    uint32_t src, opcode, n_words, words[GPU_GP0_RING_MAX_WORDS];
+} Gp0Capture;
 
 typedef struct {
     uint32_t ra, begin, limit, a2, a3, sp, gp, level, sub, root, count, table;
@@ -69,6 +76,9 @@ typedef struct {
     int vis_valid;
     uint32_t vis_status, vis_native, vis_matched, vis_missing;
     uint32_t vis_decoded_only, vis_triangles, vis_first_missing;
+    int gp0_valid;
+    uint32_t gp0_count, gp0_overflow;
+    Gp0Capture gp0[CAPTURE_GP0_MAX];
     uint8_t scratch[CAPTURE_SCRATCH_SIZE];
     uint8_t range[CAPTURE_RANGE_MAX];
     uint8_t records[CAPTURE_TABLE_SIZE];
@@ -315,13 +325,51 @@ static void visible_compare(DrawCapture* draw) {
     mohu_world_mesh_free(&mesh);
 }
 
+/* Record the final GP0 polygon/env commands the draw emitted. The debug ring
+ * is filtered to the draw's packet range (physical form). Word offsets are
+ * evidence only: per-face texpage/CLUT attribution is not established. */
+static void gp0_dump(DrawCapture* draw) {
+    draw->gp0_valid = 1;
+    static GpuGp0RingEntry entries[CAPTURE_GP0_FRAME_ENTRIES];
+    extern uint32_t s_frame_count;
+    if (!gpu_gp0_ring_capacity()) return;
+    const uint32_t begin = draw->begin & 0x1FFFFFu;
+    const uint32_t limit = draw->limit & 0x1FFFFFu;
+    for (uint32_t delta = 0; delta < 2; ++delta) {
+        const uint32_t frame = s_frame_count - delta;
+        const int dumped = gpu_gp0_ring_dump_frame(
+            frame, entries, (int)CAPTURE_GP0_FRAME_ENTRIES);
+        for (int i = 0; i < dumped; ++i) {
+            const GpuGp0RingEntry* entry = &entries[i];
+            const uint8_t opcode = entry->opcode;
+            const int wanted = (opcode >= 0x20 && opcode <= 0x3F) ||
+                               (opcode >= 0xE1 && opcode <= 0xE6);
+            if (!wanted) continue;
+            const uint32_t source = entry->src_addr & 0x1FFFFFu;
+            if (source < begin || source >= limit) continue;
+            if (draw->gp0_count >= CAPTURE_GP0_MAX) {
+                ++draw->gp0_overflow;
+                continue;
+            }
+            Gp0Capture* gp0 = &draw->gp0[draw->gp0_count++];
+            gp0->src = entry->src_addr;
+            gp0->opcode = opcode;
+            gp0->n_words = entry->n_words;
+            for (unsigned w = 0; w < GPU_GP0_RING_MAX_WORDS; ++w)
+                gp0->words[w] = entry->cmd[w];
+        }
+    }
+}
+
 /* Compare the face addresses the native loop actually processed with the
  * source addresses the decoder produced for the same root. Decoded-only
  * addresses are expected because the census bypasses camera culling. A native
  * address absent from the decoded mesh is a decoder failure, not a cull. */
 static void capture_compare(DrawCapture* draw) {
-    if (draw->compare_valid || draw->native_count == 0) return;
+    if (draw->compare_valid) return;
     draw->compare_valid = 1;
+    gp0_dump(draw);
+    if (!draw->native_count) return;
     draw->cmp_native = draw->native_count;
     if (!draw->root || !draw->table || !draw->count) {
         draw->compare_status = MOHU_WORLD_REJECT_ARGUMENT;
@@ -734,6 +782,19 @@ static void flush_capture(void) {
                     d->vis_matched,
                     d->vis_missing, d->vis_decoded_only, d->vis_triangles,
                     d->vis_first_missing);
+        if (d->gp0_valid) {
+            for (uint32_t g = 0; g < d->gp0_count; ++g) {
+                fprintf(file, "gp0=%u src=0x%08X op=0x%02X n=%u words=",
+                        (unsigned)(d - g_draws), d->gp0[g].src,
+                        d->gp0[g].opcode, d->gp0[g].n_words);
+                for (unsigned w = 0; w < GPU_GP0_RING_MAX_WORDS; ++w)
+                    fprintf(file, "%08X", d->gp0[g].words[w]);
+                fputc('\n', file);
+            }
+            if (d->gp0_overflow)
+                fprintf(file, "gp0_overflow=%u draw=%u\n", d->gp0_overflow,
+                        (unsigned)(d - g_draws));
+        }
     }
     for (unsigned i = 0; i < g_entry_count; ++i) {
         const EntryCapture* e = &g_entries[i];
