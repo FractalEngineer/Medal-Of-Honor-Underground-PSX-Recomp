@@ -60,7 +60,7 @@ class WorldDecodeFixtureTest(unittest.TestCase):
             )
             self.assertIn(
                 "static-world leaf/strip decode, winding, masks, bounds, "
-                "named rejections and snapshot cache",
+                "named rejections, visible-entry parity path and snapshot cache",
                 result.stdout,
             )
 

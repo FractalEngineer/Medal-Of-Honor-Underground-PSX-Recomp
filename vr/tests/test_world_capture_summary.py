@@ -79,6 +79,23 @@ class CaptureSummaryTest(unittest.TestCase):
         self.assertEqual(compare['missing_addrs'],
                          ['0x80123456', '0x80123490'])
 
+    def test_visible_faces_is_parsed(self):
+        text = HEADER.replace(
+            'draw=0 record_base',
+            'visible_faces=1 draw=0 status=0 native=16 matched=16 missing=0 '
+            'decoded_only=0 triangles=16 first_missing=0x00000000\n'
+            'draw=0 record_base')
+        draw = capture.summarize(self.write(text))['draws'][0]
+        self.assertEqual(draw['visible_faces'], {
+            'status': 0,
+            'native': 16,
+            'matched': 16,
+            'missing': 0,
+            'decoded_only': 0,
+            'triangles': 16,
+            'first_missing': '0x00000000',
+        })
+
     def test_entry_attribution_is_parsed(self):
         text = HEADER + (
             'entry=2 ra=0x8009A51C pc=0x00000000 level=0x800A5A28 '

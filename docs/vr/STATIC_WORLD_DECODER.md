@@ -162,29 +162,28 @@ real data. It is **not** a native culling or subdivision comparison.
 
 ## Native face comparison (2026-10-30)
 
-The probe now records `s7-8` on **every** `80011424` entry, independently of
-the 32-face dump cap. At the next `80010CF0` entry it decodes the same
-root/table/count with masks bypassed and matches each native face address
-against decoded triangle `source_address` values.
+The probe records `s7-8` on **every** `80011424` entry, independently of the
+32-face dump cap. At the next `80010CF0` entry it decodes the same
+root/table/count with masks bypassed and matches each native address against
+`MohuWorldTriangle.face_tag`.
 
-| Scene | Draw root | Native faces | Matched | Missing | Decoded triangles | Decoded-only |
+`face_tag` is the address native records: for a base triangle it is the base
+address, and for an extension it is `extension_word - 4` (the word before the
+extension code). `source_address` remains the word that introduced the
+triangle. The earlier 11/16 and 70/91 result compared native tags against
+extension code addresses; that four-byte offset on extension faces was the
+entire gap, not an unreachable leaf.
+
+| Scene | Draw root | Native faces | Matched | Missing | Root triangles | Decoded-only |
 |---|---|---:|---:|---:|---:|---:|
-| slot 2 | `0x800E8D28` | 16 | 11 | 5 | 1586 | 1575 |
-| slot 5 | `0x800E52A8` | 91 | 70 | 21 | 2097 | 2027 |
+| slot 2 | `0x800E8D28` | 16 | 16 | 0 | 1586 | 1570 |
+| slot 5 | `0x800E52A8` | 91 | 91 | 0 | 2097 | 2006 |
 
-Decoded-only is expected: the census bypasses camera culling. No native
-address was submitted twice, and no matched source carried more than one
-decoded triangle in these draws.
-
-The missing addresses are **valid base words** preceded by `0x1FFF` terminators
-(for example `0x800EA920`: `0068055D 006943C1`, preceded by `1FFF1FFF`), with
-in-range vertex indices and record values. They are real faces, not culling
-artifacts. A scan of `0x800A0000..0x80100000` found **no absolute pointer** to
-any missing face list, and none exists between the root and vertex table. The
-list is reached through the visible-entry array described below, via a
-visible-entry node pointer rather than a direct list pointer. Decoder coverage
-through the root walk is therefore incomplete, and the census triangle count
-must not be treated as native-complete. Geometry parity is **not** established.
+Decoded-only is unculled resident geometry: the root walk intentionally
+bypasses camera culling. No native address was submitted twice, and no matched
+tag carried more than one decoded triangle in these draws. Full resident-world
+geometry parity is still **not** claimed, because the capture has no
+world-complete native reference.
 
 Faces can run before the first captured packet entry; those are labelled
 `0xFFFFFFFF` rather than being attributed to draw 0.
@@ -205,20 +204,20 @@ The packet builder does **not** walk `sub+0x14` directly. Its loop reads:
 | entry `+0x0C` | face count |
 | entry `+0x18` | face-list pointer |
 
-This is the array the pre-pass fills. It accounts for every native face:
+This is the array the pre-pass fills. `mohu_world_decode_visible` decodes it in
+array order (duplicates included) through the same strip rules. It reproduces
+the submitted set exactly:
 
-| Scene | Visible entries | Faces | Decoded when each entry is used as a root |
-|---|---:|---:|---:|
-| slot 2 | 1 (`0x800E9098`, list `0x800EA91C`) | 16 | 16 |
-| slot 5 | 7 | 91 | 20+22+6+15+12+8+8 = 91 |
+| Scene | Visible entries | Faces | Visible triangles | Decoded-only |
+|---|---:|---:|---:|---:|
+| slot 2 | 1 (`0x800E9098`, list `0x800EA91C`) | 16 | 16 | 0 |
+| slot 5 | 7 | 91 | 20+22+6+15+12+8+8 = 91 | 0 |
 
-Every entry decoded with `status=ok` and its own face count. The main root
-walk still matches only 11/16 and 70/91 because it does not reach at least the
-slot-2 leaf: `0x800E9098` is referenced at `0x800E8F20` by interior node
-`0x800E8F04`, which the BFS from `0x800E8D28` never visits. Therefore the root
-walk is **not** a complete native reference, and geometry parity remains
-unproven. The next implementation must decode the visible-entry array (or the
-structure that produces it), not widen the root scan.
+Every entry decoded with `status=ok` and its own face count. With `face_tag`,
+the root walk also matches every native face (16/16 and 91/91), so the earlier
+"missing leaf `0x800E9098`" claim is withdrawn. The visible-entry array remains
+useful as the **view-specific submitted set**; it is not a replacement for the
+full resident tree, and its parity is reported separately.
 
 ## Rejections (atomic, named)
 
@@ -252,17 +251,20 @@ non-finite/malformed polygons, capacity overflow and argument guards.
 proven draw/face fields, six-half record layout, material fields staying null,
 and refusals for a wrong record base, wrong index or missing header.
 
-Not yet demonstrated: full native face coverage (11/16 and 70/91 matched),
-texture-page/CLUT mapping, subdivision decisions and textured output.
+Native submitted-face parity is now demonstrated for both captured views
+(16/16 and 91/91 with `face_tag`), and the visible-entry path reproduces the
+same set. Not yet demonstrated: full resident-world geometry parity (no
+world-complete native reference), texture-page/CLUT mapping, subdivision
+decisions and textured output.
 
 ## Next
 
 1. Map the packet/preflight fields that carry texture page, CLUT, shading and
    semi-transparency; the 12-byte record is not one of them.
-2. Decode the visible-entry array at `0x800B74B8` (or the pre-pass output that
-   fills it) instead of treating the root walk as complete. The array covers
-   all native faces when decoded per entry; the root walk misses leaves the
-   native builder submits.
+2. Keep `mohu_world_decode_visible` as the view-specific submitted-set check
+   (1 entry/16 faces and 7 entries/91 faces, zero decoded-only). Full resident
+   geometry still comes from the root walk; capture a world-complete native
+   reference before claiming full geometry parity.
 3. Wire the decoder into a default-OFF native census so the real arena root,
    record table and resource generation are recorded before the host renderer
    consumes it.

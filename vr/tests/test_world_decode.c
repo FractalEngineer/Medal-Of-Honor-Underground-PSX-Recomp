@@ -116,6 +116,7 @@ static void test_full_decode(void) {
 
     assert(!mesh.triangles[0].is_extension && mesh.triangles[0].extension_word == 0u);
     assert(mesh.triangles[0].source_address == STRIP_A);
+    assert(mesh.triangles[0].face_tag == STRIP_A);
     assert(mesh.triangles[0].base_word[0] == ((1u << 16) | 0u));
     assert(mesh.triangles[0].record_index == 0x00CFu);
     assert(mesh.triangles[1].record_index == 0x00CFu);
@@ -123,6 +124,8 @@ static void test_full_decode(void) {
     assert(mesh.triangles[1].is_extension);
     assert(mesh.triangles[1].extension_word == ((1u << 13) | 3u));
     assert(mesh.triangles[1].render_flags == 1u);
+    assert(mesh.triangles[1].face_tag == STRIP_A + 4u);
+    assert(mesh.triangles[2].face_tag == STRIP_A + 8u);
     assert(!mesh.triangles[1].winding_swapped);
     assert(mesh.triangles[2].winding_swapped);
     assert(mesh.triangles[2].render_flags == 0u);
@@ -297,12 +300,133 @@ static void test_cache(void) {
     mohu_world_cache_free(&cache);
 }
 
+static MohuWorldVisibleRequest visible_request(const uint32_t *entries,
+                                               uint32_t count) {
+    MohuWorldVisibleRequest r;
+    memset(&r, 0, sizeof r);
+    r.entries = entries;
+    r.entry_count = count;
+    r.vertex_table = VERTICES;
+    r.vertex_count = 4u;
+    r.generation = 7u;
+    return r;
+}
+
+static void test_visible_decode(void) {
+    build_level();
+    const uint32_t entries[2] = {NODE_LEAF_A, NODE_LEAF_B};
+    MohuWorldVisibleRequest r = visible_request(entries, 2u);
+    MohuWorldMesh mesh;
+    MohuWorldReport report;
+    assert(mohu_world_decode_visible(&r, &mesh, &report) == MOHU_WORLD_OK);
+    assert(report.leaves_visited == 2u && mesh.leaf_count == 2u);
+    assert(mesh.generation == 7u && mesh.vertex_count == 4u);
+    assert(mesh.triangle_count == 4u && report.triangles_decoded == 4u);
+    assert(mesh.materials_decoded == 0u && mesh.material_tokens == 4u);
+    assert(mesh.triangles[0].source_address == STRIP_A);
+    assert(mesh.triangles[3].source_address == STRIP_B);
+    check_bounds(&mesh);
+    mohu_world_mesh_free(&mesh);
+
+    const uint32_t reversed[2] = {NODE_LEAF_B, NODE_LEAF_A};
+    r = visible_request(reversed, 2u);
+    assert(mohu_world_decode_visible(&r, &mesh, &report) == MOHU_WORLD_OK);
+    assert(mesh.triangle_count == 4u);
+    assert(mesh.triangles[0].source_address == STRIP_B);
+    assert(mesh.triangles[1].source_address == STRIP_A);
+    mohu_world_mesh_free(&mesh);
+
+    const uint32_t twice[2] = {NODE_LEAF_A, NODE_LEAF_A};
+    r = visible_request(twice, 2u);
+    assert(mohu_world_decode_visible(&r, &mesh, &report) == MOHU_WORLD_OK);
+    assert(mesh.triangle_count == 6u && report.leaves_visited == 2u);
+    mohu_world_mesh_free(&mesh);
+}
+
+static void test_visible_decode_empty(void) {
+    build_level();
+    MohuWorldVisibleRequest r = visible_request(NULL, 0u);
+    MohuWorldMesh mesh;
+    MohuWorldReport report;
+    assert(mohu_world_decode_visible(&r, &mesh, &report) == MOHU_WORLD_OK);
+    assert(mesh.triangle_count == 0u && mesh.leaf_count == 0u);
+    for (unsigned i = 0; i < 3; ++i) {
+        assert(mesh.bounds_min[i] == 0 && mesh.bounds_max[i] == 0);
+        assert(mesh.leaf_bounds_min[i] == 0 && mesh.leaf_bounds_max[i] == 0);
+    }
+    mohu_world_mesh_free(&mesh);
+}
+
+static void test_visible_decode_rejections(void) {
+    build_level();
+    MohuWorldMesh mesh;
+    MohuWorldReport report;
+    const uint32_t entries[2] = {NODE_LEAF_A, NODE_LEAF_B};
+
+    MohuWorldVisibleRequest r = visible_request(NULL, 1u);
+    assert(mohu_world_decode_visible(&r, &mesh, &report) ==
+           MOHU_WORLD_REJECT_ARGUMENT);
+    assert(mohu_world_decode_visible(NULL, &mesh, &report) ==
+           MOHU_WORLD_REJECT_ARGUMENT);
+
+    uint32_t bad_entry[1] = {NODE_LEAF_A + 2u};
+    r = visible_request(bad_entry, 1u);
+    assert(mohu_world_decode_visible(&r, &mesh, &report) ==
+           MOHU_WORLD_REJECT_ENTRY);
+    assert(mesh.triangles == NULL && mesh.vertices == NULL);
+
+    r = visible_request(entries, MOHU_WORLD_MAX_ENTRIES + 1u);
+    assert(mohu_world_decode_visible(&r, &mesh, &report) ==
+           MOHU_WORLD_REJECT_LEAF_BUDGET);
+    assert(mesh.triangles == NULL && mesh.vertices == NULL);
+
+    r = visible_request(entries, 2u);
+    r.vertex_table = 0x7ffffff0u;
+    assert(mohu_world_decode_visible(&r, &mesh, &report) ==
+           MOHU_WORLD_REJECT_VERTEX_TABLE);
+    assert(mesh.triangles == NULL && mesh.vertices == NULL);
+
+    r = visible_request(entries, 2u);
+    r.max_triangles = 2u;
+    assert(mohu_world_decode_visible(&r, &mesh, &report) ==
+           MOHU_WORLD_REJECT_TRIANGLE_BUDGET);
+    assert(mesh.triangles == NULL && mesh.vertices == NULL);
+
+    const int16_t inverted[6] = {10, 0, 0, -10, 0, 0};
+    put_box(NODE_LEAF_A, inverted);
+    r = visible_request(entries, 1u);
+    assert(mohu_world_decode_visible(&r, &mesh, &report) ==
+           MOHU_WORLD_REJECT_NODE_BOUNDS);
+    assert(mesh.triangles == NULL && mesh.vertices == NULL);
+
+    build_level();
+    put_word(NODE_LEAF_A + 12u, MOHU_WORLD_MAX_LEAF_FACES + 1u);
+    r = visible_request(entries, 1u);
+    assert(mohu_world_decode_visible(&r, &mesh, &report) ==
+           MOHU_WORLD_REJECT_LEAF_COUNT);
+    assert(mesh.triangles == NULL && mesh.vertices == NULL);
+
+    build_level();
+    put_word(NODE_LEAF_A + 24u, 0x7ffffff0u);
+    r = visible_request(entries, 1u);
+    assert(mohu_world_decode_visible(&r, &mesh, &report) ==
+           MOHU_WORLD_REJECT_STRIP_SPAN);
+    assert(mesh.triangles == NULL && mesh.vertices == NULL);
+
+    assert(strcmp(mohu_world_status_name(MOHU_WORLD_REJECT_ENTRY), "entry") ==
+           0);
+    assert(mohu_world_status_name((MohuWorldStatus)99) != NULL);
+}
+
 int main(void) {
     test_full_decode();
     test_masks();
     test_rejections();
     test_cache();
+    test_visible_decode();
+    test_visible_decode_empty();
+    test_visible_decode_rejections();
     puts("PASS: static-world leaf/strip decode, winding, masks, bounds, "
-         "named rejections and snapshot cache");
+         "named rejections, visible-entry parity path and snapshot cache");
     return 0;
 }

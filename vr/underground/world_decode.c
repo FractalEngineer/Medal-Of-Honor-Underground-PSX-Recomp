@@ -11,7 +11,7 @@ static const char *const s_status_names[] = {
     "ok", "argument", "vertex_table", "tree_root", "node_bounds",
     "leaf_count", "leaf_budget", "strip_span", "strip_terminator",
     "strip_budget", "vertex_index", "tree_budget", "triangle_budget",
-    "allocation"
+    "allocation", "entry"
 };
 
 const char *mohu_world_status_name(MohuWorldStatus status) {
@@ -79,6 +79,7 @@ static void include_bounds(MohuWorldMesh *mesh, const MohuWorldVertex *v) {
 static MohuWorldStatus append_triangle(MohuWorldMesh *mesh, uint32_t limit,
                                        const uint32_t idx[3],
                                        uint32_t source_address,
+                                       uint32_t face_tag,
                                        const uint32_t base_word[2],
                                        uint32_t extension_word,
                                        uint16_t render_flags,
@@ -95,6 +96,7 @@ static MohuWorldStatus append_triangle(MohuWorldMesh *mesh, uint32_t limit,
         include_bounds(mesh, &mesh->vertices[idx[i]]);
     }
     t->source_address = source_address;
+    t->face_tag = face_tag;
     t->base_word[0] = base_word[0];
     t->base_word[1] = base_word[1];
     t->record_index = (uint16_t)(base_word[1] >> 16);
@@ -165,8 +167,9 @@ static MohuWorldStatus decode_strip(uint32_t list, uint32_t faces,
                 return reject(report, MOHU_WORLD_REJECT_VERTEX_INDEX, source,
                               leaf, idx[i]);
         }
+        const uint32_t tag = is_extension ? source - 4u : source;
         const MohuWorldStatus status =
-            append_triangle(mesh, limit, idx, source, base_word,
+            append_triangle(mesh, limit, idx, source, tag, base_word,
                             extension_word, render_flags, winding_swapped,
                             is_extension, report);
         if (status != MOHU_WORLD_OK) {
@@ -181,6 +184,54 @@ static MohuWorldStatus decode_strip(uint32_t list, uint32_t faces,
         return reject(report, MOHU_WORLD_REJECT_STRIP_TERMINATOR, cursor,
                       leaf, 0u);
     return MOHU_WORLD_OK;
+}
+
+static MohuWorldStatus load_vertices(uint32_t table, uint32_t count,
+                                     uint32_t generation, MohuWorldMesh *mesh,
+                                     MohuWorldReport *report) {
+    if (!count || count > MOHU_WORLD_MAX_VERTICES ||
+        !span_ok(table, count * 8u))
+        return reject(report, MOHU_WORLD_REJECT_VERTEX_TABLE, table, 0u, count);
+
+    mesh->vertices = calloc(count, sizeof *mesh->vertices);
+    if (!mesh->vertices)
+        return reject(report, MOHU_WORLD_REJECT_ALLOCATION, 0u, 0u, count);
+    mesh->vertex_count = count;
+    mesh->generation = generation;
+    mesh->source_start = 0xFFFFFFFFu;
+    mesh->source_end = 0u;
+    for (unsigned i = 0; i < 3; ++i) {
+        mesh->bounds_min[i] = INT32_MAX;
+        mesh->bounds_max[i] = INT32_MIN;
+        mesh->leaf_bounds_min[i] = INT16_MAX;
+        mesh->leaf_bounds_max[i] = INT16_MIN;
+    }
+    record_read(mesh, table, count * 8u);
+    for (uint32_t i = 0; i < count; ++i) {
+        const uint32_t address = table + i * 8u;
+        mesh->vertices[i].x = (int16_t)psx_mod_read_half(address);
+        mesh->vertices[i].y = (int16_t)psx_mod_read_half(address + 2u);
+        mesh->vertices[i].z = (int16_t)psx_mod_read_half(address + 4u);
+        mesh->vertices[i].pad = 0;
+    }
+    return MOHU_WORLD_OK;
+}
+
+static void finish_mesh(MohuWorldMesh *mesh, MohuWorldReport *report) {
+    if (!mesh->triangle_count) {
+        for (unsigned i = 0; i < 3; ++i) {
+            mesh->bounds_min[i] = 0;
+            mesh->bounds_max[i] = 0;
+        }
+    }
+    if (!mesh->leaf_count) {
+        for (unsigned i = 0; i < 3; ++i) {
+            mesh->leaf_bounds_min[i] = 0;
+            mesh->leaf_bounds_max[i] = 0;
+        }
+    }
+    mesh->source_fingerprint = mohu_world_source_fingerprint(mesh);
+    report->status = MOHU_WORLD_OK;
 }
 
 static MohuWorldStatus decode_tree(const MohuWorldRequest *request,
@@ -258,12 +309,6 @@ MohuWorldStatus mohu_world_decode(const MohuWorldRequest *request,
     if (mesh) memset(mesh, 0, sizeof *mesh);
     if (!request || !mesh || !report)
         return reject(report, MOHU_WORLD_REJECT_ARGUMENT, 0u, 0u, 0u);
-    if (!request->vertex_count ||
-        request->vertex_count > MOHU_WORLD_MAX_VERTICES ||
-        !span_ok(request->vertex_table, request->vertex_count * 8u))
-        return reject(report, MOHU_WORLD_REJECT_VERTEX_TABLE,
-                      request->vertex_table, 0u, request->vertex_count);
-
     uint32_t limit = request->max_triangles ? request->max_triangles
                                             : MOHU_WORLD_MAX_TRIANGLES;
     if (limit > MOHU_WORLD_MAX_TRIANGLES) limit = MOHU_WORLD_MAX_TRIANGLES;
@@ -271,28 +316,10 @@ MohuWorldStatus mohu_world_decode(const MohuWorldRequest *request,
                                               : MOHU_WORLD_MAX_LEAVES;
     if (max_leaves > MOHU_WORLD_MAX_LEAVES) max_leaves = MOHU_WORLD_MAX_LEAVES;
 
-    mesh->vertices = calloc(request->vertex_count, sizeof *mesh->vertices);
-    if (!mesh->vertices)
-        return reject(report, MOHU_WORLD_REJECT_ALLOCATION, 0u, 0u,
-                      request->vertex_count);
-    mesh->vertex_count = request->vertex_count;
-    mesh->generation = request->generation;
-    mesh->source_start = 0xFFFFFFFFu;
-    mesh->source_end = 0u;
-    for (unsigned i = 0; i < 3; ++i) {
-        mesh->bounds_min[i] = INT32_MAX;
-        mesh->bounds_max[i] = INT32_MIN;
-        mesh->leaf_bounds_min[i] = INT16_MAX;
-        mesh->leaf_bounds_max[i] = INT16_MIN;
-    }
-    record_read(mesh, request->vertex_table, request->vertex_count * 8u);
-    for (uint32_t i = 0; i < request->vertex_count; ++i) {
-        const uint32_t address = request->vertex_table + i * 8u;
-        mesh->vertices[i].x = (int16_t)psx_mod_read_half(address);
-        mesh->vertices[i].y = (int16_t)psx_mod_read_half(address + 2u);
-        mesh->vertices[i].z = (int16_t)psx_mod_read_half(address + 4u);
-        mesh->vertices[i].pad = 0;
-    }
+    const MohuWorldStatus prepared =
+        load_vertices(request->vertex_table, request->vertex_count,
+                      request->generation, mesh, report);
+    if (prepared != MOHU_WORLD_OK) return prepared;
 
     MohuWorldRequest bounded = *request;
     bounded.max_leaves = max_leaves;
@@ -305,20 +332,83 @@ MohuWorldStatus mohu_world_decode(const MohuWorldRequest *request,
     }
 
     mesh->leaf_count = report->leaves_visited;
-    if (!mesh->triangle_count) {
-        for (unsigned i = 0; i < 3; ++i) {
-            mesh->bounds_min[i] = 0;
-            mesh->bounds_max[i] = 0;
+    finish_mesh(mesh, report);
+    return MOHU_WORLD_OK;
+}
+
+MohuWorldStatus mohu_world_decode_visible(
+    const MohuWorldVisibleRequest *request, MohuWorldMesh *mesh,
+    MohuWorldReport *report) {
+    if (report) memset(report, 0, sizeof *report);
+    if (mesh) memset(mesh, 0, sizeof *mesh);
+    if (!request || !mesh || !report || (request->entry_count &&
+                                         !request->entries))
+        return reject(report, MOHU_WORLD_REJECT_ARGUMENT, 0u, 0u, 0u);
+    if (request->entry_count > MOHU_WORLD_MAX_ENTRIES)
+        return reject(report, MOHU_WORLD_REJECT_LEAF_BUDGET, 0u, 0u,
+                      request->entry_count);
+
+    uint32_t limit = request->max_triangles ? request->max_triangles
+                                            : MOHU_WORLD_MAX_TRIANGLES;
+    if (limit > MOHU_WORLD_MAX_TRIANGLES) limit = MOHU_WORLD_MAX_TRIANGLES;
+
+    const MohuWorldStatus prepared =
+        load_vertices(request->vertex_table, request->vertex_count,
+                      request->generation, mesh, report);
+    if (prepared != MOHU_WORLD_OK) return prepared;
+
+    for (uint32_t i = 0; i < request->entry_count; ++i) {
+        const uint32_t entry = request->entries[i];
+        if (!span_ok(entry, 36u) || (entry & 3u)) {
+            mohu_world_mesh_free(mesh);
+            return reject(report, MOHU_WORLD_REJECT_ENTRY, entry, 0u, i);
+        }
+        record_read(mesh, entry, 36u);
+
+        int16_t bounds[6];
+        for (unsigned b = 0; b < 6; ++b)
+            bounds[b] = (int16_t)psx_mod_read_half(entry + b * 2u);
+        for (unsigned b = 0; b < 3; ++b) {
+            if (bounds[b] > bounds[b + 3]) {
+                mohu_world_mesh_free(mesh);
+                return reject(report, MOHU_WORLD_REJECT_NODE_BOUNDS, entry,
+                              0u, b);
+            }
+        }
+
+        const uint32_t faces = psx_mod_read_word(entry + 12u);
+        if (faces > MOHU_WORLD_MAX_LEAF_FACES) {
+            mohu_world_mesh_free(mesh);
+            return reject(report, MOHU_WORLD_REJECT_LEAF_COUNT, entry, 0u,
+                          faces);
+        }
+        if (!faces) continue;
+
+        if (++report->leaves_visited > MOHU_WORLD_MAX_LEAVES) {
+            mohu_world_mesh_free(mesh);
+            return reject(report, MOHU_WORLD_REJECT_LEAF_BUDGET, entry, 0u,
+                          report->leaves_visited);
+        }
+        for (unsigned b = 0; b < 3; ++b) {
+            if (bounds[b] < mesh->leaf_bounds_min[b])
+                mesh->leaf_bounds_min[b] = bounds[b];
+            if (bounds[b + 3] > mesh->leaf_bounds_max[b])
+                mesh->leaf_bounds_max[b] = bounds[b + 3];
+        }
+        report->leaf = entry;
+        const uint32_t list = psx_mod_read_word(entry + 24u);
+        const MohuWorldStatus status =
+            decode_strip(list, faces, mesh, limit, entry, report);
+        report->leaf = 0;
+        if (status != MOHU_WORLD_OK) {
+            mohu_world_mesh_free(mesh);
+            report->status = status;
+            return status;
         }
     }
-    if (!mesh->leaf_count) {
-        for (unsigned i = 0; i < 3; ++i) {
-            mesh->leaf_bounds_min[i] = 0;
-            mesh->leaf_bounds_max[i] = 0;
-        }
-    }
-    mesh->source_fingerprint = mohu_world_source_fingerprint(mesh);
-    report->status = MOHU_WORLD_OK;
+
+    mesh->leaf_count = report->leaves_visited;
+    finish_mesh(mesh, report);
     return MOHU_WORLD_OK;
 }
 

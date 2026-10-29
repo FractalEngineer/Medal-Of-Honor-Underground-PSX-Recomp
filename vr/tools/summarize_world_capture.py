@@ -44,6 +44,10 @@ NATIVE_COMPARE_RE = re.compile(
     r"first_missing=0x([0-9A-Fa-f]{8}) first_dup=0x([0-9A-Fa-f]{8}) "
     r"first_multi=0x([0-9A-Fa-f]{8})"
     r"(?: missing_in_range=(\d+) missing_addrs=([0-9a-fx,]*))?")
+VISIBLE_FACES_RE = re.compile(
+    r"visible_faces=1 draw=(\d+) status=(\d+) native=(\d+) matched=(\d+) "
+    r"missing=(\d+) decoded_only=(\d+) triangles=(\d+) "
+    r"first_missing=0x([0-9A-F]{8})")
 ENTRY_RE = re.compile(
     r"entry=(\d+) ra=0x([0-9A-F]+) pc=0x([0-9A-F]+) level=0x([0-9A-F]+) "
     r"sub=0x([0-9A-F]+) root=0x([0-9A-F]+) table=0x([0-9A-F]+) count=(\d+) "
@@ -129,6 +133,22 @@ def summarize(path):
                 "record_entries": 0,
                 "records": b"",
                 "native_compare": None,
+                "visible_faces": None,
+            }
+            continue
+        m = VISIBLE_FACES_RE.match(line)
+        if m:
+            index = int(m.group(1))
+            if index not in summary:
+                fail(f"visible faces before draw {index}")
+            summary[index]["visible_faces"] = {
+                "status": int(m.group(2)),
+                "native": int(m.group(3)),
+                "matched": int(m.group(4)),
+                "missing": int(m.group(5)),
+                "decoded_only": int(m.group(6)),
+                "triangles": int(m.group(7)),
+                "first_missing": f"0x{m.group(8).upper()}",
             }
             continue
         m = NATIVE_COMPARE_RE.match(line)
@@ -330,6 +350,7 @@ def summarize(path):
             "record_table_hash_before_call": (
                 f"0x{fnv1a(draw['records']):08X}" if draw["records"] else None),
             "native_compare": draw["native_compare"],
+            "visible_faces": draw["visible_faces"],
         })
     return report
 

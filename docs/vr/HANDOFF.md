@@ -74,20 +74,19 @@ The decoder also runs once on each live arena with masks bypassed and returns
 `status=ok`: slot 2 decodes 203 nodes / 134 leaves / 1756 triangles, slot 5
 237 / 155 / 1932. The global masks prune slot 2 to 25 leaves and slot 5 to
 zero, so they are view-specific, not a resource filter.
-Native face coverage is measured against every `80011424` submission:
-the root walk matches 11 of 16 on slot 2 and 70 of 91 on slot 5. Attribution
-shows every real `80010CF0` entry has `ra=0x8009A51C`; the missing faces are
-not from another caller. The builder's actual source is the visible-entry array
-at `0x800B74B8` (face count `+0x0C`, list `+0x18`), which accounts for all
-native faces: slot 2 has 1 entry/16 faces and slot 5 has 7 entries/91 faces,
-and decoding each entry as a root returns exactly its face count with
-`status=ok`. The root walk misses at least slot 2's leaf `0x800E9098` (parent
-interior node `0x800E8F04`), so geometry parity is **not** established.
+Native face parity is exact on both captured views. With `face_tag` (base
+address for a base, `extension_word - 4` for an extension), the root walk
+matches 16/16 on slot 2 and 91/91 on slot 5 with zero missing; the earlier
+11/16 and 70/91 result was an extension-address tag mismatch, not an
+unreachable leaf. The visible-entry array at `0x800B74B8` is the submitted set,
+and `mohu_world_decode_visible` reproduces it exactly: slot 2 1 entry/16
+triangles, slot 5 7 entries/91 triangles, zero decoded-only, `status=ok`. Full
+resident-world geometry parity is **not** claimed.
 Texture page/CLUT fields remain unmapped.
 [Receipt](../../vr/proof/sp-world-capture-receipt.json).
 Strict fixture `vr/tests/test_world_decode.c`; contract in
-[STATIC_WORLD_DECODER](STATIC_WORLD_DECODER.md). Next: decode the visible-entry
-array; map texpage/CLUT.
+[STATIC_WORLD_DECODER](STATIC_WORLD_DECODER.md). Next: map texpage/CLUT; capture
+a world-complete native reference for full geometry parity.
 
 Petrol now follows the shared hand ray in both measured SP release branches.
 Slot 1's missing street is reproduced and repaired in both eyes: the VR selector

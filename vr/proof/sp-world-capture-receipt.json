@@ -1,5 +1,5 @@
 {
-  "schema": 5,
+  "schema": 6,
   "date": "2026-10-30",
   "scope": "M1 real SP 80010CF0/80011424 input capture",
   "build": {
@@ -26,8 +26,9 @@
     "Slot 2: the three record words appear verbatim in the face packet at offsets 3, 6 and 9 (20 of 32 captured faces), alongside words such as 0x007B00E2 that look like packed UVs.",
     "The record table base is a runtime pointer (0x801259BC for slot 2 draw 0), not a static level field.",
     "The decoder decoded both real arenas with masks bypassed and no rejection: slot 2 54/25/324 with masks (203/134/1756 bypassed), slot 5 1/0/0 with masks (237/155/1932 bypassed). Counts are nodes/leaves/triangles.",
-    "Native face addresses are s7-8 at 80011424 and are directly comparable with decoded triangle source_address values; 11/16 and 70/91 matched.",
-    "The native builder face source is the visible-entry array at 0x800B74B8 (faces at +0x0C, list at +0x18), not a direct root walk; all real 80010CF0 invocations share ra=0x8009A51C."
+    "The native builder face source is the visible-entry array at 0x800B74B8 (faces at +0x0C, list at +0x18), not a direct root walk; all real 80010CF0 invocations share ra=0x8009A51C.",
+    "Native face tags (s7-8) match decoded face_tag exactly: slot 2 16/16 and slot 5 91/91, zero missing; extension tags are extension_word - 4.",
+    "The visible-entry array at 0x800B74B8 decodes to exactly the submitted set: slot 2 1 entry/16 triangles, slot 5 7 entries/91 triangles, zero decoded_only, status=ok."
   ],
   "not_proven": [
     "The mapping is not universal: slot 5 contains the record word in the captured packet for only 3 of 32 faces, and its packet layout differs.",
@@ -35,8 +36,8 @@
     "Texture page, CLUT, shading and semi-transparency fields; they are not in the 12-byte record and were not found as GP0 draw-mode words in the captured packet window.",
     "Decoded triangle counts/winding/bounds against the captured arena: the capture does not dump the full tree/vertex table.",
     "No native triangle-count reference is captured yet; the census proves the tree/strip decode terminates and covers the resident leaves, not that native culling or subdivision matches.",
-    "Native face coverage: slot 2 11/16 matched, slot 5 70/91 matched. The missing faces are real strips whose owner is not an absolute pointer in the captured level range.",
-    "Geometry parity: the root walk misses leaves the native builder submits via the visible-entry array at 0x800B74B8 (slot 2 11/16, slot 5 70/91). The array itself covers all native faces when decoded per entry."
+    "Full resident-world geometry parity: the root walk decodes unculled resident geometry (1586 and 2097 triangles) while the visible path is view-specific (16 and 91); neither is a world-complete native reference.",
+    "Off-camera resident leaves are not part of the captured native face list, so submitted-face parity does not prove full-world culling equality."
   ],
   "runs": [
     {
@@ -280,7 +281,7 @@
     "Scratch/range dumps are read at the next packet entry and describe the prior draw.",
     "One canonical run per scene; no XR/HUD/hands."
   ],
-  "binary_sha256_current_normal_build": "bbcff007ff294ea6bcb645a94e39d1a32151a5a54e4df80b8a9505f9c23418dc",
+  "binary_sha256_current_normal_build": "e55d3fc5f47619388538d261f88e53c94dbd3b4ed700fefa35a1e21983626c38",
   "census_runs": [
     {
       "slot": 2,
@@ -371,7 +372,7 @@
       ]
     }
   ],
-  "binary_sha256_current_capture_build": "a66cfb994d6de88556342caf33a2ee9b4940517b84c4d51ec0e45735f1b4c3ca",
+  "binary_sha256_current_capture_build": "3359ff277804fa74eba5fbad5edeab452ef89c7c0b331855643d34db25b8ab2a",
   "native_face_comparison": {
     "method": "record s7-8 on every 80011424 entry (independent of the 32-face dump cap); at the next 80010CF0 entry decode the same root/table/count with masks bypassed and match native face addresses against decoded triangle source_address values",
     "runs": [
@@ -1395,5 +1396,87 @@
     ],
     "conclusion": "All real invocations on both scenes have ra=0x8009A51C, so the missing faces do not come from a different caller. The packet builder does not walk the root directly: it iterates the visible-entry array at 0x800B74B8, reading the face count at +0x0C and the list pointer at +0x18. That array accounts for every native face (slot 2: 1 entry/16 faces; slot 5: 7 entries/91 faces), and decoding each entry as a root returns exactly its face count with status=ok. The decoder root walk does not reach at least the slot-2 leaf 0x800E9098 (parent interior node 0x800E8F04), so the root walk is incomplete as a native reference.",
     "next": "Decode the captured visible-entry array (or the structure that produces it) instead of treating the root walk as complete, then re-run the native face comparison."
+  },
+  "native_face_parity": {
+    "face_tag": "Native 80011424 records s7-8. For a base face that is the base address; for an extension it is extension_word - 4 (the word before the extension code), not the code address. MohuWorldTriangle.face_tag now carries this value while source_address keeps the code address.",
+    "runs": [
+      {
+        "slot": 2,
+        "capture": "analysis\\vr-captures\\slot2-parity2\\world-capture.txt",
+        "summary": "analysis\\vr-captures\\slot2-parity2\\summary.json",
+        "stdout": "analysis\\vr-captures\\slot2-parity2\\stdout.log",
+        "runtime_receipt": "analysis\\vr-captures\\slot2-parity2\\receipt.json",
+        "binary_sha256": "3359ff277804fa74eba5fbad5edeab452ef89c7c0b331855643d34db25b8ab2a",
+        "config_sha256": "34ea40ba6c65ec3e8d4a7b5a50537e07ed731cb00244b99414f92b113240b2c7",
+        "canonical_guest_hz": 60.00071428571429,
+        "visible_faces": {
+          "status": 0,
+          "native": 16,
+          "matched": 16,
+          "missing": 0,
+          "decoded_only": 0,
+          "triangles": 16,
+          "first_missing": "0x00000000"
+        },
+        "root_walk": {
+          "native": 16,
+          "overflow": 0,
+          "unique": 16,
+          "matched": 16,
+          "missing": 0,
+          "decoded_only": 1570,
+          "duplicate_calls": 0,
+          "multi_source": 0,
+          "multi_source_triangles": 0,
+          "decoded_triangles": 1586,
+          "status": 0,
+          "first_missing": "0x00000000",
+          "first_duplicate_call": "0x00000000",
+          "first_multi_source": "0x00000000",
+          "missing_in_range": 0,
+          "missing_addrs": []
+        },
+        "visible_entry_count": 1
+      },
+      {
+        "slot": 5,
+        "capture": "analysis\\vr-captures\\slot5-parity2\\world-capture.txt",
+        "summary": "analysis\\vr-captures\\slot5-parity2\\summary.json",
+        "stdout": "analysis\\vr-captures\\slot5-parity2\\stdout.log",
+        "runtime_receipt": "analysis\\vr-captures\\slot5-parity2\\receipt.json",
+        "binary_sha256": "3359ff277804fa74eba5fbad5edeab452ef89c7c0b331855643d34db25b8ab2a",
+        "config_sha256": "34ea40ba6c65ec3e8d4a7b5a50537e07ed731cb00244b99414f92b113240b2c7",
+        "canonical_guest_hz": 60.00066666666667,
+        "visible_faces": {
+          "status": 0,
+          "native": 91,
+          "matched": 91,
+          "missing": 0,
+          "decoded_only": 0,
+          "triangles": 91,
+          "first_missing": "0x00000000"
+        },
+        "root_walk": {
+          "native": 91,
+          "overflow": 0,
+          "unique": 91,
+          "matched": 91,
+          "missing": 0,
+          "decoded_only": 2006,
+          "duplicate_calls": 0,
+          "multi_source": 0,
+          "multi_source_triangles": 0,
+          "decoded_triangles": 2097,
+          "status": 0,
+          "first_missing": "0x00000000",
+          "first_duplicate_call": "0x00000000",
+          "first_multi_source": "0x00000000",
+          "missing_in_range": 0,
+          "missing_addrs": []
+        },
+        "visible_entry_count": 7
+      }
+    ],
+    "conclusion": "With face_tag, the root walk matches every submitted native face on both captured views: slot 2 16/16 and slot 5 91/91, zero missing. The visible-entry decode also matches 16/16 and 91/91 with 16 and 91 triangles and zero decoded_only. The earlier 11/16 and 70/91 result was an extension-address tag mismatch, not an unreachable leaf."
   }
 }

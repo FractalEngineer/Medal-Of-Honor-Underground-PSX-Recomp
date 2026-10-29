@@ -28,6 +28,7 @@
 #define MOHU_WORLD_MAX_LEAVES     16384u
 #define MOHU_WORLD_MAX_TRIANGLES  65536u
 #define MOHU_WORLD_MAX_LEAF_FACES 4096u
+#define MOHU_WORLD_MAX_ENTRIES    16384u
 #define MOHU_WORLD_STACK_DEPTH    256u
 #define MOHU_WORLD_CACHE_SLOTS    4u
 
@@ -45,7 +46,8 @@ typedef enum {
     MOHU_WORLD_REJECT_VERTEX_INDEX,
     MOHU_WORLD_REJECT_TREE_BUDGET,
     MOHU_WORLD_REJECT_TRIANGLE_BUDGET,
-    MOHU_WORLD_REJECT_ALLOCATION
+    MOHU_WORLD_REJECT_ALLOCATION,
+    MOHU_WORLD_REJECT_ENTRY
 } MohuWorldStatus;
 
 /* One source vertex: three signed 16-bit camera-relative coordinates and two
@@ -57,6 +59,8 @@ typedef struct {
 typedef struct {
     uint32_t vertex[3];       /* indices into MohuWorldMesh.vertices */
     uint32_t source_address;  /* guest word that introduced this triangle */
+    uint32_t face_tag;        /* native face address: base start, or the word
+                               * before an extension code (extension - 4) */
     uint32_t base_word[2];    /* raw base words; upper half of [1] is below */
     uint16_t record_index;    /* upper half of base_word[1]: per-face UV record */
     uint32_t extension_word;  /* 0 for a base triangle */
@@ -75,6 +79,19 @@ typedef struct {
     uint32_t max_leaves;      /* 0 = MOHU_WORLD_MAX_LEAVES */
     uint32_t generation;      /* resource version, echoed into the mesh */
 } MohuWorldRequest;
+
+/* The native builder submits a view-specific set of leaf entries, not a root
+ * walk: entry pointers from 0x800B74B8, each with a face count at +12 and a
+ * strip-list pointer at +24. This request decodes exactly that set. It is not
+ * a replacement for the full-tree census. */
+typedef struct {
+    const uint32_t *entries;
+    uint32_t entry_count;
+    uint32_t vertex_table;
+    uint32_t vertex_count;
+    uint32_t max_triangles;   /* 0 = MOHU_WORLD_MAX_TRIANGLES */
+    uint32_t generation;
+} MohuWorldVisibleRequest;
 
 typedef struct {
     uint32_t generation;
@@ -113,6 +130,13 @@ const char *mohu_world_status_name(MohuWorldStatus status);
 MohuWorldStatus mohu_world_decode(const MohuWorldRequest *request,
                                   MohuWorldMesh *mesh,
                                   MohuWorldReport *report);
+
+/* Decodes the exact visible-entry set the native builder submits. Entries are
+ * decoded in array order; duplicates are decoded as many times as they occur.
+ * On success the caller owns the mesh and must free it. */
+MohuWorldStatus mohu_world_decode_visible(const MohuWorldVisibleRequest *request,
+                                          MohuWorldMesh *mesh,
+                                          MohuWorldReport *report);
 
 void mohu_world_mesh_free(MohuWorldMesh *mesh);
 

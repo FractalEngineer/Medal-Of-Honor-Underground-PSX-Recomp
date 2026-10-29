@@ -66,6 +66,9 @@ typedef struct {
     uint32_t cmp_missing_owner[16];
     uint8_t cmp_missing_consulted[16];
     uint32_t cmp_missing_list_count, cmp_missing_in_range;
+    int vis_valid;
+    uint32_t vis_status, vis_native, vis_matched, vis_missing;
+    uint32_t vis_decoded_only, vis_triangles, vis_first_missing;
     uint8_t scratch[CAPTURE_SCRATCH_SIZE];
     uint8_t range[CAPTURE_RANGE_MAX];
     uint8_t records[CAPTURE_TABLE_SIZE];
@@ -211,6 +214,107 @@ static void capture_census(const DrawCapture* draw) {
     mohu_world_mesh_free(&mesh);
 }
 
+/* Decode the exact visible-entry set the native builder submitted and compare
+ * it with the native face addresses. This is the view-specific parity check,
+ * separate from the full-tree census. */
+static void visible_compare(DrawCapture* draw) {
+    if (draw->entry_index >= g_entry_count) return;
+    const EntryCapture* entry = &g_entries[draw->entry_index];
+    const uint32_t count = entry->visible_count < CAPTURE_VISIBLE_MAX
+                               ? entry->visible_count
+                               : CAPTURE_VISIBLE_MAX;
+    uint32_t entries[CAPTURE_VISIBLE_MAX];
+    memcpy(entries, entry->visible_entry, count * sizeof *entries);
+
+    MohuWorldVisibleRequest request;
+    memset(&request, 0, sizeof request);
+    request.entries = entries;
+    request.entry_count = count;
+    request.vertex_table = draw->table;
+    request.vertex_count = draw->count;
+    request.generation = 1;
+    MohuWorldMesh mesh;
+    MohuWorldReport report;
+    const MohuWorldStatus status =
+        mohu_world_decode_visible(&request, &mesh, &report);
+
+    draw->vis_valid = 1;
+    draw->vis_status = status;
+    draw->vis_native = draw->native_count;
+    if (status == MOHU_WORLD_OK) {
+        draw->vis_triangles = mesh.triangle_count;
+        for (uint32_t i = 0; i < draw->native_count; ++i) {
+            const uint32_t address = draw->native_faces[i];
+            int seen = 0;
+            for (uint32_t j = 0; j < i; ++j) {
+                if (draw->native_faces[j] == address) {
+                    seen = 1;
+                    break;
+                }
+            }
+            if (seen) continue;
+            int found = 0;
+            for (uint32_t t = 0; t < mesh.triangle_count; ++t) {
+                if (mesh.triangles[t].face_tag == address) {
+                    found = 1;
+                    break;
+                }
+            }
+            if (found) {
+                ++draw->vis_matched;
+            } else {
+                ++draw->vis_missing;
+                if (!draw->vis_first_missing)
+                    draw->vis_first_missing = address;
+            }
+        }
+        for (uint32_t t = 0; t < mesh.triangle_count; ++t) {
+            const uint32_t source = mesh.triangles[t].face_tag;
+            int seen = 0;
+            for (uint32_t k = 0; k < t; ++k) {
+                if (mesh.triangles[k].face_tag == source) {
+                    seen = 1;
+                    break;
+                }
+            }
+            if (seen) continue;
+            int found = 0;
+            for (uint32_t i = 0; i < draw->native_count; ++i) {
+                if (draw->native_faces[i] == source) {
+                    found = 1;
+                    break;
+                }
+            }
+            if (!found) ++draw->vis_decoded_only;
+        }
+    }
+    fprintf(stdout,
+            "mohu-vr-visible-faces: draw=%u status=%s native=%u matched=%u "
+            "missing=%u decoded_only=%u triangles=%u first_missing=0x%08X\n",
+            (unsigned)(draw - g_draws), mohu_world_status_name(status),
+            draw->vis_native, draw->vis_matched, draw->vis_missing,
+            draw->vis_decoded_only, draw->vis_triangles,
+            draw->vis_first_missing);
+    if (status == MOHU_WORLD_OK) {
+        fprintf(stdout, "mohu-vr-visible-sources: draw=%u sources=",
+                (unsigned)(draw - g_draws));
+        for (uint32_t t = 0; t < mesh.triangle_count; ++t) {
+            const uint32_t source = mesh.triangles[t].face_tag;
+            int seen = 0;
+            for (uint32_t k = 0; k < t; ++k)
+                if (mesh.triangles[k].face_tag == source) seen = 1;
+            if (!seen) fprintf(stdout, "%s0x%08X", t ? "," : "", source);
+        }
+        fprintf(stdout, " native=");
+        for (uint32_t i = 0; i < draw->native_count; ++i)
+            fprintf(stdout, "%s0x%08X", i ? "," : "",
+                    draw->native_faces[i]);
+        fputc('\n', stdout);
+    }
+    fflush(stdout);
+    mohu_world_mesh_free(&mesh);
+}
+
 /* Compare the face addresses the native loop actually processed with the
  * source addresses the decoder produced for the same root. Decoded-only
  * addresses are expected because the census bypasses camera culling. A native
@@ -255,7 +359,7 @@ static void capture_compare(DrawCapture* draw) {
             ++draw->cmp_unique;
             uint32_t decoded = 0;
             for (uint32_t t = 0; t < mesh.triangle_count; ++t) {
-                if (mesh.triangles[t].source_address == address) ++decoded;
+                if (mesh.triangles[t].face_tag == address) ++decoded;
             }
             if (!decoded) {
                 ++draw->cmp_missing;
@@ -319,10 +423,10 @@ static void capture_compare(DrawCapture* draw) {
             }
         }
         for (uint32_t t = 0; t < mesh.triangle_count; ++t) {
-            const uint32_t source = mesh.triangles[t].source_address;
+            const uint32_t source = mesh.triangles[t].face_tag;
             int seen = 0;
             for (uint32_t k = 0; k < t; ++k) {
-                if (mesh.triangles[k].source_address == source) {
+                if (mesh.triangles[k].face_tag == source) {
                     seen = 1;
                     break;
                 }
@@ -449,6 +553,7 @@ static void capture_compare(DrawCapture* draw) {
         }
     }
     mohu_world_mesh_free(&mesh);
+    visible_compare(draw);
 }
 
 static void write_hex(FILE* file, const uint8_t* data, unsigned size) {
@@ -498,7 +603,7 @@ static void entry_compare(EntryCapture* entry) {
             if (seen) continue;
             uint32_t decoded = 0;
             for (uint32_t t = 0; t < mesh.triangle_count; ++t) {
-                if (mesh.triangles[t].source_address == address) ++decoded;
+                if (mesh.triangles[t].face_tag == address) ++decoded;
             }
             if (decoded) {
                 ++entry->cmp_matched;
@@ -509,10 +614,10 @@ static void entry_compare(EntryCapture* entry) {
             }
         }
         for (uint32_t t = 0; t < mesh.triangle_count; ++t) {
-            const uint32_t source = mesh.triangles[t].source_address;
+            const uint32_t source = mesh.triangles[t].face_tag;
             int seen = 0;
             for (uint32_t k = 0; k < t; ++k) {
-                if (mesh.triangles[k].source_address == source) {
+                if (mesh.triangles[k].face_tag == source) {
                     seen = 1;
                     break;
                 }
@@ -620,6 +725,15 @@ static void flush_capture(void) {
                         d->cmp_missing_owner[k]);
             fputc('\n', file);
         }
+        if (d->vis_valid)
+            fprintf(file,
+                    "visible_faces=1 draw=%u status=%u native=%u matched=%u "
+                    "missing=%u decoded_only=%u triangles=%u "
+                    "first_missing=0x%08X\n",
+                    (unsigned)(d - g_draws), d->vis_status, d->vis_native,
+                    d->vis_matched,
+                    d->vis_missing, d->vis_decoded_only, d->vis_triangles,
+                    d->vis_first_missing);
     }
     for (unsigned i = 0; i < g_entry_count; ++i) {
         const EntryCapture* e = &g_entries[i];
