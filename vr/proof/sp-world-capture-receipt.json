@@ -1491,6 +1491,7 @@
     "opcodes": {
       "0x34": 128
     },
-    "conclusion": "The draw packet range emits GP0 0x34 commands, but their 9-word groups interleave command, vertex and UV slots, so per-face texpage/CLUT attribution is not established. The face-window dump remains preflight scratch. Texture page/CLUT stay unmapped."
+    "conclusion": "The draw packet range emits GP0 0x34 commands, but their 9-word groups interleave command, vertex and UV slots, so per-face texpage/CLUT attribution is not established. The face-window dump remains preflight scratch. Texture page/CLUT stay unmapped.",
+    "attribution": "not per face: the draw commands are submitted after the face loop, so ring sequence bounds collapse to the last face; face packet pointers target a separate preflight buffer"
   }
 }

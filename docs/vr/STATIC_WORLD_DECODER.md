@@ -147,9 +147,12 @@ The capture can now dump the runtime's debug GP0 ring entries for the draw's
 packet range. This requires `PSX_DEBUG_TOOLS=ON`; release builds compile the
 ring out. Slot 2 captured 128 in-range entries (141 overflow) on the draw, all
 opcode `0x34`. Their 9-word groups interleave command, vertex and UV slots, so
-per-face texture-page/CLUT attribution is **not** established. The face-window
-dump is still preflight scratch, not the final packet. Texpage/CLUT stay
-unmapped; do not read a material from these words yet.
+per-face texture-page/CLUT attribution is **not** established. A per-face
+attempt using ring sequence bounds assigned every command to the last captured
+face: the draw's commands are submitted after the face loop, and the face
+packet pointers target a separate preflight buffer. Neither mechanism names a
+face. The face-window dump is still preflight scratch, not the final packet.
+Texpage/CLUT stay unmapped; do not read a material from these words yet.
 
 ## Real-arena census (2026-10-30)
 
