@@ -180,14 +180,45 @@ The missing addresses are **valid base words** preceded by `0x1FFF` terminators
 (for example `0x800EA920`: `0068055D 006943C1`, preceded by `1FFF1FFF`), with
 in-range vertex indices and record values. They are real faces, not culling
 artifacts. A scan of `0x800A0000..0x80100000` found **no absolute pointer** to
-any missing list, and none exists between the root and vertex table. The owner
-is reached by a mechanism not yet identified (relative pointer, index, or a
-second source list), so decoder coverage is incomplete and the census triangle
-count must not be treated as native-complete. Geometry parity is **not**
-established.
+any missing face list, and none exists between the root and vertex table. The
+list is reached through the visible-entry array described below, via a
+visible-entry node pointer rather than a direct list pointer. Decoder coverage
+through the root walk is therefore incomplete, and the census triangle count
+must not be treated as native-complete. Geometry parity is **not** established.
 
 Faces can run before the first captured packet entry; those are labelled
 `0xFFFFFFFF` rather than being attributed to draw 0.
+
+## Native face source: visible-entry array (2026-10-30)
+
+Attribution ruled out a second caller: every real `80010CF0` entry on both
+scenes has `ra=0x8009A51C`. The dispatcher also re-enters the same segment body
+at `0x80011008` after each face return; those are continuations, not entries,
+and are filtered by `pc`.
+
+The packet builder does **not** walk `sub+0x14` directly. Its loop reads:
+
+| Native read | Meaning |
+|---|---|
+| `0x800B74B4` | visible-entry count |
+| `0x800B74B8 + index*4` | visible-entry pointer |
+| entry `+0x0C` | face count |
+| entry `+0x18` | face-list pointer |
+
+This is the array the pre-pass fills. It accounts for every native face:
+
+| Scene | Visible entries | Faces | Decoded when each entry is used as a root |
+|---|---:|---:|---:|
+| slot 2 | 1 (`0x800E9098`, list `0x800EA91C`) | 16 | 16 |
+| slot 5 | 7 | 91 | 20+22+6+15+12+8+8 = 91 |
+
+Every entry decoded with `status=ok` and its own face count. The main root
+walk still matches only 11/16 and 70/91 because it does not reach at least the
+slot-2 leaf: `0x800E9098` is referenced at `0x800E8F20` by interior node
+`0x800E8F04`, which the BFS from `0x800E8D28` never visits. Therefore the root
+walk is **not** a complete native reference, and geometry parity remains
+unproven. The next implementation must decode the visible-entry array (or the
+structure that produces it), not widen the root scan.
 
 ## Rejections (atomic, named)
 
@@ -228,10 +259,10 @@ texture-page/CLUT mapping, subdivision decisions and textured output.
 
 1. Map the packet/preflight fields that carry texture page, CLUT, shading and
    semi-transparency; the 12-byte record is not one of them.
-2. Close the native face coverage gap: 5/16 and 21/91 native faces are real
-   strips whose owner is not an absolute pointer in the captured level range.
-   Identify the second source list or relative/indexed owner before claiming
-   geometry parity; do not widen the scan blindly.
+2. Decode the visible-entry array at `0x800B74B8` (or the pre-pass output that
+   fills it) instead of treating the root walk as complete. The array covers
+   all native faces when decoded per entry; the root walk misses leaves the
+   native builder submits.
 3. Wire the decoder into a default-OFF native census so the real arena root,
    record table and resource generation are recorded before the host renderer
    consumes it.

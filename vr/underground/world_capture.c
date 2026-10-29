@@ -40,13 +40,19 @@
 #define CAPTURE_PACKET_SIZE 0x60u
 #define CAPTURE_NATIVE_FACES 4096u
 #define CAPTURE_NATIVE_REGS 512u
+#define CAPTURE_MAX_ENTRIES 64u
+#define CAPTURE_ENTRY_FACES 512u
+#define CAPTURE_VISIBLE_MAX 512u
+#define CAPTURE_VISIBLE_COUNT 0x800B74B4u
+#define CAPTURE_VISIBLE_LIST 0x800B74B8u
 
 typedef struct {
     uint32_t ra, begin, limit, a2, a3, sp, gp, level, sub, root, count, table;
+    uint32_t entry_index;
     uint32_t scratch_hash, range_len, range_hash;
     uint32_t record_base, record_entries;
     uint32_t native_faces[CAPTURE_NATIVE_FACES];
-    uint32_t native_regs[CAPTURE_NATIVE_REGS][16];
+    uint32_t native_regs[CAPTURE_NATIVE_REGS][32];
     uint32_t native_count, native_overflow;
     int compare_valid;
     uint32_t compare_status;
@@ -56,7 +62,7 @@ typedef struct {
     uint32_t cmp_first_multi;
     uint32_t cmp_missing_addrs[16];
     uint32_t cmp_missing_words[16][4];
-    uint32_t cmp_missing_regs[16][16];
+    uint32_t cmp_missing_regs[16][32];
     uint32_t cmp_missing_owner[16];
     uint8_t cmp_missing_consulted[16];
     uint32_t cmp_missing_list_count, cmp_missing_in_range;
@@ -78,9 +84,27 @@ typedef struct {
     int packet_dumped;
 } FaceCapture;
 
+/* One 80010CF0 invocation, recorded regardless of return address. Faces are
+ * attributed to the most recent entry so a non-draw caller cannot leak faces
+ * into the preceding draw. */
+typedef struct {
+    uint32_t index, ra, pc, level, sub, root, table, count;
+    uint32_t gpr[32];
+    uint32_t faces, overflow, selected;
+    uint32_t visible_count, visible_overflow;
+    uint32_t visible_entry[CAPTURE_VISIBLE_MAX];
+    uint32_t visible_faces[CAPTURE_VISIBLE_MAX];
+    uint32_t visible_list[CAPTURE_VISIBLE_MAX];
+    uint32_t addrs[CAPTURE_ENTRY_FACES];
+    int compare_valid;
+    uint32_t compare_status, cmp_native, cmp_matched, cmp_missing;
+    uint32_t cmp_decoded_only, cmp_triangles, cmp_first_missing;
+} EntryCapture;
+
 static DrawCapture g_draws[CAPTURE_MAX_DRAWS];
 static FaceCapture g_faces[CAPTURE_MAX_FACES];
-static unsigned g_draw_count, g_face_count;
+static EntryCapture g_entries[CAPTURE_MAX_ENTRIES];
+static unsigned g_draw_count, g_face_count, g_entry_count, g_entry_overflow;
 static unsigned g_draw_limit, g_face_limit;
 static int g_enabled, g_written;
 static const char* g_path;
@@ -338,7 +362,7 @@ static void capture_compare(DrawCapture* draw) {
     fprintf(stdout, " missing_regs=");
     for (uint32_t k = 0; k < draw->cmp_missing_list_count; ++k) {
         fprintf(stdout, "%s", k ? ";" : "");
-        for (unsigned r = 0; r < 16; ++r)
+        for (unsigned r = 0; r < 32; ++r)
             fprintf(stdout, "%s%08X", r ? "," : "",
                     draw->cmp_missing_regs[k][r]);
     }
@@ -348,6 +372,82 @@ static void capture_compare(DrawCapture* draw) {
                 draw->cmp_missing_owner[k]);
     fputc('\n', stdout);
     fflush(stdout);
+    if (draw->entry_index < g_entry_count) {
+        const EntryCapture* entry = &g_entries[draw->entry_index];
+        const uint32_t visible = entry->visible_count < CAPTURE_VISIBLE_MAX
+                                     ? entry->visible_count
+                                     : CAPTURE_VISIBLE_MAX;
+        for (uint32_t i = 0; i < visible && i < 32u; ++i) {
+            MohuWorldRequest node_request;
+            memset(&node_request, 0, sizeof node_request);
+            node_request.root = entry->visible_entry[i];
+            node_request.vertex_table = draw->table;
+            node_request.vertex_count = draw->count;
+            node_request.masks[0] = psx_mod_read_word(CAPTURE_MASK0);
+            node_request.masks[1] = psx_mod_read_word(CAPTURE_MASK1);
+            node_request.bypass_masks = 1;
+            node_request.generation = 1;
+            MohuWorldMesh node_mesh;
+            MohuWorldReport node_report;
+            const MohuWorldStatus node_status =
+                mohu_world_decode(&node_request, &node_mesh, &node_report);
+            const uint32_t node_address = entry->visible_entry[i];
+            uint32_t owner = 0;
+            for (uint32_t p = draw->root;
+                 draw->table > draw->root && p + 4u <= draw->table; p += 4u) {
+                if (psx_mod_read_word(p) == node_address) {
+                    owner = p;
+                    break;
+                }
+            }
+            if (!owner) {
+                for (uint32_t p = 0x800A0000u; p + 4u <= 0x80100000u;
+                     p += 4u) {
+                    if (p >= draw->root && p < draw->table) continue;
+                    if (psx_mod_read_word(p) == node_address) {
+                        owner = p;
+                        break;
+                    }
+                }
+            }
+            fprintf(stdout,
+                    "mohu-vr-visible-node: draw=%u i=%u node=0x%08X "
+                    "faces=%u list=0x%08X status=%s triangles=%u "
+                    "first_source=0x%08X last_source=0x%08X owner=0x%08X\n",
+                    (unsigned)(draw - g_draws), i, node_address,
+                    entry->visible_faces[i], entry->visible_list[i],
+                    mohu_world_status_name(node_status),
+                    node_mesh.triangle_count,
+                    node_mesh.triangle_count
+                        ? node_mesh.triangles[0].source_address : 0u,
+                    node_mesh.triangle_count
+                        ? node_mesh.triangles[node_mesh.triangle_count - 1u]
+                              .source_address : 0u,
+                    owner);
+            if (owner >= 0x80000020u) {
+                uint8_t parent_bytes[0x30];
+                copy_span(parent_bytes, owner - 0x20u, sizeof parent_bytes);
+                fprintf(stdout, "  parent_base=0x%08X parent_bytes=",
+                        owner - 0x20u);
+                for (unsigned b = 0; b < sizeof parent_bytes; ++b)
+                    fprintf(stdout, "%02X", parent_bytes[b]);
+                for (unsigned k = 0; k < 3; ++k) {
+                    const uint32_t base = owner - (k == 0 ? 0x18u
+                                                  : k == 1 ? 0x1Cu : 0x20u);
+                    fprintf(stdout,
+                            " base=0x%08X:faces=%u:c18=0x%08X:c1c=0x%08X:"
+                            "c20=0x%08X",
+                            base, psx_mod_read_word(base + 0x0Cu),
+                            psx_mod_read_word(base + 0x18u),
+                            psx_mod_read_word(base + 0x1Cu),
+                            psx_mod_read_word(base + 0x20u));
+                }
+                fputc('\n', stdout);
+            }
+            fflush(stdout);
+            mohu_world_mesh_free(&node_mesh);
+        }
+    }
     mohu_world_mesh_free(&mesh);
 }
 
@@ -359,6 +459,87 @@ static void write_hex(FILE* file, const uint8_t* data, unsigned size) {
     }
 }
 
+/* Compare a non-draw entry's own face list with its own root. Selected draws
+ * are compared by capture_compare instead. */
+static void entry_compare(EntryCapture* entry) {
+    if (entry->compare_valid || !entry->faces || entry->selected) return;
+    entry->compare_valid = 1;
+    entry->cmp_native = entry->faces;
+    if (!entry->root || !entry->table || !entry->count) {
+        entry->compare_status = MOHU_WORLD_REJECT_ARGUMENT;
+        return;
+    }
+    MohuWorldRequest request;
+    memset(&request, 0, sizeof request);
+    request.root = entry->root;
+    request.vertex_table = entry->table;
+    request.vertex_count = entry->count;
+    request.masks[0] = psx_mod_read_word(CAPTURE_MASK0);
+    request.masks[1] = psx_mod_read_word(CAPTURE_MASK1);
+    request.bypass_masks = 1;
+    request.generation = 1;
+    MohuWorldMesh mesh;
+    MohuWorldReport report;
+    const MohuWorldStatus status = mohu_world_decode(&request, &mesh, &report);
+    entry->compare_status = status;
+    if (status == MOHU_WORLD_OK) {
+        const uint32_t stored = entry->faces < CAPTURE_ENTRY_FACES
+                                    ? entry->faces : CAPTURE_ENTRY_FACES;
+        entry->cmp_triangles = mesh.triangle_count;
+        for (uint32_t i = 0; i < stored; ++i) {
+            const uint32_t address = entry->addrs[i];
+            int seen = 0;
+            for (uint32_t j = 0; j < i; ++j) {
+                if (entry->addrs[j] == address) {
+                    seen = 1;
+                    break;
+                }
+            }
+            if (seen) continue;
+            uint32_t decoded = 0;
+            for (uint32_t t = 0; t < mesh.triangle_count; ++t) {
+                if (mesh.triangles[t].source_address == address) ++decoded;
+            }
+            if (decoded) {
+                ++entry->cmp_matched;
+            } else {
+                ++entry->cmp_missing;
+                if (!entry->cmp_first_missing)
+                    entry->cmp_first_missing = address;
+            }
+        }
+        for (uint32_t t = 0; t < mesh.triangle_count; ++t) {
+            const uint32_t source = mesh.triangles[t].source_address;
+            int seen = 0;
+            for (uint32_t k = 0; k < t; ++k) {
+                if (mesh.triangles[k].source_address == source) {
+                    seen = 1;
+                    break;
+                }
+            }
+            if (seen) continue;
+            int found = 0;
+            for (uint32_t i = 0; i < stored; ++i) {
+                if (entry->addrs[i] == source) {
+                    found = 1;
+                    break;
+                }
+            }
+            if (!found) ++entry->cmp_decoded_only;
+        }
+    }
+    fprintf(stdout,
+            "mohu-vr-entry-faces: entry=%u ra=0x%08X root=0x%08X faces=%u "
+            "overflow=%u matched=%u missing=%u decoded_only=%u triangles=%u "
+            "status=%s first_missing=0x%08X\n",
+            entry->index, entry->ra, entry->root, entry->faces,
+            entry->overflow, entry->cmp_matched, entry->cmp_missing,
+            entry->cmp_decoded_only, entry->cmp_triangles,
+            mohu_world_status_name(status), entry->cmp_first_missing);
+    fflush(stdout);
+    mohu_world_mesh_free(&mesh);
+}
+
 static void flush_capture(void) {
     if (!g_enabled || g_written) return;
     FILE* file = fopen(g_path, "wb");
@@ -367,9 +548,21 @@ static void flush_capture(void) {
         fflush(stdout);
         return;
     }
+    for (unsigned i = 0; i < g_entry_count; ++i)
+        entry_compare(&g_entries[i]);
     fprintf(file, "MOHU-SP-WORLD-CAPTURE 1\n");
     fprintf(file, "draws=%u faces=%u draw_limit=%u face_limit=%u\n",
             g_draw_count, g_face_count, g_draw_limit, g_face_limit);
+    uint8_t caller_code[0x100];
+    copy_span(caller_code, 0x8009A480u, sizeof caller_code);
+    fprintf(file, "caller_base=0x8009A480 caller_code=");
+    write_hex(file, caller_code, sizeof caller_code);
+    fputc('\n', file);
+    uint8_t builder_code[0x730];
+    copy_span(builder_code, 0x80010CF0u, sizeof builder_code);
+    fprintf(file, "builder_base=0x80010CF0 builder_code=");
+    write_hex(file, builder_code, sizeof builder_code);
+    fputc('\n', file);
     for (unsigned i = 0; i < g_draw_count; ++i) {
         const DrawCapture* d = &g_draws[i];
         fprintf(file,
@@ -417,7 +610,7 @@ static void flush_capture(void) {
             fprintf(file, " missing_regs=");
             for (uint32_t k = 0; k < d->cmp_missing_list_count; ++k) {
                 fprintf(file, "%s", k ? ";" : "");
-                for (unsigned r = 0; r < 16; ++r)
+                for (unsigned r = 0; r < 32; ++r)
                     fprintf(file, "%s%08X", r ? "," : "",
                             d->cmp_missing_regs[k][r]);
             }
@@ -427,6 +620,32 @@ static void flush_capture(void) {
                         d->cmp_missing_owner[k]);
             fputc('\n', file);
         }
+    }
+    for (unsigned i = 0; i < g_entry_count; ++i) {
+        const EntryCapture* e = &g_entries[i];
+        fprintf(file,
+                "entry=%u ra=0x%08X pc=0x%08X level=0x%08X sub=0x%08X "
+                "root=0x%08X table=0x%08X count=%u faces=%u selected=%u "
+                "overflow=%u compare=%d status=%u matched=%u missing=%u "
+                "decoded_only=%u triangles=%u first_missing=0x%08X "
+                "visible=%u visible_overflow=%u visible_entries=",
+                e->index, e->ra, e->pc, e->level, e->sub, e->root, e->table,
+                e->count, e->faces, e->selected, e->overflow,
+                e->compare_valid, e->compare_status, e->cmp_matched,
+                e->cmp_missing, e->cmp_decoded_only, e->cmp_triangles,
+                e->cmp_first_missing, e->visible_count,
+                e->visible_overflow);
+        const uint32_t stored_visible = e->visible_count < CAPTURE_VISIBLE_MAX
+                                            ? e->visible_count
+                                            : CAPTURE_VISIBLE_MAX;
+        for (uint32_t v = 0; v < stored_visible; ++v)
+            fprintf(file, "%s%08X:%u:%08X", v ? "," : "",
+                    e->visible_entry[v], e->visible_faces[v],
+                    e->visible_list[v]);
+        fprintf(file, " gpr=");
+        for (unsigned r = 0; r < 32; ++r)
+            fprintf(file, "%08X", e->gpr[r]);
+        fputc('\n', file);
     }
     for (unsigned i = 0; i < g_face_count; ++i) {
         const FaceCapture* f = &g_faces[i];
@@ -464,9 +683,49 @@ static void flush_capture(void) {
     fflush(stdout);
 }
 
+static void capture_entry(CPUState* cpu) {
+    /* The dispatcher re-enters the same segment body at 0x80011008 after each
+     * 80011424 return. Those are continuations, not new invocations. */
+    if (cpu->pc && cpu->pc != 0x80010CF0u) return;
+    if (g_entry_count >= CAPTURE_MAX_ENTRIES) {
+        ++g_entry_overflow;
+        return;
+    }
+    EntryCapture* entry = &g_entries[g_entry_count];
+    memset(entry, 0, sizeof *entry);
+    entry->index = g_entry_count++;
+    entry->ra = cpu->gpr[31];
+    entry->pc = cpu->pc;
+    memcpy(entry->gpr, cpu->gpr, sizeof entry->gpr);
+    entry->level = cpu->gpr[18];
+    if (mohu_vr_ray_span(entry->level, 0x40u)) {
+        entry->sub = psx_mod_read_word(entry->level + 8u);
+        entry->count = psx_mod_read_word(entry->level + 0x3Cu);
+        entry->table = psx_mod_read_word(entry->level + 0x2Cu);
+        if (mohu_vr_ray_span(entry->sub, 0x18u))
+            entry->root = psx_mod_read_word(entry->sub + 0x14u);
+    }
+    entry->visible_count = psx_mod_read_word(CAPTURE_VISIBLE_COUNT);
+    uint32_t visible = entry->visible_count;
+    if (visible > CAPTURE_VISIBLE_MAX) {
+        entry->visible_overflow = visible - CAPTURE_VISIBLE_MAX;
+        visible = CAPTURE_VISIBLE_MAX;
+    }
+    for (uint32_t i = 0; i < visible; ++i) {
+        const uint32_t pointer =
+            psx_mod_read_word(CAPTURE_VISIBLE_LIST + i * 4u);
+        entry->visible_entry[i] = pointer;
+        if (!span(pointer, 0x1Cu)) continue;
+        entry->visible_faces[i] = psx_mod_read_word(pointer + 0x0Cu);
+        entry->visible_list[i] = psx_mod_read_word(pointer + 0x18u);
+    }
+}
+
 static void capture_packet(CPUState* cpu, uint32_t address) {
     (void)address;
-    if (!g_enabled || !cpu || cpu->gpr[31] != 0x8009A51Cu) return;
+    if (!g_enabled || !cpu) return;
+    capture_entry(cpu);
+    if (cpu->gpr[31] != 0x8009A51Cu) return;
 
     capture_previous_range();
     capture_previous_scratch();
@@ -495,6 +754,10 @@ static void capture_packet(CPUState* cpu, uint32_t address) {
         if (mohu_vr_ray_span(draw->sub, 0x18u))
             draw->root = psx_mod_read_word(draw->sub + 0x14u);
     }
+    if (g_entry_count) {
+        g_entries[g_entry_count - 1u].selected = 1;
+        draw->entry_index = g_entry_count - 1u;
+    }
     capture_census(draw);
     g_has_previous = 1;
     ++g_draw_count;
@@ -504,32 +767,26 @@ static void capture_face(CPUState* cpu, uint32_t address) {
     (void)address;
     if (!g_enabled || !cpu) return;
     if (cpu->gpr[31] != 0x80011008u || cpu->gpr[19] != 0x1F800000u) return;
-    if (g_draw_count) {
-        DrawCapture* draw = &g_draws[g_draw_count - 1u];
-        const uint32_t slot = draw->native_count;
-        if (slot < CAPTURE_NATIVE_FACES) {
-            draw->native_faces[slot] = cpu->gpr[23] - 8u;
-            if (slot < CAPTURE_NATIVE_REGS) {
-                draw->native_regs[slot][0] = cpu->gpr[23];  /* s7 */
-                draw->native_regs[slot][1] = cpu->gpr[22];  /* s6 */
-                draw->native_regs[slot][2] = cpu->gpr[21];  /* s5 */
-                draw->native_regs[slot][3] = cpu->gpr[20];  /* s4 */
-                draw->native_regs[slot][4] = cpu->gpr[19];  /* s3 */
-                draw->native_regs[slot][5] = cpu->gpr[18];  /* s2 */
-                draw->native_regs[slot][6] = cpu->gpr[17];  /* s1 */
-                draw->native_regs[slot][7] = cpu->gpr[16];  /* s0 */
-                draw->native_regs[slot][8] = cpu->gpr[11];  /* t3 */
-                draw->native_regs[slot][9] = cpu->gpr[10];  /* t2 */
-                draw->native_regs[slot][10] = cpu->gpr[9];  /* t1 */
-                draw->native_regs[slot][11] = cpu->gpr[8];  /* t0 */
-                draw->native_regs[slot][12] = cpu->gpr[29]; /* sp */
-                draw->native_regs[slot][13] = cpu->gpr[28]; /* gp */
-                draw->native_regs[slot][14] = cpu->gpr[4];  /* a0 */
-                draw->native_regs[slot][15] = cpu->gpr[5];  /* a1 */
+    if (g_entry_count) {
+        EntryCapture* entry = &g_entries[g_entry_count - 1u];
+        const uint32_t face_address = cpu->gpr[23] - 8u;
+        if (entry->faces < CAPTURE_ENTRY_FACES)
+            entry->addrs[entry->faces] = face_address;
+        else
+            ++entry->overflow;
+        ++entry->faces;
+        if (entry->selected && g_draw_count) {
+            DrawCapture* draw = &g_draws[g_draw_count - 1u];
+            const uint32_t slot = draw->native_count;
+            if (slot < CAPTURE_NATIVE_FACES) {
+                draw->native_faces[slot] = face_address;
+                if (slot < CAPTURE_NATIVE_REGS)
+                    memcpy(draw->native_regs[slot], cpu->gpr,
+                           sizeof draw->native_regs[slot]);
+                ++draw->native_count;
+            } else {
+                ++draw->native_overflow;
             }
-            ++draw->native_count;
-        } else {
-            ++draw->native_overflow;
         }
     }
     capture_previous_face_packet();

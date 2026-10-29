@@ -1,5 +1,5 @@
 {
-  "schema": 4,
+  "schema": 5,
   "date": "2026-10-30",
   "scope": "M1 real SP 80010CF0/80011424 input capture",
   "build": {
@@ -26,7 +26,8 @@
     "Slot 2: the three record words appear verbatim in the face packet at offsets 3, 6 and 9 (20 of 32 captured faces), alongside words such as 0x007B00E2 that look like packed UVs.",
     "The record table base is a runtime pointer (0x801259BC for slot 2 draw 0), not a static level field.",
     "The decoder decoded both real arenas with masks bypassed and no rejection: slot 2 54/25/324 with masks (203/134/1756 bypassed), slot 5 1/0/0 with masks (237/155/1932 bypassed). Counts are nodes/leaves/triangles.",
-    "Native face addresses are s7-8 at 80011424 and are directly comparable with decoded triangle source_address values; 11/16 and 70/91 matched."
+    "Native face addresses are s7-8 at 80011424 and are directly comparable with decoded triangle source_address values; 11/16 and 70/91 matched.",
+    "The native builder face source is the visible-entry array at 0x800B74B8 (faces at +0x0C, list at +0x18), not a direct root walk; all real 80010CF0 invocations share ra=0x8009A51C."
   ],
   "not_proven": [
     "The mapping is not universal: slot 5 contains the record word in the captured packet for only 3 of 32 faces, and its packet layout differs.",
@@ -34,7 +35,8 @@
     "Texture page, CLUT, shading and semi-transparency fields; they are not in the 12-byte record and were not found as GP0 draw-mode words in the captured packet window.",
     "Decoded triangle counts/winding/bounds against the captured arena: the capture does not dump the full tree/vertex table.",
     "No native triangle-count reference is captured yet; the census proves the tree/strip decode terminates and covers the resident leaves, not that native culling or subdivision matches.",
-    "Native face coverage: slot 2 11/16 matched, slot 5 70/91 matched. The missing faces are real strips whose owner is not an absolute pointer in the captured level range."
+    "Native face coverage: slot 2 11/16 matched, slot 5 70/91 matched. The missing faces are real strips whose owner is not an absolute pointer in the captured level range.",
+    "Geometry parity: the root walk misses leaves the native builder submits via the visible-entry array at 0x800B74B8 (slot 2 11/16, slot 5 70/91). The array itself covers all native faces when decoded per entry."
   ],
   "runs": [
     {
@@ -369,7 +371,7 @@
       ]
     }
   ],
-  "binary_sha256_current_capture_build": "1027d464a151373ed423a3a58fc3b1c4469db7f93061d76591edfa31a4561ae1",
+  "binary_sha256_current_capture_build": "a66cfb994d6de88556342caf33a2ee9b4940517b84c4d51ec0e45735f1b4c3ca",
   "native_face_comparison": {
     "method": "record s7-8 on every 80011424 entry (independent of the 32-face dump cap); at the next 80010CF0 entry decode the same root/table/count with masks bypassed and match native face addresses against decoded triangle source_address values",
     "runs": [
@@ -519,5 +521,879 @@
     "conclusion": "The decoder matched 11/16 native faces on slot 2 draw 2 and 70/91 on slot 5 draw 2. The missing addresses are valid base words preceded by 0x1FFF terminators, with valid vertex indices and records, so they are real faces, not culling artifacts. No absolute pointer to any missing list exists in 0x800A0000..0x80100000, so the loop reaches those lists by a mechanism not yet identified. Geometry parity is not established; do not treat the census triangle count as complete.",
     "decoded_only_note": "Expected: the census bypasses camera culling, so the decoded mesh contains leaves the native view did not submit.",
     "multi_source_note": "No native address was submitted more than once, and no matched source carried more than one decoded triangle in these draws."
+  },
+  "entry_attribution": {
+    "method": "record every segment dispatch, keep only real 80010CF0 entry points (pc == 0x80010CF0 or unset), and attribute each 80011424 face call to the most recent real entry; the dispatcher also re-enters the same body at 0x80011008 after each face return, and those continuations are not entries",
+    "runs": [
+      {
+        "slot": 2,
+        "runtime_receipt": "analysis\\vr-captures\\slot2-parent\\receipt.json",
+        "capture": "analysis\\vr-captures\\slot2-parent\\world-capture.txt",
+        "summary": "analysis\\vr-captures\\slot2-parent\\summary.json",
+        "stdout": "analysis\\vr-captures\\slot2-parent\\stdout.log",
+        "binary_sha256": "a66cfb994d6de88556342caf33a2ee9b4940517b84c4d51ec0e45735f1b4c3ca",
+        "config_sha256": "34ea40ba6c65ec3e8d4a7b5a50537e07ed731cb00244b99414f92b113240b2c7",
+        "complete": true,
+        "canonical_guest_hz": 59.997142857142855,
+        "entries": [
+          {
+            "index": 0,
+            "ra": "0x8009A51C",
+            "pc": "0x00000000",
+            "level": "0x800A58A0",
+            "sub": "0x800A54A0",
+            "root": "0x8010BA48",
+            "table": "0x8010FE4C",
+            "vertex_count": 1444,
+            "faces": 0,
+            "selected": true,
+            "overflow": 0,
+            "compare": false,
+            "status": 0,
+            "matched": 0,
+            "missing": 0,
+            "decoded_only": 0,
+            "triangles": 0,
+            "first_missing": "0x00000000",
+            "visible_count": 0,
+            "visible_overflow": 0,
+            "visible": []
+          },
+          {
+            "index": 1,
+            "ra": "0x8009A51C",
+            "pc": "0x00000000",
+            "level": "0x800A5964",
+            "sub": "0x800A55B4",
+            "root": "0x800FA3B8",
+            "table": "0x800FDEBC",
+            "vertex_count": 1551,
+            "faces": 0,
+            "selected": true,
+            "overflow": 0,
+            "compare": false,
+            "status": 0,
+            "matched": 0,
+            "missing": 0,
+            "decoded_only": 0,
+            "triangles": 0,
+            "first_missing": "0x00000000",
+            "visible_count": 0,
+            "visible_overflow": 0,
+            "visible": []
+          },
+          {
+            "index": 2,
+            "ra": "0x8009A51C",
+            "pc": "0x00000000",
+            "level": "0x800A5A28",
+            "sub": "0x800A56C8",
+            "root": "0x800E8D28",
+            "table": "0x800ECE1C",
+            "vertex_count": 1471,
+            "faces": 16,
+            "selected": true,
+            "overflow": 0,
+            "compare": false,
+            "status": 0,
+            "matched": 0,
+            "missing": 0,
+            "decoded_only": 0,
+            "triangles": 0,
+            "first_missing": "0x00000000",
+            "visible_count": 1,
+            "visible_overflow": 0,
+            "visible": [
+              {
+                "entry": "0x800E9098",
+                "faces": 16,
+                "list": "0x800EA91C"
+              }
+            ]
+          },
+          {
+            "index": 3,
+            "ra": "0x8009A51C",
+            "pc": "0x00000000",
+            "level": "0x800A57DC",
+            "sub": "0x800A538C",
+            "root": "0x8011D0D8",
+            "table": "0x8012163C",
+            "vertex_count": 1440,
+            "faces": 0,
+            "selected": false,
+            "overflow": 0,
+            "compare": false,
+            "status": 0,
+            "matched": 0,
+            "missing": 0,
+            "decoded_only": 0,
+            "triangles": 0,
+            "first_missing": "0x00000000",
+            "visible_count": 90,
+            "visible_overflow": 0,
+            "visible": [
+              {
+                "entry": "0x8011DCA0",
+                "faces": 2,
+                "list": "0x8011FC88"
+              },
+              {
+                "entry": "0x8011DCBC",
+                "faces": 12,
+                "list": "0x8011FC98"
+              },
+              {
+                "entry": "0x8011DC0C",
+                "faces": 2,
+                "list": "0x8011FB94"
+              },
+              {
+                "entry": "0x8011DC68",
+                "faces": 5,
+                "list": "0x8011FBF0"
+              },
+              {
+                "entry": "0x8011DC84",
+                "faces": 19,
+                "list": "0x8011FC14"
+              },
+              {
+                "entry": "0x8011DC4C",
+                "faces": 9,
+                "list": "0x8011FBA4"
+              },
+              {
+                "entry": "0x8011DBF0",
+                "faces": 4,
+                "list": "0x8011FB74"
+              },
+              {
+                "entry": "0x8011E2BC",
+                "faces": 29,
+                "list": "0x801207F4"
+              },
+              {
+                "entry": "0x8011E7A8",
+                "faces": 13,
+                "list": "0x801212B4"
+              },
+              {
+                "entry": "0x8011E8BC",
+                "faces": 18,
+                "list": "0x801214CC"
+              },
+              {
+                "entry": "0x8011E8FC",
+                "faces": 20,
+                "list": "0x8012154C"
+              },
+              {
+                "entry": "0x8011E884",
+                "faces": 12,
+                "list": "0x8012140C"
+              },
+              {
+                "entry": "0x8011E84C",
+                "faces": 8,
+                "list": "0x80121354"
+              },
+              {
+                "entry": "0x8011E868",
+                "faces": 18,
+                "list": "0x80121394"
+              },
+              {
+                "entry": "0x8011E830",
+                "faces": 13,
+                "list": "0x801212F8"
+              },
+              {
+                "entry": "0x8011E5C0",
+                "faces": 23,
+                "list": "0x80120E24"
+              },
+              {
+                "entry": "0x8011E770",
+                "faces": 15,
+                "list": "0x80121188"
+              },
+              {
+                "entry": "0x8011E78C",
+                "faces": 26,
+                "list": "0x80121204"
+              },
+              {
+                "entry": "0x8011E754",
+                "faces": 16,
+                "list": "0x80121120"
+              },
+              {
+                "entry": "0x8011E700",
+                "faces": 12,
+                "list": "0x80120FD8"
+              },
+              {
+                "entry": "0x8011E3BC",
+                "faces": 13,
+                "list": "0x801209F8"
+              },
+              {
+                "entry": "0x8011E52C",
+                "faces": 8,
+                "list": "0x80120C8C"
+              },
+              {
+                "entry": "0x8011E588",
+                "faces": 8,
+                "list": "0x80120D8C"
+              },
+              {
+                "entry": "0x8011E5A4",
+                "faces": 12,
+                "list": "0x80120DCC"
+              },
+              {
+                "entry": "0x8011E56C",
+                "faces": 32,
+                "list": "0x80120CC4"
+              },
+              {
+                "entry": "0x8011E4F4",
+                "faces": 10,
+                "list": "0x80120B5C"
+              },
+              {
+                "entry": "0x8011E510",
+                "faces": 28,
+                "list": "0x80120BAC"
+              },
+              {
+                "entry": "0x8011E460",
+                "faces": 4,
+                "list": "0x80120A74"
+              },
+              {
+                "entry": "0x8011E4BC",
+                "faces": 8,
+                "list": "0x80120B14"
+              },
+              {
+                "entry": "0x8011E4D8",
+                "faces": 2,
+                "list": "0x80120B4C"
+              },
+              {
+                "entry": "0x8011E4A0",
+                "faces": 24,
+                "list": "0x80120A8C"
+              },
+              {
+                "entry": "0x8011E444",
+                "faces": 2,
+                "list": "0x80120A64"
+              },
+              {
+                "entry": "0x8011E05C",
+                "faces": 24,
+                "list": "0x801202F8"
+              },
+              {
+                "entry": "0x8011E114",
+                "faces": 20,
+                "list": "0x801204CC"
+              },
+              {
+                "entry": "0x8011E170",
+                "faces": 16,
+                "list": "0x80120608"
+              },
+              {
+                "entry": "0x8011E1CC",
+                "faces": 4,
+                "list": "0x80120694"
+              },
+              {
+                "entry": "0x8011E284",
+                "faces": 4,
+                "list": "0x801207B4"
+              },
+              {
+                "entry": "0x8011E2A0",
+                "faces": 4,
+                "list": "0x801207D4"
+              },
+              {
+                "entry": "0x8011E24C",
+                "faces": 10,
+                "list": "0x801206F4"
+              },
+              {
+                "entry": "0x8011E268",
+                "faces": 18,
+                "list": "0x80120744"
+              },
+              {
+                "entry": "0x8011E230",
+                "faces": 10,
+                "list": "0x801206B4"
+              },
+              {
+                "entry": "0x8011E1B0",
+                "faces": 7,
+                "list": "0x80120668"
+              },
+              {
+                "entry": "0x8011E154",
+                "faces": 27,
+                "list": "0x8012054C"
+              },
+              {
+                "entry": "0x8011E0DC",
+                "faces": 15,
+                "list": "0x801203C8"
+              },
+              {
+                "entry": "0x8011E0F8",
+                "faces": 24,
+                "list": "0x8012042C"
+              },
+              {
+                "entry": "0x8011E0C0",
+                "faces": 10,
+                "list": "0x80120380"
+              },
+              {
+                "entry": "0x8011DED0",
+                "faces": 27,
+                "list": "0x8011FFB0"
+              },
+              {
+                "entry": "0x8011DF2C",
+                "faces": 16,
+                "list": "0x801200BC"
+              },
+              {
+                "entry": "0x8011E024",
+                "faces": 12,
+                "list": "0x80120234"
+              },
+              {
+                "entry": "0x8011E040",
+                "faces": 19,
+                "list": "0x80120284"
+              },
+              {
+                "entry": "0x8011DFEC",
+                "faces": 24,
+                "list": "0x8012017C"
+              },
+              {
+                "entry": "0x8011E008",
+                "faces": 2,
+                "list": "0x80120224"
+              },
+              {
+                "entry": "0x8011DFD0",
+                "faces": 8,
+                "list": "0x8012014C"
+              },
+              {
+                "entry": "0x8011DF90",
+                "faces": 4,
+                "list": "0x8012012C"
+              },
+              {
+                "entry": "0x8011DF10",
+                "faces": 10,
+                "list": "0x80120074"
+              },
+              {
+                "entry": "0x8011DD84",
+                "faces": 24,
+                "list": "0x8011FD34"
+              },
+              {
+                "entry": "0x8011DE98",
+                "faces": 9,
+                "list": "0x8011FF18"
+              },
+              {
+                "entry": "0x8011DEB4",
+                "faces": 17,
+                "list": "0x8011FF4C"
+              },
+              {
+                "entry": "0x8011DE60",
+                "faces": 8,
+                "list": "0x8011FEC0"
+              },
+              {
+                "entry": "0x8011DE7C",
+                "faces": 6,
+                "list": "0x8011FEF0"
+              },
+              {
+                "entry": "0x8011DE28",
+                "faces": 9,
+                "list": "0x8011FE34"
+              },
+              {
+                "entry": "0x8011DE44",
+                "faces": 14,
+                "list": "0x8011FE70"
+              },
+              {
+                "entry": "0x8011DE0C",
+                "faces": 20,
+                "list": "0x8011FDBC"
+              },
+              {
+                "entry": "0x8011DD68",
+                "faces": 9,
+                "list": "0x8011FCE0"
+              },
+              {
+                "entry": "0x8011D570",
+                "faces": 14,
+                "list": "0x8011F1A0"
+              },
+              {
+                "entry": "0x8011D988",
+                "faces": 2,
+                "list": "0x8011F88C"
+              },
+              {
+                "entry": "0x8011D9E4",
+                "faces": 2,
+                "list": "0x8011F8BC"
+              },
+              {
+                "entry": "0x8011DA00",
+                "faces": 30,
+                "list": "0x8011F8CC"
+              },
+              {
+                "entry": "0x8011D9C8",
+                "faces": 4,
+                "list": "0x8011F89C"
+              },
+              {
+                "entry": "0x8011D96C",
+                "faces": 3,
+                "list": "0x8011F878"
+              },
+              {
+                "entry": "0x8011DA5C",
+                "faces": 6,
+                "list": "0x8011F994"
+              },
+              {
+                "entry": "0x8011DAB8",
+                "faces": 8,
+                "list": "0x8011F9D4"
+              },
+              {
+                "entry": "0x8011DB70",
+                "faces": 2,
+                "list": "0x8011FB54"
+              },
+              {
+                "entry": "0x8011DB8C",
+                "faces": 2,
+                "list": "0x8011FB64"
+              },
+              {
+                "entry": "0x8011DB38",
+                "faces": 10,
+                "list": "0x8011FA54"
+              },
+              {
+                "entry": "0x8011DB54",
+                "faces": 32,
+                "list": "0x8011FA9C"
+              },
+              {
+                "entry": "0x8011DB1C",
+                "faces": 14,
+                "list": "0x8011FA14"
+              },
+              {
+                "entry": "0x8011DA9C",
+                "faces": 4,
+                "list": "0x8011F9B4"
+              },
+              {
+                "entry": "0x8011DA40",
+                "faces": 6,
+                "list": "0x8011F974"
+              },
+              {
+                "entry": "0x8011D6A8",
+                "faces": 16,
+                "list": "0x8011F350"
+              },
+              {
+                "entry": "0x8011D670",
+                "faces": 17,
+                "list": "0x8011F240"
+              },
+              {
+                "entry": "0x8011D654",
+                "faces": 6,
+                "list": "0x8011F218"
+              },
+              {
+                "entry": "0x8011D3E4",
+                "faces": 22,
+                "list": "0x8011EE8C"
+              },
+              {
+                "entry": "0x8011D49C",
+                "faces": 8,
+                "list": "0x8011F00C"
+              },
+              {
+                "entry": "0x8011D554",
+                "faces": 17,
+                "list": "0x8011F12C"
+              },
+              {
+                "entry": "0x8011D538",
+                "faces": 28,
+                "list": "0x8011F094"
+              },
+              {
+                "entry": "0x8011D464",
+                "faces": 12,
+                "list": "0x8011EF38"
+              },
+              {
+                "entry": "0x8011D480",
+                "faces": 17,
+                "list": "0x8011EF80"
+              },
+              {
+                "entry": "0x8011D448",
+                "faces": 3,
+                "list": "0x8011EF1C"
+              },
+              {
+                "entry": "0x8011D3C8",
+                "faces": 26,
+                "list": "0x8011EDF4"
+              }
+            ]
+          }
+        ],
+        "selected_draw": {
+          "index": 2,
+          "ra": "0x8009A51C",
+          "begin": "0x80138390",
+          "limit": "0x80144FA7",
+          "level": "0x800A5A28",
+          "sub": "0x800A56C8",
+          "root": "0x800E8D28",
+          "vertex_count": 1471,
+          "vertex_table": "0x800ECE1C",
+          "record_table_before_call": "0x801FFD90",
+          "record_table_entries_before_call": 16,
+          "record_table_hash_before_call": "0xDE039D41",
+          "native_compare": {
+            "native": 16,
+            "overflow": 0,
+            "unique": 16,
+            "matched": 11,
+            "missing": 5,
+            "decoded_only": 1575,
+            "duplicate_calls": 0,
+            "multi_source": 0,
+            "multi_source_triangles": 0,
+            "decoded_triangles": 1586,
+            "status": 0,
+            "first_missing": "0x800EA920",
+            "first_duplicate_call": "0x00000000",
+            "first_multi_source": "0x00000000",
+            "missing_in_range": 5,
+            "missing_addrs": [
+              "0x800"
+            ]
+          }
+        },
+        "visible_nodes": [
+          {
+            "visible_index": 0,
+            "node": "0x800E9098",
+            "faces": 16,
+            "list": "0x800EA91C",
+            "status": "ok",
+            "triangles": 16,
+            "first_source": "0x800EA91C",
+            "last_source": "0x800EA98C",
+            "owner": "0x800E8F20"
+          }
+        ],
+        "visible_face_total": 16,
+        "visible_triangle_total": 16
+      },
+      {
+        "slot": 5,
+        "runtime_receipt": "analysis\\vr-captures\\slot5-visible\\receipt.json",
+        "capture": "analysis\\vr-captures\\slot5-visible\\world-capture.txt",
+        "summary": "analysis\\vr-captures\\slot5-visible\\summary.json",
+        "stdout": "analysis\\vr-captures\\slot5-visible\\stdout.log",
+        "binary_sha256": "a66cfb994d6de88556342caf33a2ee9b4940517b84c4d51ec0e45735f1b4c3ca",
+        "config_sha256": "34ea40ba6c65ec3e8d4a7b5a50537e07ed731cb00244b99414f92b113240b2c7",
+        "complete": true,
+        "canonical_guest_hz": 60.001333333333335,
+        "entries": [
+          {
+            "index": 0,
+            "ra": "0x8009A51C",
+            "pc": "0x00000000",
+            "level": "0x800A58A0",
+            "sub": "0x800A54A0",
+            "root": "0x8010C788",
+            "table": "0x80111234",
+            "vertex_count": 1307,
+            "faces": 0,
+            "selected": true,
+            "overflow": 0,
+            "compare": false,
+            "status": 0,
+            "matched": 0,
+            "missing": 0,
+            "decoded_only": 0,
+            "triangles": 0,
+            "first_missing": "0x00000000",
+            "visible_count": 0,
+            "visible_overflow": 0,
+            "visible": []
+          },
+          {
+            "index": 1,
+            "ra": "0x8009A51C",
+            "pc": "0x00000000",
+            "level": "0x800A5964",
+            "sub": "0x800A55B4",
+            "root": "0x800F8D18",
+            "table": "0x800FE384",
+            "vertex_count": 1481,
+            "faces": 0,
+            "selected": true,
+            "overflow": 0,
+            "compare": false,
+            "status": 0,
+            "matched": 0,
+            "missing": 0,
+            "decoded_only": 0,
+            "triangles": 0,
+            "first_missing": "0x00000000",
+            "visible_count": 0,
+            "visible_overflow": 0,
+            "visible": []
+          },
+          {
+            "index": 2,
+            "ra": "0x8009A51C",
+            "pc": "0x00000000",
+            "level": "0x800A5A28",
+            "sub": "0x800A56C8",
+            "root": "0x800E52A8",
+            "table": "0x800EA364",
+            "vertex_count": 1538,
+            "faces": 91,
+            "selected": true,
+            "overflow": 0,
+            "compare": false,
+            "status": 0,
+            "matched": 0,
+            "missing": 0,
+            "decoded_only": 0,
+            "triangles": 0,
+            "first_missing": "0x00000000",
+            "visible_count": 7,
+            "visible_overflow": 0,
+            "visible": [
+              {
+                "entry": "0x800E6F5C",
+                "faces": 20,
+                "list": "0x800EA00C"
+              },
+              {
+                "entry": "0x800E6A70",
+                "faces": 22,
+                "list": "0x800E96B0"
+              },
+              {
+                "entry": "0x800E6ACC",
+                "faces": 6,
+                "list": "0x800E9758"
+              },
+              {
+                "entry": "0x800E6AE8",
+                "faces": 15,
+                "list": "0x800E9780"
+              },
+              {
+                "entry": "0x800E6AB0",
+                "faces": 12,
+                "list": "0x800E9718"
+              },
+              {
+                "entry": "0x800E6940",
+                "faces": 8,
+                "list": "0x800E9540"
+              },
+              {
+                "entry": "0x800E699C",
+                "faces": 8,
+                "list": "0x800E9590"
+              }
+            ]
+          },
+          {
+            "index": 3,
+            "ra": "0x8009A51C",
+            "pc": "0x00000000",
+            "level": "0x800A58A0",
+            "sub": "0x800A54A0",
+            "root": "0x8010C788",
+            "table": "0x80111234",
+            "vertex_count": 1307,
+            "faces": 0,
+            "selected": false,
+            "overflow": 0,
+            "compare": false,
+            "status": 0,
+            "matched": 0,
+            "missing": 0,
+            "decoded_only": 0,
+            "triangles": 0,
+            "first_missing": "0x00000000",
+            "visible_count": 0,
+            "visible_overflow": 0,
+            "visible": []
+          }
+        ],
+        "selected_draw": {
+          "index": 2,
+          "ra": "0x8009A51C",
+          "begin": "0x80148C10",
+          "limit": "0x8015AF07",
+          "level": "0x800A5A28",
+          "sub": "0x800A56C8",
+          "root": "0x800E52A8",
+          "vertex_count": 1538,
+          "vertex_table": "0x800EA364",
+          "record_table_before_call": "0x801FFD90",
+          "record_table_entries_before_call": 16,
+          "record_table_hash_before_call": "0x1EE00035",
+          "native_compare": {
+            "native": 91,
+            "overflow": 0,
+            "unique": 91,
+            "matched": 70,
+            "missing": 21,
+            "decoded_only": 2027,
+            "duplicate_calls": 0,
+            "multi_source": 0,
+            "multi_source_triangles": 0,
+            "decoded_triangles": 2097,
+            "status": 0,
+            "first_missing": "0x800E9594",
+            "first_duplicate_call": "0x00000000",
+            "first_multi_source": "0x00000000",
+            "missing_in_range": 16,
+            "missing_addrs": [
+              "0x800"
+            ]
+          }
+        },
+        "visible_nodes": [
+          {
+            "visible_index": 0,
+            "node": "0x800E6F5C",
+            "faces": 20,
+            "list": "0x800EA00C",
+            "status": "ok",
+            "triangles": 20,
+            "first_source": "0x800EA00C",
+            "last_source": "0x800EA094",
+            "owner": "0x800E6F20"
+          },
+          {
+            "visible_index": 1,
+            "node": "0x800E6A70",
+            "faces": 22,
+            "list": "0x800E96B0",
+            "status": "ok",
+            "triangles": 22,
+            "first_source": "0x800E96B0",
+            "last_source": "0x800E9710",
+            "owner": "0x800E68F8"
+          },
+          {
+            "visible_index": 2,
+            "node": "0x800E6ACC",
+            "faces": 6,
+            "list": "0x800E9758",
+            "status": "ok",
+            "triangles": 6,
+            "first_source": "0x800E9758",
+            "last_source": "0x800E9778",
+            "owner": "0x800E6AA8"
+          },
+          {
+            "visible_index": 3,
+            "node": "0x800E6AE8",
+            "faces": 15,
+            "list": "0x800E9780",
+            "status": "ok",
+            "triangles": 15,
+            "first_source": "0x800E9780",
+            "last_source": "0x800E97DC",
+            "owner": "0x800E6AAC"
+          },
+          {
+            "visible_index": 4,
+            "node": "0x800E6AB0",
+            "faces": 12,
+            "list": "0x800E9718",
+            "status": "ok",
+            "triangles": 12,
+            "first_source": "0x800E9718",
+            "last_source": "0x800E9750",
+            "owner": "0x800E6AA4"
+          },
+          {
+            "visible_index": 5,
+            "node": "0x800E6940",
+            "faces": 8,
+            "list": "0x800E9540",
+            "status": "ok",
+            "triangles": 8,
+            "first_source": "0x800E9540",
+            "last_source": "0x800E9568",
+            "owner": "0x800E691C"
+          },
+          {
+            "visible_index": 6,
+            "node": "0x800E699C",
+            "faces": 8,
+            "list": "0x800E9590",
+            "status": "ok",
+            "triangles": 8,
+            "first_source": "0x800E9590",
+            "last_source": "0x800E95B8",
+            "owner": "0x800E6978"
+          }
+        ],
+        "visible_face_total": 91,
+        "visible_triangle_total": 91
+      }
+    ],
+    "conclusion": "All real invocations on both scenes have ra=0x8009A51C, so the missing faces do not come from a different caller. The packet builder does not walk the root directly: it iterates the visible-entry array at 0x800B74B8, reading the face count at +0x0C and the list pointer at +0x18. That array accounts for every native face (slot 2: 1 entry/16 faces; slot 5: 7 entries/91 faces), and decoding each entry as a root returns exactly its face count with status=ok. The decoder root walk does not reach at least the slot-2 leaf 0x800E9098 (parent interior node 0x800E8F04), so the root walk is incomplete as a native reference.",
+    "next": "Decode the captured visible-entry array (or the structure that produces it) instead of treating the root walk as complete, then re-run the native face comparison."
   }
 }

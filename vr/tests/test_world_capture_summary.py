@@ -79,6 +79,25 @@ class CaptureSummaryTest(unittest.TestCase):
         self.assertEqual(compare['missing_addrs'],
                          ['0x80123456', '0x80123490'])
 
+    def test_entry_attribution_is_parsed(self):
+        text = HEADER + (
+            'entry=2 ra=0x8009A51C pc=0x00000000 level=0x800A5A28 '
+            'sub=0x800A56C8 root=0x800E8D28 table=0x800ECE1C count=1471 '
+            'faces=16 selected=1 overflow=0 compare=0 status=0 matched=0 '
+            'missing=0 decoded_only=0 triangles=0 first_missing=0x00000000 '
+            'visible=1 visible_overflow=0 '
+            'visible_entries=800E9098:16:800EA91C\n')
+        report = capture.summarize(self.write(text))
+        entry = report['entries'][0]
+        self.assertEqual(entry['index'], 2)
+        self.assertEqual(entry['ra'], '0x8009A51C')
+        self.assertTrue(entry['selected'])
+        self.assertEqual(entry['faces'], 16)
+        self.assertEqual(entry['visible_count'], 1)
+        self.assertEqual(entry['visible'],
+                         [{'entry': '0x800E9098', 'faces': 16,
+                           'list': '0x800EA91C'}])
+
     def test_wrong_record_base_is_refused(self):
         text = HEADER.replace('record_base=0x8011003C',
                               'record_base=0x80110040')

@@ -74,16 +74,20 @@ The decoder also runs once on each live arena with masks bypassed and returns
 `status=ok`: slot 2 decodes 203 nodes / 134 leaves / 1756 triangles, slot 5
 237 / 155 / 1932. The global masks prune slot 2 to 25 leaves and slot 5 to
 zero, so they are view-specific, not a resource filter.
-Native face coverage is now measured against every `80011424` submission:
-slot 2 matched 11 of 16, slot 5 matched 70 of 91. The missing faces are valid
-base strips with valid indices and records, but no absolute pointer to their
-lists exists in `0x800A0000..0x80100000`, so their owner is still unidentified
-and the decoder is incomplete. Geometry parity is **not** established.
+Native face coverage is measured against every `80011424` submission:
+the root walk matches 11 of 16 on slot 2 and 70 of 91 on slot 5. Attribution
+shows every real `80010CF0` entry has `ra=0x8009A51C`; the missing faces are
+not from another caller. The builder's actual source is the visible-entry array
+at `0x800B74B8` (face count `+0x0C`, list `+0x18`), which accounts for all
+native faces: slot 2 has 1 entry/16 faces and slot 5 has 7 entries/91 faces,
+and decoding each entry as a root returns exactly its face count with
+`status=ok`. The root walk misses at least slot 2's leaf `0x800E9098` (parent
+interior node `0x800E8F04`), so geometry parity is **not** established.
 Texture page/CLUT fields remain unmapped.
 [Receipt](../../vr/proof/sp-world-capture-receipt.json).
 Strict fixture `vr/tests/test_world_decode.c`; contract in
-[STATIC_WORLD_DECODER](STATIC_WORLD_DECODER.md). Next: identify the second
-face-list owner; map texpage/CLUT.
+[STATIC_WORLD_DECODER](STATIC_WORLD_DECODER.md). Next: decode the visible-entry
+array; map texpage/CLUT.
 
 Petrol now follows the shared hand ray in both measured SP release branches.
 Slot 1's missing street is reproduced and repaired in both eyes: the VR selector

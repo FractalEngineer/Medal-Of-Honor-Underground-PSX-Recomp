@@ -44,6 +44,13 @@ NATIVE_COMPARE_RE = re.compile(
     r"first_missing=0x([0-9A-Fa-f]{8}) first_dup=0x([0-9A-Fa-f]{8}) "
     r"first_multi=0x([0-9A-Fa-f]{8})"
     r"(?: missing_in_range=(\d+) missing_addrs=([0-9a-fx,]*))?")
+ENTRY_RE = re.compile(
+    r"entry=(\d+) ra=0x([0-9A-F]+) pc=0x([0-9A-F]+) level=0x([0-9A-F]+) "
+    r"sub=0x([0-9A-F]+) root=0x([0-9A-F]+) table=0x([0-9A-F]+) count=(\d+) "
+    r"faces=(\d+) selected=(\d+) overflow=(\d+) compare=(\d) status=(\d+) "
+    r"matched=(\d+) missing=(\d+) decoded_only=(\d+) triangles=(\d+) "
+    r"first_missing=0x([0-9A-F]{8}) visible=(\d+) visible_overflow=(\d+) "
+    r"visible_entries=([^ ]*)")
 
 
 def fnv1a(data):
@@ -61,10 +68,47 @@ def summarize(path):
     lines = path.read_text(encoding="utf-8").splitlines()
     if not lines or lines[0] != HEADER:
         fail("not a MOHU-SP-WORLD-CAPTURE version 1 file")
-    if not lines[1].startswith("draws="):
+    if not any(line.startswith("draws=") for line in lines[1:8]):
         fail("missing draws/faces header")
     summary = {}
+    entries = []
     for line in lines[1:]:
+        m = ENTRY_RE.match(line)
+        if m:
+            visible = []
+            for item in m.group(21).split(","):
+                if not item:
+                    continue
+                pointer, faces, face_list = item.split(":")
+                visible.append({
+                    "entry": f"0x{pointer.upper()}",
+                    "faces": int(faces),
+                    "list": f"0x{face_list.upper()}",
+                })
+            entries.append({
+                "index": int(m.group(1)),
+                "ra": f"0x{m.group(2)}",
+                "pc": f"0x{m.group(3)}",
+                "level": f"0x{m.group(4)}",
+                "sub": f"0x{m.group(5)}",
+                "root": f"0x{m.group(6)}",
+                "table": f"0x{m.group(7)}",
+                "vertex_count": int(m.group(8)),
+                "faces": int(m.group(9)),
+                "selected": bool(int(m.group(10))),
+                "overflow": int(m.group(11)),
+                "compare": bool(int(m.group(12))),
+                "status": int(m.group(13)),
+                "matched": int(m.group(14)),
+                "missing": int(m.group(15)),
+                "decoded_only": int(m.group(16)),
+                "triangles": int(m.group(17)),
+                "first_missing": f"0x{m.group(18)}",
+                "visible_count": int(m.group(19)),
+                "visible_overflow": int(m.group(20)),
+                "visible": visible,
+            })
+            continue
         m = DRAW_RE.match(line)
         if m:
             index = int(m.group(1))
@@ -225,6 +269,7 @@ def summarize(path):
         "schema": 1,
         "source": str(path),
         "draws": [],
+        "entries": entries,
         "faces": len(faces),
         "distinct_records": len(distinct),
         "face_record": {
