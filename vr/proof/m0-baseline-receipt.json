@@ -1,5 +1,5 @@
 {
-  "schema": 1,
+  "schema": 2,
   "date": "2026-10-30",
   "milestone": "M0",
   "scope": "Frozen heavy slot-2 (analysis/fixtures/sp/openbios slot02), copied to disposable outputs; production Release, debug OFF, diagnostics ON, OpenXR compiled ON but no headset; hidden window, dummy audio, separated diagnostic eyes (offset 8).",
@@ -292,7 +292,7 @@
     "No candidate comparison is implied: all three windows are the same production binary.",
     "Stage means are not a predicted FPS and nested stages are not summed."
   ],
-  "next": "Add canonical/snapshot-extract/async-GPU spans, then compare candidate kernels against this baseline with alternating windows.",
+  "next": "M0 complete. Proceed to M1: material extraction, then a world-complete native reference.",
   "canonical_control": {
     "evidence": "analysis/vr-baseline/m0-canonical-20261030/receipt.json",
     "complete": true,
@@ -419,5 +419,190 @@
       "No XR/HUD/hands in either mode."
     ],
     "conclusion": "Same shape as slot 2: steady canonical native is real-time (59.99 Hz, ~41% work interval) while stereo pair work is 16.99 ms and native VBlank falls below nominal. The indoor scene also shows a one-sample streaming hitch in the bench window; it is recorded, not averaged away."
+  },
+  "spans": {
+    "model": "guest quantum (sim) + pacer + canonical present are separate; GPU timer results are retrieved later and never added to CPU stages",
+    "slot2": {
+      "evidence": "analysis/vr-baseline/m0-final-slot2-20261030/measurement.json",
+      "verdict": "both_simulation_and_presentation",
+      "rates": {
+        "native_vblank_hz_from_trace": 58.3476,
+        "native_vblank_hz_from_cadence": 58.8,
+        "fresh_pairs_per_second": 29.1738,
+        "published_pairs_per_second": 29.1738,
+        "target_hz": 59.9988,
+        "repeated_submissions": 0,
+        "missed_periods_per_frame": 0.0
+      },
+      "runtime_cadence": {
+        "samples": 6,
+        "guest_hz_mean": 58.8,
+        "work_guest_ms_per_s_mean": 967.2833,
+        "pacer_ms_per_s_mean": 24.8667,
+        "canonical_ms_per_s_mean": 4.15,
+        "sim_interval_ms_per_s_mean": 967.2833,
+        "sim_is_guest_quantum_interval_not_exclusive_cpu": true,
+        "work_guest_is_inter_frame_interval_not_exclusive": true
+      },
+      "gpu": {
+        "timer_samples": 120,
+        "measured": true,
+        "scene_ms_mean": 26.95685,
+        "present_ms_mean": 2.933317,
+        "sample_age_frames_max": 3,
+        "retrieved_asynchronously": true,
+        "added_to_cpu_stages": false
+      },
+      "stages_ms": {
+        "pair_total": {
+          "count": 120,
+          "mean": 17.787408,
+          "p50": 17.7045,
+          "p95": 18.58805,
+          "p99": 19.4002,
+          "max": 20.366
+        },
+        "snapshot_extract": {
+          "count": 120,
+          "mean": 0.144017,
+          "p50": 0.142,
+          "p95": 0.16405,
+          "p99": 0.1862,
+          "max": 0.224
+        },
+        "snapshot_publish": {
+          "count": 120,
+          "mean": 0.000992,
+          "p50": 0.001,
+          "p95": 0.001,
+          "p99": 0.001,
+          "max": 0.004
+        },
+        "xr_locate": {
+          "count": 120,
+          "mean": 0.0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "p99": 0.0,
+          "max": 0.0
+        },
+        "host_prep": {
+          "count": 120,
+          "mean": 0.0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "p99": 0.0,
+          "max": 0.0
+        },
+        "game_traverse": {
+          "count": 120,
+          "mean": 14.611092,
+          "p50": 14.529,
+          "p95": 15.2173,
+          "p99": 15.57868,
+          "max": 16.936
+        }
+      },
+      "absent_stages": [
+        "xr_locate",
+        "host_prep",
+        "xr_wait_frame"
+      ]
+    },
+    "slot5": {
+      "evidence": "analysis/vr-baseline/m0-final-slot5-20261030/measurement.json",
+      "verdict": "within_contract",
+      "rates": {
+        "native_vblank_hz_from_trace": 59.9798,
+        "native_vblank_hz_from_cadence": 60.0417,
+        "fresh_pairs_per_second": 29.9899,
+        "published_pairs_per_second": 29.9899,
+        "target_hz": 59.9988,
+        "repeated_submissions": 0,
+        "missed_periods_per_frame": 0.0
+      },
+      "runtime_cadence": {
+        "samples": 6,
+        "guest_hz_mean": 60.0417,
+        "work_guest_ms_per_s_mean": 740.3833,
+        "pacer_ms_per_s_mean": 253.5333,
+        "canonical_ms_per_s_mean": 4.2,
+        "sim_interval_ms_per_s_mean": 740.3833,
+        "sim_is_guest_quantum_interval_not_exclusive_cpu": true,
+        "work_guest_is_inter_frame_interval_not_exclusive": true
+      },
+      "gpu": {
+        "timer_samples": 120,
+        "measured": true,
+        "scene_ms_mean": 20.568283,
+        "present_ms_mean": 8.317008,
+        "sample_age_frames_max": 3,
+        "retrieved_asynchronously": true,
+        "added_to_cpu_stages": false
+      },
+      "stages_ms": {
+        "pair_total": {
+          "count": 120,
+          "mean": 13.718425,
+          "p50": 13.6255,
+          "p95": 14.29165,
+          "p99": 15.89102,
+          "max": 23.821
+        },
+        "snapshot_extract": {
+          "count": 120,
+          "mean": 0.141758,
+          "p50": 0.138,
+          "p95": 0.1622,
+          "p99": 0.18586,
+          "max": 0.269
+        },
+        "snapshot_publish": {
+          "count": 120,
+          "mean": 0.000975,
+          "p50": 0.001,
+          "p95": 0.001,
+          "p99": 0.001,
+          "max": 0.001
+        },
+        "xr_locate": {
+          "count": 120,
+          "mean": 0.0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "p99": 0.0,
+          "max": 0.0
+        },
+        "host_prep": {
+          "count": 120,
+          "mean": 0.0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "p99": 0.0,
+          "max": 0.0
+        },
+        "game_traverse": {
+          "count": 120,
+          "mean": 11.738008,
+          "p50": 11.658,
+          "p95": 12.1722,
+          "p99": 13.40846,
+          "max": 21.221
+        }
+      },
+      "absent_stages": [
+        "xr_locate",
+        "host_prep",
+        "xr_wait_frame"
+      ]
+    }
+  },
+  "m0_exit": {
+    "report": "docs/vr/M0_REPORT.md",
+    "contract": "docs/vr/MEASUREMENT_CONTRACT.md",
+    "reproducible_reference": true,
+    "fixture_strategy": "frozen slot-2 heavy reference plus slot-5 second scene, copied to disposable outputs",
+    "simulation_vs_presentation": "canonical-only 60.00 Hz; slot-2 stereo 58.80 Hz with pair p95 18.588 ms and GPU scene 26.957 ms; slot-5 stereo 60.04 Hz with pair p95 14.292 ms",
+    "headset_acceptance": false
   }
 }

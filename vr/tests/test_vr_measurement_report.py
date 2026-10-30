@@ -26,6 +26,9 @@ def trace(count=20, interval_ms=16.666, guest_step=1, pair_us=8000,
             'flags': flags,
             'xr_display_delta_us': delta_us,
             'xr_submit_fresh': 1 if fresh is None else int(fresh[index]),
+            'gpu_scene_us': 0,
+            'gpu_present_us': 0,
+            'gpu_sample_age_frames': 0,
             'stages_us': {'pair_total': pair_us, 'hud_capture': hud_us},
         }
         rows.append(row)
@@ -110,6 +113,43 @@ class MeasurementReportTest(unittest.TestCase):
         self.assertAlmostEqual(report['runtime_cadence']['guest_hz_mean'], 59.8, 2)
         self.assertTrue(report['runtime_cadence']
                         ['work_guest_is_inter_frame_interval_not_exclusive'])
+
+    def test_canonical_and_sim_split_are_parsed(self):
+        text = ('psxrecomp: runtime cadence: guest=59.9 Hz, '
+                'work guest=12.5 pacer=3.2 canonical=5.5 sim=3.8 '
+                'autocapture=0.0 provider_poll=0.0 ms/s, x')
+        samples = measurement.parse_runtime_cadence(text)
+        self.assertAlmostEqual(samples[0]['canonical_ms_per_s'], 5.5)
+        self.assertAlmostEqual(samples[0]['sim_interval_ms_per_s'], 3.8)
+        report = measurement.analyze_trace(trace(), samples, 60, 59.83)
+        self.assertAlmostEqual(
+            report['runtime_cadence']['canonical_ms_per_s_mean'], 5.5)
+        self.assertAlmostEqual(
+            report['runtime_cadence']['sim_interval_ms_per_s_mean'], 3.8)
+        self.assertTrue(report['runtime_cadence']
+                        ['sim_is_guest_quantum_interval_not_exclusive_cpu'])
+
+    def test_async_gpu_samples_are_separate_from_cpu_stages(self):
+        data = trace()
+        for row in data['records']:
+            row['gpu_scene_us'] = 5000
+            row['gpu_present_us'] = 1000
+            row['gpu_sample_age_frames'] = 3
+        report = measurement.analyze_trace(data, [], 60, 59.83)
+        self.assertTrue(report['gpu']['measured'])
+        self.assertEqual(report['gpu']['timer_samples'], 20)
+        self.assertAlmostEqual(report['gpu']['scene_ms_mean'], 5.0)
+        self.assertAlmostEqual(report['gpu']['present_ms_mean'], 1.0)
+        self.assertEqual(report['gpu']['sample_age_frames_max'], 3)
+        self.assertFalse(report['gpu']['added_to_cpu_stages'])
+        self.assertNotIn('gpu_scene_us', report['stages_ms'])
+
+    def test_absent_stages_are_named_not_zero_cost(self):
+        report = measurement.analyze_trace(trace(), [], 60, 59.83)
+        self.assertIn('snapshot_extract', report['scope']['absent_stages'])
+        self.assertIn('xr_locate', report['scope']['absent_stages'])
+        self.assertTrue(any('stages absent' in item
+                            for item in report['findings']))
 
     def test_text_summary_keeps_the_limitation(self):
         report = measurement.analyze_trace(trace(), [], 60, 59.83)

@@ -32,9 +32,12 @@ tooling landed: `vr/tools/analyze_vr_measurement.py` classifies
 simulation-bound versus presentation-bound runs from the existing frame trace
 plus opt-in `PSX_RUNTIME_PERF_DIAG` lines
 ([contract](MEASUREMENT_CONTRACT.md)); `profile_sp_production.py
---runtime-perf` embeds it. The first real baseline is recorded below. Next: add
-canonical, snapshot-extract/publish and asynchronous GPU-query spans, then take
-a second workload. Do not restart cache-pose, compiler or calibration sweeps.
+--runtime-perf` embeds it. **M0 is complete**
+([exit report](M0_REPORT.md)): guest-quantum/pacer/canonical spans, pair
+snapshot extract/publish, XR locate/host-prep stages, async GPU samples with
+age, and two workloads are recorded. Next: M1 material extraction and a
+world-complete native reference. Do not restart cache-pose, compiler or
+calibration sweeps.
 
 **M0 baseline measured:** three production slot-2 windows
 (`--runtime-perf --eye-offset 8`, frozen slot02 copied, debug OFF, no
@@ -49,8 +52,12 @@ The added per-eye work — not native execution or pacing — causes the slowdow
 Second scene (slot 5, indoor/streaming) matches: stereo 27.68 pairs/s at
 16.99 ms, canonical steady 59.99 Hz at ~41% work; one streaming hitch is
 recorded, not averaged away. [Receipt](../../vr/proof/m0-baseline-receipt.json).
-Not a headset pass; the snapshot/async-GPU spans and alternating matched
-windows remain open.
+Final span windows: slot 2 58.80 Hz, pair p95 18.588 ms, GPU scene 26.957 ms
+(`both_simulation_and_presentation`); slot 5 60.04 Hz, pair p95 14.292 ms
+(`within_contract`). Snapshot extract is 0.14–0.15 ms; publish is sub-us.
+Not a headset pass: XR locate/host stages are absent in the desktop captures
+and named as such. Alternating matched windows and physical acceptance belong
+to M6 qualification.
 
 **M1 started:** `vr/underground/world_decode.{h,c}` decodes the measured SP
 arena tree and strip lists into an owned, deterministic mesh with named,

@@ -43,7 +43,17 @@ mission-start scene is not a substitute.
   the eye guest draw. **Never add nested stages.**
 - `guest_sim` and the runtime `work guest=` value are the **interval between
   traced frames (or vblank samples)**, not exclusive simulation CPU time.
+  In the cadence line this is also printed as `sim=`; it ends at present entry,
+  so it is the guest quantum, not the whole present body.
 - `pacer` is explicit wall-clock waiting and is reported separately.
+- `canonical` is the canonical display selection + present span, measured from
+  present entry to the present function's exit. It is outside `sim`/`work`, so
+  do not subtract it from them.
+- `snapshot_extract` / `snapshot_publish` are the existing transactional pair's
+  baseline checkpoint and publish, not the future scene-mailbox transport.
+- `xr_locate` / `host_prep` bracket `xrLocateViews` and the view/hand
+  preparation after it. `xr_wait_frame`, `xr_*`, `pose_age` and `hud_*` keep
+  their existing meanings.
 - `hud_capture` is a CPU transaction; it is added to `pair_total` only because
   the trace shows it executing on the frame's own thread. If it never ran
   (`hud_capture_included: false`) its cost is unmeasured, not zero.
@@ -53,10 +63,19 @@ mission-start scene is not a substitute.
 
 ## Async GPU work
 
-The plan requires asynchronous GPU queries retrieved later. Until such a query
-exists, the report must not present `pair_total` as GPU completion time. A
-future GPU stage is reported as its own field and never added to overlapping
-CPU stages.
+The GL renderer's `GL_TIME_ELAPSED` sampling ring is enabled for traced frames
+(and for diagnostics builds). Results are retrieved several presents later into
+`gpu_scene_us`, `gpu_present_us` and `gpu_sample_age_frames`. They describe a
+past frame's GPU execution, never the current frame's CPU work, and are never
+added to `pair_total` or any other CPU stage. A missing sample is reported as
+unmeasured, not zero. `pair_total` remains CPU submission time.
+
+## Absent spans
+
+The report lists `scope.absent_stages` and a finding instead of treating an
+unexercised stage as zero. A stage that ran below the 1 us resolution may also
+appear there; snapshot publish is rounded up to 1 us when its tick delta is
+nonzero so a completed publish is not misreported as absent.
 
 ## Baseline capture
 

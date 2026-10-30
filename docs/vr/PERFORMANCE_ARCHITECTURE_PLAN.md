@@ -13,7 +13,7 @@ This document records the agreed architecture and execution gates. Read [HANDOFF
 
 | Milestone | State | Evidence / remaining blocker |
 | --- | --- | --- |
-| M0: baseline and measurement contract | In progress | Two scenes: canonical-only real-time (~60 Hz, 41% work interval); stereo 21.95–27.68 pairs/s, native clock below nominal, 96% work interval. Snapshot/async-GPU spans and alternating matched windows open |
+| M0: baseline and measurement contract | Complete | [M0_REPORT](M0_REPORT.md); two scenes, canonical control, separate guest/pacer/canonical spans, pair snapshot spans, XR locate/host stages, async GPU samples. Slot 2: 58.80 Hz, pair p95 18.588 ms, GPU 26.957 ms. Slot 5: 60.04 Hz, pair p95 14.292 ms |
 | M1: static-world resource decoder | In progress | Submitted-face parity is exact with `face_tag`: root walk 16/16 and 91/91, zero missing. `mohu_world_decode_visible` reproduces the visible-entry set (1 entry/16, 7 entries/91, zero decoded-only). Full resident-world native reference still open. Record is six parameter halves, not material; texpage/CLUT open |
 | M2: host GPU static-scene rendering | In progress | Host reference transform/projection + real-view adapter landed; retained GPU buffers, shaders, ordering and separated-eye visual/performance gates open |
 | M3: complete dynamic scene snapshots | Not started | All encountered producer families |
@@ -40,6 +40,8 @@ This document records the agreed architecture and execution gates. Read [HANDOFF
 | 2026-10-30 | M0 baseline: three production slot-2 windows with `--runtime-perf` | [receipt](../../vr/proof/m0-baseline-receipt.json); 21.95–23.41 pairs/s, native VBlank 43.9–46.8 Hz | Add canonical/snapshot/async-GPU spans; capture a second scene |
 | 2026-10-30 | M0 canonical-only control on the same slot-2 scene | Same receipt; native 60.00 Hz, work interval 41% vs stereo 96%, pacer 58% vs ~0.8% | Run canonical/stereo alternating; then add snapshot/async-GPU spans |
 | 2026-10-30 | M0 second scene (slot 5 indoor/streaming) stereo + canonical | Same receipt; stereo 27.68 pairs/s at 16.99 ms, canonical steady 59.99 Hz (~41% work); one streaming hitch recorded | Run alternating matched windows on both scenes |
+| 2026-10-30 | M0 span instrumentation: guest/pacer/canonical split, pair snapshot spans, XR locate/host prep, async GPU samples | [M0_REPORT](M0_REPORT.md); slot 2 58.80 Hz / pair p95 18.588 ms / GPU 26.957 ms; slot 5 60.04 Hz / pair p95 14.292 ms; 14 analyzer tests + C frame-trace test pass | Close M0 and start M1 material extraction |
+| 2026-10-30 | M0 exit gate | [M0_REPORT](M0_REPORT.md), [receipt](../../vr/proof/m0-baseline-receipt.json) schema 2 | M1: material extraction and a world-complete native reference |
 
 ## 1. Decision and evidence
 
@@ -127,14 +129,14 @@ Each milestone must leave a buildable candidate, focused tests and a compact rec
 
 Extend existing profiling tools rather than creating another launcher.
 
-- [ ] Record separate simulation active CPU time, pacing waits and canonical-rendering spans.
-- [ ] Record snapshot extraction/publication spans.
-- [ ] Record XR wait, pose location, host preparation, GPU work and submission spans.
-- [ ] Record native VBlank progression, native scene updates, snapshot age, fresh-pose renders, repeated images and missed deadlines.
-- [ ] Use asynchronous GPU queries and retrieve results later. Do not add nested spans together or relabel historical `guest_sim` inter-frame intervals as exclusive simulation time.
+- [x] Record separate simulation active CPU time, pacing waits and canonical-rendering spans. (`sim` is the guest-quantum interval; exclusive guest CPU is not claimed. `pacer` and `canonical` are measured separately.)
+- [x] Record snapshot extraction/publication spans. (`snapshot_extract`/`snapshot_publish` on the existing transactional pair; not the future mailbox.)
+- [x] Record XR wait, pose location, host preparation, GPU work and submission spans. (`xr_locate`/`host_prep` added; XR stages are absent in desktop captures and named as such.)
+- [x] Record native VBlank progression, native scene updates, snapshot age, fresh-pose renders, repeated images and missed deadlines. (Frame trace: guest frame, `pair_age_ms`, fresh/repeat flags, `xr_display_delta_us`.)
+- [x] Use asynchronous GPU queries and retrieve results later. Do not add nested spans together or relabel historical `guest_sim` inter-frame intervals as exclusive simulation time. (`GL_TIME_ELAPSED` samples with `gpu_sample_age_frames`; never added to CPU stages.)
 - [x] Measure canonical-only execution with stereo replay disabled on the heavy scene. If it still falls behind, attribute the remaining canonical cost separately; do not claim threading solves it.
 - [x] Preserve the existing heavy slot-2 reference. For changed execution identities, obtain candidate scenes through copied-card native boot/input and genuine saves. Record mission, location, camera and scene contents.
-- [ ] **M0 exit:** reproducible reference measurements, valid fixture strategy and a report distinguishing simulation slowdown from presentation overload.
+- [x] **M0 exit:** reproducible reference measurements, valid fixture strategy and a report distinguishing simulation slowdown from presentation overload. ([M0_REPORT](M0_REPORT.md), [receipt](../../vr/proof/m0-baseline-receipt.json).)
 
 A mission-start scene cannot replace the heavy-scene acceptance gate.
 

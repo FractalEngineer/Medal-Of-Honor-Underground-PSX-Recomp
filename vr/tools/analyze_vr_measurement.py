@@ -60,12 +60,18 @@ def parse_runtime_cadence(text):
             continue
         guest = _search(r'guest=([\d.]+) Hz', line, float)
         work = re.search(r'work guest=([\d.]+) pacer=([\d.]+)', line)
+        canonical = _search(r'\bcanonical=([\d.]+)', line, float)
+        sim = _search(r'\bsim=([\d.]+)', line, float)
+        # `sim` is the guest-quantum interval, not exclusive CPU; pacer and
+        # canonical present are measured in the present body after it.
         pairs = re.search(r'VR pairs=(\d+) shed=(\d+) empty=(\d+) failures=(\d+)'
                           r' avg_pair_ms=([\d.]+) last_pair_ms=([\d.]+)', line)
         sample = {
             'guest_hz': guest,
             'work_guest_ms_per_s': float(work.group(1)) if work else None,
             'pacer_ms_per_s': float(work.group(2)) if work else None,
+            'canonical_ms_per_s': canonical,
+            'sim_interval_ms_per_s': sim,
         }
         if pairs:
             sample.update(
@@ -134,6 +140,24 @@ def analyze_trace(data, cadence, target_hz, nominal_hz, path='<memory>'):
     effective_target_hz = 1e6 / period_us
 
     hud_measured = any(r['stages_us'].get('hud_capture') for r in rows)
+    gpu_rows = [r for r in rows
+                if r.get('gpu_scene_us') or r.get('gpu_present_us')]
+    gpu = {
+        'timer_samples': len(gpu_rows),
+        'measured': bool(gpu_rows),
+        'scene_ms_mean': (round(statistics.mean(
+            r['gpu_scene_us'] for r in gpu_rows) / 1000, 6) if gpu_rows else None),
+        'present_ms_mean': (round(statistics.mean(
+            r['gpu_present_us'] for r in gpu_rows) / 1000, 6) if gpu_rows else None),
+        'sample_age_frames_max': (max(r.get('gpu_sample_age_frames', 0)
+                                      for r in gpu_rows) if gpu_rows else None),
+        'retrieved_asynchronously': True,
+        'added_to_cpu_stages': False,
+    }
+    expected_stages = ('snapshot_extract', 'snapshot_publish', 'xr_locate',
+                       'host_prep', 'xr_wait_frame')
+    absent_stages = [key for key in expected_stages
+                     if not any(r['stages_us'].get(key) for r in rows)]
     pair_plus_hud_us = [r['stages_us'].get('pair_total', 0)
                         + r['stages_us'].get('hud_capture', 0) for r in rows]
     pair_plus_hud_p95_ms = percentile(pair_plus_hud_us, .95) / 1000
@@ -150,6 +174,10 @@ def analyze_trace(data, cadence, target_hz, nominal_hz, path='<memory>'):
             if s.get('work_guest_ms_per_s') is not None]
     pacer = [s['pacer_ms_per_s'] for s in cadence
              if s.get('pacer_ms_per_s') is not None]
+    canonical = [s['canonical_ms_per_s'] for s in cadence
+                 if s.get('canonical_ms_per_s') is not None]
+    sim = [s['sim_interval_ms_per_s'] for s in cadence
+           if s.get('sim_interval_ms_per_s') is not None]
 
     measured_vblank_hz = (statistics.mean(cadence_guest) if cadence_guest
                           else vblank_hz)
@@ -190,6 +218,12 @@ def analyze_trace(data, cadence, target_hz, nominal_hz, path='<memory>'):
             'certify headset cadence')
     if not hud_measured:
         findings.append('HUD capture never ran; its cost is unmeasured here')
+    if not gpu_rows:
+        findings.append('no asynchronous GPU timer sample; GPU work is '
+                        'unmeasured here (not zero)')
+    if absent_stages:
+        findings.append('stages absent (not zero cost): '
+                        + ', '.join(absent_stages))
     if repeats:
         findings.append(f'{len(repeats)} repeated submissions are counted separately')
 
@@ -209,7 +243,9 @@ def analyze_trace(data, cadence, target_hz, nominal_hz, path='<memory>'):
             'records': len(rows),
             'wall_ms': round(span_ms, 3),
             'stages_measured': stages,
+            'absent_stages': absent_stages,
         },
+        'gpu': gpu,
         'rates': {
             'native_vblank_hz_from_trace': round(vblank_hz, 4),
             'native_vblank_hz_from_cadence': (round(statistics.mean(cadence_guest), 4)
@@ -237,6 +273,11 @@ def analyze_trace(data, cadence, target_hz, nominal_hz, path='<memory>'):
                                          if work else None),
             'pacer_ms_per_s_mean': (round(statistics.mean(pacer), 4)
                                     if pacer else None),
+            'canonical_ms_per_s_mean': (round(statistics.mean(canonical), 4)
+                                        if canonical else None),
+            'sim_interval_ms_per_s_mean': (round(statistics.mean(sim), 4)
+                                           if sim else None),
+            'sim_is_guest_quantum_interval_not_exclusive_cpu': True,
             'work_guest_is_inter_frame_interval_not_exclusive': True,
         },
         'verdict': verdict,
@@ -286,6 +327,14 @@ def render_text(report):
         f"(target {rates['target_hz']:.0f} Hz)",
         f"pair+hud p95: {budget['p95']:.3f} ms vs "
         f"{report['scope']['display_budget_ms']:.3f} ms budget",
+        'interval split (ms/s): '
+        f"work={report['runtime_cadence']['work_guest_ms_per_s_mean']} "
+        f"pacer={report['runtime_cadence']['pacer_ms_per_s_mean']} "
+        f"canonical={report['runtime_cadence']['canonical_ms_per_s_mean']} "
+        f"sim_interval={report['runtime_cadence']['sim_interval_ms_per_s_mean']}",
+        f"async GPU samples: {report['gpu']['timer_samples']} "
+        f"(scene={report['gpu']['scene_ms_mean']} ms, "
+        f"present={report['gpu']['present_ms_mean']} ms)",
         'findings:',
     ]
     lines += [f'  - {item}' for item in report['findings'] or ['none']]
