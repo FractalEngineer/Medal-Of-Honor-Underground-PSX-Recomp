@@ -61,11 +61,11 @@ Final span captures (new instrumentation, 120 traced pairs each):
 | Slot 2 | 58.80 Hz | 29.17/s | 18.588 ms | 26.957 / 2.933 ms | 967.28 ms/s | 24.87 ms/s | 4.15 ms/s | `both_simulation_and_presentation` |
 | Slot 5 | 60.04 Hz | 29.99/s | 14.292 ms | 20.568 / 8.317 ms | 740.38 ms/s | 253.53 ms/s | 4.20 ms/s | `within_contract` |
 
-Pair stage detail on slot 2: `pair_total` 17.73 ms mean,
-`eye_guest_l/r` 7.84/7.72 ms, `snapshot_extract` 0.153 ms,
-`snapshot_publish` 0.0009 ms, `game_traverse` 14.45 ms. Slot 5:
-`pair_total` 13.48 ms, `eye_guest_l/r` 6.34/6.02 ms,
-`snapshot_extract` 0.141 ms. GPU samples were retrieved 3 host frames later.
+Pair stage detail on slot 2: `pair_total` 17.787 ms mean,
+`eye_guest_l/r` 7.957/7.754 ms, `snapshot_extract` 0.144 ms,
+`snapshot_publish` 0.001 ms, `game_traverse` 14.611 ms. Slot 5:
+`pair_total` 13.718 ms, `eye_guest_l/r` 6.286/6.295 ms,
+`snapshot_extract` 0.142 ms. GPU samples were retrieved 3 host frames later.
 
 ## How to read the result
 
