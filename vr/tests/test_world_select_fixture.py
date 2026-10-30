@@ -65,8 +65,8 @@ class WorldSelectFixtureTest(unittest.TestCase):
                 [str(executable)], check=True, capture_output=True, text=True
             )
             self.assertIn(
-                "conservative per-eye world selection, saturation, budget and "
-                "argument guards",
+                "conservative per-eye world selection, far-plane policy, "
+                "saturation, budget and argument guards",
                 result.stdout,
             )
 

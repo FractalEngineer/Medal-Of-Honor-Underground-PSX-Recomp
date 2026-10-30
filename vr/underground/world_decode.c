@@ -11,7 +11,7 @@ static const char *const s_status_names[] = {
     "ok", "argument", "vertex_table", "tree_root", "node_bounds",
     "leaf_count", "leaf_budget", "strip_span", "strip_terminator",
     "strip_budget", "vertex_index", "tree_budget", "triangle_budget",
-    "allocation", "entry"
+    "allocation", "entry", "material"
 };
 
 const char *mohu_world_status_name(MohuWorldStatus status) {
@@ -76,6 +76,51 @@ static void include_bounds(MohuWorldMesh *mesh, const MohuWorldVertex *v) {
     }
 }
 
+/* Native record table: 12 bytes per face, indexed by `record_index`.
+ *   word0 = UV0 | CLUT<<16
+ *   word1 = UV1 | texpage<<16
+ *   word2 = UV2
+ * These are the exact words the packet builder writes into its 0x34 packet
+ * (80011238..80011338). A caller that requires materials gets a named rejection
+ * for a missing or out-of-range record rather than an unmaterialed face. */
+typedef struct {
+    uint32_t table;
+    uint32_t count;
+    int required;
+} MaterialSource;
+
+static MohuWorldStatus read_material(const MaterialSource *source,
+                                     uint32_t index,
+                                     MohuWorldMaterial *material,
+                                     MohuWorldMesh *mesh,
+                                     MohuWorldReport *report) {
+    memset(material, 0, sizeof *material);
+    if (!source->table || !source->count) {
+        if (source->required)
+            return reject(report, MOHU_WORLD_REJECT_MATERIAL, 0u, report->leaf,
+                          index);
+        return MOHU_WORLD_OK;
+    }
+    if (index >= source->count)
+        return reject(report, MOHU_WORLD_REJECT_MATERIAL, source->table,
+                      report->leaf, index);
+    const uint32_t address = source->table + index * 12u;
+    if (!span_ok(address, 12u))
+        return reject(report, MOHU_WORLD_REJECT_MATERIAL, address, report->leaf,
+                      index);
+    record_read(mesh, address, 12u);
+    const uint32_t word0 = psx_mod_read_word(address);
+    const uint32_t word1 = psx_mod_read_word(address + 4u);
+    const uint32_t word2 = psx_mod_read_word(address + 8u);
+    material->clut = (uint16_t)(word0 >> 16);
+    material->texpage = (uint16_t)(word1 >> 16);
+    material->uv[0] = (uint16_t)word0;
+    material->uv[1] = (uint16_t)word1;
+    material->uv[2] = (uint16_t)word2;
+    material->valid = 1;
+    return MOHU_WORLD_OK;
+}
+
 static MohuWorldStatus append_triangle(MohuWorldMesh *mesh, uint32_t limit,
                                        const uint32_t idx[3],
                                        uint32_t source_address,
@@ -84,7 +129,13 @@ static MohuWorldStatus append_triangle(MohuWorldMesh *mesh, uint32_t limit,
                                        uint32_t extension_word,
                                        uint16_t render_flags,
                                        int winding_swapped, int is_extension,
+                                       const MaterialSource *materials,
                                        MohuWorldReport *report) {
+    MohuWorldMaterial material;
+    const uint32_t record_index = base_word[1] >> 16;
+    const MohuWorldStatus material_status =
+        read_material(materials, record_index, &material, mesh, report);
+    if (material_status != MOHU_WORLD_OK) return material_status;
     if (!reserve_triangles(mesh, mesh->triangle_count + 1u, limit,
                            &report->status))
         return reject(report, report->status, source_address, report->leaf,
@@ -99,19 +150,23 @@ static MohuWorldStatus append_triangle(MohuWorldMesh *mesh, uint32_t limit,
     t->face_tag = face_tag;
     t->base_word[0] = base_word[0];
     t->base_word[1] = base_word[1];
-    t->record_index = (uint16_t)(base_word[1] >> 16);
+    t->record_index = (uint16_t)record_index;
     t->extension_word = extension_word;
     t->render_flags = render_flags;
     t->winding_swapped = (uint8_t)(winding_swapped ? 1 : 0);
     t->is_extension = (uint8_t)(is_extension ? 1 : 0);
+    t->material = material;
     mesh->material_tokens++;
+    if (material.valid) mesh->materials_decoded++;
     report->triangles_decoded = mesh->triangle_count;
     return MOHU_WORLD_OK;
 }
 
 static MohuWorldStatus decode_strip(uint32_t list, uint32_t faces,
                                     MohuWorldMesh *mesh, uint32_t limit,
-                                    uint32_t leaf, MohuWorldReport *report) {
+                                    uint32_t leaf,
+                                    const MaterialSource *materials,
+                                    MohuWorldReport *report) {
     uint32_t cursor = list, idx[3] = {0}, emitted = 0, bytes = 0;
     uint32_t base_word[2] = {0, 0};
     int base = 1;
@@ -171,7 +226,7 @@ static MohuWorldStatus decode_strip(uint32_t list, uint32_t faces,
         const MohuWorldStatus status =
             append_triangle(mesh, limit, idx, source, tag, base_word,
                             extension_word, render_flags, winding_swapped,
-                            is_extension, report);
+                            is_extension, materials, report);
         if (status != MOHU_WORLD_OK) {
             report->node = source;
             report->leaf = leaf;
@@ -236,6 +291,7 @@ static void finish_mesh(MohuWorldMesh *mesh, MohuWorldReport *report) {
 
 static MohuWorldStatus decode_tree(const MohuWorldRequest *request,
                                    MohuWorldMesh *mesh, uint32_t limit,
+                                   const MaterialSource *materials,
                                    MohuWorldReport *report) {
     uint32_t stack[MOHU_WORLD_STACK_DEPTH];
     unsigned top = 1;
@@ -295,7 +351,8 @@ static MohuWorldStatus decode_tree(const MohuWorldRequest *request,
         report->leaf = node;
         const uint32_t list = psx_mod_read_word(node + 24u);
         const MohuWorldStatus status =
-            decode_strip(list, (uint32_t)faces, mesh, limit, node, report);
+            decode_strip(list, (uint32_t)faces, mesh, limit, node, materials,
+                         report);
         report->leaf = 0;
         if (status != MOHU_WORLD_OK) return status;
     }
@@ -315,16 +372,26 @@ MohuWorldStatus mohu_world_decode(const MohuWorldRequest *request,
     uint32_t max_leaves = request->max_leaves ? request->max_leaves
                                               : MOHU_WORLD_MAX_LEAVES;
     if (max_leaves > MOHU_WORLD_MAX_LEAVES) max_leaves = MOHU_WORLD_MAX_LEAVES;
+    if (request->record_count > MOHU_WORLD_MAX_RECORDS)
+        return reject(report, MOHU_WORLD_REJECT_MATERIAL, request->record_table,
+                      0u, request->record_count);
+    if (request->require_materials &&
+        (!request->record_table || !request->record_count))
+        return reject(report, MOHU_WORLD_REJECT_MATERIAL, 0u, 0u, 0u);
 
     const MohuWorldStatus prepared =
         load_vertices(request->vertex_table, request->vertex_count,
                       request->generation, mesh, report);
     if (prepared != MOHU_WORLD_OK) return prepared;
+    mesh->far_plane = request->far_plane;
 
+    const MaterialSource materials = {
+        request->record_table, request->record_count, request->require_materials
+    };
     MohuWorldRequest bounded = *request;
     bounded.max_leaves = max_leaves;
     const MohuWorldStatus status =
-        decode_tree(&bounded, mesh, limit, report);
+        decode_tree(&bounded, mesh, limit, &materials, report);
     if (status != MOHU_WORLD_OK) {
         mohu_world_mesh_free(mesh);
         report->status = status;
@@ -351,11 +418,21 @@ MohuWorldStatus mohu_world_decode_visible(
     uint32_t limit = request->max_triangles ? request->max_triangles
                                             : MOHU_WORLD_MAX_TRIANGLES;
     if (limit > MOHU_WORLD_MAX_TRIANGLES) limit = MOHU_WORLD_MAX_TRIANGLES;
+    if (request->record_count > MOHU_WORLD_MAX_RECORDS)
+        return reject(report, MOHU_WORLD_REJECT_MATERIAL, request->record_table,
+                      0u, request->record_count);
+    if (request->require_materials &&
+        (!request->record_table || !request->record_count))
+        return reject(report, MOHU_WORLD_REJECT_MATERIAL, 0u, 0u, 0u);
 
     const MohuWorldStatus prepared =
         load_vertices(request->vertex_table, request->vertex_count,
                       request->generation, mesh, report);
     if (prepared != MOHU_WORLD_OK) return prepared;
+    mesh->far_plane = request->far_plane;
+    const MaterialSource materials = {
+        request->record_table, request->record_count, request->require_materials
+    };
 
     for (uint32_t i = 0; i < request->entry_count; ++i) {
         const uint32_t entry = request->entries[i];
@@ -398,7 +475,7 @@ MohuWorldStatus mohu_world_decode_visible(
         report->leaf = entry;
         const uint32_t list = psx_mod_read_word(entry + 24u);
         const MohuWorldStatus status =
-            decode_strip(list, faces, mesh, limit, entry, report);
+            decode_strip(list, faces, mesh, limit, entry, &materials, report);
         report->leaf = 0;
         if (status != MOHU_WORLD_OK) {
             mohu_world_mesh_free(mesh);
@@ -446,7 +523,11 @@ static int same_request(const MohuWorldRequest *a, const MohuWorldRequest *b) {
            a->masks[0] == b->masks[0] && a->masks[1] == b->masks[1] &&
            a->bypass_masks == b->bypass_masks &&
            a->max_triangles == b->max_triangles &&
-           a->max_leaves == b->max_leaves;
+           a->max_leaves == b->max_leaves &&
+           a->record_table == b->record_table &&
+           a->record_count == b->record_count &&
+           a->require_materials == b->require_materials &&
+           a->far_plane == b->far_plane;
 }
 
 MohuWorldStatus mohu_world_cache_acquire(MohuWorldCache *cache,

@@ -39,6 +39,15 @@ static void put_vertex(uint32_t table, unsigned index, int16_t x, int16_t y,
 #define STRIP_A     0x80002000u
 #define STRIP_B     0x80002100u
 #define VERTICES    0x80001000u
+#define RECORDS     0x80003000u
+
+static void put_record(unsigned index, uint32_t word0, uint32_t word1,
+                       uint32_t word2) {
+    const uint32_t base = RECORDS + index * 12u;
+    put_word(base, word0);
+    put_word(base + 4u, word1);
+    put_word(base + 8u, word2);
+}
 
 static void build_level(void) {
     memset(g_ram, 0, sizeof g_ram);
@@ -250,6 +259,80 @@ static void test_rejections(void) {
                    "vertex_index"));
 }
 
+static MohuWorldVisibleRequest visible_request(const uint32_t *entries,
+                                               uint32_t count);
+
+static void build_material_level(void) {
+    build_level();
+    /* Record index comes from the upper half of the second base word. */
+    put_word(STRIP_A + 4u, (0u << 16) | 2u);
+    put_word(STRIP_B + 4u, (1u << 16) | 3u);
+    put_record(0u, 0x7CC33F80u, 0x300E00BFu, 0x0000BF3Fu);
+    put_record(1u, 0x7D8280FFu, 0x300CBFC0u, 0x0000BFFFu);
+}
+
+static void test_materials(void) {
+    build_material_level();
+    MohuWorldRequest r = request();
+    r.record_table = RECORDS;
+    r.record_count = 2u;
+    r.require_materials = 1;
+    r.far_plane = 500;
+    MohuWorldMesh mesh;
+    MohuWorldReport report;
+    assert(mohu_world_decode(&r, &mesh, &report) == MOHU_WORLD_OK);
+    assert(mesh.materials_decoded == 4u && mesh.material_tokens == 4u);
+    assert(mesh.far_plane == 500);
+    assert(mesh.triangles[0].material.valid);
+    assert(mesh.triangles[0].material.clut == 0x7CC3u);
+    assert(mesh.triangles[0].material.texpage == 0x300Eu);
+    assert(mesh.triangles[0].material.uv[0] == 0x3F80u);
+    assert(mesh.triangles[0].material.uv[1] == 0x00BFu);
+    assert(mesh.triangles[0].material.uv[2] == 0xBF3Fu);
+    assert(mesh.triangles[3].material.clut == 0x7D82u);
+    assert(mesh.triangles[3].material.texpage == 0x300Cu);
+    mohu_world_mesh_free(&mesh);
+
+    /* The same decode without a record table stays geometry-only. */
+    build_level();
+    r = request();
+    assert(mohu_world_decode(&r, &mesh, &report) == MOHU_WORLD_OK);
+    assert(mesh.materials_decoded == 0u && !mesh.triangles[0].material.valid);
+    mohu_world_mesh_free(&mesh);
+
+    /* A required material rejects a missing table and an out-of-range index. */
+    r = request();
+    r.require_materials = 1;
+    assert(mohu_world_decode(&r, &mesh, &report) ==
+           MOHU_WORLD_REJECT_MATERIAL);
+    assert(!mesh.triangles);
+
+    build_material_level();
+    put_word(STRIP_A + 4u, (7u << 16) | 2u);
+    r = request();
+    r.record_table = RECORDS;
+    r.record_count = 2u;
+    r.require_materials = 1;
+    assert(mohu_world_decode(&r, &mesh, &report) ==
+           MOHU_WORLD_REJECT_MATERIAL);
+    assert(report.detail == 7u && !mesh.triangles);
+    assert(!strcmp(mohu_world_status_name(MOHU_WORLD_REJECT_MATERIAL),
+                   "material"));
+
+    /* Visible-entry decoding carries the same material fields. */
+    build_material_level();
+    const uint32_t entries[2] = {NODE_LEAF_A, NODE_LEAF_B};
+    MohuWorldVisibleRequest vr = visible_request(entries, 2u);
+    vr.record_table = RECORDS;
+    vr.record_count = 2u;
+    vr.require_materials = 1;
+    vr.far_plane = 600;
+    assert(mohu_world_decode_visible(&vr, &mesh, &report) == MOHU_WORLD_OK);
+    assert(mesh.materials_decoded == 4u && mesh.far_plane == 600);
+    assert(mesh.triangles[0].material.clut == 0x7CC3u);
+    mohu_world_mesh_free(&mesh);
+}
+
 static void test_cache(void) {
     build_level();
     MohuWorldRequest r = request();
@@ -422,11 +505,13 @@ int main(void) {
     test_full_decode();
     test_masks();
     test_rejections();
+    test_materials();
     test_cache();
     test_visible_decode();
     test_visible_decode_empty();
     test_visible_decode_rejections();
     puts("PASS: static-world leaf/strip decode, winding, masks, bounds, "
-         "named rejections, visible-entry parity path and snapshot cache");
+         "record material/CLUT/texpage mapping, named rejections, "
+         "visible-entry parity path and snapshot cache");
     return 0;
 }

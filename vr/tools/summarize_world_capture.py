@@ -288,7 +288,26 @@ def summarize(path):
             fail("record hash collision")
         entry["half_words"] = list(struct.unpack("<6H", record))
 
+    def material(record):
+        half = struct.unpack("<6H", record)
+        return {
+            "clut": half[1],                 # word0 high
+            "texpage": half[3],              # word1 high
+            "uv": [half[0], half[2], half[4]],
+            "reserved": half[5],
+        }
+
+    def packet_material(words):
+        if len(words) < 10 or (words[1] >> 24) != 0x34:
+            return None
+        return {
+            "clut": (words[3] >> 16) & 0xFFFF,
+            "texpage": (words[6] >> 16) & 0xFFFF,
+            "uv": [words[3] & 0xFFFF, words[6] & 0xFFFF, words[9] & 0xFFFF],
+        }
+
     face_evidence = []
+    record_packet_matches = 0
     for index in sorted(faces):
         record = blobs[index][1]
         captured, data, stored_hash = packets.get(index, (0, b'', 0))
@@ -297,6 +316,14 @@ def summarize(path):
                 fail(f"face {index}: expected 96 packet bytes")
             if fnv1a(data) != stored_hash:
                 fail(f"face {index}: packet hash mismatch")
+        words = (list(struct.unpack("<%dI" % (len(data) // 4), data))
+                 if captured else [])
+        record_material = material(record)
+        packet_material_value = packet_material(words)
+        matches = bool(packet_material_value and
+                       packet_material_value["clut"] == record_material["clut"] and
+                       packet_material_value["texpage"] == record_material["texpage"])
+        record_packet_matches += matches
         face_evidence.append({
             "face": index,
             "index": faces[index]["index"],
@@ -304,15 +331,17 @@ def summarize(path):
                            if faces[index]["packet_ptr"] is not None else None),
             "record_hash": f"0x{fnv1a(record):08X}",
             "record_half_words": list(struct.unpack("<6H", record)),
+            "material": record_material,
             "packet_captured": bool(captured),
             "packet_hash": f"0x{stored_hash:08X}" if captured else None,
-            "packet_words": ([f"0x{word:08X}" for word in
-                              struct.unpack("<%dI" % (len(data) // 4), data)]
+            "packet_words": ([f"0x{word:08X}" for word in words]
                              if captured else []),
+            "packet_material": packet_material_value,
+            "record_matches_packet": matches,
         })
 
     report = {
-        "schema": 1,
+        "schema": 2,
         "source": str(path),
         "draws": [],
         "entries": entries,
@@ -328,20 +357,23 @@ def summarize(path):
                 {"offset": 8, "width": 2, "field": "half4"},
                 {"offset": 10, "width": 2, "field": "half5"},
             ],
-            "proven": "six 16-bit fields read at base+index*12; the low halves "
-                      "are written to packet +0x38/+0x3C/+0x40 and the high "
-                      "halves through other packet fields after adding a base",
-            "not_proven": "UV vs coordinate-delta meaning of each half",
+            "proven": "word0 = UV0 | CLUT<<16, word1 = UV1 | texpage<<16, "
+                      "word2 = UV2; the builder at 80011238..80011338 loads "
+                      "these words and writes them to packet words 3, 6 and 9",
+            "not_proven": "independent per-vertex UV association in the host "
+                          "renderer; the record order is the native packet order",
         },
         "material_fields": {
-            "texture_page": None,
-            "clut": None,
+            "texture_page": "record half_words[3] (word1 high)",
+            "clut": "record half_words[1] (word0 high)",
             "shading": None,
             "semi_transparency": None,
-            "reason": "not present in the captured 12-byte record; the "
-                      "packet/preflight fields that may carry them are not "
-                      "mapped yet",
+            "reason": "CLUT/texpage are the record high halves and match the "
+                      "0x34 packet where the packet pointer is fresh; shading "
+                      "and semi-transparency are packet draw-mode state, not in "
+                      "the 12-byte record",
         },
+        "record_packet_matches": record_packet_matches,
         "records": [
             {"hash": f"0x{key:08X}", "indices": value["indices"],
              "half_words": value["half_words"],

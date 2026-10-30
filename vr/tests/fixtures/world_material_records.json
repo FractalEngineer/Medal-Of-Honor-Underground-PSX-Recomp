@@ -1,0 +1,44 @@
+{
+  "schema": 1,
+  "source": "Captured 12-byte per-face records: analysis/vr-captures/slot2-facegp0/world-capture.txt (faces 0, 2) and analysis/vr-captures/slot5-ptr-20261030/world-capture.txt (face 0).",
+  "mapping": {
+    "record_size": 12,
+    "index": "upper 16 bits of the second strip base word",
+    "word0": "UV0 | CLUT << 16",
+    "word1": "UV1 | texpage << 16",
+    "word2": "UV2",
+    "native_write": "builder 80011238..80011338 writes word0 to packet word3, word1 to word6 and word2's low half to word9"
+  },
+  "records": [
+    {
+      "scene": "slot2",
+      "face": 0,
+      "index": 207,
+      "record_hex": "803fc37cbf000e30bf3f0000",
+      "clut": 31939,
+      "texpage": 12302,
+      "uv": [16256, 191, 16319],
+      "packet_material": {"clut": 31939, "texpage": 12302}
+    },
+    {
+      "scene": "slot2",
+      "face": 2,
+      "index": 209,
+      "record_hex": "bfff427c80ff0c30bfc00000",
+      "clut": 31810,
+      "texpage": 12300,
+      "uv": [65471, 65408, 49343],
+      "packet_material": {"clut": 31810, "texpage": 12300}
+    },
+    {
+      "scene": "slot5",
+      "face": 0,
+      "index": 207,
+      "record_hex": "40ff817f40c00b307fff0000",
+      "clut": 32641,
+      "texpage": 12299,
+      "uv": [65344, 49216, 65407],
+      "packet_material": null
+    }
+  ]
+}

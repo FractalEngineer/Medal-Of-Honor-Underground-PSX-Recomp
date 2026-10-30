@@ -24,6 +24,10 @@ typedef struct {
     double translation[3];
     double fx, fy, cx, cy;
     int width, height;
+    /* Caller far-plane policy in eye-space units; 0 disables it. A triangle is
+     * rejected only when all three vertices are beyond it, so a straddling
+     * face is kept (conservative, never a silent drop). */
+    double far_plane;
 } MohuWorldEyeView;
 
 typedef struct {

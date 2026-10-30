@@ -38,6 +38,9 @@
 #define CAPTURE_FACE_WINDOW 16u
 #define CAPTURE_TABLE_ENTRIES 16u
 #define CAPTURE_TABLE_SIZE (CAPTURE_TABLE_ENTRIES * CAPTURE_RECORD_SIZE)
+/* Material records are read in place by the decoder; the dump above keeps only
+ * the first 16 for evidence. 1024 covers every observed index (max 219). */
+#define CAPTURE_MATERIAL_RECORDS 1024u
 #define CAPTURE_PACKET_SIZE 0x60u
 #define CAPTURE_NATIVE_FACES 4096u
 #define CAPTURE_NATIVE_REGS 512u
@@ -189,6 +192,18 @@ static void capture_previous_face_packet(void) {
     face->packet_dumped = 1;
 }
 
+/* The per-draw record-table pointer is scratch+0x3E8 at packet entry; the
+ * DrawCapture copy is filled later in the entry path, so read it live here. */
+static uint32_t live_record_table(const DrawCapture* draw) {
+    if (draw->record_base) return draw->record_base;
+    /* The scratch copy is filled at the NEXT entry and can still describe the
+     * previous draw (slot 5). A face from this draw carries the correct base. */
+    for (unsigned i = g_face_count; i > 0; --i) {
+        if (g_faces[i - 1u].table_base) return g_faces[i - 1u].table_base;
+    }
+    return psx_mod_read_word(CAPTURE_SCRATCH + 0x3E8u);
+}
+
 /* Decode the real arena once, from the captured root/table/count, so the
  * decoder is exercised against actual guest data rather than a synthetic
  * fixture. Diagnostic only; no mesh escapes this function. */
@@ -205,18 +220,23 @@ static void capture_census(const DrawCapture* draw) {
     /* Census intent: every resident leaf, before view-dependent culling. */
     request.bypass_masks = 1;
     request.generation = 1;
+    request.record_table = live_record_table(draw);
+    request.record_count = CAPTURE_MATERIAL_RECORDS;
+    request.require_materials = request.record_table != 0;
     MohuWorldMesh mesh;
     MohuWorldReport report;
     const MohuWorldStatus status = mohu_world_decode(&request, &mesh, &report);
     fprintf(stdout,
             "mohu-vr-world-census: status=%s root=0x%08X table=0x%08X "
             "count=%u masks=0x%08X,0x%08X nodes=%u leaves=%u triangles=%u "
-            "tokens=%u bounds=%d,%d,%d..%d,%d,%d "
+            "tokens=%u materials=%u records=0x%08X/%u "
+            "bounds=%d,%d,%d..%d,%d,%d "
             "reject=0x%08X/0x%08X/%u\n",
             mohu_world_status_name(status), request.root, request.vertex_table,
             request.vertex_count, request.masks[0], request.masks[1],
             report.nodes_visited, report.leaves_visited,
             report.triangles_decoded, mesh.material_tokens,
+            mesh.materials_decoded, request.record_table, request.record_count,
             mesh.bounds_min[0], mesh.bounds_min[1], mesh.bounds_min[2],
             mesh.bounds_max[0], mesh.bounds_max[1], mesh.bounds_max[2],
             report.node, report.leaf, report.detail);
@@ -243,6 +263,9 @@ static void visible_compare(DrawCapture* draw) {
     request.vertex_table = draw->table;
     request.vertex_count = draw->count;
     request.generation = 1;
+    request.record_table = live_record_table(draw);
+    request.record_count = CAPTURE_MATERIAL_RECORDS;
+    request.require_materials = request.record_table != 0;
     MohuWorldMesh mesh;
     MohuWorldReport report;
     const MohuWorldStatus status =
@@ -300,11 +323,12 @@ static void visible_compare(DrawCapture* draw) {
     }
     fprintf(stdout,
             "mohu-vr-visible-faces: draw=%u status=%s native=%u matched=%u "
-            "missing=%u decoded_only=%u triangles=%u first_missing=0x%08X\n",
+            "missing=%u decoded_only=%u triangles=%u materials=%u "
+            "first_missing=0x%08X\n",
             (unsigned)(draw - g_draws), mohu_world_status_name(status),
             draw->vis_native, draw->vis_matched, draw->vis_missing,
             draw->vis_decoded_only, draw->vis_triangles,
-            draw->vis_first_missing);
+            mesh.materials_decoded, draw->vis_first_missing);
     if (status == MOHU_WORLD_OK) {
         fprintf(stdout, "mohu-vr-visible-sources: draw=%u sources=",
                 (unsigned)(draw - g_draws));

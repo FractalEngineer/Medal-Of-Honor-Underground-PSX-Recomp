@@ -101,6 +101,20 @@ int main(void) {
            selection.outside == 0u && selection.unknown == 0u);
     for (unsigned i = 0; i < 4; ++i) assert(indices[i] == i);
 
+    /* Caller far-plane policy is separate from decode and conservative. */
+    view.far_plane = 90.0;
+    assert(mohu_world_select_eye(&mesh, &view, indices, 8u, &selection) ==
+           MOHU_WORLD_OK);
+    assert(selection.count == 0u && selection.outside == 4u);
+    view.far_plane = 110.0;
+    assert(mohu_world_select_eye(&mesh, &view, indices, 8u, &selection) ==
+           MOHU_WORLD_OK);
+    assert(selection.count == 4u && selection.outside == 0u);
+    view.far_plane = -1.0;
+    assert(mohu_world_select_eye(&mesh, &view, indices, 8u, &selection) ==
+           MOHU_WORLD_REJECT_ARGUMENT);
+    view = identity_view();
+
     view.rotation[0] = -1.0;
     view.rotation[8] = -1.0;
     assert(mohu_world_select_eye(&mesh, &view, indices, 8u, &selection) ==
@@ -139,7 +153,7 @@ int main(void) {
            MOHU_WORLD_OK);
     assert(selection.count == 0u && selection.tested == 0u);
 
-    puts("PASS: conservative per-eye world selection, saturation, budget and "
-         "argument guards");
+    puts("PASS: conservative per-eye world selection, far-plane policy, "
+         "saturation, budget and argument guards");
     return 0;
 }

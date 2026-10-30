@@ -59,7 +59,7 @@ Not a headset pass: XR locate/host stages are absent in the desktop captures
 and named as such. Alternating matched windows and physical acceptance belong
 to M6 qualification.
 
-**M1 started:** `vr/underground/world_decode.{h,c}` decodes the measured SP
+**M1 complete:** `vr/underground/world_decode.{h,c}` decodes the measured SP
 arena tree and strip lists into an owned, deterministic mesh with named,
 atomic rejections and raw material tokens. A bounded snapshot cache keys on
 request identity plus generation (never pose) and revalidates a source-span
@@ -69,34 +69,44 @@ framework's `psx_vr_box_visible` (UNKNOWN kept, capacity overflow explicit).
 `world_project.{h,c}` adds the host reference transform, near-plane clipping,
 screen projection and a fan-triangulated screen draw list, plus an adapter from
 the real `PSXModRenderView`.
-Materials are **not** decoded
-(`materials_decoded == 0`); textured rendering must refuse the mesh. A real
-slot-2/slot-5 capture (`MOHU_VR_WORLD_CAPTURE`, default OFF) confirms the
-`0x8009A51C` caller, the packet range, the level root/vertex table/count, and
-that `record_index` is the upper half of base word 1; its 12-byte table entry
-is six 16-bit parameter halves, **not** a material descriptor. A per-face
-packet dump finds those words at packet offsets 3/6/9 for 20/32 slot-2 faces
-but only 3/32 slot-5 faces, so the relationship is real but not universal.
-The decoder also runs once on each live arena with masks bypassed and returns
+Materials are now decoded from the native 12-byte record:
+`word0 = UV0 | CLUT<<16`, `word1 = UV1 | texpage<<16`, `word2 = UV2`; the
+builder at `80011238..80011338` copies those words into packet words 3/6/9.
+`record_table`/`record_count` fill `MohuWorldTriangle.material`; without them
+textured rendering must refuse the mesh, and `require_materials` rejects
+missing/out-of-range/unreadable records with the named `material` status. Real
+slot-2 census: 203 nodes / 134 leaves / **1756/1756 materials**, status ok,
+record table `0x801259BC`. Slot 5's first root-walk census rejects with
+`status=material` (index 63 at an unverified table pointer), a named
+unsupported case; its captured visible faces still carry records. The 12-byte
+record is therefore a material descriptor (UV/CLUT/texpage), not six opaque
+halves. Captured fixture:
+`vr/tests/fixtures/world_material_records.json`.
+
+`MohuWorldEyeView.far_plane` carries the caller's far-plane policy; decode
+echoes `MohuWorldRequest.far_plane` and never applies it. Selection rejects a
+triangle only when all three vertices are beyond the plane.
+The geometry-only census on each live arena with masks bypassed returns
 `status=ok`: slot 2 decodes 203 nodes / 134 leaves / 1756 triangles, slot 5
 237 / 155 / 1932. The global masks prune slot 2 to 25 leaves and slot 5 to
-zero, so they are view-specific, not a resource filter.
+zero, so they are view-specific, not a resource filter. The material-required
+census is slot 2 `status=ok` with 1756 materials; slot 5 is the named
+`material` rejection above.
 Native face parity is exact on both captured views. With `face_tag` (base
 address for a base, `extension_word - 4` for an extension), the root walk
 matches 16/16 on slot 2 and 91/91 on slot 5 with zero missing; the earlier
 11/16 and 70/91 result was an extension-address tag mismatch, not an
 unreachable leaf. The visible-entry array at `0x800B74B8` is the submitted set,
 and `mohu_world_decode_visible` reproduces it exactly: slot 2 1 entry/16
-triangles, slot 5 7 entries/91 triangles, zero decoded-only, `status=ok`. Full
-resident-world geometry parity is **not** claimed.
-Texture page/CLUT fields remain unmapped. A default-OFF GP0 ring probe now
-captures in-range `0x34` commands under `PSX_DEBUG_TOOLS=ON`; per-face
-texpage/CLUT attribution is not established, so do not treat those words as a
-material.
-[Receipt](../../vr/proof/sp-world-capture-receipt.json).
-Strict fixture `vr/tests/test_world_decode.c`; contract in
-[STATIC_WORLD_DECODER](STATIC_WORLD_DECODER.md). Next: map texpage/CLUT; capture
-a world-complete native reference for full geometry parity.
+triangles, slot 5 7 entries/91 triangles, zero decoded-only, `status=ok`.
+Native submits only the visible set, so the resident root walk is the census,
+not an independently submit-verified count.
+Shading and semi-transparency remain packet draw-mode state rather than record
+fields. [Receipt](../../vr/proof/sp-world-capture-receipt.json). Strict fixture
+`vr/tests/test_world_decode.c` and captured
+`vr/tests/fixtures/world_material_records.json`; contract in
+[STATIC_WORLD_DECODER](STATIC_WORLD_DECODER.md). Next: M2 textured GPU
+consumption.
 
 Petrol now follows the shared hand ray in both measured SP release branches.
 Slot 1's missing street is reproduced and repaired in both eyes: the VR selector

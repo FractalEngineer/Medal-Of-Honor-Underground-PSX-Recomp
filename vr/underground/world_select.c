@@ -17,7 +17,8 @@ static int view_valid(const MohuWorldEyeView *view) {
            finite_values(view->translation, 3) && isfinite(view->fx) &&
            isfinite(view->fy) && isfinite(view->cx) && isfinite(view->cy) &&
            view->fx > 0.0 && view->fy > 0.0 && view->width > 0 &&
-           view->height > 0;
+           view->height > 0 && isfinite(view->far_plane) &&
+           view->far_plane >= 0.0;
 }
 
 MohuWorldStatus mohu_world_select_eye(const MohuWorldMesh *mesh,
@@ -59,6 +60,26 @@ MohuWorldStatus mohu_world_select_eye(const MohuWorldMesh *mesh,
         if (visible == PSX_VR_GEOMETRY_OUTSIDE) {
             selection->outside++;
             continue;
+        }
+        if (view->far_plane > 0.0) {
+            int beyond = 1;
+            for (unsigned corner = 0; corner < 3 && beyond; ++corner) {
+                const MohuWorldVertex *vertex =
+                    &mesh->vertices[triangle->vertex[corner]];
+                const double z =
+                    view->rotation[6] * vertex->x +
+                    view->rotation[7] * vertex->y +
+                    view->rotation[8] * vertex->z + view->translation[2];
+                if (!isfinite(z)) {
+                    beyond = 0;
+                    break;
+                }
+                if (z <= view->far_plane) beyond = 0;
+            }
+            if (beyond) {
+                selection->outside++;
+                continue;
+            }
         }
         if (visible == PSX_VR_GEOMETRY_UNKNOWN) selection->unknown++;
         if (selection->count == capacity)

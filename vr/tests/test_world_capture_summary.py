@@ -39,8 +39,14 @@ class CaptureSummaryTest(unittest.TestCase):
                           report['face_record']['layout']],
                          ['half0', 'half1', 'half2', 'half3', 'half4',
                           'half5'])
-        self.assertIsNone(report['material_fields']['texture_page'])
-        self.assertIsNone(report['material_fields']['clut'])
+        self.assertEqual(report['material_fields']['texture_page'],
+                         'record half_words[3] (word1 high)')
+        self.assertEqual(report['material_fields']['clut'],
+                         'record half_words[1] (word0 high)')
+        evidence = report['face_evidence'][0]
+        self.assertEqual(evidence['material']['clut'], 0x4433)
+        self.assertEqual(evidence['material']['texpage'], 0x8877)
+        self.assertEqual(evidence['material']['uv'], [0x2211, 0x6655, 0x0099])
         self.assertEqual(report['draws'][0]['root'], '0x8010BA48')
         self.assertEqual(report['draws'][0]['vertex_count'], 1444)
 
@@ -58,6 +64,21 @@ class CaptureSummaryTest(unittest.TestCase):
         bad = text.replace(f'{capture.fnv1a(packet):08X}', '00000000')
         with self.assertRaises(ValueError):
             capture.summarize(self.write(bad))
+
+    def test_record_material_matches_fresh_034_packet(self):
+        # tag, cmd, v0, uv0|clut, color1, v1, uv1|tpage, color2, v2, uv2
+        words = [0x09120000, 0x34000000, 0x00000000, 0x44332211,
+                 0x00000000, 0x00000000, 0x88776655, 0x00000000,
+                 0x00000000, 0x00000099]
+        packet = b''.join(word.to_bytes(4, 'little') for word in words)
+        packet += bytes(0x60 - len(packet))
+        text = HEADER + (
+            f'face=0 packet_captured=1 packet_hash=0x'
+            f'{capture.fnv1a(packet):08X} packet={packet.hex()}\n')
+        evidence = capture.summarize(self.write(text))['face_evidence'][0]
+        self.assertEqual(evidence['packet_material']['clut'], 0x4433)
+        self.assertEqual(evidence['packet_material']['texpage'], 0x8877)
+        self.assertTrue(evidence['record_matches_packet'])
 
     def test_native_compare_is_parsed(self):
         text = HEADER + (

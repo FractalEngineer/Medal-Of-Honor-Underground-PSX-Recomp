@@ -1,7 +1,8 @@
 # Static-world decoder (M1)
 
-Created: 2026-10-30. Status: **geometry/topology decoder landed; materials and
-reference captures remain open.** This is the first M1 deliverable for
+Created: 2026-10-30. Status: **geometry/topology, per-face materials and the
+far-plane policy landed; one arena family is validated.** This is the M1
+deliverable for
 [PERFORMANCE_ARCHITECTURE_PLAN](PERFORMANCE_ARCHITECTURE_PLAN.md).
 
 ## Inputs
@@ -18,6 +19,8 @@ SP packet-builder inputs:
 | Child / face-list word | `+24`, `+32`, `+28` | interior children or leaf strip |
 | Vertex table | level `+0x2C` | 8-byte `int16 x,y,z` vertices |
 | Vertex count | level `+0x3C` | bounded to 8192 |
+| Record table | `word[0x1F8003E8]` | 12-byte per-face UV/CLUT/texpage records |
+| Record index | upper half of base word 1 | selects the record; `require_materials` rejects out-of-range/unreadable entries |
 
 Strip list: 8-byte base triangles, 4-byte extensions, `0x1fff` terminator.
 Base/index masking and extension winding (`bit 15`) match
@@ -57,13 +60,43 @@ changes can force a re-decode but never a stale reuse. It is revalidated at
 most once per native snapshot, never per eye. `*mesh` is borrowed until the
 next acquire/reset/free.
 
-## Materials are not decoded
+## Materials (2026-10-30)
 
-`materials_decoded` is always `0`. Raw tokens are retained so the next step can
-map them without re-walking guests. Textured output must refuse this mesh: the
-packet/preflight/subdivision material fields have not been captured and mapped
-yet. The 8-byte index words carry vertex indices and `record_index`, not a
-material descriptor.
+`record_index` (upper half of base word 1) selects a 12-byte record from the
+native table at `word[0x1F8003E8]`:
+
+| Record | Bytes | Meaning | Native use |
+|---|---|---|---|
+| word 0 | 0..3 | `UV0 | CLUT << 16` | builder stores it at packet word 3 (UV0/CLUT) |
+| word 1 | 4..7 | `UV1 | texpage << 16` | builder stores it at packet word 6 (UV1/texpage) |
+| word 2 | 8..11 | `UV2` (low half) | builder stores it at packet word 9 |
+
+Evidence: the builder disassembly at `80011238..80011338` loads `$s4`, `$s5`
+and the half at `+8` from `table + index*12` and writes them into the `0x34`
+packet. The captured slot-2 faces show the same words in fresh packets
+(32/32 records parsed; 23/32 exact CLUT+texpage matches on fresh packet
+windows, 31/32 texpage; the remaining pointers are shared/stale, not missing
+records). See [material fixture](../../vr/tests/fixtures/world_material_records.json)
+and `sp-world-capture-receipt.json`.
+
+When `record_table`/`record_count` are supplied the decoder fills
+`MohuWorldTriangle.material` (`clut`, `texpage`, three raw UV halves) and
+`materials_decoded`; the record range participates in the source fingerprint.
+Without a table the geometry still decodes but materials stay invalid and
+textured output must refuse it. `require_materials` turns a missing,
+out-of-range or unreadable record into `MOHU_WORLD_REJECT_MATERIAL` instead of
+silently emitting an unmaterialed face.
+
+The UV association is the native packet order, not an independently verified
+per-vertex mapping. Shading and semi-transparency are packet draw-mode state,
+not fields of the 12-byte record.
+
+Real-arena census, slot 2: 203 nodes / 134 leaves / 1756 triangles, **1756
+materials**, record table `0x801259BC`, `status=ok`. Slot 5's first resident
+census reports `status=material` (record index 63 at a table pointer that does
+not support it): a named unsupported case, not a silent omission. The
+visible-entry path has table-backed materials for captured faces; the slot-5
+root-walk material table is still unverified.
 
 ## Per-eye selection
 
@@ -236,7 +269,8 @@ full resident tree, and its parity is reported separately.
 
 `argument`, `vertex_table`, `tree_root`, `node_bounds`, `leaf_count`,
 `leaf_budget`, `strip_span`, `strip_terminator`, `strip_budget`,
-`vertex_index`, `tree_budget`, `triangle_budget`, `allocation`.
+`vertex_index`, `tree_budget`, `triangle_budget`, `allocation`, `entry`,
+`material`.
 
 Every rejection frees the partial mesh and records the node/leaf, offending
 word and detail. Faces are never silently dropped, and a cycle is stopped by
@@ -248,12 +282,18 @@ the 8192-node budget.
 `vr/tests/test_world_decode_fixture.py`) covers a two-leaf synthetic arena:
 triangle order, extension winding and render flags, `record_index` from the
 upper half of the second base word, mask selection, rendered bounds,
-deterministic re-decode (including struct padding), every rejection class, and
-the cache (same-snapshot hit, fingerprint revalidation, unrelated-byte
-tolerance, content invalidation, generation change, reset).
+deterministic re-decode (including struct padding), every rejection class,
+record-backed CLUT/texpage/UV fields, `require_materials` rejection (missing
+table and out-of-range index), far-plane echo, the cache (same-snapshot hit,
+fingerprint revalidation, unrelated-byte tolerance, content invalidation,
+generation change, reset).
+
+`vr/tests/test_world_material_fixture.py` parses the captured record fixture and
+checks the record-word -> CLUT/texpage/UV mapping against its packet fields.
 
 `vr/tests/test_world_select.c` covers identity/rotated/translated eyes,
-conservative UNKNOWN retention, capacity overflow and argument guards.
+conservative UNKNOWN retention, far-plane policy, capacity overflow and
+argument guards.
 
 `vr/tests/test_world_project.c` covers the view adapter (Q16/Q12/precise and
 fallbacks), exact screen coordinates, whole-triangle rejection, four-vertex
@@ -261,23 +301,21 @@ near clipping, draw-list triangulation of triangles and clipped quads,
 non-finite/malformed polygons, capacity overflow and argument guards.
 
 `vr/tests/test_world_capture_summary.py` covers the offline capture validator:
-proven draw/face fields, six-half record layout, material fields staying null,
-and refusals for a wrong record base, wrong index or missing header.
+proven draw/face fields, six-half record layout, record-backed material and
+packet comparison, and refusals for a wrong record base, wrong index or missing
+header.
 
-Native submitted-face parity is now demonstrated for both captured views
-(16/16 and 91/91 with `face_tag`), and the visible-entry path reproduces the
-same set. Not yet demonstrated: full resident-world geometry parity (no
-world-complete native reference), texture-page/CLUT mapping, subdivision
-decisions and textured output.
+Native submitted-face parity is demonstrated for both captured views (16/16 and
+91/91 with `face_tag`), and the visible-entry path reproduces the same set.
+Slot 2's resident census decodes 1756/1756 materials. The slot-5 root-walk
+material table is a named unsupported case; its visible faces still carry
+captured records. Not yet demonstrated: shading/semi-transparency mapping,
+subdivision decisions and textured output (M2).
 
-## Next
+## Next (M2)
 
-1. Map the packet/preflight fields that carry texture page, CLUT, shading and
-   semi-transparency; the 12-byte record is not one of them.
-2. Keep `mohu_world_decode_visible` as the view-specific submitted-set check
-   (1 entry/16 faces and 7 entries/91 faces, zero decoded-only). Full resident
-   geometry still comes from the root walk; capture a world-complete native
-   reference before claiming full geometry parity.
-3. Wire the decoder into a default-OFF native census so the real arena root,
-   record table and resource generation are recorded before the host renderer
-   consumes it.
+1. Consume `MohuWorldMaterial` in the retained GPU path; upload the referenced
+   texture pages/CLUTs.
+2. Compare the projected visible set against the native 0x34 packets.
+3. Keep `mohu_world_decode_visible` as the view-specific submitted-set check
+   (1 entry/16 faces and 7 entries/91 faces, zero decoded-only).

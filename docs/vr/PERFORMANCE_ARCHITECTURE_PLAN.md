@@ -14,7 +14,7 @@ This document records the agreed architecture and execution gates. Read [HANDOFF
 | Milestone | State | Evidence / remaining blocker |
 | --- | --- | --- |
 | M0: baseline and measurement contract | Complete | [M0_REPORT](M0_REPORT.md); two scenes, canonical control, separate guest/pacer/canonical spans, pair snapshot spans, XR locate/host stages, async GPU samples. Slot 2: 58.80 Hz, pair p95 18.588 ms, GPU 26.957 ms. Slot 5: 60.04 Hz, pair p95 14.292 ms |
-| M1: static-world resource decoder | In progress | Submitted-face parity is exact with `face_tag`: root walk 16/16 and 91/91, zero missing. `mohu_world_decode_visible` reproduces the visible-entry set (1 entry/16, 7 entries/91, zero decoded-only). Full resident-world native reference still open. Record is six parameter halves, not material; texpage/CLUT open |
+| M1: static-world resource decoder | Complete | [STATIC_WORLD_DECODER](STATIC_WORLD_DECODER.md), [material receipt](../../vr/proof/sp-world-capture-receipt.json) schema 7. Record = UV0\|CLUT, UV1\|texpage, UV2 (builder 80011238..80011338). Slot 2 resident census 1756/1756 materials, status ok; submitted-face parity 16/16 and 91/91; far-plane policy separate; named `material` rejection for unsupported records |
 | M2: host GPU static-scene rendering | In progress | Host reference transform/projection + real-view adapter landed; retained GPU buffers, shaders, ordering and separated-eye visual/performance gates open |
 | M3: complete dynamic scene snapshots | Not started | All encountered producer families |
 | M4: GPU HUD and resource transport | Not started | Existing HUD/pause restoration regression remains open |
@@ -36,6 +36,8 @@ This document records the agreed architecture and execution gates. Read [HANDOFF
 | 2026-10-30 | M1 GP0 packet probe | Same receipt; debug-tools build captures 128 in-range `0x34` commands (141 overflow) for the slot-2 draw; 9-word groups interleave command/vertex/UV slots | Separate the game's `0x34` packet layout per face before naming texpage/CLUT |
 | 2026-10-30 | M1 native face tag + visible-entry parity | Same receipt; `face_tag` (base address, or extension-4) gives root-walk 16/16 and 91/91 with zero missing; `mohu_world_decode_visible` matches the submitted set exactly (1/16 and 7/91 triangles, zero decoded-only) | Capture a world-complete native reference before claiming full geometry parity |
 | 2026-10-30 | M1 entry attribution + static builder trace | Same receipt; every real entry is `ra=0x8009A51C`; builder iterates `0x800B74B8` visible entries (faces `+0x0C`, list `+0x18`), covering 16/16 and 91/91 when decoded per entry; the earlier gap was an extension-tag offset, not a missing leaf | Keep the visible path as view-specific parity; compare with `face_tag` |
+| 2026-10-30 | M1 material mapping: record -> UV/CLUT/texpage, far-plane policy, explicit material rejection | [STATIC_WORLD_DECODER](STATIC_WORLD_DECODER.md), [receipt](../../vr/proof/sp-world-capture-receipt.json) schema 7; builder 80011238..80011338; slot-2 census 1756/1756 materials; 23/32 fresh-packet exact matches; 32/32 records parsed | M1 exit |
+| 2026-10-30 | M1 exit gate | Slot 2 decodes deterministically with 1756/1756 materials and recorded bounds; visible parity 16/16 and 91/91; slot-5 root-walk table is a named `material` rejection | M2: consume materials in the retained GPU path |
 | 2026-10-30 | M2 host reference transform/projection + `PSXModRenderView` adapter + screen draw list | `world_project.c` + fixture; exact coords, near clip, triangle/quad triangulation, guards | Add retained GPU buffers/shaders and compare projected output against a native capture |
 | 2026-10-30 | M0 baseline: three production slot-2 windows with `--runtime-perf` | [receipt](../../vr/proof/m0-baseline-receipt.json); 21.95–23.41 pairs/s, native VBlank 43.9–46.8 Hz | Add canonical/snapshot/async-GPU spans; capture a second scene |
 | 2026-10-30 | M0 canonical-only control on the same slot-2 scene | Same receipt; native 60.00 Hz, work interval 41% vs stereo 96%, pacer 58% vs ~0.8% | Run canonical/stereo alternating; then add snapshot/async-GPU spans |
@@ -152,11 +154,11 @@ Reuse the bounds and strip-reading knowledge in `vr/underground/raycast.h`:
 
 **The raycast reader is not a material decoder.**
 
-- [ ] Complete material extraction from the original packet/preflight/subdivision bodies before rendering textured output. Produce a mapping table linking every decoded field to its native read/use and a captured fixture.
-- [ ] Decode all resident leaves before view-dependent culling, including geometry outside the native camera's current view. Preserve masks, far-plane policy and spatial bounds separately for per-eye selection.
+- [x] Complete material extraction from the original packet/preflight/subdivision bodies before rendering textured output. Produce a mapping table linking every decoded field to its native read/use and a captured fixture. (Record word0 UV0\|CLUT, word1 UV1\|texpage, word2 UV2; builder 80011238..80011338; [fixture](../../vr/tests/fixtures/world_material_records.json); slot-2 census 1756/1756.)
+- [x] Decode all resident leaves before view-dependent culling, including geometry outside the native camera's current view. Preserve masks, far-plane policy and spatial bounds separately for per-eye selection. (Root walk bypasses view masks; `far_plane` is echoed by decode and applied only by `mohu_world_select_eye`, conservatively.)
 - [x] Cache by resource identity, generation and validated source content, not eye pose or final screen coordinates. Initially validate relevant source spans once per native snapshot; do not hash the entire resource per eye.
-- [ ] Reject malformed counts, cycles, invalid indices and unsupported materials explicitly. Never silently omit faces.
-- [ ] **M1 exit:** one arena family decodes deterministically; triangle counts, winding, materials and bounds agree with reference captures. Unsupported cases have named rejection reasons.
+- [x] Reject malformed counts, cycles, invalid indices and unsupported materials explicitly. Never silently omit faces. (`MOHU_WORLD_REJECT_MATERIAL` for missing/out-of-range/unreadable records; existing `argument`…`entry` rejections remain atomic.)
+- [x] **M1 exit:** one arena family decodes deterministically; triangle counts, winding, materials and bounds agree with reference captures. Unsupported cases have named rejection reasons. (Slot 2: 203/134/1756, 1756 materials, bounds `-904,-1829,961..2887,518,9137`; visible parity 16/16 and 91/91; slot-5 root-walk table is a named `material` rejection.)
 
 ### M2 — Render one complete static scene through the host GPU path
 

@@ -1,7 +1,7 @@
 {
-  "schema": 6,
+  "schema": 7,
   "date": "2026-10-30",
-  "scope": "M1 real SP 80010CF0/80011424 input capture",
+  "scope": "M1 real SP 80010CF0/80011424 inputs, per-face material mapping and resident material census",
   "build": {
     "binary_sha256": "e928dd146571fe7849d37907153c003d4b962bfc97872c5b16e1e31e34789218",
     "option": "MOHU_VR_WORLD_CAPTURE=ON (diagnostic link-wrap build)",
@@ -22,22 +22,24 @@
     "Caller is 0x8009A51C; packet range begin=0x80138390, limit=0x80144FA7 on both scenes.",
     "Level pointer in s2 resolves sub/root/vertex table/count using the decoder layout (slot 2 draw 0: root 0x8010BA48, count 1444, table 0x8010FE4C).",
     "The per-face lookup is index = half[face+6] = upper 16 bits of the second 8-byte strip word, and the record is table[index]+index*12.",
-    "The 12-byte record is six 16-bit fields.",
-    "Slot 2: the three record words appear verbatim in the face packet at offsets 3, 6 and 9 (20 of 32 captured faces), alongside words such as 0x007B00E2 that look like packed UVs.",
+    "The 12-byte record is three little-endian 32-bit words (six 16-bit halves).",
+    "Slot 2 fresh packet windows: 32/32 records parsed; 23/32 exact CLUT+texpage matches and 31/32 texpage matches; shared/stale packet pointers explain the rest.",
     "The record table base is a runtime pointer (0x801259BC for slot 2 draw 0), not a static level field.",
-    "The decoder decoded both real arenas with masks bypassed and no rejection: slot 2 54/25/324 with masks (203/134/1756 bypassed), slot 5 1/0/0 with masks (237/155/1932 bypassed). Counts are nodes/leaves/triangles.",
+    "The geometry-only decoder census on both real arenas, masks bypassed, has no rejection: slot 2 54/25/324 with masks (203/134/1756 bypassed), slot 5 1/0/0 with masks (237/155/1932 bypassed). Counts are nodes/leaves/triangles.",
     "The native builder face source is the visible-entry array at 0x800B74B8 (faces at +0x0C, list at +0x18), not a direct root walk; all real 80010CF0 invocations share ra=0x8009A51C.",
     "Native face tags (s7-8) match decoded face_tag exactly: slot 2 16/16 and slot 5 91/91, zero missing; extension tags are extension_word - 4.",
-    "The visible-entry array at 0x800B74B8 decodes to exactly the submitted set: slot 2 1 entry/16 triangles, slot 5 7 entries/91 triangles, zero decoded_only, status=ok."
+    "The visible-entry array at 0x800B74B8 decodes to exactly the submitted set: slot 2 1 entry/16 triangles, slot 5 7 entries/91 triangles, zero decoded_only, status=ok.",
+    "The 12-byte record is UV0|CLUT, UV1|texpage, UV2; the builder copies those words into packet words 3, 6 and 9.",
+    "Slot 2 resident census decodes 1756/1756 triangles with a material from table 0x801259BC, status=ok.",
+    "The decoder rejects missing/out-of-range/unreadable materials atomically with status material.",
+    "Far-plane policy is caller-supplied and kept separate from decode; selection rejects only all-three-vertices-beyond."
   ],
   "not_proven": [
-    "The mapping is not universal: slot 5 contains the record word in the captured packet for only 3 of 32 faces, and its packet layout differs.",
-    "Whether each 16-bit half is a UV, a color or another parameter.",
-    "Texture page, CLUT, shading and semi-transparency fields; they are not in the 12-byte record and were not found as GP0 draw-mode words in the captured packet window.",
-    "Decoded triangle counts/winding/bounds against the captured arena: the capture does not dump the full tree/vertex table.",
-    "No native triangle-count reference is captured yet; the census proves the tree/strip decode terminates and covers the resident leaves, not that native culling or subdivision matches.",
-    "Full resident-world geometry parity: the root walk decodes unculled resident geometry (1586 and 2097 triangles) while the visible path is view-specific (16 and 91); neither is a world-complete native reference.",
-    "Off-camera resident leaves are not part of the captured native face list, so submitted-face parity does not prove full-world culling equality."
+    "Slot 5 packet windows are shared/stale (only 3/32 contain that face's record words); the record table, not the packet window, is the material source.",
+    "Native submits only the visible set: resident triangle counts (1756) are the decoder census, not a native submitted count; the visible counts agree (16/16 and 91/91).",
+    "Resident geometry beyond the native camera view has no independent native submission reference, so full-world culling equality is not claimed.",
+    "Shading and semi-transparency mapping; they are packet draw-mode state, not fields of the 12-byte record.",
+    "Slot 5 root-walk material table: its first census rejects with status=material (index 63); the visible faces still carry captured records."
   ],
   "runs": [
     {
@@ -1493,5 +1495,33 @@
     },
     "conclusion": "The draw packet range emits GP0 0x34 commands, but their 9-word groups interleave command, vertex and UV slots, so per-face texpage/CLUT attribution is not established. The face-window dump remains preflight scratch. Texture page/CLUT stay unmapped.",
     "attribution": "not per face: the draw commands are submitted after the face loop, so ring sequence bounds collapse to the last face; face packet pointers target a separate preflight buffer"
-  }
+  },
+  "material_mapping": {
+    "record_size": 12,
+    "record_index": "upper 16 bits of the second strip base word",
+    "table": "word[0x1F8003E8] + index*12",
+    "word0": "UV0 | CLUT << 16 (builder -> packet word 3)",
+    "word1": "UV1 | texpage << 16 (builder -> packet word 6)",
+    "word2": "UV2 low half (builder -> packet word 9)",
+    "native_evidence": "builder 80011238..80011338 loads $s4/$s5/half+8 from table+index*12",
+    "capture_evidence": "slot 2: 32/32 records parsed, 23/32 exact CLUT+texpage on fresh packet windows, 31/32 texpage; remaining packet pointers are shared/stale",
+    "residual": "shading and semi-transparency are packet draw-mode state, not in the 12-byte record"
+  },
+  "material_run": {
+    "slot2": {
+      "capture": "analysis/vr-captures/materials-capture/world-capture2.txt",
+      "stdout": "analysis/vr-captures/slot2-material-20261030b/stdout.log",
+      "census": "status=ok root=0x8010BA48 nodes=203 leaves=134 triangles=1756 materials=1756 records=0x801259BC/1024",
+      "summary": "analysis/vr-captures/slot2-material-20261030b/summary.json",
+      "record_packet_matches": 23,
+      "faces": 32
+    },
+    "slot5": {
+      "capture": "analysis/vr-captures/materials-capture/world-capture-slot5b.txt",
+      "stdout": "analysis/vr-captures/slot5-material-20261030b/stdout.log",
+      "census": "status=material root=0x8010C788 reject=0x8010E6B0/0/63",
+      "classification": "named unsupported material table pointer; not a silent omission"
+    }
+  },
+  "next": "M1 complete: slot-2 resident materials decoded; slot-5 root-walk table is a named unsupported case. Proceed to M2 textured GPU consumption."
 }

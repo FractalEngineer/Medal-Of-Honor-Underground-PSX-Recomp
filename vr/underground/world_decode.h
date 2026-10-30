@@ -13,12 +13,15 @@
  * +0x2c and +0x3c fields. This is the same layout the raycast reader uses;
  * decoding never projects, culls or writes GPU state.
  *
- * MATERIALS ARE NOT DECODED. Every triangle retains the source words, but
- * `materials_decoded` stays 0 until the packet/preflight/subdivision bodies'
- * material fields are captured and mapped. The upper half of the second base
- * word is captured as `record_index`; a real slot-2 capture resolved that
- * index to a 12-byte table of three 16-bit UV pairs, so it is not a material
- * descriptor. Textured rendering must refuse this mesh rather than guess.
+ * MATERIALS. The upper half of the second base word is `record_index`, an
+ * index into the native 12-byte per-face parameter table at
+ * `word[0x1F8003E8]`. Its words are UV0|CLUT, UV1|texpage and UV2, exactly the
+ * fields the packet builder writes into the 0x34 command. When the caller
+ * supplies `record_table`/`record_count`, each triangle gets those material
+ * fields and `materials_decoded` is incremented. Without a table the geometry
+ * still decodes but `materials_decoded` stays 0 and textured output must
+ * refuse the mesh. `require_materials` turns a missing/out-of-range record
+ * into a named rejection instead of a silent unmaterialed face.
  * Unsupported or malformed input rejects the whole decode with a named status;
  * faces are never silently dropped.
  */
@@ -29,6 +32,7 @@
 #define MOHU_WORLD_MAX_TRIANGLES  65536u
 #define MOHU_WORLD_MAX_LEAF_FACES 4096u
 #define MOHU_WORLD_MAX_ENTRIES    16384u
+#define MOHU_WORLD_MAX_RECORDS    65536u
 #define MOHU_WORLD_STACK_DEPTH    256u
 #define MOHU_WORLD_CACHE_SLOTS    4u
 
@@ -47,7 +51,8 @@ typedef enum {
     MOHU_WORLD_REJECT_TREE_BUDGET,
     MOHU_WORLD_REJECT_TRIANGLE_BUDGET,
     MOHU_WORLD_REJECT_ALLOCATION,
-    MOHU_WORLD_REJECT_ENTRY
+    MOHU_WORLD_REJECT_ENTRY,
+    MOHU_WORLD_REJECT_MATERIAL
 } MohuWorldStatus;
 
 /* One source vertex: three signed 16-bit camera-relative coordinates and two
@@ -56,17 +61,29 @@ typedef struct {
     int16_t x, y, z, pad;
 } MohuWorldVertex;
 
+/* Per-face material fields from the native 12-byte record. The low half of
+ * record word 0 is UV0 and its high half is the CLUT; word 1 is UV1|texpage;
+ * word 2 is UV2. The UV association is the native packet order, not an
+ * independently verified vertex mapping. */
+typedef struct {
+    uint16_t clut;
+    uint16_t texpage;
+    uint16_t uv[3];
+    uint8_t valid;
+} MohuWorldMaterial;
+
 typedef struct {
     uint32_t vertex[3];       /* indices into MohuWorldMesh.vertices */
     uint32_t source_address;  /* guest word that introduced this triangle */
     uint32_t face_tag;        /* native face address: base start, or the word
                                * before an extension code (extension - 4) */
     uint32_t base_word[2];    /* raw base words; upper half of [1] is below */
-    uint16_t record_index;    /* upper half of base_word[1]: per-face UV record */
+    uint16_t record_index;    /* upper half of base_word[1]: record table index */
     uint32_t extension_word;  /* 0 for a base triangle */
     uint16_t render_flags;    /* extension bits 13..14; 0 when not decoded */
     uint8_t winding_swapped;  /* extension bit 15 */
     uint8_t is_extension;
+    MohuWorldMaterial material;
 } MohuWorldTriangle;
 
 typedef struct {
@@ -78,6 +95,10 @@ typedef struct {
     uint32_t max_triangles;   /* 0 = MOHU_WORLD_MAX_TRIANGLES */
     uint32_t max_leaves;      /* 0 = MOHU_WORLD_MAX_LEAVES */
     uint32_t generation;      /* resource version, echoed into the mesh */
+    uint32_t record_table;    /* native 12-byte record table; 0 = no materials */
+    uint32_t record_count;    /* bounded entries; 0 = no materials */
+    int require_materials;    /* reject a face without a valid record */
+    int32_t far_plane;        /* caller policy, echoed; decode never applies it */
 } MohuWorldRequest;
 
 /* The native builder submits a view-specific set of leaf entries, not a root
@@ -91,6 +112,10 @@ typedef struct {
     uint32_t vertex_count;
     uint32_t max_triangles;   /* 0 = MOHU_WORLD_MAX_TRIANGLES */
     uint32_t generation;
+    uint32_t record_table;    /* native 12-byte record table; 0 = no materials */
+    uint32_t record_count;    /* bounded entries; 0 = no materials */
+    int require_materials;    /* reject a face without a valid record */
+    int32_t far_plane;        /* caller policy, echoed; decode never applies it */
 } MohuWorldVisibleRequest;
 
 typedef struct {
@@ -106,7 +131,8 @@ typedef struct {
     int16_t leaf_bounds_min[3];     /* union of accepted leaf boxes */
     int16_t leaf_bounds_max[3];
     uint32_t material_tokens;       /* faces whose raw words were retained */
-    uint32_t materials_decoded;     /* always 0 until the M1 material map lands */
+    uint32_t materials_decoded;     /* triangles with a valid record material */
+    int32_t far_plane;              /* echoed caller policy, not applied here */
     uint32_t source_start;          /* first source byte consulted */
     uint32_t source_end;            /* one past the last source byte consulted */
     uint32_t source_fingerprint;    /* FNV-1a over [source_start, source_end) */
