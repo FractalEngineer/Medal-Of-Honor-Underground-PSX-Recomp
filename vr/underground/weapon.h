@@ -46,6 +46,9 @@ typedef struct {
     double right[3];
     double up[3];
     double forward[3];
+    /* Camera-space translation moved together with the rendered model and
+     * its muzzle ray. Use this for mount geometry, not per-save calibration. */
+    double mount_offset_m[3];
     double model_units_per_metre;
     double reference_length_m;
     double forward_span_units;

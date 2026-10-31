@@ -1,14 +1,18 @@
 # Underground VR execution handoff
 
-**2026-10-31 cache/PGO checkpoint:** the game now pins clean framework
-`e696907e`, which contains the native-overlay hook guard. The current
-`cg18_e060fa62_gc7068bcdd_f2` cache was force-rebuilt at 31/31 shards, the normal
-Release build and 171 tests pass, and selective PGO baseline/generate are built
-with ccache disabled. PGO use and matched performance remain open because the
-available Underground save is still rejected by the execution guard; menu/boot
-profiles are deliberately not consumed. [Exact resume checklist and
-identities](CACHE_PGO_20261031.md). The independent-renderer/M0-M2 branch is
-shelved and is not the active framework pin.
+**2026-10-31 cache/PGO checkpoint:** the game pins framework `e57fd027`, which
+contains the native-overlay hook guard and release-safe synthetic XR overrides.
+The current `cg18_e060fa62_gc7068bcdd_f2` cache was force-rebuilt at 31/31
+regions, selective PGO was trained and consumed on the fresh heavy slot 1, and
+the accepted PGO executable is installed in `build-release`. Reversed-order
+heavy testing found an 8.10% pooled pair-time EMA reduction with unstable work
+load; the slot-0 second scene found 3.72% lower work and 8.99% lower pair EMA.
+All measured runs had zero audio/XR/weapon failure counters. The silenced
+pistol's exact SP asset variant now reuses its MP calibration, and Panzerfaust
+has a 20 cm shoulder-height mount offset. [Full checklist, tables and stereo
+evidence](CACHE_PGO_20261031.md). The independent-renderer/M0-M2 branch remains
+shelved. A physical-headset audio/HUD/height check is the remaining acceptance
+gate.
 
 **2026-10-31 dependency update:** production is rebuilt on upstream #792/#793
 plus the retained VR branches. Active framework pin is `fd327460`, UI

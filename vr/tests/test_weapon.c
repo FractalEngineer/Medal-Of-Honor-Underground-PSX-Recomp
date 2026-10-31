@@ -47,6 +47,7 @@ int main(void) {
         CHECK(profile->geometry_fnv32 && profile->node_count <= 32u);
         CHECK(mohu_vr_weapon_sp_geometry_valid(profile, profile->geometry_fnv32));
         CHECK(mohu_vr_weapon_sp_geometry_valid(profile, 0x408599ACu) == (profile->id == 15u));
+        CHECK(mohu_vr_weapon_sp_geometry_valid(profile, 0xA5D4B144u) == (profile->id == 9u));
         CHECK(!mohu_vr_weapon_sp_geometry_valid(profile, 0x408599ADu));
         CHECK(profile->calibration && profile->calibration->provisional == 1u);
         CHECK(profile->calibration->model_units_per_metre > 1.0);

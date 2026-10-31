@@ -19,6 +19,7 @@ static const MohuVrWeaponCalibration k_p38_calibration = {
     {1.0, 0.0, 0.0},
     {0.0, -1.0, 0.0},
     {0.0, 0.0, 1.0},
+    {0.0, 0.0, 0.0},
     850.0,
     0.216000000000,
     164.265769717169,
@@ -31,6 +32,7 @@ static const MohuVrWeaponCalibration k_mp40_calibration = {
     {1.0, 0.0, 0.0},
     {0.0, -1.0, 0.0},
     {0.0, 0.0, 1.0},
+    {0.0, 0.0, 0.0},
     850.0,
     0.833000000000,
     470.609520288343,
@@ -43,6 +45,7 @@ static const MohuVrWeaponCalibration k_shotgun_calibration = {
     {1.0, 0.0, 0.0},
     {0.0, -1.0, 0.0},
     {0.0, 0.0, 1.0},
+    {0.0, 0.0, 0.0},
     850.0,
     1.000000000000,
     716.800492727390,
@@ -55,6 +58,7 @@ static const MohuVrWeaponCalibration k_scoped_rifle_calibration = {
     {1.0, 0.0, 0.0},
     {0.0, -1.0, 0.0},
     {0.0, 0.0, 1.0},
+    {0.0, 0.0, 0.0},
     850.0,
     1.110000000000,
     723.766110491706,
@@ -67,6 +71,7 @@ static const MohuVrWeaponCalibration k_colt_45_calibration = {
     {1.0, 0.0, 0.0},
     {0.0, -1.0, 0.0},
     {0.0, 0.0, 1.0},
+    {0.0, 0.0, 0.0},
     850.0,
     0.216000000000,
     161.338059492327,
@@ -79,6 +84,7 @@ static const MohuVrWeaponCalibration k_silenced_pistol_calibration = {
     {1.0, 0.0, 0.0},
     {0.0, -1.0, 0.0},
     {0.0, 0.0, 1.0},
+    {0.0, 0.0, 0.0},
     850.0,
     0.300000000000,
     209.224345876678,
@@ -91,6 +97,7 @@ static const MohuVrWeaponCalibration k_stick_grenade_calibration = {
     {1.0, 0.0, 0.0},
     {0.0, -1.0, 0.0},
     {0.0, 0.0, 1.0},
+    {0.0, 0.0, 0.0},
     414.569888540525,
     0.365000000000,
     151.318009317292,
@@ -103,6 +110,7 @@ static const MohuVrWeaponCalibration k_m1_garand_calibration = {
     {1.0, 0.0, 0.0},
     {0.0, -1.0, 0.0},
     {0.0, 0.0, 1.0},
+    {0.0, 0.0, 0.0},
     850.0,
     1.107000000000,
     636.782623823402,
@@ -115,6 +123,7 @@ static const MohuVrWeaponCalibration k_panzerfaust_calibration = {
     {1.0, 0.0, 0.0},
     {0.0, -1.0, 0.0},
     {0.0, 0.0, 1.0},
+    {0.0, -0.20, 0.0},
     850.0,
     1.000000000000,
     516.805308178657,
@@ -127,6 +136,7 @@ static const MohuVrWeaponCalibration k_crossbow_calibration = {
     {1.0, 0.0, 0.0},
     {0.0, -1.0, 0.0},
     {0.0, 0.0, 1.0},
+    {0.0, 0.0, 0.0},
     850.0,
     0.800000000000,
     449.835119944576,
@@ -139,6 +149,7 @@ static const MohuVrWeaponCalibration k_petrol_bomb_calibration = {
     {1.0, 0.0, 0.0},
     {0.0, -1.0, 0.0},
     {0.0, 0.0, 1.0},
+    {0.0, 0.0, 0.0},
     568.917001007464,
     0.300000000000,
     170.675100302239,
@@ -149,6 +160,9 @@ int mohu_vr_weapon_sp_geometry_valid(const MohuVrWeaponProfile* profile,
                                      uint32_t geometry_fnv32) {
     if (!profile) return 0;
     if (geometry_fnv32 == profile->geometry_fnv32) return 1;
+    /* SP mission variant with the same ID 9 mesh magic, faces, and node
+     * topology. Reuse the immutable MP calibration; do not relax the guard. */
+    if (profile->id == 9u && geometry_fnv32 == 0xA5D4B144u) return 1;
     /* SP slot-3 petrol has identical XYZ and topology to the MP calibration
      * asset. All 196 vertices carry metadata 128 rather than MP's 129. Keep
      * an exact second hash; do not ignore metadata or accept arbitrary assets. */
@@ -161,6 +175,7 @@ static const MohuVrWeaponCalibration k_sten_calibration = {
     {1.0, 0.0, 0.0},
     {0.0, -1.0, 0.0},
     {0.0, 0.0, 1.0},
+    {0.0, 0.0, 0.0},
     850.0,
     0.762000000000,
     437.685058775527,
@@ -173,6 +188,7 @@ static const MohuVrWeaponCalibration k_stg44_calibration = {
     {1.0, 0.0, 0.0},
     {0.0, -1.0, 0.0},
     {0.0, 0.0, 1.0},
+    {0.0, 0.0, 0.0},
     850.0,
     0.940000000000,
     637.164404516367,
@@ -313,7 +329,7 @@ int mohu_vr_weapon_calibrated_control(
             if (!isfinite(value) || value < INT16_MIN || value > INT16_MAX) return 0;
             rt[row*3+col] = (int16_t)lround(value);
         }
-        double value = hand_translation[row];
+        double value = hand_translation[row] + c->mount_offset_m[row];
         for (unsigned k=0; k<3; ++k)
             value -= (double)rt[row*3+k] / 4096.0 * c->grip_pivot[k];
         if (!isfinite(value) || value < INT32_MIN || value > INT32_MAX) return 0;

@@ -26,6 +26,9 @@ int main(void) {
     point(c,cal->grip_pivot,grip);
     point(c,cal->muzzle,muzzle);
     for (unsigned i=0; i<3; ++i) assert(fabs(grip[i]-hand[i])<=.5);
+    assert(fabs(cal->mount_offset_m[0])<1e-12);
+    assert(fabs(cal->mount_offset_m[1])<1e-12);
+    assert(fabs(cal->mount_offset_m[2])<1e-12);
     double expected_x=0,expected_y=0;
     for (unsigned i=0;i<3;++i) {
         expected_x+=(cal->muzzle[i]-cal->grip_pivot[i])*cal->right[i]*1000/cal->model_units_per_metre;
@@ -136,6 +139,14 @@ int main(void) {
     assert(mohu_vr_weapon_gun_vertex(stg,27,108)); /* muzzle */
     assert(mohu_vr_weapon_gun_vertex(stg,29,15)); /* magazine */
     assert(mohu_vr_weapon_gun_vertex(stg,31,12)); /* sight */
+    const MohuVrWeaponCalibration* panzerfaust=
+        mohu_vr_weapon_calibration_find(13);
+    assert(panzerfaust && fabs(panzerfaust->mount_offset_m[1]+.20)<1e-12);
+    uint32_t panzer_control[8]={0};
+    assert(mohu_vr_weapon_calibrated_control(
+        panzer_control,identity,hand,1000,panzerfaust));
+    point(panzer_control,panzerfaust->grip_pivot,grip);
+    assert(fabs(grip[1]-(hand[1]-200))<=.5);
     puts("calibrated grip/muzzle, authored bore, upright prop, StG semantic mask: PASS");
     return 0;
 }

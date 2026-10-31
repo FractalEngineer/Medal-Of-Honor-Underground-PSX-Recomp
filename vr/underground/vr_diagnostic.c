@@ -281,6 +281,8 @@ static uint32_t g_mp_weapon_draws[2];
 static uint32_t g_weapon_viewmodel_saved_control[8];
 static uint32_t g_weapon_viewmodel_sp;
 static uint32_t g_weapon_trace_count;
+static bool g_weapon_model_failure_reported;
+static bool g_weapon_tracking_failure_reported;
 static int32_t g_weapon_synthetic_x;
 static int32_t g_weapon_synthetic_yaw_mdeg;
 static bool g_weapon_force_tracking_loss;
@@ -366,6 +368,7 @@ static double g_weapon_capture_camera_max[3];
 static double g_weapon_capture_screen_min[2];
 static double g_weapon_capture_screen_max[2];
 static bool g_weapon_pose_applied_reported;
+static bool g_sp_weapon_applied_reported;
 static bool g_runtime_hook_counts_reported;
 static double g_weapon_delta_rotation[9];
 static double g_weapon_delta_translation[3];
@@ -1264,11 +1267,14 @@ static void vr_diagnostic_vblank(void) {
         input.focused = 1;
         input.synthetic = 1;
         input.active[0] = input.active[1] = 1;
-        /* Loaded states open in the native pause menu. Hold a focused,
-         * otherwise neutral pair and pulse Menu once after the load settles. */
+        /* Paused states need one native Start press after the load settles.
+         * Gameplay states remain untouched and tracking stays active. */
+        MohuVrMpInputState mp_state;
+        const bool multiplayer = vr_mp_input_snapshot(&mp_state);
         if (g_synthetic_save_loaded &&
             g_synthetic_controller_frame >= 30u &&
-            g_synthetic_controller_frame < 34u) {
+            g_synthetic_controller_frame < 34u &&
+            vr_native_paused(multiplayer)) {
             input.buttons[0] = PSX_MOD_XR_MENU;
             input.buttons_active[0] = PSX_MOD_XR_MENU;
         }
@@ -2223,6 +2229,9 @@ static void vr_marker_load(void) {
     memset(&g_fresh_cadence,0,sizeof g_fresh_cadence);
     g_synthetic_save_loaded = g_synthetic_controllers;
     g_synthetic_controller_frame = 0u;
+    g_weapon_model_failure_reported = false;
+    g_weapon_tracking_failure_reported = false;
+    g_sp_weapon_applied_reported = false;
     g_frame_render_args_valid=false;
     g_frame_projection_valid=false;
     vr_muzzle_invalidate();
@@ -3990,9 +3999,36 @@ static bool vr_weapon_prepare_delta(void) {
     hands.struct_size = sizeof hands;
     double rotation[9];
     double translation[3];
-    if (!psx_mod_openxr_hands(&hands) ||
-        !mohu_vr_weapon_track_delta(
+    if (!psx_mod_openxr_hands(&hands)) {
+        if (g_weapon_trace && !g_weapon_tracking_failure_reported) {
+            g_weapon_tracking_failure_reported = true;
+            fprintf(stdout,
+                    "mohu-vr-weapon: tracking guard reject reason=unavailable\n");
+            fflush(stdout);
+        }
+        return false;
+    }
+    if (!mohu_vr_weapon_track_delta(
             &hands, g_openxr_units_per_meter, rotation, translation)) {
+        if (g_weapon_trace && !g_weapon_tracking_failure_reported) {
+            g_weapon_tracking_failure_reported = true;
+            const PSXModTrackedPose* grip =
+                &hands.pose[1][PSX_MOD_XR_GRIP_POSE];
+            const PSXModTrackedPose* aim =
+                &hands.pose[1][PSX_MOD_XR_AIM_POSE];
+            fprintf(stdout,
+                    "mohu-vr-weapon: tracking guard reject reason=pose "
+                    "focused=%u synthetic=%u origin=%u age=%u "
+                    "grip=%u/%u aim=%u/%u grip_pos=%.6f,%.6f,%.6f "
+                    "aim_q=%.6f,%.6f,%.6f,%.6f\n",
+                    hands.focused, hands.synthetic, hands.origin_valid,
+                    hands.age_ms, grip->active, grip->flags,
+                    aim->active, aim->flags, grip->position_m[0],
+                    grip->position_m[1], grip->position_m[2],
+                    aim->orientation_xyzw[0], aim->orientation_xyzw[1],
+                    aim->orientation_xyzw[2], aim->orientation_xyzw[3]);
+            fflush(stdout);
+        }
         return false;
     }
     if (!mohu_vr_weapon_calibration_find(
@@ -4009,6 +4045,28 @@ static bool vr_weapon_prepare_delta(void) {
 static bool vr_sp_weapon_model_valid(uint32_t input, uint32_t object,
                                      uint8_t* id_out,
                                      const MohuVrWeaponProfile** profile_out);
+
+static bool vr_sp_weapon_model_reject(
+    const char* reason, uint32_t input, uint32_t object, uint32_t id,
+    const MohuVrWeaponProfile* profile, uint32_t actual_magic,
+    uint32_t actual_faces, uint32_t actual_nodes, uint32_t actual_hash) {
+    if (g_weapon_trace && !g_weapon_model_failure_reported) {
+        g_weapon_model_failure_reported = true;
+        fprintf(stdout,
+                "mohu-vr-weapon: sp model guard reject reason=%s "
+                "input=0x%08X object=0x%08X id=%u profile=%s "
+                "magic=0x%08X expected_magic=0x%08X "
+                "faces=%u expected_faces=%u nodes=%u expected_nodes=%u "
+                "geometry=0x%08X expected_geometry=0x%08X\n",
+                reason, input, object, id, profile ? profile->name : "none",
+                actual_magic, profile ? profile->mesh_magic : 0u,
+                actual_faces, profile ? profile->face_count : 0u,
+                actual_nodes, profile ? profile->node_count : 0u,
+                actual_hash, profile ? profile->geometry_fnv32 : 0u);
+        fflush(stdout);
+    }
+    return false;
+}
 
 static bool vr_sp_shot_pose(const MohuVrWeaponCalibration* calibration,
                            int32_t position[3], int32_t angles[3]) {
@@ -4186,21 +4244,42 @@ static bool vr_sp_weapon_model_valid(uint32_t input, uint32_t object,
                                      const MohuVrWeaponProfile** profile_out) {
     if (!id_out || !profile_out || input < 0x800B0000u ||
         input > 0x801FC000u || object < 0x800B0000u ||
-        object > 0x801FC000u) return false;
+        object > 0x801FC000u) {
+        return vr_sp_weapon_model_reject(
+            "address", input, object, 0u, NULL, 0u, 0u, 0u, 0u);
+    }
     const uint8_t id = psx_mod_read_byte(input + 93u);
     const MohuVrWeaponProfile* profile = mohu_vr_weapon_profile_find(id);
-    if (!profile || !profile->calibration ||
-        psx_mod_read_word(object + 0x70u) != profile->mesh_magic ||
-        psx_mod_read_half(object + 0xB6u) != profile->face_count) {
-        return false;
-    }
+    const uint32_t actual_magic = psx_mod_read_word(object + 0x70u);
+    const uint32_t actual_faces = psx_mod_read_half(object + 0xB6u);
+    if (!profile || !profile->calibration)
+        return vr_sp_weapon_model_reject(
+            "profile", input, object, id, profile,
+            actual_magic, actual_faces, 0u, 0u);
+    if (actual_magic != profile->mesh_magic)
+        return vr_sp_weapon_model_reject(
+            "magic", input, object, id, profile,
+            actual_magic, actual_faces, 0u, 0u);
+    if (actual_faces != profile->face_count)
+        return vr_sp_weapon_model_reject(
+            "faces", input, object, id, profile,
+            actual_magic, actual_faces, 0u, 0u);
     const uint32_t header = psx_mod_read_word(object + 0x80u);
-    if (header < 0x80000000u || header > 0x801FFFF8u || (header & 3u) ||
-        psx_mod_read_word(header + 4u) != profile->node_count) return false;
+    if (header < 0x80000000u || header > 0x801FFFF8u || (header & 3u))
+        return vr_sp_weapon_model_reject(
+            "header", input, object, id, profile,
+            actual_magic, actual_faces, 0u, 0u);
+    const uint32_t actual_nodes = psx_mod_read_word(header + 4u);
+    if (actual_nodes != profile->node_count)
+        return vr_sp_weapon_model_reject(
+            "nodes", input, object, id, profile,
+            actual_magic, actual_faces, actual_nodes, 0u);
     const uint32_t nodes = psx_mod_read_word(header);
     if (nodes < 0x80000000u ||
         nodes > 0x80200000u - profile->node_count * 8u || (nodes & 3u)) {
-        return false;
+        return vr_sp_weapon_model_reject(
+            "node_table", input, object, id, profile,
+            actual_magic, actual_faces, actual_nodes, 0u);
     }
     uint32_t hash = 2166136261u;
     for (unsigned node = 0; node < profile->node_count; ++node) {
@@ -4209,14 +4288,19 @@ static bool vr_sp_weapon_model_valid(uint32_t input, uint32_t object,
         if (count != profile->vertices[node] ||
             (count && (data < 0x80000000u ||
                        data > 0x80200000u - count * 8u || (data & 3u)))) {
-            return false;
+            return vr_sp_weapon_model_reject(
+                "vertices", input, object, id, profile,
+                actual_magic, actual_faces, actual_nodes, hash);
         }
         for (unsigned k = 0; k < 4u; ++k)
             hash = (hash ^ ((count >> (k * 8u)) & 255u)) * 16777619u;
         for (unsigned k = 0; k < count * 8u; ++k)
             hash = (hash ^ psx_mod_read_byte(data + k)) * 16777619u;
     }
-    if (!mohu_vr_weapon_sp_geometry_valid(profile, hash)) return false;
+    if (!mohu_vr_weapon_sp_geometry_valid(profile, hash))
+        return vr_sp_weapon_model_reject(
+            "geometry", input, object, id, profile,
+            actual_magic, actual_faces, actual_nodes, hash);
     *id_out = id;
     *profile_out = profile;
     return true;
@@ -4458,6 +4542,16 @@ static int vr_sp_weapon_geometry_filter(CPUState* cpu, uint32_t address) {
     }
     g_weapon_profile_last_id = id;
     g_weapon_profile_last_object = object;
+    if (g_weapon_trace && !g_sp_weapon_applied_reported) {
+        g_sp_weapon_applied_reported = true;
+        fprintf(stdout,
+                "mohu-vr-weapon: sp applied id=%u profile=%s "
+                "mount_offset_m=%.6f,%.6f,%.6f\n",
+                id, profile->name, profile->calibration->mount_offset_m[0],
+                profile->calibration->mount_offset_m[1],
+                profile->calibration->mount_offset_m[2]);
+        fflush(stdout);
+    }
     g_sp_weapon_projected = false;
     g_sp_weapon_output = 0u;
     const uint32_t native_cursor = psx_mod_read_word(0x800A5358u);

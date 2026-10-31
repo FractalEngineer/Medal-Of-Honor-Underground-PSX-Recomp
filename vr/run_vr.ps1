@@ -37,6 +37,7 @@ param(
     [switch]$PerformanceTest,
     [switch]$Baseline,
     [switch]$WristHudTest,
+    [switch]$GracefulClose,
     [switch]$PrepareOnly
 )
 
@@ -473,6 +474,15 @@ try {
 
     if ($Seconds -gt 0) {
         $null = $process.WaitForExit($Seconds * 1000)
+        if ($GracefulClose -and -not $process.HasExited) {
+            $process.Refresh()
+            if (-not $process.CloseMainWindow()) {
+                throw 'The owned runtime did not expose a window for graceful shutdown.'
+            }
+            if (-not $process.WaitForExit(15000)) {
+                throw 'The owned runtime did not exit within 15 seconds of graceful shutdown.'
+            }
+        }
     } else {
         $process.WaitForExit()
     }
