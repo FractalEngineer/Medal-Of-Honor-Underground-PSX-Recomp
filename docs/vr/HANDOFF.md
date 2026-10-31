@@ -13,7 +13,9 @@ zero fallbacks, and controller-dependent first-motion deltas.
 
 Fresh selective-PGO training data was relinked with the final source. Installed
 production SHA-256 is
-`806ABF8CBA62C9721668AD68654A321E987B719A8AFB79AF348D39AB9BAAC6FE`.
+`6DCA998E78F4DAC2F92348590962D37F7540B292E7122D0C82DF067E09264EA2`.
+The camera and paper models now use a 2.5x display scale with a raised,
+rearward mount offset.
 The normal bounded-controller launcher smoke completed 300/300 pairs over ten
 seconds with zero XR failures, `300/300` weapon hits and zero weapon
 fallbacks. Full 171-test suite passes. Physical headset model placement,

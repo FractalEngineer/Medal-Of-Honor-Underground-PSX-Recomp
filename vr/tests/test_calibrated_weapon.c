@@ -125,7 +125,9 @@ int main(void) {
         assert(p1[1]<p0[1] && fabs(p1[2]-p0[2])<.001);
         assert(mohu_vr_weapon_muzzle_shot(affine,a,identity,(double[3]){0},position,angles));
         assert(angles[0]==0 && angles[1]==0 && angles[2]==0);
-        if (p->id!=10 && p->id!=15) assert(a->model_units_per_metre==850);
+        if (p->id==7) assert(a->model_units_per_metre==340);
+        else if (p->id!=10 && p->id!=15)
+            assert(a->model_units_per_metre==850);
         if (p->id==10 || p->id==15) {
             point(affine,a->muzzle,p1);
             assert(p1[1]<p0[1]-150); /* cap/neck above grip, not aimed ahead */

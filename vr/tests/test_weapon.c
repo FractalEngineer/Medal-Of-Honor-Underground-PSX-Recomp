@@ -145,7 +145,11 @@ int main(void) {
         CHECK(camera_calibration &&
               camera_calibration->grip_pivot[0] == -7.0 &&
               camera_calibration->grip_pivot[1] == -27.5 &&
-              camera_calibration->grip_pivot[2] == -3.5);
+              camera_calibration->grip_pivot[2] == -3.5 &&
+              camera_calibration->mount_offset_m[0] == 0.0 &&
+              camera_calibration->mount_offset_m[1] == -0.22 &&
+              camera_calibration->mount_offset_m[2] == -0.10 &&
+              camera_calibration->model_units_per_metre == 340.0);
     }
     {
         const MohuVrWeaponCalibration* calibration =

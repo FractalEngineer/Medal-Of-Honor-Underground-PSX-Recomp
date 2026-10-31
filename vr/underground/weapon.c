@@ -115,8 +115,10 @@ static const MohuVrWeaponCalibration k_camera_calibration = {
     {1.0, 0.0, 0.0},
     {0.0, -1.0, 0.0},
     {0.0, 0.0, 1.0},
-    {0.0, 0.0, 0.0},
-    850.0,
+    /* Raise the shared camera/papers mount toward the eye and pull it back
+     * from the native hand position so neither prop obscures the scene. */
+    {0.0, -0.22, -0.10},
+    340.0,
     0.200000000000,
     41.0,
     1u,

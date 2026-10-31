@@ -135,8 +135,8 @@ def set_bounded_camera_hands() -> None:
         "oqz": 0,
         "oqw": 1000000,
     }
-    for hand, x_mm, roll in (("left", -140, 707107),
-                             ("right", 140, -707107)):
+    for hand, x_mm, roll in (("left", -140, 500000),
+                             ("right", 140, -500000)):
         for pose, z_mm in (("grip", -450), ("aim", -500)):
             native.command(
                 "openxr_hands_override",
@@ -152,7 +152,7 @@ def set_bounded_camera_hands() -> None:
                 qx=0,
                 qy=0,
                 qz=roll,
-                qw=707107,
+                qw=866025,
                 **origin,
             )
 
