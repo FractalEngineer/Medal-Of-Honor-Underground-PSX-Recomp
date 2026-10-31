@@ -22,10 +22,11 @@ Panzerfaust special actions. P38 continues to use its accepted complete-gun
 calibration exactly; the other 12 profiles are explicitly provisional.
 
 The SP objective camera is tracked as a separate special profile, ID 7, and is
-not part of the 13-ID multiplayer shot-family matrix. Its 206-face body
-(nodes 1-12) is retained while 139 arm vertices are masked per eye. Right grip
-maps to native R2 only for this equipped SP item, allowing trigger to select the
-photograph action instead of the unaimed papers action. See
+not part of the 13-ID multiplayer shot-family matrix. Node 22 is the 128-face
+camera body; nodes 15, 16, 18 and 19 are the 56-face paper prop; nodes 1-12 are
+the masked arm. Right grip maps to native R2 only for this equipped SP item,
+allows trigger to select the photograph action, and neutralizes movement axes.
+Trigger without grip swaps the camera body to the paper prop. See
 [CAMERA_SLOT3_EVIDENCE.md](CAMERA_SLOT3_EVIDENCE.md).
 
 Normal defaults are unchanged. The new candidates require either

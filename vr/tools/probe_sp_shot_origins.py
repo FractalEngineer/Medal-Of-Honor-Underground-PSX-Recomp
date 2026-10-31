@@ -30,6 +30,7 @@ POSITION_OFFSET = 0x220
 ANGLE_OFFSET = 0x23C
 SP_MOTION_PCS = (0x800793E4, 0x80079400, 0x8007941C)
 CASES = (
+    (2, 0, 10),  # stick grenade
     (3, 0, 0),   # P38
     (4, 0, 16),  # Sten
     (2, 2, 13),  # Panzerfaust
@@ -446,6 +447,12 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("out", type=Path)
     parser.add_argument("--ids", type=int, nargs="+")
+    parser.add_argument(
+        "--source-saves",
+        type=Path,
+        default=ROOT / "analysis/fixtures/sp",
+        help="memcard root containing openbios fixture saves",
+    )
     parser.add_argument("--hand-yaw", type=float, default=0.0)
     parser.add_argument("--head-yaw", type=float, default=0.0)
     parser.add_argument("--tracking-loss", action="store_true")
@@ -453,6 +460,11 @@ def main() -> None:
     parser.add_argument("--verify", action="store_true")
     parser.add_argument("--hand-x-mm", type=float, default=0.0)
     parser.add_argument("--fire-buttons", type=lambda value: int(value, 0))
+    parser.add_argument(
+        "--build-dir",
+        type=Path,
+        default=Path("build-release"),
+    )
     parser.add_argument("--lifecycle", action="store_true")
     parser.add_argument("--turn-frames", type=int, default=0,
                         help="Natural right-stick turn before firing; signed VBlanks")
@@ -481,18 +493,20 @@ def main() -> None:
     saves = out / "saves/openbios"
     saves.mkdir(parents=True)
     hashes = {}
+    source_root = args.source_saves.resolve()
     for slot in sorted({case[0] for case in CASES}):
         for suffix in ("pst", "thumb"):
-            source = ROOT / (
-                "analysis/fixtures/sp/openbios/"
+            source = (
+                source_root / "openbios" /
                 f"state_8001F844_slot{slot:02}.{suffix}"
             )
             shutil.copyfile(source, saves / source.name)
             hashes[str(source.relative_to(ROOT))] = native.digest(source)
     preferences = comparison.hash_existing(comparison.preference_paths())
-    executable = (
-        ROOT / "build-release/Medal_of_Honor_Underground_Recompiled.exe"
-    )
+    build_dir = (
+        args.build_dir if args.build_dir.is_absolute() else ROOT / args.build_dir
+    ).resolve()
+    executable = build_dir / "Medal_of_Honor_Underground_Recompiled.exe"
     env = comparison.environment(
         "native" if args.native else "tracked", True, hand_fixed=True
     )
@@ -510,9 +524,7 @@ def main() -> None:
         "headset_used": False,
         "fixture_hashes": hashes,
         "executable_sha256": native.digest(executable),
-        "build": comparison.build_configuration(
-            ROOT / "build-release/CMakeCache.txt"
-        ),
+        "build": comparison.build_configuration(build_dir / "CMakeCache.txt"),
         "cases": [],
         "hand_yaw_deg": args.hand_yaw,
         "head_yaw_deg": args.head_yaw,

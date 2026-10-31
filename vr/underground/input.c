@@ -11,6 +11,11 @@ static double scalar_deadzone(double v, double deadzone) {
     if (fabs(v) <= deadzone) return 0;
     return copysign((fabs(v) - deadzone) / (1 - deadzone), v);
 }
+static int camera_aim_held(const PSXModOpenXRInput *input, int camera_aim) {
+    return camera_aim && input->squeeze_active[1] &&
+           isfinite(input->squeeze[1]) &&
+           input->squeeze[1] >= .55f && input->squeeze[1] <= 1;
+}
 static uint32_t combat_buttons(const PSXModOpenXRInput *input, int camera_aim) {
     uint32_t left = input->buttons[0] & input->buttons_active[0];
     uint32_t right = input->buttons[1] & input->buttons_active[1];
@@ -130,6 +135,10 @@ int mohu_vr_camera_input_map(const PSXModOpenXRInput *input, double deadzone,
     if (!isfinite(deadzone) || deadzone < 0 || deadzone >= 1 ||
         !isfinite(turn_gain) || turn_gain < 0 || turn_gain > 2 ||
         !valid_response(response)) return 0;
+    /* The objective camera is calibrated against a stationary controller.
+     * Keep its trigger/R2 buttons but neutralize every locomotion and turn
+     * axis while the right grip is held. */
+    if (camera_aim_held(input, camera_aim)) return 1;
     /* The native left stick is LX (turn) + LY (move/aim). LX comes off the right
      * hand and LY off the left, so any mode that aims with the left stick - a
      * machine gun - splits its two axes across both hands. The right stick's Y

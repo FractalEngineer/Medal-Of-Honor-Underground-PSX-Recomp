@@ -1,18 +1,23 @@
 # Underground VR execution handoff
 
-**2026-11-01 camera checkpoint:** SP slot 3 now loads objective camera weapon
-ID `7` with exact asset identity `53506D92` / pose `3EDCCA12`. The profile tracks
-the 206-face camera body in both eyes, masks 139 arm vertices, and leaves the
-13-ID multiplayer shot matrix unchanged. While weapon 7 is equipped in SP,
-right grip maps to native R2; trigger continues to map to Cross. An isolated
-live control shows the unaimed papers path, then the viewfinder and
-`PHOTOGRAPHED CIPHER KEY BOOK` when grip plus trigger are held. Source saves and
-preferences remained unchanged. Selective PGO was retrained and installed;
+**2026-11-01 camera and thrown-weapon checkpoint:** SP slot 3 objective camera
+ID `7` now renders only its node-22 camera body centered on the right
+controller. Right grip maps to native R2 and neutralizes all movement/turn
+axes. Unaimed trigger swaps the tracked camera model to its nodes-15/16/18/19
+paper prop; grip plus trigger shows the viewfinder and completes
+`PHOTOGRAPHED CIPHER KEY BOOK`. The final bounded-controller separated-eye
+receipt has zero model/input/tracking fallbacks and unchanged source saves.
+SP stick grenade ID `10` now passes through the same guarded final-release path
+as petrol: at controller yaw -30/0/+30 it recorded `2` aimed releases each,
+zero fallbacks, and controller-dependent first-motion deltas.
+
+Fresh selective-PGO training data was relinked with the final source. Installed
 production SHA-256 is
-`FB19115147DD970B54F7D8D247F007A6BE30550AA77CC7EAF8A97AB94F187478`.
-The normal tracked launcher smoke completed 57 new pairs in two seconds, with
-`60/60` weapon hits and zero weapon/XR fallbacks. Physical camera
-grip/scale/comfort remains open.
+`806ABF8CBA62C9721668AD68654A321E987B719A8AFB79AF348D39AB9BAAC6FE`.
+The normal bounded-controller launcher smoke completed 300/300 pairs over ten
+seconds with zero XR failures, `300/300` weapon hits and zero weapon
+fallbacks. Full 171-test suite passes. Physical headset model placement,
+movement-lock feel, paper swap and wrist comfort remain open.
 [Camera evidence and checklist](CAMERA_SLOT3_EVIDENCE.md).
 
 **2026-10-31 cache/PGO checkpoint:** the game pins framework `e57fd027`, which

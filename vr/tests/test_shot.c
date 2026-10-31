@@ -66,8 +66,8 @@ int main(void) {
     assert(mohu_vr_sp_tracked_type_valid(13u, 0x13F1u));
     assert(mohu_vr_sp_tracked_type_valid(14u, 0x13FAu));
     assert(mohu_vr_sp_tracked_type_valid(16u, 0x13F7u));
-    assert(!mohu_vr_sp_tracked_type_valid(10u, 0x13F3u));
-    assert(!mohu_vr_sp_tracked_type_valid(15u, 0x13F3u));
+    assert(mohu_vr_sp_tracked_type_valid(10u, 0x13F3u));
+    assert(mohu_vr_sp_tracked_type_valid(15u, 0x13F3u));
     assert(!mohu_vr_sp_tracked_type_valid(13u, 0x13F6u));
     assert(!mohu_vr_sp_tracked_type_valid(255u, 0u));
 

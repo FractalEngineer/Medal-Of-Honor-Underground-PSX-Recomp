@@ -132,12 +132,20 @@ int main(void) {
     {
         const MohuVrWeaponProfile* camera = mohu_vr_weapon_profile_find(7u);
         CHECK(camera && camera->face_count == 390u &&
-              camera->gun_face_count == 206u &&
+              camera->gun_face_count == 128u &&
+              camera->gun_vertex_count == 99u &&
               camera->node_count == 23u);
-        CHECK(mohu_vr_weapon_gun_vertex(camera, 1u, 0u));
-        CHECK(mohu_vr_weapon_gun_vertex(camera, 12u, 3u));
+        CHECK(!mohu_vr_weapon_gun_vertex(camera, 1u, 0u));
+        CHECK(!mohu_vr_weapon_gun_vertex(camera, 2u, 0u));
+        CHECK(!mohu_vr_weapon_gun_vertex(camera, 12u, 3u));
         CHECK(!mohu_vr_weapon_gun_vertex(camera, 15u, 0u));
-        CHECK(!mohu_vr_weapon_gun_vertex(camera, 22u, 0u));
+        CHECK(mohu_vr_weapon_gun_vertex(camera, 22u, 0u));
+        const MohuVrWeaponCalibration* camera_calibration =
+            mohu_vr_weapon_calibration_find(7u);
+        CHECK(camera_calibration &&
+              camera_calibration->grip_pivot[0] == -7.0 &&
+              camera_calibration->grip_pivot[1] == -27.5 &&
+              camera_calibration->grip_pivot[2] == -3.5);
     }
     {
         const MohuVrWeaponCalibration* calibration =

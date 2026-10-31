@@ -19,7 +19,9 @@ int mohu_vr_input_map(const PSXModOpenXRInput *input, double deadzone,
                     double turn_gain, const MohuVRAnalogResponse *response,
                     int merged_y, PSXModControllerState *pad);
 /* Camera mode maps a held right grip to R2 so Cross plus grip performs the
- * native "take photograph" action instead of the unaimed papers action. */
+ * native "take photograph" action instead of the unaimed papers action. While
+ * that grip is held, every analog movement/turn axis is neutral so controller
+ * motion cannot alter the camera calibration. */
 int mohu_vr_camera_input_map(const PSXModOpenXRInput *input, double deadzone,
                     double turn_gain, const MohuVRAnalogResponse *response,
                     int merged_y, int camera_aim,

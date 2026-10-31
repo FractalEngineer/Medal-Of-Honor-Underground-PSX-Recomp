@@ -123,6 +123,40 @@ def counter_delta(before: dict, after: dict, name: str) -> int:
     return int(after.get(name, 0)) - int(before.get(name, 0))
 
 
+def set_bounded_camera_hands() -> None:
+    """Place both synthetic controllers inside the separated-eye view."""
+    origin = {
+        "origin_valid": 1,
+        "ox_mm": 0,
+        "oy_mm": 0,
+        "oz_mm": 0,
+        "oqx": 0,
+        "oqy": 0,
+        "oqz": 0,
+        "oqw": 1000000,
+    }
+    for hand, x_mm, roll in (("left", -140, 707107),
+                             ("right", 140, -707107)):
+        for pose, z_mm in (("grip", -450), ("aim", -500)):
+            native.command(
+                "openxr_hands_override",
+                hand=hand,
+                pose=pose,
+                focused=1,
+                active=1,
+                flags=15,
+                age_ms=0,
+                px_mm=x_mm,
+                py_mm=-120,
+                pz_mm=z_mm,
+                qx=0,
+                qy=0,
+                qz=roll,
+                qw=707107,
+                **origin,
+            )
+
+
 def capture_stereo(directory: Path) -> tuple[Path, Path]:
     directory.mkdir()
     native.command("stereo_dump", path=directory.as_posix(), count=1)
@@ -272,6 +306,8 @@ def main() -> None:
                     )
                 comparison.release_load_override()
                 comparison.set_desktop_hands()
+                if args.camera_objective:
+                    set_bounded_camera_hands()
                 native.frames(10)
                 start = comparison.counter_values()
                 entries = [snapshot("initial")]
@@ -292,25 +328,39 @@ def main() -> None:
                     idle_left, idle_right = capture_stereo(
                         out / "camera-idle-stereo"
                     )
+                    before_unaimed = comparison.counter_values()
                     native.command(
                         "openxr_input_override",
                         right_squeeze=0,
                         right_trigger=1000,
                     )
                     native.frames(8)
+                    unaimed_left, unaimed_right = capture_stereo(
+                        out / "camera-unaimed-stereo"
+                    )
                     unaimed_path = out / "camera-unaimed.png"
                     native.command(
                         "screenshot_file", path=str(unaimed_path)
                     )
                     native.command("openxr_input_override", clear=1)
+                    after_unaimed = comparison.counter_values()
                     receipt["camera_unaimed_paper_check"] = {
                         "image": str(unaimed_path),
+                        "stereo_images": [
+                            str(unaimed_left), str(unaimed_right),
+                        ],
                         "input": {"right_trigger": 1000},
                         "native_effect": "papers",
+                        "counter_delta": {
+                            key: counter_delta(before_unaimed, after_unaimed, key)
+                            for key in after_unaimed
+                            if key.startswith("mohu.vr.")
+                        },
                     }
                     receipt["load"] = native.load(3)
                     comparison.release_load_override()
                     comparison.set_desktop_hands()
+                    set_bounded_camera_hands()
                     native.frames(10)
                     native.command(
                         "openxr_input_override",
@@ -328,6 +378,9 @@ def main() -> None:
                         right_trigger=1000,
                     )
                     native.frames(8)
+                    fire_left, fire_right = capture_stereo(
+                        out / "camera-photo-stereo"
+                    )
                     fire_path = out / "camera-photo.png"
                     native.command("screenshot_file", path=str(fire_path))
                     native.command(
@@ -336,6 +389,9 @@ def main() -> None:
                         right_trigger=0,
                     )
                     native.frames(8)
+                    release_left, release_right = capture_stereo(
+                        out / "camera-release-stereo"
+                    )
                     release_path = out / "camera-after.png"
                     native.command("screenshot_file", path=str(release_path))
                     native.command("openxr_input_override", clear=1)
@@ -349,6 +405,15 @@ def main() -> None:
                         ],
                         "stereo_images": [
                             str(aim_left), str(aim_right),
+                        ],
+                        "unaimed_stereo_images": [
+                            str(unaimed_left), str(unaimed_right),
+                        ],
+                        "fire_stereo_images": [
+                            str(fire_left), str(fire_right),
+                        ],
+                        "release_stereo_images": [
+                            str(release_left), str(release_right),
                         ],
                         "input": {
                             "right_squeeze": 1000,

@@ -104,12 +104,14 @@ static const MohuVrWeaponCalibration k_stick_grenade_calibration = {
     1u,
 };
 
-/* SP objective camera. Nodes 1..12 are the 206-face camera body; the native
- * arm/hand components are node 15..19 and the four disconnected islands in
- * node 22. Its front lens is +Z and the grip is at the bottom of the body. */
+/* SP objective camera. Node 22 contains the camera body; nodes 15, 16, 18 and
+ * 19 contain the papers used by the unaimed firing state, while nodes 1..12
+ * contain the native arm. The camera body is anchored at its measured
+ * bounding-box centre so it sits on the controller instead of projecting from
+ * the native hand grip. The renderer swaps to the paper vertices on trigger. */
 static const MohuVrWeaponCalibration k_camera_calibration = {
-    {0.0, -5.0, 0.0},
-    {0.0, 5.0, 41.0},
+    {-7.0, -27.5, -3.5},
+    {-7.0, -27.5, 3.0},
     {1.0, 0.0, 0.0},
     {0.0, -1.0, 0.0},
     {0.0, 0.0, 1.0},
@@ -235,7 +237,7 @@ static const MohuVrWeaponProfile k_weapon_profiles[] = {
      390u, 23u,
      {0, 18, 14, 20, 4, 4, 1, 1, 4, 4, 7, 4, 4, 0, 0, 15, 15, 0,
       5, 5, 0, 0, 99},
-     206u, 85u, 0x1FFEu, 0xFFu,
+     128u, 99u, 0x00400000u, 0xFFu,
      {0u, 0u, 0u, 0u},
      &k_camera_calibration},
     {8u, 2u, 0u, "Colt .45", 0xe0007u, 0x267e86aau, 0xc782d942u, 303u, 14u,

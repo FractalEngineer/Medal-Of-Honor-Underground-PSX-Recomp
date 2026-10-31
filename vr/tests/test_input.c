@@ -77,12 +77,22 @@ int main(void) {
     assert(mohu_vr_camera_input_map(
         &input, .2, .65, &response, 0, 1, &pad));
     assert(pad.buttons == (0xffffu ^ (0xf108u | 0x0200u)));
+    input.active[0] = input.active[1] = 1;
+    input.stick[0][0] = input.stick[0][1] = 1;
+    input.stick[1][0] = input.stick[1][1] = 1;
+    assert(mohu_vr_camera_input_map(
+        &input, .2, .65, &response, 1, 1, &pad));
+    assert(pad.lx == 128 && pad.ly == 128 && pad.rx == 128);
     input.squeeze[1] = .54f;
     assert(mohu_vr_camera_input_map(
         &input, .2, .65, &response, 0, 1, &pad));
     assert(pad.buttons == (0xffffu ^ 0xf108u));
     input.squeeze[1] = .8f;
+    assert(mohu_vr_camera_input_map(
+        &input, .2, .65, &response, 1, 1, &pad));
     assert(pad.lx == 128 && pad.ly == 128 && pad.rx == 128);
+    input.active[0] = input.active[1] = 0;
+    memset(input.stick, 0, sizeof input.stick);
     input.focused = 0;
     assert(mohu_vr_input_map(&input, .2, .65, &response, 0, &pad) && pad.buttons == 0xffff);
     input.focused = 1; input.buttons_active[0] = input.buttons_active[1] = 0;

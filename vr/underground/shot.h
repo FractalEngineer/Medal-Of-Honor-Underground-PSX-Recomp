@@ -98,8 +98,8 @@ static inline MohuVrShotFamily mohu_vr_shot_family(uint32_t type) {
 }
 
 /* SP uses the same family types at 80048604 -> 80076C28. P38 and Sten are
- * observed live. The rocket is admitted separately below after its SP basis
- * call; thrown families remain native until their final-origin path is bound. */
+ * observed live. The rocket and both thrown props are admitted after their
+ * measured final-origin seams below. */
 static inline int mohu_vr_sp_firearm_type_valid(uint32_t id, uint32_t type) {
     const uint32_t expected = mohu_vr_shot_type(id);
     return expected == type &&
@@ -108,19 +108,21 @@ static inline int mohu_vr_sp_firearm_type_valid(uint32_t id, uint32_t type) {
             type == MOHU_VR_SHOT_TYPE_BOLT);
 }
 
-/* The rocket enters the same measured SP basis seam before its final origin
- * adjustment. Thrown families remain excluded until their SP constructor and
- * release path are bound independently. */
+/* The rocket and thrown families enter the measured SP basis seam. Thrown
+ * poses are corrected again at their final release seam so native release
+ * writes cannot restore a fixed camera-space direction. */
 static inline int mohu_vr_sp_tracked_type_valid(uint32_t id, uint32_t type) {
     const uint32_t expected = mohu_vr_shot_type(id);
     return expected == type &&
            (type == MOHU_VR_SHOT_TYPE_SINGLE ||
             type == MOHU_VR_SHOT_TYPE_REPEATING ||
             type == MOHU_VR_SHOT_TYPE_BOLT ||
-            type == MOHU_VR_SHOT_TYPE_ROCKET);
+            type == MOHU_VR_SHOT_TYPE_ROCKET ||
+            type == MOHU_VR_SHOT_TYPE_THROWN);
 }
 
-/* Only the independently observed SP petrol release register contract.
+/* Independently observed SP thrown-release register contract. It is shared by
+ * the stick grenade and petrol bomb.
  * The caller additionally checks live model/type/code/camera/tracking. */
 static inline int mohu_vr_sp_petrol_release_valid(
     uint32_t shot, uint32_t saved_shot, uint32_t player,
