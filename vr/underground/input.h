@@ -18,6 +18,12 @@ int32_t mohu_vr_analog_response(const MohuVRAnalogResponse *response,
 int mohu_vr_input_map(const PSXModOpenXRInput *input, double deadzone,
                     double turn_gain, const MohuVRAnalogResponse *response,
                     int merged_y, PSXModControllerState *pad);
+/* Camera mode maps a held right grip to R2 so Cross plus grip performs the
+ * native "take photograph" action instead of the unaimed papers action. */
+int mohu_vr_camera_input_map(const PSXModOpenXRInput *input, double deadzone,
+                    double turn_gain, const MohuVRAnalogResponse *response,
+                    int merged_y, int camera_aim,
+                    PSXModControllerState *pad);
 /* Native menu buttons/D-pad, independent of gameplay calibration tables. */
 int mohu_vr_menu_input_map(const PSXModOpenXRInput *input,double deadzone,
                          PSXModControllerState *pad);

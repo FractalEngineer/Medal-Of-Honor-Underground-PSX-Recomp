@@ -104,6 +104,22 @@ static const MohuVrWeaponCalibration k_stick_grenade_calibration = {
     1u,
 };
 
+/* SP objective camera. Nodes 1..12 are the 206-face camera body; the native
+ * arm/hand components are node 15..19 and the four disconnected islands in
+ * node 22. Its front lens is +Z and the grip is at the bottom of the body. */
+static const MohuVrWeaponCalibration k_camera_calibration = {
+    {0.0, -5.0, 0.0},
+    {0.0, 5.0, 41.0},
+    {1.0, 0.0, 0.0},
+    {0.0, -1.0, 0.0},
+    {0.0, 0.0, 1.0},
+    {0.0, 0.0, 0.0},
+    850.0,
+    0.200000000000,
+    41.0,
+    1u,
+};
+
 static const MohuVrWeaponCalibration k_m1_garand_calibration = {
     {67.333333333333, 88.111111111111, 233.407407407407},
     {79.200000000000, 97.200000000000, 744.000000000000},
@@ -215,6 +231,13 @@ static const MohuVrWeaponProfile k_weapon_profiles[] = {
      199u, 159u, (1u << 22u) | (1u << 25u), 0xFFu,
      {0u, 0u, 0u, 0u},
      &k_scoped_rifle_calibration},
+    {7u, 0u, 0u, "Objective camera", 0x170007u, 0x53506d92u, 0x3edcca12u,
+     390u, 23u,
+     {0, 18, 14, 20, 4, 4, 1, 1, 4, 4, 7, 4, 4, 0, 0, 15, 15, 0,
+      5, 5, 0, 0, 99},
+     206u, 85u, 0x1FFEu, 0xFFu,
+     {0u, 0u, 0u, 0u},
+     &k_camera_calibration},
     {8u, 2u, 0u, "Colt .45", 0xe0007u, 0x267e86aau, 0xc782d942u, 303u, 14u,
      {0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 0, 92, 0, 68},
      115u, 68u, 1u << 13u, 0xFFu, {0u, 0u, 0u, 0u},

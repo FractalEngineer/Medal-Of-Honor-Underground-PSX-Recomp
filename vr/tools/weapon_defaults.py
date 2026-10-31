@@ -19,8 +19,11 @@ def calibrations(root=None):
                       r'\{(.*?)\n\};', source, re.S)
     result = {}
     for name, body in rows:
+        # Objective camera is a tracked SP prop, not a multiplayer shot profile.
+        if name not in IDS:
+            continue
         vectors = re.findall(r'\{([^{}]+)\}', body)
-        if len(vectors) != 6 or name not in IDS:
+        if len(vectors) != 6:
             raise ValueError('Changed calibration initializer schema')
         values = {key: [float(x.strip()) for x in row.split(',')]
                   for key, row in zip(('grip_pivot', 'muzzle', 'right', 'up',

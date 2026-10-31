@@ -605,8 +605,13 @@ static int vr_controller_source(PSXModControllerState* pad) {
     g_input_guard_reported = false;
     int merged = input.squeeze_active[0] && isfinite(input.squeeze[0]) &&
                  input.squeeze[0] >= .55f && input.squeeze[0] <= 1;
-    return mohu_vr_input_map(&input, g_move_deadzone, g_turn_gain,
-                             &response, merged, pad);
+    const uint32_t player_input =
+        psx_mod_read_word(player + 0x39Cu);
+    const int camera_aim =
+        !multiplayer && player_input == player + 0x3FCu &&
+        psx_mod_read_byte(player_input + 93u) == 7u;
+    return mohu_vr_camera_input_map(&input, g_move_deadzone, g_turn_gain,
+                                    &response, merged, camera_aim, pad);
 }
 
 static uint32_t vr_controller_mode(const PSXModControllerInput* input) {
@@ -4433,13 +4438,12 @@ static void vr_sp_weapon_projected(CPUState* cpu, uint32_t address) {
     const unsigned eye = g_stereo_current_eye;
     const MohuVrWeaponProfile* profile =
         mohu_vr_weapon_profile_find((uint8_t)g_weapon_profile_last_id);
-    const MohuVrMarkerGroup* group =
-        mohu_vr_marker_group((uint8_t)g_weapon_profile_last_id);
-    if (!profile || !group) return;
+    if (!profile) return;
     uint32_t outputs[MOHU_VR_WEAPON_FP_MAX_NODES] = {0};
     for (unsigned node = 0; node < profile->node_count; ++node)
         outputs[node] = psx_mod_read_word(g_sp_weapon_output + node * 4u);
-    vr_weapon_projected_flash(profile, outputs, eye);
+    if (mohu_vr_marker_group((uint8_t)g_weapon_profile_last_id))
+        vr_weapon_projected_flash(profile, outputs, eye);
     if (!g_weapon_gun_only) return;
     g_p38_masked_vertices[eye] = g_p38_gun_vertices[eye] = 0;
     for (unsigned node = 0; node < profile->node_count; ++node) {

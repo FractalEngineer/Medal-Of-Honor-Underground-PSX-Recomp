@@ -74,6 +74,14 @@ int main(void) {
     assert(mohu_vr_input_map(&input, .2, .65, &response, 0, &pad));
     /* No R2: the right-grip aim mapping was removed, so nothing drives it. */
     assert(pad.buttons == (0xffffu ^ 0xf108u)); /* buttons don't depend on stick activity */
+    assert(mohu_vr_camera_input_map(
+        &input, .2, .65, &response, 0, 1, &pad));
+    assert(pad.buttons == (0xffffu ^ (0xf108u | 0x0200u)));
+    input.squeeze[1] = .54f;
+    assert(mohu_vr_camera_input_map(
+        &input, .2, .65, &response, 0, 1, &pad));
+    assert(pad.buttons == (0xffffu ^ 0xf108u));
+    input.squeeze[1] = .8f;
     assert(pad.lx == 128 && pad.ly == 128 && pad.rx == 128);
     input.focused = 0;
     assert(mohu_vr_input_map(&input, .2, .65, &response, 0, &pad) && pad.buttons == 0xffff);

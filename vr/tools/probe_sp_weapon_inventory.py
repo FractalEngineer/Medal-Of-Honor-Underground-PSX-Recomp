@@ -1,4 +1,4 @@
-"""Inventory naturally reachable SP weapons in copied fixtures.
+"""Inventory naturally reachable SP weapons and exercise the slot-3 camera.
 
 The probe uses ordinary weapon-switch input and the measured SP input/viewmodel
 layout. It does not edit inventory, ammunition, health, saves or guest code.
@@ -14,6 +14,7 @@ import shutil
 import socket
 import struct
 import subprocess
+import time
 
 import inspect_weapon_sets as native
 import probe_p38_headset as comparison
@@ -24,6 +25,7 @@ SP_PLAYER = 0x800AA17C
 SP_INPUT_OFFSET = 0x39C
 SP_VIEWMODEL_OFFSET = 0x114
 SP_INPUT_VIEWMODEL_OFFSET = 0x330
+SP_SPECIAL_WEAPONS = {7: "Objective camera"}
 
 
 def read_word(address: int) -> int:
@@ -107,7 +109,9 @@ def snapshot(label: str) -> dict:
         "input": hex(player_input),
         "object": hex(object_address),
         "weapon_id": weapon_id,
-        "weapon": native.WEAPONS.get(weapon_id, "Unknown"),
+        "weapon": SP_SPECIAL_WEAPONS.get(
+            weapon_id, native.WEAPONS.get(weapon_id, "Unknown")
+        ),
         "weapon_slot": native.read(player_input + 92, 1)[0],
         "model": geometry_identity(object_address),
         "render": comparison.shot_command("render"),
@@ -117,6 +121,19 @@ def snapshot(label: str) -> dict:
 
 def counter_delta(before: dict, after: dict, name: str) -> int:
     return int(after.get(name, 0)) - int(before.get(name, 0))
+
+
+def capture_stereo(directory: Path) -> tuple[Path, Path]:
+    directory.mkdir()
+    native.command("stereo_dump", path=directory.as_posix(), count=1)
+    deadline = time.monotonic() + 10
+    while time.monotonic() < deadline:
+        left = list(directory.glob("*_left.png"))
+        right = list(directory.glob("*_right.png"))
+        if len(left) == len(right) == 1:
+            return left[0], right[0]
+        time.sleep(.05)
+    raise RuntimeError("No complete camera stereo pair")
 
 
 def main() -> None:
@@ -141,6 +158,16 @@ def main() -> None:
         action="store_true",
         help="record the first SP model/tracking rejection in the runtime log",
     )
+    parser.add_argument(
+        "--dump-ram",
+        action="store_true",
+        help="save a read-only 2 MiB guest RAM snapshot for mesh analysis",
+    )
+    parser.add_argument(
+        "--camera-objective",
+        action="store_true",
+        help="exercise slot 3 camera aim plus trigger in an isolated save",
+    )
     args = parser.parse_args()
     if native.game_pids():
         raise RuntimeError("Close the existing game before this owned probe")
@@ -151,6 +178,8 @@ def main() -> None:
         parser.error("slots must be in 0..99")
     if not 1 <= args.switches <= 8:
         parser.error("switches must be in 1..8")
+    if args.camera_objective and args.slots != [3]:
+        parser.error("camera-objective requires --slots 3")
 
     out = args.out.resolve()
     out.mkdir(parents=True, exist_ok=False)
@@ -182,6 +211,8 @@ def main() -> None:
         MOHU_VR_MP_FRUSTUM="0",
         MOHU_VR_WEAPON_TRACE=str(int(args.weapon_trace)),
     )
+    if args.camera_objective:
+        env["MOHU_VR_EYE_OFFSET"] = "8"
     receipt = {
         "schema": 1,
         "kind": "G7a read-only SP natural weapon inventory",
@@ -229,6 +260,16 @@ def main() -> None:
             comparison.wait_for_ping(process)
             for slot in args.slots:
                 receipt["load"] = native.load(slot)
+                if args.dump_ram:
+                    slot_dir = out / f"slot-{slot:02}"
+                    slot_dir.mkdir()
+                    (slot_dir / "ram.bin").write_bytes(
+                        native.read(0x80000000, 0x200000)
+                    )
+                    native.command(
+                        "screenshot_file",
+                        path=str(slot_dir / "initial.png"),
+                    )
                 comparison.release_load_override()
                 comparison.set_desktop_hands()
                 native.frames(10)
@@ -247,6 +288,78 @@ def main() -> None:
                         start, end, "mohu.vr.weapon.sp.model_guard_fail"
                     ),
                 }
+                if args.camera_objective:
+                    idle_left, idle_right = capture_stereo(
+                        out / "camera-idle-stereo"
+                    )
+                    native.command(
+                        "openxr_input_override",
+                        right_squeeze=0,
+                        right_trigger=1000,
+                    )
+                    native.frames(8)
+                    unaimed_path = out / "camera-unaimed.png"
+                    native.command(
+                        "screenshot_file", path=str(unaimed_path)
+                    )
+                    native.command("openxr_input_override", clear=1)
+                    receipt["camera_unaimed_paper_check"] = {
+                        "image": str(unaimed_path),
+                        "input": {"right_trigger": 1000},
+                        "native_effect": "papers",
+                    }
+                    receipt["load"] = native.load(3)
+                    comparison.release_load_override()
+                    comparison.set_desktop_hands()
+                    native.frames(10)
+                    native.command(
+                        "openxr_input_override",
+                        right_squeeze=1000,
+                        right_trigger=0,
+                    )
+                    native.frames(8)
+                    aim_path = out / "camera-aim.png"
+                    native.command("screenshot_file", path=str(aim_path))
+                    aim_left, aim_right = capture_stereo(out / "camera-stereo")
+                    before_fire = comparison.counter_values()
+                    native.command(
+                        "openxr_input_override",
+                        right_squeeze=1000,
+                        right_trigger=1000,
+                    )
+                    native.frames(8)
+                    fire_path = out / "camera-photo.png"
+                    native.command("screenshot_file", path=str(fire_path))
+                    native.command(
+                        "openxr_input_override",
+                        right_squeeze=1000,
+                        right_trigger=0,
+                    )
+                    native.frames(8)
+                    release_path = out / "camera-after.png"
+                    native.command("screenshot_file", path=str(release_path))
+                    native.command("openxr_input_override", clear=1)
+                    after_fire = comparison.counter_values()
+                    entries[0]["camera_objective"] = {
+                        "aim_image": str(aim_path),
+                        "fire_image": str(fire_path),
+                        "release_image": str(release_path),
+                        "idle_stereo_images": [
+                            str(idle_left), str(idle_right),
+                        ],
+                        "stereo_images": [
+                            str(aim_left), str(aim_right),
+                        ],
+                        "input": {
+                            "right_squeeze": 1000,
+                            "right_trigger": 1000,
+                        },
+                        "counter_delta": {
+                            key: counter_delta(before_fire, after_fire, key)
+                            for key in after_fire
+                            if key.startswith("mohu.vr.")
+                        },
+                    }
                 for index in range(args.switches):
                     native.switch()
                     comparison.release_load_override()

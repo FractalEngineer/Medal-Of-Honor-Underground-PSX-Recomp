@@ -1,5 +1,20 @@
 # Underground VR execution handoff
 
+**2026-11-01 camera checkpoint:** SP slot 3 now loads objective camera weapon
+ID `7` with exact asset identity `53506D92` / pose `3EDCCA12`. The profile tracks
+the 206-face camera body in both eyes, masks 139 arm vertices, and leaves the
+13-ID multiplayer shot matrix unchanged. While weapon 7 is equipped in SP,
+right grip maps to native R2; trigger continues to map to Cross. An isolated
+live control shows the unaimed papers path, then the viewfinder and
+`PHOTOGRAPHED CIPHER KEY BOOK` when grip plus trigger are held. Source saves and
+preferences remained unchanged. Selective PGO was retrained and installed;
+production SHA-256 is
+`FB19115147DD970B54F7D8D247F007A6BE30550AA77CC7EAF8A97AB94F187478`.
+The normal tracked launcher smoke completed 57 new pairs in two seconds, with
+`60/60` weapon hits and zero weapon/XR fallbacks. Physical camera
+grip/scale/comfort remains open.
+[Camera evidence and checklist](CAMERA_SLOT3_EVIDENCE.md).
+
 **2026-10-31 cache/PGO checkpoint:** the game pins framework `e57fd027`, which
 contains the native-overlay hook guard and release-safe synthetic XR overrides.
 The current `cg18_e060fa62_gc7068bcdd_f2` cache was force-rebuilt at 31/31
@@ -344,9 +359,9 @@ the SP work/fixture, without expanding MP scope.
 - Restore/rebuild production debug-OFF after diagnostic builds. End with no
   owned game process/overrides left behind and no persistent XR settings change.
   Current production executable is
-  `49936ea2ce270c8066738513d58dcca0cf23c9ba3df648fb069880b640c93753`.
+  `fb19115147dd970b54f7d8d247f007a6be30550aa77cc7eaf8a97ab94f187478`.
 - Run focused checks appropriate to changes and `git diff --check`. Current
-  baseline: 140 Python tests, including shared save-route and SP weapon-tool coverage.
+  baseline: 171 Python tests, including shared save-route and SP weapon-tool coverage.
   Strict shot/weapon/raycast/frustum/cadence/cache-key C fixtures and 100,000
   preflight comparisons pass. Current production smoke and both profile builds
   pass; exact provenance is in the render-kernel receipt.

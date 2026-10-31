@@ -40,7 +40,7 @@ static void valid_hands(PSXModOpenXRHands* hands) {
 }
 
 int main(void) {
-    CHECK(mohu_vr_weapon_profile_count() == 13u);
+    CHECK(mohu_vr_weapon_profile_count() == 14u);
     for (size_t i = 0; i < mohu_vr_weapon_profile_count(); ++i) {
         const MohuVrWeaponProfile* profile = mohu_vr_weapon_profile_at(i);
         CHECK(profile && profile->name && mohu_vr_weapon_profile_find(profile->id));
@@ -56,6 +56,8 @@ int main(void) {
              profile, 0xA5D4B144u, 0x926AB21Cu) == (profile->id == 9u));
         CHECK(mohu_vr_weapon_sp_geometry_valid(
              profile, 0x408599ACu, 0x5D809AB4u) == (profile->id == 15u));
+        CHECK(mohu_vr_weapon_sp_geometry_valid(
+             profile, 0x53506D92u, 0x3EDCCA12u) == (profile->id == 7u));
         CHECK(!mohu_vr_weapon_sp_geometry_valid(
             profile, 0x408599ADu, 0x5D809AB5u));
         CHECK(profile->calibration && profile->calibration->provisional == 1u);
@@ -127,6 +129,16 @@ int main(void) {
         mohu_vr_weapon_profile_find(1u), 26u, 0u));
     CHECK(!mohu_vr_weapon_gun_vertex(
         mohu_vr_weapon_profile_find(1u), 22u, 0u));
+    {
+        const MohuVrWeaponProfile* camera = mohu_vr_weapon_profile_find(7u);
+        CHECK(camera && camera->face_count == 390u &&
+              camera->gun_face_count == 206u &&
+              camera->node_count == 23u);
+        CHECK(mohu_vr_weapon_gun_vertex(camera, 1u, 0u));
+        CHECK(mohu_vr_weapon_gun_vertex(camera, 12u, 3u));
+        CHECK(!mohu_vr_weapon_gun_vertex(camera, 15u, 0u));
+        CHECK(!mohu_vr_weapon_gun_vertex(camera, 22u, 0u));
+    }
     {
         const MohuVrWeaponCalibration* calibration =
             mohu_vr_weapon_calibration_find(0u);

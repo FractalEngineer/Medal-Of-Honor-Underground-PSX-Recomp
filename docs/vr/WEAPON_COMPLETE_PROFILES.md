@@ -21,6 +21,13 @@ recoil, reload, switching, scope hiding and the grenade, petrol-bomb and
 Panzerfaust special actions. P38 continues to use its accepted complete-gun
 calibration exactly; the other 12 profiles are explicitly provisional.
 
+The SP objective camera is tracked as a separate special profile, ID 7, and is
+not part of the 13-ID multiplayer shot-family matrix. Its 206-face body
+(nodes 1-12) is retained while 139 arm vertices are masked per eye. Right grip
+maps to native R2 only for this equipped SP item, allowing trigger to select the
+photograph action instead of the unaimed papers action. See
+[CAMERA_SLOT3_EVIDENCE.md](CAMERA_SLOT3_EVIDENCE.md).
+
 Normal defaults are unchanged. The new candidates require either
 `MOHU_VR_WEAPON_GUN_ONLY=1` or `MOHU_VR_WEAPON_CALIBRATED=1`.
 The older `MOHU_VR_P38_CALIBRATED=1` path remains P38-specific.

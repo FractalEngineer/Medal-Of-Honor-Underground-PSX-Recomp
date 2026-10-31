@@ -11,7 +11,7 @@ static double scalar_deadzone(double v, double deadzone) {
     if (fabs(v) <= deadzone) return 0;
     return copysign((fabs(v) - deadzone) / (1 - deadzone), v);
 }
-static uint32_t combat_buttons(const PSXModOpenXRInput *input) {
+static uint32_t combat_buttons(const PSXModOpenXRInput *input, int camera_aim) {
     uint32_t left = input->buttons[0] & input->buttons_active[0];
     uint32_t right = input->buttons[1] & input->buttons_active[1];
     uint32_t pressed = 0;
@@ -20,6 +20,9 @@ static uint32_t combat_buttons(const PSXModOpenXRInput *input) {
      * Square's reload/interaction context is still the game's decision. */
     if (input->trigger_active[1] && isfinite(input->trigger[1]) &&
         input->trigger[1] >= .55f && input->trigger[1] <= 1) pressed |= 0x4000; /* Cross: fire/confirm */
+    if (camera_aim && input->squeeze_active[1] &&
+        isfinite(input->squeeze[1]) && input->squeeze[1] >= .55f &&
+        input->squeeze[1] <= 1) pressed |= 0x0200; /* R2: camera aim */
     if (right & PSX_MOD_XR_PRIMARY) pressed |= 0x8000; /* A: Square/use */
     if (right & PSX_MOD_XR_SECONDARY) pressed |= 0x2000; /* B: Circle/next weapon/back */
     if (left & PSX_MOD_XR_PRIMARY) pressed |= 0x8000; /* X: Square/reload/use context */
@@ -114,15 +117,16 @@ static uint32_t inverse_axis(const MohuVRAnalogResponse *response,
     }
     return best;
 }
-int mohu_vr_input_map(const PSXModOpenXRInput *input, double deadzone,
+int mohu_vr_camera_input_map(const PSXModOpenXRInput *input, double deadzone,
                     double turn_gain, const MohuVRAnalogResponse *response,
-                    int merged_y, PSXModControllerState *pad) {
+                    int merged_y, int camera_aim,
+                    PSXModControllerState *pad) {
     if (!pad) return 0;
     memset(pad, 0, sizeof *pad); pad->struct_size = sizeof *pad;
     pad->buttons = 0xffff;
     pad->lx = pad->ly = pad->rx = pad->ry = 128; pad->analog = 1;
     if (!input || input->struct_size != sizeof *input || !input->focused) return 1;
-    pad->buttons = combat_buttons(input);
+    pad->buttons = combat_buttons(input, camera_aim);
     if (!isfinite(deadzone) || deadzone < 0 || deadzone >= 1 ||
         !isfinite(turn_gain) || turn_gain < 0 || turn_gain > 2 ||
         !valid_response(response)) return 0;
@@ -154,4 +158,11 @@ int mohu_vr_input_map(const PSXModOpenXRInput *input, double deadzone,
     }
     if (have_ly) pad->ly = inverse_axis(response, 1, ly);
     return 1;
+}
+
+int mohu_vr_input_map(const PSXModOpenXRInput *input, double deadzone,
+                    double turn_gain, const MohuVRAnalogResponse *response,
+                    int merged_y, PSXModControllerState *pad) {
+    return mohu_vr_camera_input_map(input, deadzone, turn_gain, response,
+                                    merged_y, 0, pad);
 }
