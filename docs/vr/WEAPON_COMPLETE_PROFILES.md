@@ -58,6 +58,24 @@ and [all-node capture receipt](../../vr/proof/weapon-profile-captures-receipt.js
 The capture contains 16 slot appearances because IDs 10, 15 and 17 occur in
 more than one native cycle, but only 13 unique IDs.
 
+## SP asset variants
+
+SP missions may reuse a multiplayer mesh with different texture/presentation
+metadata. The profile guard therefore computes two FNV-1a hashes over node
+counts and vertex packets:
+
+- the raw hash includes all eight bytes of every vertex and remains the exact
+  MP asset identity;
+- the pose hash includes only the first six bytes (`X/Y/Z`) and must match the
+  corresponding MP profile when the raw hash differs.
+
+Mesh magic, face count, node count, per-node vertex count, marker indices and
+the complete gun-only mask always remain exact. This shared rule covers all 13
+profiles. Verified examples are MP40 SP `431BB1CB` / pose `D21273BB` and
+silenced pistol SP `A5D4B144` / pose `926AB21C`. Runtime receipts live under
+`analysis/runtime/mp40-slot2-final-diagnostic-20261031/` and
+`analysis/runtime/mp40-pgo-production-tracked-20261031/`.
+
 ## Provisional calibration (historical PCA candidate)
 
 The current authored-axis/850-unit firearm candidate supersedes this table.

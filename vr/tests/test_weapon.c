@@ -44,11 +44,20 @@ int main(void) {
     for (size_t i = 0; i < mohu_vr_weapon_profile_count(); ++i) {
         const MohuVrWeaponProfile* profile = mohu_vr_weapon_profile_at(i);
         CHECK(profile && profile->name && mohu_vr_weapon_profile_find(profile->id));
-        CHECK(profile->geometry_fnv32 && profile->node_count <= 32u);
-        CHECK(mohu_vr_weapon_sp_geometry_valid(profile, profile->geometry_fnv32));
-        CHECK(mohu_vr_weapon_sp_geometry_valid(profile, 0x408599ACu) == (profile->id == 15u));
-        CHECK(mohu_vr_weapon_sp_geometry_valid(profile, 0xA5D4B144u) == (profile->id == 9u));
-        CHECK(!mohu_vr_weapon_sp_geometry_valid(profile, 0x408599ADu));
+        CHECK(profile->geometry_fnv32 && profile->geometry_pose_fnv32 &&
+              profile->node_count <= 32u);
+        CHECK(mohu_vr_weapon_sp_geometry_valid(
+            profile, profile->geometry_fnv32, 0u));
+        CHECK(mohu_vr_weapon_sp_geometry_valid(
+            profile, 0u, profile->geometry_pose_fnv32));
+        CHECK(mohu_vr_weapon_sp_geometry_valid(
+             profile, 0x431BB1CBu, 0xD21273BBu) == (profile->id == 1u));
+        CHECK(mohu_vr_weapon_sp_geometry_valid(
+             profile, 0xA5D4B144u, 0x926AB21Cu) == (profile->id == 9u));
+        CHECK(mohu_vr_weapon_sp_geometry_valid(
+             profile, 0x408599ACu, 0x5D809AB4u) == (profile->id == 15u));
+        CHECK(!mohu_vr_weapon_sp_geometry_valid(
+            profile, 0x408599ADu, 0x5D809AB5u));
         CHECK(profile->calibration && profile->calibration->provisional == 1u);
         CHECK(profile->calibration->model_units_per_metre > 1.0);
         CHECK(profile->calibration->reference_length_m > 0.0);
@@ -68,6 +77,8 @@ int main(void) {
             profile->face_count + 1u, profile->vertices, profile->node_count));
         for (size_t j = 0; j < i; ++j) {
             CHECK(mohu_vr_weapon_profile_at(j)->id != profile->id);
+            CHECK(mohu_vr_weapon_profile_at(j)->geometry_pose_fnv32 !=
+                  profile->geometry_pose_fnv32);
         }
         unsigned gun_vertices = 0;
         for (unsigned node = 0; node < profile->node_count; ++node) {

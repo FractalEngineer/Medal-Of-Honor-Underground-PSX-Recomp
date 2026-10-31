@@ -4049,7 +4049,8 @@ static bool vr_sp_weapon_model_valid(uint32_t input, uint32_t object,
 static bool vr_sp_weapon_model_reject(
     const char* reason, uint32_t input, uint32_t object, uint32_t id,
     const MohuVrWeaponProfile* profile, uint32_t actual_magic,
-    uint32_t actual_faces, uint32_t actual_nodes, uint32_t actual_hash) {
+    uint32_t actual_faces, uint32_t actual_nodes, uint32_t actual_hash,
+    uint32_t actual_pose_hash) {
     if (g_weapon_trace && !g_weapon_model_failure_reported) {
         g_weapon_model_failure_reported = true;
         fprintf(stdout,
@@ -4057,12 +4058,14 @@ static bool vr_sp_weapon_model_reject(
                 "input=0x%08X object=0x%08X id=%u profile=%s "
                 "magic=0x%08X expected_magic=0x%08X "
                 "faces=%u expected_faces=%u nodes=%u expected_nodes=%u "
-                "geometry=0x%08X expected_geometry=0x%08X\n",
+                "geometry=0x%08X expected_geometry=0x%08X "
+                "pose=0x%08X expected_pose=0x%08X\n",
                 reason, input, object, id, profile ? profile->name : "none",
                 actual_magic, profile ? profile->mesh_magic : 0u,
                 actual_faces, profile ? profile->face_count : 0u,
                 actual_nodes, profile ? profile->node_count : 0u,
-                actual_hash, profile ? profile->geometry_fnv32 : 0u);
+                actual_hash, profile ? profile->geometry_fnv32 : 0u,
+                actual_pose_hash, profile ? profile->geometry_pose_fnv32 : 0u);
         fflush(stdout);
     }
     return false;
@@ -4246,7 +4249,7 @@ static bool vr_sp_weapon_model_valid(uint32_t input, uint32_t object,
         input > 0x801FC000u || object < 0x800B0000u ||
         object > 0x801FC000u) {
         return vr_sp_weapon_model_reject(
-            "address", input, object, 0u, NULL, 0u, 0u, 0u, 0u);
+            "address", input, object, 0u, NULL, 0u, 0u, 0u, 0u, 0u);
     }
     const uint8_t id = psx_mod_read_byte(input + 93u);
     const MohuVrWeaponProfile* profile = mohu_vr_weapon_profile_find(id);
@@ -4255,33 +4258,34 @@ static bool vr_sp_weapon_model_valid(uint32_t input, uint32_t object,
     if (!profile || !profile->calibration)
         return vr_sp_weapon_model_reject(
             "profile", input, object, id, profile,
-            actual_magic, actual_faces, 0u, 0u);
+            actual_magic, actual_faces, 0u, 0u, 0u);
     if (actual_magic != profile->mesh_magic)
         return vr_sp_weapon_model_reject(
             "magic", input, object, id, profile,
-            actual_magic, actual_faces, 0u, 0u);
+            actual_magic, actual_faces, 0u, 0u, 0u);
     if (actual_faces != profile->face_count)
         return vr_sp_weapon_model_reject(
             "faces", input, object, id, profile,
-            actual_magic, actual_faces, 0u, 0u);
+            actual_magic, actual_faces, 0u, 0u, 0u);
     const uint32_t header = psx_mod_read_word(object + 0x80u);
     if (header < 0x80000000u || header > 0x801FFFF8u || (header & 3u))
         return vr_sp_weapon_model_reject(
             "header", input, object, id, profile,
-            actual_magic, actual_faces, 0u, 0u);
+            actual_magic, actual_faces, 0u, 0u, 0u);
     const uint32_t actual_nodes = psx_mod_read_word(header + 4u);
     if (actual_nodes != profile->node_count)
         return vr_sp_weapon_model_reject(
             "nodes", input, object, id, profile,
-            actual_magic, actual_faces, actual_nodes, 0u);
+            actual_magic, actual_faces, actual_nodes, 0u, 0u);
     const uint32_t nodes = psx_mod_read_word(header);
     if (nodes < 0x80000000u ||
         nodes > 0x80200000u - profile->node_count * 8u || (nodes & 3u)) {
         return vr_sp_weapon_model_reject(
             "node_table", input, object, id, profile,
-            actual_magic, actual_faces, actual_nodes, 0u);
+            actual_magic, actual_faces, actual_nodes, 0u, 0u);
     }
     uint32_t hash = 2166136261u;
+    uint32_t pose_hash = 2166136261u;
     for (unsigned node = 0; node < profile->node_count; ++node) {
         const uint32_t count = psx_mod_read_word(nodes + node * 8u + 4u);
         const uint32_t data = psx_mod_read_word(nodes + node * 8u);
@@ -4290,17 +4294,24 @@ static bool vr_sp_weapon_model_valid(uint32_t input, uint32_t object,
                        data > 0x80200000u - count * 8u || (data & 3u)))) {
             return vr_sp_weapon_model_reject(
                 "vertices", input, object, id, profile,
-                actual_magic, actual_faces, actual_nodes, hash);
+                actual_magic, actual_faces, actual_nodes, hash, pose_hash);
         }
-        for (unsigned k = 0; k < 4u; ++k)
+        for (unsigned k = 0; k < 4u; ++k) {
             hash = (hash ^ ((count >> (k * 8u)) & 255u)) * 16777619u;
-        for (unsigned k = 0; k < count * 8u; ++k)
+            pose_hash =
+                (pose_hash ^ ((count >> (k * 8u)) & 255u)) * 16777619u;
+        }
+        for (unsigned k = 0; k < count * 8u; ++k) {
             hash = (hash ^ psx_mod_read_byte(data + k)) * 16777619u;
+            if ((k & 7u) < 6u)
+                pose_hash =
+                    (pose_hash ^ psx_mod_read_byte(data + k)) * 16777619u;
+        }
     }
-    if (!mohu_vr_weapon_sp_geometry_valid(profile, hash))
+    if (!mohu_vr_weapon_sp_geometry_valid(profile, hash, pose_hash))
         return vr_sp_weapon_model_reject(
             "geometry", input, object, id, profile,
-            actual_magic, actual_faces, actual_nodes, hash);
+            actual_magic, actual_faces, actual_nodes, hash, pose_hash);
     *id_out = id;
     *profile_out = profile;
     return true;

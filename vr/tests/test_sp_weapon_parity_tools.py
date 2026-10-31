@@ -23,6 +23,16 @@ class SpWeaponParityToolsTest(unittest.TestCase):
             ),
             3,
         )
+        self.assertEqual(
+            inventory.fnv32_bytes(2166136261, b""),
+            2166136261,
+        )
+        self.assertEqual(
+            inventory.fnv32_bytes(2166136261, b"\x00\x01\xff"),
+            inventory.fnv32_bytes(
+                inventory.fnv32_bytes(2166136261, b"\x00"), b"\x01\xff"
+            ),
+        )
 
     def test_position_groups_require_complete_same_frame_xyz(self) -> None:
         shot = 0x800D5A50

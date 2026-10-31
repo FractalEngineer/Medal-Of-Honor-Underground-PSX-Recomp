@@ -34,6 +34,12 @@ def read_half(address: int) -> int:
     return struct.unpack("<H", native.read(address, 2))[0]
 
 
+def fnv32_bytes(hash_value: int, data: bytes) -> int:
+    for value in data:
+        hash_value = ((hash_value ^ value) * 16777619) & 0xFFFFFFFF
+    return hash_value
+
+
 def geometry_identity(object_address: int) -> dict:
     header = read_word(object_address + 0x80)
     if not 0x80000000 <= header <= 0x801FFFF8 or header & 3:
@@ -45,7 +51,9 @@ def geometry_identity(object_address: int) -> dict:
     ):
         raise RuntimeError(f"Invalid weapon node table {nodes:#010x}")
     table = native.read(nodes, count * 8)
-    fnv = 2166136261
+    raw_fnv = 2166136261
+    pose_fnv = 2166136261
+    attributes_fnv = 2166136261
     rows = []
     for index in range(count):
         address, vertices = struct.unpack_from("<II", table, index * 8)
@@ -56,8 +64,15 @@ def geometry_identity(object_address: int) -> dict:
         ):
             raise RuntimeError(f"Invalid weapon node {index} vertex range")
         data = native.read(address, vertices * 8) if vertices else b""
-        for value in struct.pack("<I", vertices) + data:
-            fnv = ((fnv ^ value) * 16777619) & 0xFFFFFFFF
+        count_bytes = struct.pack("<I", vertices)
+        raw_fnv = fnv32_bytes(raw_fnv, count_bytes)
+        pose_fnv = fnv32_bytes(pose_fnv, count_bytes)
+        attributes_fnv = fnv32_bytes(attributes_fnv, count_bytes)
+        for vertex in range(vertices):
+            packet = data[vertex * 8:(vertex + 1) * 8]
+            raw_fnv = fnv32_bytes(raw_fnv, packet)
+            pose_fnv = fnv32_bytes(pose_fnv, packet[:6])
+            attributes_fnv = fnv32_bytes(attributes_fnv, packet[6:])
         rows.append({
             "node": index,
             "address": hex(address),
@@ -68,7 +83,9 @@ def geometry_identity(object_address: int) -> dict:
         "magic": hex(read_word(object_address + 0x70)),
         "face_count": read_half(object_address + 0xB6),
         "node_count": count,
-        "geometry_fnv32": f"{fnv:08X}",
+        "geometry_fnv32": f"{raw_fnv:08X}",
+        "pose_fnv32": f"{pose_fnv:08X}",
+        "attributes_fnv32": f"{attributes_fnv:08X}",
         "nodes": rows,
     }
 
@@ -105,16 +122,33 @@ def counter_delta(before: dict, after: dict, name: str) -> int:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("out", type=Path)
+    parser.add_argument(
+        "--source",
+        type=Path,
+        default=ROOT / "analysis/fixtures/sp",
+        help="directory containing openbios/state_8001F844_slotNN.*",
+    )
+    parser.add_argument(
+        "--build-dir",
+        type=Path,
+        default=Path("build-release"),
+        help="diagnostics-enabled build directory relative to the repository",
+    )
     parser.add_argument("--slots", type=int, nargs="+", default=[1, 3, 4, 5])
     parser.add_argument("--switches", type=int, default=4)
+    parser.add_argument(
+        "--weapon-trace",
+        action="store_true",
+        help="record the first SP model/tracking rejection in the runtime log",
+    )
     args = parser.parse_args()
     if native.game_pids():
         raise RuntimeError("Close the existing game before this owned probe")
     with socket.socket() as probe:
         if probe.connect_ex(("127.0.0.1", 4372)) == 0:
             raise RuntimeError("Diagnostic TCP port 4372 is occupied")
-    if any(not 1 <= slot <= 99 for slot in args.slots):
-        parser.error("slots must be in 1..99")
+    if any(not 0 <= slot <= 99 for slot in args.slots):
+        parser.error("slots must be in 0..99")
     if not 1 <= args.switches <= 8:
         parser.error("switches must be in 1..8")
 
@@ -122,29 +156,31 @@ def main() -> None:
     out.mkdir(parents=True, exist_ok=False)
     saves = out / "saves/openbios"
     saves.mkdir(parents=True)
+    source_root = args.source.resolve()
     sources = {}
     for slot in args.slots:
         for suffix in ("pst", "thumb"):
-            source = ROOT / (
-                "analysis/fixtures/sp/openbios/"
+            source = (
+                source_root / "openbios" /
                 f"state_8001F844_slot{slot:02}.{suffix}"
             )
             if not source.is_file():
                 raise FileNotFoundError(source)
             shutil.copyfile(source, saves / source.name)
-            sources[str(source.relative_to(ROOT))] = native.digest(source)
+            sources[str(source)] = native.digest(source)
 
     preferences = comparison.hash_existing(comparison.preference_paths())
-    executable = (
-        ROOT / "build-release/Medal_of_Honor_Underground_Recompiled.exe"
-    )
+    build_dir = (
+        args.build_dir if args.build_dir.is_absolute() else ROOT / args.build_dir
+    ).resolve()
+    executable = build_dir / "Medal_of_Honor_Underground_Recompiled.exe"
     env = comparison.environment("tracked", True, hand_fixed=True)
     env.update(
         PSX_INTERNAL_RESOLUTION="native",
         PSX_RENDER_PASS_VERIFY="1",
         MOHU_VR_MP_CONTROL="0",
         MOHU_VR_MP_FRUSTUM="0",
-        MOHU_VR_WEAPON_TRACE="0",
+        MOHU_VR_WEAPON_TRACE=str(int(args.weapon_trace)),
     )
     receipt = {
         "schema": 1,
@@ -155,7 +191,7 @@ def main() -> None:
         "switches_per_slot": args.switches,
         "fixture_hashes": sources,
         "executable_sha256": native.digest(executable),
-        "build": comparison.build_configuration(ROOT / "build-release/CMakeCache.txt"),
+        "build": comparison.build_configuration(build_dir / "CMakeCache.txt"),
         "environment": {
             key: value for key, value in env.items()
             if key.startswith(("PSX_", "MOHU_"))

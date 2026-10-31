@@ -7,12 +7,14 @@ regions, selective PGO was trained and consumed on the fresh heavy slot 1, and
 the accepted PGO executable is installed in `build-release`. Reversed-order
 heavy testing found an 8.10% pooled pair-time EMA reduction with unstable work
 load; the slot-0 second scene found 3.72% lower work and 8.99% lower pair EMA.
-All measured runs had zero audio/XR/weapon failure counters. The silenced
-pistol's exact SP asset variant now reuses its MP calibration, and Panzerfaust
-has a 20 cm shoulder-height mount offset. [Full checklist, tables and stereo
-evidence](CACHE_PGO_20261031.md). The independent-renderer/M0-M2 branch remains
-shelved. A physical-headset audio/HUD/height check is the remaining acceptance
-gate.
+All measured runs had zero audio/XR/weapon failure counters. SP rendering-only
+asset variants now reuse their MP pose/calibration through the six-byte
+vertex-position hash; the updated MP40 save records 300/300 production PGO
+applications and zero fallbacks. Panzerfaust has a real 20 cm shoulder-height
+mount offset in metres converted to PSX units. [Full checklist, tables and
+stereo evidence](CACHE_PGO_20261031.md). The independent-renderer/M0-M2 branch
+remains shelved. A physical-headset audio/HUD/height check is the remaining
+acceptance gate.
 
 **2026-10-31 dependency update:** production is rebuilt on upstream #792/#793
 plus the retained VR branches. Active framework pin is `fd327460`, UI

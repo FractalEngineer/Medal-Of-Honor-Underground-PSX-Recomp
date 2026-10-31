@@ -157,16 +157,15 @@ static const MohuVrWeaponCalibration k_petrol_bomb_calibration = {
 };
 
 int mohu_vr_weapon_sp_geometry_valid(const MohuVrWeaponProfile* profile,
-                                     uint32_t geometry_fnv32) {
+                                     uint32_t geometry_fnv32,
+                                     uint32_t pose_fnv32) {
     if (!profile) return 0;
     if (geometry_fnv32 == profile->geometry_fnv32) return 1;
-    /* SP mission variant with the same ID 9 mesh magic, faces, and node
-     * topology. Reuse the immutable MP calibration; do not relax the guard. */
-    if (profile->id == 9u && geometry_fnv32 == 0xA5D4B144u) return 1;
-    /* SP slot-3 petrol has identical XYZ and topology to the MP calibration
-     * asset. All 196 vertices carry metadata 128 rather than MP's 129. Keep
-     * an exact second hash; do not ignore metadata or accept arbitrary assets. */
-    return profile->id == 15u && geometry_fnv32 == 0x408599ACu;
+    /* SP mission skins may differ only in the final two presentation bytes of
+     * each 8-byte vertex packet. The complete X/Y/Z stream must still match
+     * the calibrated MP profile, and the caller separately verifies magic,
+     * faces, node count, topology, and the generated gun-only masks. */
+    return pose_fnv32 == profile->geometry_pose_fnv32;
 }
 
 static const MohuVrWeaponCalibration k_sten_calibration = {
@@ -196,65 +195,65 @@ static const MohuVrWeaponCalibration k_stg44_calibration = {
 };
 
 static const MohuVrWeaponProfile k_weapon_profiles[] = {
-    {0u, 1u, 0u, "P38 pistol", 0xe0007u, 0x8544f8b9u, 354u, 14u,
+    {0u, 1u, 0u, "P38 pistol", 0xe0007u, 0x8544f8b9u, 0x349541f9u, 354u, 14u,
      {0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 0, 149, 0, 69},
      128u, 96u, 1u << 13u, 11u,
      {UINT64_C(0x00000001FFFFFFC0), 0u, 0u, 0u},
      &k_p38_calibration},
-    {1u, 1u, 1u, "MP40", 0x200007u, 0x8095cafbu, 316u, 32u,
+    {1u, 1u, 1u, "MP40", 0x200007u, 0x8095cafbu, 0xd21273bbu, 316u, 32u,
      {0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 21, 5, 4, 4, 4, 0, 4, 4, 0, 3, 2, 0, 1, 0, 0, 0, 102, 0, 0, 6, 0, 16},
      193u, 124u, (1u << 26u) | (1u << 29u) | (1u << 31u), 0xFFu,
      {0u, 0u, 0u, 0u},
      &k_mp40_calibration},
-    {4u, 2u, 2u, "Shotgun", 0x150007u, 0x805bd649u, 306u, 21u,
+    {4u, 2u, 2u, "Shotgun", 0x150007u, 0x805bd649u, 0xfd8ed841u, 306u, 21u,
      {0, 0, 0, 0, 0, 0, 0, 0, 14, 21, 14, 0, 5, 8, 0, 0, 0, 0, 99, 0, 38},
      182u, 137u, (1u << 18u) | (1u << 20u), 0xFFu,
      {0u, 0u, 0u, 0u},
      &k_shotgun_calibration},
-    {5u, 3u, 2u, "Scoped rifle", 0x1a0007u, 0x9f7ada24u, 383u, 26u,
+    {5u, 3u, 2u, "Scoped rifle", 0x1a0007u, 0x9f7ada24u, 0x08b4377cu, 383u, 26u,
      {0, 0, 0, 0, 0, 0, 0, 0, 14, 21, 22, 4, 4, 4, 4, 4, 0, 1, 0, 0, 0, 0, 145, 0, 0, 14},
      199u, 159u, (1u << 22u) | (1u << 25u), 0xFFu,
      {0u, 0u, 0u, 0u},
      &k_scoped_rifle_calibration},
-    {8u, 2u, 0u, "Colt .45", 0xe0007u, 0x267e86aau, 303u, 14u,
+    {8u, 2u, 0u, "Colt .45", 0xe0007u, 0x267e86aau, 0xc782d942u, 303u, 14u,
      {0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 0, 92, 0, 68},
      115u, 68u, 1u << 13u, 0xFFu, {0u, 0u, 0u, 0u},
      &k_colt_45_calibration},
-    {9u, 3u, 0u, "Silenced pistol", 0xe0007u, 0x65f76c5du, 310u, 14u,
+    {9u, 3u, 0u, "Silenced pistol", 0xe0007u, 0x65f76c5du, 0x926ab21cu, 310u, 14u,
      {0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 0, 122, 0, 57},
      94u, 75u, 1u << 13u, 11u,
      {UINT64_C(0xFC03FFC0), 0u, 0u, 0u},
      &k_silenced_pistol_calibration},
-    {10u, 1u, 3u, "Stick grenade", 0x180007u, 0xddce0989u, 341u, 24u,
+    {10u, 1u, 3u, "Stick grenade", 0x180007u, 0xddce0989u, 0x56078c30u, 341u, 24u,
      {0, 0, 0, 0, 0, 0, 0, 0, 19, 16, 21, 7, 4, 4, 5, 8, 3, 5, 4, 8, 1, 0, 0, 58},
      140u, 58u, 1u << 23u, 0xFFu, {0u, 0u, 0u, 0u},
      &k_stick_grenade_calibration},
-    {12u, 4u, 0u, "M1 Garand", 0x170007u, 0x450f78dcu, 280u, 23u,
+    {12u, 4u, 0u, "M1 Garand", 0x170007u, 0x450f78dcu, 0x9172c32cu, 280u, 23u,
      {0, 0, 0, 0, 0, 0, 0, 0, 12, 16, 17, 5, 4, 4, 4, 2, 0, 3, 0, 0, 0, 0, 136},
      174u, 136u, 1u << 22u, 0xFFu, {0u, 0u, 0u, 0u},
      &k_m1_garand_calibration},
-    {13u, 4u, 2u, "Panzerfaust", 0x1f0007u, 0x68cbd37u, 333u, 31u,
+    {13u, 4u, 2u, "Panzerfaust", 0x1f0007u, 0x68cbd37u, 0x2788d1f2u, 333u, 31u,
      {0, 0, 0, 0, 0, 0, 0, 0, 14, 21, 21, 5, 4, 4, 4, 0, 4, 4, 0, 3, 0, 1, 2, 0, 0, 0, 0, 70, 10, 0, 36},
      168u, 116u, (1u << 27u) | (1u << 28u) | (1u << 30u), 0xFFu,
      {0u, 0u, 0u, 0u},
      &k_panzerfaust_calibration},
-    {14u, 3u, 1u, "Crossbow", 0x1d0007u, 0xdff185cau, 290u, 29u,
+    {14u, 3u, 1u, "Crossbow", 0x1d0007u, 0xdff185cau, 0x1ecddbdbu, 290u, 29u,
      {0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 40, 0, 0, 0, 20, 0, 0, 18, 14, 21, 0, 14, 0, 45, 0, 19, 6, 0, 21},
      187u, 178u, (1u << 14u) | (1u << 17u) | (1u << 18u) |
          (1u << 19u) | (1u << 21u) | (1u << 23u) | (1u << 25u) |
          (1u << 26u) | (1u << 28u), 0xFFu, {0u, 0u, 0u, 0u},
      &k_crossbow_calibration},
-    {15u, 2u, 3u, "Petrol bomb", 0x1c0007u, 0x7ca0dbecu, 397u, 28u,
+    {15u, 2u, 3u, "Petrol bomb", 0x1c0007u, 0x7ca0dbecu, 0x5d809ab4u, 397u, 28u,
      {0, 0, 0, 0, 0, 0, 0, 0, 21, 14, 23, 8, 5, 8, 0, 8, 4, 0, 3, 1, 0, 2, 0, 0, 0, 92, 5, 2},
      198u, 99u, (1u << 25u) | (1u << 26u) | (1u << 27u), 0xFFu,
      {0u, 0u, 0u, 0u},
      &k_petrol_bomb_calibration},
-    {16u, 2u, 1u, "Sten", 0x1f0007u, 0x29d5bc18u, 354u, 31u,
+    {16u, 2u, 1u, "Sten", 0x1f0007u, 0x29d5bc18u, 0xbd32fa29u, 354u, 31u,
      {0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 21, 5, 4, 4, 4, 0, 4, 4, 0, 3, 2, 0, 1, 0, 0, 0, 135, 0, 0, 17, 14},
      217u, 166u, (1u << 26u) | (1u << 29u) | (1u << 30u), 0xFFu,
      {0u, 0u, 0u, 0u},
      &k_sten_calibration},
-    {17u, 1u, 2u, "StG44", 0x200007u, 0xf467028bu, 352u, 32u,
+    {17u, 1u, 2u, "StG44", 0x200007u, 0xf467028bu, 0xf6cda51bu, 352u, 32u,
      {0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 21, 5, 4, 4, 4, 0, 4, 4, 0, 3, 0, 1, 2, 0, 0, 0, 0, 132, 0, 16, 0, 13},
      /* Hand shares node 27 and boundary vertices with the stock. Retain those
       * stock vertices; reject only the 18 private hand vertices. Native SZ
@@ -329,7 +328,8 @@ int mohu_vr_weapon_calibrated_control(
             if (!isfinite(value) || value < INT16_MIN || value > INT16_MAX) return 0;
             rt[row*3+col] = (int16_t)lround(value);
         }
-        double value = hand_translation[row] + c->mount_offset_m[row];
+        double value = hand_translation[row] +
+            c->mount_offset_m[row] * units_per_metre;
         for (unsigned k=0; k<3; ++k)
             value -= (double)rt[row*3+k] / 4096.0 * c->grip_pivot[k];
         if (!isfinite(value) || value < INT32_MIN || value > INT32_MAX) return 0;

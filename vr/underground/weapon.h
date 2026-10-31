@@ -62,6 +62,8 @@ typedef struct {
     const char* name;
     uint32_t mesh_magic;
     uint32_t geometry_fnv32;
+    /* FNV-1a over node counts and each vertex's six pose bytes (X/Y/Z). */
+    uint32_t geometry_pose_fnv32;
     uint16_t face_count;
     uint16_t node_count;
     uint16_t vertices[MOHU_VR_WEAPON_FP_MAX_NODES];
@@ -94,9 +96,11 @@ size_t mohu_vr_weapon_profile_count(void);
 const MohuVrWeaponProfile* mohu_vr_weapon_profile_at(size_t index);
 const MohuVrWeaponProfile* mohu_vr_weapon_profile_find(uint8_t id);
 const MohuVrWeaponCalibration* mohu_vr_weapon_calibration_find(uint8_t id);
-/* Exact SP asset variants retain full geometry/metadata identity checks. */
+/* Exact SP assets pass directly. Rendering-only metadata variants pass only
+ * when their complete X/Y/Z pose stream matches the calibrated MP asset. */
 int mohu_vr_weapon_sp_geometry_valid(const MohuVrWeaponProfile* profile,
-                                     uint32_t geometry_fnv32);
+                                     uint32_t geometry_fnv32,
+                                     uint32_t pose_fnv32);
 /* Uniform power-of-two precision lift, preserving ratios and Q12 bounds.
  * Apply the returned factor to the render-view eye translation as well. */
 int mohu_vr_weapon_precision_control(uint32_t control[8], double* factor);
