@@ -1,5 +1,15 @@
 # Underground VR execution handoff
 
+**2026-10-31 cache/PGO checkpoint:** the game now pins clean framework
+`e696907e`, which contains the native-overlay hook guard. The current
+`cg18_e060fa62_gc7068bcdd_f2` cache was force-rebuilt at 31/31 shards, the normal
+Release build and 171 tests pass, and selective PGO baseline/generate are built
+with ccache disabled. PGO use and matched performance remain open because the
+available Underground save is still rejected by the execution guard; menu/boot
+profiles are deliberately not consumed. [Exact resume checklist and
+identities](CACHE_PGO_20261031.md). The independent-renderer/M0-M2 branch is
+shelved and is not the active framework pin.
+
 **2026-10-31 dependency update:** production is rebuilt on upstream #792/#793
 plus the retained VR branches. Active framework pin is `fd327460`, UI
 `a956157`, recomp-net `7a4d330`, rbengine `28a2a47`. Native optimizations and

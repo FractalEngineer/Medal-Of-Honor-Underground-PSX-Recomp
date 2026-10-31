@@ -36,6 +36,7 @@ param(
     [switch]$Build,
     [switch]$PerformanceTest,
     [switch]$Baseline,
+    [switch]$WristHudTest,
     [switch]$PrepareOnly
 )
 
@@ -374,6 +375,10 @@ try {
         PSX_INTERNAL_RESOLUTION = $InternalResolution
         PSX_VR_HEAD_FRUSTUM = $(if ($NoHeadFrustumDiagnostic) { '0' } else { '1' })
         PSX_VR_SUPPRESS_FLAT_HUD = $(if ($KeepFlatHud) { '0' } else { '1' })
+        PSX_VR_WRIST_HUD_TEST = [string][int]$WristHudTest.IsPresent
+        PSX_VR_SYNTHETIC_CONTROLLERS = [string][int]$WristHudTest.IsPresent
+        PSX_VR_WRIST_HUD = [string][int]($WristHudTest -or -not $KeepFlatHud)
+        PSX_VR_WRIST_REPLACE = [string][int]$WristHudTest.IsPresent
         PSX_VR_MOVEMENT = $(if ($NoMovement) { '0' } else { '1' })
         PSX_VR_LASER = $(if ($NoLaser) { '0' } else { '1' })
         PSX_VR_MOVE_DEADZONE = $MoveDeadzone.ToString([Globalization.CultureInfo]::InvariantCulture)

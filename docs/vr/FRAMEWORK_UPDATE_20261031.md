@@ -1,5 +1,10 @@
 # Framework performance update — 2026-10-31
 
+**Superseded pin/status:** see
+[CACHE_PGO_20261031.md](CACHE_PGO_20261031.md). The game now pins cleaner
+framework master `e696907e`, the current overlay cache has been force-rebuilt,
+and selective PGO is pending one representative fresh-state training run.
+
 The production VR executable was rebuilt with upstream PR [#792](https://github.com/RetroPortingToolKit/psxrecomp/pull/792). **No gameplay speedup or 60/90 Hz result is established.** The final isolated slot-2 test rejects the old state with `enhancement_memory_layout_or_execution_profile_or_host_provider`. Obtain fresh states through normal play; never patch their headers.
 
 ## Completed work

@@ -92,6 +92,9 @@ renderer = "opengl"
 aspect_ratio = "4:3"
 internal_resolution = "1080p"
 
+[audio]
+buffer_ms = 260
+
 [controller]
 default_mode = "digital"
 

@@ -19,6 +19,7 @@
 #include "gpu_gl_renderer.h"
 #include "mod_plugins.h"
 #include "frame_trace.h"
+#include "psx_openxr.h"
 #include "vr_pose_math.h"
 
 #include <math.h>
@@ -51,6 +52,7 @@
 #define MOHU_VR_STEREO_DUMP_ENV "MOHU_VR_STEREO_DUMP_DIR"
 #define MOHU_VR_STEREO_DUMP_PAIRS_ENV "MOHU_VR_STEREO_DUMP_PAIRS"
 #define MOHU_VR_OPENXR_ENV "MOHU_VR_OPENXR"
+#define MOHU_VR_SYNTHETIC_CONTROLLERS_ENV "PSX_VR_SYNTHETIC_CONTROLLERS"
 #define MOHU_VR_WEAPON_POSE_ENV "PSX_VR_WEAPON_POSE"
 #define MOHU_VR_WEAPON_TRACE_ENV "MOHU_VR_WEAPON_TRACE"
 #define MOHU_VR_WEAPON_SYNTHETIC_X_ENV "MOHU_VR_WEAPON_SYNTHETIC_X"
@@ -241,6 +243,9 @@ static bool g_no_native_surface;
 static int g_openxr_native_surface = -1;
 static bool g_pause_menu_enabled = true;
 static bool g_pause_menu_active;
+static bool g_synthetic_controllers;
+static bool g_synthetic_save_loaded;
+static uint32_t g_synthetic_controller_frame;
 static uint32_t g_native_surface_seen_attempts;
 static uint32_t g_native_surface_idle_vblanks =
     MOHU_VR_NATIVE_SURFACE_IDLE_VBLANKS;
@@ -1233,6 +1238,44 @@ static int vr_laser_command(const char* args, char* reply, int cap) {
 }
 
 static void vr_diagnostic_vblank(void) {
+    if (g_synthetic_controllers && g_openxr) {
+        PSXModOpenXRHands hands = {0};
+        hands.struct_size = sizeof hands;
+        hands.focused = 1;
+        hands.synthetic = 1;
+        hands.origin_valid = 1;
+        hands.origin_orientation_xyzw[3] = 1;
+        for (unsigned side = 0; side < 2; ++side) {
+            for (unsigned pose = 0; pose < 2; ++pose) {
+                PSXModTrackedPose *tracked = &hands.pose[side][pose];
+                tracked->active = 1;
+                tracked->flags = 15;
+                tracked->position_m[0] = side ? .18f : -.18f;
+                tracked->position_m[1] = -.18f;
+                tracked->position_m[2] = -.45f;
+                tracked->orientation_xyzw[2] = side ? -.707107f : .707107f;
+                tracked->orientation_xyzw[3] = .707107f;
+            }
+        }
+        (void)psx_openxr_hands_override(&hands);
+
+        PSXModOpenXRInput input = {0};
+        input.struct_size = sizeof input;
+        input.focused = 1;
+        input.synthetic = 1;
+        input.active[0] = input.active[1] = 1;
+        /* Loaded states open in the native pause menu. Hold a focused,
+         * otherwise neutral pair and pulse Menu once after the load settles. */
+        if (g_synthetic_save_loaded &&
+            g_synthetic_controller_frame >= 30u &&
+            g_synthetic_controller_frame < 34u) {
+            input.buttons[0] = PSX_MOD_XR_MENU;
+            input.buttons_active[0] = PSX_MOD_XR_MENU;
+        }
+        (void)psx_openxr_input_override(&input);
+        if (g_synthetic_save_loaded) ++g_synthetic_controller_frame;
+    }
+
     /* Opt-in file export allows the same stage timings in debug-OFF builds.
      * Export once, outside an eye; never put file IO in a timed quiet window. */
     if (g_trace_file && !g_trace_written && !g_stereo_active &&
@@ -2178,6 +2221,8 @@ static int vr_marker_model_key(MohuVrMarkerKey* key) {
 static void vr_marker_load(void) {
     vr_world_cache_reset();
     memset(&g_fresh_cadence,0,sizeof g_fresh_cadence);
+    g_synthetic_save_loaded = g_synthetic_controllers;
+    g_synthetic_controller_frame = 0u;
     g_frame_render_args_valid=false;
     g_frame_projection_valid=false;
     vr_muzzle_invalidate();
@@ -5039,6 +5084,12 @@ static void vr_diagnostic_activate(void) {
                           *suppress_flat_hud != '0';
     const char* openxr = getenv(MOHU_VR_OPENXR_ENV);
     g_openxr = openxr && *openxr && *openxr != '0';
+    const char* synthetic_controllers =
+        getenv(MOHU_VR_SYNTHETIC_CONTROLLERS_ENV);
+    g_synthetic_controllers = synthetic_controllers &&
+        *synthetic_controllers && *synthetic_controllers != '0';
+    g_synthetic_save_loaded = false;
+    g_synthetic_controller_frame = 0u;
     /* Desktop controls must use the same requested physical units as XR. */
     parse_optional_double(MOHU_VR_UNITS_PER_METER_ENV, 1.0, 65536.0,
                           &g_openxr_units_per_meter);
@@ -5148,6 +5199,8 @@ static void vr_diagnostic_activate(void) {
     psx_mod_counter_add("mohu.vr.input.guard_fallback", 0);
     fprintf(stdout, "mohu-vr-input: enabled=%d deadzone=%.3f turn_gain=%.3f "
             "config=2 sample=offline\n", g_movement, g_move_deadzone, g_turn_gain);
+    fprintf(stdout, "mohu-vr-input: synthetic_controllers=%d "
+            "start_after_save=1\n", g_synthetic_controllers ? 1 : 0);
     if (g_stereo_proof) {
         const char* eye_offset = getenv(MOHU_VR_EYE_OFFSET_ENV);
         if (eye_offset && *eye_offset &&
