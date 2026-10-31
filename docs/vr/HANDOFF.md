@@ -1,5 +1,14 @@
 # Underground VR execution handoff
 
+**2026-10-31 dependency update:** production is rebuilt on upstream #792/#793
+plus the retained VR branches. Active framework pin is `fd327460`, UI
+`a956157`, recomp-net `7a4d330`, rbengine `28a2a47`. Native optimizations and
+HLE GL batching are enabled; matching overlay compiler is staged. 171 tests
+pass. Old slot 2 is explicitly rejected for execution/layout/provider mismatch;
+fresh operator states are needed before performance comparison. No new speedup
+or headset pass is claimed. [Update receipt and comparison checklist](FRAMEWORK_UPDATE_20261031.md)
+supersede older build identities and fixture compatibility statements below.
+
 Updated 2026-10-30 after render-kernel implementation and stereo cache controls.
 **Latest physical performance trial FAILED.** Operator reports unplayable
 motion despite VDXR panel 90 FPS / 45-ms latency / 15-ms game rendering. Its
@@ -175,8 +184,9 @@ for G6. G7a and earlier P38/Sten/Panzerfaust direction controls remain complete.
 - Reference, read first only where relevant:
   `C:/Users/titan/Desktop/Github_Projects/Mine/Medal-Of-Honor-PSX-Recomp`.
   [REFERENCE_REUSE_AUDIT.md](REFERENCE_REUSE_AUDIT.md) lists existing ports.
-- Framework remains pinned to `555e1eabccc59b9b6ff0d9fca48aca783513dc86` in both
-  games. No framework changes in this checkpoint. Generic work belongs on
+- Underground framework is pinned to `fd32746007d940ce5baff8bc215c954c76f03889`
+  after the authorized 2026-10-31 update; the sibling game was not changed.
+  Generic work belongs on
   `vr/shared-development`/feature branches, never master; both affected games
   must pass before changing pins. [Upstream tracker](FRAMEWORK_UPSTREAM_TRACKER.md).
 - Production executable: `build-release/Medal_of_Honor_Underground_Recompiled.exe`.
