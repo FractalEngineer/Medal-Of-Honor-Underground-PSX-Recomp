@@ -6,6 +6,18 @@
 #include <string.h>
 
 int main(void) {
+    assert(mohu_vr_scope_final_depth_h(2447) == 2463);
+    assert(mohu_vr_scope_final_depth_h(400) == 400);
+    assert(mohu_vr_scope_final_depth_h(401) == 403);
+    assert(!mohu_vr_scope_final_depth_h(0));
+    assert(!mohu_vr_scope_final_depth_h(UINT32_MAX));
+    assert(mohu_vr_scope_fog_start(5700,2447,400,250) == 9252);
+    assert(mohu_vr_scope_fog_start(5700,2447,2463,2313) == 9252);
+    assert(mohu_vr_scope_fog_start(12000,2447,400,250) == 12000);
+    assert(mohu_vr_scope_fog_start(5700,0,400,250) == 5700);
+    assert(mohu_vr_scope_fog_start(5700,2447,0,250) == 5700);
+    assert(mohu_vr_scope_fog_start(5700,2447,2500,250) == 5700);
+    assert(mohu_vr_scope_fog_start(5700,2447,400,UINT32_MAX) == 5700);
     PSXModRenderView view = {0};
     view.struct_size = sizeof view;
     view.fx_q16 = 50000;

@@ -3567,10 +3567,46 @@ static int vr_stereo_eye_draw(CPUState* cpu, void* user, uint32_t eye) {
         cpu->gpr[4u + i] = g_frame_render_args[i];
     }
     cpu->gpr[31] = ra;
+    /* Native scope's input+AC ramp also advances 800B7480. Preflight
+     * classifies vertices below 4*that cutoff as near; 800110E4 then skips
+     * software fog for those triangles. Raising that subdivision cutoff in
+     * a wide VR eye exhausts the native packet arena. Apply its final fog
+     * distance directly, preserving subdivision and the descriptor far plane.
+     * Scene+CC is the native fog start read at 800110C0. */
+    uint32_t scope_fog_address = 0u;
+    uint16_t native_fog = 0u;
+    PSXModOpenXRHands scope_hands = {0};
+    scope_hands.struct_size = sizeof scope_hands;
+    double scope_rotation[9], scope_translation[3];
+    if (g_scope_active && !g_stereo_mp && !g_weapon_force_tracking_loss &&
+        psx_mod_openxr_hands(&scope_hands) &&
+        mohu_vr_weapon_track_delta(&scope_hands, g_openxr_units_per_meter,
+                                   scope_rotation, scope_translation) &&
+        psx_mod_read_word(0x8008A090u) == 0x8E0200ACu &&
+        psx_mod_read_word(0x8008A0E4u) == 0xACC37480u &&
+        psx_mod_read_word(0x800110C0u) == 0x976F00CCu &&
+        psx_mod_read_word(0x800110E0u) == 0x2C580002u) {
+        const uint32_t player = psx_mod_read_word(MOHU_VR_SP_PLAYER_POINTER_ADDR);
+        const uint32_t input = mohu_vr_ray_span(player, 0x3A0u)
+            ? psx_mod_read_word(player + 0x39Cu) : 0u;
+        const uint32_t scene = psx_mod_read_word(0x800A977Cu);
+        if (input == player + 0x3FCu && mohu_vr_ray_span(input, 0xB8u) &&
+            mohu_vr_ray_span(scene, 0xDCu) &&
+            psx_mod_read_byte(input + 93u) == 5u) {
+            scope_fog_address = scene + 0xCCu;
+            native_fog = psx_mod_read_half(scope_fog_address);
+            const uint16_t fog = mohu_vr_scope_fog_start(native_fog,
+                psx_mod_read_word(input + 0xB0u),
+                psx_mod_read_word(input + 0xACu),
+                psx_mod_read_word(0x800B7480u));
+            psx_mod_write_half(scope_fog_address, fog);
+        }
+    }
     g_replaying_frame = true;
     VR_SPAN_BEGIN(PSX_TRACE_GAME_TRAVERSE);
     psx_dispatch_call(cpu, 0x80053BB4u, ra);
     VR_SPAN_END(PSX_TRACE_GAME_TRAVERSE);
+    if (scope_fog_address) psx_mod_write_half(scope_fog_address, native_fog);
     g_replaying_frame = false;
     if (!g_stereo_mp) {
         const uint32_t player =

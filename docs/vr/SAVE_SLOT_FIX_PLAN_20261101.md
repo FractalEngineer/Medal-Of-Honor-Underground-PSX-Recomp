@@ -1,7 +1,7 @@
 # Save Slot VR Fix Plan
 
-Updated 2026-11-02 after operator acceptance of the mission-end frontend fix.
-The sniper zoom is implemented; sniper view-distance extension remains open.
+Updated 2026-11-03 after copied Slot 01 sniper range verification.
+Held sniper zoom and range are implemented; physical range acceptance is open.
 
 ## Slot map
 
@@ -47,9 +47,11 @@ keybinds remain unchanged. Single-player behavior only.
   unscoped view and normal laser behavior.
 - [x] Remove the scrapped scope mask, mobile aim path and title-specific extra
   OpenXR overlay.
-- [ ] Sniper view distance/fog extension is still not working in VR. The flat
-  Slot 01 reference demonstrates the intended final scope transition; current
-  VR changes cover focal zoom only.
+- [x] Copied Slot 01: held weapon-5 grip reveals the farther corridor arch by
+  applying the native final scope's effective fog distance during eye replay.
+  The same-2.5x control hides that arch, proving this is separate from zoom.
+- [x] Original range returns on release, weapon switch, pause and tracking loss;
+  native R2 remains released and held-scope movement changes player position.
 - [ ] Physical headset: confirm zoom comfort, rifle/laser alignment, clean grip
   release and final long-range visibility.
 
@@ -81,9 +83,11 @@ keybinds remain unchanged. Single-player behavior only.
 - [x] Copied Slot 01 and Slot 02 source saves retain their pre-run hashes.
 - [x] Null-HMD scoped runs complete with complete stereo pairs and zero XR
   begin/view failures.
-- [ ] Sniper view-distance acceptance remains open.
+- [x] Desktop sniper range and same-zoom control pass; 1104 guest restoration
+  checks report zero mismatches. See [range evidence](SCOPE_RANGE_EVIDENCE_20261103.md).
+- [ ] Physical-headset sniper range acceptance remains open.
 - [x] Final Release executable SHA-256:
-  `B5E22F1F349EA09B04DEAF7799577EC15B7EA00306B906900C707734F9926A36`.
+  `DF276A974F2167D06039D02E2BE3AA5B4A97067E177F4DF5BDF9F2D5BFEF3DFB`.
 
 ## Evidence
 
@@ -91,6 +95,14 @@ keybinds remain unchanged. Single-player behavior only.
   `analysis/runtime/mission-end-slot2-native-20261102/layers/compositor.png`
 - Scoped rifle/laser:
   `analysis/runtime/scope-zoom-refactor-slot1-20261102/layers/compositor.png`
+- Sniper range, release, tracking, switch, pause and movement:
+  `analysis/runtime/scope-range-transitions4-20261103/receipt.json` and its
+  `held/`, `zoom-only-control/`, `released/` capture directories.
+- Native scope state and caller trace:
+  `analysis/runtime/scope-range-native-cutoff-20261103/receipt.json` and
+  `trace-disassembly.txt`.
+- Final debug-OFF Release range capture:
+  `analysis/runtime/scope-range-release-final-20261103/layers/application_layer.png`
 - Flat camera/HUD:
   `analysis/runtime/camera-slot3-wristzero-20261101/` and
   `analysis/runtime/vr-slot4-damage-underlay-20261101-run5/`

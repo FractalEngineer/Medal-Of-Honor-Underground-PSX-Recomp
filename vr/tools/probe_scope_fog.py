@@ -35,7 +35,16 @@ def descriptor_snapshot() -> dict:
     result = {
         "camera_pointer": hex(camera),
         "player_pointer": hex(player),
+        "subdivision_cutoff": int.from_bytes(native.read(0x800B7480, 4), "little"),
     }
+    scene = int.from_bytes(native.read(0x800A977C, 4), "little")
+    if 0x80000000 <= scene < 0x801FFF00:
+        result["scene_pointer"] = hex(scene)
+        result["software_fog_start"] = int.from_bytes(native.read(scene + 0xCC, 2), "little")
+    if 0x80000000 <= player < 0x801FF000:
+        player_input = int.from_bytes(native.read(player + 0x39C, 4), "little")
+        result["player_input_pointer"] = hex(player_input)
+        result["player_scope_words"] = read_words(player_input + 0xAC, 3)
     if not 0x80000000 <= camera <= 0x801FFFFC:
         return result
     camera_words = read_words(camera, 0x400 // 4)
@@ -126,6 +135,7 @@ def main() -> None:
     parser.add_argument("--settle-frames", type=int, default=240)
     parser.add_argument("--build-dir", type=Path, default=Path("build-diagnostic"))
     parser.add_argument("--force-fog", type=int)
+    parser.add_argument("--trace-source", choices=("descriptor", "cutoff"), default="descriptor")
     args = parser.parse_args()
     if native.game_pids():
         raise RuntimeError("Close the existing game before this owned probe")
@@ -211,8 +221,8 @@ def main() -> None:
             )
             native.command(
                 "wtrace_range",
-                lo=hex(descriptor_address + 0x3C),
-                hi=hex(descriptor_address + 0x40),
+                lo=hex(0x800B7480 if args.trace_source == "cutoff" else descriptor_address + 0x3C),
+                hi=hex(0x800B7484 if args.trace_source == "cutoff" else descriptor_address + 0x40),
             )
             native.command("wtrace_clear")
             native.frames(12)
