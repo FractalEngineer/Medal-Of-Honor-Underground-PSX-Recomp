@@ -1,6 +1,6 @@
 # Underground VR release handoff
 
-Updated 2026-11-03 for the `v0.1.1` Windows x64 native VR alpha.
+Updated 2026-11-03 for the `v0.1.1` Windows x64 Full 6dof VR alpha.
 
 ## Release checkpoint
 

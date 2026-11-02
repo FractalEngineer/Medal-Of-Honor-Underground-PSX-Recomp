@@ -1,4 +1,4 @@
-# Medal of Honor Underground Recompiled - Native VR Alpha
+# Medal of Honor Underground Recompiled - Full 6dof VR Alpha
 
 This is the Windows x64 **v0.1.1** testing release. Flat play remains the
 default; VR is optional. Quest 3 through Virtual Desktop with VDXR is the
