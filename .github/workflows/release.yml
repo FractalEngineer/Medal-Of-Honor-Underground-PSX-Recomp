@@ -714,7 +714,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ needs.prepare.outputs.tag }}
-          name: "Medal of Honor Underground Recompiled + Native VR - ${{ needs.prepare.outputs.tag }} Alpha"
+          name: "Medal of Honor Underground Recompiled + Full 6dof VR - ${{ needs.prepare.outputs.tag }} Alpha"
           body_path: docs/release/${{ needs.prepare.outputs.tag }}.md
           files: |
             dist/mohu-*.zip

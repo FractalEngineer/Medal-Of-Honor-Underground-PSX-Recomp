@@ -2,7 +2,7 @@
 
 ## Release status
 
-`v0.1.1` is the first Underground native VR alpha. It includes per-eye OpenXR
+`v0.1.1` is the first Underground Full 6dof VR alpha. It includes per-eye OpenXR
 rendering, tracked weapons, the wrist HUD, objective-camera support, native
 frontend restoration and the held sniper scope with native range.
 
