@@ -1,7 +1,7 @@
 # Slot 3 objective camera
 
-Updated 2026-11-01 after bounded-controller separated-eye validation. Physical
-headset fit and comfort remain open.
+Updated 2026-11-02 after bounded-controller separated-eye validation and
+operator acceptance of the wrist placement.
 
 ## Implemented behavior
 
@@ -15,8 +15,16 @@ headset fit and comfort remain open.
 - The camera uses the authored `+Z` forward basis and a 340 model-unit metre,
   a 2.5x display scale relative to the original 850-unit calibration. Grip
   pivot `(-7, -27.5, -3.5)`, the body's measured bounding-box centre, anchors
-  the model on the right controller. The shared camera/paper mount is raised
-  0.22 m and pulled 0.10 m back toward the player.
+  the model on the right controller. The default controller-local correction is
+  `(0, 0, 0)` so the measured centre maps directly to the tracked wrist origin.
+- The objective camera offset can be changed while the game is running:
+  `python vr/tools/tune_camera_offset.py --up 0.02 --forward -0.01`.
+  Values are absolute controller-local offsets; omitted axes remain unchanged.
+  `--read` reports the current values and `--reset` restores the built-in
+  wrist origin. Release builds poll an atomically replaced tuning file; debug
+  builds can also use the TCP command when its server is compiled in.
+  The equivalent launch overrides are `MOHU_VR_CAMERA_OFFSET_UP_M` and
+  `MOHU_VR_CAMERA_OFFSET_FORWARD_M` (plus `..._RIGHT_M`).
 - For SP only, while weapon ID 7 is equipped, right-squeeze above `0.55` maps to
   native R2 (`0x0200`). Right-trigger above `0.55` continues to map to native
   Cross (`0x4000`). Other weapons and multiplayer remain unchanged.
@@ -76,14 +84,14 @@ verifies source and preference hashes after shutdown.
 
 ## Build acceptance
 
-- The existing fresh selective-PGO training data was relinked with the final
-  VR source in `build-pgo-camera-20261101`.
-- Installed production PGO executable SHA-256:
-  `6DCA998E78F4DAC2F92348590962D37F7540B292E7122D0C82DF067E09264EA2`.
+- The active Release runtime was relinked after the wrist-zero and file-based
+  calibration changes.
+- Installed production executable SHA-256:
+  `64B66B038AF148FF87570E3294CCE329E69DE94FFCC6CEBB7509BA0BAA41A207`.
 - Normal `run_vr.ps1 -WristHudTest` headless launcher smoke on copied slot 3
   completed 300/300 stereo pairs over ten seconds with zero XR failures,
   `300/300` weapon hits and zero weapon fallbacks.
-- Full suite: 171 Python tests and focused input/weapon/shot C tests pass.
+- Full suite: 173 Python tests and focused input/weapon/shot C tests pass.
 
 ## Remaining physical check
 
@@ -93,19 +101,20 @@ verifies source and preference hashes after shutdown.
 - [x] Confirm trigger without grip swaps the camera body to the paper prop.
 - [x] Confirm trigger-plus-grip completes the objective without accidental
   trigger input in the synthetic OpenXR path.
-- [ ] Hold the camera in the physical headset and confirm grip position, scale,
+- [x] Hold the camera in the physical headset and confirm grip position, scale,
   wrist orientation and comfort.
 - [ ] Confirm no movement occurs while the right grip holds camera aim in the
   physical headset.
 - [ ] Confirm the camera-to-papers swap and aimed viewfinder remain comfortable
   and stable at the physical runtime cadence.
 
-## 2.5x model refinement
+## 2.5x model refinement and wrist correction
 
 The 850-to-340 model-unit scale change makes both the node-22 camera body and
-the nodes-15/16/18/19 paper prop 2.5x larger. The shared mount offset changes
-from `(0, 0, 0)` to `(0, -0.22, -0.10)` metres in PSX camera coordinates:
-negative Y raises the prop and negative Z moves it back toward the player.
+the nodes-15/16/18/19 paper prop 2.5x larger. The body's measured bounds are
+`(-45,-64,-10)..(31,9,3)`, confirming the `(-7,-27.5,-3.5)` centre. The default
+controller-local correction is `(0,0,0)` metres; unlike the rejected
+camera-space offset, any live correction rotates with the hand.
 
 The bounded-controller probe now uses a 60-degree test-wrist roll instead of the
 prior 90-degree roll. This is still synthetic capture geometry; the operator
