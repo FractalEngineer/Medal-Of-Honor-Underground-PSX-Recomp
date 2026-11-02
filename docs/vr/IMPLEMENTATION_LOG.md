@@ -1,5 +1,21 @@
 # VR Port Implementation Log
 
+## 2026-11-02 — accepted slot fixes and open sniper range
+
+- Camera, under-fire wrist HUD, mission-end frontend and weapon calibration
+  changes are split into functional commits. The operator accepted the camera
+  placement, wrist marker ordering and mission-complete frontend.
+- Sniper weapon ID `5` retains the held 2.5x focal zoom and now projects both
+  the rifle and right-grip laser through the same zoomed eye view. Native ADS,
+  movement pinning and the rejected scope mask remain removed.
+- Sniper view-distance/fog extension is not fixed. The far-plane and fog
+  overrides were removed rather than leaving ineffective production code, and
+  the open condition remains explicit in
+  [SAVE_SLOT_FIX_PLAN_20261101.md](SAVE_SLOT_FIX_PLAN_20261101.md).
+- Final Release tree: `build-release`, Release with debug tools OFF and OpenXR
+  ON. All 173 Python tests, focused C tests and a 390-pair null-HMD scoped run
+  pass with zero XR begin/view failures.
+
 ## 2026-10-30 — reject the full VDXR performance playtest
 
 - Operator reports unplayable motion despite panel 90 FPS, 45-ms latency and

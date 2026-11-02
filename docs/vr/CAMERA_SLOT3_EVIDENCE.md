@@ -87,7 +87,7 @@ verifies source and preference hashes after shutdown.
 - The active Release runtime was relinked after the wrist-zero and file-based
   calibration changes.
 - Installed production executable SHA-256:
-  `64B66B038AF148FF87570E3294CCE329E69DE94FFCC6CEBB7509BA0BAA41A207`.
+  `B5E22F1F349EA09B04DEAF7799577EC15B7EA00306B906900C707734F9926A36`.
 - Normal `run_vr.ps1 -WristHudTest` headless launcher smoke on copied slot 3
   completed 300/300 stereo pairs over ten seconds with zero XR failures,
   `300/300` weapon hits and zero weapon fallbacks.

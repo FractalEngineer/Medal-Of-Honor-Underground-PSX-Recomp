@@ -1,25 +1,27 @@
 # Underground VR execution handoff
 
-**2026-11-01 camera and thrown-weapon checkpoint:** SP slot 3 objective camera
-ID `7` now renders only its node-22 camera body centered on the right
-controller. Right grip maps to native R2 and neutralizes all movement/turn
-axes. Unaimed trigger swaps the tracked camera model to its nodes-15/16/18/19
-paper prop; grip plus trigger shows the viewfinder and completes
-`PHOTOGRAPHED CIPHER KEY BOOK`. The final bounded-controller separated-eye
-receipt has zero model/input/tracking fallbacks and unchanged source saves.
-SP stick grenade ID `10` now passes through the same guarded final-release path
-as petrol: at controller yaw -30/0/+30 it recorded `2` aimed releases each,
-zero fallbacks, and controller-dependent first-motion deltas.
+**2026-11-02 camera, HUD, and frontend checkpoint:** the Slot 03 objective
+camera uses the measured node-22 centre at the tracked wrist with zero default
+controller-local correction. Live calibration remains available through
+`vr/tools/tune_camera_offset.py`. The Slot 04 under-fire path keeps its native
+damage marker on the left wrist beneath the solid health ring and suppresses
+both the centered gameplay flat scene and screen-space marker. The operator
+confirmed the mission-end frontend fix.
 
-Fresh selective-PGO training data was relinked with the final source. Installed
-production SHA-256 is
-`6DCA998E78F4DAC2F92348590962D37F7540B292E7122D0C82DF067E09264EA2`.
-The camera and paper models now use a 2.5x display scale with a raised,
-rearward mount offset.
-The normal bounded-controller launcher smoke completed 300/300 pairs over ten
-seconds with zero XR failures, `300/300` weapon hits and zero weapon
-fallbacks. Full 171-test suite passes. Physical headset model placement,
-movement-lock feel, paper swap and wrist comfort remain open.
+The sniper rifle keeps the normal weapon and right-grip laser. Weapon ID `5`
+uses a held 2.5x focal zoom, and the rifle and laser share that zoomed eye
+projection so their screen-space aim stays aligned. Native R2/ADS, movement
+pinning, scope masks and extra title-specific OpenXR overlays remain removed.
+Sniper view-distance/fog extension is **not fixed** and remains open in the
+[slot fix plan](SAVE_SLOT_FIX_PLAN_20261101.md).
+
+Prop lasers use one shared one-pixel packet, including the calibrated coaxial
+Panzerfaust tube. Native frontend surfaces remain available outside active
+gameplay and after the guarded mission-end scene-idle transition. All 173
+Python tests and the focused C tests pass. Physical scope comfort,
+long-range readability and remaining frontend navigation checks stay open.
+Current Release executable SHA-256:
+`B5E22F1F349EA09B04DEAF7799577EC15B7EA00306B906900C707734F9926A36`.
 [Camera evidence and checklist](CAMERA_SLOT3_EVIDENCE.md).
 
 **2026-10-31 cache/PGO checkpoint:** the game pins framework `e57fd027`, which
