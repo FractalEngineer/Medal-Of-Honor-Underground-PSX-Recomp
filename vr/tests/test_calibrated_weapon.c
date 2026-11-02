@@ -26,6 +26,12 @@ int main(void) {
     point(c,cal->grip_pivot,grip);
     point(c,cal->muzzle,muzzle);
     for (unsigned i=0; i<3; ++i) assert(fabs(grip[i]-hand[i])<=.5);
+    const double arbitrary[3]={10,-20,30};
+    double direct[3],affine[3];
+    assert(mohu_vr_weapon_calibrated_point(
+        identity,hand,1000,cal,arbitrary,direct));
+    point(c,arbitrary,affine);
+    for (unsigned i=0; i<3; ++i) assert(fabs(direct[i]-affine[i])<=.5);
     assert(fabs(cal->mount_offset_m[0])<1e-12);
     assert(fabs(cal->mount_offset_m[1])<1e-12);
     assert(fabs(cal->mount_offset_m[2])<1e-12);
@@ -111,8 +117,33 @@ int main(void) {
     int32_t saved[3];memcpy(saved,position,sizeof saved);
     assert(!mohu_vr_weapon_muzzle_shot(c,cal,bad,tr,position,angles));
     assert(!memcmp(saved,position,sizeof saved));
-    /* Every authored firearm bore remains +Z rather than a whole-model PCA
-     * axis. Held props stay upright while their launch axis stays forward. */
+    {
+        MohuVrWeaponCalibration camera=*mohu_vr_weapon_calibration_find(7);
+        camera.wrist_offset_m[0]=.05;
+        camera.wrist_offset_m[1]=.03;
+        camera.wrist_offset_m[2]=-.02;
+        camera.model_units_per_metre=1000;
+        const double rotations[3][9]={
+            {1,0,0,0,1,0,0,0,1},
+            {0,0,1,0,1,0,-1,0,0},
+            {1,0,0,0,0,-1,0,1,0},
+        };
+        for(unsigned ri=0;ri<3;++ri) {
+            uint32_t wrist[8]={0};
+            assert(mohu_vr_weapon_calibrated_control(
+                wrist,rotations[ri],hand,1000,&camera));
+            point(wrist,camera.grip_pivot,grip);
+            for(unsigned row=0;row<3;++row) {
+                double expected=hand[row]+1000*
+                    (rotations[ri][row*3]*camera.wrist_offset_m[0]-
+                     rotations[ri][row*3+1]*camera.wrist_offset_m[1]+
+                     rotations[ri][row*3+2]*camera.wrist_offset_m[2]);
+                assert(fabs(grip[row]-expected)<=.5);
+            }
+        }
+    }
+    /* Authored firearm bores remain +Z. The Panzerfaust's skewed tube is
+     * explicitly levelled rather than using a whole-model PCA axis. */
     for (size_t i=0; i<mohu_vr_weapon_profile_count(); ++i) {
         const MohuVrWeaponProfile* p=mohu_vr_weapon_profile_at(i);
         const MohuVrWeaponCalibration* a=p->calibration;
@@ -120,11 +151,20 @@ int main(void) {
         assert(mohu_vr_weapon_calibrated_control(affine,identity,hand,1000,a));
         double p0[3],p1[3];
         point(affine,a->grip_pivot,p0);
-        const double up[3]={a->grip_pivot[0],a->grip_pivot[1]-100,a->grip_pivot[2]};
-        point(affine,up,p1);
-        assert(p1[1]<p0[1] && fabs(p1[2]-p0[2])<.001);
+        if (p->id != 13) {
+            const double up[3]={a->grip_pivot[0],
+                a->grip_pivot[1]-100,a->grip_pivot[2]};
+            point(affine,up,p1);
+            assert(p1[1]<p0[1] && fabs(p1[2]-p0[2])<.001);
+        }
         assert(mohu_vr_weapon_muzzle_shot(affine,a,identity,(double[3]){0},position,angles));
-        assert(angles[0]==0 && angles[1]==0 && angles[2]==0);
+        if (p->id == 13) {
+            /* Fixed-point basis rounding is below one thousandth of a degree. */
+            assert(abs(angles[0]) < 4096 && abs(angles[1]) < 4096 &&
+                   angles[2] == 0);
+        } else {
+            assert(angles[0]==0 && angles[1]==0 && angles[2]==0);
+        }
         if (p->id==7) assert(a->model_units_per_metre==340);
         else if (p->id!=10 && p->id!=15)
             assert(a->model_units_per_metre==850);
@@ -149,6 +189,29 @@ int main(void) {
         panzer_control,identity,hand,1000,panzerfaust));
     point(panzer_control,panzerfaust->grip_pivot,grip);
     assert(fabs(grip[1]-(hand[1]-200))<=.5);
-    puts("calibrated grip/muzzle, authored bore, upright prop, StG semantic mask: PASS");
+    double tube[3];
+    for (unsigned i=0; i<3; ++i)
+        tube[i]=panzerfaust->muzzle[i]-panzerfaust->grip_pivot[i];
+    double tube_length=sqrt(tube[0]*tube[0]+tube[1]*tube[1]+tube[2]*tube[2]);
+    double panzer_grip[3], panzer_muzzle[3];
+    point(panzer_control,panzerfaust->grip_pivot,panzer_grip);
+    point(panzer_control,panzerfaust->muzzle,panzer_muzzle);
+    assert(fabs(panzer_muzzle[0]-panzer_grip[0])<=.5 &&
+           fabs(panzer_muzzle[1]-panzer_grip[1])<=.5);
+    assert(panzer_muzzle[2]>panzer_grip[2]);
+    double alignment=0;
+    for (unsigned i=0; i<3; ++i)
+        alignment += tube[i]/tube_length*panzerfaust->forward[i];
+    assert(fabs(alignment-1.0)<1e-7);
+    double panzer_origin[3],panzer_direction[3];
+    assert(mohu_vr_weapon_model_ray(
+        panzer_control,panzerfaust->muzzle,panzerfaust->forward,
+        panzer_origin,panzer_direction));
+    double direction_length=sqrt(
+        panzer_direction[0]*panzer_direction[0]+
+        panzer_direction[1]*panzer_direction[1]+
+        panzer_direction[2]*panzer_direction[2]);
+    assert(fabs(panzer_direction[2]/direction_length-1.0)<1e-5);
+    puts("calibrated grip/muzzle, authored bore, coaxial Panzerfaust tube, StG semantic mask: PASS");
     return 0;
 }

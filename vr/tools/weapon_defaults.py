@@ -23,11 +23,12 @@ def calibrations(root=None):
         if name not in IDS:
             continue
         vectors = re.findall(r'\{([^{}]+)\}', body)
-        if len(vectors) != 6:
+        if len(vectors) != 7:
             raise ValueError('Changed calibration initializer schema')
         values = {key: [float(x.strip()) for x in row.split(',')]
                   for key, row in zip(('grip_pivot', 'muzzle', 'right', 'up',
-                                       'forward', 'mount_offset_m'), vectors)}
+                                       'forward', 'mount_offset_m',
+                                       'wrist_offset_m'), vectors)}
         rest = body[body.rindex('}')+1:].strip().lstrip(',').strip()
         fields = rest.split(',')
         values.update(zip(('model_units_per_metre', 'reference_length_m', 'forward_span_units'),

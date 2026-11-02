@@ -20,6 +20,7 @@ static const MohuVrWeaponCalibration k_p38_calibration = {
     {0.0, -1.0, 0.0},
     {0.0, 0.0, 1.0},
     {0.0, 0.0, 0.0},
+    {0.0, 0.0, 0.0},
     850.0,
     0.216000000000,
     164.265769717169,
@@ -32,6 +33,7 @@ static const MohuVrWeaponCalibration k_mp40_calibration = {
     {1.0, 0.0, 0.0},
     {0.0, -1.0, 0.0},
     {0.0, 0.0, 1.0},
+    {0.0, 0.0, 0.0},
     {0.0, 0.0, 0.0},
     850.0,
     0.833000000000,
@@ -46,6 +48,7 @@ static const MohuVrWeaponCalibration k_shotgun_calibration = {
     {0.0, -1.0, 0.0},
     {0.0, 0.0, 1.0},
     {0.0, 0.0, 0.0},
+    {0.0, 0.0, 0.0},
     850.0,
     1.000000000000,
     716.800492727390,
@@ -58,6 +61,7 @@ static const MohuVrWeaponCalibration k_scoped_rifle_calibration = {
     {1.0, 0.0, 0.0},
     {0.0, -1.0, 0.0},
     {0.0, 0.0, 1.0},
+    {0.0, 0.0, 0.0},
     {0.0, 0.0, 0.0},
     850.0,
     1.110000000000,
@@ -72,6 +76,7 @@ static const MohuVrWeaponCalibration k_colt_45_calibration = {
     {0.0, -1.0, 0.0},
     {0.0, 0.0, 1.0},
     {0.0, 0.0, 0.0},
+    {0.0, 0.0, 0.0},
     850.0,
     0.216000000000,
     161.338059492327,
@@ -85,6 +90,7 @@ static const MohuVrWeaponCalibration k_silenced_pistol_calibration = {
     {0.0, -1.0, 0.0},
     {0.0, 0.0, 1.0},
     {0.0, 0.0, 0.0},
+    {0.0, 0.0, 0.0},
     850.0,
     0.300000000000,
     209.224345876678,
@@ -97,6 +103,7 @@ static const MohuVrWeaponCalibration k_stick_grenade_calibration = {
     {1.0, 0.0, 0.0},
     {0.0, -1.0, 0.0},
     {0.0, 0.0, 1.0},
+    {0.0, 0.0, 0.0},
     {0.0, 0.0, 0.0},
     414.569888540525,
     0.365000000000,
@@ -115,9 +122,8 @@ static const MohuVrWeaponCalibration k_camera_calibration = {
     {1.0, 0.0, 0.0},
     {0.0, -1.0, 0.0},
     {0.0, 0.0, 1.0},
-    /* Raise the shared camera/papers mount toward the eye and pull it back
-     * from the native hand position so neither prop obscures the scene. */
-    {0.0, -0.22, -0.10},
+    {0.0, 0.0, 0.0},
+    {0.0, 0.0, 0.0},
     340.0,
     0.200000000000,
     41.0,
@@ -131,6 +137,7 @@ static const MohuVrWeaponCalibration k_m1_garand_calibration = {
     {0.0, -1.0, 0.0},
     {0.0, 0.0, 1.0},
     {0.0, 0.0, 0.0},
+    {0.0, 0.0, 0.0},
     850.0,
     1.107000000000,
     636.782623823402,
@@ -140,10 +147,13 @@ static const MohuVrWeaponCalibration k_m1_garand_calibration = {
 static const MohuVrWeaponCalibration k_panzerfaust_calibration = {
     {130.565217391304, 99.086956521739, 272.739130434783},
     {135.800000000000, 72.000000000000, 543.400000000000},
-    {1.0, 0.0, 0.0},
-    {0.0, -1.0, 0.0},
-    {0.0, 0.0, 1.0},
+    /* Rotate the authored tube onto the camera/controller bore so the
+     * launcher, laser and native projectile share one centreline. */
+    {0.99981302, 0.0, -0.01933713},
+    {-0.00192523, -0.99503144, -0.09954263},
+    {0.01924105, -0.09956125, 0.99484539},
     {0.0, -0.20, 0.0},
+    {0.0, 0.0, 0.0},
     850.0,
     1.000000000000,
     516.805308178657,
@@ -157,6 +167,7 @@ static const MohuVrWeaponCalibration k_crossbow_calibration = {
     {0.0, -1.0, 0.0},
     {0.0, 0.0, 1.0},
     {0.0, 0.0, 0.0},
+    {0.0, 0.0, 0.0},
     850.0,
     0.800000000000,
     449.835119944576,
@@ -169,6 +180,7 @@ static const MohuVrWeaponCalibration k_petrol_bomb_calibration = {
     {1.0, 0.0, 0.0},
     {0.0, -1.0, 0.0},
     {0.0, 0.0, 1.0},
+    {0.0, 0.0, 0.0},
     {0.0, 0.0, 0.0},
     568.917001007464,
     0.300000000000,
@@ -195,6 +207,7 @@ static const MohuVrWeaponCalibration k_sten_calibration = {
     {0.0, -1.0, 0.0},
     {0.0, 0.0, 1.0},
     {0.0, 0.0, 0.0},
+    {0.0, 0.0, 0.0},
     850.0,
     0.762000000000,
     437.685058775527,
@@ -207,6 +220,7 @@ static const MohuVrWeaponCalibration k_stg44_calibration = {
     {1.0, 0.0, 0.0},
     {0.0, -1.0, 0.0},
     {0.0, 0.0, 1.0},
+    {0.0, 0.0, 0.0},
     {0.0, 0.0, 0.0},
     850.0,
     0.940000000000,
@@ -357,6 +371,10 @@ int mohu_vr_weapon_calibrated_control(
         }
         double value = hand_translation[row] +
             c->mount_offset_m[row] * units_per_metre;
+        value += units_per_metre *
+            (hand_rotation[row * 3] * c->wrist_offset_m[0] -
+             hand_rotation[row * 3 + 1] * c->wrist_offset_m[1] +
+             hand_rotation[row * 3 + 2] * c->wrist_offset_m[2]);
         for (unsigned k=0; k<3; ++k)
             value -= (double)rt[row*3+k] / 4096.0 * c->grip_pivot[k];
         if (!isfinite(value) || value < INT32_MIN || value > INT32_MAX) return 0;
@@ -366,6 +384,36 @@ int mohu_vr_weapon_calibrated_control(
         result[i] = (uint16_t)rt[2*i] | ((uint32_t)(uint16_t)rt[2*i+1] << 16);
     result[4] = (control[4] & 0xFFFF0000u) | (uint16_t)rt[8];
     memcpy(control, result, sizeof result);
+    return 1;
+}
+
+int mohu_vr_weapon_calibrated_point(
+    const double hand_rotation[9], const double hand_translation[3],
+    double units_per_metre, const MohuVrWeaponCalibration* c,
+    const double model_point[3], double output_m[3]) {
+    if (!hand_rotation || !hand_translation || !c || !model_point ||
+        !output_m || !isfinite(units_per_metre) || units_per_metre < 1.0 ||
+        units_per_metre > 65536.0 || !isfinite(c->model_units_per_metre) ||
+        c->model_units_per_metre < 1.0) return 0;
+    const double model_scale = units_per_metre / c->model_units_per_metre;
+    double result[3];
+    for (unsigned row = 0; row < 3u; ++row) {
+        double value = hand_translation[row] + units_per_metre *
+            (hand_rotation[row * 3u] * c->wrist_offset_m[0] -
+             hand_rotation[row * 3u + 1u] * c->wrist_offset_m[1] +
+             hand_rotation[row * 3u + 2u] * c->wrist_offset_m[2]);
+        for (unsigned col = 0; col < 3u; ++col) {
+            const double basis =
+                hand_rotation[row * 3u] * c->right[col] -
+                hand_rotation[row * 3u + 1u] * c->up[col] +
+                hand_rotation[row * 3u + 2u] * c->forward[col];
+            value += model_scale * basis *
+                     (model_point[col] - c->grip_pivot[col]);
+        }
+        if (!isfinite(value)) return 0;
+        result[row] = value;
+    }
+    memcpy(output_m, result, sizeof result);
     return 1;
 }
 
@@ -391,14 +439,12 @@ int mohu_vr_weapon_model_ray(const uint32_t control[8], const double tip[3],
     return 1;
 }
 
-int mohu_vr_weapon_animated_shot(
-    const uint32_t control[8], const double tip[3],
-    const double declared_axis[3], const double inverse[9],
+static int weapon_shot_from_axis(
+    const double muzzle[3], const double axis[3], const double inverse[9],
     const double camera_translation[3], int32_t position[3],
     int32_t angles[3]) {
-    double muzzle[3],axis[3];
-    if (!inverse || !camera_translation || !position || !angles ||
-        !mohu_vr_weapon_model_ray(control,tip,declared_axis,muzzle,axis)) return 0;
+    if (!muzzle || !axis || !inverse || !camera_translation || !position ||
+        !angles) return 0;
     int32_t p[3];
     double d[3] = {0};
     for (unsigned row=0; row<3; ++row) {
@@ -426,6 +472,18 @@ int mohu_vr_weapon_animated_shot(
     memcpy(position, p, sizeof p);
     memcpy(angles, a, sizeof a);
     return 1;
+}
+
+int mohu_vr_weapon_animated_shot(
+    const uint32_t control[8], const double tip[3],
+    const double declared_axis[3], const double inverse[9],
+    const double camera_translation[3], int32_t position[3],
+    int32_t angles[3]) {
+    double muzzle[3],axis[3];
+    if (!inverse || !camera_translation || !position || !angles ||
+        !mohu_vr_weapon_model_ray(control,tip,declared_axis,muzzle,axis)) return 0;
+    return weapon_shot_from_axis(
+        muzzle, axis, inverse, camera_translation, position, angles);
 }
 
 int mohu_vr_weapon_muzzle_shot(

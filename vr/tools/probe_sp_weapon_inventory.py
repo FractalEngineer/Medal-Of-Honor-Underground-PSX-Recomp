@@ -202,6 +202,9 @@ def main() -> None:
         action="store_true",
         help="exercise slot 3 camera aim plus trigger in an isolated save",
     )
+    parser.add_argument("--camera-offset-right", type=float)
+    parser.add_argument("--camera-offset-up", type=float)
+    parser.add_argument("--camera-offset-forward", type=float)
     args = parser.parse_args()
     if native.game_pids():
         raise RuntimeError("Close the existing game before this owned probe")
@@ -214,6 +217,13 @@ def main() -> None:
         parser.error("switches must be in 1..8")
     if args.camera_objective and args.slots != [3]:
         parser.error("camera-objective requires --slots 3")
+    for value in (
+        args.camera_offset_right,
+        args.camera_offset_up,
+        args.camera_offset_forward,
+    ):
+        if value is not None and not -1.0 <= value <= 1.0:
+            parser.error("camera offsets must be in -1.0..1.0 metres")
 
     out = args.out.resolve()
     out.mkdir(parents=True, exist_ok=False)
@@ -308,6 +318,22 @@ def main() -> None:
                 comparison.set_desktop_hands()
                 if args.camera_objective:
                     set_bounded_camera_hands()
+                    offsets = []
+                    for name in ("right", "up", "forward"):
+                        value = getattr(args, f"camera_offset_{name}")
+                        if value is not None:
+                            offsets.append(f"{name}={value:.6f}")
+                    if offsets:
+                        offset = native.command(
+                            "mod_cmd",
+                            name="mohu.vr.weapon.camera-offset",
+                            args=" ".join(offsets),
+                        )
+                        if offset.get("result") != 1:
+                            raise RuntimeError(
+                                f"camera offset rejected: {offset}"
+                            )
+                        receipt["camera_offset"] = json.loads(offset["reply"])
                 native.frames(10)
                 start = comparison.counter_values()
                 entries = [snapshot("initial")]

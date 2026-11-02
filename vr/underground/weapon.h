@@ -49,6 +49,9 @@ typedef struct {
     /* Camera-space translation moved together with the rendered model and
      * its muzzle ray. Use this for mount geometry, not per-save calibration. */
     double mount_offset_m[3];
+    /* Controller-local right/up/forward translation, rotated with the hand.
+     * Use this for wrist placement; it remains stable through hand roll. */
+    double wrist_offset_m[3];
     double model_units_per_metre;
     double reference_length_m;
     double forward_span_units;
@@ -182,6 +185,12 @@ int mohu_vr_weapon_calibrated_control(
     uint32_t control[8], const double hand_rotation[9],
     const double hand_translation[3], double units_per_metre,
     const MohuVrWeaponCalibration* calibration);
+/* Map one measured model-space point through the exact same controller-local
+ * transform as the rendered weapon affine. Output uses PSX camera axes/metres. */
+int mohu_vr_weapon_calibrated_point(
+    const double hand_rotation[9], const double hand_translation[3],
+    double units_per_metre, const MohuVrWeaponCalibration* calibration,
+    const double model_point[3], double output_m[3]);
 int mohu_vr_weapon_muzzle_shot(
     const uint32_t control[8], const MohuVrWeaponCalibration* calibration,
     const double camera_inverse[9], const double camera_translation[3],

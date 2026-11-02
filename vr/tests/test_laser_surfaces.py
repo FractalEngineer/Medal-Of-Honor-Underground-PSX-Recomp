@@ -37,8 +37,14 @@ class LaserSurfaceTests(unittest.TestCase):
         rows=calibrations()
         self.assertEqual(len(rows),13)
         for weapon,row in rows.items():
-            self.assertEqual(row['forward'],[0,0,1])
-            self.assertEqual(row['up'],[0,-1,0])
+            if weapon == 13:
+                tube=np.asarray(row['muzzle'])-np.asarray(row['grip_pivot'])
+                tube/=np.linalg.norm(tube)
+                self.assertAlmostEqual(float(np.dot(tube,row['forward'])),1.0,
+                                       places=7)
+            else:
+                self.assertEqual(row['forward'],[0,0,1])
+                self.assertEqual(row['up'],[0,-1,0])
             self.assertTrue(all(math.isfinite(x) for x in row['grip_pivot']))
             if weapon in (10,15):
                 self.assertLess(row['muzzle'][1],row['grip_pivot'][1]-90)
