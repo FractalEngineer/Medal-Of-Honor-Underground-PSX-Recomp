@@ -515,7 +515,7 @@ jobs:
           # Ninja does not emit flags.make (Makefiles generator only). Probe
           # whichever compile-flag artifact exists for the defines the release
           # depends on.
-          for define in PSX_HAVE_VULKAN PSX_HAS_GAME_DISPATCH PSX_OPENXR MOHU_VR_DIAGNOSTICS; do
+          for define in PSX_HAVE_VULKAN PSX_HAS_GAME_DISPATCH PSX_OPENXR; do
             FOUND=0
             for f in \
                 build-ci/build.ninja \
@@ -532,6 +532,10 @@ jobs:
               exit 1
             fi
           done
+          if ! grep -q 'vr/underground/vr_diagnostic.c' build-ci/build.ninja; then
+            echo "::error::VR plugin source missing; MOHU_VR_DIAGNOSTICS was not applied"
+            exit 1
+          fi
           cmake --build build-ci --target psx-runtime -j"${JOBS}"
           # Lobby list pin must match RELEASE_VERSION (the packager enforces).
           STAMP=""
