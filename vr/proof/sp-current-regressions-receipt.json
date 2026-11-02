@@ -1,0 +1,65 @@
+{
+  "schema": 1,
+  "date": "2026-10-29",
+  "operator_report": "save 1 has missing level rendering again and save 2 has severe performance issues",
+  "numbering": "Operator confirmed internal/file/tool slot indices 1 and 2 throughout; do not reinterpret through menu display labels",
+  "numbering_confirmed_by_operator": true,
+  "cases": [
+    {
+      "id": "G5",
+      "internal_slot": 1,
+      "symptom": "Missing level rendering again",
+      "files": [
+        {
+          "source": "saves/openbios/state_8001F844_slot01.pst",
+          "fixture": "analysis/fixtures/sp/openbios/state_8001F844_slot01.pst",
+          "bytes": 1851927,
+          "sha256": "3d7d06637158aaf7c436e05f2c7e65b85d9ed124fb636edc8a92d5cfd900f94b",
+          "modified_utc": "2026-10-29T11:28:03.439350+00:00"
+        },
+        {
+          "source": "saves/openbios/state_8001F844_slot01.thumb",
+          "fixture": "analysis/fixtures/sp/openbios/state_8001F844_slot01.thumb",
+          "bytes": 49164,
+          "sha256": "4cb5e3136a139da82572853dbaa2c1616f4c39b4d927d74c8ea2136dd4e71908",
+          "modified_utc": "2026-10-29T11:28:03.439850+00:00"
+        }
+      ],
+      "reproduced": false,
+      "root_cause": null,
+      "fps": null
+    },
+    {
+      "id": "G6",
+      "internal_slot": 2,
+      "symptom": "Severe performance issues; FPS not measured",
+      "files": [
+        {
+          "source": "saves/openbios/state_8001F844_slot02.pst",
+          "fixture": "analysis/fixtures/sp/openbios/state_8001F844_slot02.pst",
+          "bytes": 1880742,
+          "sha256": "dd1c87925c8480198d04e8d7b38c67c0099ed4985463f7dc4e46731c80f90ceb",
+          "modified_utc": "2026-10-29T11:29:47.489081+00:00"
+        },
+        {
+          "source": "saves/openbios/state_8001F844_slot02.thumb",
+          "fixture": "analysis/fixtures/sp/openbios/state_8001F844_slot02.thumb",
+          "bytes": 49164,
+          "sha256": "332196dd7003ad841e25a9320fc138d2a5886ce9a5e47a494894c16c178e9b55",
+          "modified_utc": "2026-10-29T11:29:47.489585+00:00"
+        }
+      ],
+      "reproduced": false,
+      "root_cause": null,
+      "fps": null
+    }
+  ],
+  "current_disk_binary_sha256": "b00fc27187d232c42db66129d952b77bbfdd261e4b73d1b486335be019fba8b1",
+  "reported_binary_sha256": null,
+  "reported_runtime": null,
+  "reported_mode": null,
+  "game_launched": false,
+  "personal_saves_unchanged": true,
+  "frozen_in_existing_sp_fixture_library": true,
+  "next_task": "G7 complete all MP-to-SP weapon calibration/control parity FIRST; then G5b internal slot 1 Flat/stereo reproduction and G6b internal slot 2 measured baseline before implementation selection"
+}

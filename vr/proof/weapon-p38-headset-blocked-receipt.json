@@ -1,0 +1,82 @@
+{
+  "schema": 1,
+  "date": "2026-10-26",
+  "kind": "W3.2 P38 bounded movement-enabled comparison",
+  "desktop_synthetic": false,
+  "headset_acceptance": false,
+  "revision": "1b4e551721f02f34e69a2644a41cd448093bd4ef",
+  "executable_sha256": "9db6c6bbf8aae79d3d568cb4f0067d7b1dcc6eab07f00a4dbb1abe12265fdc73",
+  "build": {
+    "PSX_DEBUG_TOOLS": "ON",
+    "MOHU_VR_DIAGNOSTICS": "ON",
+    "PSX_OPENXR": "ON",
+    "configuration": "Release"
+  },
+  "calibration": {
+    "path": "vr\\proof\\weapon-p38-calibration-receipt.json",
+    "sha256": "28bbaca4c6e0464017862466fb9eba041c03a5b5875c57bf2e7aaaf85f8abda3",
+    "node": 13,
+    "vertex_count": 69,
+    "provisional_scale": 530.2105640419018,
+    "physical_acceptance": "open; W3.3"
+  },
+  "fixture": {
+    "source": "root multiplayer slot 1",
+    "weapon_id": 0,
+    "weapon": "P38 pistol",
+    "switches": 0,
+    "fire_policy": "operator may fire; runner never edits ammo",
+    "source_hashes": {
+      "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\saves\\openbios\\state_8001F844_slot01.pst": "b248dfa247b45a41906beea3aa829cff79b39d863e425211e5c0651e853a7f5d",
+      "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\saves\\openbios\\state_8001F844_slot01.thumb": "008eb36b216f802cc54b8911eed2201b28b5167830ac4cfeaf4bfff5aab3543c"
+    }
+  },
+  "comparison": {
+    "modes": [
+      "native",
+      "tracked"
+    ],
+    "seconds_per_mode": 2,
+    "movement_enabled": true,
+    "mp_control_enabled": true,
+    "laser_disabled": true
+  },
+  "complete": false,
+  "checks": {
+    "all_cases_complete": false,
+    "source_saves_unchanged": true,
+    "preferences_unchanged": true,
+    "remaining_game_pids": []
+  },
+  "raw_receipt": "analysis\\vr-baseline\\weapon-mesh-mapping\\w32-headset-smoke-20261026b\\receipt.json",
+  "raw_receipt_sha256": "49a3c6618a7f9a31a3a33c93ba75835f80c61da3edbcbcf770d21c16b37fc9d2",
+  "cases": [
+    {
+      "mode": "native",
+      "seconds": 2,
+      "elapsed_seconds": null,
+      "complete": false,
+      "error": "OpenXR did not submit stereo frames",
+      "exit_code": 0,
+      "model": {
+        "magic": "0xe0007",
+        "face_count": 354,
+        "node_count": 14,
+        "geometry_fnv32": "0x8544f8b9",
+        "node_table_sha256": "996d7f2e28405e080600300ebb096834929c79c1d276ce88d3259a73c5a2969b"
+      },
+      "sample_summary": null,
+      "stereo_before": null,
+      "stereo_after": null,
+      "xr_before": null,
+      "xr_after": null
+    }
+  ],
+  "status": "blocked",
+  "error": "OpenXR did not submit stereo frames",
+  "limits": [
+    "No operator acceptance is inferred.",
+    "W3.1 P38 calibration remains provisional.",
+    "Physical grip, scale, recoil, reload, switch and wall checks are W3.3."
+  ]
+}

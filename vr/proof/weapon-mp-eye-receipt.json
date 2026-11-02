@@ -1,0 +1,2419 @@
+{
+  "date": "2026-10-25",
+  "kind": "guarded P1-only multiplayer eye replay",
+  "executable_sha256": "0bdaf3835559f31514144ce473186a0765bcba19238f212f32408539e65e43c2",
+  "sources": {
+    "vr\\underground\\vr_diagnostic.c": "10dab5c2cf2bd1f52c1e2fca0f77222c77e7bbd06f00133f1e822c9b795578e2",
+    "vr\\underground\\mp_view.h": "d640d9e76cf2384b64a6b858209977447e3d25c130b7f7f6df923bc8c3532d4a"
+  },
+  "controls": {
+    "analysis\\vr-baseline\\weapon-mesh-mapping\\mp-eye-all-final-20261025": "8b5d85394f04d9adc6ea532d828c50694ca6344981c7c658e051c3d3afbc0686",
+    "analysis\\vr-baseline\\weapon-mesh-mapping\\mp-eye-lateral-20261025a": "9a72da51dac628d4f656030b9dcca41807178fe1862f2578835f089fd039b4d3",
+    "analysis\\vr-baseline\\weapon-mesh-mapping\\mp-eye-combat-recovery-20261025b": "a5daf3bae7d0b5393fae35c6a8ee901c6883260b1c8a2e1232fb993a66c224a2"
+  },
+  "contract": {
+    "context": "0x800A0B08",
+    "native_frame": "0x80054BC4",
+    "native_caller": "0x80063CF8",
+    "camera_selector": "0x80054E68",
+    "scene_draw": "0x8006E9D8",
+    "player_root": "0x800A3604",
+    "camera_root": "0x800A35B0",
+    "scene_root": "0x800A35CC",
+    "current_player": "0x800A35C4",
+    "eye_size": [
+      512,
+      120
+    ],
+    "world_h": 400,
+    "weapon_h": 133,
+    "weapon_projection_h_ref": 400
+  },
+  "code_guards": [
+    {
+      "address": "0x80054BC4",
+      "bytes": 512,
+      "fnv32": "6CDFBB75"
+    },
+    {
+      "address": "0x80054E68",
+      "bytes": 332,
+      "fnv32": "2BE15194"
+    },
+    {
+      "address": "0x8006E9D8",
+      "bytes": 384,
+      "fnv32": "04C21F46"
+    },
+    {
+      "address": "0x80082598",
+      "bytes": 580,
+      "fnv32": "8B9E349D"
+    }
+  ],
+  "unique_ids": [
+    0,
+    1,
+    4,
+    5,
+    8,
+    9,
+    10,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17
+  ],
+  "native_cycles_closed": {
+    "1": true,
+    "2": true,
+    "3": true,
+    "4": true
+  },
+  "rows": [
+    {
+      "slot": 1,
+      "id": 0,
+      "name": "P38 pistol",
+      "cases": [
+        {
+          "case": "native",
+          "image_hashes": {
+            "p000022_left.png": "646577a487b2394980b21275797fef119af15518a02d10bc40a68b6dc1bd64e2",
+            "p000022_right.png": "646577a487b2394980b21275797fef119af15518a02d10bc40a68b6dc1bd64e2"
+          },
+          "checkpoint_pairs": 23,
+          "eye_cycles": [
+            10438025907,
+            10438025907
+          ],
+          "eye_hashes": [
+            "452ffa0cdb4b8072",
+            "452ffa0cdb4b8072"
+          ],
+          "verify_checks": 46,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.apply.left": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.view_restore": 13,
+            "mohu.vr.mp.draw.left": 6,
+            "mohu.vr.weapon.apply.right": 0,
+            "mohu.vr.mp.draw.right": 7,
+            "mohu.vr.weapon.tracking_fallback": 13
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": null
+        },
+        {
+          "case": "translated",
+          "image_hashes": {
+            "p000032_left.png": "285ffbae04ffbaa861d70bce376ba93c76f0092866fa1bc8e2cfdcc9bd989f17",
+            "p000032_right.png": "285ffbae04ffbaa861d70bce376ba93c76f0092866fa1bc8e2cfdcc9bd989f17"
+          },
+          "checkpoint_pairs": 32,
+          "eye_cycles": [
+            10453440037,
+            10453440037
+          ],
+          "eye_hashes": [
+            "061b836f65e55027",
+            "061b836f65e55027"
+          ],
+          "verify_checks": 64,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 10,
+            "mohu.vr.weapon.apply.left": 5,
+            "mohu.vr.weapon.viewmodel_restore": 10,
+            "mohu.vr.weapon.view_restore": 10,
+            "mohu.vr.mp.draw.left": 5,
+            "mohu.vr.weapon.apply.right": 5,
+            "mohu.vr.mp.draw.right": 5,
+            "mohu.vr.weapon.tracking_fallback": 0
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": [
+            23,
+            5,
+            57,
+            20
+          ]
+        },
+        {
+          "case": "yawed",
+          "image_hashes": {
+            "p000041_left.png": "2cad20c32ff296b969b4a6ccf48a618c90d8c13e2f0829a9cc5468c1d65eedb4",
+            "p000041_right.png": "2cad20c32ff296b969b4a6ccf48a618c90d8c13e2f0829a9cc5468c1d65eedb4"
+          },
+          "checkpoint_pairs": 42,
+          "eye_cycles": [
+            10470398235,
+            10470398235
+          ],
+          "eye_hashes": [
+            "4b7c7e7d3fa89ed3",
+            "4b7c7e7d3fa89ed3"
+          ],
+          "verify_checks": 84,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 13,
+            "mohu.vr.weapon.apply.left": 7,
+            "mohu.vr.weapon.viewmodel_restore": 13,
+            "mohu.vr.weapon.view_restore": 13,
+            "mohu.vr.mp.draw.left": 7,
+            "mohu.vr.weapon.apply.right": 6,
+            "mohu.vr.mp.draw.right": 6,
+            "mohu.vr.weapon.tracking_fallback": 0
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": [
+            23,
+            5,
+            79,
+            20
+          ]
+        },
+        {
+          "case": "lost",
+          "image_hashes": {
+            "p000051_left.png": "383c2384abb1192fb05c176ed96bee17e069295a2ce116d1f55a82335e4b1cfe",
+            "p000051_right.png": "383c2384abb1192fb05c176ed96bee17e069295a2ce116d1f55a82335e4b1cfe"
+          },
+          "checkpoint_pairs": 51,
+          "eye_cycles": [
+            10487277346,
+            10487277346
+          ],
+          "eye_hashes": [
+            "e1950884ae91c5e5",
+            "e1950884ae91c5e5"
+          ],
+          "verify_checks": 104,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.apply.left": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.view_restore": 12,
+            "mohu.vr.mp.draw.left": 6,
+            "mohu.vr.weapon.apply.right": 0,
+            "mohu.vr.mp.draw.right": 6,
+            "mohu.vr.weapon.tracking_fallback": 12
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": null
+        }
+      ]
+    },
+    {
+      "slot": 1,
+      "id": 1,
+      "name": "MP40",
+      "cases": [
+        {
+          "case": "native",
+          "image_hashes": {
+            "p000093_left.png": "681066f58a2495739d7c6f27ae1ce9de34ecc2ce6439a87dca174e7c01a443ec",
+            "p000093_right.png": "681066f58a2495739d7c6f27ae1ce9de34ecc2ce6439a87dca174e7c01a443ec"
+          },
+          "checkpoint_pairs": 93,
+          "eye_cycles": [
+            10550666397,
+            10550666397
+          ],
+          "eye_hashes": [
+            "0a12bc24dfa12727",
+            "0a12bc24dfa12727"
+          ],
+          "verify_checks": 186,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.apply.left": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.view_restore": 10,
+            "mohu.vr.mp.draw.left": 5,
+            "mohu.vr.weapon.apply.right": 0,
+            "mohu.vr.mp.draw.right": 5,
+            "mohu.vr.weapon.tracking_fallback": 10
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": null
+        },
+        {
+          "case": "translated",
+          "image_hashes": {
+            "p000103_left.png": "b7f7f85f9173b7904d3ef17af4a4ae9a9b572124c0aa9039dd3ff0713bd94697",
+            "p000103_right.png": "b7f7f85f9173b7904d3ef17af4a4ae9a9b572124c0aa9039dd3ff0713bd94697"
+          },
+          "checkpoint_pairs": 104,
+          "eye_cycles": [
+            10568005596,
+            10568005596
+          ],
+          "eye_hashes": [
+            "1d15ed8346b820cc",
+            "1d15ed8346b820cc"
+          ],
+          "verify_checks": 208,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 13,
+            "mohu.vr.weapon.apply.left": 6,
+            "mohu.vr.weapon.viewmodel_restore": 13,
+            "mohu.vr.weapon.view_restore": 13,
+            "mohu.vr.mp.draw.left": 6,
+            "mohu.vr.weapon.apply.right": 7,
+            "mohu.vr.mp.draw.right": 7,
+            "mohu.vr.weapon.tracking_fallback": 0
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": [
+            35,
+            0,
+            77,
+            20
+          ]
+        },
+        {
+          "case": "yawed",
+          "image_hashes": {
+            "p000111_left.png": "e92ecfbb655636d903ff594057018674b993288be8c2fe32709d0a545cef4136",
+            "p000111_right.png": "e92ecfbb655636d903ff594057018674b993288be8c2fe32709d0a545cef4136"
+          },
+          "checkpoint_pairs": 112,
+          "eye_cycles": [
+            10580408697,
+            10580408697
+          ],
+          "eye_hashes": [
+            "b6a9bffb4cef1d60",
+            "b6a9bffb4cef1d60"
+          ],
+          "verify_checks": 224,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 12,
+            "mohu.vr.weapon.apply.left": 6,
+            "mohu.vr.weapon.viewmodel_restore": 12,
+            "mohu.vr.weapon.view_restore": 12,
+            "mohu.vr.mp.draw.left": 6,
+            "mohu.vr.weapon.apply.right": 6,
+            "mohu.vr.mp.draw.right": 6,
+            "mohu.vr.weapon.tracking_fallback": 0
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": [
+            35,
+            0,
+            98,
+            20
+          ]
+        },
+        {
+          "case": "lost",
+          "image_hashes": {
+            "p000119_left.png": "f441cc326dc6c8d2286e46c4888446d0c432a3c0518d9d29be02a7e4800b5036",
+            "p000119_right.png": "f441cc326dc6c8d2286e46c4888446d0c432a3c0518d9d29be02a7e4800b5036"
+          },
+          "checkpoint_pairs": 120,
+          "eye_cycles": [
+            10593156860,
+            10593156860
+          ],
+          "eye_hashes": [
+            "624732501e57f195",
+            "624732501e57f195"
+          ],
+          "verify_checks": 240,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.apply.left": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.view_restore": 12,
+            "mohu.vr.mp.draw.left": 6,
+            "mohu.vr.weapon.apply.right": 0,
+            "mohu.vr.mp.draw.right": 6,
+            "mohu.vr.weapon.tracking_fallback": 12
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": null
+        }
+      ]
+    },
+    {
+      "slot": 1,
+      "id": 17,
+      "name": "StG44",
+      "cases": [
+        {
+          "case": "native",
+          "image_hashes": {
+            "p000164_left.png": "839386607cbe8348ef0ece60608d66e32c4572aaf04a22603435f15f4fd82768",
+            "p000164_right.png": "839386607cbe8348ef0ece60608d66e32c4572aaf04a22603435f15f4fd82768"
+          },
+          "checkpoint_pairs": 164,
+          "eye_cycles": [
+            10661884416,
+            10661884416
+          ],
+          "eye_hashes": [
+            "c6a676050eeb8a7e",
+            "c6a676050eeb8a7e"
+          ],
+          "verify_checks": 329,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.apply.left": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.view_restore": 11,
+            "mohu.vr.mp.draw.left": 6,
+            "mohu.vr.weapon.apply.right": 0,
+            "mohu.vr.mp.draw.right": 5,
+            "mohu.vr.weapon.tracking_fallback": 12
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": null
+        },
+        {
+          "case": "translated",
+          "image_hashes": {
+            "p000174_left.png": "9ab9de61b5f215744a3f75207a7f950c2d32f1f304a5b4f60a411dbd765781e4",
+            "p000174_right.png": "9ab9de61b5f215744a3f75207a7f950c2d32f1f304a5b4f60a411dbd765781e4"
+          },
+          "checkpoint_pairs": 175,
+          "eye_cycles": [
+            10678235890,
+            10678235890
+          ],
+          "eye_hashes": [
+            "07a87e0711a600eb",
+            "07a87e0711a600eb"
+          ],
+          "verify_checks": 350,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 13,
+            "mohu.vr.weapon.apply.left": 6,
+            "mohu.vr.weapon.viewmodel_restore": 13,
+            "mohu.vr.weapon.view_restore": 13,
+            "mohu.vr.mp.draw.left": 6,
+            "mohu.vr.weapon.apply.right": 7,
+            "mohu.vr.mp.draw.right": 7,
+            "mohu.vr.weapon.tracking_fallback": 0
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": [
+            47,
+            0,
+            215,
+            20
+          ]
+        },
+        {
+          "case": "yawed",
+          "image_hashes": {
+            "p000185_left.png": "e1ca8d3ada2cf8a2a5c140868d413a41f27e75648b0fb3d97f1ccfc1f2869ace",
+            "p000185_right.png": "e1ca8d3ada2cf8a2a5c140868d413a41f27e75648b0fb3d97f1ccfc1f2869ace"
+          },
+          "checkpoint_pairs": 185,
+          "eye_cycles": [
+            10696125534,
+            10696125534
+          ],
+          "eye_hashes": [
+            "45cf4618b511caa1",
+            "45cf4618b511caa1"
+          ],
+          "verify_checks": 371,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 14,
+            "mohu.vr.weapon.apply.left": 7,
+            "mohu.vr.weapon.viewmodel_restore": 14,
+            "mohu.vr.weapon.view_restore": 14,
+            "mohu.vr.mp.draw.left": 7,
+            "mohu.vr.weapon.apply.right": 7,
+            "mohu.vr.mp.draw.right": 7,
+            "mohu.vr.weapon.tracking_fallback": 0
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": [
+            47,
+            0,
+            242,
+            20
+          ]
+        },
+        {
+          "case": "lost",
+          "image_hashes": {
+            "p000194_left.png": "a9027cbcc56e95d4a64848f262bd5a3c6860f6464ecf345ec26b15b19c7645c7",
+            "p000194_right.png": "a9027cbcc56e95d4a64848f262bd5a3c6860f6464ecf345ec26b15b19c7645c7"
+          },
+          "checkpoint_pairs": 195,
+          "eye_cycles": [
+            10711174791,
+            10711174791
+          ],
+          "eye_hashes": [
+            "ed3544af1c2d636e",
+            "ed3544af1c2d636e"
+          ],
+          "verify_checks": 390,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.apply.left": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.view_restore": 14,
+            "mohu.vr.mp.draw.left": 7,
+            "mohu.vr.weapon.apply.right": 0,
+            "mohu.vr.mp.draw.right": 7,
+            "mohu.vr.weapon.tracking_fallback": 14
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": null
+        }
+      ]
+    },
+    {
+      "slot": 1,
+      "id": 10,
+      "name": "Stick grenade",
+      "cases": [
+        {
+          "case": "native",
+          "image_hashes": {
+            "p000237_left.png": "2ef4ee0671269915b122052175283086676517e4ede95b5b9d7721d4eb882f63",
+            "p000237_right.png": "2ef4ee0671269915b122052175283086676517e4ede95b5b9d7721d4eb882f63"
+          },
+          "checkpoint_pairs": 238,
+          "eye_cycles": [
+            10777287059,
+            10777287059
+          ],
+          "eye_hashes": [
+            "41a4ce798f934948",
+            "41a4ce798f934948"
+          ],
+          "verify_checks": 476,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.apply.left": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.view_restore": 12,
+            "mohu.vr.mp.draw.left": 6,
+            "mohu.vr.weapon.apply.right": 0,
+            "mohu.vr.mp.draw.right": 6,
+            "mohu.vr.weapon.tracking_fallback": 12
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": null
+        },
+        {
+          "case": "translated",
+          "image_hashes": {
+            "p000247_left.png": "311cb654fb413584b174163fc0d480990353fe70dc8666d0b2603d65ca875983",
+            "p000247_right.png": "311cb654fb413584b174163fc0d480990353fe70dc8666d0b2603d65ca875983"
+          },
+          "checkpoint_pairs": 248,
+          "eye_cycles": [
+            10792574761,
+            10792574761
+          ],
+          "eye_hashes": [
+            "359cb9481db977f1",
+            "359cb9481db977f1"
+          ],
+          "verify_checks": 496,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 14,
+            "mohu.vr.weapon.apply.left": 7,
+            "mohu.vr.weapon.viewmodel_restore": 14,
+            "mohu.vr.weapon.view_restore": 14,
+            "mohu.vr.mp.draw.left": 7,
+            "mohu.vr.weapon.apply.right": 7,
+            "mohu.vr.mp.draw.right": 7,
+            "mohu.vr.weapon.tracking_fallback": 0
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": [
+            61,
+            0,
+            135,
+            20
+          ]
+        },
+        {
+          "case": "yawed",
+          "image_hashes": {
+            "p000256_left.png": "7ff8577da0bc64fdd0ba291cd3a2835fa47de1b0e8330b35754ca3a910bcecad",
+            "p000256_right.png": "7ff8577da0bc64fdd0ba291cd3a2835fa47de1b0e8330b35754ca3a910bcecad"
+          },
+          "checkpoint_pairs": 256,
+          "eye_cycles": [
+            10805940344,
+            10805940344
+          ],
+          "eye_hashes": [
+            "9eed8c1b4d27dc90",
+            "9eed8c1b4d27dc90"
+          ],
+          "verify_checks": 513,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 11,
+            "mohu.vr.weapon.apply.left": 6,
+            "mohu.vr.weapon.viewmodel_restore": 11,
+            "mohu.vr.weapon.view_restore": 11,
+            "mohu.vr.mp.draw.left": 6,
+            "mohu.vr.weapon.apply.right": 5,
+            "mohu.vr.mp.draw.right": 5,
+            "mohu.vr.weapon.tracking_fallback": 0
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": [
+            61,
+            0,
+            216,
+            20
+          ]
+        },
+        {
+          "case": "lost",
+          "image_hashes": {
+            "p000266_left.png": "ef31e82d73e88c6d3c7c50ef65989bbdf69032beb4c0d4488d8deda71bff773b",
+            "p000266_right.png": "ef31e82d73e88c6d3c7c50ef65989bbdf69032beb4c0d4488d8deda71bff773b"
+          },
+          "checkpoint_pairs": 266,
+          "eye_cycles": [
+            10821038881,
+            10821038881
+          ],
+          "eye_hashes": [
+            "a05c94eb1ad96d9a",
+            "a05c94eb1ad96d9a"
+          ],
+          "verify_checks": 533,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.apply.left": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.view_restore": 11,
+            "mohu.vr.mp.draw.left": 6,
+            "mohu.vr.weapon.apply.right": 0,
+            "mohu.vr.mp.draw.right": 5,
+            "mohu.vr.weapon.tracking_fallback": 12
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": [
+            61,
+            0,
+            127,
+            20
+          ]
+        }
+      ]
+    },
+    {
+      "slot": 2,
+      "id": 8,
+      "name": "Colt .45",
+      "cases": [
+        {
+          "case": "native",
+          "image_hashes": {
+            "p000322_left.png": "3534d9b67600db34c34ea278527f15702435f274d801ca549084df6d7b074e66",
+            "p000322_right.png": "3534d9b67600db34c34ea278527f15702435f274d801ca549084df6d7b074e66"
+          },
+          "checkpoint_pairs": 323,
+          "eye_cycles": [
+            14303776522,
+            14303776522
+          ],
+          "eye_hashes": [
+            "35ee63148ab548b2",
+            "35ee63148ab548b2"
+          ],
+          "verify_checks": 646,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.apply.left": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.view_restore": 14,
+            "mohu.vr.mp.draw.left": 7,
+            "mohu.vr.weapon.apply.right": 0,
+            "mohu.vr.mp.draw.right": 7,
+            "mohu.vr.weapon.tracking_fallback": 14
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": null
+        },
+        {
+          "case": "translated",
+          "image_hashes": {
+            "p000332_left.png": "98824406b91cb10eaeeab4554ec9a796a45ea84fb5d6eaa2d1c9b5761cc606d4",
+            "p000332_right.png": "98824406b91cb10eaeeab4554ec9a796a45ea84fb5d6eaa2d1c9b5761cc606d4"
+          },
+          "checkpoint_pairs": 332,
+          "eye_cycles": [
+            14316487595,
+            14316487595
+          ],
+          "eye_hashes": [
+            "90aef3aa0f7ccf2f",
+            "90aef3aa0f7ccf2f"
+          ],
+          "verify_checks": 664,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 12,
+            "mohu.vr.weapon.apply.left": 6,
+            "mohu.vr.weapon.viewmodel_restore": 12,
+            "mohu.vr.weapon.view_restore": 12,
+            "mohu.vr.mp.draw.left": 6,
+            "mohu.vr.weapon.apply.right": 6,
+            "mohu.vr.mp.draw.right": 6,
+            "mohu.vr.weapon.tracking_fallback": 0
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": [
+            7,
+            0,
+            52,
+            20
+          ]
+        },
+        {
+          "case": "yawed",
+          "image_hashes": {
+            "p000343_left.png": "05ab82d63463ec9247bbee4fabc6e737a47806284ed98c3a511d3ad083fa6323",
+            "p000343_right.png": "05ab82d63463ec9247bbee4fabc6e737a47806284ed98c3a511d3ad083fa6323"
+          },
+          "checkpoint_pairs": 343,
+          "eye_cycles": [
+            14332006917,
+            14332006917
+          ],
+          "eye_hashes": [
+            "cd4e65a58f58e17c",
+            "cd4e65a58f58e17c"
+          ],
+          "verify_checks": 686,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 10,
+            "mohu.vr.weapon.apply.left": 5,
+            "mohu.vr.weapon.viewmodel_restore": 11,
+            "mohu.vr.weapon.view_restore": 11,
+            "mohu.vr.mp.draw.left": 5,
+            "mohu.vr.weapon.apply.right": 5,
+            "mohu.vr.mp.draw.right": 6,
+            "mohu.vr.weapon.tracking_fallback": 0
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": [
+            7,
+            0,
+            73,
+            20
+          ]
+        },
+        {
+          "case": "lost",
+          "image_hashes": {
+            "p000352_left.png": "1e778b01d39a897362c83b9e49e8805d7d418b4fd4ab90269d424fe737558e2d",
+            "p000352_right.png": "1e778b01d39a897362c83b9e49e8805d7d418b4fd4ab90269d424fe737558e2d"
+          },
+          "checkpoint_pairs": 353,
+          "eye_cycles": [
+            14346107760,
+            14346107760
+          ],
+          "eye_hashes": [
+            "d0368dc557cf8e58",
+            "d0368dc557cf8e58"
+          ],
+          "verify_checks": 706,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.apply.left": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.view_restore": 12,
+            "mohu.vr.mp.draw.left": 6,
+            "mohu.vr.weapon.apply.right": 0,
+            "mohu.vr.mp.draw.right": 6,
+            "mohu.vr.weapon.tracking_fallback": 12
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": null
+        }
+      ]
+    },
+    {
+      "slot": 2,
+      "id": 16,
+      "name": "Sten",
+      "cases": [
+        {
+          "case": "native",
+          "image_hashes": {
+            "p000401_left.png": "3da5e4b8b70421f9911f6a924c8473040aba9344f4bedf0fa2f47c6c76bbec49",
+            "p000401_right.png": "3da5e4b8b70421f9911f6a924c8473040aba9344f4bedf0fa2f47c6c76bbec49"
+          },
+          "checkpoint_pairs": 402,
+          "eye_cycles": [
+            14416623112,
+            14416623112
+          ],
+          "eye_hashes": [
+            "77fedee64a86f8a4",
+            "77fedee64a86f8a4"
+          ],
+          "verify_checks": 804,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.apply.left": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.view_restore": 16,
+            "mohu.vr.mp.draw.left": 8,
+            "mohu.vr.weapon.apply.right": 0,
+            "mohu.vr.mp.draw.right": 8,
+            "mohu.vr.weapon.tracking_fallback": 15
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": null
+        },
+        {
+          "case": "translated",
+          "image_hashes": {
+            "p000410_left.png": "9271613071bf110200edaabe0ada6386dd1336ce2e4d0a3ee81b086e9fefe53b",
+            "p000410_right.png": "9271613071bf110200edaabe0ada6386dd1336ce2e4d0a3ee81b086e9fefe53b"
+          },
+          "checkpoint_pairs": 411,
+          "eye_cycles": [
+            14429839027,
+            14429839027
+          ],
+          "eye_hashes": [
+            "f02f2a600804fa7e",
+            "f02f2a600804fa7e"
+          ],
+          "verify_checks": 822,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 12,
+            "mohu.vr.weapon.apply.left": 6,
+            "mohu.vr.weapon.viewmodel_restore": 12,
+            "mohu.vr.weapon.view_restore": 12,
+            "mohu.vr.mp.draw.left": 6,
+            "mohu.vr.weapon.apply.right": 6,
+            "mohu.vr.mp.draw.right": 6,
+            "mohu.vr.weapon.tracking_fallback": 0
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": [
+            16,
+            5,
+            108,
+            20
+          ]
+        },
+        {
+          "case": "yawed",
+          "image_hashes": {
+            "p000420_left.png": "6d46faec347b2265f3bd8c618b5844fc7320ea7586b8f7d154735ab5e1d5ce28",
+            "p000420_right.png": "6d46faec347b2265f3bd8c618b5844fc7320ea7586b8f7d154735ab5e1d5ce28"
+          },
+          "checkpoint_pairs": 421,
+          "eye_cycles": [
+            14444427226,
+            14444427226
+          ],
+          "eye_hashes": [
+            "00ed05e2faf035c1",
+            "00ed05e2faf035c1"
+          ],
+          "verify_checks": 842,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 12,
+            "mohu.vr.weapon.apply.left": 6,
+            "mohu.vr.weapon.viewmodel_restore": 13,
+            "mohu.vr.weapon.view_restore": 13,
+            "mohu.vr.mp.draw.left": 6,
+            "mohu.vr.weapon.apply.right": 6,
+            "mohu.vr.mp.draw.right": 7,
+            "mohu.vr.weapon.tracking_fallback": 0
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": [
+            16,
+            6,
+            148,
+            20
+          ]
+        },
+        {
+          "case": "lost",
+          "image_hashes": {
+            "p000429_left.png": "8a62830c312a5653a7d79b6add6acf95900f92b4e5e41fc86feef645e52e19e1",
+            "p000429_right.png": "8a62830c312a5653a7d79b6add6acf95900f92b4e5e41fc86feef645e52e19e1"
+          },
+          "checkpoint_pairs": 429,
+          "eye_cycles": [
+            14456223953,
+            14456223953
+          ],
+          "eye_hashes": [
+            "ca4da9f86a2bcbc1",
+            "ca4da9f86a2bcbc1"
+          ],
+          "verify_checks": 858,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.apply.left": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.view_restore": 10,
+            "mohu.vr.mp.draw.left": 5,
+            "mohu.vr.weapon.apply.right": 0,
+            "mohu.vr.mp.draw.right": 5,
+            "mohu.vr.weapon.tracking_fallback": 10
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": null
+        }
+      ]
+    },
+    {
+      "slot": 2,
+      "id": 4,
+      "name": "Shotgun",
+      "cases": [
+        {
+          "case": "native",
+          "image_hashes": {
+            "p000476_left.png": "6a8d7a93575325e3f82cc5e7c98950acf0277eb3d9c3752cac674dc02d31a133",
+            "p000476_right.png": "6a8d7a93575325e3f82cc5e7c98950acf0277eb3d9c3752cac674dc02d31a133"
+          },
+          "checkpoint_pairs": 476,
+          "eye_cycles": [
+            14524513641,
+            14524513641
+          ],
+          "eye_hashes": [
+            "0cd890765bf21ee3",
+            "0cd890765bf21ee3"
+          ],
+          "verify_checks": 954,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.apply.left": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.view_restore": 14,
+            "mohu.vr.mp.draw.left": 7,
+            "mohu.vr.weapon.apply.right": 0,
+            "mohu.vr.mp.draw.right": 7,
+            "mohu.vr.weapon.tracking_fallback": 14
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": null
+        },
+        {
+          "case": "translated",
+          "image_hashes": {
+            "p000486_left.png": "1342df43a708ba76dee38cc667a58c9f2beb99c151d2afda65d56360a09421d6",
+            "p000486_right.png": "1342df43a708ba76dee38cc667a58c9f2beb99c151d2afda65d56360a09421d6"
+          },
+          "checkpoint_pairs": 486,
+          "eye_cycles": [
+            14537240697,
+            14537240697
+          ],
+          "eye_hashes": [
+            "b9920c7a21a7cdc0",
+            "b9920c7a21a7cdc0"
+          ],
+          "verify_checks": 973,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 12,
+            "mohu.vr.weapon.apply.left": 6,
+            "mohu.vr.weapon.viewmodel_restore": 11,
+            "mohu.vr.weapon.view_restore": 11,
+            "mohu.vr.mp.draw.left": 6,
+            "mohu.vr.weapon.apply.right": 6,
+            "mohu.vr.mp.draw.right": 5,
+            "mohu.vr.weapon.tracking_fallback": 0
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": [
+            27,
+            0,
+            117,
+            20
+          ]
+        },
+        {
+          "case": "yawed",
+          "image_hashes": {
+            "p000497_left.png": "92928171735ddb20e59c2b7e58ce5158ca277cdaced01db1b2cc27c43f005239",
+            "p000497_right.png": "92928171735ddb20e59c2b7e58ce5158ca277cdaced01db1b2cc27c43f005239"
+          },
+          "checkpoint_pairs": 498,
+          "eye_cycles": [
+            14554183260,
+            14554183260
+          ],
+          "eye_hashes": [
+            "aa59d2c9503c8621",
+            "aa59d2c9503c8621"
+          ],
+          "verify_checks": 996,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 14,
+            "mohu.vr.weapon.apply.left": 7,
+            "mohu.vr.weapon.viewmodel_restore": 14,
+            "mohu.vr.weapon.view_restore": 14,
+            "mohu.vr.mp.draw.left": 7,
+            "mohu.vr.weapon.apply.right": 7,
+            "mohu.vr.mp.draw.right": 7,
+            "mohu.vr.weapon.tracking_fallback": 0
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": [
+            27,
+            0,
+            126,
+            20
+          ]
+        },
+        {
+          "case": "lost",
+          "image_hashes": {
+            "p000508_left.png": "40de78fe1bb10c02ca3ba48afed0209102bdba0034c96580fe4ce3f77060c246",
+            "p000508_right.png": "40de78fe1bb10c02ca3ba48afed0209102bdba0034c96580fe4ce3f77060c246"
+          },
+          "checkpoint_pairs": 508,
+          "eye_cycles": [
+            14568327274,
+            14568327274
+          ],
+          "eye_hashes": [
+            "7d465a0e79db4b6d",
+            "7d465a0e79db4b6d"
+          ],
+          "verify_checks": 1016,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.apply.left": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.view_restore": 10,
+            "mohu.vr.mp.draw.left": 5,
+            "mohu.vr.weapon.apply.right": 0,
+            "mohu.vr.mp.draw.right": 5,
+            "mohu.vr.weapon.tracking_fallback": 10
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": [
+            24,
+            0,
+            116,
+            20
+          ]
+        }
+      ]
+    },
+    {
+      "slot": 2,
+      "id": 15,
+      "name": "Petrol bomb",
+      "cases": [
+        {
+          "case": "native",
+          "image_hashes": {
+            "p000555_left.png": "9e51ef10dd38933fc4066b18d3a2874c08e76be6cfc83e604dd232cb2a7a8cf1",
+            "p000555_right.png": "9e51ef10dd38933fc4066b18d3a2874c08e76be6cfc83e604dd232cb2a7a8cf1"
+          },
+          "checkpoint_pairs": 555,
+          "eye_cycles": [
+            14636097724,
+            14636097724
+          ],
+          "eye_hashes": [
+            "1368e86bcbf0e986",
+            "1368e86bcbf0e986"
+          ],
+          "verify_checks": 1112,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.apply.left": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.view_restore": 12,
+            "mohu.vr.mp.draw.left": 6,
+            "mohu.vr.weapon.apply.right": 0,
+            "mohu.vr.mp.draw.right": 6,
+            "mohu.vr.weapon.tracking_fallback": 12
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": null
+        },
+        {
+          "case": "translated",
+          "image_hashes": {
+            "p000566_left.png": "2b594d54dc95908b0b4e1665d9131a1f8c9e2042e7d977743c71bfeef75e8d00",
+            "p000566_right.png": "2b594d54dc95908b0b4e1665d9131a1f8c9e2042e7d977743c71bfeef75e8d00"
+          },
+          "checkpoint_pairs": 566,
+          "eye_cycles": [
+            14650200326,
+            14650200326
+          ],
+          "eye_hashes": [
+            "f6969818476662eb",
+            "f6969818476662eb"
+          ],
+          "verify_checks": 1132,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 12,
+            "mohu.vr.weapon.apply.left": 6,
+            "mohu.vr.weapon.viewmodel_restore": 12,
+            "mohu.vr.weapon.view_restore": 12,
+            "mohu.vr.mp.draw.left": 6,
+            "mohu.vr.weapon.apply.right": 6,
+            "mohu.vr.mp.draw.right": 6,
+            "mohu.vr.weapon.tracking_fallback": 0
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": [
+            59,
+            0,
+            94,
+            20
+          ]
+        },
+        {
+          "case": "yawed",
+          "image_hashes": {
+            "p000577_left.png": "51d2bb93d9c867131a74e58cdde04d50e9c5aa0c19b785a5519d855764349277",
+            "p000577_right.png": "51d2bb93d9c867131a74e58cdde04d50e9c5aa0c19b785a5519d855764349277"
+          },
+          "checkpoint_pairs": 578,
+          "eye_cycles": [
+            14667082516,
+            14667082516
+          ],
+          "eye_hashes": [
+            "f1967ed9abe25c8b",
+            "f1967ed9abe25c8b"
+          ],
+          "verify_checks": 1156,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 14,
+            "mohu.vr.weapon.apply.left": 7,
+            "mohu.vr.weapon.viewmodel_restore": 14,
+            "mohu.vr.weapon.view_restore": 14,
+            "mohu.vr.mp.draw.left": 7,
+            "mohu.vr.weapon.apply.right": 7,
+            "mohu.vr.mp.draw.right": 7,
+            "mohu.vr.weapon.tracking_fallback": 0
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": [
+            59,
+            0,
+            149,
+            20
+          ]
+        },
+        {
+          "case": "lost",
+          "image_hashes": {
+            "p000587_left.png": "64b176adba632c323f39ca1429dce063b5cd6d4f05c25b66deff36871533dafa",
+            "p000587_right.png": "64b176adba632c323f39ca1429dce063b5cd6d4f05c25b66deff36871533dafa"
+          },
+          "checkpoint_pairs": 588,
+          "eye_cycles": [
+            14681189062,
+            14681189062
+          ],
+          "eye_hashes": [
+            "d88972e7d2f7fbe4",
+            "d88972e7d2f7fbe4"
+          ],
+          "verify_checks": 1177,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.apply.left": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.view_restore": 16,
+            "mohu.vr.mp.draw.left": 8,
+            "mohu.vr.weapon.apply.right": 0,
+            "mohu.vr.mp.draw.right": 8,
+            "mohu.vr.weapon.tracking_fallback": 16
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": [
+            58,
+            0,
+            88,
+            20
+          ]
+        }
+      ]
+    },
+    {
+      "slot": 3,
+      "id": 9,
+      "name": "Silenced pistol",
+      "cases": [
+        {
+          "case": "native",
+          "image_hashes": {
+            "p000648_left.png": "a3fe69fbd760f3a0ce0b54e04056ac79a3562fc36fc80f8263c0590579898ac6",
+            "p000648_right.png": "a3fe69fbd760f3a0ce0b54e04056ac79a3562fc36fc80f8263c0590579898ac6"
+          },
+          "checkpoint_pairs": 648,
+          "eye_cycles": [
+            18570383664,
+            18570383664
+          ],
+          "eye_hashes": [
+            "86250fd4969cc68c",
+            "86250fd4969cc68c"
+          ],
+          "verify_checks": 1297,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.apply.left": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.view_restore": 12,
+            "mohu.vr.mp.draw.left": 6,
+            "mohu.vr.weapon.apply.right": 0,
+            "mohu.vr.mp.draw.right": 6,
+            "mohu.vr.weapon.tracking_fallback": 12
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": null
+        },
+        {
+          "case": "translated",
+          "image_hashes": {
+            "p000657_left.png": "d1484831e9a23bd98638f11b85f0c676b6960b6189c27cb2d74ba20abf3b409b",
+            "p000657_right.png": "d1484831e9a23bd98638f11b85f0c676b6960b6189c27cb2d74ba20abf3b409b"
+          },
+          "checkpoint_pairs": 658,
+          "eye_cycles": [
+            18583153047,
+            18583153047
+          ],
+          "eye_hashes": [
+            "cf1b1cd0547852c2",
+            "cf1b1cd0547852c2"
+          ],
+          "verify_checks": 1316,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 12,
+            "mohu.vr.weapon.apply.left": 6,
+            "mohu.vr.weapon.viewmodel_restore": 12,
+            "mohu.vr.weapon.view_restore": 12,
+            "mohu.vr.mp.draw.left": 6,
+            "mohu.vr.weapon.apply.right": 6,
+            "mohu.vr.mp.draw.right": 6,
+            "mohu.vr.weapon.tracking_fallback": 0
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": [
+            0,
+            2,
+            45,
+            20
+          ]
+        },
+        {
+          "case": "yawed",
+          "image_hashes": {
+            "p000666_left.png": "cdc737c3f5267c72c69f5f849e166189c571d2fdade8da0263e8f2bec19c4b63",
+            "p000666_right.png": "cdc737c3f5267c72c69f5f849e166189c571d2fdade8da0263e8f2bec19c4b63"
+          },
+          "checkpoint_pairs": 667,
+          "eye_cycles": [
+            18595974943,
+            18595974943
+          ],
+          "eye_hashes": [
+            "0a4e7266ab79f242",
+            "0a4e7266ab79f242"
+          ],
+          "verify_checks": 1334,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 12,
+            "mohu.vr.weapon.apply.left": 6,
+            "mohu.vr.weapon.viewmodel_restore": 12,
+            "mohu.vr.weapon.view_restore": 12,
+            "mohu.vr.mp.draw.left": 6,
+            "mohu.vr.weapon.apply.right": 6,
+            "mohu.vr.mp.draw.right": 6,
+            "mohu.vr.weapon.tracking_fallback": 0
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": [
+            0,
+            2,
+            70,
+            20
+          ]
+        },
+        {
+          "case": "lost",
+          "image_hashes": {
+            "p000675_left.png": "8c2e50d7452b23062e69462988325d4a92e9eb4d9bf68ad6b18ccb868499285a",
+            "p000675_right.png": "8c2e50d7452b23062e69462988325d4a92e9eb4d9bf68ad6b18ccb868499285a"
+          },
+          "checkpoint_pairs": 675,
+          "eye_cycles": [
+            18607776296,
+            18607776296
+          ],
+          "eye_hashes": [
+            "50333084d7a984d1",
+            "50333084d7a984d1"
+          ],
+          "verify_checks": 1350,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.apply.left": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.view_restore": 10,
+            "mohu.vr.mp.draw.left": 5,
+            "mohu.vr.weapon.apply.right": 0,
+            "mohu.vr.mp.draw.right": 5,
+            "mohu.vr.weapon.tracking_fallback": 10
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": null
+        }
+      ]
+    },
+    {
+      "slot": 3,
+      "id": 14,
+      "name": "Crossbow",
+      "cases": [
+        {
+          "case": "native",
+          "image_hashes": {
+            "p000720_left.png": "7caa156038dab88eeb158a4b044f5bc2999babd30052099f3b9e5d6e3e758a4f",
+            "p000720_right.png": "7caa156038dab88eeb158a4b044f5bc2999babd30052099f3b9e5d6e3e758a4f"
+          },
+          "checkpoint_pairs": 721,
+          "eye_cycles": [
+            18673194091,
+            18673194091
+          ],
+          "eye_hashes": [
+            "0c925b55b76409ae",
+            "0c925b55b76409ae"
+          ],
+          "verify_checks": 1442,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.apply.left": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.view_restore": 12,
+            "mohu.vr.mp.draw.left": 6,
+            "mohu.vr.weapon.apply.right": 0,
+            "mohu.vr.mp.draw.right": 6,
+            "mohu.vr.weapon.tracking_fallback": 12
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": null
+        },
+        {
+          "case": "translated",
+          "image_hashes": {
+            "p000730_left.png": "ab7c509ab13c8f3aef118b52ec4ceae96dc8d2dbb71fb72d3c42a08466f61753",
+            "p000730_right.png": "ab7c509ab13c8f3aef118b52ec4ceae96dc8d2dbb71fb72d3c42a08466f61753"
+          },
+          "checkpoint_pairs": 730,
+          "eye_cycles": [
+            18686081823,
+            18686081823
+          ],
+          "eye_hashes": [
+            "33e3709ce85b7ff1",
+            "33e3709ce85b7ff1"
+          ],
+          "verify_checks": 1460,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 10,
+            "mohu.vr.weapon.apply.left": 5,
+            "mohu.vr.weapon.viewmodel_restore": 10,
+            "mohu.vr.weapon.view_restore": 10,
+            "mohu.vr.mp.draw.left": 5,
+            "mohu.vr.weapon.apply.right": 5,
+            "mohu.vr.mp.draw.right": 5,
+            "mohu.vr.weapon.tracking_fallback": 0
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": [
+            0,
+            1,
+            242,
+            20
+          ]
+        },
+        {
+          "case": "yawed",
+          "image_hashes": {
+            "p000742_left.png": "18da72c3ed4f3ae56b00573d93042031a0d559418097c9bc4b080d55aa7b737a",
+            "p000742_right.png": "18da72c3ed4f3ae56b00573d93042031a0d559418097c9bc4b080d55aa7b737a"
+          },
+          "checkpoint_pairs": 742,
+          "eye_cycles": [
+            18703531217,
+            18703531217
+          ],
+          "eye_hashes": [
+            "d9276a359d7ed9a2",
+            "d9276a359d7ed9a2"
+          ],
+          "verify_checks": 1484,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 13,
+            "mohu.vr.weapon.apply.left": 6,
+            "mohu.vr.weapon.viewmodel_restore": 13,
+            "mohu.vr.weapon.view_restore": 13,
+            "mohu.vr.mp.draw.left": 6,
+            "mohu.vr.weapon.apply.right": 7,
+            "mohu.vr.mp.draw.right": 7,
+            "mohu.vr.weapon.tracking_fallback": 0
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": [
+            0,
+            1,
+            242,
+            20
+          ]
+        },
+        {
+          "case": "lost",
+          "image_hashes": {
+            "p000750_left.png": "0cbf37ab08022ad53739ceeeeaf83c1b337739edee566b15a803cd361d2bc78a",
+            "p000750_right.png": "0cbf37ab08022ad53739ceeeeaf83c1b337739edee566b15a803cd361d2bc78a"
+          },
+          "checkpoint_pairs": 750,
+          "eye_cycles": [
+            18715387692,
+            18715387692
+          ],
+          "eye_hashes": [
+            "5157f66402d7fed3",
+            "5157f66402d7fed3"
+          ],
+          "verify_checks": 1500,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.apply.left": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.view_restore": 10,
+            "mohu.vr.mp.draw.left": 5,
+            "mohu.vr.weapon.apply.right": 0,
+            "mohu.vr.mp.draw.right": 5,
+            "mohu.vr.weapon.tracking_fallback": 10
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": null
+        }
+      ]
+    },
+    {
+      "slot": 3,
+      "id": 5,
+      "name": "Scoped rifle",
+      "cases": [
+        {
+          "case": "native",
+          "image_hashes": {
+            "p000797_left.png": "19e74df03a2678722fdd5310bc35698af22086eb4e87079c940da6116ba16f4d",
+            "p000797_right.png": "19e74df03a2678722fdd5310bc35698af22086eb4e87079c940da6116ba16f4d"
+          },
+          "checkpoint_pairs": 797,
+          "eye_cycles": [
+            18782323886,
+            18782323886
+          ],
+          "eye_hashes": [
+            "1bbdd4d38f6a70e8",
+            "1bbdd4d38f6a70e8"
+          ],
+          "verify_checks": 1594,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.apply.left": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.view_restore": 10,
+            "mohu.vr.mp.draw.left": 5,
+            "mohu.vr.weapon.apply.right": 0,
+            "mohu.vr.mp.draw.right": 5,
+            "mohu.vr.weapon.tracking_fallback": 10
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": null
+        },
+        {
+          "case": "translated",
+          "image_hashes": {
+            "p000806_left.png": "9d7a234c67607e26efefba9ae33dd56dfdd0f56e2d965d8374d15cd666e4b50c",
+            "p000806_right.png": "9d7a234c67607e26efefba9ae33dd56dfdd0f56e2d965d8374d15cd666e4b50c"
+          },
+          "checkpoint_pairs": 807,
+          "eye_cycles": [
+            18797372590,
+            18797372590
+          ],
+          "eye_hashes": [
+            "ec07b0af69673619",
+            "ec07b0af69673619"
+          ],
+          "verify_checks": 1614,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 12,
+            "mohu.vr.weapon.apply.left": 6,
+            "mohu.vr.weapon.viewmodel_restore": 12,
+            "mohu.vr.weapon.view_restore": 12,
+            "mohu.vr.mp.draw.left": 6,
+            "mohu.vr.weapon.apply.right": 6,
+            "mohu.vr.mp.draw.right": 6,
+            "mohu.vr.weapon.tracking_fallback": 0
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": [
+            4,
+            0,
+            143,
+            20
+          ]
+        },
+        {
+          "case": "yawed",
+          "image_hashes": {
+            "p000816_left.png": "3507a07afbabe13055be96dee7c2f37cdcba2d5cb71fb892e66f2b0b9cfedc23",
+            "p000816_right.png": "3507a07afbabe13055be96dee7c2f37cdcba2d5cb71fb892e66f2b0b9cfedc23"
+          },
+          "checkpoint_pairs": 817,
+          "eye_cycles": [
+            18812108335,
+            18812108335
+          ],
+          "eye_hashes": [
+            "93c4d285019f3d76",
+            "93c4d285019f3d76"
+          ],
+          "verify_checks": 1634,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 12,
+            "mohu.vr.weapon.apply.left": 6,
+            "mohu.vr.weapon.viewmodel_restore": 12,
+            "mohu.vr.weapon.view_restore": 12,
+            "mohu.vr.mp.draw.left": 6,
+            "mohu.vr.weapon.apply.right": 6,
+            "mohu.vr.mp.draw.right": 6,
+            "mohu.vr.weapon.tracking_fallback": 0
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": [
+            4,
+            0,
+            134,
+            20
+          ]
+        },
+        {
+          "case": "lost",
+          "image_hashes": {
+            "p000825_left.png": "f97db1ba0c69fdc5b2824dabcfd88f761d850d873e9cbbc79ef6adcce098b1ba",
+            "p000825_right.png": "f97db1ba0c69fdc5b2824dabcfd88f761d850d873e9cbbc79ef6adcce098b1ba"
+          },
+          "checkpoint_pairs": 826,
+          "eye_cycles": [
+            18825588089,
+            18825588089
+          ],
+          "eye_hashes": [
+            "fc9ceb60dba9c0e8",
+            "fc9ceb60dba9c0e8"
+          ],
+          "verify_checks": 1652,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.apply.left": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.view_restore": 13,
+            "mohu.vr.mp.draw.left": 6,
+            "mohu.vr.weapon.apply.right": 0,
+            "mohu.vr.mp.draw.right": 7,
+            "mohu.vr.weapon.tracking_fallback": 13
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": null
+        }
+      ]
+    },
+    {
+      "slot": 3,
+      "id": 10,
+      "name": "Stick grenade",
+      "cases": [
+        {
+          "case": "native",
+          "image_hashes": {
+            "p000873_left.png": "c0e6c1acabe6b045c46263258caa7e250407bde43aea80c413ce1b2f4a8f6e4d",
+            "p000873_right.png": "c0e6c1acabe6b045c46263258caa7e250407bde43aea80c413ce1b2f4a8f6e4d"
+          },
+          "checkpoint_pairs": 874,
+          "eye_cycles": [
+            18893500858,
+            18893500858
+          ],
+          "eye_hashes": [
+            "87544d4b1eaacf4a",
+            "87544d4b1eaacf4a"
+          ],
+          "verify_checks": 1748,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.apply.left": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.view_restore": 14,
+            "mohu.vr.mp.draw.left": 7,
+            "mohu.vr.weapon.apply.right": 0,
+            "mohu.vr.mp.draw.right": 7,
+            "mohu.vr.weapon.tracking_fallback": 14
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": null
+        },
+        {
+          "case": "translated",
+          "image_hashes": {
+            "p000883_left.png": "1b40f3b059ba628ab92dbe617f2b4635cff8c236fcc7dfce383aa2c8cfed5328",
+            "p000883_right.png": "1b40f3b059ba628ab92dbe617f2b4635cff8c236fcc7dfce383aa2c8cfed5328"
+          },
+          "checkpoint_pairs": 884,
+          "eye_cycles": [
+            18907628371,
+            18907628371
+          ],
+          "eye_hashes": [
+            "2d83bd091f58ee11",
+            "2d83bd091f58ee11"
+          ],
+          "verify_checks": 1768,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 12,
+            "mohu.vr.weapon.apply.left": 6,
+            "mohu.vr.weapon.viewmodel_restore": 12,
+            "mohu.vr.weapon.view_restore": 12,
+            "mohu.vr.mp.draw.left": 6,
+            "mohu.vr.weapon.apply.right": 6,
+            "mohu.vr.mp.draw.right": 6,
+            "mohu.vr.weapon.tracking_fallback": 0
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": [
+            60,
+            0,
+            134,
+            20
+          ]
+        },
+        {
+          "case": "yawed",
+          "image_hashes": {
+            "p000892_left.png": "028a4652c7c311f38444eff1d162e4ef5d7303dfdeb43ec9f0487d6477f1e1ef",
+            "p000892_right.png": "028a4652c7c311f38444eff1d162e4ef5d7303dfdeb43ec9f0487d6477f1e1ef"
+          },
+          "checkpoint_pairs": 893,
+          "eye_cycles": [
+            18920366670,
+            18920366670
+          ],
+          "eye_hashes": [
+            "b3ebf9525b6766d5",
+            "b3ebf9525b6766d5"
+          ],
+          "verify_checks": 1786,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 12,
+            "mohu.vr.weapon.apply.left": 6,
+            "mohu.vr.weapon.viewmodel_restore": 12,
+            "mohu.vr.weapon.view_restore": 12,
+            "mohu.vr.mp.draw.left": 6,
+            "mohu.vr.weapon.apply.right": 6,
+            "mohu.vr.mp.draw.right": 6,
+            "mohu.vr.weapon.tracking_fallback": 0
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": [
+            60,
+            0,
+            214,
+            20
+          ]
+        },
+        {
+          "case": "lost",
+          "image_hashes": {
+            "p000901_left.png": "a8efcfdb1af82ede6326059d59efe91ad5193670c7c726f3e8a5f4ef0f4534c6",
+            "p000901_right.png": "a8efcfdb1af82ede6326059d59efe91ad5193670c7c726f3e8a5f4ef0f4534c6"
+          },
+          "checkpoint_pairs": 901,
+          "eye_cycles": [
+            18933132994,
+            18933132994
+          ],
+          "eye_hashes": [
+            "b4d23e387cc00133",
+            "b4d23e387cc00133"
+          ],
+          "verify_checks": 1804,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.apply.left": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.view_restore": 12,
+            "mohu.vr.mp.draw.left": 6,
+            "mohu.vr.weapon.apply.right": 0,
+            "mohu.vr.mp.draw.right": 6,
+            "mohu.vr.weapon.tracking_fallback": 12
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": [
+            60,
+            0,
+            126,
+            20
+          ]
+        }
+      ]
+    },
+    {
+      "slot": 4,
+      "id": 12,
+      "name": "M1 Garand",
+      "cases": [
+        {
+          "case": "native",
+          "image_hashes": {
+            "p000963_left.png": "16b24374a935e0b40670688e0941b7ec1d69bddfe98279ba55cdd34c0f5307ae",
+            "p000963_right.png": "16b24374a935e0b40670688e0941b7ec1d69bddfe98279ba55cdd34c0f5307ae"
+          },
+          "checkpoint_pairs": 965,
+          "eye_cycles": [
+            23050971535,
+            23050971535
+          ],
+          "eye_hashes": [
+            "3d6c20f6cfa55dfe",
+            "3d6c20f6cfa55dfe"
+          ],
+          "verify_checks": 1930,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.apply.left": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.view_restore": 15,
+            "mohu.vr.mp.draw.left": 7,
+            "mohu.vr.weapon.apply.right": 0,
+            "mohu.vr.mp.draw.right": 8,
+            "mohu.vr.weapon.tracking_fallback": 14
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": null
+        },
+        {
+          "case": "translated",
+          "image_hashes": {
+            "p000974_left.png": "eff72c12430c099f85c88943b5777c4880cdbc636ee376b7c158287105eff314",
+            "p000974_right.png": "eff72c12430c099f85c88943b5777c4880cdbc636ee376b7c158287105eff314"
+          },
+          "checkpoint_pairs": 974,
+          "eye_cycles": [
+            23065904925,
+            23065904925
+          ],
+          "eye_hashes": [
+            "93c8bb5db434603b",
+            "93c8bb5db434603b"
+          ],
+          "verify_checks": 1949,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 12,
+            "mohu.vr.weapon.apply.left": 6,
+            "mohu.vr.weapon.viewmodel_restore": 12,
+            "mohu.vr.weapon.view_restore": 12,
+            "mohu.vr.mp.draw.left": 6,
+            "mohu.vr.weapon.apply.right": 6,
+            "mohu.vr.mp.draw.right": 6,
+            "mohu.vr.weapon.tracking_fallback": 0
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": [
+            16,
+            0,
+            78,
+            20
+          ]
+        },
+        {
+          "case": "yawed",
+          "image_hashes": {
+            "p000985_left.png": "3a931fc4fb1e91e36499db2d1aa30093ef0382eafc9d0908cb8088b7064b34d8",
+            "p000985_right.png": "3a931fc4fb1e91e36499db2d1aa30093ef0382eafc9d0908cb8088b7064b34d8"
+          },
+          "checkpoint_pairs": 985,
+          "eye_cycles": [
+            23081504636,
+            23081504636
+          ],
+          "eye_hashes": [
+            "9567a5127d158f3d",
+            "9567a5127d158f3d"
+          ],
+          "verify_checks": 1970,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 12,
+            "mohu.vr.weapon.apply.left": 6,
+            "mohu.vr.weapon.viewmodel_restore": 12,
+            "mohu.vr.weapon.view_restore": 12,
+            "mohu.vr.mp.draw.left": 6,
+            "mohu.vr.weapon.apply.right": 6,
+            "mohu.vr.mp.draw.right": 6,
+            "mohu.vr.weapon.tracking_fallback": 0
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": [
+            16,
+            0,
+            101,
+            20
+          ]
+        },
+        {
+          "case": "lost",
+          "image_hashes": {
+            "p000994_left.png": "16b24374a935e0b40670688e0941b7ec1d69bddfe98279ba55cdd34c0f5307ae",
+            "p000994_right.png": "16b24374a935e0b40670688e0941b7ec1d69bddfe98279ba55cdd34c0f5307ae"
+          },
+          "checkpoint_pairs": 994,
+          "eye_cycles": [
+            23096716121,
+            23096716121
+          ],
+          "eye_hashes": [
+            "47b21b084facee41",
+            "47b21b084facee41"
+          ],
+          "verify_checks": 1989,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.apply.left": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.view_restore": 13,
+            "mohu.vr.mp.draw.left": 6,
+            "mohu.vr.weapon.apply.right": 0,
+            "mohu.vr.mp.draw.right": 7,
+            "mohu.vr.weapon.tracking_fallback": 13
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": null
+        }
+      ]
+    },
+    {
+      "slot": 4,
+      "id": 17,
+      "name": "StG44",
+      "cases": [
+        {
+          "case": "native",
+          "image_hashes": {
+            "p001039_left.png": "1f16f8b089682d87eac35fe0479927e66b5f4f2c87f8de1b9f0a7887ae769715",
+            "p001039_right.png": "1f16f8b089682d87eac35fe0479927e66b5f4f2c87f8de1b9f0a7887ae769715"
+          },
+          "checkpoint_pairs": 1039,
+          "eye_cycles": [
+            23162955533,
+            23162955533
+          ],
+          "eye_hashes": [
+            "57f6ec7aed993f0f",
+            "57f6ec7aed993f0f"
+          ],
+          "verify_checks": 2078,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.apply.left": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.view_restore": 11,
+            "mohu.vr.mp.draw.left": 6,
+            "mohu.vr.weapon.apply.right": 0,
+            "mohu.vr.mp.draw.right": 5,
+            "mohu.vr.weapon.tracking_fallback": 11
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": null
+        },
+        {
+          "case": "translated",
+          "image_hashes": {
+            "p001048_left.png": "c0b698c1d759051a1513ff5e0a842aa81020868d26c510823aa0f880763504b6",
+            "p001048_right.png": "c0b698c1d759051a1513ff5e0a842aa81020868d26c510823aa0f880763504b6"
+          },
+          "checkpoint_pairs": 1049,
+          "eye_cycles": [
+            23178731151,
+            23178731151
+          ],
+          "eye_hashes": [
+            "39b0bcb2d3c290d9",
+            "39b0bcb2d3c290d9"
+          ],
+          "verify_checks": 2098,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 12,
+            "mohu.vr.weapon.apply.left": 6,
+            "mohu.vr.weapon.viewmodel_restore": 12,
+            "mohu.vr.weapon.view_restore": 12,
+            "mohu.vr.mp.draw.left": 6,
+            "mohu.vr.weapon.apply.right": 6,
+            "mohu.vr.mp.draw.right": 6,
+            "mohu.vr.weapon.tracking_fallback": 0
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": [
+            49,
+            0,
+            221,
+            20
+          ]
+        },
+        {
+          "case": "yawed",
+          "image_hashes": {
+            "p001059_left.png": "04ebe138258dd851cf0d02694e67b39d9e87eaf7dcd147d7ff03481df9e62c2e",
+            "p001059_right.png": "04ebe138258dd851cf0d02694e67b39d9e87eaf7dcd147d7ff03481df9e62c2e"
+          },
+          "checkpoint_pairs": 1059,
+          "eye_cycles": [
+            23194949809,
+            23194949809
+          ],
+          "eye_hashes": [
+            "316bb0a60e463c8f",
+            "316bb0a60e463c8f"
+          ],
+          "verify_checks": 2118,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 14,
+            "mohu.vr.weapon.apply.left": 7,
+            "mohu.vr.weapon.viewmodel_restore": 14,
+            "mohu.vr.weapon.view_restore": 14,
+            "mohu.vr.mp.draw.left": 7,
+            "mohu.vr.weapon.apply.right": 7,
+            "mohu.vr.mp.draw.right": 7,
+            "mohu.vr.weapon.tracking_fallback": 0
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": [
+            49,
+            0,
+            242,
+            20
+          ]
+        },
+        {
+          "case": "lost",
+          "image_hashes": {
+            "p001068_left.png": "1f16f8b089682d87eac35fe0479927e66b5f4f2c87f8de1b9f0a7887ae769715",
+            "p001068_right.png": "1f16f8b089682d87eac35fe0479927e66b5f4f2c87f8de1b9f0a7887ae769715"
+          },
+          "checkpoint_pairs": 1069,
+          "eye_cycles": [
+            23210456524,
+            23210456524
+          ],
+          "eye_hashes": [
+            "759aaa89cc0f8063",
+            "759aaa89cc0f8063"
+          ],
+          "verify_checks": 2138,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.apply.left": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.view_restore": 13,
+            "mohu.vr.mp.draw.left": 6,
+            "mohu.vr.weapon.apply.right": 0,
+            "mohu.vr.mp.draw.right": 7,
+            "mohu.vr.weapon.tracking_fallback": 12
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": null
+        }
+      ]
+    },
+    {
+      "slot": 4,
+      "id": 13,
+      "name": "Panzerfaust",
+      "cases": [
+        {
+          "case": "native",
+          "image_hashes": {
+            "p001112_left.png": "6138ce6b1c0467ead1ab1632838b6ea24b0a4ad0c8c6e053f322a56921461cc5",
+            "p001112_right.png": "6138ce6b1c0467ead1ab1632838b6ea24b0a4ad0c8c6e053f322a56921461cc5"
+          },
+          "checkpoint_pairs": 1113,
+          "eye_cycles": [
+            23276627985,
+            23276627985
+          ],
+          "eye_hashes": [
+            "859b3caabb4d32ac",
+            "859b3caabb4d32ac"
+          ],
+          "verify_checks": 2226,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.apply.left": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.view_restore": 13,
+            "mohu.vr.mp.draw.left": 6,
+            "mohu.vr.weapon.apply.right": 0,
+            "mohu.vr.mp.draw.right": 7,
+            "mohu.vr.weapon.tracking_fallback": 13
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": null
+        },
+        {
+          "case": "translated",
+          "image_hashes": {
+            "p001122_left.png": "21cdab1ee7ea176fa5001857f29ccfc9c16b7d04da4dbbb9f32daacc684e267a",
+            "p001122_right.png": "21cdab1ee7ea176fa5001857f29ccfc9c16b7d04da4dbbb9f32daacc684e267a"
+          },
+          "checkpoint_pairs": 1123,
+          "eye_cycles": [
+            23291618666,
+            23291618666
+          ],
+          "eye_hashes": [
+            "392ab6c0521ba77d",
+            "392ab6c0521ba77d"
+          ],
+          "verify_checks": 2246,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 12,
+            "mohu.vr.weapon.apply.left": 6,
+            "mohu.vr.weapon.viewmodel_restore": 12,
+            "mohu.vr.weapon.view_restore": 12,
+            "mohu.vr.mp.draw.left": 6,
+            "mohu.vr.weapon.apply.right": 6,
+            "mohu.vr.mp.draw.right": 6,
+            "mohu.vr.weapon.tracking_fallback": 0
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": [
+            36,
+            0,
+            215,
+            20
+          ]
+        },
+        {
+          "case": "yawed",
+          "image_hashes": {
+            "p001132_left.png": "1e08fec5ecdffbf0cd318635fcfaaff7cde07a9007439b890f0e381f3d77a458",
+            "p001132_right.png": "1e08fec5ecdffbf0cd318635fcfaaff7cde07a9007439b890f0e381f3d77a458"
+          },
+          "checkpoint_pairs": 1132,
+          "eye_cycles": [
+            23306290957,
+            23306290957
+          ],
+          "eye_hashes": [
+            "12f0114c0e0b5a8d",
+            "12f0114c0e0b5a8d"
+          ],
+          "verify_checks": 2265,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 14,
+            "mohu.vr.weapon.apply.left": 7,
+            "mohu.vr.weapon.viewmodel_restore": 14,
+            "mohu.vr.weapon.view_restore": 14,
+            "mohu.vr.mp.draw.left": 7,
+            "mohu.vr.weapon.apply.right": 7,
+            "mohu.vr.mp.draw.right": 7,
+            "mohu.vr.weapon.tracking_fallback": 0
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": [
+            36,
+            0,
+            242,
+            20
+          ]
+        },
+        {
+          "case": "lost",
+          "image_hashes": {
+            "p001142_left.png": "023230e6a93cb9207b9993fa50e1f9ae8932e18752fe31468c6b73ec1ec97145",
+            "p001142_right.png": "023230e6a93cb9207b9993fa50e1f9ae8932e18752fe31468c6b73ec1ec97145"
+          },
+          "checkpoint_pairs": 1143,
+          "eye_cycles": [
+            23321243827,
+            23321243827
+          ],
+          "eye_hashes": [
+            "31150f47bc70cca3",
+            "31150f47bc70cca3"
+          ],
+          "verify_checks": 2286,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.apply.left": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.view_restore": 15,
+            "mohu.vr.mp.draw.left": 7,
+            "mohu.vr.weapon.apply.right": 0,
+            "mohu.vr.mp.draw.right": 8,
+            "mohu.vr.weapon.tracking_fallback": 15
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": [
+            36,
+            0,
+            184,
+            20
+          ]
+        }
+      ]
+    },
+    {
+      "slot": 4,
+      "id": 15,
+      "name": "Petrol bomb",
+      "cases": [
+        {
+          "case": "native",
+          "image_hashes": {
+            "p001187_left.png": "9543c0c8a1984cc2de4da715f5ba01c5361d22895b8a0fa83966310dd84c6c53",
+            "p001187_right.png": "9543c0c8a1984cc2de4da715f5ba01c5361d22895b8a0fa83966310dd84c6c53"
+          },
+          "checkpoint_pairs": 1187,
+          "eye_cycles": [
+            23386846256,
+            23386846256
+          ],
+          "eye_hashes": [
+            "8779806ec8a26ec6",
+            "8779806ec8a26ec6"
+          ],
+          "verify_checks": 2374,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.apply.left": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.view_restore": 11,
+            "mohu.vr.mp.draw.left": 6,
+            "mohu.vr.weapon.apply.right": 0,
+            "mohu.vr.mp.draw.right": 5,
+            "mohu.vr.weapon.tracking_fallback": 11
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": null
+        },
+        {
+          "case": "translated",
+          "image_hashes": {
+            "p001196_left.png": "5d23a94b3b9a18e48a5d43a77726de751f7e406d2f658575df1880db97ad144c",
+            "p001196_right.png": "5d23a94b3b9a18e48a5d43a77726de751f7e406d2f658575df1880db97ad144c"
+          },
+          "checkpoint_pairs": 1197,
+          "eye_cycles": [
+            23401516134,
+            23401516134
+          ],
+          "eye_hashes": [
+            "4679d9f7392b4f03",
+            "4679d9f7392b4f03"
+          ],
+          "verify_checks": 2394,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 12,
+            "mohu.vr.weapon.apply.left": 6,
+            "mohu.vr.weapon.viewmodel_restore": 12,
+            "mohu.vr.weapon.view_restore": 12,
+            "mohu.vr.mp.draw.left": 6,
+            "mohu.vr.weapon.apply.right": 6,
+            "mohu.vr.mp.draw.right": 6,
+            "mohu.vr.weapon.tracking_fallback": 0
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": [
+            59,
+            0,
+            93,
+            20
+          ]
+        },
+        {
+          "case": "yawed",
+          "image_hashes": {
+            "p001206_left.png": "532ba9900b7219ed6ace33403df98998b0699ec0e35becf206c1d11242bbf809",
+            "p001206_right.png": "532ba9900b7219ed6ace33403df98998b0699ec0e35becf206c1d11242bbf809"
+          },
+          "checkpoint_pairs": 1206,
+          "eye_cycles": [
+            23416403634,
+            23416403634
+          ],
+          "eye_hashes": [
+            "76ce31cbdb777012",
+            "76ce31cbdb777012"
+          ],
+          "verify_checks": 2413,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 11,
+            "mohu.vr.weapon.apply.left": 6,
+            "mohu.vr.weapon.viewmodel_restore": 11,
+            "mohu.vr.weapon.view_restore": 11,
+            "mohu.vr.mp.draw.left": 6,
+            "mohu.vr.weapon.apply.right": 5,
+            "mohu.vr.mp.draw.right": 5,
+            "mohu.vr.weapon.tracking_fallback": 0
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": [
+            59,
+            0,
+            147,
+            20
+          ]
+        },
+        {
+          "case": "lost",
+          "image_hashes": {
+            "p001215_left.png": "de532ab3eb030d5b29fa3ecabaa031cfd6a87a1408732369ba3dc42a800dc8e5",
+            "p001215_right.png": "de532ab3eb030d5b29fa3ecabaa031cfd6a87a1408732369ba3dc42a800dc8e5"
+          },
+          "checkpoint_pairs": 1215,
+          "eye_cycles": [
+            23428163251,
+            23428163251
+          ],
+          "eye_hashes": [
+            "c0264bef514958f3",
+            "c0264bef514958f3"
+          ],
+          "verify_checks": 2430,
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.apply.left": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.view_restore": 12,
+            "mohu.vr.mp.draw.left": 6,
+            "mohu.vr.weapon.apply.right": 0,
+            "mohu.vr.mp.draw.right": 6,
+            "mohu.vr.weapon.tracking_fallback": 12
+          },
+          "sampled_world_difference": null,
+          "weapon_difference": [
+            58,
+            0,
+            88,
+            20
+          ]
+        }
+      ]
+    }
+  ],
+  "lateral_changed_pixels": 52136,
+  "projective_draws": 1383420,
+  "pistol_native_fire": {
+    "before": [
+      {
+        "port": 1,
+        "actor": "0x801483d0",
+        "input": "0x801487d0",
+        "weapon_slot": 0,
+        "weapon_id": 0,
+        "weapon": "P38 pistol",
+        "reserve": 20,
+        "clip": 8,
+        "input_fields": "000000000000000010ffffff0c00000000000000000000000000000000000000000014002c015a00010032002c012c010900080000000000000000000000000000000000",
+        "health_raw": 2097152,
+        "health": 32.0,
+        "position": [
+          -94470713,
+          33292288,
+          33718412
+        ],
+        "rotation": [
+          -16384,
+          24,
+          0
+        ]
+      },
+      {
+        "port": 2,
+        "actor": "0x80145810",
+        "input": "0x80145c10",
+        "weapon_slot": 0,
+        "weapon_id": 0,
+        "weapon": "P38 pistol",
+        "reserve": 20,
+        "clip": 8,
+        "input_fields": "000000000000000010ffffff0c000000000000000000000000000000000000000000140020001e00010032002c012c010900080000000000000000000000000000000000",
+        "health_raw": 2097152,
+        "health": 32.0,
+        "position": [
+          -96488943,
+          33357824,
+          -70958831
+        ],
+        "rotation": [
+          -32768,
+          24,
+          -32768
+        ]
+      }
+    ],
+    "after": [
+      {
+        "port": 1,
+        "actor": "0x801483d0",
+        "input": "0x801487d0",
+        "weapon_slot": 0,
+        "weapon_id": 0,
+        "weapon": "P38 pistol",
+        "reserve": 20,
+        "clip": 7,
+        "input_fields": "000000000000000010ffffff0c0000000c000000000000000000000000000000000014002c015a00010032002c012c010900070000000000000000000000000000000000",
+        "health_raw": 2097152,
+        "health": 32.0,
+        "position": [
+          -94470713,
+          33292288,
+          33718412
+        ],
+        "rotation": [
+          -16384,
+          24,
+          0
+        ]
+      },
+      {
+        "port": 2,
+        "actor": "0x80145810",
+        "input": "0x80145c10",
+        "weapon_slot": 0,
+        "weapon_id": 0,
+        "weapon": "P38 pistol",
+        "reserve": 20,
+        "clip": 8,
+        "input_fields": "000000000000000010ffffff0c000000000000000000000000000000000000000000140020001e00010032002c012c010900080000000000000000000000000000000000",
+        "health_raw": 2048000,
+        "health": 31.25,
+        "position": [
+          -96467535,
+          33357824,
+          -70946639
+        ],
+        "rotation": [
+          -8192,
+          28,
+          -32768
+        ]
+      }
+    ],
+    "native_health_trace": {
+      "id": 0,
+      "ok": true,
+      "total": 1,
+      "available": 1,
+      "pc_lo": "0x00000000",
+      "pc_hi": "0xFFFFFFFF",
+      "entries": [
+        {
+          "seq": 0,
+          "addr": "0x00145918",
+          "old": "0x00200000",
+          "new": "0x001F4000",
+          "ra": "0x80050900",
+          "func": "0x000029CC",
+          "pc": "0x8004EB80",
+          "cpu_pc": "0x8004EB70",
+          "sp": "0x801FFE30",
+          "v0": "0x001F4000",
+          "v1": "0x801487D0",
+          "a0": "0x00000000",
+          "a1": "0x0000C000",
+          "a2": "0x801103C0",
+          "a3": "0xFFFFFFFF",
+          "t0": "0x801D68EC",
+          "t1": "0x00000011",
+          "s0": "0x80145810",
+          "s1": "0x801103C0",
+          "s2": "0x00000000",
+          "s3": "0x0000C000",
+          "s4": "0x801103C0",
+          "s5": "0x00000000",
+          "frame": 201,
+          "w": 4,
+          "dma_ch": -1
+        }
+      ],
+      "emitted": 1
+    }
+  },
+  "reject_recovery": {
+    "before": {
+      "pairs": 153,
+      "failed": 0,
+      "refused": 0,
+      "retained_pair_id": 0,
+      "stale_frames": 0,
+      "last_pair_id": 153,
+      "last_failed_attempt": 0
+    },
+    "refused": {
+      "pairs": 154,
+      "failed": 0,
+      "refused": 7,
+      "retained_pair_id": 0,
+      "stale_frames": 0,
+      "last_pair_id": 154,
+      "last_failed_attempt": 0
+    },
+    "recovered": {
+      "pairs": 158,
+      "failed": 0,
+      "refused": 7,
+      "retained_pair_id": 0,
+      "stale_frames": 0,
+      "last_pair_id": 165,
+      "last_failed_attempt": 0
+    }
+  },
+  "recovered_image_pair_id": 166,
+  "recovered_image_hashes": {
+    "p000166_left.png": "269c5610d28b883e0813b3deb145a8d700f98da39d953abac8fd47a44fcff89e",
+    "p000166_right.png": "269c5610d28b883e0813b3deb145a8d700f98da39d953abac8fd47a44fcff89e"
+  },
+  "proof_image_sha256": "63d77a211e72d573b86cc381c58f20a6bd6dff8cae8d8fbc09559804ab62ff17",
+  "source_saves_unchanged": true,
+  "preferences_unchanged": true,
+  "remaining_owned_game_processes": [],
+  "limits": [
+    "Desktop synthetic controls, not physical headset acceptance.",
+    "Native 512x120 P1 view; native MP visibility selection remains in use.",
+    "Grip pivot/scale, independent head/hand calibration and tracked shots remain open.",
+    "MP eye bench omits the native split HUD and does not yet draw the laser.",
+    "Image pairs and checkpoint counters are separate bounded live snapshots."
+  ]
+}

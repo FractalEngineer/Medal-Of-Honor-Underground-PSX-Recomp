@@ -1,0 +1,4366 @@
+{
+  "date": "2026-10-25",
+  "kind": "multiplayer first-person geometry mapping",
+  "inventory": "analysis\\vr-baseline\\weapon-mesh-mapping\\fp-controls-final-20261025\\inventory.json",
+  "inventory_sha256": "d66df9472b909f8eddab17cdc126d293c521010735f6a80973f0bc92efec6c1d",
+  "executable_sha256": "083ac2dde96761b2ab4143b9f6921b0901d553e05261f6a031f58f1486d690be",
+  "revision": "3cdbe826790db0f9e1324bec21b7e1c9928e7dbd",
+  "vr_sources": {
+    "vr/underground/vr_diagnostic.c": "1b8b3648e3b30254eb4f1f27bbb481e81a1108be976d5ab5cec3671c1b66287d",
+    "vr/underground/weapon.c": "478062803184ae51e31f5baa1be6d47ec3765d8e08d43cc223884dd5a76f5023",
+    "vr/underground/weapon.h": "52e0c91c5f42dcc698b03635cf3667e7d44c3f21b61885d2caa761415de8a2c9",
+    "vr/tools/inspect_weapon_sets.py": "0f57469c3ce10c069f575fd8d64b4fa50266523eceb727cead831ce12ce36239"
+  },
+  "source_saves": {
+    "saves\\openbios\\state_8001F844_slot01.pst": "b248dfa247b45a41906beea3aa829cff79b39d863e425211e5c0651e853a7f5d",
+    "saves\\openbios\\state_8001F844_slot01.thumb": "008eb36b216f802cc54b8911eed2201b28b5167830ac4cfeaf4bfff5aab3543c",
+    "saves\\openbios\\state_8001F844_slot02.pst": "d849f30c217e31ef05a0508f98c10a0ffbc2e03260bebf8ae13bf975745223b0",
+    "saves\\openbios\\state_8001F844_slot02.thumb": "3062f96294604ea6c16ce2560780338908145cb0b59709f83bbc95279f61533e",
+    "saves\\openbios\\state_8001F844_slot03.pst": "ac6a5e3f85a8a12a0c312d95682b74a26109a5c651e3ada39f50a986e9242e9d",
+    "saves\\openbios\\state_8001F844_slot03.thumb": "17b69f2729f3cbc9dc0c470e7eaf0cdcb479fc3a2afe2a51516e5e21546d12d5",
+    "saves\\openbios\\state_8001F844_slot04.pst": "5beb061c29120eb61a0d9fe2df1a73a6329ca465a24c67b4ca9c3fa0ca8cd0e6",
+    "saves\\openbios\\state_8001F844_slot04.thumb": "ce4d5a2cbccbb79bb74856cfbb4d534f3b6c4625c8b760ceaccc854c3a5bba9d"
+  },
+  "fixed_regions_xyxy": {
+    "top_world": [
+      110,
+      30,
+      190,
+      65
+    ],
+    "bottom_world": [
+      20,
+      170,
+      150,
+      215
+    ],
+    "top_ammo": [
+      380,
+      0,
+      512,
+      45
+    ],
+    "bottom_ammo": [
+      380,
+      123,
+      512,
+      168
+    ],
+    "other_weapon": [
+      260,
+      218,
+      512,
+      240
+    ]
+  },
+  "proof_image_sha256": "44a5b6bc21714399b3445644c293343a0a0ed850998bc64a5b65dba01fbe5df2",
+  "rows": [
+    {
+      "slot": 1,
+      "weapon_id": 0,
+      "name": "P38 pistol",
+      "mesh": {
+        "actor": "0x801483d0",
+        "input": "0x801487d0",
+        "object": "0x801491c0",
+        "magic": "0xe0007",
+        "node_count": 14,
+        "nodes": [
+          {
+            "node": 0,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 1,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 2,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 3,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 4,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 5,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 6,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 7,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 8,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 9,
+            "address": "0x801bcb1c",
+            "vertices": 20,
+            "sha256": "c11b77cec01e35abcfd69b8e8934860c154cbde76cf7ecf8bbe1a6f22b9c24bc"
+          },
+          {
+            "node": 10,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 11,
+            "address": "0x801bcbbc",
+            "vertices": 149,
+            "sha256": "13abee462fffb7fb825b53c89d1bc4b8d86fb3f75902aa858558fe6d670a468c"
+          },
+          {
+            "node": 12,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 13,
+            "address": "0x801bd064",
+            "vertices": 69,
+            "sha256": "1b74334bf245decc40da4a20223070ef2bd8df846fea26c6a6a85f8283095a94"
+          }
+        ],
+        "node_table_sha256": "996d7f2e28405e080600300ebb096834929c79c1d276ce88d3259a73c5a2969b",
+        "node_table_fnv64": "0x3c944c7042abf384",
+        "geometry_fnv32": "0x8544f8b9",
+        "face_count": 354,
+        "faces": "0x801be4e4"
+      },
+      "scope_drained": true,
+      "cases": {
+        "translated": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 237,
+          "case": "translated",
+          "x": 24,
+          "yaw_mdeg": 0,
+          "lost": 0,
+          "sha256": "897da407eb2e52660de6353ee1c38d26bbda874e07b28b38525cd95cdc88c956",
+          "image": "slot-01\\pose-00-translated.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 5,
+            "mohu.vr.weapon.viewmodel_restore": 5
+          }
+        },
+        "yawed": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 282,
+          "case": "yawed",
+          "x": 0,
+          "yaw_mdeg": 12000,
+          "lost": 0,
+          "sha256": "d5feac05b826a36112e668a90f09695599a886f1d640fbc68424308dc8803c7f",
+          "image": "slot-01\\pose-00-yawed.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 5,
+            "mohu.vr.weapon.viewmodel_restore": 5
+          }
+        },
+        "lost": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 3,
+          "case": "lost",
+          "x": 24,
+          "yaw_mdeg": 0,
+          "lost": 1,
+          "sha256": "77d192e29a4cf55be832b60271b51db57556276075f04f0cea8dd1e69bd33f93",
+          "image": "slot-01\\pose-00-lost.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.tracking_fallback": 5
+          }
+        },
+        "restored": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 0,
+          "case": "restored",
+          "x": 0,
+          "yaw_mdeg": 0,
+          "lost": 0,
+          "sha256": "de431d8b5801582307fcf6f21d654f5222340ade17a968a27b1523d6b43f18ff",
+          "image": "slot-01\\pose-00-restored.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 4,
+            "mohu.vr.weapon.viewmodel_restore": 4,
+            "mohu.vr.weapon.tracking_fallback": 0
+          }
+        }
+      }
+    },
+    {
+      "slot": 1,
+      "weapon_id": 1,
+      "name": "MP40",
+      "mesh": {
+        "actor": "0x801483d0",
+        "input": "0x801487d0",
+        "object": "0x801491c0",
+        "magic": "0x200007",
+        "node_count": 32,
+        "nodes": [
+          {
+            "node": 0,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 1,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 2,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 3,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 4,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 5,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 6,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 7,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 8,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 9,
+            "address": "0x801bd28c",
+            "vertices": 14,
+            "sha256": "bbb29fb521fee0d4ec67577f51ba359a7085ca472963884cf7ab1488e35de188"
+          },
+          {
+            "node": 10,
+            "address": "0x801bd2fc",
+            "vertices": 21,
+            "sha256": "c43fd40c98590f9216b1320bfa1b10eba3893ae51ab8df7d177334dfc0db2f23"
+          },
+          {
+            "node": 11,
+            "address": "0x801bd3a4",
+            "vertices": 5,
+            "sha256": "64deeebf411a34393ddcf7a963508c76c8bd4022f994242cd59031747b9cdf2b"
+          },
+          {
+            "node": 12,
+            "address": "0x801bd3cc",
+            "vertices": 4,
+            "sha256": "5d1d315bdec1c10858872b6beb456ec4f951fbc1ae8a802b71ae068fb6f94ba3"
+          },
+          {
+            "node": 13,
+            "address": "0x801bd3ec",
+            "vertices": 4,
+            "sha256": "1bb2b0f1a6a134133a2bfc708e1d67fbca5b2d917f300d880b69fc7ccdeac8cd"
+          },
+          {
+            "node": 14,
+            "address": "0x801bd40c",
+            "vertices": 4,
+            "sha256": "510eb174d219c446679caf3236e3e7aeeee9e8ff517c357ab2f92244b6f76948"
+          },
+          {
+            "node": 15,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 16,
+            "address": "0x801bd42c",
+            "vertices": 4,
+            "sha256": "d86f863b7cdce08310e665d868f8f804c7cff53250e0e0eed006f18ab1b46802"
+          },
+          {
+            "node": 17,
+            "address": "0x801bd44c",
+            "vertices": 4,
+            "sha256": "7e4cb40a072087db491bcd28c57795c2331ae05116d0fda147c37bb883b32d3b"
+          },
+          {
+            "node": 18,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 19,
+            "address": "0x801bd46c",
+            "vertices": 3,
+            "sha256": "5a192a48caeca688a531af2732e5d71a20b46969a0b32174977948bdf39bdf0d"
+          },
+          {
+            "node": 20,
+            "address": "0x801bd484",
+            "vertices": 2,
+            "sha256": "7c4ab66d7f0e3cc29b800722777740852bab8bf4224a19faf6a3cf7688eff428"
+          },
+          {
+            "node": 21,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 22,
+            "address": "0x801bd494",
+            "vertices": 1,
+            "sha256": "815e25abe62dc32d71f9f3ade4edf528ae5cead16d6ed7a599a72cf28b23b857"
+          },
+          {
+            "node": 23,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 24,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 25,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 26,
+            "address": "0x801bd49c",
+            "vertices": 102,
+            "sha256": "a24e7be3c80ac7f7c74b168ed8b4f2bd2aa206d5b7eb49150d53cd46f57568dd"
+          },
+          {
+            "node": 27,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 28,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 29,
+            "address": "0x801bd7cc",
+            "vertices": 6,
+            "sha256": "0cbad5f66f6f25a9abfd13b1e4c5682637c5b46c52c45bf1a131596c8f82135f"
+          },
+          {
+            "node": 30,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 31,
+            "address": "0x801bd7fc",
+            "vertices": 16,
+            "sha256": "702edda9ccc190b0da8a080b67f1ca6274d9baabc8bd974ba100d7ff68eb0e7d"
+          }
+        ],
+        "node_table_sha256": "a420760a174a176e79493dc6d728787a18818c13b313338164653af839713f47",
+        "node_table_fnv64": "0x67d95fe9d18fd4b4",
+        "geometry_fnv32": "0x8095cafb",
+        "face_count": 316,
+        "faces": "0x801bf5c4"
+      },
+      "scope_drained": true,
+      "cases": {
+        "translated": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 371,
+          "case": "translated",
+          "x": 24,
+          "yaw_mdeg": 0,
+          "lost": 0,
+          "sha256": "d3f36c43a54da1cc231d855458490ab1dbcfd5dd5d71549123864623b7ac5e8a",
+          "image": "slot-01\\pose-01-translated.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 4,
+            "mohu.vr.weapon.viewmodel_restore": 4,
+            "mohu.vr.weapon.tracking_fallback": 0
+          }
+        },
+        "yawed": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 545,
+          "case": "yawed",
+          "x": 0,
+          "yaw_mdeg": 12000,
+          "lost": 0,
+          "sha256": "b129e7d39fc992270d3e36dfced7b56c7be8e007d0769601d721738f4eca8e2a",
+          "image": "slot-01\\pose-01-yawed.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 5,
+            "mohu.vr.weapon.viewmodel_restore": 5,
+            "mohu.vr.weapon.tracking_fallback": 0
+          }
+        },
+        "lost": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 3,
+          "case": "lost",
+          "x": 24,
+          "yaw_mdeg": 0,
+          "lost": 1,
+          "sha256": "92f03231c3f9b25f447169321407a14358e571d16e7905968eaac8702d7d15aa",
+          "image": "slot-01\\pose-01-lost.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.tracking_fallback": 5
+          }
+        },
+        "restored": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 0,
+          "case": "restored",
+          "x": 0,
+          "yaw_mdeg": 0,
+          "lost": 0,
+          "sha256": "466a9988987113caac8869da5279cb9f81d283127594716c337f9998f45c138e",
+          "image": "slot-01\\pose-01-restored.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 5,
+            "mohu.vr.weapon.viewmodel_restore": 5,
+            "mohu.vr.weapon.tracking_fallback": 0
+          }
+        }
+      }
+    },
+    {
+      "slot": 1,
+      "weapon_id": 17,
+      "name": "StG44",
+      "mesh": {
+        "actor": "0x801483d0",
+        "input": "0x801487d0",
+        "object": "0x801491c0",
+        "magic": "0x200007",
+        "node_count": 32,
+        "nodes": [
+          {
+            "node": 0,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 1,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 2,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 3,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 4,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 5,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 6,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 7,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 8,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 9,
+            "address": "0x801bd87c",
+            "vertices": 21,
+            "sha256": "84800929fcef379ba38ba6945c9da772b65e154dd4b4ea684435174cf34a9267"
+          },
+          {
+            "node": 10,
+            "address": "0x801bd924",
+            "vertices": 21,
+            "sha256": "0f36fa7e1bba72ee1805512f5ec6358780d5f164ab537034b3e67f598747301a"
+          },
+          {
+            "node": 11,
+            "address": "0x801bd9cc",
+            "vertices": 5,
+            "sha256": "1d860e037b9e3912a00178b21697a623a760c57af763f9debf6c052e7b86e48a"
+          },
+          {
+            "node": 12,
+            "address": "0x801bd9f4",
+            "vertices": 4,
+            "sha256": "00a2dd00089dd26d98e9f1e7991997ef6c1db16b852bb78cfa0db7009da8b9da"
+          },
+          {
+            "node": 13,
+            "address": "0x801bda14",
+            "vertices": 4,
+            "sha256": "fef35d39e15b16c906c03500b44999ed9ba6165b3d18dafa82859cf9df861bd7"
+          },
+          {
+            "node": 14,
+            "address": "0x801bda34",
+            "vertices": 4,
+            "sha256": "9a7513d73c7ce1575a832422cfc19040fca0f5bb27f4227d1c3dfe2f471ca92f"
+          },
+          {
+            "node": 15,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 16,
+            "address": "0x801bda54",
+            "vertices": 4,
+            "sha256": "263e90aed70672679b203b90d161c63d19d2731d22bf6667065d3877edc7a0a4"
+          },
+          {
+            "node": 17,
+            "address": "0x801bda74",
+            "vertices": 4,
+            "sha256": "178a254f80d7b3005ccccbc17f97a84b0fca2a6bb29eefa6e0deb8add9327450"
+          },
+          {
+            "node": 18,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 19,
+            "address": "0x801bda94",
+            "vertices": 3,
+            "sha256": "cb8e5cc334ec21fa609860acb2a05ecddf71d0888ebf4548dc455d4ca33a41eb"
+          },
+          {
+            "node": 20,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 21,
+            "address": "0x801bdaac",
+            "vertices": 1,
+            "sha256": "239bdf729fea8ed17f440f0d556b7e336bcfbc808f4a6f914e05d4d011fb21c8"
+          },
+          {
+            "node": 22,
+            "address": "0x801bdab4",
+            "vertices": 2,
+            "sha256": "e2ff6336cae4fc717b86c76087b3b2a056c65e04b62bd5fc2fc339d034b36e00"
+          },
+          {
+            "node": 23,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 24,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 25,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 26,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 27,
+            "address": "0x801bdac4",
+            "vertices": 132,
+            "sha256": "fea85a618f68867057933323dbf52167d45345ddd29eecc7f46790099c11fb19"
+          },
+          {
+            "node": 28,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 29,
+            "address": "0x801bdee4",
+            "vertices": 16,
+            "sha256": "96142eb8817fdf14413ee50b7c15e3cb285ef7168e54158b6398deb74a582fc1"
+          },
+          {
+            "node": 30,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 31,
+            "address": "0x801bdf64",
+            "vertices": 13,
+            "sha256": "96767d83fe23ce9607fa41a337fbd56b177ed0d98eec82490ab28387efd4cdb5"
+          }
+        ],
+        "node_table_sha256": "4697bb8a2d7245d2f72fff5963d7831569a1af197ddabc6d3a50007a46b436f5",
+        "node_table_fnv64": "0x353c57791e0d86ff",
+        "geometry_fnv32": "0xf467028b",
+        "face_count": 352,
+        "faces": "0x801c058c"
+      },
+      "scope_drained": true,
+      "cases": {
+        "translated": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 3361,
+          "case": "translated",
+          "x": 24,
+          "yaw_mdeg": 0,
+          "lost": 0,
+          "sha256": "42d3b547e88ab2aaba47a3ea22782520c913ed79cccd516cbe83f4149ca57b43",
+          "image": "slot-01\\pose-02-translated.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 5,
+            "mohu.vr.weapon.viewmodel_restore": 5,
+            "mohu.vr.weapon.tracking_fallback": 0
+          }
+        },
+        "yawed": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 3937,
+          "case": "yawed",
+          "x": 0,
+          "yaw_mdeg": 12000,
+          "lost": 0,
+          "sha256": "c9cab6f2e8ff94c1e5ba963b8850d28554788d922b33143367bd73ada16dac94",
+          "image": "slot-01\\pose-02-yawed.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 5,
+            "mohu.vr.weapon.viewmodel_restore": 5,
+            "mohu.vr.weapon.tracking_fallback": 0
+          }
+        },
+        "lost": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 3,
+          "case": "lost",
+          "x": 24,
+          "yaw_mdeg": 0,
+          "lost": 1,
+          "sha256": "8b884670642be44bcf4084c93e31308e1999c5b088c430f7056f7c030c2dfaac",
+          "image": "slot-01\\pose-02-lost.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.tracking_fallback": 4
+          }
+        },
+        "restored": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 0,
+          "case": "restored",
+          "x": 0,
+          "yaw_mdeg": 0,
+          "lost": 0,
+          "sha256": "80d0c60060b9ba94866db24a1af8bba85d49433c55b17786bbf174c389819663",
+          "image": "slot-01\\pose-02-restored.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 4,
+            "mohu.vr.weapon.viewmodel_restore": 4,
+            "mohu.vr.weapon.tracking_fallback": 0
+          }
+        }
+      }
+    },
+    {
+      "slot": 1,
+      "weapon_id": 10,
+      "name": "Stick grenade",
+      "mesh": {
+        "actor": "0x801483d0",
+        "input": "0x801487d0",
+        "object": "0x801491c0",
+        "magic": "0x180007",
+        "node_count": 24,
+        "nodes": [
+          {
+            "node": 0,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 1,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 2,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 3,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 4,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 5,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 6,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 7,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 8,
+            "address": "0x801bdfcc",
+            "vertices": 19,
+            "sha256": "294c13309b599c31c6c249985fc0dbd7552ee13e17b7af496b393aba6bcab5d4"
+          },
+          {
+            "node": 9,
+            "address": "0x801be064",
+            "vertices": 16,
+            "sha256": "0793fc0ca6547b6bd01b9a57e36739bf04947bb5f9b3ab480a2ff5c5b3002a2f"
+          },
+          {
+            "node": 10,
+            "address": "0x801be0e4",
+            "vertices": 21,
+            "sha256": "64ac29c11cb2d1a8d00c11bf9a00f3c784c253b2eaf9caafd059463c1d669e1a"
+          },
+          {
+            "node": 11,
+            "address": "0x801be18c",
+            "vertices": 7,
+            "sha256": "cbef14ba8e45e2292a1938b4940b04942bf65ff292e919efbe923bdb25afda25"
+          },
+          {
+            "node": 12,
+            "address": "0x801be1c4",
+            "vertices": 4,
+            "sha256": "91fdab83fd23d0dda1e561eac1539d2afcec1254c5edaa61bf5748f7d1008e42"
+          },
+          {
+            "node": 13,
+            "address": "0x801be1e4",
+            "vertices": 4,
+            "sha256": "23a743987652703fc0ad3a9586c18419ca2c9fc665dd0f4a53f7f8d15666a14a"
+          },
+          {
+            "node": 14,
+            "address": "0x801be204",
+            "vertices": 5,
+            "sha256": "7e00743eb3b072bdf89f5b6ae7f7989189090a91155409fc35937ed5cde5e25d"
+          },
+          {
+            "node": 15,
+            "address": "0x801be22c",
+            "vertices": 8,
+            "sha256": "6792133c62fa477587321944caeaa666e9760228e9b33f46320f4117a2bf203f"
+          },
+          {
+            "node": 16,
+            "address": "0x801be26c",
+            "vertices": 3,
+            "sha256": "2d6767f581ecfafb21073408a366d9df26301c5dac5d58cdbde06266abf1aa9f"
+          },
+          {
+            "node": 17,
+            "address": "0x801be284",
+            "vertices": 5,
+            "sha256": "459c33e30759202b25b08a0ab70c093c9b86ffcf577f6bbb094e281c669e2e12"
+          },
+          {
+            "node": 18,
+            "address": "0x801be2ac",
+            "vertices": 4,
+            "sha256": "8a904b9a0f19b4b2525665810857e23646c339d7c20b4b22f160e5c9ad70b6b8"
+          },
+          {
+            "node": 19,
+            "address": "0x801be2cc",
+            "vertices": 8,
+            "sha256": "3bde9ae4a4cbd368a2bfb3f61067b10fbac4edd87ddf739b3640bc092b5dd223"
+          },
+          {
+            "node": 20,
+            "address": "0x801be30c",
+            "vertices": 1,
+            "sha256": "514a8b733dea560495c3f0cf54e6f529a2816d02d3d2466780eb2eb4ff67b7b1"
+          },
+          {
+            "node": 21,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 22,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 23,
+            "address": "0x801be314",
+            "vertices": 58,
+            "sha256": "cfa7b6d73971a8fe046e6240be162b51380a641a4e010a9a3e562667e76a1c2b"
+          }
+        ],
+        "node_table_sha256": "cb321f81ddfb5cd7e39a2e771897e012a63e18c691cddf2deedd7c76cc31af40",
+        "node_table_fnv64": "0x724783cf9e8142d4",
+        "geometry_fnv32": "0xddce0989",
+        "face_count": 341,
+        "faces": "0x801c18b4"
+      },
+      "scope_drained": true,
+      "cases": {
+        "translated": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 3134,
+          "case": "translated",
+          "x": 24,
+          "yaw_mdeg": 0,
+          "lost": 0,
+          "sha256": "f841aeb251d02183cd0d2cbb3dea8015ca6c9105203068f615906964d38cde06",
+          "image": "slot-01\\pose-03-translated.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 5,
+            "mohu.vr.weapon.viewmodel_restore": 5,
+            "mohu.vr.weapon.tracking_fallback": 0
+          }
+        },
+        "yawed": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 7383,
+          "case": "yawed",
+          "x": 0,
+          "yaw_mdeg": 12000,
+          "lost": 0,
+          "sha256": "2d474570899fdf073a0a7800994e027e4c009f7d4fb9def53b528af178cf0bb0",
+          "image": "slot-01\\pose-03-yawed.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 6,
+            "mohu.vr.weapon.viewmodel_restore": 6,
+            "mohu.vr.weapon.tracking_fallback": 0
+          }
+        },
+        "lost": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 0,
+          "case": "lost",
+          "x": 24,
+          "yaw_mdeg": 0,
+          "lost": 1,
+          "sha256": "3103ab16d40688b7bedd261aa3155119158ab87f3c5ac26cbe921fe37fd94da0",
+          "image": "slot-01\\pose-03-lost.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.tracking_fallback": 5
+          }
+        },
+        "restored": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 1312,
+          "case": "restored",
+          "x": 0,
+          "yaw_mdeg": 0,
+          "lost": 0,
+          "sha256": "85a2cb3d9158027e6e7070fd367a29b4a2f9f9cef2c3f0d39889c51df82e2ef1",
+          "image": "slot-01\\pose-03-restored.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 5,
+            "mohu.vr.weapon.viewmodel_restore": 5,
+            "mohu.vr.weapon.tracking_fallback": 0
+          }
+        }
+      }
+    },
+    {
+      "slot": 2,
+      "weapon_id": 8,
+      "name": "Colt .45",
+      "mesh": {
+        "actor": "0x8014b390",
+        "input": "0x8014b790",
+        "object": "0x8014c180",
+        "magic": "0xe0007",
+        "node_count": 14,
+        "nodes": [
+          {
+            "node": 0,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 1,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 2,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 3,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 4,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 5,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 6,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 7,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 8,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 9,
+            "address": "0x801bcf9c",
+            "vertices": 20,
+            "sha256": "3f379d0585bef328ed9db6dbada701c246b6a5d8a47919c1639b186928504406"
+          },
+          {
+            "node": 10,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 11,
+            "address": "0x801bd03c",
+            "vertices": 92,
+            "sha256": "78cb8f3b8e8f5a64d8e9d883da68389d78c1d1a494701507c38a43919f0e8e97"
+          },
+          {
+            "node": 12,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 13,
+            "address": "0x801bd31c",
+            "vertices": 68,
+            "sha256": "6a839bdddf468f6a836e4ee12e8eb04f7c3ece9e71449ec27949d5b9cac9df80"
+          }
+        ],
+        "node_table_sha256": "2c769bf803d587569ab578863b055b0d1c8da9ae5df5a3d535f046eb1583c689",
+        "node_table_fnv64": "0x9081b43b7faba5d4",
+        "geometry_fnv32": "0x267e86aa",
+        "face_count": 303,
+        "faces": "0x801be90c"
+      },
+      "scope_drained": true,
+      "cases": {
+        "translated": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 572,
+          "case": "translated",
+          "x": 24,
+          "yaw_mdeg": 0,
+          "lost": 0,
+          "sha256": "ef35020c18ebc78505de4da11ee1de18b6a61627a54d296a7c2df5671a130643",
+          "image": "slot-02\\pose-00-translated.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 5,
+            "mohu.vr.weapon.viewmodel_restore": 5,
+            "mohu.vr.weapon.tracking_fallback": 0
+          }
+        },
+        "yawed": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 840,
+          "case": "yawed",
+          "x": 0,
+          "yaw_mdeg": 12000,
+          "lost": 0,
+          "sha256": "e3c20f5f3391ddd677b24b7b39cd02f2ca879b1aff5ff464d2d5d1a4f339dafc",
+          "image": "slot-02\\pose-00-yawed.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 5,
+            "mohu.vr.weapon.viewmodel_restore": 5,
+            "mohu.vr.weapon.tracking_fallback": 0
+          }
+        },
+        "lost": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 35,
+          "case": "lost",
+          "x": 24,
+          "yaw_mdeg": 0,
+          "lost": 1,
+          "sha256": "2a8dccea857d0935ce02a183d3fb75654b07cfdd94a37b3dffe1d4a78a75ca80",
+          "image": "slot-02\\pose-00-lost.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.tracking_fallback": 6
+          }
+        },
+        "restored": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 7,
+          "case": "restored",
+          "x": 0,
+          "yaw_mdeg": 0,
+          "lost": 0,
+          "sha256": "a53820581b51f906794ed97d1f27ee6e1634d1828fdabad6afa22873fbf4943f",
+          "image": "slot-02\\pose-00-restored.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 5,
+            "mohu.vr.weapon.viewmodel_restore": 5,
+            "mohu.vr.weapon.tracking_fallback": 0
+          }
+        }
+      }
+    },
+    {
+      "slot": 2,
+      "weapon_id": 16,
+      "name": "Sten",
+      "mesh": {
+        "actor": "0x8014b390",
+        "input": "0x8014b790",
+        "object": "0x8014c180",
+        "magic": "0x1f0007",
+        "node_count": 31,
+        "nodes": [
+          {
+            "node": 0,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 1,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 2,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 3,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 4,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 5,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 6,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 7,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 8,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 9,
+            "address": "0x801bd53c",
+            "vertices": 21,
+            "sha256": "f3e08027ec9da88347f98041b0b5563ba07a9dcdcc1b4709ffdbfacc2be0c9db"
+          },
+          {
+            "node": 10,
+            "address": "0x801bd5e4",
+            "vertices": 21,
+            "sha256": "c43fd40c98590f9216b1320bfa1b10eba3893ae51ab8df7d177334dfc0db2f23"
+          },
+          {
+            "node": 11,
+            "address": "0x801bd68c",
+            "vertices": 5,
+            "sha256": "64deeebf411a34393ddcf7a963508c76c8bd4022f994242cd59031747b9cdf2b"
+          },
+          {
+            "node": 12,
+            "address": "0x801bd6b4",
+            "vertices": 4,
+            "sha256": "5d1d315bdec1c10858872b6beb456ec4f951fbc1ae8a802b71ae068fb6f94ba3"
+          },
+          {
+            "node": 13,
+            "address": "0x801bd6d4",
+            "vertices": 4,
+            "sha256": "1bb2b0f1a6a134133a2bfc708e1d67fbca5b2d917f300d880b69fc7ccdeac8cd"
+          },
+          {
+            "node": 14,
+            "address": "0x801bd6f4",
+            "vertices": 4,
+            "sha256": "510eb174d219c446679caf3236e3e7aeeee9e8ff517c357ab2f92244b6f76948"
+          },
+          {
+            "node": 15,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 16,
+            "address": "0x801bd714",
+            "vertices": 4,
+            "sha256": "d86f863b7cdce08310e665d868f8f804c7cff53250e0e0eed006f18ab1b46802"
+          },
+          {
+            "node": 17,
+            "address": "0x801bd734",
+            "vertices": 4,
+            "sha256": "7e4cb40a072087db491bcd28c57795c2331ae05116d0fda147c37bb883b32d3b"
+          },
+          {
+            "node": 18,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 19,
+            "address": "0x801bd754",
+            "vertices": 3,
+            "sha256": "5a192a48caeca688a531af2732e5d71a20b46969a0b32174977948bdf39bdf0d"
+          },
+          {
+            "node": 20,
+            "address": "0x801bd76c",
+            "vertices": 2,
+            "sha256": "7c4ab66d7f0e3cc29b800722777740852bab8bf4224a19faf6a3cf7688eff428"
+          },
+          {
+            "node": 21,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 22,
+            "address": "0x801bd77c",
+            "vertices": 1,
+            "sha256": "815e25abe62dc32d71f9f3ade4edf528ae5cead16d6ed7a599a72cf28b23b857"
+          },
+          {
+            "node": 23,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 24,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 25,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 26,
+            "address": "0x801bd784",
+            "vertices": 135,
+            "sha256": "81a9ee2b359b29e3e95a011c172c7c7473ee05a5db010bcc059380a81b999cd0"
+          },
+          {
+            "node": 27,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 28,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 29,
+            "address": "0x801bdbbc",
+            "vertices": 17,
+            "sha256": "7f479205ffa9255054ca55b3da279c2f9e371741c8b96dcf48cfbe9c2aefb8ad"
+          },
+          {
+            "node": 30,
+            "address": "0x801bdc44",
+            "vertices": 14,
+            "sha256": "7d9bf945540b2d64b2cbf821540a4f3796d6dbe7862fcd0a91039db7439a2023"
+          }
+        ],
+        "node_table_sha256": "3e23b41411adecb140eb12c97c0ebe675f7981de11f748e63f3848c0c1cdc58e",
+        "node_table_fnv64": "0x9663f66c3e01b607",
+        "geometry_fnv32": "0x29d5bc18",
+        "face_count": 354,
+        "faces": "0x801bf6ec"
+      },
+      "scope_drained": true,
+      "cases": {
+        "translated": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 456,
+          "case": "translated",
+          "x": 24,
+          "yaw_mdeg": 0,
+          "lost": 0,
+          "sha256": "3da1da96aff4f31e857228b062af9f07869856c79e33b4975dccfb740f3d0ac9",
+          "image": "slot-02\\pose-01-translated.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 6,
+            "mohu.vr.weapon.viewmodel_restore": 6,
+            "mohu.vr.weapon.tracking_fallback": 0
+          }
+        },
+        "yawed": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 608,
+          "case": "yawed",
+          "x": 0,
+          "yaw_mdeg": 12000,
+          "lost": 0,
+          "sha256": "d971d54ddfa9147dd03809fec21b9924d403ec59bda9a11be3e3f151430aa2f2",
+          "image": "slot-02\\pose-01-yawed.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 4,
+            "mohu.vr.weapon.viewmodel_restore": 4,
+            "mohu.vr.weapon.tracking_fallback": 0
+          }
+        },
+        "lost": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 397,
+          "case": "lost",
+          "x": 24,
+          "yaw_mdeg": 0,
+          "lost": 1,
+          "sha256": "c304af539e5bdbc37324d58a6c12b2f28f8df1fda8b525675676c74483f65f3a",
+          "image": "slot-02\\pose-01-lost.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.tracking_fallback": 6
+          }
+        },
+        "restored": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 253,
+          "case": "restored",
+          "x": 0,
+          "yaw_mdeg": 0,
+          "lost": 0,
+          "sha256": "a59f4918fe7aaeeb5a47715a8b7dadb9ffef61b309cad7dc568e124f34b8ff13",
+          "image": "slot-02\\pose-01-restored.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 6,
+            "mohu.vr.weapon.viewmodel_restore": 6,
+            "mohu.vr.weapon.tracking_fallback": 0
+          }
+        }
+      }
+    },
+    {
+      "slot": 2,
+      "weapon_id": 4,
+      "name": "Shotgun",
+      "mesh": {
+        "actor": "0x8014b390",
+        "input": "0x8014b790",
+        "object": "0x8014c180",
+        "magic": "0x150007",
+        "node_count": 21,
+        "nodes": [
+          {
+            "node": 0,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 1,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 2,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 3,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 4,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 5,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 6,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 7,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 8,
+            "address": "0x801bdcb4",
+            "vertices": 14,
+            "sha256": "59eb0ac19afb7a1c9c84ea2eb83a97a3ea8a940634ac2b321581b28fe02fd3a8"
+          },
+          {
+            "node": 9,
+            "address": "0x801bdd24",
+            "vertices": 21,
+            "sha256": "6c1355cda5fa77335e7e8cd4cd8ff9aa945978349f2e83a54ed52c6620116cec"
+          },
+          {
+            "node": 10,
+            "address": "0x801bddcc",
+            "vertices": 14,
+            "sha256": "8dd84aa2c68096eed6f7121b25d05a571fb4a1cc398f2ce836dffca3f2aafa2a"
+          },
+          {
+            "node": 11,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 12,
+            "address": "0x801bde3c",
+            "vertices": 5,
+            "sha256": "699e08177abad0970d4224ff8854511cf189ebc436c7d2b7ecb60c11c3bd5c76"
+          },
+          {
+            "node": 13,
+            "address": "0x801bde64",
+            "vertices": 8,
+            "sha256": "41df1ee9d74d67c74a7a09404ef14ea0ed016995ffd214febdc33658fcf59af9"
+          },
+          {
+            "node": 14,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 15,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 16,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 17,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 18,
+            "address": "0x801bdea4",
+            "vertices": 99,
+            "sha256": "c6f1c21c44d3ae436373ac8afcaaf7f02a2f00b0fbdf8bd9dc7454d3cf19d1b7"
+          },
+          {
+            "node": 19,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 20,
+            "address": "0x801be1bc",
+            "vertices": 38,
+            "sha256": "87261beb9e624f08c9e61445d4ccbbf1f386c000b5b8b120ed6fe5446ec488d8"
+          }
+        ],
+        "node_table_sha256": "67f4dc6f27aa13512c208b328c011d5e41ac71f21a63fab24e8d826d8eca3de7",
+        "node_table_fnv64": "0xbee2e53add670ec",
+        "geometry_fnv32": "0x805bd649",
+        "face_count": 306,
+        "faces": "0x801c0964"
+      },
+      "scope_drained": true,
+      "cases": {
+        "translated": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 665,
+          "case": "translated",
+          "x": 24,
+          "yaw_mdeg": 0,
+          "lost": 0,
+          "sha256": "d718cdd027e2d842f0bf2f34c18091c7a84a7d044a2c98f0304936d5b489a8a6",
+          "image": "slot-02\\pose-02-translated.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 5,
+            "mohu.vr.weapon.viewmodel_restore": 5,
+            "mohu.vr.weapon.tracking_fallback": 0
+          }
+        },
+        "yawed": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 1333,
+          "case": "yawed",
+          "x": 0,
+          "yaw_mdeg": 12000,
+          "lost": 0,
+          "sha256": "9824a8013f3d9bb568ec369fa939bcfdb891e4b73bafef312ef1f4386fc1030f",
+          "image": "slot-02\\pose-02-yawed.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 6,
+            "mohu.vr.weapon.viewmodel_restore": 6,
+            "mohu.vr.weapon.tracking_fallback": 0
+          }
+        },
+        "lost": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 976,
+          "case": "lost",
+          "x": 24,
+          "yaw_mdeg": 0,
+          "lost": 1,
+          "sha256": "e8acf5cbea81e4423eeed4c47648328e3cff4e2ae00276f7503f99724cf9c8d5",
+          "image": "slot-02\\pose-02-lost.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.tracking_fallback": 6
+          }
+        },
+        "restored": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 791,
+          "case": "restored",
+          "x": 0,
+          "yaw_mdeg": 0,
+          "lost": 0,
+          "sha256": "613e9f99499a6d07648ce01ea1a5e1a24627ec8fc8cbda4cbac05649c5ef1c57",
+          "image": "slot-02\\pose-02-restored.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 6,
+            "mohu.vr.weapon.viewmodel_restore": 6,
+            "mohu.vr.weapon.tracking_fallback": 0
+          }
+        }
+      }
+    },
+    {
+      "slot": 2,
+      "weapon_id": 15,
+      "name": "Petrol bomb",
+      "mesh": {
+        "actor": "0x8014b390",
+        "input": "0x8014b790",
+        "object": "0x8014c180",
+        "magic": "0x1c0007",
+        "node_count": 28,
+        "nodes": [
+          {
+            "node": 0,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 1,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 2,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 3,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 4,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 5,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 6,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 7,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 8,
+            "address": "0x801be2ec",
+            "vertices": 21,
+            "sha256": "f05933a9c2f7d97bde10c4520105e997da6a959322bf82620e88001ab05d9bbc"
+          },
+          {
+            "node": 9,
+            "address": "0x801be394",
+            "vertices": 14,
+            "sha256": "2609cf06dd0b52dd9ff977482f5b898e9d2bda03f968dd555bd37c77232faf98"
+          },
+          {
+            "node": 10,
+            "address": "0x801be404",
+            "vertices": 23,
+            "sha256": "27414231ebe96f68596f496cbcbab7152108413b995f483bae92d45655bb9205"
+          },
+          {
+            "node": 11,
+            "address": "0x801be4bc",
+            "vertices": 8,
+            "sha256": "d7bbf49a41dd5e4665ee32458960af78d685851c24d78002779257f91b194b31"
+          },
+          {
+            "node": 12,
+            "address": "0x801be4fc",
+            "vertices": 5,
+            "sha256": "eafaff61a18f73f8d14f163fe41ebc5cf034514d561248fcda21482f9bf1492c"
+          },
+          {
+            "node": 13,
+            "address": "0x801be524",
+            "vertices": 8,
+            "sha256": "d5c5a6c52c161d44190e2efbe16592e996d2e36eb7ff0e148d317929f4ef1150"
+          },
+          {
+            "node": 14,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 15,
+            "address": "0x801be564",
+            "vertices": 8,
+            "sha256": "e3c2a1e459c65c3683cbb353033f012de8541350276527ab854fd87a5cee4564"
+          },
+          {
+            "node": 16,
+            "address": "0x801be5a4",
+            "vertices": 4,
+            "sha256": "323ed1f4d833002ec64cbab0e937890bac40dd8a5d69eca436b2a7b6c18e5064"
+          },
+          {
+            "node": 17,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 18,
+            "address": "0x801be5c4",
+            "vertices": 3,
+            "sha256": "de752f6b8548f3cbfb3679523252e8bb4fed92649965056b0ca515b95c0090e3"
+          },
+          {
+            "node": 19,
+            "address": "0x801be5dc",
+            "vertices": 1,
+            "sha256": "fc8603502b269a6ca73e97be68bb8052c60168afe534e5a06c8ab0b6bd8194db"
+          },
+          {
+            "node": 20,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 21,
+            "address": "0x801be5e4",
+            "vertices": 2,
+            "sha256": "d0f550319cec29e14e64a6a3615edf6b00741cdaa4b559ab751f4e1e65f4e6fc"
+          },
+          {
+            "node": 22,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 23,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 24,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 25,
+            "address": "0x801be5f4",
+            "vertices": 92,
+            "sha256": "ba275e743ca79676f4cebcd014f6f62375daf45977ae2dcf7b2fcac739b91afb"
+          },
+          {
+            "node": 26,
+            "address": "0x801be8d4",
+            "vertices": 5,
+            "sha256": "a549627dd8970fbf951087de035846ccc7dae192bd6ace1aa28a47e8417df3ea"
+          },
+          {
+            "node": 27,
+            "address": "0x801be8fc",
+            "vertices": 2,
+            "sha256": "6d070eb266d4993d5227bf25e34339e38e55b3e717f765eaf51a24d49c3a5e7b"
+          }
+        ],
+        "node_table_sha256": "63a2f8a7a773e60a52861c24b1201afbed6c0c97ce3de5b06ee3a6efe2578d5a",
+        "node_table_fnv64": "0xe1631f3822da9691",
+        "geometry_fnv32": "0x7ca0dbec",
+        "face_count": 397,
+        "faces": "0x801c16e4"
+      },
+      "scope_drained": true,
+      "cases": {
+        "translated": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 1796,
+          "case": "translated",
+          "x": 24,
+          "yaw_mdeg": 0,
+          "lost": 0,
+          "sha256": "5035699574de42c60264f2b41d384c52b592dbef38ad7e2b4c9ad5637f7e3481",
+          "image": "slot-02\\pose-03-translated.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 6,
+            "mohu.vr.weapon.viewmodel_restore": 6,
+            "mohu.vr.weapon.tracking_fallback": 0
+          }
+        },
+        "yawed": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 4091,
+          "case": "yawed",
+          "x": 0,
+          "yaw_mdeg": 12000,
+          "lost": 0,
+          "sha256": "184008bf10bffa9e03bd2200c104178aeb19071c9411f23d35902f787cb9ab0d",
+          "image": "slot-02\\pose-03-yawed.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 6,
+            "mohu.vr.weapon.viewmodel_restore": 6,
+            "mohu.vr.weapon.tracking_fallback": 0
+          }
+        },
+        "lost": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 1522,
+          "case": "lost",
+          "x": 24,
+          "yaw_mdeg": 0,
+          "lost": 1,
+          "sha256": "7e63c92f9fca18ca376986d89ce06f19e115e751f81d817b6652afb6624f0852",
+          "image": "slot-02\\pose-03-lost.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.tracking_fallback": 6
+          }
+        },
+        "restored": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 0,
+          "case": "restored",
+          "x": 0,
+          "yaw_mdeg": 0,
+          "lost": 0,
+          "sha256": "e183c5cf5ac50a655174d4c1d23f8a340ce5d08af84c1d5c85aee70f1c52998f",
+          "image": "slot-02\\pose-03-restored.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 6,
+            "mohu.vr.weapon.viewmodel_restore": 6,
+            "mohu.vr.weapon.tracking_fallback": 0
+          }
+        }
+      }
+    },
+    {
+      "slot": 3,
+      "weapon_id": 9,
+      "name": "Silenced pistol",
+      "mesh": {
+        "actor": "0x80146cc0",
+        "input": "0x801470c0",
+        "object": "0x80147ab0",
+        "magic": "0xe0007",
+        "node_count": 14,
+        "nodes": [
+          {
+            "node": 0,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 1,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 2,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 3,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 4,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 5,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 6,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 7,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 8,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 9,
+            "address": "0x801bc780",
+            "vertices": 20,
+            "sha256": "abdcb0ff14cfc850235a149be474953cd5690dad588da946f2a8f50ca1a0c34d"
+          },
+          {
+            "node": 10,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 11,
+            "address": "0x801bc820",
+            "vertices": 122,
+            "sha256": "c6ba7de5e9609a7221756acce2485b03c5982c8d844817825f8d1eecfba718a3"
+          },
+          {
+            "node": 12,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 13,
+            "address": "0x801bcbf0",
+            "vertices": 57,
+            "sha256": "9a54545e85745c582e97e71e530bde5b0a197014e6f638f5864c492b960e41e4"
+          }
+        ],
+        "node_table_sha256": "29a80ef5a17bd750d06abf676eef140df1c62e657fe6b21c2eb74f31bdbaad74",
+        "node_table_fnv64": "0x657922c7652ae45f",
+        "geometry_fnv32": "0x65f76c5d",
+        "face_count": 310,
+        "faces": "0x801be1b0"
+      },
+      "scope_drained": true,
+      "cases": {
+        "translated": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 358,
+          "case": "translated",
+          "x": 24,
+          "yaw_mdeg": 0,
+          "lost": 0,
+          "sha256": "02e442acfa2eb8e7cc2c9965d0468ee7ed5c0987258e0bf85b28562a0296c423",
+          "image": "slot-03\\pose-00-translated.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 6,
+            "mohu.vr.weapon.viewmodel_restore": 6,
+            "mohu.vr.weapon.tracking_fallback": 0
+          }
+        },
+        "yawed": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 827,
+          "case": "yawed",
+          "x": 0,
+          "yaw_mdeg": 12000,
+          "lost": 0,
+          "sha256": "638f2990ff9023c6c9be51b82634aa3f92bccf354bc6afaf9d6539f9c0b0118a",
+          "image": "slot-03\\pose-00-yawed.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 5,
+            "mohu.vr.weapon.viewmodel_restore": 5,
+            "mohu.vr.weapon.tracking_fallback": 0
+          }
+        },
+        "lost": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 0,
+          "case": "lost",
+          "x": 24,
+          "yaw_mdeg": 0,
+          "lost": 1,
+          "sha256": "033bc8ba84c3703aa194b1c3d50d8d78f18a8330636041ffc2206bfe14cbea6c",
+          "image": "slot-03\\pose-00-lost.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.tracking_fallback": 6
+          }
+        },
+        "restored": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 0,
+          "case": "restored",
+          "x": 0,
+          "yaw_mdeg": 0,
+          "lost": 0,
+          "sha256": "087703ad98bc6ebfdba170185cd2273458d7d3a791f1cd8febcd2df9bad2e2de",
+          "image": "slot-03\\pose-00-restored.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 6,
+            "mohu.vr.weapon.viewmodel_restore": 6,
+            "mohu.vr.weapon.tracking_fallback": 0
+          }
+        }
+      }
+    },
+    {
+      "slot": 3,
+      "weapon_id": 14,
+      "name": "Crossbow",
+      "mesh": {
+        "actor": "0x80146cc0",
+        "input": "0x801470c0",
+        "object": "0x80147ab0",
+        "magic": "0x1d0007",
+        "node_count": 29,
+        "nodes": [
+          {
+            "node": 0,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 1,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 2,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 3,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 4,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 5,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 6,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 7,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 8,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 9,
+            "address": "0x801bcdb8",
+            "vertices": 21,
+            "sha256": "06c3f9240eedfad495c0d7db2773dddbafee84d079dd4368b2652bb1065d3718"
+          },
+          {
+            "node": 10,
+            "address": "0x801bce60",
+            "vertices": 40,
+            "sha256": "3bb61775adbb3c227fb784e2a5029fca46e051c03dbf4c3401ea6a896ec2e9c8"
+          },
+          {
+            "node": 11,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 12,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 13,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 14,
+            "address": "0x801bcfa0",
+            "vertices": 20,
+            "sha256": "9821c8297a08dd34219b593d1feff194d0da82fd716a34048ecd6878d6c800a7"
+          },
+          {
+            "node": 15,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 16,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 17,
+            "address": "0x801bd040",
+            "vertices": 18,
+            "sha256": "7d488c37cca612a4108dd34fe26fe6bb225865334a915005919df076557bfc7c"
+          },
+          {
+            "node": 18,
+            "address": "0x801bd0d0",
+            "vertices": 14,
+            "sha256": "0b856e2e2bf56d7b0ff3f6af5631c2c4b1c7391c702e771a3be9986f03a8a082"
+          },
+          {
+            "node": 19,
+            "address": "0x801bd140",
+            "vertices": 21,
+            "sha256": "212674722a10d3dabca7aa071ff72f75e41db55b558d0c5a5c036669c2fe1953"
+          },
+          {
+            "node": 20,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 21,
+            "address": "0x801bd1e8",
+            "vertices": 14,
+            "sha256": "9efea30aeda0d96ee1235d1bb3f66666e793e7beaa55ff4c668189e29ceeb07e"
+          },
+          {
+            "node": 22,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 23,
+            "address": "0x801bd258",
+            "vertices": 45,
+            "sha256": "52bd8068c1e0e3eff3c3eaf5677bd4413156617858022e280b80dd1f4e7f9949"
+          },
+          {
+            "node": 24,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 25,
+            "address": "0x801bd3c0",
+            "vertices": 19,
+            "sha256": "4e1c2a6bf9e55f2c7a19ee2bee2d8e3ba0ab76f53458403b13bed8770cc4a385"
+          },
+          {
+            "node": 26,
+            "address": "0x801bd458",
+            "vertices": 6,
+            "sha256": "2375c7241d81e5351d008d830d452f4963a7f89b65cc18ce48049dd5a6b7d2f1"
+          },
+          {
+            "node": 27,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 28,
+            "address": "0x801bd488",
+            "vertices": 21,
+            "sha256": "057020203235d41633f52cca1b6f3c5051b916d5824458c398631f62231a3194"
+          }
+        ],
+        "node_table_sha256": "1810c540b533b356649393b21c8f57ecde039669b3cdad7858f7177c67487f7a",
+        "node_table_fnv64": "0x1ec73a434a533c30",
+        "geometry_fnv32": "0xdff185ca",
+        "face_count": 290,
+        "faces": "0x801bf040"
+      },
+      "scope_drained": true,
+      "cases": {
+        "translated": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 1794,
+          "case": "translated",
+          "x": 24,
+          "yaw_mdeg": 0,
+          "lost": 0,
+          "sha256": "d18ed3d97d2177c4efa4c8c59d4ec8f618dc637271b9274f6e2b3aa4acb2e129",
+          "image": "slot-03\\pose-01-translated.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 5,
+            "mohu.vr.weapon.viewmodel_restore": 5,
+            "mohu.vr.weapon.tracking_fallback": 0
+          }
+        },
+        "yawed": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 3283,
+          "case": "yawed",
+          "x": 0,
+          "yaw_mdeg": 12000,
+          "lost": 0,
+          "sha256": "9dcad41cdb70f36bc64ca53f09b95e0307d10ed2e68eca8b886ee86b8425c8c3",
+          "image": "slot-03\\pose-01-yawed.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 5,
+            "mohu.vr.weapon.viewmodel_restore": 5,
+            "mohu.vr.weapon.tracking_fallback": 0
+          }
+        },
+        "lost": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 38,
+          "case": "lost",
+          "x": 24,
+          "yaw_mdeg": 0,
+          "lost": 1,
+          "sha256": "244a483215c782e1aa0f47029899b069b159147b0de9db64482b56bf6ea8f098",
+          "image": "slot-03\\pose-01-lost.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.tracking_fallback": 6
+          }
+        },
+        "restored": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 38,
+          "case": "restored",
+          "x": 0,
+          "yaw_mdeg": 0,
+          "lost": 0,
+          "sha256": "6b0ef4c6b5c9e97509b069893a8c53bba2c41d18272ae9c229d6552a698bd6b2",
+          "image": "slot-03\\pose-01-restored.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 6,
+            "mohu.vr.weapon.viewmodel_restore": 6,
+            "mohu.vr.weapon.tracking_fallback": 0
+          }
+        }
+      }
+    },
+    {
+      "slot": 3,
+      "weapon_id": 5,
+      "name": "Scoped rifle",
+      "mesh": {
+        "actor": "0x80146cc0",
+        "input": "0x801470c0",
+        "object": "0x80147ab0",
+        "magic": "0x1a0007",
+        "node_count": 26,
+        "nodes": [
+          {
+            "node": 0,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 1,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 2,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 3,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 4,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 5,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 6,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 7,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 8,
+            "address": "0x801bd530",
+            "vertices": 14,
+            "sha256": "52ad9511c8b31dbb4155a487fbe80abc1d47c19702af8d5f69a862acf6d87b2e"
+          },
+          {
+            "node": 9,
+            "address": "0x801bd5a0",
+            "vertices": 21,
+            "sha256": "2001d93a3e67435f023809f91d22c3f7ae8bea2d997d5c5fd7483868506c808f"
+          },
+          {
+            "node": 10,
+            "address": "0x801bd648",
+            "vertices": 22,
+            "sha256": "b459a16604fb56c6dc535232eeeeb25898a9736607a21dc004fffec78a4d2666"
+          },
+          {
+            "node": 11,
+            "address": "0x801bd6f8",
+            "vertices": 4,
+            "sha256": "eaa46219484934d3a7a473037e74f78bf4787aa00f0ae4093104aa6d9c4a1fdc"
+          },
+          {
+            "node": 12,
+            "address": "0x801bd718",
+            "vertices": 4,
+            "sha256": "6da9297bf0528513ee80c92d4bb848c3815e68be2a0557272895b768028f1c67"
+          },
+          {
+            "node": 13,
+            "address": "0x801bd738",
+            "vertices": 4,
+            "sha256": "0dd1d33a9fb818e6e3f63f7186228e160f16d322f1151abfa774d1adb2447787"
+          },
+          {
+            "node": 14,
+            "address": "0x801bd758",
+            "vertices": 4,
+            "sha256": "84815b1f47f8d5396c388c428429404ded299fd144140d9ed599639a18817a17"
+          },
+          {
+            "node": 15,
+            "address": "0x801bd778",
+            "vertices": 4,
+            "sha256": "e0f5f994436955688a343d2341c0e213c730cba7f08858e451021c16bac1d874"
+          },
+          {
+            "node": 16,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 17,
+            "address": "0x801bd798",
+            "vertices": 1,
+            "sha256": "a0c29dc2914ff51822a059ede054268b2ab16580a1c8fda12d994c458c6f46c4"
+          },
+          {
+            "node": 18,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 19,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 20,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 21,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 22,
+            "address": "0x801bd7a0",
+            "vertices": 145,
+            "sha256": "eb3fe7fbe33a8556d0c941d32d3a46e6c7f726610d87c8707030a87f99fbff87"
+          },
+          {
+            "node": 23,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 24,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 25,
+            "address": "0x801bdc28",
+            "vertices": 14,
+            "sha256": "cd4ebf0c58f3bf4972a18dab474fe66f875f550da7daeb352150778c3750e1fc"
+          }
+        ],
+        "node_table_sha256": "0f64b80ce67ac4b5539cba856881d182562631b60ce28ccc6277a8ae54ba9530",
+        "node_table_fnv64": "0xa624817aea4357f",
+        "geometry_fnv32": "0x9f7ada24",
+        "face_count": 383,
+        "faces": "0x801c0220"
+      },
+      "scope_drained": true,
+      "cases": {
+        "translated": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 1252,
+          "case": "translated",
+          "x": 24,
+          "yaw_mdeg": 0,
+          "lost": 0,
+          "sha256": "38f8c38d008ba8f78cdb876d8b8d2e93c62d80b95144aa485e6447975d1e3c14",
+          "image": "slot-03\\pose-02-translated.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 4,
+            "mohu.vr.weapon.viewmodel_restore": 5,
+            "mohu.vr.weapon.tracking_fallback": 0
+          }
+        },
+        "yawed": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 1892,
+          "case": "yawed",
+          "x": 0,
+          "yaw_mdeg": 12000,
+          "lost": 0,
+          "sha256": "113431b576414c571a932ca7077ddefdbab2f6fe167a1d69399aa66e4497aa68",
+          "image": "slot-03\\pose-02-yawed.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 5,
+            "mohu.vr.weapon.viewmodel_restore": 5,
+            "mohu.vr.weapon.tracking_fallback": 0
+          }
+        },
+        "lost": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 38,
+          "case": "lost",
+          "x": 24,
+          "yaw_mdeg": 0,
+          "lost": 1,
+          "sha256": "d4aac4dd374a497f5f4265b03961ebbd4bcbdf482a7eb8e12c479847ebbed208",
+          "image": "slot-03\\pose-02-lost.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.tracking_fallback": 5
+          }
+        },
+        "restored": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 38,
+          "case": "restored",
+          "x": 0,
+          "yaw_mdeg": 0,
+          "lost": 0,
+          "sha256": "f4192d177785171697c507bb26d51e38a0613b2baa8917dd9563f3d87ddda634",
+          "image": "slot-03\\pose-02-restored.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 5,
+            "mohu.vr.weapon.viewmodel_restore": 5,
+            "mohu.vr.weapon.tracking_fallback": 0
+          }
+        }
+      }
+    },
+    {
+      "slot": 3,
+      "weapon_id": 10,
+      "name": "Stick grenade",
+      "mesh": {
+        "actor": "0x80146cc0",
+        "input": "0x801470c0",
+        "object": "0x80147ab0",
+        "magic": "0x180007",
+        "node_count": 24,
+        "nodes": [
+          {
+            "node": 0,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 1,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 2,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 3,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 4,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 5,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 6,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 7,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 8,
+            "address": "0x801bdc98",
+            "vertices": 19,
+            "sha256": "294c13309b599c31c6c249985fc0dbd7552ee13e17b7af496b393aba6bcab5d4"
+          },
+          {
+            "node": 9,
+            "address": "0x801bdd30",
+            "vertices": 16,
+            "sha256": "0793fc0ca6547b6bd01b9a57e36739bf04947bb5f9b3ab480a2ff5c5b3002a2f"
+          },
+          {
+            "node": 10,
+            "address": "0x801bddb0",
+            "vertices": 21,
+            "sha256": "64ac29c11cb2d1a8d00c11bf9a00f3c784c253b2eaf9caafd059463c1d669e1a"
+          },
+          {
+            "node": 11,
+            "address": "0x801bde58",
+            "vertices": 7,
+            "sha256": "cbef14ba8e45e2292a1938b4940b04942bf65ff292e919efbe923bdb25afda25"
+          },
+          {
+            "node": 12,
+            "address": "0x801bde90",
+            "vertices": 4,
+            "sha256": "91fdab83fd23d0dda1e561eac1539d2afcec1254c5edaa61bf5748f7d1008e42"
+          },
+          {
+            "node": 13,
+            "address": "0x801bdeb0",
+            "vertices": 4,
+            "sha256": "23a743987652703fc0ad3a9586c18419ca2c9fc665dd0f4a53f7f8d15666a14a"
+          },
+          {
+            "node": 14,
+            "address": "0x801bded0",
+            "vertices": 5,
+            "sha256": "7e00743eb3b072bdf89f5b6ae7f7989189090a91155409fc35937ed5cde5e25d"
+          },
+          {
+            "node": 15,
+            "address": "0x801bdef8",
+            "vertices": 8,
+            "sha256": "6792133c62fa477587321944caeaa666e9760228e9b33f46320f4117a2bf203f"
+          },
+          {
+            "node": 16,
+            "address": "0x801bdf38",
+            "vertices": 3,
+            "sha256": "2d6767f581ecfafb21073408a366d9df26301c5dac5d58cdbde06266abf1aa9f"
+          },
+          {
+            "node": 17,
+            "address": "0x801bdf50",
+            "vertices": 5,
+            "sha256": "459c33e30759202b25b08a0ab70c093c9b86ffcf577f6bbb094e281c669e2e12"
+          },
+          {
+            "node": 18,
+            "address": "0x801bdf78",
+            "vertices": 4,
+            "sha256": "8a904b9a0f19b4b2525665810857e23646c339d7c20b4b22f160e5c9ad70b6b8"
+          },
+          {
+            "node": 19,
+            "address": "0x801bdf98",
+            "vertices": 8,
+            "sha256": "3bde9ae4a4cbd368a2bfb3f61067b10fbac4edd87ddf739b3640bc092b5dd223"
+          },
+          {
+            "node": 20,
+            "address": "0x801bdfd8",
+            "vertices": 1,
+            "sha256": "514a8b733dea560495c3f0cf54e6f529a2816d02d3d2466780eb2eb4ff67b7b1"
+          },
+          {
+            "node": 21,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 22,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 23,
+            "address": "0x801bdfe0",
+            "vertices": 58,
+            "sha256": "cfa7b6d73971a8fe046e6240be162b51380a641a4e010a9a3e562667e76a1c2b"
+          }
+        ],
+        "node_table_sha256": "a18f194d5a41029c471f41736fedecb83bd8474369c34e2d880cbe0b492663d4",
+        "node_table_fnv64": "0x6e44589342a8854c",
+        "geometry_fnv32": "0xddce0989",
+        "face_count": 341,
+        "faces": "0x801c1520"
+      },
+      "scope_drained": true,
+      "cases": {
+        "translated": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 3158,
+          "case": "translated",
+          "x": 24,
+          "yaw_mdeg": 0,
+          "lost": 0,
+          "sha256": "96f4d42291f4ec5e641a9346d3e2e23f06e696265268eaab8ddc0e8c194829f6",
+          "image": "slot-03\\pose-03-translated.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 5,
+            "mohu.vr.weapon.viewmodel_restore": 5,
+            "mohu.vr.weapon.tracking_fallback": 0
+          }
+        },
+        "yawed": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 7313,
+          "case": "yawed",
+          "x": 0,
+          "yaw_mdeg": 12000,
+          "lost": 0,
+          "sha256": "3229040170beb87b8beede8f8a1af74c292e694048d595de0dee16d37ea6a1d1",
+          "image": "slot-03\\pose-03-yawed.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 5,
+            "mohu.vr.weapon.viewmodel_restore": 5,
+            "mohu.vr.weapon.tracking_fallback": 0
+          }
+        },
+        "lost": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 1886,
+          "case": "lost",
+          "x": 24,
+          "yaw_mdeg": 0,
+          "lost": 1,
+          "sha256": "33dc70ef25f34e99046162b4a65d2924cc78becb770e17172d337486ed680612",
+          "image": "slot-03\\pose-03-lost.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.tracking_fallback": 6
+          }
+        },
+        "restored": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 1944,
+          "case": "restored",
+          "x": 0,
+          "yaw_mdeg": 0,
+          "lost": 0,
+          "sha256": "61cb7ebcdd7baf9c98db761858153d8755e11affffab43256d00eab820d98237",
+          "image": "slot-03\\pose-03-restored.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 6,
+            "mohu.vr.weapon.viewmodel_restore": 6,
+            "mohu.vr.weapon.tracking_fallback": 0
+          }
+        }
+      }
+    },
+    {
+      "slot": 4,
+      "weapon_id": 12,
+      "name": "M1 Garand",
+      "mesh": {
+        "actor": "0x80147fb0",
+        "input": "0x801483b0",
+        "object": "0x80148da0",
+        "magic": "0x170007",
+        "node_count": 23,
+        "nodes": [
+          {
+            "node": 0,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 1,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 2,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 3,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 4,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 5,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 6,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 7,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 8,
+            "address": "0x801bcc94",
+            "vertices": 12,
+            "sha256": "06716fe4eae2fa727315d483cd46f275d0575d187ef313a217a7a4805f5aa47c"
+          },
+          {
+            "node": 9,
+            "address": "0x801bccf4",
+            "vertices": 16,
+            "sha256": "75b823d75c9f2f04c8b96efc455c9a6542d0d6b9d9eb539b3f991fed44366e33"
+          },
+          {
+            "node": 10,
+            "address": "0x801bcd74",
+            "vertices": 17,
+            "sha256": "5d86f38b02601da7c5f0c675add9d84bf3a971ffe471d022b79a88dfd12bb3bf"
+          },
+          {
+            "node": 11,
+            "address": "0x801bcdfc",
+            "vertices": 5,
+            "sha256": "bc28f14f38db7fbaa66b49163a7c005f1ddfa53dbd59fc5254852c15c03d90b8"
+          },
+          {
+            "node": 12,
+            "address": "0x801bce24",
+            "vertices": 4,
+            "sha256": "ee1ba194ab06d4d77f209aec1758326c156ef89429ae4334c5ca88ad110785cd"
+          },
+          {
+            "node": 13,
+            "address": "0x801bce44",
+            "vertices": 4,
+            "sha256": "2e89d472b72ad48fe8f59490a9f81ee6b601f472f770084c7105859cbde3b15f"
+          },
+          {
+            "node": 14,
+            "address": "0x801bce64",
+            "vertices": 4,
+            "sha256": "e5af3ba3baf1b61b9ea6fb8a8cc838a0427b8c8d5db3addbd0061a409eb6db45"
+          },
+          {
+            "node": 15,
+            "address": "0x801bce84",
+            "vertices": 2,
+            "sha256": "93ee622e662e8fcc76323307a58944325af95c890dbfde5370dbfa98f179b334"
+          },
+          {
+            "node": 16,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 17,
+            "address": "0x801bce94",
+            "vertices": 3,
+            "sha256": "722af1c3e589b750d5e6dbc76b190f919661b1b25aca779d8524adc70864cddd"
+          },
+          {
+            "node": 18,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 19,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 20,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 21,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 22,
+            "address": "0x801bceac",
+            "vertices": 136,
+            "sha256": "7d0f7b4032ac7f24d106414341ff1407ee112507719eeaf44ba5f9126941eba1"
+          }
+        ],
+        "node_table_sha256": "7319005f400b846ba5a29a187f96074b83d7f1752c556d4f46c6a049dacd0f4f",
+        "node_table_fnv64": "0xdf2df16c20b4172a",
+        "geometry_fnv32": "0x450f78dc",
+        "face_count": 280,
+        "faces": "0x801be6b4"
+      },
+      "scope_drained": true,
+      "cases": {
+        "translated": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 810,
+          "case": "translated",
+          "x": 24,
+          "yaw_mdeg": 0,
+          "lost": 0,
+          "sha256": "9ea15d18b73b26e7228fc3a37224da7d22d79e1fb60bea5b4b981459923ffa17",
+          "image": "slot-04\\pose-00-translated.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 4,
+            "mohu.vr.weapon.viewmodel_restore": 5,
+            "mohu.vr.weapon.tracking_fallback": 0
+          }
+        },
+        "yawed": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 1362,
+          "case": "yawed",
+          "x": 0,
+          "yaw_mdeg": 12000,
+          "lost": 0,
+          "sha256": "ce5ca30aa84ac01af00f7bf223f4213f01956bba099d37a1887bcea2422f6523",
+          "image": "slot-04\\pose-00-yawed.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 6,
+            "mohu.vr.weapon.viewmodel_restore": 5,
+            "mohu.vr.weapon.tracking_fallback": 0
+          }
+        },
+        "lost": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 23,
+          "case": "lost",
+          "x": 24,
+          "yaw_mdeg": 0,
+          "lost": 1,
+          "sha256": "c564ea427bfbf165d1b679663f05736af49cfeecaea1de14ddea3bdf6e7935e6",
+          "image": "slot-04\\pose-00-lost.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.tracking_fallback": 5
+          }
+        },
+        "restored": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 0,
+          "case": "restored",
+          "x": 0,
+          "yaw_mdeg": 0,
+          "lost": 0,
+          "sha256": "594758b57581c88728f3f7645801bf83b5b07bd583bd704b35d3bb9402487b50",
+          "image": "slot-04\\pose-00-restored.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 5,
+            "mohu.vr.weapon.viewmodel_restore": 5,
+            "mohu.vr.weapon.tracking_fallback": 0
+          }
+        }
+      }
+    },
+    {
+      "slot": 4,
+      "weapon_id": 17,
+      "name": "StG44",
+      "mesh": {
+        "actor": "0x80147fb0",
+        "input": "0x801483b0",
+        "object": "0x80148da0",
+        "magic": "0x200007",
+        "node_count": 32,
+        "nodes": [
+          {
+            "node": 0,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 1,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 2,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 3,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 4,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 5,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 6,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 7,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 8,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 9,
+            "address": "0x801bd2ec",
+            "vertices": 21,
+            "sha256": "84800929fcef379ba38ba6945c9da772b65e154dd4b4ea684435174cf34a9267"
+          },
+          {
+            "node": 10,
+            "address": "0x801bd394",
+            "vertices": 21,
+            "sha256": "0f36fa7e1bba72ee1805512f5ec6358780d5f164ab537034b3e67f598747301a"
+          },
+          {
+            "node": 11,
+            "address": "0x801bd43c",
+            "vertices": 5,
+            "sha256": "1d860e037b9e3912a00178b21697a623a760c57af763f9debf6c052e7b86e48a"
+          },
+          {
+            "node": 12,
+            "address": "0x801bd464",
+            "vertices": 4,
+            "sha256": "00a2dd00089dd26d98e9f1e7991997ef6c1db16b852bb78cfa0db7009da8b9da"
+          },
+          {
+            "node": 13,
+            "address": "0x801bd484",
+            "vertices": 4,
+            "sha256": "fef35d39e15b16c906c03500b44999ed9ba6165b3d18dafa82859cf9df861bd7"
+          },
+          {
+            "node": 14,
+            "address": "0x801bd4a4",
+            "vertices": 4,
+            "sha256": "9a7513d73c7ce1575a832422cfc19040fca0f5bb27f4227d1c3dfe2f471ca92f"
+          },
+          {
+            "node": 15,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 16,
+            "address": "0x801bd4c4",
+            "vertices": 4,
+            "sha256": "263e90aed70672679b203b90d161c63d19d2731d22bf6667065d3877edc7a0a4"
+          },
+          {
+            "node": 17,
+            "address": "0x801bd4e4",
+            "vertices": 4,
+            "sha256": "178a254f80d7b3005ccccbc17f97a84b0fca2a6bb29eefa6e0deb8add9327450"
+          },
+          {
+            "node": 18,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 19,
+            "address": "0x801bd504",
+            "vertices": 3,
+            "sha256": "cb8e5cc334ec21fa609860acb2a05ecddf71d0888ebf4548dc455d4ca33a41eb"
+          },
+          {
+            "node": 20,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 21,
+            "address": "0x801bd51c",
+            "vertices": 1,
+            "sha256": "239bdf729fea8ed17f440f0d556b7e336bcfbc808f4a6f914e05d4d011fb21c8"
+          },
+          {
+            "node": 22,
+            "address": "0x801bd524",
+            "vertices": 2,
+            "sha256": "e2ff6336cae4fc717b86c76087b3b2a056c65e04b62bd5fc2fc339d034b36e00"
+          },
+          {
+            "node": 23,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 24,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 25,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 26,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 27,
+            "address": "0x801bd534",
+            "vertices": 132,
+            "sha256": "fea85a618f68867057933323dbf52167d45345ddd29eecc7f46790099c11fb19"
+          },
+          {
+            "node": 28,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 29,
+            "address": "0x801bd954",
+            "vertices": 16,
+            "sha256": "96142eb8817fdf14413ee50b7c15e3cb285ef7168e54158b6398deb74a582fc1"
+          },
+          {
+            "node": 30,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 31,
+            "address": "0x801bd9d4",
+            "vertices": 13,
+            "sha256": "96767d83fe23ce9607fa41a337fbd56b177ed0d98eec82490ab28387efd4cdb5"
+          }
+        ],
+        "node_table_sha256": "a699380b30101f6fd17505aab8d5ceaec16f30b1f31601b72a888fb5e9252bbb",
+        "node_table_fnv64": "0x6b9f90c91ebd7058",
+        "geometry_fnv32": "0xf467028b",
+        "face_count": 352,
+        "faces": "0x801bf4e4"
+      },
+      "scope_drained": true,
+      "cases": {
+        "translated": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 3201,
+          "case": "translated",
+          "x": 24,
+          "yaw_mdeg": 0,
+          "lost": 0,
+          "sha256": "31a8c7fbebbec513faabe870015f53afb1c829983d9bf647538a85e5fe59a012",
+          "image": "slot-04\\pose-01-translated.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 4,
+            "mohu.vr.weapon.viewmodel_restore": 4,
+            "mohu.vr.weapon.tracking_fallback": 0
+          }
+        },
+        "yawed": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 3666,
+          "case": "yawed",
+          "x": 0,
+          "yaw_mdeg": 12000,
+          "lost": 0,
+          "sha256": "dd95cdcd90437ed781887aab56b754e86150dd88fcb6f8956483b8273375d39c",
+          "image": "slot-04\\pose-01-yawed.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 4,
+            "mohu.vr.weapon.viewmodel_restore": 4,
+            "mohu.vr.weapon.tracking_fallback": 0
+          }
+        },
+        "lost": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 23,
+          "case": "lost",
+          "x": 24,
+          "yaw_mdeg": 0,
+          "lost": 1,
+          "sha256": "522addb5178c4dd21e5876b369a0aa39549a1ea1b28fa0190ca864ac945aa556",
+          "image": "slot-04\\pose-01-lost.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.tracking_fallback": 5
+          }
+        },
+        "restored": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 23,
+          "case": "restored",
+          "x": 0,
+          "yaw_mdeg": 0,
+          "lost": 0,
+          "sha256": "c583d950fa4a4e1c345534df77e16b606f858e937208b577ff04bf99e85c293e",
+          "image": "slot-04\\pose-01-restored.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 5,
+            "mohu.vr.weapon.viewmodel_restore": 5,
+            "mohu.vr.weapon.tracking_fallback": 0
+          }
+        }
+      }
+    },
+    {
+      "slot": 4,
+      "weapon_id": 13,
+      "name": "Panzerfaust",
+      "mesh": {
+        "actor": "0x80147fb0",
+        "input": "0x801483b0",
+        "object": "0x80148da0",
+        "magic": "0x1f0007",
+        "node_count": 31,
+        "nodes": [
+          {
+            "node": 0,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 1,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 2,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 3,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 4,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 5,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 6,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 7,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 8,
+            "address": "0x801bda3c",
+            "vertices": 14,
+            "sha256": "38f8c647715c3390e9205544f375097f1ee7fbcfa42864d24e0d2e51183adbb9"
+          },
+          {
+            "node": 9,
+            "address": "0x801bdaac",
+            "vertices": 21,
+            "sha256": "e12100ca85603d4a31a82ae5f6efcfba481586952a1725a8aaadaea3e4ce8b99"
+          },
+          {
+            "node": 10,
+            "address": "0x801bdb54",
+            "vertices": 21,
+            "sha256": "c43fd40c98590f9216b1320bfa1b10eba3893ae51ab8df7d177334dfc0db2f23"
+          },
+          {
+            "node": 11,
+            "address": "0x801bdbfc",
+            "vertices": 5,
+            "sha256": "4d8c0439b492d4f18873fa034c13c37127265b8ce2c44f5362a3cc6af2dac0d9"
+          },
+          {
+            "node": 12,
+            "address": "0x801bdc24",
+            "vertices": 4,
+            "sha256": "0c26ba7d02d458104db2062b6bc76d8f209a1d15723e0cb63cf16ab13af89b8d"
+          },
+          {
+            "node": 13,
+            "address": "0x801bdc44",
+            "vertices": 4,
+            "sha256": "1bb2b0f1a6a134133a2bfc708e1d67fbca5b2d917f300d880b69fc7ccdeac8cd"
+          },
+          {
+            "node": 14,
+            "address": "0x801bdc64",
+            "vertices": 4,
+            "sha256": "510eb174d219c446679caf3236e3e7aeeee9e8ff517c357ab2f92244b6f76948"
+          },
+          {
+            "node": 15,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 16,
+            "address": "0x801bdc84",
+            "vertices": 4,
+            "sha256": "d86f863b7cdce08310e665d868f8f804c7cff53250e0e0eed006f18ab1b46802"
+          },
+          {
+            "node": 17,
+            "address": "0x801bdca4",
+            "vertices": 4,
+            "sha256": "127b8a0870887915554dccc82d195d65b88758fc4e3ac2eda7233417890ca9b9"
+          },
+          {
+            "node": 18,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 19,
+            "address": "0x801bdcc4",
+            "vertices": 3,
+            "sha256": "c52143a3d0ba7a35b61cf418a3722715f809109ed2db13c0074683b09279f333"
+          },
+          {
+            "node": 20,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 21,
+            "address": "0x801bdcdc",
+            "vertices": 1,
+            "sha256": "e1e3c9a76df57573ca184c7b592c20e3a1ea4c3ac60992ee0d4b96ce0ad63272"
+          },
+          {
+            "node": 22,
+            "address": "0x801bdce4",
+            "vertices": 2,
+            "sha256": "1bff99d1cfb7f0493209f2992877066260d9344cea63a96a7d55f99e610638c2"
+          },
+          {
+            "node": 23,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 24,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 25,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 26,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 27,
+            "address": "0x801bdcf4",
+            "vertices": 70,
+            "sha256": "8bea5230c6177e5eee102516c14b53809e957c98ab88bca9ddfa4a61afaef624"
+          },
+          {
+            "node": 28,
+            "address": "0x801bdf24",
+            "vertices": 10,
+            "sha256": "514fdeb91af900a34a7cb6115607d960524a9fd84f6962abc56773f816463d25"
+          },
+          {
+            "node": 29,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 30,
+            "address": "0x801bdf74",
+            "vertices": 36,
+            "sha256": "a294eab831057538e56f5c9553af56c0f32633899811c7c4ec75ce252eeb83c9"
+          }
+        ],
+        "node_table_sha256": "3f14594655983e42799730d96bc13236335aef0f2f7ed3d91a19cf12fdf05d9f",
+        "node_table_fnv64": "0x81476739c61a457f",
+        "geometry_fnv32": "0x68cbd37",
+        "face_count": 333,
+        "faces": "0x801c080c"
+      },
+      "scope_drained": true,
+      "cases": {
+        "translated": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 7331,
+          "case": "translated",
+          "x": 24,
+          "yaw_mdeg": 0,
+          "lost": 0,
+          "sha256": "4b9b2ca4dc5ec91606927719328c5d7f3738948dfd31c4e9a8308eaf50609243",
+          "image": "slot-04\\pose-02-translated.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 6,
+            "mohu.vr.weapon.viewmodel_restore": 6,
+            "mohu.vr.weapon.tracking_fallback": 0
+          }
+        },
+        "yawed": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 10473,
+          "case": "yawed",
+          "x": 0,
+          "yaw_mdeg": 12000,
+          "lost": 0,
+          "sha256": "833c610fffdc4362e6bf2a006f32da8424e5559872ad142b243d57c3c144f7a0",
+          "image": "slot-04\\pose-02-yawed.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 4,
+            "mohu.vr.weapon.viewmodel_restore": 4,
+            "mohu.vr.weapon.tracking_fallback": 0
+          }
+        },
+        "lost": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 23,
+          "case": "lost",
+          "x": 24,
+          "yaw_mdeg": 0,
+          "lost": 1,
+          "sha256": "e1e663eeeb59a2a4694ded89bd5c2b1d0101b9e8ccd0a98bd4a960a6545ed262",
+          "image": "slot-04\\pose-02-lost.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.tracking_fallback": 5
+          }
+        },
+        "restored": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 4642,
+          "case": "restored",
+          "x": 0,
+          "yaw_mdeg": 0,
+          "lost": 0,
+          "sha256": "bc5c615d9ed661ad4c2d80b828a901d4fcf7629bfd8fb3790d84febf87e28c0d",
+          "image": "slot-04\\pose-02-restored.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 6,
+            "mohu.vr.weapon.viewmodel_restore": 6,
+            "mohu.vr.weapon.tracking_fallback": 0
+          }
+        }
+      }
+    },
+    {
+      "slot": 4,
+      "weapon_id": 15,
+      "name": "Petrol bomb",
+      "mesh": {
+        "actor": "0x80147fb0",
+        "input": "0x801483b0",
+        "object": "0x80148da0",
+        "magic": "0x1c0007",
+        "node_count": 28,
+        "nodes": [
+          {
+            "node": 0,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 1,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 2,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 3,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 4,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 5,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 6,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 7,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 8,
+            "address": "0x801be094",
+            "vertices": 21,
+            "sha256": "f05933a9c2f7d97bde10c4520105e997da6a959322bf82620e88001ab05d9bbc"
+          },
+          {
+            "node": 9,
+            "address": "0x801be13c",
+            "vertices": 14,
+            "sha256": "2609cf06dd0b52dd9ff977482f5b898e9d2bda03f968dd555bd37c77232faf98"
+          },
+          {
+            "node": 10,
+            "address": "0x801be1ac",
+            "vertices": 23,
+            "sha256": "27414231ebe96f68596f496cbcbab7152108413b995f483bae92d45655bb9205"
+          },
+          {
+            "node": 11,
+            "address": "0x801be264",
+            "vertices": 8,
+            "sha256": "d7bbf49a41dd5e4665ee32458960af78d685851c24d78002779257f91b194b31"
+          },
+          {
+            "node": 12,
+            "address": "0x801be2a4",
+            "vertices": 5,
+            "sha256": "eafaff61a18f73f8d14f163fe41ebc5cf034514d561248fcda21482f9bf1492c"
+          },
+          {
+            "node": 13,
+            "address": "0x801be2cc",
+            "vertices": 8,
+            "sha256": "d5c5a6c52c161d44190e2efbe16592e996d2e36eb7ff0e148d317929f4ef1150"
+          },
+          {
+            "node": 14,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 15,
+            "address": "0x801be30c",
+            "vertices": 8,
+            "sha256": "e3c2a1e459c65c3683cbb353033f012de8541350276527ab854fd87a5cee4564"
+          },
+          {
+            "node": 16,
+            "address": "0x801be34c",
+            "vertices": 4,
+            "sha256": "323ed1f4d833002ec64cbab0e937890bac40dd8a5d69eca436b2a7b6c18e5064"
+          },
+          {
+            "node": 17,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 18,
+            "address": "0x801be36c",
+            "vertices": 3,
+            "sha256": "de752f6b8548f3cbfb3679523252e8bb4fed92649965056b0ca515b95c0090e3"
+          },
+          {
+            "node": 19,
+            "address": "0x801be384",
+            "vertices": 1,
+            "sha256": "fc8603502b269a6ca73e97be68bb8052c60168afe534e5a06c8ab0b6bd8194db"
+          },
+          {
+            "node": 20,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 21,
+            "address": "0x801be38c",
+            "vertices": 2,
+            "sha256": "d0f550319cec29e14e64a6a3615edf6b00741cdaa4b559ab751f4e1e65f4e6fc"
+          },
+          {
+            "node": 22,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 23,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 24,
+            "address": "0x0",
+            "vertices": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "node": 25,
+            "address": "0x801be39c",
+            "vertices": 92,
+            "sha256": "ba275e743ca79676f4cebcd014f6f62375daf45977ae2dcf7b2fcac739b91afb"
+          },
+          {
+            "node": 26,
+            "address": "0x801be67c",
+            "vertices": 5,
+            "sha256": "a549627dd8970fbf951087de035846ccc7dae192bd6ace1aa28a47e8417df3ea"
+          },
+          {
+            "node": 27,
+            "address": "0x801be6a4",
+            "vertices": 2,
+            "sha256": "6d070eb266d4993d5227bf25e34339e38e55b3e717f765eaf51a24d49c3a5e7b"
+          }
+        ],
+        "node_table_sha256": "05e325d38397d99f9f644ee796e939d378c07629984bb9ab474e245e846cc408",
+        "node_table_fnv64": "0x1cd22a4875afea83",
+        "geometry_fnv32": "0x7ca0dbec",
+        "face_count": 397,
+        "faces": "0x801c16dc"
+      },
+      "scope_drained": true,
+      "cases": {
+        "translated": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 1976,
+          "case": "translated",
+          "x": 24,
+          "yaw_mdeg": 0,
+          "lost": 0,
+          "sha256": "efeeb7ad7d40bc1b26ac4a95a90eab597e91f7e5e951446c94e6eebdde9cd246",
+          "image": "slot-04\\pose-03-translated.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 5,
+            "mohu.vr.weapon.viewmodel_restore": 5,
+            "mohu.vr.weapon.tracking_fallback": 0
+          }
+        },
+        "yawed": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 3944,
+          "case": "yawed",
+          "x": 0,
+          "yaw_mdeg": 12000,
+          "lost": 0,
+          "sha256": "7aacd501463598f77432ecfb637699dfb6dce482149e8a2980a57bfb6da8b9dd",
+          "image": "slot-04\\pose-03-yawed.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 6,
+            "mohu.vr.weapon.viewmodel_restore": 5,
+            "mohu.vr.weapon.tracking_fallback": 0
+          }
+        },
+        "lost": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 835,
+          "case": "lost",
+          "x": 24,
+          "yaw_mdeg": 0,
+          "lost": 1,
+          "sha256": "d54b156071a475b33bbe46f606c248488699d218f0c33056636f070d0555f41e",
+          "image": "slot-04\\pose-03-lost.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 0,
+            "mohu.vr.weapon.viewmodel_restore": 0,
+            "mohu.vr.weapon.tracking_fallback": 5
+          }
+        },
+        "restored": {
+          "fixed_region_changed_pixels": {
+            "top_world": 0,
+            "bottom_world": 0,
+            "top_ammo": 0,
+            "bottom_ammo": 0,
+            "other_weapon": 0
+          },
+          "top_lower_region_changed_pixels": 1184,
+          "case": "restored",
+          "x": 0,
+          "yaw_mdeg": 0,
+          "lost": 0,
+          "sha256": "a89b69400b920716c1edf9d93c3f0ff6df3a2271c20a79629391cb15c78e598d",
+          "image": "slot-04\\pose-03-restored.png",
+          "counter_delta": {
+            "mohu.vr.weapon.viewmodel_apply": 6,
+            "mohu.vr.weapon.viewmodel_restore": 6,
+            "mohu.vr.weapon.tracking_fallback": 0
+          }
+        }
+      }
+    }
+  ],
+  "unique_ids": [
+    0,
+    1,
+    4,
+    5,
+    8,
+    9,
+    10,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17
+  ],
+  "source_saves_unchanged": true,
+  "preferences_unchanged": true,
+  "remaining_owned_processes": [],
+  "limits": [
+    "Fixed regions cover selected world/HUD/other-weapon pixels only.",
+    "Idle actors and native weapon animation continue between captures.",
+    "This is a flat MP geometry control; multiplayer stereo is not accepted.",
+    "Grip/pivot/scale, physical tracking, shot alignment and barrel laser remain open."
+  ],
+  "combat": {
+    "inventory": "analysis\\vr-baseline\\weapon-mesh-mapping\\fp-combat-final-20261025\\inventory.json",
+    "sha256": "976a4b47d84c08875ebe0a62f142c0f10bb1b6272a30a34c9459823ce40d9a46",
+    "executable_sha256": "083ac2dde96761b2ab4143b9f6921b0901d553e05261f6a031f58f1486d690be",
+    "controls": {
+      "case": "fire",
+      "fire_frames": 24,
+      "release_frames": 240,
+      "scoped_zoom": false,
+      "approach_frames": 0,
+      "auto_special_controls": true,
+      "force_weapon_tracking_loss": false,
+      "models": false,
+      "weapon_pose": true,
+      "first_person_models": true,
+      "pose_controls": false,
+      "weapon_pose_x": 24,
+      "weapon_pose_yaw_mdeg": 0
+    },
+    "hits": [
+      {
+        "slot": 1,
+        "weapon_id": 0,
+        "p2_health_before": 32.0,
+        "p2_health_after": 31.25,
+        "native_trace_entries": 1,
+        "native_p2_decrease": true
+      },
+      {
+        "slot": 1,
+        "weapon_id": 1,
+        "p2_health_before": 32.0,
+        "p2_health_after": 30.200027465820312,
+        "native_trace_entries": 3,
+        "native_p2_decrease": true
+      },
+      {
+        "slot": 1,
+        "weapon_id": 17,
+        "p2_health_before": 32.0,
+        "p2_health_after": 30.200027465820312,
+        "native_trace_entries": 3,
+        "native_p2_decrease": true
+      },
+      {
+        "slot": 1,
+        "weapon_id": 10,
+        "p2_health_before": 32.0,
+        "p2_health_after": 0.0,
+        "native_trace_entries": 2,
+        "native_p2_decrease": true
+      },
+      {
+        "slot": 2,
+        "weapon_id": 8,
+        "p2_health_before": 32.0,
+        "p2_health_after": 31.25,
+        "native_trace_entries": 1,
+        "native_p2_decrease": true
+      },
+      {
+        "slot": 2,
+        "weapon_id": 16,
+        "p2_health_before": 32.0,
+        "p2_health_after": 29.60003662109375,
+        "native_trace_entries": 4,
+        "native_p2_decrease": true
+      },
+      {
+        "slot": 2,
+        "weapon_id": 4,
+        "p2_health_before": 32.0,
+        "p2_health_after": 18.0,
+        "native_trace_entries": 5,
+        "native_p2_decrease": true
+      },
+      {
+        "slot": 2,
+        "weapon_id": 15,
+        "p2_health_before": 32.0,
+        "p2_health_after": 32.0,
+        "native_trace_entries": 10,
+        "native_p2_decrease": true
+      },
+      {
+        "slot": 3,
+        "weapon_id": 9,
+        "p2_health_before": 32.0,
+        "p2_health_after": 31.25,
+        "native_trace_entries": 1,
+        "native_p2_decrease": true
+      },
+      {
+        "slot": 3,
+        "weapon_id": 14,
+        "p2_health_before": 32.0,
+        "p2_health_after": 0.0,
+        "native_trace_entries": 2,
+        "native_p2_decrease": true
+      },
+      {
+        "slot": 3,
+        "weapon_id": 5,
+        "p2_health_before": 32.0,
+        "p2_health_after": 32.0,
+        "native_trace_entries": 3,
+        "native_p2_decrease": true
+      },
+      {
+        "slot": 3,
+        "weapon_id": 10,
+        "p2_health_before": 32.0,
+        "p2_health_after": 0.0,
+        "native_trace_entries": 5,
+        "native_p2_decrease": true
+      },
+      {
+        "slot": 4,
+        "weapon_id": 12,
+        "p2_health_before": 32.0,
+        "p2_health_after": 27.0,
+        "native_trace_entries": 1,
+        "native_p2_decrease": true
+      },
+      {
+        "slot": 4,
+        "weapon_id": 17,
+        "p2_health_before": 32.0,
+        "p2_health_after": 30.200027465820312,
+        "native_trace_entries": 3,
+        "native_p2_decrease": true
+      },
+      {
+        "slot": 4,
+        "weapon_id": 13,
+        "p2_health_before": 32.0,
+        "p2_health_after": 0.0,
+        "native_trace_entries": 3,
+        "native_p2_decrease": true
+      },
+      {
+        "slot": 4,
+        "weapon_id": 15,
+        "p2_health_before": 32.0,
+        "p2_health_after": 32.0,
+        "native_trace_entries": 7,
+        "native_p2_decrease": true
+      }
+    ],
+    "source_saves_unchanged": true,
+    "preferences_unchanged": true
+  },
+  "sp_stereo_regression": {
+    "receipt": "analysis\\vr-baseline\\weapon-mesh-mapping\\fp-stereo-final-20261025\\receipt.json",
+    "sha256": "11ecd0249ba11de655e8ef522ac0ee7887ffd3cd007f29fc739dd0618fb3b1f4",
+    "pairs": 18,
+    "eye_hashes": [
+      "7375ac65cfd6207f",
+      "7375ac65cfd6207f"
+    ],
+    "eye_cycles": [
+      1247681962,
+      1247681962
+    ],
+    "verify_checks": 37,
+    "verify_mismatch": 0,
+    "vram_leaks": 0,
+    "watchdog": 0,
+    "nesting_repairs": 0,
+    "mp_weapon_stereo_accepted": false
+  }
+}

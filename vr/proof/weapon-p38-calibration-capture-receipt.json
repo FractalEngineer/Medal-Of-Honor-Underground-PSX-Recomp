@@ -1,0 +1,1246 @@
+{
+  "schema": 1,
+  "date": "2026-10-26",
+  "kind": "W3.1 P38 model-local vertex capture",
+  "fixture": "copied root MP slot 1, P38 ID 0, zero switches, no fire",
+  "executable_sha256": "d59a6a2f02ccab4d4b9f14858e4a74c703a5075e78eea51bcb2a54eaec91df97",
+  "source_hashes": {
+    "vr/underground/vr_diagnostic.c": "91ae32ab257eab1f24cee56fe880d84d32f01b0394db8364d6398bcfe4e06611",
+    "vr/underground/weapon.c": "4637c802251c034e7175f67b15146a836f609805725a15e86aca813a5590dafc",
+    "vr/underground/weapon.h": "4433ee10508d207142eae34e1a62c64ca2888fbfaa8891959177e64d1ab2fead",
+    "vr/tools/check_weapon_pose_spaces.py": "038592ac6cfceef31270ab5e567d3201f5baf76c39eae99163792072b126267b",
+    "vr/tools/probe_weapon_calibration.py": "ffaa47d1d41b084b3d985b291dda082e4e208f4550ade00f8fb471da5d705fdf"
+  },
+  "source_saves": {
+    "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\saves\\openbios\\state_8001F844_slot01.pst": "b248dfa247b45a41906beea3aa829cff79b39d863e425211e5c0651e853a7f5d",
+    "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\saves\\openbios\\state_8001F844_slot01.thumb": "008eb36b216f802cc54b8911eed2201b28b5167830ac4cfeaf4bfff5aab3543c"
+  },
+  "preferences": {
+    "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\build-release\\settings.toml": "5ba64573bb6ec0f437f64384a79fb1e8f8149ab90c88a4404e81d565227364d4",
+    "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\build-release\\keybinds.ini": "55a6baab11a9a36b64d3f92908b9fc7a6fec657e73b3d287784b1de60715008b",
+    "C:\\Program Files (x86)\\Steam\\config\\steamvr.vrsettings": "bc4b95d242547c552e4e6f672ad3c3284d357cd37249069fd643522473323f10"
+  },
+  "calibration_node": 13,
+  "capture": {
+    "valid": true,
+    "sequence": 14,
+    "frame": 19,
+    "id": 0,
+    "object": "801491C0",
+    "node_table": "801BC7EC",
+    "output_table": "80188C00",
+    "count": 14,
+    "node": 13,
+    "local_addr": "801BD064",
+    "output_addr": "800B5888",
+    "local": [
+      -86,
+      -8,
+      -68,
+      128
+    ],
+    "animated": [
+      71,
+      116,
+      388,
+      0
+    ],
+    "native_gte": [
+      "FFAE600A",
+      "FFF8F847",
+      "FD323C0D",
+      "017D0294",
+      "00001FE8",
+      "00000000",
+      "00000000",
+      "00000000"
+    ],
+    "tracked_gte": [
+      "FFAE600A",
+      "FFF8F847",
+      "FD323C0D",
+      "017D0294",
+      "00001FE8",
+      "00000000",
+      "00000000",
+      "00000000"
+    ],
+    "restored": 1,
+    "restored_gte": [
+      "FFAE600A",
+      "FFF8F847",
+      "FD323C0D",
+      "017D0294",
+      "00001FE8",
+      "00000000",
+      "00000000",
+      "00000000"
+    ],
+    "eye_view": 1,
+    "eye": 1,
+    "h": 133,
+    "precise": 1,
+    "view_rt12": [
+      4096,
+      0,
+      0,
+      0,
+      4096,
+      0,
+      0,
+      0,
+      4096
+    ],
+    "view_t": [
+      0,
+      0,
+      0
+    ],
+    "view_t_precise": [
+      0.0,
+      -0.0,
+      -0.0
+    ],
+    "view_h_ref": 400,
+    "gte_ofx_q16": 16777216,
+    "gte_ofy_q16": 3932160,
+    "delta_r": [
+      1.0,
+      -0.0,
+      -0.0,
+      -0.0,
+      1.0,
+      0.0,
+      -0.0,
+      0.0,
+      1.0
+    ],
+    "delta_t": [
+      0.0,
+      -0.0,
+      -0.0
+    ]
+  },
+  "model": {
+    "object": "801491C0",
+    "node_table": "801BC7EC",
+    "output_table": "80188C00",
+    "node": 13,
+    "local_address": "0x801bd064",
+    "output_address": "0x800b5888",
+    "vertex_count": 69,
+    "local_sha256": "1b74334bf245decc40da4a20223070ef2bd8df846fea26c6a6a85f8283095a94",
+    "animated_sha256": "2c6113305c293de8e11f4b6a0ad8101be213d95b952fa1f2065a4e8fb65be277",
+    "local_bytes": 552,
+    "animated_bytes": 552,
+    "source_face_count": 354,
+    "source_face_address": "0x801be4e4",
+    "object_state_sha256": "7f220684a2165a547f163357efe178b39338c3e703db42273922b2d12dc397cc",
+    "local_vertices_xyzw": [
+      [
+        -86,
+        -8,
+        -68,
+        128
+      ],
+      [
+        -58,
+        -8,
+        -48,
+        128
+      ],
+      [
+        -56,
+        -10,
+        -46,
+        128
+      ],
+      [
+        -36,
+        -10,
+        -32,
+        128
+      ],
+      [
+        -21,
+        -10,
+        -22,
+        128
+      ],
+      [
+        -92,
+        -7,
+        -60,
+        128
+      ],
+      [
+        -91,
+        -7,
+        -59,
+        128
+      ],
+      [
+        -63,
+        -7,
+        -40,
+        128
+      ],
+      [
+        -61,
+        -9,
+        -38,
+        128
+      ],
+      [
+        -41,
+        -9,
+        -24,
+        128
+      ],
+      [
+        -27,
+        -9,
+        -14,
+        128
+      ],
+      [
+        -93,
+        -8,
+        -73,
+        128
+      ],
+      [
+        -99,
+        -7,
+        -65,
+        128
+      ],
+      [
+        -95,
+        -2,
+        -56,
+        128
+      ],
+      [
+        -93,
+        -2,
+        -57,
+        128
+      ],
+      [
+        -65,
+        -2,
+        -37,
+        128
+      ],
+      [
+        -65,
+        -2,
+        -33,
+        128
+      ],
+      [
+        -45,
+        -3,
+        -19,
+        128
+      ],
+      [
+        -30,
+        -3,
+        -8,
+        128
+      ],
+      [
+        -93,
+        8,
+        -57,
+        128
+      ],
+      [
+        -95,
+        8,
+        -56,
+        128
+      ],
+      [
+        -65,
+        8,
+        -37,
+        128
+      ],
+      [
+        -65,
+        7,
+        -33,
+        128
+      ],
+      [
+        -45,
+        8,
+        -19,
+        128
+      ],
+      [
+        -30,
+        9,
+        -8,
+        128
+      ],
+      [
+        -102,
+        8,
+        -61,
+        128
+      ],
+      [
+        -102,
+        -2,
+        -61,
+        128
+      ],
+      [
+        -16,
+        -9,
+        -6,
+        128
+      ],
+      [
+        -8,
+        -10,
+        -12,
+        128
+      ],
+      [
+        -8,
+        15,
+        -12,
+        128
+      ],
+      [
+        -16,
+        14,
+        -6,
+        128
+      ],
+      [
+        -22,
+        9,
+        -4,
+        128
+      ],
+      [
+        -22,
+        -3,
+        -4,
+        128
+      ],
+      [
+        -77,
+        -5,
+        -75,
+        128
+      ],
+      [
+        -50,
+        -5,
+        -59,
+        128
+      ],
+      [
+        -45,
+        -8,
+        -56,
+        128
+      ],
+      [
+        -27,
+        -10,
+        -42,
+        128
+      ],
+      [
+        -13,
+        -10,
+        -32,
+        128
+      ],
+      [
+        -91,
+        -5,
+        -77,
+        128
+      ],
+      [
+        -30,
+        6,
+        -5,
+        128
+      ],
+      [
+        -30,
+        0,
+        -5,
+        128
+      ],
+      [
+        -27,
+        0,
+        -3,
+        128
+      ],
+      [
+        -27,
+        6,
+        -3,
+        128
+      ],
+      [
+        -73,
+        -2,
+        -74,
+        128
+      ],
+      [
+        -61,
+        -2,
+        -65,
+        128
+      ],
+      [
+        -73,
+        6,
+        -74,
+        128
+      ],
+      [
+        -61,
+        6,
+        -65,
+        128
+      ],
+      [
+        -5,
+        -6,
+        -12,
+        128
+      ],
+      [
+        -5,
+        11,
+        -12,
+        128
+      ],
+      [
+        -9,
+        -2,
+        -9,
+        128
+      ],
+      [
+        -11,
+        0,
+        -1,
+        128
+      ],
+      [
+        -15,
+        0,
+        0,
+        128
+      ],
+      [
+        -14,
+        0,
+        0,
+        128
+      ],
+      [
+        -9,
+        8,
+        -9,
+        128
+      ],
+      [
+        -11,
+        5,
+        -1,
+        128
+      ],
+      [
+        -15,
+        5,
+        0,
+        128
+      ],
+      [
+        -14,
+        5,
+        0,
+        128
+      ],
+      [
+        -12,
+        0,
+        2,
+        128
+      ],
+      [
+        -9,
+        0,
+        2,
+        128
+      ],
+      [
+        -9,
+        5,
+        2,
+        128
+      ],
+      [
+        -12,
+        5,
+        2,
+        128
+      ],
+      [
+        -11,
+        1,
+        3,
+        128
+      ],
+      [
+        -9,
+        1,
+        3,
+        128
+      ],
+      [
+        -11,
+        4,
+        3,
+        128
+      ],
+      [
+        -9,
+        4,
+        3,
+        128
+      ],
+      [
+        -73,
+        -2,
+        -74,
+        128
+      ],
+      [
+        -61,
+        -2,
+        -65,
+        128
+      ],
+      [
+        -73,
+        6,
+        -74,
+        128
+      ],
+      [
+        -61,
+        6,
+        -65,
+        128
+      ]
+    ],
+    "animated_vertices_xyzw": [
+      [
+        71,
+        116,
+        388,
+        0
+      ],
+      [
+        69,
+        115,
+        354,
+        0
+      ],
+      [
+        67,
+        114,
+        351,
+        0
+      ],
+      [
+        66,
+        113,
+        326,
+        0
+      ],
+      [
+        65,
+        113,
+        308,
+        0
+      ],
+      [
+        72,
+        106,
+        389,
+        0
+      ],
+      [
+        72,
+        106,
+        387,
+        0
+      ],
+      [
+        70,
+        105,
+        353,
+        0
+      ],
+      [
+        68,
+        105,
+        351,
+        0
+      ],
+      [
+        67,
+        104,
+        326,
+        0
+      ],
+      [
+        66,
+        103,
+        309,
+        0
+      ],
+      [
+        71,
+        117,
+        396,
+        0
+      ],
+      [
+        72,
+        107,
+        397,
+        0
+      ],
+      [
+        77,
+        101,
+        389,
+        0
+      ],
+      [
+        77,
+        103,
+        388,
+        0
+      ],
+      [
+        75,
+        102,
+        353,
+        0
+      ],
+      [
+        75,
+        98,
+        351,
+        0
+      ],
+      [
+        73,
+        97,
+        327,
+        0
+      ],
+      [
+        72,
+        96,
+        308,
+        0
+      ],
+      [
+        87,
+        103,
+        387,
+        0
+      ],
+      [
+        87,
+        101,
+        388,
+        0
+      ],
+      [
+        85,
+        102,
+        353,
+        0
+      ],
+      [
+        84,
+        98,
+        351,
+        0
+      ],
+      [
+        84,
+        97,
+        326,
+        0
+      ],
+      [
+        84,
+        96,
+        308,
+        0
+      ],
+      [
+        87,
+        102,
+        397,
+        0
+      ],
+      [
+        77,
+        102,
+        397,
+        0
+      ],
+      [
+        65,
+        102,
+        296,
+        0
+      ],
+      [
+        64,
+        111,
+        292,
+        0
+      ],
+      [
+        89,
+        111,
+        291,
+        0
+      ],
+      [
+        88,
+        102,
+        295,
+        0
+      ],
+      [
+        83,
+        97,
+        299,
+        0
+      ],
+      [
+        71,
+        97,
+        299,
+        0
+      ],
+      [
+        74,
+        127,
+        384,
+        0
+      ],
+      [
+        72,
+        128,
+        353,
+        0
+      ],
+      [
+        69,
+        128,
+        347,
+        0
+      ],
+      [
+        66,
+        126,
+        324,
+        0
+      ],
+      [
+        65,
+        125,
+        307,
+        0
+      ],
+      [
+        74,
+        121,
+        397,
+        0
+      ],
+      [
+        81,
+        94,
+        306,
+        0
+      ],
+      [
+        75,
+        94,
+        306,
+        0
+      ],
+      [
+        75,
+        93,
+        303,
+        0
+      ],
+      [
+        81,
+        93,
+        303,
+        0
+      ],
+      [
+        76,
+        128,
+        380,
+        0
+      ],
+      [
+        76,
+        127,
+        365,
+        0
+      ],
+      [
+        84,
+        128,
+        380,
+        0
+      ],
+      [
+        84,
+        127,
+        365,
+        0
+      ],
+      [
+        68,
+        113,
+        289,
+        0
+      ],
+      [
+        85,
+        113,
+        289,
+        0
+      ],
+      [
+        72,
+        108,
+        291,
+        0
+      ],
+      [
+        74,
+        100,
+        288,
+        0
+      ],
+      [
+        74,
+        97,
+        291,
+        0
+      ],
+      [
+        74,
+        98,
+        290,
+        0
+      ],
+      [
+        82,
+        108,
+        291,
+        0
+      ],
+      [
+        79,
+        100,
+        288,
+        0
+      ],
+      [
+        79,
+        97,
+        291,
+        0
+      ],
+      [
+        79,
+        98,
+        290,
+        0
+      ],
+      [
+        74,
+        97,
+        287,
+        0
+      ],
+      [
+        74,
+        99,
+        285,
+        0
+      ],
+      [
+        79,
+        99,
+        285,
+        0
+      ],
+      [
+        79,
+        97,
+        287,
+        0
+      ],
+      [
+        75,
+        97,
+        286,
+        0
+      ],
+      [
+        75,
+        98,
+        284,
+        0
+      ],
+      [
+        78,
+        97,
+        286,
+        0
+      ],
+      [
+        78,
+        98,
+        284,
+        0
+      ],
+      [
+        76,
+        128,
+        380,
+        0
+      ],
+      [
+        76,
+        127,
+        365,
+        0
+      ],
+      [
+        84,
+        128,
+        380,
+        0
+      ],
+      [
+        84,
+        127,
+        365,
+        0
+      ]
+    ]
+  },
+  "players": [
+    {
+      "port": 1,
+      "actor": "0x801483d0",
+      "input": "0x801487d0",
+      "weapon_slot": 0,
+      "weapon_id": 0,
+      "weapon": "P38 pistol",
+      "reserve": 20,
+      "clip": 8,
+      "input_fields": "000000000000000010ffffff0c00000000000000000000000000000000000000000014002c015a00010032002c012c010900080000000000000000000000000000000000",
+      "health_raw": 2097152,
+      "health": 32.0,
+      "position": [
+        -94470713,
+        33292288,
+        33718412
+      ],
+      "rotation": [
+        -16384,
+        24,
+        0
+      ]
+    },
+    {
+      "port": 2,
+      "actor": "0x80145810",
+      "input": "0x80145c10",
+      "weapon_slot": 0,
+      "weapon_id": 0,
+      "weapon": "P38 pistol",
+      "reserve": 20,
+      "clip": 8,
+      "input_fields": "000000000000000010ffffff0c000000000000000000000000000000000000000000140020001e00010032002c012c010900080000000000000000000000000000000000",
+      "health_raw": 2097152,
+      "health": 32.0,
+      "position": [
+        -96488943,
+        33357824,
+        -70958831
+      ],
+      "rotation": [
+        -32768,
+        24,
+        -32768
+      ]
+    }
+  ],
+  "players_after": [
+    {
+      "port": 1,
+      "actor": "0x801483d0",
+      "input": "0x801487d0",
+      "weapon_slot": 0,
+      "weapon_id": 0,
+      "weapon": "P38 pistol",
+      "reserve": 20,
+      "clip": 8,
+      "input_fields": "000000000000000010ffffff0c00000000000000000000000000000000000000000014002c015a00010032002c012c010900080000000000000000000000000000000000",
+      "health_raw": 2097152,
+      "health": 32.0,
+      "position": [
+        -94470713,
+        33292288,
+        33718412
+      ],
+      "rotation": [
+        -16384,
+        24,
+        0
+      ]
+    },
+    {
+      "port": 2,
+      "actor": "0x80145810",
+      "input": "0x80145c10",
+      "weapon_slot": 0,
+      "weapon_id": 0,
+      "weapon": "P38 pistol",
+      "reserve": 20,
+      "clip": 8,
+      "input_fields": "000000000000000010ffffff0c000000000000000000000000000000000000000000140020001e00010032002c012c010900080000000000000000000000000000000000",
+      "health_raw": 2097152,
+      "health": 32.0,
+      "position": [
+        -96488943,
+        33357824,
+        -70958831
+      ],
+      "rotation": [
+        -32768,
+        24,
+        -32768
+      ]
+    }
+  ],
+  "stereo": {
+    "id": 0,
+    "ok": true,
+    "attempts": 17,
+    "pairs": 17,
+    "refused": 0,
+    "failed": 0,
+    "shed": 0,
+    "status": 0,
+    "last_pair_id": 17,
+    "last_guest_cycle": 10427892314,
+    "eye_cycles": [
+      10427892314,
+      10427892314
+    ],
+    "eye_hashes": [
+      "f3a85b6870c7ab51",
+      "f3a85b6870c7ab51"
+    ],
+    "eye_view": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0
+      ]
+    ],
+    "last_eye": 1,
+    "last_failure": "",
+    "last_failed_attempt": 0,
+    "last_failed_eye": 0,
+    "last_failed_reason": "",
+    "retained_pair_id": 0,
+    "shedding": 0,
+    "shed_streak": 0,
+    "shed_streak_ms": 0,
+    "shed_streak_max": 0,
+    "stale_frames": 0,
+    "budget_resets": 0,
+    "budget_ms": 13.333,
+    "budget_source": 0,
+    "checkpoint_saves": 17,
+    "checkpoint_reuses": 17,
+    "checkpoint_ram_bytes": 35651584,
+    "last_pair_age_ms": 0,
+    "last_pair_ms": 22.2,
+    "avg_pair_ms": 28.691,
+    "published": {
+      "valid": 1,
+      "pair_id": 17,
+      "guest_cycle": 10427892314,
+      "width": 512,
+      "height": 120,
+      "staged_mask": 3,
+      "mode": 1,
+      "presents": 0
+    },
+    "captures": [
+      {
+        "pair_id": 16,
+        "guest_cycle": 10426344313,
+        "width": 512,
+        "height": 120,
+        "left_eye": 0,
+        "right_eye": 1,
+        "view_offset": [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ]
+      }
+    ]
+  },
+  "render_pass": {
+    "id": 0,
+    "ok": true,
+    "plans": 0,
+    "planned": 0,
+    "wanted": 0,
+    "refused": 0,
+    "passes": 34,
+    "aborted": 0,
+    "discarded": 0,
+    "watchdog": 0,
+    "vram_leaks": 0,
+    "nesting_repairs": 0,
+    "device_reads": 0,
+    "last_device_read": "0x00000000",
+    "last_device_read_width": 0,
+    "verify_checks": 34,
+    "verify_mismatch": 0,
+    "dropped": {
+      "spu": 0,
+      "cd": 0,
+      "timer": 0,
+      "dma": 0,
+      "gpu": 0,
+      "other": 0
+    },
+    "last_pass_ms": 10.986,
+    "avg_pass_ms": 11.852,
+    "avg_begin_ms": 0.916,
+    "avg_guest_ms": 9.783,
+    "avg_end_ms": 0.673,
+    "avg_restore_ms": 0.25,
+    "guest_cycles_last": 537532,
+    "disabled": 0,
+    "promotions": 0,
+    "pass_presents": 0,
+    "blended_presents": 0,
+    "expired": 0,
+    "late_presents": 0,
+    "unmatched_flips": 0,
+    "early_presents": 0,
+    "cost_us": 0,
+    "cost_rewarms": 0,
+    "frame_images": 0,
+    "journaled": 0,
+    "image_textures": 0,
+    "image_bytes": 0,
+    "status": 1,
+    "backups_reused": 17,
+    "pass_attempts": 34,
+    "argument_refused": 0,
+    "status_refused": 0,
+    "begin_refused": 0,
+    "checkpoint_refused": 0,
+    "spans": 0,
+    "span_failures": 0,
+    "local_views": 0,
+    "local_attempts": 0,
+    "local_status": 4,
+    "admission": {
+      "plans": 0,
+      "frame": 0,
+      "zero_credit_refusals": 0,
+      "idle_ms": 0.0,
+      "present_ms": 0.0,
+      "prior_pass_ms": 0.0,
+      "present_reserve_ms": 0.0,
+      "spare_ms": 0.0,
+      "frame_ms": 0.0,
+      "cost_ms": 0.0,
+      "budget_ms": 0.0,
+      "wanted": 0,
+      "planned": 0
+    },
+    "last_failure": null,
+    "last_abort_detail": "",
+    "span_fail": {
+      "reason": 0,
+      "pc": "0x00000000",
+      "start": "0x00000000",
+      "stop": "0x00000000",
+      "ra": "0x00000000",
+      "after": "0x00000000",
+      "insns": 0
+    }
+  },
+  "complete": true,
+  "source_saves_unchanged": true,
+  "preferences_unchanged": true,
+  "remaining_game_pids": [],
+  "images": {
+    "p000016_left.png": "a35c5d2ccbd91fc5884a638d6c455e6036838e3a28eab35be4ee8428120eac1d",
+    "p000016_right.png": "a35c5d2ccbd91fc5884a638d6c455e6036838e3a28eab35be4ee8428120eac1d"
+  }
+}

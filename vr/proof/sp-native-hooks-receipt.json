@@ -1,0 +1,317 @@
+{
+  "schema": 1,
+  "date": "2026-10-28",
+  "kind": "R4 native overlay hook integration and matched SP cadence",
+  "headset_acceptance": false,
+  "physical_acceptance": false,
+  "release_acceptance": false,
+  "starting_revision": "eff72be",
+  "source_state": "working tree",
+  "framework_pin": "555e1eabccc59b9b6ff0d9fca48aca783513dc86",
+  "source_hashes": {
+    "game.toml": "9669410368D7C410916D1DDF21B7DA230A7FDDCB77AB6B5AE781FB0C93856C9F",
+    "generated/SLUS_012.70_full_01.c": "7C78AA5596CEC49A046EDDF6F6657BEC89A224A9DA2DFB1119760803326E6910",
+    "generated/SLUS_012.70_full_02.c": "E49DA6858CC60A228F93186C33312840422864C74839909ADA4CA4A7B31C3A17",
+    "vr/underground/vr_diagnostic.c": "80EF574D0179C708DF4BD5B4F5CA1EEFA5B3CD863CBB312B79E840A131A941A9",
+    "vr/underground/engine_map.c": "00101F9888364312FAF926266B31A8A1942731AF4DCF5BCA3EC46BBD883C9073",
+    "vr/tools/probe_sp_weapon.py": "4C06BC35DF351DDDC3C6E6F4F9C0846EC3C914B34E30DA047E941C3EFEDD9F40",
+    "vr/tools/check_mp_view.py": "1E0693E6178D188A9E0DC7B51DBA062FA0AFD6D431C2A19F196124926B15EB7C",
+    "vr/tools/profile_sp_runtime.py": "842030C9F8CA3B2E4248D95868B5988E8E89DD05EF5A241F9D57C95408F5970E",
+    "vr/tests/test_native_hooks.py": "47AB2F614E2D85752E4E51EABF9F0EEA7ED1BDA92CD9292F79ECE5F3DE92A5A3"
+  },
+  "instrumentation": {
+    "function_entry_count": 24,
+    "instruction_site_count": 11,
+    "generated_static_forwarders": [
+      "0x80013B40",
+      "0x80013EB4",
+      "0x80018B48",
+      "0x80018BB8"
+    ],
+    "runtime_hooks_reported": {
+      "function": 24,
+      "instruction": 11
+    },
+    "normal_runtime": "cached native overlays",
+    "diagnostic_exception": "PSX_NATIVE_BLOCK remains a localization control only"
+  },
+  "binaries": {
+    "diagnostic_debug_on": {
+      "path": "build-release/Medal_of_Honor_Underground_Recompiled.exe",
+      "sha256": "ED6F2664880DDC7FC2DF057C9439AEB4E35AEC2D0AC571AB720F863DE78F145C",
+      "build": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "MOHU_VR_DIAGNOSTICS": "ON",
+        "PSX_DEBUG_TOOLS": "ON",
+        "PSX_OPENXR": "ON"
+      }
+    },
+    "production_debug_off": {
+      "path": "build-release/Medal_of_Honor_Underground_Recompiled.exe",
+      "sha256": "6C39318C2FB27C7574AB90417581BEB32A9FF8987C0563A3E6C216F9A063CBF8",
+      "build": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "MOHU_VR_DIAGNOSTICS": "ON",
+        "PSX_DEBUG_TOOLS": "OFF",
+        "PSX_OPENXR": "ON"
+      }
+    }
+  },
+  "controls": [
+    {
+      "name": "SP baseline",
+      "raw_receipt": {
+        "path": "analysis/vr-baseline/r4-native-required-v2-20261028-032115/receipt.json",
+        "sha256": "2BD832B0AA9E927D99758621A56CEFAC484653C5934295C986A895FF78E9EE31"
+      },
+      "raw_stdout": {
+        "path": "analysis/vr-baseline/r4-native-required-v2-20261028-032115/stdout.log",
+        "sha256": "3A246F9151FC16F61A62CC38BCBF7A7F497843D790028B1F68428F4A923A02F3"
+      },
+      "complete": true,
+      "control_passed": true,
+      "exit_code": 0,
+      "native_calls_delta": 11024,
+      "native_would_run": 0,
+      "quiet_pairs": 117,
+      "eye_failures": 0,
+      "verify_checks": 286,
+      "verify_mismatch": 0,
+      "visible_gun_vertices": [
+        96,
+        96
+      ],
+      "masked_arm_vertices": [
+        142,
+        142
+      ],
+      "flash_bank0": 261,
+      "flash_bank1": 261,
+      "aimed_shots": 1
+    },
+    {
+      "name": "SP turned head and hand with reload",
+      "raw_receipt": {
+        "path": "analysis/vr-baseline/r4-native-controls-20261028-032151/turned-reload/receipt.json",
+        "sha256": "0721E93F10DDFCC4B2794C984B39652986014DD397920B2C359A092F52EDA288"
+      },
+      "raw_stdout": {
+        "path": "analysis/vr-baseline/r4-native-controls-20261028-032151/turned-reload/stdout.log",
+        "sha256": "E621E180F884631FA18DA758DD54536BBCAE24E7664F18976B99B845B5FE1760"
+      },
+      "complete": true,
+      "control_passed": true,
+      "exit_code": 0,
+      "native_calls_delta": 9685,
+      "quiet_pairs": 104,
+      "eye_failures": 0,
+      "verify_checks": 258,
+      "verify_mismatch": 0,
+      "visible_gun_vertices": [
+        96,
+        96
+      ],
+      "masked_arm_vertices": [
+        142,
+        142
+      ],
+      "flash_bank0": 235,
+      "flash_bank1": 235
+    },
+    {
+      "name": "SP close hand",
+      "raw_receipt": {
+        "path": "analysis/vr-baseline/r4-native-controls-20261028-032151/close-hand/receipt.json",
+        "sha256": "C6216A4CE45CF4607B137DF0BA24F9167B6FBE14401F3E471B574B3BC6C4E102"
+      },
+      "raw_stdout": {
+        "path": "analysis/vr-baseline/r4-native-controls-20261028-032151/close-hand/stdout.log",
+        "sha256": "7E9B60B1CF99B14C103AA0336C69C4C1BAC13DE0DCFDA6FAA08A7F8AE9ED2222"
+      },
+      "complete": true,
+      "control_passed": true,
+      "exit_code": 0,
+      "native_calls_delta": 14657,
+      "quiet_pairs": 151,
+      "eye_failures": 0,
+      "verify_checks": 376,
+      "verify_mismatch": 0,
+      "visible_gun_vertices": [
+        96,
+        96
+      ],
+      "masked_arm_vertices": [
+        142,
+        142
+      ],
+      "flash_bank0": 330,
+      "flash_bank1": 330
+    },
+    {
+      "name": "SP tracking loss",
+      "raw_receipt": {
+        "path": "analysis/vr-baseline/r4-native-tracking-loss-v2-20261028-032402/receipt.json",
+        "sha256": "63386405FF04C11823A2638B8F7B2526D12BD28ECAFB4AAAC3FD3C6BDA7FC257"
+      },
+      "raw_stdout": {
+        "path": "analysis/vr-baseline/r4-native-tracking-loss-v2-20261028-032402/stdout.log",
+        "sha256": "0F5C578E0C981F8541DD4E3FFA5DFEAAAD04233E90774AC7542BDC67ED2F5272"
+      },
+      "complete": true,
+      "control_passed": true,
+      "exit_code": 0,
+      "native_calls_delta": 210838,
+      "quiet_pairs": 166,
+      "eye_failures": 0,
+      "verify_checks": 402,
+      "verify_mismatch": 0,
+      "visible_gun_vertices": [
+        96,
+        96
+      ],
+      "masked_arm_vertices": [
+        142,
+        142
+      ],
+      "flash_bank0": 359,
+      "flash_bank1": 359,
+      "aimed_shots": 0
+    },
+    {
+      "name": "SP owned flash out of view",
+      "raw_receipt": {
+        "path": "analysis/vr-baseline/r4-native-out-of-view-v2-20261028-032509/receipt.json",
+        "sha256": "47C94DED0C21D572864C172F807FFBA494DC9C11F20AF399ADA0FAFBE8BDCF0D"
+      },
+      "raw_stdout": {
+        "path": "analysis/vr-baseline/r4-native-out-of-view-v2-20261028-032509/stdout.log",
+        "sha256": "1F5D1908F61B9D2742ADDA208B458F8A1D1B94428C1A1E1926BAAC8ED3125FFA"
+      },
+      "complete": true,
+      "control_passed": true,
+      "exit_code": 0,
+      "native_calls_delta": 181990,
+      "quiet_pairs": 126,
+      "eye_failures": 0,
+      "verify_checks": 312,
+      "verify_mismatch": 0,
+      "visible_gun_vertices": [
+        0,
+        0
+      ],
+      "masked_arm_vertices": [
+        142,
+        142
+      ],
+      "flash_bank0": 277,
+      "flash_bank1": 277,
+      "aimed_shots": 1
+    },
+    {
+      "name": "Focused native MP P38 eyes, fire and recovery",
+      "raw_receipt": {
+        "path": "analysis/vr-baseline/r4-native-mp-focused-native-res-20261028-032839/receipt.json",
+        "sha256": "2B422F19CB93DCA358E189E83AA1386513C53272DA725FA5CE5F8DB52CDDA2BD"
+      },
+      "raw_stdout": {
+        "path": "analysis/vr-baseline/r4-native-mp-focused-native-res-20261028-032839/stdout.log",
+        "sha256": "763B21102E4057CAA144C3ED6955B7E248C09887C77041F5AFEFDA53FD1C98E8"
+      },
+      "complete": true,
+      "control_passed": true,
+      "exit_code": 0,
+      "native_calls_delta": 30690,
+      "native_would_run": 0,
+      "last_eye_pair_counter": 152,
+      "verify_checks": 1106,
+      "verify_mismatch": 0,
+      "native_clip": [
+        8,
+        7
+      ],
+      "native_p2_health": [
+        32.0,
+        31.25
+      ],
+      "native_health_trace_entries": 1,
+      "recovery_pair": 263
+    }
+  ],
+  "performance": {
+    "scope": "Copied SP slot 3, hidden SDL window, 1080p, no XR, no tracked hand input, no screenshots, VERIFY OFF, Release debug OFF",
+    "window": {
+      "guest_frames": [
+        300,
+        900
+      ]
+    },
+    "native": {
+      "raw_receipt": {
+        "path": "analysis/vr-baseline/r4-native-cadence-active-20261028-040858/receipt.json",
+        "sha256": "81751747987D101583F675CBFA4CF53A6765C5683DEC819E7535A0AA162283A3"
+      },
+      "raw_stdout": {
+        "path": "analysis/vr-baseline/r4-native-cadence-active-20261028-040858/stdout.log",
+        "sha256": "A155FA43E6008CE52A7D4775488CDEDB6CA22BB7863133510628E7EFA7CDF495"
+      },
+      "complete": true,
+      "pair_cadence": 29.99955157820931,
+      "bench_frames": 600,
+      "wall_ms": 9943.534,
+      "guest_work_ms": 7979.947,
+      "pacer_ms": 1891.882,
+      "dirty_instructions": 379200,
+      "dirty_dispatches": 0,
+      "overlay_native": 2807918,
+      "overlay_interp": 18600,
+      "overlay_loads": 0
+    },
+    "interpreter": {
+      "raw_receipt": {
+        "path": "analysis/vr-baseline/r4-interpreter-cadence-active-20261028-041009/receipt.json",
+        "sha256": "221D31FC66C3FF21EA25AF19ACBA909500F7040B387F6CE11BEE200B4AA2394C"
+      },
+      "raw_stdout": {
+        "path": "analysis/vr-baseline/r4-interpreter-cadence-active-20261028-041009/stdout.log",
+        "sha256": "DD31CA4260FEAB52576DCD617ADFB08C59C55A5BC482496C201F1FF814DE8211"
+      },
+      "complete": true,
+      "pair_cadence": 29.1891297289306,
+      "bench_frames": 600,
+      "wall_ms": 9897.785,
+      "guest_work_ms": 9760.183,
+      "pacer_ms": 84.451,
+      "dirty_instructions": 133806583,
+      "dirty_dispatches": 21453,
+      "overlay_native": 0,
+      "overlay_interp": 0,
+      "overlay_loads": 0
+    },
+    "relative_metrics": {
+      "pair_cadence_ratio": 1.027755300896289,
+      "guest_work_ratio": 0.817601673373011,
+      "dirty_instruction_ratio": 0.002834409994594,
+      "wall_time_ratio": 1.004621565830935
+    },
+    "note": "The native run had lower guest work but slightly higher measured wall time; the 30-pair pacing limit makes the wall/cadence difference nonuniform. This is not a claim of uniform FPS improvement."
+  },
+  "validation": {
+    "python_tests": 123,
+    "python_result": "pass",
+    "strict_weapon_c_fixture": "pass",
+    "mp_guard_c_fixture": "pass",
+    "diagnostic_c_syntax": "pass",
+    "flat_launcher_smoke": "pass; inherited VR markers inactive",
+    "source_saves_unchanged": true,
+    "preferences_unchanged": true,
+    "forced_cleanup": false
+  },
+  "limits": [
+    "Desktop synthetic controls only; no headset or physical weapon acceptance.",
+    "The cadence control is one measured scene and does not establish whole-campaign performance.",
+    "Native overlay integration is cfg-dependent: use game.toml and verify native execution; the interpreter config runs zero native overlays by design.",
+    "The MP control is a focused P38 regression, not another all-weapon matrix.",
+    "R5 view-dependent fog and R6 linked live SP NPC damage remain open.",
+    "R5 is paused because the available slot 0/2/3 captures do not reproduce the operator's street-wall fog case."
+  ]
+}

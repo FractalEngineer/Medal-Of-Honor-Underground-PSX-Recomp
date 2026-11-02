@@ -1,0 +1,617 @@
+{
+  "schema": 1,
+  "kind": "W3.4 all-ID complete-gun desktop controls",
+  "headset_used": false,
+  "complete": true,
+  "source_receipt": "analysis\\vr-baseline\\weapon-animation-all-final-20261027\\receipt.json",
+  "source_receipt_sha256": "1ff8125b58e686ad4e154f19406bf0b826eb3b153338d078d1220b655461342d",
+  "executable_sha256": "16142c7d130049b33501383e4909cd7b4b1d08520aebb665c61b23c845fc6e66",
+  "sources": {
+    "vr\\underground\\vr_diagnostic.c": "351e3d017cf56bb94b5f6db6cd1693263c24af690029eb3c7ca2ff22c7f22506",
+    "vr\\underground\\mp_view.h": "e5719fbd36617c1d6bdbd59212f8c1196096db13aa66d480474818e54346ecb6",
+    "vr\\underground\\frustum.h": "9c60cb3113837ee71e702b35253c43edd076e7d0d525b1aa3061f74780d5f62b",
+    "vr\\tools\\check_mp_view.py": "3d8a7b1f1e03f9c575e8c85fecb2521782117c3fc61ba34481bbdad0294abbc4",
+    "vr\\tools\\check_weapon_pose_spaces.py": "038592ac6cfceef31270ab5e567d3201f5baf76c39eae99163792072b126267b",
+    "vr\\tests\\test_mp_view.c": "e04475e71687119a6a81d6f13aed2221c1f6bb870fd692ea25303195c5bf4307",
+    "psxrecomp\\runtime\\src\\vr_geometry_math.c": "9e51708f0f05a16182e4d5893063a06f656d4fc723965f72cea9191632661a23",
+    "psxrecomp\\runtime\\include\\vr_geometry_math.h": "9669b212e9195b9be96edd47fe8f917287bdaf6e5e35e75210f6de337ae7a777"
+  },
+  "source_saves": {
+    "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\saves\\openbios\\state_8001F844_slot01.pst": "b248dfa247b45a41906beea3aa829cff79b39d863e425211e5c0651e853a7f5d",
+    "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\saves\\openbios\\state_8001F844_slot01.thumb": "008eb36b216f802cc54b8911eed2201b28b5167830ac4cfeaf4bfff5aab3543c",
+    "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\saves\\openbios\\state_8001F844_slot02.pst": "d849f30c217e31ef05a0508f98c10a0ffbc2e03260bebf8ae13bf975745223b0",
+    "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\saves\\openbios\\state_8001F844_slot02.thumb": "3062f96294604ea6c16ce2560780338908145cb0b59709f83bbc95279f61533e",
+    "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\saves\\openbios\\state_8001F844_slot03.pst": "ac6a5e3f85a8a12a0c312d95682b74a26109a5c651e3ada39f50a986e9242e9d",
+    "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\saves\\openbios\\state_8001F844_slot03.thumb": "17b69f2729f3cbc9dc0c470e7eaf0cdcb479fc3a2afe2a51516e5e21546d12d5",
+    "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\saves\\openbios\\state_8001F844_slot04.pst": "5beb061c29120eb61a0d9fe2df1a73a6329ca465a24c67b4ca9c3fa0ca8cd0e6",
+    "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\saves\\openbios\\state_8001F844_slot04.thumb": "ce4d5a2cbccbb79bb74856cfbb4d534f3b6c4625c8b760ceaccc854c3a5bba9d"
+  },
+  "preferences": {
+    "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\build-release\\settings.toml": "5ba64573bb6ec0f437f64384a79fb1e8f8149ab90c88a4404e81d565227364d4",
+    "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\build-release\\keybinds.ini": "55a6baab11a9a36b64d3f92908b9fc7a6fec657e73b3d287784b1de60715008b",
+    "C:\\Program Files (x86)\\Steam\\config\\steamvr.vrsettings": "bc4b95d242547c552e4e6f672ad3c3284d357cd37249069fd643522473323f10"
+  },
+  "unique_weapon_ids": [
+    0,
+    1,
+    4,
+    5,
+    8,
+    9,
+    10,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17
+  ],
+  "captured_slot_rows": 16,
+  "cases": 64,
+  "eye_mask_applications": {
+    "left": 398,
+    "right": 406
+  },
+  "cycles_closed": {
+    "1": true,
+    "2": true,
+    "3": true,
+    "4": true
+  },
+  "weapons": [
+    {
+      "id": 0,
+      "slot": 1,
+      "switches": 0,
+      "cases": [
+        "native",
+        "translated",
+        "yawed",
+        "lost"
+      ],
+      "image_hashes": [
+        {
+          "p000022_left.png": "646577a487b2394980b21275797fef119af15518a02d10bc40a68b6dc1bd64e2",
+          "p000022_right.png": "646577a487b2394980b21275797fef119af15518a02d10bc40a68b6dc1bd64e2"
+        },
+        {
+          "p000032_left.png": "285ffbae04ffbaa861d70bce376ba93c76f0092866fa1bc8e2cfdcc9bd989f17",
+          "p000032_right.png": "285ffbae04ffbaa861d70bce376ba93c76f0092866fa1bc8e2cfdcc9bd989f17"
+        },
+        {
+          "p000044_left.png": "2fcaf75b7e36e34617f91947e6e36676e5d6fb83fc307d411b7c1080dbb67a97",
+          "p000044_right.png": "2fcaf75b7e36e34617f91947e6e36676e5d6fb83fc307d411b7c1080dbb67a97"
+        },
+        {
+          "p000054_left.png": "a35c5d2ccbd91fc5884a638d6c455e6036838e3a28eab35be4ee8428120eac1d",
+          "p000054_right.png": "a35c5d2ccbd91fc5884a638d6c455e6036838e3a28eab35be4ee8428120eac1d"
+        }
+      ],
+      "rollback_checks": 310,
+      "mask_counts": {
+        "left": 27,
+        "right": 28
+      }
+    },
+    {
+      "id": 1,
+      "slot": 1,
+      "switches": 1,
+      "cases": [
+        "native",
+        "translated",
+        "yawed",
+        "lost"
+      ],
+      "image_hashes": [
+        {
+          "p000096_left.png": "b48e33ab5d2dc14a512a61752299c581fb480e046691af2309914a73c21b9bf4",
+          "p000096_right.png": "b48e33ab5d2dc14a512a61752299c581fb480e046691af2309914a73c21b9bf4"
+        },
+        {
+          "p000105_left.png": "2b2d3b57f2f52f34877ad677a9ad1a28d4a666b4e415e94c0b945bd8e8bc3ece",
+          "p000105_right.png": "2b2d3b57f2f52f34877ad677a9ad1a28d4a666b4e415e94c0b945bd8e8bc3ece"
+        },
+        {
+          "p000116_left.png": "ac3a6f246284f105e5c196463d2def936c492614e796837665302fe66bf0d56c",
+          "p000116_right.png": "ac3a6f246284f105e5c196463d2def936c492614e796837665302fe66bf0d56c"
+        },
+        {
+          "p000126_left.png": "b48e33ab5d2dc14a512a61752299c581fb480e046691af2309914a73c21b9bf4",
+          "p000126_right.png": "b48e33ab5d2dc14a512a61752299c581fb480e046691af2309914a73c21b9bf4"
+        }
+      ],
+      "rollback_checks": 892,
+      "mask_counts": {
+        "left": 25,
+        "right": 28
+      }
+    },
+    {
+      "id": 17,
+      "slot": 1,
+      "switches": 2,
+      "cases": [
+        "native",
+        "translated",
+        "yawed",
+        "lost"
+      ],
+      "image_hashes": [
+        {
+          "p000169_left.png": "209a97d69e71f779c595bb1835e9c34d7d9eae266daa5252197b555b1ccc2eaf",
+          "p000169_right.png": "209a97d69e71f779c595bb1835e9c34d7d9eae266daa5252197b555b1ccc2eaf"
+        },
+        {
+          "p000179_left.png": "a01f945f276ec52f24d41f8eeaf41ddfbfff5b5515f60e77d682118d12be59d5",
+          "p000179_right.png": "a01f945f276ec52f24d41f8eeaf41ddfbfff5b5515f60e77d682118d12be59d5"
+        },
+        {
+          "p000190_left.png": "3feec1c7f9f479b8090a38ab2c95c4c3dfb904fb6372517958dae64130112857",
+          "p000190_right.png": "3feec1c7f9f479b8090a38ab2c95c4c3dfb904fb6372517958dae64130112857"
+        },
+        {
+          "p000201_left.png": "ff61f3322bf6e8958e3bf3a37c7ad566af9ff58aff7fa993bc8dd0f9afd204aa",
+          "p000201_right.png": "ff61f3322bf6e8958e3bf3a37c7ad566af9ff58aff7fa993bc8dd0f9afd204aa"
+        }
+      ],
+      "rollback_checks": 1483,
+      "mask_counts": {
+        "left": 27,
+        "right": 29
+      }
+    },
+    {
+      "id": 10,
+      "slot": 1,
+      "switches": 3,
+      "cases": [
+        "native",
+        "translated",
+        "yawed",
+        "lost"
+      ],
+      "image_hashes": [
+        {
+          "p000244_left.png": "20a347b4ea83fb65b1f34cbe6e12fda673350441c378cbca933d10189e335095",
+          "p000244_right.png": "20a347b4ea83fb65b1f34cbe6e12fda673350441c378cbca933d10189e335095"
+        },
+        {
+          "p000253_left.png": "59fc23f4577d733c90d0ccc05d8cea04b452ad965e1ece69bfd660ec3364c2af",
+          "p000253_right.png": "59fc23f4577d733c90d0ccc05d8cea04b452ad965e1ece69bfd660ec3364c2af"
+        },
+        {
+          "p000261_left.png": "ce126ffb240c5cd073961e1822734c3e8396087d80050bd87738c48c7964e28f",
+          "p000261_right.png": "ce126ffb240c5cd073961e1822734c3e8396087d80050bd87738c48c7964e28f"
+        },
+        {
+          "p000270_left.png": "67e6c067a4928382d1b2d6e55e6a23cd1714e06cd679a380e0c5332f72aebe85",
+          "p000270_right.png": "67e6c067a4928382d1b2d6e55e6a23cd1714e06cd679a380e0c5332f72aebe85"
+        }
+      ],
+      "rollback_checks": 2062,
+      "mask_counts": {
+        "left": 24,
+        "right": 24
+      }
+    },
+    {
+      "id": 8,
+      "slot": 2,
+      "switches": 0,
+      "cases": [
+        "native",
+        "translated",
+        "yawed",
+        "lost"
+      ],
+      "image_hashes": [
+        {
+          "p000329_left.png": "282ef7f0d8e9998cd1db0fa463918b50174b327b2eaede848cfa15e9270e212a",
+          "p000329_right.png": "282ef7f0d8e9998cd1db0fa463918b50174b327b2eaede848cfa15e9270e212a"
+        },
+        {
+          "p000340_left.png": "a97a678d8d337f2be35c5340b072fde44547fb6a2796fcba8b1c8157a52db792",
+          "p000340_right.png": "a97a678d8d337f2be35c5340b072fde44547fb6a2796fcba8b1c8157a52db792"
+        },
+        {
+          "p000354_left.png": "0035256b0a25b36c6694d96e74ef8911eecda6ac8c59f37138b5f5b14408c490",
+          "p000354_right.png": "0035256b0a25b36c6694d96e74ef8911eecda6ac8c59f37138b5f5b14408c490"
+        },
+        {
+          "p000366_left.png": "282ef7f0d8e9998cd1db0fa463918b50174b327b2eaede848cfa15e9270e212a",
+          "p000366_right.png": "282ef7f0d8e9998cd1db0fa463918b50174b327b2eaede848cfa15e9270e212a"
+        }
+      ],
+      "rollback_checks": 2786,
+      "mask_counts": {
+        "left": 26,
+        "right": 26
+      }
+    },
+    {
+      "id": 16,
+      "slot": 2,
+      "switches": 1,
+      "cases": [
+        "native",
+        "translated",
+        "yawed",
+        "lost"
+      ],
+      "image_hashes": [
+        {
+          "p000411_left.png": "f1d93a96fc67ee926b9ae6fbf3ca1f0fba9b4dca3809ca30a0bf708d5d060f03",
+          "p000411_right.png": "f1d93a96fc67ee926b9ae6fbf3ca1f0fba9b4dca3809ca30a0bf708d5d060f03"
+        },
+        {
+          "p000421_left.png": "7e461e6ccbc530787ed700812a76c3539f3edeb5c1984c60840b66e6e97c2839",
+          "p000421_right.png": "7e461e6ccbc530787ed700812a76c3539f3edeb5c1984c60840b66e6e97c2839"
+        },
+        {
+          "p000432_left.png": "efca84c5ff01099617c7635b1a82e05e7cba10d40ac3ac7cb311d869adcc1ed9",
+          "p000432_right.png": "efca84c5ff01099617c7635b1a82e05e7cba10d40ac3ac7cb311d869adcc1ed9"
+        },
+        {
+          "p000443_left.png": "bea381b16008def24415a959ed852d9d861547c0c5530100a206ea9b3a27b682",
+          "p000443_right.png": "bea381b16008def24415a959ed852d9d861547c0c5530100a206ea9b3a27b682"
+        }
+      ],
+      "rollback_checks": 3416,
+      "mask_counts": {
+        "left": 24,
+        "right": 25
+      }
+    },
+    {
+      "id": 4,
+      "slot": 2,
+      "switches": 2,
+      "cases": [
+        "native",
+        "translated",
+        "yawed",
+        "lost"
+      ],
+      "image_hashes": [
+        {
+          "p000489_left.png": "04ff29b486901e7c61488159ed92c5668b95fbdfce37c06243db8f479b938c42",
+          "p000489_right.png": "04ff29b486901e7c61488159ed92c5668b95fbdfce37c06243db8f479b938c42"
+        },
+        {
+          "p000499_left.png": "4ea84a51c6299aa36ee91bfc8e3a0aa075ee6aa07a1fff158872385eb64f447a",
+          "p000499_right.png": "4ea84a51c6299aa36ee91bfc8e3a0aa075ee6aa07a1fff158872385eb64f447a"
+        },
+        {
+          "p000509_left.png": "90bc29f8b85c14e8e1eced8bae56c1345083f9ac66b625e3b984cf7b83c2afe9",
+          "p000509_right.png": "90bc29f8b85c14e8e1eced8bae56c1345083f9ac66b625e3b984cf7b83c2afe9"
+        },
+        {
+          "p000519_left.png": "3957307d2460763102e2258374686b3aae61d9204056e043196db843d6e0eb12",
+          "p000519_right.png": "3957307d2460763102e2258374686b3aae61d9204056e043196db843d6e0eb12"
+        }
+      ],
+      "rollback_checks": 4036,
+      "mask_counts": {
+        "left": 23,
+        "right": 22
+      }
+    },
+    {
+      "id": 15,
+      "slot": 2,
+      "switches": 3,
+      "cases": [
+        "native",
+        "translated",
+        "yawed",
+        "lost"
+      ],
+      "image_hashes": [
+        {
+          "p000567_left.png": "cb90d40af120211d72dfa482d4c8bf08f4baad41473e4424786c77431610efdc",
+          "p000567_right.png": "cb90d40af120211d72dfa482d4c8bf08f4baad41473e4424786c77431610efdc"
+        },
+        {
+          "p000576_left.png": "df7f227710a019b96e646fbf0897d25c9ac326cee566ad4b816fb1ea973e9067",
+          "p000576_right.png": "df7f227710a019b96e646fbf0897d25c9ac326cee566ad4b816fb1ea973e9067"
+        },
+        {
+          "p000587_left.png": "9160efcaf5fc0e48d7001b9d34786b47c15877b57b65dbdf2dd4c895fc4e0cea",
+          "p000587_right.png": "9160efcaf5fc0e48d7001b9d34786b47c15877b57b65dbdf2dd4c895fc4e0cea"
+        },
+        {
+          "p000596_left.png": "77ec39f5eb6ce1196bd4d1f898c3f4c7467e49d4fdae05097063950dad032f76",
+          "p000596_right.png": "77ec39f5eb6ce1196bd4d1f898c3f4c7467e49d4fdae05097063950dad032f76"
+        }
+      ],
+      "rollback_checks": 4654,
+      "mask_counts": {
+        "left": 23,
+        "right": 23
+      }
+    },
+    {
+      "id": 9,
+      "slot": 3,
+      "switches": 0,
+      "cases": [
+        "native",
+        "translated",
+        "yawed",
+        "lost"
+      ],
+      "image_hashes": [
+        {
+          "p000658_left.png": "aba03e7b7ca31c5304310d452454386031a739835ba67eed24eeece42998d37e",
+          "p000658_right.png": "aba03e7b7ca31c5304310d452454386031a739835ba67eed24eeece42998d37e"
+        },
+        {
+          "p000669_left.png": "9cf63c74d15141c5f1d8834ff399b78345a05e855e49791c866de829d95564d8",
+          "p000669_right.png": "9cf63c74d15141c5f1d8834ff399b78345a05e855e49791c866de829d95564d8"
+        },
+        {
+          "p000682_left.png": "3f512eb90dfaa76c60263677d1cfa543b4218b5a05317bd6833b1cb94d06cf6d",
+          "p000682_right.png": "3f512eb90dfaa76c60263677d1cfa543b4218b5a05317bd6833b1cb94d06cf6d"
+        },
+        {
+          "p000693_left.png": "aba03e7b7ca31c5304310d452454386031a739835ba67eed24eeece42998d37e",
+          "p000693_right.png": "aba03e7b7ca31c5304310d452454386031a739835ba67eed24eeece42998d37e"
+        }
+      ],
+      "rollback_checks": 5411,
+      "mask_counts": {
+        "left": 28,
+        "right": 26
+      }
+    },
+    {
+      "id": 14,
+      "slot": 3,
+      "switches": 1,
+      "cases": [
+        "native",
+        "translated",
+        "yawed",
+        "lost"
+      ],
+      "image_hashes": [
+        {
+          "p000740_left.png": "5218a5eda9ca718a03f5af0c759bb9d48fef6be18b7209bade2f430aeaeb46db",
+          "p000740_right.png": "5218a5eda9ca718a03f5af0c759bb9d48fef6be18b7209bade2f430aeaeb46db"
+        },
+        {
+          "p000750_left.png": "c7f9a94ec7a884edfe48e88139094f36640f70b893d09f97e1765a56ac22ce66",
+          "p000750_right.png": "c7f9a94ec7a884edfe48e88139094f36640f70b893d09f97e1765a56ac22ce66"
+        },
+        {
+          "p000760_left.png": "7b3b4e436e75353c1a49f015fe5390768d002aa99598f6fa38dd225dfa306c1e",
+          "p000760_right.png": "7b3b4e436e75353c1a49f015fe5390768d002aa99598f6fa38dd225dfa306c1e"
+        },
+        {
+          "p000771_left.png": "7caa156038dab88eeb158a4b044f5bc2999babd30052099f3b9e5d6e3e758a4f",
+          "p000771_right.png": "7caa156038dab88eeb158a4b044f5bc2999babd30052099f3b9e5d6e3e758a4f"
+        }
+      ],
+      "rollback_checks": 6046,
+      "mask_counts": {
+        "left": 25,
+        "right": 26
+      }
+    },
+    {
+      "id": 5,
+      "slot": 3,
+      "switches": 2,
+      "cases": [
+        "native",
+        "translated",
+        "yawed",
+        "lost"
+      ],
+      "image_hashes": [
+        {
+          "p000819_left.png": "343d13a1905f56e0de5bf43d4b6da7e02c0b679412ee2568c9582bd60cca8cf9",
+          "p000819_right.png": "343d13a1905f56e0de5bf43d4b6da7e02c0b679412ee2568c9582bd60cca8cf9"
+        },
+        {
+          "p000830_left.png": "fd5a5e2133f79b7cf71d19267470b188a51594dfa679269fe8d44f30b49001d5",
+          "p000830_right.png": "fd5a5e2133f79b7cf71d19267470b188a51594dfa679269fe8d44f30b49001d5"
+        },
+        {
+          "p000840_left.png": "4f9836ab7d5e66bc7048ab22eb97785b803a9772460e41ff5c4829b997d8289b",
+          "p000840_right.png": "4f9836ab7d5e66bc7048ab22eb97785b803a9772460e41ff5c4829b997d8289b"
+        },
+        {
+          "p000848_left.png": "0945e03c95908e6c9b5c0fa0406d62a481621d3416fb50b0eb7c842a878635cf",
+          "p000848_right.png": "0945e03c95908e6c9b5c0fa0406d62a481621d3416fb50b0eb7c842a878635cf"
+        }
+      ],
+      "rollback_checks": 6677,
+      "mask_counts": {
+        "left": 23,
+        "right": 23
+      }
+    },
+    {
+      "id": 10,
+      "slot": 3,
+      "switches": 3,
+      "cases": [
+        "native",
+        "translated",
+        "yawed",
+        "lost"
+      ],
+      "image_hashes": [
+        {
+          "p000894_left.png": "d865d189024230f8a01ee5da62fbe4f45634147bd4d22b970e7551da50f80acc",
+          "p000894_right.png": "d865d189024230f8a01ee5da62fbe4f45634147bd4d22b970e7551da50f80acc"
+        },
+        {
+          "p000904_left.png": "76a7c62366ac6ff287fdf570bd843c5dd41f1c09480f1b230cec82fa0cba5894",
+          "p000904_right.png": "76a7c62366ac6ff287fdf570bd843c5dd41f1c09480f1b230cec82fa0cba5894"
+        },
+        {
+          "p000914_left.png": "53b0a1f58c915c7fa76ca6b8ef864016fb11b48add1ae4b5583189ff44d21bfe",
+          "p000914_right.png": "53b0a1f58c915c7fa76ca6b8ef864016fb11b48add1ae4b5583189ff44d21bfe"
+        },
+        {
+          "p000924_left.png": "5af98d616758dc9c732ccfb0493a74e335fdeede127580d917fb9b83fad58cb1",
+          "p000924_right.png": "5af98d616758dc9c732ccfb0493a74e335fdeede127580d917fb9b83fad58cb1"
+        }
+      ],
+      "rollback_checks": 7278,
+      "mask_counts": {
+        "left": 24,
+        "right": 23
+      }
+    },
+    {
+      "id": 12,
+      "slot": 4,
+      "switches": 0,
+      "cases": [
+        "native",
+        "translated",
+        "yawed",
+        "lost"
+      ],
+      "image_hashes": [
+        {
+          "p000983_left.png": "16b24374a935e0b40670688e0941b7ec1d69bddfe98279ba55cdd34c0f5307ae",
+          "p000983_right.png": "16b24374a935e0b40670688e0941b7ec1d69bddfe98279ba55cdd34c0f5307ae"
+        },
+        {
+          "p000993_left.png": "b2d234ecc0f484c644fd060fb13cf5b6953f175cad02857d9b4230a0bc81c831",
+          "p000993_right.png": "b2d234ecc0f484c644fd060fb13cf5b6953f175cad02857d9b4230a0bc81c831"
+        },
+        {
+          "p001003_left.png": "340daa2b5004f245d5f1ebfca5e02c3337401dd581e7c89b2ccdd48e6d2918da",
+          "p001003_right.png": "340daa2b5004f245d5f1ebfca5e02c3337401dd581e7c89b2ccdd48e6d2918da"
+        },
+        {
+          "p001011_left.png": "9aeff2ad1f56ad6d8425252e8ad4ac0050b41e1e9bd6da2e731d246b0bf826ca",
+          "p001011_right.png": "9aeff2ad1f56ad6d8425252e8ad4ac0050b41e1e9bd6da2e731d246b0bf826ca"
+        }
+      ],
+      "rollback_checks": 7982,
+      "mask_counts": {
+        "left": 25,
+        "right": 25
+      }
+    },
+    {
+      "id": 17,
+      "slot": 4,
+      "switches": 1,
+      "cases": [
+        "native",
+        "translated",
+        "yawed",
+        "lost"
+      ],
+      "image_hashes": [
+        {
+          "p001056_left.png": "71486b77554855c4f9d51b3d4425eab2915ade93cf8aa324087e972f37026539",
+          "p001056_right.png": "71486b77554855c4f9d51b3d4425eab2915ade93cf8aa324087e972f37026539"
+        },
+        {
+          "p001066_left.png": "6cebf83d87fc736deb2a01fcb3aff2e3d0e76c3f55e14e55d0217d7bd9ead017",
+          "p001066_right.png": "6cebf83d87fc736deb2a01fcb3aff2e3d0e76c3f55e14e55d0217d7bd9ead017"
+        },
+        {
+          "p001074_left.png": "34cdcce1f0f5a76c936287b047fa4edf8c1f7c093487a10ed52543a12648b0a6",
+          "p001074_right.png": "34cdcce1f0f5a76c936287b047fa4edf8c1f7c093487a10ed52543a12648b0a6"
+        },
+        {
+          "p001084_left.png": "71486b77554855c4f9d51b3d4425eab2915ade93cf8aa324087e972f37026539",
+          "p001084_right.png": "71486b77554855c4f9d51b3d4425eab2915ade93cf8aa324087e972f37026539"
+        }
+      ],
+      "rollback_checks": 8564,
+      "mask_counts": {
+        "left": 25,
+        "right": 25
+      }
+    },
+    {
+      "id": 13,
+      "slot": 4,
+      "switches": 2,
+      "cases": [
+        "native",
+        "translated",
+        "yawed",
+        "lost"
+      ],
+      "image_hashes": [
+        {
+          "p001130_left.png": "f8c6041b40059261636b337e154c5af3b6ff7754b7ad115024059ab8f628d7dd",
+          "p001130_right.png": "f8c6041b40059261636b337e154c5af3b6ff7754b7ad115024059ab8f628d7dd"
+        },
+        {
+          "p001141_left.png": "6388b4b99ae7a3c1a93fa54a66fdbf2bc9dd02120c18cc3cebe550858679dd1c",
+          "p001141_right.png": "6388b4b99ae7a3c1a93fa54a66fdbf2bc9dd02120c18cc3cebe550858679dd1c"
+        },
+        {
+          "p001152_left.png": "aabfe4b8cc048adbef7ca841bf5a8687775f2252964581e979c328b6d1eeab1e",
+          "p001152_right.png": "aabfe4b8cc048adbef7ca841bf5a8687775f2252964581e979c328b6d1eeab1e"
+        },
+        {
+          "p001164_left.png": "7d08aab5cea7e9e558f564aa378d23ef1a48ef896a5fe6078708e7e35409cf95",
+          "p001164_right.png": "7d08aab5cea7e9e558f564aa378d23ef1a48ef896a5fe6078708e7e35409cf95"
+        }
+      ],
+      "rollback_checks": 9180,
+      "mask_counts": {
+        "left": 27,
+        "right": 28
+      }
+    },
+    {
+      "id": 15,
+      "slot": 4,
+      "switches": 3,
+      "cases": [
+        "native",
+        "translated",
+        "yawed",
+        "lost"
+      ],
+      "image_hashes": [
+        {
+          "p001208_left.png": "e76cd19c6d2b77f324fd493ea5dda97e8e5f902f49594f370b938088f07b7eb2",
+          "p001208_right.png": "e76cd19c6d2b77f324fd493ea5dda97e8e5f902f49594f370b938088f07b7eb2"
+        },
+        {
+          "p001217_left.png": "8f02c5768cc07fe2cdadd6192a4f900e6a5422f713019673137d93c4a1619740",
+          "p001217_right.png": "8f02c5768cc07fe2cdadd6192a4f900e6a5422f713019673137d93c4a1619740"
+        },
+        {
+          "p001227_left.png": "f010910bc583ac97035e1cb7940126ef48a428d6739e80950a1c36f585a0861b",
+          "p001227_right.png": "f010910bc583ac97035e1cb7940126ef48a428d6739e80950a1c36f585a0861b"
+        },
+        {
+          "p001238_left.png": "dac2526a07d1cc7a2c9e7eef920ec4e5eb56347b9edc843a9c9073aa5c3d409b",
+          "p001238_right.png": "dac2526a07d1cc7a2c9e7eef920ec4e5eb56347b9edc843a9c9073aa5c3d409b"
+        }
+      ],
+      "rollback_checks": 9785,
+      "mask_counts": {
+        "left": 22,
+        "right": 25
+      }
+    }
+  ],
+  "proof_image": "vr\\proof\\weapon-complete-gun-controls.png",
+  "proof_image_sha256": "b1ba2a7fe76ed7fc7670f7b0048a6765741f771f8064ac05e7d291cfc7f5740c",
+  "source_saves_unchanged": true,
+  "preferences_unchanged": true,
+  "remaining_game_pids": [],
+  "limits": [
+    "Desktop synthetic pose controls, not physical acceptance.",
+    "Gun-only mask and native-pose integrity, not grip/scale acceptance.",
+    "No firing, NPC/SP override, special-animation or hardware claim."
+  ]
+}

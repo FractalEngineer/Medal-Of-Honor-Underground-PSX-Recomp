@@ -1,0 +1,794 @@
+{
+  "schema": 1,
+  "date": "2026-10-28",
+  "kind": "A7 native SP/MP pause menu port and A1 exit classification",
+  "starting_revision": "ee848cd",
+  "source_state": "working tree",
+  "physical_acceptance": false,
+  "framework_pin": "555e1eabccc59b9b6ff0d9fca48aca783513dc86",
+  "source_hashes": {
+    "vr/underground/vr_diagnostic.c": "5e80a374bde499a5af4bc6f9c5176e9dc6d719af10b66da34cfbe497c395e4ea",
+    "vr/underground/menu_surface.h": "6f072d5c6eb1fcbd2a97b9f8d4625f0aef62bf668e0afd86609fe8f9ab6561ee",
+    "vr/tests/test_menu_surface.c": "6acfaef2fcaa77aa49d3a334096290fd2aa96d381be6e2a2f85e5d5e557fd2fc",
+    "vr/tools/probe_pause_menu.py": "ece1dcd9220dba6cfee6eee1c6378170b675f216ecfee2342f3e3c58789b55d3",
+    "game.toml": "9669410368d7c410916d1ddf21b7da230a7fddcb77ab6b5ae781fb0c93856c9f"
+  },
+  "native_pause": {
+    "sp": {
+      "word": "0x800A70F0",
+      "writer": "0x8006EA0C"
+    },
+    "mp": {
+      "word": "0x800A0A84",
+      "writer": "0x80064AC4"
+    }
+  },
+  "controls": [
+    {
+      "name": "pause-port-sp-v2-20261028",
+      "mode": "sp",
+      "null_hmd": false,
+      "complete": true,
+      "control_passed": true,
+      "binary_sha256": "a7349425ec8b53baeba5d9ce40e36daccbf3a83b5f7522438b22f0dcb98dc62d",
+      "exit_code": 0,
+      "exit_code_scope": "game",
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "load_while_paused_passed": null,
+      "cycles": [
+        {
+          "paused_flag": 1,
+          "menu_pad_right": {
+            "buttons": "0xFFDF",
+            "connected": true,
+            "analog": true,
+            "type": 1,
+            "sticks": [
+              128,
+              128,
+              128,
+              128
+            ],
+            "negcon": [
+              0,
+              0,
+              0
+            ],
+            "mode_locked": false
+          },
+          "menu_pad_left": {
+            "buttons": "0xFF7F",
+            "connected": true,
+            "analog": true,
+            "type": 1,
+            "sticks": [
+              128,
+              128,
+              128,
+              128
+            ],
+            "negcon": [
+              0,
+              0,
+              0
+            ],
+            "mode_locked": false
+          },
+          "focus_lost_pad": {
+            "buttons": "0xFFFF",
+            "connected": true,
+            "analog": true,
+            "type": 1,
+            "sticks": [
+              128,
+              128,
+              128,
+              128
+            ],
+            "negcon": [
+              0,
+              0,
+              0
+            ],
+            "mode_locked": false
+          },
+          "paused_pairs_unchanged": true,
+          "resumed_pairs": 52,
+          "verify_checks": 106,
+          "verify_mismatch": 0
+        },
+        {
+          "paused_flag": 1,
+          "menu_pad_right": {
+            "buttons": "0xFFDF",
+            "connected": true,
+            "analog": true,
+            "type": 1,
+            "sticks": [
+              128,
+              128,
+              128,
+              128
+            ],
+            "negcon": [
+              0,
+              0,
+              0
+            ],
+            "mode_locked": false
+          },
+          "menu_pad_left": {
+            "buttons": "0xFF7F",
+            "connected": true,
+            "analog": true,
+            "type": 1,
+            "sticks": [
+              128,
+              128,
+              128,
+              128
+            ],
+            "negcon": [
+              0,
+              0,
+              0
+            ],
+            "mode_locked": false
+          },
+          "focus_lost_pad": {
+            "buttons": "0xFFFF",
+            "connected": true,
+            "analog": true,
+            "type": 1,
+            "sticks": [
+              128,
+              128,
+              128,
+              128
+            ],
+            "negcon": [
+              0,
+              0,
+              0
+            ],
+            "mode_locked": false
+          },
+          "paused_pairs_unchanged": true,
+          "resumed_pairs": 71,
+          "verify_checks": 142,
+          "verify_mismatch": 0
+        }
+      ],
+      "raw_files": {
+        "analysis/vr-baseline/pause-port-sp-v2-20261028/gameplay.png": "65741f0cd49d646d1619f91d4584d3d3440c7e7c4726c8f997640ea8e9a7244b",
+        "analysis/vr-baseline/pause-port-sp-v2-20261028/paused-0.png": "831e86c61ce5c4179e1baf96b70e6c6aa1f92380f8e6b16a99f919c24e0d5422",
+        "analysis/vr-baseline/pause-port-sp-v2-20261028/paused-1.png": "831e86c61ce5c4179e1baf96b70e6c6aa1f92380f8e6b16a99f919c24e0d5422",
+        "analysis/vr-baseline/pause-port-sp-v2-20261028/paused-right-0.png": "da13f4e68bbc6040ae6d28c65d61124b7ef118b8cc505c79070165fa100b0598",
+        "analysis/vr-baseline/pause-port-sp-v2-20261028/paused-right-1.png": "da13f4e68bbc6040ae6d28c65d61124b7ef118b8cc505c79070165fa100b0598",
+        "analysis/vr-baseline/pause-port-sp-v2-20261028/psx_freeze_heartbeat.json": "5db13d2240a5b5140b853bc1c9d49fa93b12cb3eb1f2bb5315827ad933681563",
+        "analysis/vr-baseline/pause-port-sp-v2-20261028/psx_last_run_report.json": "324a179f8b11e5140cba46cf44a2c118a7157f950f9bb9b5f2eaac7e33ceac94",
+        "analysis/vr-baseline/pause-port-sp-v2-20261028/receipt.json": "c708ee5df41df4261eb04ab50a3d9802340ac56b213ff57b651cb5f0cf079ba2",
+        "analysis/vr-baseline/pause-port-sp-v2-20261028/resumed-0.png": "65741f0cd49d646d1619f91d4584d3d3440c7e7c4726c8f997640ea8e9a7244b",
+        "analysis/vr-baseline/pause-port-sp-v2-20261028/resumed-1.png": "65741f0cd49d646d1619f91d4584d3d3440c7e7c4726c8f997640ea8e9a7244b",
+        "analysis/vr-baseline/pause-port-sp-v2-20261028/stderr.log": "cea86c384f453ff3025fb08a833dd70a672f08d7496edf0d74fc8efecb044148",
+        "analysis/vr-baseline/pause-port-sp-v2-20261028/stdout.log": "560ad9182f555d146c6245d415f7372c956bb991d12481d96d5af404af351b30"
+      }
+    },
+    {
+      "name": "pause-port-mp-v2-20261028",
+      "mode": "mp",
+      "null_hmd": false,
+      "complete": true,
+      "control_passed": true,
+      "binary_sha256": "a7349425ec8b53baeba5d9ce40e36daccbf3a83b5f7522438b22f0dcb98dc62d",
+      "exit_code": 0,
+      "exit_code_scope": "game",
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "load_while_paused_passed": null,
+      "cycles": [
+        {
+          "paused_flag": 1,
+          "menu_pad_right": {
+            "buttons": "0xFFDF",
+            "connected": true,
+            "analog": true,
+            "type": 1,
+            "sticks": [
+              128,
+              128,
+              128,
+              128
+            ],
+            "negcon": [
+              0,
+              0,
+              0
+            ],
+            "mode_locked": false
+          },
+          "menu_pad_left": {
+            "buttons": "0xFF7F",
+            "connected": true,
+            "analog": true,
+            "type": 1,
+            "sticks": [
+              128,
+              128,
+              128,
+              128
+            ],
+            "negcon": [
+              0,
+              0,
+              0
+            ],
+            "mode_locked": false
+          },
+          "focus_lost_pad": {
+            "buttons": "0xFFFF",
+            "connected": true,
+            "analog": true,
+            "type": 1,
+            "sticks": [
+              128,
+              128,
+              128,
+              128
+            ],
+            "negcon": [
+              0,
+              0,
+              0
+            ],
+            "mode_locked": false
+          },
+          "paused_pairs_unchanged": true,
+          "resumed_pairs": 39,
+          "verify_checks": 78,
+          "verify_mismatch": 0
+        },
+        {
+          "paused_flag": 1,
+          "menu_pad_right": {
+            "buttons": "0xFFDF",
+            "connected": true,
+            "analog": true,
+            "type": 1,
+            "sticks": [
+              128,
+              128,
+              128,
+              128
+            ],
+            "negcon": [
+              0,
+              0,
+              0
+            ],
+            "mode_locked": false
+          },
+          "menu_pad_left": {
+            "buttons": "0xFF7F",
+            "connected": true,
+            "analog": true,
+            "type": 1,
+            "sticks": [
+              128,
+              128,
+              128,
+              128
+            ],
+            "negcon": [
+              0,
+              0,
+              0
+            ],
+            "mode_locked": false
+          },
+          "focus_lost_pad": {
+            "buttons": "0xFFFF",
+            "connected": true,
+            "analog": true,
+            "type": 1,
+            "sticks": [
+              128,
+              128,
+              128,
+              128
+            ],
+            "negcon": [
+              0,
+              0,
+              0
+            ],
+            "mode_locked": false
+          },
+          "paused_pairs_unchanged": true,
+          "resumed_pairs": 53,
+          "verify_checks": 106,
+          "verify_mismatch": 0
+        }
+      ],
+      "raw_files": {
+        "analysis/vr-baseline/pause-port-mp-v2-20261028/gameplay.png": "56e03c778568b618ffffc88b2183282aa5d401edc208b9c54c4a3a5814801517",
+        "analysis/vr-baseline/pause-port-mp-v2-20261028/paused-0.png": "51619f69c322007e62b941a87c1d53b6252262101da7211c1d29bfc26f5abb32",
+        "analysis/vr-baseline/pause-port-mp-v2-20261028/paused-1.png": "9d1ca86685ddf34bc8ab6481f3d212db2061acb90bfb962bc718d543f403476e",
+        "analysis/vr-baseline/pause-port-mp-v2-20261028/paused-right-0.png": "f04956ab10f0a97004763835afe6ddbfe5247a21e91d49f8b136c221cf8423c8",
+        "analysis/vr-baseline/pause-port-mp-v2-20261028/paused-right-1.png": "ca819151c8481f5f878558527ea98c8f5fbcc43393c935361529f409c2998dd0",
+        "analysis/vr-baseline/pause-port-mp-v2-20261028/psx_freeze_heartbeat.json": "467889e109a937673187538d207478b6e972f90041cc8273c2a3a7f0d56d827e",
+        "analysis/vr-baseline/pause-port-mp-v2-20261028/psx_last_run_report.json": "80edff7249a6e14f43d03deda7f9920803f44c6a7745f74db6a904a4b7a6ea67",
+        "analysis/vr-baseline/pause-port-mp-v2-20261028/receipt.json": "2c76d0c13b2812cda1d3a6b96ced2145eb8aa102271b1a1f1f05dd638846f48c",
+        "analysis/vr-baseline/pause-port-mp-v2-20261028/resumed-0.png": "3a9a5fc146def45452996c79ccc1af7f25ea8edfddefea73488331c9ded6a721",
+        "analysis/vr-baseline/pause-port-mp-v2-20261028/resumed-1.png": "90f8156321db6bd2b2c411196fdaa0f06934bd6468e0b497c2da7bdee58a9052",
+        "analysis/vr-baseline/pause-port-mp-v2-20261028/stderr.log": "7a9e10d548dfafada0ad63240e92700f63112986377794f8283ae97754989b22",
+        "analysis/vr-baseline/pause-port-mp-v2-20261028/stdout.log": "280b7f041aee94ea7df9ed90da486b984ff89aa4edf0b3c1682ed0bfd1570875"
+      }
+    },
+    {
+      "name": "pause-port-sp-final-20261028",
+      "mode": "sp",
+      "null_hmd": true,
+      "complete": true,
+      "control_passed": true,
+      "binary_sha256": "a7349425ec8b53baeba5d9ce40e36daccbf3a83b5f7522438b22f0dcb98dc62d",
+      "exit_code": 0,
+      "exit_code_scope": "launcher",
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "load_while_paused_passed": true,
+      "cycles": [
+        {
+          "paused_flag": 1,
+          "menu_pad_right": {
+            "buttons": "0xFFDF",
+            "connected": true,
+            "analog": true,
+            "type": 1,
+            "sticks": [
+              128,
+              128,
+              128,
+              128
+            ],
+            "negcon": [
+              0,
+              0,
+              0
+            ],
+            "mode_locked": false
+          },
+          "menu_pad_left": {
+            "buttons": "0xFF7F",
+            "connected": true,
+            "analog": true,
+            "type": 1,
+            "sticks": [
+              128,
+              128,
+              128,
+              128
+            ],
+            "negcon": [
+              0,
+              0,
+              0
+            ],
+            "mode_locked": false
+          },
+          "focus_lost_pad": {
+            "buttons": "0xFFFF",
+            "connected": true,
+            "analog": true,
+            "type": 1,
+            "sticks": [
+              128,
+              128,
+              128,
+              128
+            ],
+            "negcon": [
+              0,
+              0,
+              0
+            ],
+            "mode_locked": false
+          },
+          "paused_pairs_unchanged": true,
+          "resumed_pairs": 85,
+          "verify_checks": 170,
+          "verify_mismatch": 0,
+          "xr": {
+            "native_submitted": [
+              26,
+              73,
+              77
+            ],
+            "submitted_source": [
+              2,
+              2,
+              1
+            ],
+            "submitted_layer": [
+              2,
+              2,
+              1
+            ],
+            "failures": [
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "paused_flag": 1,
+          "menu_pad_right": {
+            "buttons": "0xFFDF",
+            "connected": true,
+            "analog": true,
+            "type": 1,
+            "sticks": [
+              128,
+              128,
+              128,
+              128
+            ],
+            "negcon": [
+              0,
+              0,
+              0
+            ],
+            "mode_locked": false
+          },
+          "menu_pad_left": {
+            "buttons": "0xFF7F",
+            "connected": true,
+            "analog": true,
+            "type": 1,
+            "sticks": [
+              128,
+              128,
+              128,
+              128
+            ],
+            "negcon": [
+              0,
+              0,
+              0
+            ],
+            "mode_locked": false
+          },
+          "focus_lost_pad": {
+            "buttons": "0xFFFF",
+            "connected": true,
+            "analog": true,
+            "type": 1,
+            "sticks": [
+              128,
+              128,
+              128,
+              128
+            ],
+            "negcon": [
+              0,
+              0,
+              0
+            ],
+            "mode_locked": false
+          },
+          "paused_pairs_unchanged": true,
+          "resumed_pairs": 104,
+          "verify_checks": 208,
+          "verify_mismatch": 0,
+          "xr": {
+            "native_submitted": [
+              100,
+              155,
+              167
+            ],
+            "submitted_source": [
+              2,
+              2,
+              1
+            ],
+            "submitted_layer": [
+              2,
+              2,
+              1
+            ],
+            "failures": [
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      ],
+      "raw_files": {
+        "analysis/vr-baseline/pause-port-sp-final-20261028/gameplay.png": "7bd67bbb5293059d51b0bfe8b058bfa78a05011880d8757526849ece430d6cd8",
+        "analysis/vr-baseline/pause-port-sp-final-20261028/openxr-smoke.json": "2226aec9bd38115e71342e5e759d748efdedb2802de87820d392d78329ef278d",
+        "analysis/vr-baseline/pause-port-sp-final-20261028/paused-0.png": "a67a3c03ad4201a7d2cd71ecf209c5e373cf1095b4d4712e6c445342ee5c5acd",
+        "analysis/vr-baseline/pause-port-sp-final-20261028/paused-1.png": "3f064e01b219c8ca3fba47822622dc37fa8b8aff8a3b3843401a097f5cb20b68",
+        "analysis/vr-baseline/pause-port-sp-final-20261028/paused-right-0.png": "8223008c7cfcf06400fc3b142366b926b330a7e5b19d01eca89e80c309c5b86a",
+        "analysis/vr-baseline/pause-port-sp-final-20261028/paused-right-1.png": "27d215f87be65611b60eea16e41d171c497b6fe65fe0b53ff1bc6a04331cf575",
+        "analysis/vr-baseline/pause-port-sp-final-20261028/receipt.json": "048261214d98705e81279450c8fff9ff96a5d7b9e9617ceb59b0d218962f1047",
+        "analysis/vr-baseline/pause-port-sp-final-20261028/resumed-0.png": "7bd67bbb5293059d51b0bfe8b058bfa78a05011880d8757526849ece430d6cd8",
+        "analysis/vr-baseline/pause-port-sp-final-20261028/resumed-1.png": "7bd67bbb5293059d51b0bfe8b058bfa78a05011880d8757526849ece430d6cd8",
+        "analysis/vr-baseline/pause-port-sp-final-20261028/startup.json": "d0c5a11fc63dec20840ff670d331daea7389c6f2aad420d38383769f56a1a5b6",
+        "analysis/vr-baseline/pause-port-sp-final-20261028/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "analysis/vr-baseline/pause-port-sp-final-20261028/stdout.log": "198451a11cf3638a395d15756d77e42868a95a5e4d887f27379ab895137711b3",
+        "analysis/vr-baseline/pause-port-sp-final-20261028/vr-launch.stderr.log": "5c50204b82e1c423bcf8c532270e281b3673092cfcd1b5691c1befea165f150d",
+        "analysis/vr-baseline/pause-port-sp-final-20261028/vr-launch.stdout.log": "9fcd7fd97aca4c27ca101e2656515eaedf13b0239a3bb2a93ba2bf06470a08c2"
+      }
+    },
+    {
+      "name": "pause-port-mp-final-20261028",
+      "mode": "mp",
+      "null_hmd": true,
+      "complete": true,
+      "control_passed": true,
+      "binary_sha256": "a7349425ec8b53baeba5d9ce40e36daccbf3a83b5f7522438b22f0dcb98dc62d",
+      "exit_code": 0,
+      "exit_code_scope": "launcher",
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "load_while_paused_passed": true,
+      "cycles": [
+        {
+          "paused_flag": 1,
+          "menu_pad_right": {
+            "buttons": "0xFFDF",
+            "connected": true,
+            "analog": true,
+            "type": 1,
+            "sticks": [
+              128,
+              128,
+              128,
+              128
+            ],
+            "negcon": [
+              0,
+              0,
+              0
+            ],
+            "mode_locked": false
+          },
+          "menu_pad_left": {
+            "buttons": "0xFF7F",
+            "connected": true,
+            "analog": true,
+            "type": 1,
+            "sticks": [
+              128,
+              128,
+              128,
+              128
+            ],
+            "negcon": [
+              0,
+              0,
+              0
+            ],
+            "mode_locked": false
+          },
+          "focus_lost_pad": {
+            "buttons": "0xFFFF",
+            "connected": true,
+            "analog": true,
+            "type": 1,
+            "sticks": [
+              128,
+              128,
+              128,
+              128
+            ],
+            "negcon": [
+              0,
+              0,
+              0
+            ],
+            "mode_locked": false
+          },
+          "paused_pairs_unchanged": true,
+          "resumed_pairs": 79,
+          "verify_checks": 158,
+          "verify_mismatch": 0,
+          "xr": {
+            "native_submitted": [
+              28,
+              74,
+              81
+            ],
+            "submitted_source": [
+              2,
+              2,
+              1
+            ],
+            "submitted_layer": [
+              2,
+              2,
+              1
+            ],
+            "failures": [
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "paused_flag": 1,
+          "menu_pad_right": {
+            "buttons": "0xFFDF",
+            "connected": true,
+            "analog": true,
+            "type": 1,
+            "sticks": [
+              128,
+              128,
+              128,
+              128
+            ],
+            "negcon": [
+              0,
+              0,
+              0
+            ],
+            "mode_locked": false
+          },
+          "menu_pad_left": {
+            "buttons": "0xFF7F",
+            "connected": true,
+            "analog": true,
+            "type": 1,
+            "sticks": [
+              128,
+              128,
+              128,
+              128
+            ],
+            "negcon": [
+              0,
+              0,
+              0
+            ],
+            "mode_locked": false
+          },
+          "focus_lost_pad": {
+            "buttons": "0xFFFF",
+            "connected": true,
+            "analog": true,
+            "type": 1,
+            "sticks": [
+              128,
+              128,
+              128,
+              128
+            ],
+            "negcon": [
+              0,
+              0,
+              0
+            ],
+            "mode_locked": false
+          },
+          "paused_pairs_unchanged": true,
+          "resumed_pairs": 94,
+          "verify_checks": 188,
+          "verify_mismatch": 0,
+          "xr": {
+            "native_submitted": [
+              101,
+              154,
+              165
+            ],
+            "submitted_source": [
+              2,
+              2,
+              1
+            ],
+            "submitted_layer": [
+              2,
+              2,
+              1
+            ],
+            "failures": [
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      ],
+      "raw_files": {
+        "analysis/vr-baseline/pause-port-mp-final-20261028/gameplay.png": "bfa7316e125e3f73cdabe3d30b4f326a1f934538a2a9a5ce3aed21e30529ccd9",
+        "analysis/vr-baseline/pause-port-mp-final-20261028/openxr-smoke.json": "7ed7a21b2834faf58a037a808ce55cadf2765c9a80212ad2abb8946aae9d272e",
+        "analysis/vr-baseline/pause-port-mp-final-20261028/paused-0.png": "dacb0e5c8a7d10ba18ae543c555102895a51264f3f11acc9d03b0dd513f08393",
+        "analysis/vr-baseline/pause-port-mp-final-20261028/paused-1.png": "7d71ecf8e7519950bc6619f5b593495a9cb45515a95e948747a8049ec8f8ac93",
+        "analysis/vr-baseline/pause-port-mp-final-20261028/paused-right-0.png": "e4b5222111baf601734af718f8640b03b312c82a7872d0467bb31091eff6b21a",
+        "analysis/vr-baseline/pause-port-mp-final-20261028/paused-right-1.png": "bf409221fb2aa1f7d3f39947e68743fd8bcc77d547b2bbd99f682601dba17b8c",
+        "analysis/vr-baseline/pause-port-mp-final-20261028/receipt.json": "8537cde49ac5124752bc1177cc2d697de90b38a3b44ee779334c5ef77d056c65",
+        "analysis/vr-baseline/pause-port-mp-final-20261028/resumed-0.png": "55d701ab0496d5004ca50a490460cf7e59d529699c742666ace75be10f08f723",
+        "analysis/vr-baseline/pause-port-mp-final-20261028/resumed-1.png": "c239ce4ca386856b196b02b1e532ae61028a3e0c7427b75520a786fb86feeb86",
+        "analysis/vr-baseline/pause-port-mp-final-20261028/startup.json": "3d292d73c1333a3722fe2dad39c6a9bdff09b0eeea51de3f52001764386c25bd",
+        "analysis/vr-baseline/pause-port-mp-final-20261028/stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "analysis/vr-baseline/pause-port-mp-final-20261028/stdout.log": "a3abd0b3b36111e0ce2c6e3616650e8f1449f2dcd075925c5dec665fc950909e",
+        "analysis/vr-baseline/pause-port-mp-final-20261028/vr-launch.stderr.log": "ed14995c50b9bb1e6afe5010d16a8eead270e8540eb35c3ad45a414940cbb39e",
+        "analysis/vr-baseline/pause-port-mp-final-20261028/vr-launch.stdout.log": "37ee1079f81d7ffb3b6daf3a97551e6efac7efa6eede520ddd7ae0aac520e8e8"
+      }
+    }
+  ],
+  "mp_fire_regression": {
+    "path": "analysis/vr-baseline/pause-port-mp-fire-20261028/receipt.json",
+    "sha256": "8869ca2f3791371213327f9b01fb17d5b82d51b4ba105bb87cadd3efe6b6630f",
+    "exit_code": 0,
+    "complete": true,
+    "source_saves_unchanged": true,
+    "preferences_unchanged": true
+  },
+  "physical_exit_reports": [
+    {
+      "path": "analysis/vr-baseline/headset-batch-20261028/mp1/headset/psx_last_run_report.json",
+      "sha256": "aa09319266997381b6623e1ac14b9a0a909e66804bfb3a1570ded006c31f6146",
+      "reason": "atexit",
+      "exit_origin": "sdl_window_close"
+    },
+    {
+      "path": "analysis/vr-baseline/headset-batch-20261028/mp2/headset/psx_last_run_report.json",
+      "sha256": "6249f32425f4437715af87577f194953342c791cb876fdec51462757f5d0437a",
+      "reason": "atexit",
+      "exit_origin": "sdl_window_close"
+    },
+    {
+      "path": "analysis/vr-baseline/headset-batch-20261028/mp3/headset/psx_last_run_report.json",
+      "sha256": "dab46c21df224f1b81344ef591b1daf319ad0e9e5e27dfb5592abe62530767be",
+      "reason": "atexit",
+      "exit_origin": "sdl_window_close"
+    },
+    {
+      "path": "analysis/vr-baseline/headset-batch-20261028/mp4/headset/psx_last_run_report.json",
+      "sha256": "41491f016c4a827291da2110385581453a824b3132bc8fd8ba03ac52dbee3daa",
+      "reason": "atexit",
+      "exit_origin": "sdl_window_close"
+    },
+    {
+      "path": "analysis/vr-baseline/headset-batch-20261028/sp/headset/psx_last_run_report.json",
+      "sha256": "0327a86c576623e499131c3d9642bc51e919a06b30c93f047d283cb320186cd4",
+      "reason": "atexit",
+      "exit_origin": "sdl_window_close"
+    },
+    {
+      "path": "analysis/vr-baseline/headset-batch-20261028/sp/headset-laser/psx_last_run_report.json",
+      "sha256": "e0ee662451d9bd3e3f0e36212374de98cc92b837cfe29d233848373bccabccbc",
+      "reason": "atexit",
+      "exit_origin": "sdl_window_close"
+    }
+  ],
+  "limits": [
+    "No operator headset acceptance",
+    "No-XR exit codes are child codes; null-HMD exit codes are launcher codes only",
+    "Existing production physical close/teardown nonzero exit remains S5",
+    "No new weapon calibration or laser/HUD changes"
+  ],
+  "tooling_note": "Final tool adds occupied-port refusal and propagates incomplete status; runtime controls predate only those harness safety checks",
+  "production_binary": {
+    "path": "build-release/Medal_of_Honor_Underground_Recompiled.exe",
+    "sha256": "2412bdf8fa266a541341fbf08b1f0a97e3d816dd0879825b6997976baa97a8c2",
+    "PSX_DEBUG_TOOLS": "OFF"
+  },
+  "production_smoke": {
+    "path": "analysis/vr-baseline/pause-port-production-20261028/sp/desktop/receipt.json",
+    "sha256": "e1a773ecdffffbc1a2b7a3c55bd7404ff1a0fcdc6ad40641e03eff265875c2e2",
+    "exit_code": 0,
+    "transport_passed": true,
+    "native_calls": 1759395,
+    "final_stereo": [
+      "210",
+      "210",
+      "1"
+    ]
+  }
+}

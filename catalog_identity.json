@@ -13,17 +13,17 @@
     "players": 2
   },
   "rom_identity": {
-    "cue_name": "MOHU (USA).cue",
-    "bin_name": "MOHU (USA).bin",
+    "cue_name": "Medal of Honor - Underground (USA).cue",
+    "bin_name": "Medal of Honor - Underground (USA).bin",
     "track_counts": [
       1
     ],
     "require_cue": true,
     "data_track": {
       "size": 748001856,
-      "md5": "8a2e3361e8272ce09e9a4ea7bd0403ad",
-      "sha1": "8f5a23bb21e626b4625cfd923aa4e2faec57165f",
-      "crc32": "91bd1816"
+      "md5": "9b5f6e9ed0ced26fda1bfb7cdd2b7a01",
+      "sha1": "3d4ed9b1c7fb99acd96dd9c6ce2749a40cb8a1c2",
+      "crc32": "19a9614b"
     },
     "disc_fp": "5abe13ac21c40bd37cccbad669472f507fae740c920b971817a4eab6a49de417"
   },

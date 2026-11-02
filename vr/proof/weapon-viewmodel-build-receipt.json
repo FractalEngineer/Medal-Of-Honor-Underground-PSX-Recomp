@@ -1,0 +1,53 @@
+{
+  "date": "2026-10-25",
+  "build": "build-release",
+  "build_type": "Release",
+  "debug_tools": false,
+  "opengl": true,
+  "openxr_compiled": true,
+  "pgxp": true,
+  "production_weapon_tracking_default": false,
+  "release_executable_sha256": "87e3c841e27ebfc436dcfdd7710f9a3091e8061d1880792498485de23edb380e",
+  "diagnostic_executable_sha256": "083ac2dde96761b2ab4143b9f6921b0901d553e05261f6a031f58f1486d690be",
+  "python_tests_passed": 18,
+  "strict_c_fixtures": [
+    "frustum",
+    "hud_packets",
+    "input",
+    "menu_surface",
+    "weapon",
+    "raycast"
+  ],
+  "strict_diagnostic_syntax": "passed",
+  "flat_startup": {
+    "passed": true,
+    "inherited_weapon_and_stereo_flags": true,
+    "weapon_pose": 0,
+    "flat_probe": 0,
+    "stereo_proof": 0,
+    "openxr": 0,
+    "log": "analysis/vr-baseline/weapon-mesh-mapping/fp-flat-release-20261025/stdout.log",
+    "intentional_smoke_termination": true,
+    "cleanup": "CIM parent query was denied; observed owned game PID 6720 was closed directly afterward. Final process inventory is empty."
+  },
+  "source_saves_unchanged": true,
+  "preferences_unchanged": true,
+  "steamvr_settings_sha256": "bc4b95d242547c552e4e6f672ad3c3284d357cd37249069fd643522473323f10",
+  "remaining_game_pids": [],
+  "game_config_generated_framework_ui_unchanged": true,
+  "documentation_links": "passed",
+  "source_hashes": {
+    "RunFlat.bat": "7a62ddd369f69a271bd5bb1e700bb9d3bfac8ad617a42ada37526842729636c9",
+    "vr/underground/engine_map.c": "00101f9888364312faf926266b31a8a1942731af4dcf5bca3ec46bbd883c9073",
+    "vr/underground/vr_diagnostic.c": "1b8b3648e3b30254eb4f1f27bbb481e81a1108be976d5ab5cec3671c1b66287d",
+    "vr/underground/weapon.c": "478062803184ae51e31f5baa1be6d47ec3765d8e08d43cc223884dd5a76f5023",
+    "vr/underground/weapon.h": "52e0c91c5f42dcc698b03635cf3667e7d44c3f21b61885d2caa761415de8a2c9",
+    "vr/tools/inspect_weapon_sets.py": "0f57469c3ce10c069f575fd8d64b4fa50266523eceb727cead831ce12ce36239",
+    "vr/tools/summarize_weapon_viewmodels.py": "01891c7a140d4432c6a2c1654c910b68ec2cc8fc48617e7f60defae810f6339e"
+  },
+  "uncommitted": true,
+  "limits": [
+    "Physical headset, calibrated grip/pivot/scale, transformed MP stereo and shot alignment remain open.",
+    "The final debug-off smoke validates flat startup, not interactive gameplay or new OpenXR submissions."
+  ]
+}

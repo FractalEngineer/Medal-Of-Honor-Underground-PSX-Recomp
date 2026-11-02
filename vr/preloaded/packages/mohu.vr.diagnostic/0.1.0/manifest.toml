@@ -1,0 +1,22 @@
+format_version = 7
+id = "mohu.vr.diagnostic"
+version = "0.1.0"
+name = "Medal of Honor Underground VR Diagnostics"
+author = "Medal-Of-Honor-Underground-PSX-Recomp"
+description = "Hash-guarded, read-only diagnostic hooks for the Underground VR port."
+license = "MIT"
+resolver = "declarative"
+
+[[target]]
+game_id = "SLUS-01270"
+
+[[feature]]
+id = "diagnostic"
+name = "VR diagnostic hooks"
+description = "Logs confirmed entry points without changing guest state."
+channel = "experimental"
+default_enabled = true
+
+[[plugin]]
+feature = "diagnostic"
+id = "mohu.vr.diagnostic"

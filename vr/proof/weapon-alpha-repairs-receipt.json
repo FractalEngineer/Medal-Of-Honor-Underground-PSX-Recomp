@@ -1,0 +1,3082 @@
+{
+  "schema": 1,
+  "date": "2026-10-28",
+  "kind": "A2 authored weapon/default and StG mask repairs; A4 exact SP/MP surfaces and shared firing ray",
+  "starting_revision": "8d423155d338761797d2e6973c0ca7b961dd1e46",
+  "source_state": "working tree",
+  "physical_acceptance": false,
+  "source_hashes": {
+    "vr/underground/weapon.c": "f90955c75e0558cea521e3ba2e65d7eb41b43c73d846ad32b0474c5227bdd124",
+    "vr/underground/weapon.h": "bfdcc7e04afcd8ce526fce5e66bd1f6467f43880c9dcb26d08b04144b424f9d6",
+    "vr/underground/raycast.h": "c84717c54dac3967ea2d91d7b05a8c47605851ca1b65adab2c0547ad9b03faa5",
+    "vr/underground/vr_diagnostic.c": "b2bb9dd1e9bc436e02c37e6f2a1e8b0649a618827b8cb63cb5d7f65f638fa342",
+    "vr/tools/weapon_defaults.py": "d5d84a959bc78566b8068afd05174db331f948a60b23eb3792aeba533b020b1d",
+    "vr/tools/probe_laser_surfaces.py": "1520fcc04eac5503a592d7886bff3f7a1304575ead5aaa24b50ffcf83f6b0b3e",
+    "vr/tools/probe_weapon_profiles.py": "d792a20fdab98ba4778ffe4d5d0c4917e5884ef1642bbde54edeab63196d8dcc",
+    "vr/tools/probe_weapon_aim.py": "16aefbc4a15e1bc51fe00d9ccf054ff61aa9cdc9a383dc962973ecbe52baafea",
+    "vr/tools/check_weapon_meshes.py": "d81633e021d540d6f3dd015dbfa1d1fba9dad60b9ebf90d3ef42c9b6d10666a5",
+    "vr/tools/probe_rendered_muzzle.py": "095b25914151440b95fa520a256a32df17a0e2337b4b11f00613340947324d82",
+    "vr/tests/test_calibrated_weapon.c": "f005f0255f25a35942e3391240a36a39ac7cc0094b2fa9ff9d7653e345700ba5",
+    "vr/tests/test_raycast.c": "201b6e26c0ec258420f2f9dc9c7b0e1e1b1dbc968b7907cec72f1813411afddb",
+    "vr/tests/test_laser_surfaces.py": "b0bf969105e7b69b6121dd028e754339d54df647d521ac736580dc8d3ee5a0ab",
+    "vr/tests/test_weapon.c": "5817c40e977acd4d3760ce4bf8d19fa7995a54b5471c4ca843d5e1cba0f2acb8",
+    "vr/tests/test_rendered_muzzle_probe.py": "a1f2d333cbfc06bdabc13b7d55587981de74729c438709f8798e9ea3d1e61c1d"
+  },
+  "calibration_defaults": {
+    "0": {
+      "grip_pivot": [
+        76.555555555556,
+        100.777777777778,
+        287.888888888889
+      ],
+      "muzzle": [
+        81.8,
+        110.6,
+        447.6
+      ],
+      "right": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "up": [
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "forward": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "model_units_per_metre": 850.0,
+      "reference_length_m": 0.216,
+      "forward_span_units": 164.265769717169
+    },
+    "1": {
+      "grip_pivot": [
+        70.88,
+        131.24,
+        280.6
+      ],
+      "muzzle": [
+        85.6,
+        93.8,
+        555.6
+      ],
+      "right": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "up": [
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "forward": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "model_units_per_metre": 850.0,
+      "reference_length_m": 0.833,
+      "forward_span_units": 470.609520288343
+    },
+    "4": {
+      "grip_pivot": [
+        83.888888888889,
+        86.814814814815,
+        149.259259259259
+      ],
+      "muzzle": [
+        90.4,
+        59.6,
+        569.6
+      ],
+      "right": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "up": [
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "forward": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "model_units_per_metre": 850.0,
+      "reference_length_m": 1.0,
+      "forward_span_units": 716.80049272739
+    },
+    "5": {
+      "grip_pivot": [
+        71.03125,
+        114.875,
+        266.9375
+      ],
+      "muzzle": [
+        65.8,
+        90.8,
+        764.2
+      ],
+      "right": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "up": [
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "forward": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "model_units_per_metre": 850.0,
+      "reference_length_m": 1.11,
+      "forward_span_units": 723.766110491706
+    },
+    "8": {
+      "grip_pivot": [
+        74.214285714286,
+        109.214285714286,
+        287.785714285714
+      ],
+      "muzzle": [
+        84.2,
+        95.8,
+        440.4
+      ],
+      "right": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "up": [
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "forward": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "model_units_per_metre": 850.0,
+      "reference_length_m": 0.216,
+      "forward_span_units": 161.338059492327
+    },
+    "9": {
+      "grip_pivot": [
+        75.866666666667,
+        109.933333333333,
+        290.6
+      ],
+      "muzzle": [
+        71.0,
+        109.8,
+        492.8
+      ],
+      "right": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "up": [
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "forward": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "model_units_per_metre": 850.0,
+      "reference_length_m": 0.3,
+      "forward_span_units": 209.224345876678
+    },
+    "10": {
+      "grip_pivot": [
+        32.333333333333,
+        110.416666666667,
+        184.166666666667
+      ],
+      "muzzle": [
+        66.6,
+        14.4,
+        216.8
+      ],
+      "right": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "up": [
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "forward": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "model_units_per_metre": 414.569888540525,
+      "reference_length_m": 0.365,
+      "forward_span_units": 151.318009317292
+    },
+    "12": {
+      "grip_pivot": [
+        67.333333333333,
+        88.111111111111,
+        233.407407407407
+      ],
+      "muzzle": [
+        79.2,
+        97.2,
+        744.0
+      ],
+      "right": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "up": [
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "forward": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "model_units_per_metre": 850.0,
+      "reference_length_m": 1.107,
+      "forward_span_units": 636.782623823402
+    },
+    "13": {
+      "grip_pivot": [
+        130.565217391304,
+        99.086956521739,
+        272.739130434783
+      ],
+      "muzzle": [
+        135.8,
+        72.0,
+        543.4
+      ],
+      "right": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "up": [
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "forward": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "model_units_per_metre": 850.0,
+      "reference_length_m": 1.0,
+      "forward_span_units": 516.805308178657
+    },
+    "14": {
+      "grip_pivot": [
+        86.555555555556,
+        122.25,
+        246.777777777778
+      ],
+      "muzzle": [
+        92.0,
+        102.0,
+        400.0
+      ],
+      "right": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "up": [
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "forward": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "model_units_per_metre": 850.0,
+      "reference_length_m": 0.8,
+      "forward_span_units": 449.835119944576
+    },
+    "15": {
+      "grip_pivot": [
+        51.9,
+        113.45,
+        200.8
+      ],
+      "muzzle": [
+        39.6,
+        0.8,
+        202.4
+      ],
+      "right": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "up": [
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "forward": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "model_units_per_metre": 568.917001007464,
+      "reference_length_m": 0.3,
+      "forward_span_units": 170.675100302239
+    },
+    "16": {
+      "grip_pivot": [
+        77.484848484848,
+        110.939393939394,
+        324.969696969697
+      ],
+      "muzzle": [
+        115.6,
+        109.8,
+        508.2
+      ],
+      "right": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "up": [
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "forward": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "model_units_per_metre": 850.0,
+      "reference_length_m": 0.762,
+      "forward_span_units": 437.685058775527
+    },
+    "17": {
+      "grip_pivot": [
+        83.388888888889,
+        132.111111111111,
+        37.666666666667
+      ],
+      "muzzle": [
+        99.6,
+        63.2,
+        592.8
+      ],
+      "right": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "up": [
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "forward": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "model_units_per_metre": 850.0,
+      "reference_length_m": 0.94,
+      "forward_span_units": 637.164404516367
+    }
+  },
+  "reference": {
+    "revision": "d82a5d0024570d7477db38d3cea5dfc59dd22035",
+    "sources": [
+      "vr/psx_vr_stereo.c::vr_weapon_geometry_filter",
+      "vr/moh_vr_aim.c::moh_vr_weapon_transform",
+      "vr/moh_vr_weapons.h::moh_vr_weapon_face",
+      "vr/moh_vr_raycast.h::moh_vr_ray_tri"
+    ]
+  },
+  "framework_pin": "555e1eabccc59b9b6ff0d9fca48aca783513dc86",
+  "ui_pin": "7c635c6b366a6e0d5d3c913a7fce6ec04dd9f256",
+  "sdk_calibration": {
+    "path": "analysis/vr-baseline/alpha-sdk-defaults-20261028/captures.json",
+    "sha256": "5786afddcdc902f541512eb5bbd32471288023125a10e6ed7980ec96b129929f",
+    "binary_sha256": "5b5cbe6b5a5d3386037073469f38de3ab1a0ebd75912f165cb3a3ae33ff05224",
+    "unique_ids": [
+      0,
+      1,
+      4,
+      5,
+      8,
+      9,
+      10,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17
+    ],
+    "slot_rows": 16,
+    "units_per_metre": 238.80597014925374,
+    "independent_check": "Actual SDK identity rotation and 700mm forward grip; compare quantized RT/TR against current shipped defaults for every nonempty node",
+    "weapons": [
+      {
+        "id": 0,
+        "name": "P38 pistol",
+        "faces": 128,
+        "vertices": 96,
+        "masked_vertices": 142,
+        "rejected_mixed_hand_triangles": 0,
+        "validated_node_affines": 3,
+        "example_affine": [
+          "0000047F",
+          "00000000",
+          "0000047F",
+          "00000000",
+          "0000047F",
+          "FFFFFFEA",
+          "FFFFFFE4",
+          "00000056"
+        ],
+        "images": {
+          "p000077_left.png": "246484bf9e51db43b20108206a8b904c89fa5059fd6363ab4d9496b6ce59d576",
+          "p000077_right.png": "246484bf9e51db43b20108206a8b904c89fa5059fd6363ab4d9496b6ce59d576"
+        }
+      },
+      {
+        "id": 1,
+        "name": "MP40",
+        "faces": 193,
+        "vertices": 124,
+        "masked_vertices": 66,
+        "rejected_mixed_hand_triangles": 0,
+        "validated_node_affines": 14,
+        "example_affine": [
+          "0000047F",
+          "00000000",
+          "0000047F",
+          "00000000",
+          "0000047F",
+          "FFFFFFEC",
+          "FFFFFFDB",
+          "00000058"
+        ],
+        "images": {
+          "p000190_left.png": "9cfc219a03c100025c37b9731eb9ff58c07c3ed23e1d61e47045ddf9614f159d",
+          "p000190_right.png": "9cfc219a03c100025c37b9731eb9ff58c07c3ed23e1d61e47045ddf9614f159d"
+        }
+      },
+      {
+        "id": 17,
+        "name": "StG44",
+        "faces": 185,
+        "vertices": 143,
+        "masked_vertices": 91,
+        "rejected_mixed_hand_triangles": 15,
+        "validated_node_affines": 14,
+        "example_affine": [
+          "0000047F",
+          "00000000",
+          "0000047F",
+          "00000000",
+          "0000047F",
+          "FFFFFFE9",
+          "FFFFFFDB",
+          "0000009D"
+        ],
+        "images": {
+          "p000326_left.png": "93757740e2d9413643da0feb5b7e31bebedd3a041dc05eeae8528845e2b717cd",
+          "p000326_right.png": "93757740e2d9413643da0feb5b7e31bebedd3a041dc05eeae8528845e2b717cd"
+        }
+      },
+      {
+        "id": 10,
+        "name": "Stick grenade",
+        "faces": 140,
+        "vertices": 58,
+        "masked_vertices": 105,
+        "rejected_mixed_hand_triangles": 0,
+        "validated_node_affines": 14,
+        "example_affine": [
+          "00000937",
+          "00000000",
+          "00000937",
+          "00000000",
+          "00000937",
+          "FFFFFFED",
+          "FFFFFFC0",
+          "0000003D"
+        ],
+        "images": {
+          "p000465_left.png": "fcba170fdddeee10b584356e304a3bb49e2256521c9dcf4cd60064978ced8bbf",
+          "p000465_right.png": "fcba170fdddeee10b584356e304a3bb49e2256521c9dcf4cd60064978ced8bbf"
+        }
+      },
+      {
+        "id": 8,
+        "name": "Colt .45",
+        "faces": 115,
+        "vertices": 68,
+        "masked_vertices": 112,
+        "rejected_mixed_hand_triangles": 0,
+        "validated_node_affines": 3,
+        "example_affine": [
+          "0000047F",
+          "00000000",
+          "0000047F",
+          "00000000",
+          "0000047F",
+          "FFFFFFEB",
+          "FFFFFFE1",
+          "00000056"
+        ],
+        "images": {
+          "p000536_left.png": "ee1a1f1c62c94e0cab15e5baba006e3b9545bdf26009bbffe7c4143a4ac23b7d",
+          "p000536_right.png": "ee1a1f1c62c94e0cab15e5baba006e3b9545bdf26009bbffe7c4143a4ac23b7d"
+        }
+      },
+      {
+        "id": 16,
+        "name": "Sten",
+        "faces": 217,
+        "vertices": 166,
+        "masked_vertices": 73,
+        "rejected_mixed_hand_triangles": 0,
+        "validated_node_affines": 14,
+        "example_affine": [
+          "0000047F",
+          "00000000",
+          "0000047F",
+          "00000000",
+          "0000047F",
+          "FFFFFFEA",
+          "FFFFFFE1",
+          "0000004C"
+        ],
+        "images": {
+          "p000632_left.png": "33238359ff58626d2741eed251668215021580de87ac3a678294d721d1450566",
+          "p000632_right.png": "33238359ff58626d2741eed251668215021580de87ac3a678294d721d1450566"
+        }
+      },
+      {
+        "id": 4,
+        "name": "Shotgun",
+        "faces": 182,
+        "vertices": 137,
+        "masked_vertices": 62,
+        "rejected_mixed_hand_triangles": 0,
+        "validated_node_affines": 7,
+        "example_affine": [
+          "0000047F",
+          "00000000",
+          "0000047F",
+          "00000000",
+          "0000047F",
+          "FFFFFFE8",
+          "FFFFFFE8",
+          "0000007D"
+        ],
+        "images": {
+          "p000717_left.png": "c1b272cbfa3e25d07a445247bd3fc0e86980b47e633240da4719302c99c56c82",
+          "p000717_right.png": "c1b272cbfa3e25d07a445247bd3fc0e86980b47e633240da4719302c99c56c82"
+        }
+      },
+      {
+        "id": 15,
+        "name": "Petrol bomb",
+        "faces": 198,
+        "vertices": 99,
+        "masked_vertices": 97,
+        "rejected_mixed_hand_triangles": 0,
+        "validated_node_affines": 14,
+        "example_affine": [
+          "000006B7",
+          "00000000",
+          "000006B7",
+          "00000000",
+          "000006B7",
+          "FFFFFFEA",
+          "FFFFFFD0",
+          "00000053"
+        ],
+        "images": {
+          "p000856_left.png": "dc521edd6685601033b3ac0379d79e4768b594238d994b0f69488792f1d601d9",
+          "p000856_right.png": "dc521edd6685601033b3ac0379d79e4768b594238d994b0f69488792f1d601d9"
+        }
+      },
+      {
+        "id": 9,
+        "name": "Silenced pistol",
+        "faces": 94,
+        "vertices": 75,
+        "masked_vertices": 124,
+        "rejected_mixed_hand_triangles": 0,
+        "validated_node_affines": 3,
+        "example_affine": [
+          "0000047F",
+          "00000000",
+          "0000047F",
+          "00000000",
+          "0000047F",
+          "FFFFFFEB",
+          "FFFFFFE1",
+          "00000056"
+        ],
+        "images": {
+          "p000925_left.png": "74190f39466e17edc35fc41a17d7d66a1ffc82c299ba0ddf861585f031b7d8cb",
+          "p000925_right.png": "74190f39466e17edc35fc41a17d7d66a1ffc82c299ba0ddf861585f031b7d8cb"
+        }
+      },
+      {
+        "id": 14,
+        "name": "Crossbow",
+        "faces": 187,
+        "vertices": 178,
+        "masked_vertices": 61,
+        "rejected_mixed_hand_triangles": 0,
+        "validated_node_affines": 11,
+        "example_affine": [
+          "0000047F",
+          "00000000",
+          "0000047F",
+          "00000000",
+          "0000047F",
+          "FFFFFFE8",
+          "FFFFFFDE",
+          "00000062"
+        ],
+        "images": {
+          "p001029_left.png": "71a40d98ba46f56f40541da0d639d818ccd27d11d0e6a38ae79ceebb8fc7294b",
+          "p001029_right.png": "71a40d98ba46f56f40541da0d639d818ccd27d11d0e6a38ae79ceebb8fc7294b"
+        }
+      },
+      {
+        "id": 5,
+        "name": "Scoped rifle",
+        "faces": 199,
+        "vertices": 159,
+        "masked_vertices": 78,
+        "rejected_mixed_hand_triangles": 0,
+        "validated_node_affines": 11,
+        "example_affine": [
+          "0000047F",
+          "00000000",
+          "0000047F",
+          "00000000",
+          "0000047F",
+          "FFFFFFEC",
+          "FFFFFFE0",
+          "0000005C"
+        ],
+        "images": {
+          "p001124_left.png": "6b1175dc6cbcc82141f3f448ef15ebb5e24b09507f6a2f59adfd93ede787534d",
+          "p001124_right.png": "6b1175dc6cbcc82141f3f448ef15ebb5e24b09507f6a2f59adfd93ede787534d"
+        }
+      },
+      {
+        "id": 12,
+        "name": "M1 Garand",
+        "faces": 174,
+        "vertices": 136,
+        "masked_vertices": 67,
+        "rejected_mixed_hand_triangles": 0,
+        "validated_node_affines": 10,
+        "example_affine": [
+          "0000047F",
+          "00000000",
+          "0000047F",
+          "00000000",
+          "0000047F",
+          "FFFFFFED",
+          "FFFFFFE7",
+          "00000066"
+        ],
+        "images": {
+          "p001282_left.png": "682325e62bf1d1a6f0674bfb3abf6a02cbf46490537641f24b078c3b98c660b1",
+          "p001282_right.png": "682325e62bf1d1a6f0674bfb3abf6a02cbf46490537641f24b078c3b98c660b1"
+        }
+      },
+      {
+        "id": 13,
+        "name": "Panzerfaust",
+        "faces": 168,
+        "vertices": 116,
+        "masked_vertices": 87,
+        "rejected_mixed_hand_triangles": 0,
+        "validated_node_affines": 15,
+        "example_affine": [
+          "0000047F",
+          "00000000",
+          "0000047F",
+          "00000000",
+          "0000047F",
+          "FFFFFFDB",
+          "FFFFFFE4",
+          "0000005B"
+        ],
+        "images": {
+          "p001560_left.png": "168d541370960ba38f91ca41fc6ed33322247598421849f116c3cae952ad6252",
+          "p001560_right.png": "168d541370960ba38f91ca41fc6ed33322247598421849f116c3cae952ad6252"
+        }
+      }
+    ]
+  },
+  "native_firing": {
+    "path": "analysis/vr-baseline/alpha-aim-20261028/receipt.json",
+    "sha256": "3bae136a7fea9f2b5461b0dc581b42bd48a6820926a76ce7f485538fb116ed5b",
+    "binary_sha256": "f7b2dbacda325e6eb45cdf5474acfd021c06b48b0dd6737c95a632f56ba41b24",
+    "weapons": [
+      {
+        "id": 0,
+        "name": "P38 pistol",
+        "shots": 1,
+        "native_damage_events": 1,
+        "spread": null
+      },
+      {
+        "id": 17,
+        "name": "StG44",
+        "shots": 3,
+        "native_damage_events": 3,
+        "spread": null
+      },
+      {
+        "id": 10,
+        "name": "Stick grenade",
+        "shots": 1,
+        "native_damage_events": 0,
+        "spread": null
+      },
+      {
+        "id": 4,
+        "name": "Shotgun",
+        "shots": 6,
+        "native_damage_events": 4,
+        "spread": {
+          "pellets": 6,
+          "maximum_pair_angle_degrees": 5.153723134720737,
+          "minimum_pair_angle_degrees": 0.4399666883017435,
+          "speeds_world_units_per_frame": [
+            351.13606915624604,
+            484.16174741118283,
+            574.2395276853118,
+            616.9739852193932,
+            730.1060068579083,
+            481.138063280697
+          ],
+          "speed_range": 378.9699377016622
+        }
+      },
+      {
+        "id": 15,
+        "name": "Petrol bomb",
+        "shots": 1,
+        "native_damage_events": 2,
+        "spread": null
+      }
+    ]
+  },
+  "sp_laser": {
+    "path": "analysis/vr-baseline/alpha-sp-laser-final-20261028/receipt.json",
+    "sha256": "8d86bee05b8efd454812bf3368d73a7a57d2d4636fec37cccec1698ba8394861",
+    "binary_sha256": "5b5cbe6b5a5d3386037073469f38de3ab1a0ebd75912f165cb3a3ae33ff05224",
+    "triangles": 7251,
+    "independent_oracle": "plane intersection + barycentric coordinates over all decoded triangles",
+    "cases": [
+      {
+        "yaw": 0,
+        "pitch": 0,
+        "head": 0,
+        "eyes": [
+          {
+            "valid": 1,
+            "hit": 1,
+            "eye": 0,
+            "mp": 0,
+            "weapon": 0,
+            "levels": 4,
+            "level_valid": 1,
+            "weapon_valid": 1,
+            "grip": 1,
+            "surfaces": 4,
+            "distance": 1701.46255669,
+            "origin": [
+              16742.4328896,
+              -194.451338841,
+              161.460862561
+            ],
+            "direction": [
+              -0.625411374155,
+              0.00976391284673,
+              0.780234118123
+            ],
+            "control": [
+              1151,
+              0,
+              1151,
+              0,
+              1151,
+              14,
+              8,
+              15
+            ],
+            "independent": {
+              "index": 2186,
+              "distance": 1701.4625566908626,
+              "vertices": [
+                [
+                  16024.0,
+                  -190.0,
+                  1489.0
+                ],
+                [
+                  15615.0,
+                  14.0,
+                  1489.0
+                ],
+                [
+                  15614.0,
+                  -189.0,
+                  1489.0
+                ]
+              ],
+              "barycentric": [
+                0.055755332706483834,
+                0.787505402381366
+              ]
+            }
+          },
+          {
+            "valid": 1,
+            "hit": 1,
+            "eye": 1,
+            "mp": 0,
+            "weapon": 0,
+            "levels": 4,
+            "level_valid": 1,
+            "weapon_valid": 1,
+            "grip": 1,
+            "surfaces": 4,
+            "distance": 1701.46255669,
+            "origin": [
+              16742.4328896,
+              -194.451338841,
+              161.460862561
+            ],
+            "direction": [
+              -0.625411374155,
+              0.00976391284673,
+              0.780234118123
+            ],
+            "control": [
+              1151,
+              0,
+              1151,
+              0,
+              1151,
+              14,
+              8,
+              15
+            ],
+            "independent": {
+              "index": 2186,
+              "distance": 1701.4625566908626,
+              "vertices": [
+                [
+                  16024.0,
+                  -190.0,
+                  1489.0
+                ],
+                [
+                  15615.0,
+                  14.0,
+                  1489.0
+                ],
+                [
+                  15614.0,
+                  -189.0,
+                  1489.0
+                ]
+              ],
+              "barycentric": [
+                0.055755332706483834,
+                0.787505402381366
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "yaw": -30,
+        "pitch": 0,
+        "head": 0,
+        "eyes": [
+          {
+            "valid": 1,
+            "hit": 1,
+            "eye": 0,
+            "mp": 0,
+            "weapon": 0,
+            "levels": 4,
+            "level_valid": 1,
+            "weapon_valid": 1,
+            "grip": 1,
+            "surfaces": 4,
+            "distance": 899.77242893,
+            "origin": [
+              16753.6008035,
+              -194.483448902,
+              165.728315577
+            ],
+            "direction": [
+              -0.151786852153,
+              0.00861442632775,
+              0.988375709522
+            ],
+            "control": [
+              997,
+              575,
+              1151,
+              64961,
+              997,
+              4294967273,
+              8,
+              36
+            ],
+            "independent": {
+              "index": 77,
+              "distance": 899.772428906835,
+              "vertices": [
+                [
+                  16743.0,
+                  14.0,
+                  1191.0
+                ],
+                [
+                  16743.0,
+                  -234.0,
+                  1191.0
+                ],
+                [
+                  16579.0,
+                  -234.0,
+                  1014.0
+                ]
+              ],
+              "barycentric": [
+                0.04127798378381382,
+                0.7681269581574819
+              ]
+            }
+          },
+          {
+            "valid": 1,
+            "hit": 1,
+            "eye": 1,
+            "mp": 0,
+            "weapon": 0,
+            "levels": 4,
+            "level_valid": 1,
+            "weapon_valid": 1,
+            "grip": 1,
+            "surfaces": 4,
+            "distance": 899.77242893,
+            "origin": [
+              16753.6008035,
+              -194.483448902,
+              165.728315577
+            ],
+            "direction": [
+              -0.151786852153,
+              0.00861442632775,
+              0.988375709522
+            ],
+            "control": [
+              997,
+              575,
+              1151,
+              64961,
+              997,
+              4294967273,
+              8,
+              36
+            ],
+            "independent": {
+              "index": 77,
+              "distance": 899.772428906835,
+              "vertices": [
+                [
+                  16743.0,
+                  14.0,
+                  1191.0
+                ],
+                [
+                  16743.0,
+                  -234.0,
+                  1191.0
+                ],
+                [
+                  16579.0,
+                  -234.0,
+                  1014.0
+                ]
+              ],
+              "barycentric": [
+                0.04127798378381382,
+                0.7681269581574819
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "yaw": 30,
+        "pitch": 0,
+        "head": 0,
+        "eyes": [
+          {
+            "valid": 1,
+            "hit": 1,
+            "eye": 0,
+            "mp": 0,
+            "weapon": 0,
+            "levels": 4,
+            "level_valid": 1,
+            "weapon_valid": 1,
+            "grip": 1,
+            "surfaces": 4,
+            "distance": 808.411763658,
+            "origin": [
+              16735.5540408,
+              -194.480883216,
+              152.521523086
+            ],
+            "direction": [
+              -0.931654450992,
+              0.00830005133714,
+              0.363250730342
+            ],
+            "control": [
+              997,
+              64961,
+              1151,
+              575,
+              997,
+              58,
+              8,
+              15
+            ],
+            "independent": {
+              "index": 231,
+              "distance": 808.4117636811123,
+              "vertices": [
+                [
+                  16015.0,
+                  -246.0,
+                  479.0
+                ],
+                [
+                  16015.0,
+                  14.0,
+                  479.0
+                ],
+                [
+                  15864.0,
+                  -246.0,
+                  327.0
+                ]
+              ],
+              "barycentric": [
+                0.2239575997080812,
+                0.21593627197218102
+              ]
+            }
+          },
+          {
+            "valid": 1,
+            "hit": 1,
+            "eye": 1,
+            "mp": 0,
+            "weapon": 0,
+            "levels": 4,
+            "level_valid": 1,
+            "weapon_valid": 1,
+            "grip": 1,
+            "surfaces": 4,
+            "distance": 808.411763658,
+            "origin": [
+              16735.5540408,
+              -194.480883216,
+              152.521523086
+            ],
+            "direction": [
+              -0.931654450992,
+              0.00830005133714,
+              0.363250730342
+            ],
+            "control": [
+              997,
+              64961,
+              1151,
+              575,
+              997,
+              58,
+              8,
+              15
+            ],
+            "independent": {
+              "index": 231,
+              "distance": 808.4117636811123,
+              "vertices": [
+                [
+                  16015.0,
+                  -246.0,
+                  479.0
+                ],
+                [
+                  16015.0,
+                  14.0,
+                  479.0
+                ],
+                [
+                  15864.0,
+                  -246.0,
+                  327.0
+                ]
+              ],
+              "barycentric": [
+                0.2239575997080812,
+                0.21593627197218102
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "yaw": 0,
+        "pitch": 0,
+        "head": 45,
+        "eyes": [
+          {
+            "valid": 1,
+            "hit": 1,
+            "eye": 0,
+            "mp": 0,
+            "weapon": 0,
+            "levels": 4,
+            "level_valid": 1,
+            "weapon_valid": 1,
+            "grip": 1,
+            "surfaces": 4,
+            "distance": 1701.46255669,
+            "origin": [
+              16742.4328896,
+              -194.451338841,
+              161.460862561
+            ],
+            "direction": [
+              -0.625411374155,
+              0.00976391284673,
+              0.780234118123
+            ],
+            "control": [
+              1151,
+              0,
+              1151,
+              0,
+              1151,
+              14,
+              8,
+              15
+            ],
+            "independent": {
+              "index": 2186,
+              "distance": 1701.4625566908626,
+              "vertices": [
+                [
+                  16024.0,
+                  -190.0,
+                  1489.0
+                ],
+                [
+                  15615.0,
+                  14.0,
+                  1489.0
+                ],
+                [
+                  15614.0,
+                  -189.0,
+                  1489.0
+                ]
+              ],
+              "barycentric": [
+                0.055755332706483834,
+                0.787505402381366
+              ]
+            }
+          },
+          {
+            "valid": 1,
+            "hit": 1,
+            "eye": 1,
+            "mp": 0,
+            "weapon": 0,
+            "levels": 4,
+            "level_valid": 1,
+            "weapon_valid": 1,
+            "grip": 1,
+            "surfaces": 4,
+            "distance": 1701.46255669,
+            "origin": [
+              16742.4328896,
+              -194.451338841,
+              161.460862561
+            ],
+            "direction": [
+              -0.625411374155,
+              0.00976391284673,
+              0.780234118123
+            ],
+            "control": [
+              1151,
+              0,
+              1151,
+              0,
+              1151,
+              14,
+              8,
+              15
+            ],
+            "independent": {
+              "index": 2186,
+              "distance": 1701.4625566908626,
+              "vertices": [
+                [
+                  16024.0,
+                  -190.0,
+                  1489.0
+                ],
+                [
+                  15615.0,
+                  14.0,
+                  1489.0
+                ],
+                [
+                  15614.0,
+                  -189.0,
+                  1489.0
+                ]
+              ],
+              "barycentric": [
+                0.055755332706483834,
+                0.787505402381366
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "yaw": 0,
+        "pitch": 45,
+        "head": 0,
+        "eyes": [
+          {
+            "valid": 1,
+            "hit": 0,
+            "eye": 0,
+            "mp": 0,
+            "weapon": 0,
+            "levels": 4,
+            "level_valid": 1,
+            "weapon_valid": 1,
+            "grip": 1,
+            "surfaces": 4,
+            "distance": 11940.2985075,
+            "origin": [
+              16745.9806828,
+              -220.958111627,
+              157.045129471
+            ],
+            "direction": [
+              -0.336384707863,
+              -0.842884632377,
+              0.419989077022
+            ],
+            "control": [
+              1151,
+              0,
+              4241621806,
+              53346304,
+              814,
+              14,
+              73,
+              18
+            ],
+            "independent": null
+          },
+          {
+            "valid": 1,
+            "hit": 0,
+            "eye": 1,
+            "mp": 0,
+            "weapon": 0,
+            "levels": 4,
+            "level_valid": 1,
+            "weapon_valid": 1,
+            "grip": 1,
+            "surfaces": 4,
+            "distance": 11940.2985075,
+            "origin": [
+              16745.9806828,
+              -220.958111627,
+              157.045129471
+            ],
+            "direction": [
+              -0.336384707863,
+              -0.842884632377,
+              0.419989077022
+            ],
+            "control": [
+              1151,
+              0,
+              4241621806,
+              53346304,
+              814,
+              14,
+              73,
+              18
+            ],
+            "independent": null
+          }
+        ]
+      },
+      {
+        "yaw": -30,
+        "pitch": 45,
+        "head": 0,
+        "eyes": [
+          {
+            "valid": 1,
+            "hit": 0,
+            "eye": 0,
+            "mp": 0,
+            "weapon": 0,
+            "levels": 4,
+            "level_valid": 1,
+            "weapon_valid": 1,
+            "grip": 1,
+            "surfaces": 4,
+            "distance": 11940.2985075,
+            "origin": [
+              16754.4361214,
+              -220.981429461,
+              160.403191552
+            ],
+            "direction": [
+              -0.0852256159022,
+              -0.843466588756,
+              0.53037789174
+            ],
+            "control": [
+              26674149,
+              407,
+              4241621806,
+              46267841,
+              705,
+              4294967275,
+              73,
+              39
+            ],
+            "independent": null
+          },
+          {
+            "valid": 1,
+            "hit": 0,
+            "eye": 1,
+            "mp": 0,
+            "weapon": 0,
+            "levels": 4,
+            "level_valid": 1,
+            "weapon_valid": 1,
+            "grip": 1,
+            "surfaces": 4,
+            "distance": 11940.2985075,
+            "origin": [
+              16754.4361214,
+              -220.981429461,
+              160.403191552
+            ],
+            "direction": [
+              -0.0852256159022,
+              -0.843466588756,
+              0.53037789174
+            ],
+            "control": [
+              26674149,
+              407,
+              4241621806,
+              46267841,
+              705,
+              4294967275,
+              73,
+              39
+            ],
+            "independent": null
+          }
+        ]
+      },
+      {
+        "yaw": 30,
+        "pitch": 45,
+        "head": 0,
+        "eyes": [
+          {
+            "valid": 1,
+            "hit": 1,
+            "eye": 0,
+            "mp": 0,
+            "weapon": 0,
+            "levels": 4,
+            "level_valid": 1,
+            "weapon_valid": 1,
+            "grip": 1,
+            "surfaces": 4,
+            "distance": 1326.15126823,
+            "origin": [
+              16740.5796771,
+              -220.977173172,
+              150.55545049
+            ],
+            "direction": [
+              -0.49876901273,
+              -0.843614071582,
+              0.198858668829
+            ],
+            "control": [
+              4268295141,
+              65129,
+              4241621806,
+              46203455,
+              705,
+              56,
+              73,
+              18
+            ],
+            "independent": {
+              "index": 306,
+              "distance": 1326.151268092519,
+              "vertices": [
+                [
+                  16264.0,
+                  -1358.0,
+                  227.0
+                ],
+                [
+                  16264.0,
+                  -986.0,
+                  227.0
+                ],
+                [
+                  15957.0,
+                  -1358.0,
+                  538.0
+                ]
+              ],
+              "barycentric": [
+                0.049093967792573884,
+                0.6021611779060095
+              ]
+            }
+          },
+          {
+            "valid": 1,
+            "hit": 1,
+            "eye": 1,
+            "mp": 0,
+            "weapon": 0,
+            "levels": 4,
+            "level_valid": 1,
+            "weapon_valid": 1,
+            "grip": 1,
+            "surfaces": 4,
+            "distance": 1326.15126823,
+            "origin": [
+              16740.5796771,
+              -220.977173172,
+              150.55545049
+            ],
+            "direction": [
+              -0.49876901273,
+              -0.843614071582,
+              0.198858668829
+            ],
+            "control": [
+              4268295141,
+              65129,
+              4241621806,
+              46203455,
+              705,
+              56,
+              73,
+              18
+            ],
+            "independent": {
+              "index": 306,
+              "distance": 1326.151268092519,
+              "vertices": [
+                [
+                  16264.0,
+                  -1358.0,
+                  227.0
+                ],
+                [
+                  16264.0,
+                  -986.0,
+                  227.0
+                ],
+                [
+                  15957.0,
+                  -1358.0,
+                  538.0
+                ]
+              ],
+              "barycentric": [
+                0.049093967792573884,
+                0.6021611779060095
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "yaw": 0,
+        "pitch": -75,
+        "head": 0,
+        "eyes": [
+          {
+            "valid": 1,
+            "hit": 1,
+            "eye": 0,
+            "mp": 0,
+            "weapon": 0,
+            "levels": 4,
+            "level_valid": 1,
+            "weapon_valid": 1,
+            "grip": 1,
+            "surfaces": 4,
+            "distance": 178.401325229,
+            "origin": [
+              16753.956064,
+              -162.231689039,
+              147.072435421
+            ],
+            "direction": [
+              -0.0974337636445,
+              0.987838452506,
+              0.121168698318
+            ],
+            "control": [
+              1151,
+              0,
+              72876330,
+              4222091264,
+              298,
+              14,
+              4294967246,
+              102
+            ],
+            "independent": {
+              "index": 182,
+              "distance": 178.40132522876212,
+              "vertices": [
+                [
+                  16534.0,
+                  14.0,
+                  509.0
+                ],
+                [
+                  16840.0,
+                  14.0,
+                  201.0
+                ],
+                [
+                  16568.0,
+                  14.0,
+                  -77.0
+                ]
+              ],
+              "barycentric": [
+                0.6345363025425186,
+                0.24722479017018595
+              ]
+            }
+          },
+          {
+            "valid": 1,
+            "hit": 1,
+            "eye": 1,
+            "mp": 0,
+            "weapon": 0,
+            "levels": 4,
+            "level_valid": 1,
+            "weapon_valid": 1,
+            "grip": 1,
+            "surfaces": 4,
+            "distance": 178.401325229,
+            "origin": [
+              16753.956064,
+              -162.231689039,
+              147.072435421
+            ],
+            "direction": [
+              -0.0974337636445,
+              0.987838452506,
+              0.121168698318
+            ],
+            "control": [
+              1151,
+              0,
+              72876330,
+              4222091264,
+              298,
+              14,
+              4294967246,
+              102
+            ],
+            "independent": {
+              "index": 182,
+              "distance": 178.40132522876212,
+              "vertices": [
+                [
+                  16534.0,
+                  14.0,
+                  509.0
+                ],
+                [
+                  16840.0,
+                  14.0,
+                  201.0
+                ],
+                [
+                  16568.0,
+                  14.0,
+                  -77.0
+                ]
+              ],
+              "barycentric": [
+                0.6345363025425186,
+                0.24722479017018595
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "tracking_loss": {
+      "valid": 0,
+      "hit": 0,
+      "eye": 0,
+      "mp": 0,
+      "weapon": 0,
+      "levels": 4,
+      "level_valid": 1,
+      "weapon_valid": 0,
+      "grip": 1,
+      "surfaces": 0,
+      "distance": 0,
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "direction": [
+        0,
+        0,
+        0
+      ],
+      "control": [
+        1151,
+        0,
+        72876330,
+        4222091264,
+        298,
+        14,
+        4294967246,
+        102
+      ]
+    },
+    "grip_release": {
+      "valid": 0,
+      "hit": 0,
+      "eye": 0,
+      "mp": 0,
+      "weapon": 0,
+      "levels": 4,
+      "level_valid": 1,
+      "weapon_valid": 1,
+      "grip": 0,
+      "surfaces": 0,
+      "distance": 0,
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "direction": [
+        0,
+        0,
+        0
+      ],
+      "control": [
+        1151,
+        0,
+        1151,
+        0,
+        1151,
+        14,
+        8,
+        15
+      ]
+    },
+    "verify_checks": 1162,
+    "verify_mismatch": 0,
+    "native_shot_shared_ray": null
+  },
+  "mp_laser": {
+    "path": "analysis/vr-baseline/alpha-mp-laser-shot-20261028/receipt.json",
+    "sha256": "7a44697f1d3344cdce79d04ef25ad33ce2adec063ed719d03a38e086b2d5072c",
+    "binary_sha256": "5b5cbe6b5a5d3386037073469f38de3ab1a0ebd75912f165cb3a3ae33ff05224",
+    "triangles": 8039,
+    "independent_oracle": "plane intersection + barycentric coordinates over all decoded triangles",
+    "cases": [
+      {
+        "yaw": 0,
+        "pitch": 0,
+        "head": 0,
+        "eyes": [
+          {
+            "valid": 1,
+            "hit": 1,
+            "eye": 0,
+            "mp": 1,
+            "weapon": 0,
+            "levels": 0,
+            "level_valid": 1,
+            "weapon_valid": 1,
+            "grip": 1,
+            "surfaces": 25,
+            "distance": 1632.94615809,
+            "origin": [
+              -1462.66023019,
+              299.940298679,
+              444.137355516
+            ],
+            "direction": [
+              -0.0299242057179,
+              0.00974176118263,
+              -0.999504697338
+            ],
+            "control": [
+              1151,
+              0,
+              1151,
+              0,
+              1151,
+              14,
+              8,
+              15
+            ],
+            "independent": {
+              "index": 198,
+              "distance": 1632.9461580950074,
+              "vertices": [
+                [
+                  -1718.0,
+                  289.0,
+                  -1188.0
+                ],
+                [
+                  -1383.0,
+                  289.0,
+                  -1188.0
+                ],
+                [
+                  -1720.0,
+                  512.0,
+                  -1188.0
+                ]
+              ],
+              "barycentric": [
+                0.6170625161670241,
+                0.12039493352132172
+              ]
+            }
+          },
+          {
+            "valid": 1,
+            "hit": 1,
+            "eye": 1,
+            "mp": 1,
+            "weapon": 0,
+            "levels": 0,
+            "level_valid": 1,
+            "weapon_valid": 1,
+            "grip": 1,
+            "surfaces": 25,
+            "distance": 1632.94615809,
+            "origin": [
+              -1462.66023019,
+              299.940298679,
+              444.137355516
+            ],
+            "direction": [
+              -0.0299242057179,
+              0.00974176118263,
+              -0.999504697338
+            ],
+            "control": [
+              1151,
+              0,
+              1151,
+              0,
+              1151,
+              14,
+              8,
+              15
+            ],
+            "independent": {
+              "index": 198,
+              "distance": 1632.9461580950074,
+              "vertices": [
+                [
+                  -1718.0,
+                  289.0,
+                  -1188.0
+                ],
+                [
+                  -1383.0,
+                  289.0,
+                  -1188.0
+                ],
+                [
+                  -1720.0,
+                  512.0,
+                  -1188.0
+                ]
+              ],
+              "barycentric": [
+                0.6170625161670241,
+                0.12039493352132172
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "yaw": -30,
+        "pitch": 0,
+        "head": 0,
+        "eyes": [
+          {
+            "valid": 1,
+            "hit": 1,
+            "eye": 0,
+            "mp": 1,
+            "weapon": 0,
+            "levels": 0,
+            "level_valid": 1,
+            "weapon_valid": 1,
+            "grip": 1,
+            "surfaces": 25,
+            "distance": 1921.66208118,
+            "origin": [
+              -1473.8842729,
+              299.901412901,
+              448.127036371
+            ],
+            "direction": [
+              -0.524431085199,
+              0.008298367039,
+              -0.851412458202
+            ],
+            "control": [
+              997,
+              575,
+              1151,
+              64961,
+              997,
+              4294967273,
+              8,
+              36
+            ],
+            "independent": {
+              "index": 513,
+              "distance": 1921.6620811799587,
+              "vertices": [
+                [
+                  -2634.0,
+                  289.0,
+                  -1188.0
+                ],
+                [
+                  -2325.0,
+                  289.0,
+                  -1188.0
+                ],
+                [
+                  -2634.0,
+                  512.0,
+                  -1188.0
+                ]
+              ],
+              "barycentric": [
+                0.49299804686416027,
+                0.12039493352269032
+              ]
+            }
+          },
+          {
+            "valid": 1,
+            "hit": 1,
+            "eye": 1,
+            "mp": 1,
+            "weapon": 0,
+            "levels": 0,
+            "level_valid": 1,
+            "weapon_valid": 1,
+            "grip": 1,
+            "surfaces": 25,
+            "distance": 1921.66208118,
+            "origin": [
+              -1473.8842729,
+              299.901412901,
+              448.127036371
+            ],
+            "direction": [
+              -0.524431085199,
+              0.008298367039,
+              -0.851412458202
+            ],
+            "control": [
+              997,
+              575,
+              1151,
+              64961,
+              997,
+              4294967273,
+              8,
+              36
+            ],
+            "independent": {
+              "index": 513,
+              "distance": 1921.6620811799587,
+              "vertices": [
+                [
+                  -2634.0,
+                  289.0,
+                  -1188.0
+                ],
+                [
+                  -2325.0,
+                  289.0,
+                  -1188.0
+                ],
+                [
+                  -2634.0,
+                  512.0,
+                  -1188.0
+                ]
+              ],
+              "barycentric": [
+                0.49299804686416027,
+                0.12039493352269032
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "yaw": 30,
+        "pitch": 0,
+        "head": 0,
+        "eyes": [
+          {
+            "valid": 1,
+            "hit": 1,
+            "eye": 0,
+            "mp": 1,
+            "weapon": 0,
+            "levels": 0,
+            "level_valid": 1,
+            "weapon_valid": 1,
+            "grip": 1,
+            "surfaces": 25,
+            "distance": 923.166938704,
+            "origin": [
+              -1451.66982745,
+              299.917483796,
+              446.47816251
+            ],
+            "direction": [
+              0.472526686315,
+              0.00858942012349,
+              -0.88127450467
+            ],
+            "control": [
+              997,
+              64961,
+              1151,
+              575,
+              997,
+              58,
+              8,
+              15
+            ],
+            "independent": {
+              "index": 120,
+              "distance": 923.1669387042231,
+              "vertices": [
+                [
+                  -1016.0,
+                  288.0,
+                  -367.0
+                ],
+                [
+                  -818.0,
+                  510.0,
+                  -367.0
+                ],
+                [
+                  -1019.0,
+                  510.0,
+                  -368.0
+                ]
+              ],
+              "barycentric": [
+                0.004076562547086754,
+                0.0853241242846552
+              ]
+            }
+          },
+          {
+            "valid": 1,
+            "hit": 1,
+            "eye": 1,
+            "mp": 1,
+            "weapon": 0,
+            "levels": 0,
+            "level_valid": 1,
+            "weapon_valid": 1,
+            "grip": 1,
+            "surfaces": 25,
+            "distance": 923.166938704,
+            "origin": [
+              -1451.66982745,
+              299.917483796,
+              446.47816251
+            ],
+            "direction": [
+              0.472526686315,
+              0.00858942012349,
+              -0.88127450467
+            ],
+            "control": [
+              997,
+              64961,
+              1151,
+              575,
+              997,
+              58,
+              8,
+              15
+            ],
+            "independent": {
+              "index": 120,
+              "distance": 923.1669387042231,
+              "vertices": [
+                [
+                  -1016.0,
+                  288.0,
+                  -367.0
+                ],
+                [
+                  -818.0,
+                  510.0,
+                  -367.0
+                ],
+                [
+                  -1019.0,
+                  510.0,
+                  -368.0
+                ]
+              ],
+              "barycentric": [
+                0.004076562547086754,
+                0.0853241242846552
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "yaw": 0,
+        "pitch": 0,
+        "head": 45,
+        "eyes": [
+          {
+            "valid": 1,
+            "hit": 1,
+            "eye": 0,
+            "mp": 1,
+            "weapon": 0,
+            "levels": 0,
+            "level_valid": 1,
+            "weapon_valid": 1,
+            "grip": 1,
+            "surfaces": 25,
+            "distance": 1632.94615809,
+            "origin": [
+              -1462.66023019,
+              299.940298679,
+              444.137355516
+            ],
+            "direction": [
+              -0.0299242057179,
+              0.00974176118263,
+              -0.999504697338
+            ],
+            "control": [
+              1151,
+              0,
+              1151,
+              0,
+              1151,
+              14,
+              8,
+              15
+            ],
+            "independent": {
+              "index": 198,
+              "distance": 1632.9461580950074,
+              "vertices": [
+                [
+                  -1718.0,
+                  289.0,
+                  -1188.0
+                ],
+                [
+                  -1383.0,
+                  289.0,
+                  -1188.0
+                ],
+                [
+                  -1720.0,
+                  512.0,
+                  -1188.0
+                ]
+              ],
+              "barycentric": [
+                0.6170625161670241,
+                0.12039493352132172
+              ]
+            }
+          },
+          {
+            "valid": 1,
+            "hit": 1,
+            "eye": 1,
+            "mp": 1,
+            "weapon": 0,
+            "levels": 0,
+            "level_valid": 1,
+            "weapon_valid": 1,
+            "grip": 1,
+            "surfaces": 25,
+            "distance": 1632.94615809,
+            "origin": [
+              -1462.66023019,
+              299.940298679,
+              444.137355516
+            ],
+            "direction": [
+              -0.0299242057179,
+              0.00974176118263,
+              -0.999504697338
+            ],
+            "control": [
+              1151,
+              0,
+              1151,
+              0,
+              1151,
+              14,
+              8,
+              15
+            ],
+            "independent": {
+              "index": 198,
+              "distance": 1632.9461580950074,
+              "vertices": [
+                [
+                  -1718.0,
+                  289.0,
+                  -1188.0
+                ],
+                [
+                  -1383.0,
+                  289.0,
+                  -1188.0
+                ],
+                [
+                  -1720.0,
+                  512.0,
+                  -1188.0
+                ]
+              ],
+              "barycentric": [
+                0.6170625161670241,
+                0.12039493352132172
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "yaw": 0,
+        "pitch": 45,
+        "head": 0,
+        "eyes": [
+          {
+            "valid": 1,
+            "hit": 1,
+            "eye": 0,
+            "mp": 1,
+            "weapon": 0,
+            "levels": 0,
+            "level_valid": 1,
+            "weapon_valid": 1,
+            "grip": 1,
+            "surfaces": 25,
+            "distance": 665.301057129,
+            "origin": [
+              -1462.47806294,
+              273.495585465,
+              449.792931242
+            ],
+            "direction": [
+              -0.0157036350402,
+              -0.842604141031,
+              -0.538304428148
+            ],
+            "control": [
+              1151,
+              0,
+              4241621806,
+              53346304,
+              814,
+              14,
+              73,
+              18
+            ],
+            "independent": {
+              "index": 6476,
+              "distance": 665.3010571281643,
+              "vertices": [
+                [
+                  -1722.0,
+                  -307.0,
+                  57.0
+                ],
+                [
+                  -1272.0,
+                  -280.0,
+                  104.0
+                ],
+                [
+                  -1722.0,
+                  -280.0,
+                  104.0
+                ]
+              ],
+              "barycentric": [
+                0.5534984268155556,
+                0.18391489527728905
+              ]
+            }
+          },
+          {
+            "valid": 1,
+            "hit": 1,
+            "eye": 1,
+            "mp": 1,
+            "weapon": 0,
+            "levels": 0,
+            "level_valid": 1,
+            "weapon_valid": 1,
+            "grip": 1,
+            "surfaces": 25,
+            "distance": 665.301057129,
+            "origin": [
+              -1462.47806294,
+              273.495585465,
+              449.792931242
+            ],
+            "direction": [
+              -0.0157036350402,
+              -0.842604141031,
+              -0.538304428148
+            ],
+            "control": [
+              1151,
+              0,
+              4241621806,
+              53346304,
+              814,
+              14,
+              73,
+              18
+            ],
+            "independent": {
+              "index": 6476,
+              "distance": 665.3010571281643,
+              "vertices": [
+                [
+                  -1722.0,
+                  -307.0,
+                  57.0
+                ],
+                [
+                  -1272.0,
+                  -280.0,
+                  104.0
+                ],
+                [
+                  -1722.0,
+                  -280.0,
+                  104.0
+                ]
+              ],
+              "barycentric": [
+                0.5534984268155556,
+                0.18391489527728905
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "yaw": -30,
+        "pitch": 45,
+        "head": 0,
+        "eyes": [
+          {
+            "valid": 1,
+            "hit": 1,
+            "eye": 0,
+            "mp": 1,
+            "weapon": 0,
+            "levels": 0,
+            "level_valid": 1,
+            "weapon_valid": 1,
+            "grip": 1,
+            "surfaces": 25,
+            "distance": 680.621697806,
+            "origin": [
+              -1471.05810362,
+              273.467086133,
+              452.71696272
+            ],
+            "direction": [
+              -0.278028797177,
+              -0.843544949524,
+              -0.459490920554
+            ],
+            "control": [
+              26674149,
+              407,
+              4241621806,
+              46267841,
+              705,
+              4294967275,
+              73,
+              39
+            ],
+            "independent": {
+              "index": 6478,
+              "distance": 680.6216978064341,
+              "vertices": [
+                [
+                  -1722.0,
+                  -280.0,
+                  104.0
+                ],
+                [
+                  -1272.0,
+                  -307.0,
+                  151.0
+                ],
+                [
+                  -1722.0,
+                  -307.0,
+                  151.0
+                ]
+              ],
+              "barycentric": [
+                0.13713214312513222,
+                0.6283459897662572
+              ]
+            }
+          },
+          {
+            "valid": 1,
+            "hit": 1,
+            "eye": 1,
+            "mp": 1,
+            "weapon": 0,
+            "levels": 0,
+            "level_valid": 1,
+            "weapon_valid": 1,
+            "grip": 1,
+            "surfaces": 25,
+            "distance": 680.621697806,
+            "origin": [
+              -1471.05810362,
+              273.467086133,
+              452.71696272
+            ],
+            "direction": [
+              -0.278028797177,
+              -0.843544949524,
+              -0.459490920554
+            ],
+            "control": [
+              26674149,
+              407,
+              4241621806,
+              46267841,
+              705,
+              4294967275,
+              73,
+              39
+            ],
+            "independent": {
+              "index": 6478,
+              "distance": 680.6216978064341,
+              "vertices": [
+                [
+                  -1722.0,
+                  -280.0,
+                  104.0
+                ],
+                [
+                  -1272.0,
+                  -307.0,
+                  151.0
+                ],
+                [
+                  -1722.0,
+                  -307.0,
+                  151.0
+                ]
+              ],
+              "barycentric": [
+                0.13713214312513222,
+                0.6283459897662572
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "yaw": 30,
+        "pitch": 45,
+        "head": 0,
+        "eyes": [
+          {
+            "valid": 1,
+            "hit": 1,
+            "eye": 0,
+            "mp": 1,
+            "weapon": 0,
+            "levels": 0,
+            "level_valid": 1,
+            "weapon_valid": 1,
+            "grip": 1,
+            "surfaces": 25,
+            "distance": 674.475766641,
+            "origin": [
+              -1454.19066801,
+              273.481593343,
+              451.22852303
+            ],
+            "direction": [
+              0.250839695175,
+              -0.843302559295,
+              -0.4753106782
+            ],
+            "control": [
+              4268295141,
+              65129,
+              4241621806,
+              46203455,
+              705,
+              56,
+              73,
+              18
+            ],
+            "independent": {
+              "index": 6477,
+              "distance": 674.4757666415652,
+              "vertices": [
+                [
+                  -1272.0,
+                  -280.0,
+                  104.0
+                ],
+                [
+                  -1722.0,
+                  -280.0,
+                  104.0
+                ],
+                [
+                  -1272.0,
+                  -307.0,
+                  151.0
+                ]
+              ],
+              "barycentric": [
+                0.028900827339345292,
+                0.5668721054921869
+              ]
+            }
+          },
+          {
+            "valid": 1,
+            "hit": 1,
+            "eye": 1,
+            "mp": 1,
+            "weapon": 0,
+            "levels": 0,
+            "level_valid": 1,
+            "weapon_valid": 1,
+            "grip": 1,
+            "surfaces": 25,
+            "distance": 674.475766641,
+            "origin": [
+              -1454.19066801,
+              273.481593343,
+              451.22852303
+            ],
+            "direction": [
+              0.250839695175,
+              -0.843302559295,
+              -0.4753106782
+            ],
+            "control": [
+              4268295141,
+              65129,
+              4241621806,
+              46203455,
+              705,
+              56,
+              73,
+              18
+            ],
+            "independent": {
+              "index": 6477,
+              "distance": 674.4757666415652,
+              "vertices": [
+                [
+                  -1272.0,
+                  -280.0,
+                  104.0
+                ],
+                [
+                  -1722.0,
+                  -280.0,
+                  104.0
+                ],
+                [
+                  -1272.0,
+                  -307.0,
+                  151.0
+                ]
+              ],
+              "barycentric": [
+                0.028900827339345292,
+                0.5668721054921869
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "yaw": 0,
+        "pitch": -75,
+        "head": 0,
+        "eyes": [
+          {
+            "valid": 1,
+            "hit": 1,
+            "eye": 0,
+            "mp": 1,
+            "weapon": 0,
+            "levels": 0,
+            "level_valid": 1,
+            "weapon_valid": 1,
+            "grip": 1,
+            "surfaces": 25,
+            "distance": 179.099085054,
+            "origin": [
+              -1462.1249585,
+              332.084779863,
+              462.541586019
+            ],
+            "direction": [
+              -0.00513865160446,
+              0.987806387081,
+              -0.15560249324
+            ],
+            "control": [
+              1151,
+              0,
+              72876330,
+              4222091264,
+              298,
+              14,
+              4294967246,
+              102
+            ],
+            "independent": {
+              "index": 6369,
+              "distance": 179.0990850542992,
+              "vertices": [
+                [
+                  -1375.0,
+                  509.0,
+                  575.0
+                ],
+                [
+                  -1375.0,
+                  509.0,
+                  268.0
+                ],
+                [
+                  -1721.0,
+                  509.0,
+                  268.0
+                ]
+              ],
+              "barycentric": [
+                0.2026240114704239,
+                0.25446614537795303
+              ]
+            }
+          },
+          {
+            "valid": 1,
+            "hit": 1,
+            "eye": 1,
+            "mp": 1,
+            "weapon": 0,
+            "levels": 0,
+            "level_valid": 1,
+            "weapon_valid": 1,
+            "grip": 1,
+            "surfaces": 25,
+            "distance": 179.099085054,
+            "origin": [
+              -1462.1249585,
+              332.084779863,
+              462.541586019
+            ],
+            "direction": [
+              -0.00513865160446,
+              0.987806387081,
+              -0.15560249324
+            ],
+            "control": [
+              1151,
+              0,
+              72876330,
+              4222091264,
+              298,
+              14,
+              4294967246,
+              102
+            ],
+            "independent": {
+              "index": 6369,
+              "distance": 179.0990850542992,
+              "vertices": [
+                [
+                  -1375.0,
+                  509.0,
+                  575.0
+                ],
+                [
+                  -1375.0,
+                  509.0,
+                  268.0
+                ],
+                [
+                  -1721.0,
+                  509.0,
+                  268.0
+                ]
+              ],
+              "barycentric": [
+                0.2026240114704239,
+                0.25446614537795303
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "tracking_loss": {
+      "valid": 0,
+      "hit": 0,
+      "eye": 0,
+      "mp": 0,
+      "weapon": 0,
+      "levels": 0,
+      "level_valid": 1,
+      "weapon_valid": 0,
+      "grip": 1,
+      "surfaces": 0,
+      "distance": 0,
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "direction": [
+        0,
+        0,
+        0
+      ],
+      "control": [
+        1151,
+        0,
+        1151,
+        0,
+        1151,
+        14,
+        8,
+        15
+      ]
+    },
+    "grip_release": {
+      "valid": 0,
+      "hit": 0,
+      "eye": 0,
+      "mp": 0,
+      "weapon": 0,
+      "levels": 0,
+      "level_valid": 1,
+      "weapon_valid": 1,
+      "grip": 0,
+      "surfaces": 0,
+      "distance": 0,
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "direction": [
+        0,
+        0,
+        0
+      ],
+      "control": [
+        1151,
+        0,
+        1151,
+        0,
+        1151,
+        14,
+        8,
+        15
+      ]
+    },
+    "verify_checks": 854,
+    "verify_mismatch": 0,
+    "native_shot_shared_ray": {
+      "before": {
+        "valid": 1,
+        "hit": 1,
+        "eye": 0,
+        "mp": 1,
+        "weapon": 0,
+        "levels": 0,
+        "level_valid": 1,
+        "weapon_valid": 1,
+        "grip": 1,
+        "surfaces": 25,
+        "distance": 1632.94615809,
+        "origin": [
+          -1462.66023019,
+          299.940298679,
+          444.137355516
+        ],
+        "direction": [
+          -0.0299242057179,
+          0.00974176118263,
+          -0.999504697338
+        ],
+        "control": [
+          1151,
+          0,
+          1151,
+          0,
+          1151,
+          14,
+          8,
+          15
+        ]
+      },
+      "after": {
+        "valid": 1,
+        "hit": 1,
+        "eye": 0,
+        "mp": 1,
+        "weapon": 0,
+        "levels": 0,
+        "level_valid": 1,
+        "weapon_valid": 1,
+        "grip": 1,
+        "surfaces": 25,
+        "distance": 1632.94615809,
+        "origin": [
+          -1462.66023019,
+          299.940298679,
+          444.137355516
+        ],
+        "direction": [
+          -0.0299242057179,
+          0.00974176118263,
+          -0.999504697338
+        ],
+        "control": [
+          1151,
+          0,
+          1151,
+          0,
+          1151,
+          14,
+          8,
+          15
+        ]
+      },
+      "shots": [
+        {
+          "shot": 2148598720,
+          "owner": 2148828112,
+          "p1": 2148828112,
+          "type": 5110,
+          "weapon": 0,
+          "caller": 2147780824,
+          "argument": 2148598720,
+          "eligible": 1,
+          "family_eligible": 1,
+          "code_valid": 1,
+          "hand_fixed": 1,
+          "camera_valid": 1,
+          "camera_owner": 2148828112,
+          "cycle": 11097075908,
+          "camera_cycle": 11095954089,
+          "position": [
+            -98566144,
+            23527424,
+            3735552
+          ],
+          "angles": [
+            131072,
+            133758976,
+            0
+          ],
+          "aimed": 1,
+          "aimed_position": [
+            -95856901,
+            19656887,
+            29106986
+          ],
+          "aimed_angles": [
+            -416202,
+            135496426,
+            0
+          ],
+          "weapon_control": [
+            1151,
+            0,
+            1151,
+            0,
+            1151,
+            14,
+            8,
+            15
+          ],
+          "camera": [
+            4294762470,
+            246,
+            3281930,
+            5308170,
+            57338,
+            4294964372,
+            4294966954,
+            936
+          ]
+        }
+      ]
+    }
+  },
+  "mp_native_fire_recovery": {
+    "path": "analysis/vr-baseline/alpha-mp-fire-recovery-20261028/receipt.json",
+    "sha256": "9508fe585a5ba8a6b7db82120ab2486595eefd05720d74a0c74c3bf2fe20e44b",
+    "binary_sha256": "b3286fa7d6ad5e70804c5079d0c0724d374b1ad4ab16fb468f2dd10d1b13e3cc"
+  },
+  "sp_slot3_turn_reload": {
+    "path": "analysis/vr-baseline/alpha-sp-turn-reload-20261028/receipt.json",
+    "sha256": "235635e1d9006461a94ef82d5fbc0dae1779625ccdbd471d2ad34eef6c8328d8",
+    "binary_sha256": "5b5cbe6b5a5d3386037073469f38de3ab1a0ebd75912f165cb3a3ae33ff05224",
+    "checks": {
+      "fresh_stereo": true,
+      "no_eye_failures": true,
+      "rollback": true,
+      "native_exec": true,
+      "native_calls_advance": true,
+      "expected_gun": true,
+      "expected_arm_mask": true,
+      "native_arena_failure_control": true,
+      "shot_policy": true
+    },
+    "render": {
+      "calibrated": 0,
+      "aim": 0,
+      "weapon_aim": 1,
+      "masked_arm_vertices": [
+        142,
+        142
+      ],
+      "visible_gun_vertices": [
+        96,
+        96
+      ]
+    },
+    "diagnostic_guest_frame_rate": 28.554734294263877,
+    "physical_fps_acceptance": false
+  },
+  "pause_regression": {
+    "sp": {
+      "path": "analysis/vr-baseline/alpha-pause-sp-20261028/receipt.json",
+      "sha256": "841c8724283493d8608ab4631eecfdd039349ae04497480d31f1bb23540ee42b",
+      "binary_sha256": "5b5cbe6b5a5d3386037073469f38de3ab1a0ebd75912f165cb3a3ae33ff05224"
+    },
+    "mp": {
+      "path": "analysis/vr-baseline/alpha-pause-mp-20261028/receipt.json",
+      "sha256": "6e6a376b133876e60510da9f1d62a41a2dd68cf5ae11b8ba15e84fa1512e5000",
+      "binary_sha256": "5b5cbe6b5a5d3386037073469f38de3ab1a0ebd75912f165cb3a3ae33ff05224"
+    }
+  },
+  "relative_matrix": {
+    "path": "analysis/vr-baseline/alpha-all-weapons-20261028/receipt.json",
+    "sha256": "3f8d38b584d50ebd353c3e245b760acc91b163f9d22cc0b36895baf835b049ce",
+    "draw_cases": 64,
+    "draw_controls_passed": true,
+    "runner_complete": false,
+    "error": "Pistol fire control requires ID 0",
+    "limitation": "All 64 relative-delta gun-mask draw controls passed; later optional pistol-fire request failed because final slot was petrol bomb. Do not promote that failed overall run. The actual SDK defaults capture and separate focused native firing/recovery controls are the acceptance evidence."
+  },
+  "stg_mask": {
+    "geometry_fnv32": "F467028B",
+    "private_hand_vertices": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      6,
+      7,
+      8,
+      9,
+      11,
+      12,
+      13,
+      14,
+      15,
+      38,
+      53,
+      54,
+      110
+    ],
+    "retained_shared_stock_vertices": [
+      5,
+      10,
+      109
+    ],
+    "retained_faces": 185,
+    "retained_vertices": 143,
+    "removed_hand_faces": 30
+  },
+  "tests": {
+    "python_tests": 126,
+    "strict_c": [
+      "weapon",
+      "calibrated_weapon",
+      "raycast"
+    ],
+    "strict_c_log_sha256": "2725af6e78f718e78d072b2fd80d20ecd5a587d66c57f722d2fd024d968c47a0"
+  },
+  "post_control_source_adjustment": "Final C change only makes an invalid SP root/bounds/camera inverse fail closed for the whole ray instead of accepting a partial level set. Valid control paths are unchanged. Strict tests, production rebuild and final production smoke rerun; no TCP run after that final guard.",
+  "production": {
+    "path": "analysis/vr-baseline/alpha-production-final-20261028/sp/desktop/receipt.json",
+    "sha256": "6d9fd6cd238375c3d06a227410b49dc4076b8cf3cdd9379993447335a7401e84",
+    "debug_tools": false,
+    "executable_sha256": "d465310544163439f60c945ff14171999e581955302af4e5575ab05210fb77c3",
+    "transport_passed": true,
+    "exit_code": 0,
+    "elapsed_seconds": 8.242437799926847,
+    "native_calls": 1051519,
+    "stereo": [
+      "150",
+      "150",
+      "1"
+    ]
+  },
+  "limits": [
+    "No physical headset used; per-ID preferred scale/grip and near/far sight/impact acceptance remain open.",
+    "Static arena/verified MP props only; laser is not a ballistic/drop/spread or NPC hit-volume prediction.",
+    "Real SP NPC health/damage ownership/isolation and broader SP shot families remain R6.",
+    "A5 native hand HUD, physical S5 teardown/performance, R5 matching street-wall fixture, A6 packaging remain open.",
+    "Optional A3 runtime calibration editor remains a study; no framework/UI/generated guest code or source saves changed."
+  ]
+}

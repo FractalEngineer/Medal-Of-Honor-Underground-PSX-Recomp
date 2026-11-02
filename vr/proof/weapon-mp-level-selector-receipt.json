@@ -1,0 +1,301 @@
+{
+  "schema": 1,
+  "date": "2026-10-26",
+  "source_revision": "2667308fe70faab6cc599bcf0758b77e39814ada",
+  "fixture": "copied root MP slot 1, zero switches, no fire",
+  "executable_sha256": "9b3d32a6a9d162b51df0c854a1bfbf929ae1f6f3d7e48c3f1baba11a47492691",
+  "source_hashes": {
+    "vr/tools/probe_mp_level_selector.py": "2820840faa182367e0c9406e0263747cea29fe8509bf029c103f8f09db7f539a",
+    "vr/underground/mp_view.h": "d640d9e76cf2384b64a6b858209977447e3d25c130b7f7f6df923bc8c3532d4a",
+    "vr/underground/vr_diagnostic.c": "b5c37347d12b1eb9e6b475c2c96913f9b52896c87551c4d08a27815e23d3305b"
+  },
+  "code_contracts": {
+    "frame_caller": {
+      "address": "0x80054BC4",
+      "size": 512,
+      "fnv32": "0x6CDFBB75",
+      "sha256": "cf45995fae41b79046395a0a968d29d05ee47429ef02615d3c4c310fdde6bd02"
+    },
+    "scene_dispatch": {
+      "address": "0x8006E9D8",
+      "size": 384,
+      "fnv32": "0x04C21F46",
+      "sha256": "946ed6fc048822835c2212c05706a074e665207cd3be7ddba36b72cb23aec846"
+    },
+    "scene_node_callback": {
+      "address": "0x8006C61C",
+      "size": 656,
+      "fnv32": "0xA2AAC71B",
+      "sha256": "57cf45a06a99164e5871527aefe9481edb262016eddb7960fe6e2e70fbc9a8f9"
+    },
+    "visibility_selector": {
+      "address": "0x80096EF4",
+      "size": 144,
+      "fnv32": "0x273C8059",
+      "sha256": "b21ace4b1a551ec5dbf68e80a487a760450de527e4f0d7336894db99dca9be25"
+    },
+    "visibility_helper": {
+      "address": "0x80096AC8",
+      "size": 1064,
+      "fnv32": "0x77C2060F",
+      "sha256": "ae4958a8c2b576aa58946bcc7460c0c87ab3a4cadd5e92b8e190c6198619ff31"
+    }
+  },
+  "scene_callers": [
+    {
+      "call_site": "0x80054CD4",
+      "word": "0x0C01BA76",
+      "return_address": "0x80054CDC",
+      "disasm": [
+        {
+          "addr": "0x80054CD4",
+          "word": "0x0C01BA76",
+          "text": "JAL      0x8006E9D8"
+        },
+        {
+          "addr": "0x80054CD8",
+          "word": "0x02002021",
+          "text": "ADDU     $a0, $s0, $zero"
+        },
+        {
+          "addr": "0x80054CDC",
+          "word": "0x8E2435D4",
+          "text": "LW       $a0, 13780($s1)"
+        },
+        {
+          "addr": "0x80054CE0",
+          "word": "0x0C021EF1",
+          "text": "JAL      0x80087BC4"
+        }
+      ]
+    },
+    {
+      "call_site": "0x80054D54",
+      "word": "0x0C01BA76",
+      "return_address": "0x80054D5C",
+      "disasm": [
+        {
+          "addr": "0x80054D54",
+          "word": "0x0C01BA76",
+          "text": "JAL      0x8006E9D8"
+        },
+        {
+          "addr": "0x80054D58",
+          "word": "0x02002021",
+          "text": "ADDU     $a0, $s0, $zero"
+        },
+        {
+          "addr": "0x80054D5C",
+          "word": "0x8E2435D8",
+          "text": "LW       $a0, 13784($s1)"
+        },
+        {
+          "addr": "0x80054D60",
+          "word": "0x0C021EF1",
+          "text": "JAL      0x80087BC4"
+        }
+      ]
+    }
+  ],
+  "selector_calls": {
+    "node_callback_to_selector": [
+      {
+        "call_site": "0x8006C664",
+        "word": "0x0C025BBD",
+        "return_address": "0x8006C66C"
+      },
+      {
+        "call_site": "0x8006C688",
+        "word": "0x0C025BBD",
+        "return_address": "0x8006C690"
+      }
+    ],
+    "selector_to_helper": [
+      {
+        "call_site": "0x80096F70",
+        "word": "0x0C025AB2",
+        "return_address": "0x80096F78"
+      }
+    ]
+  },
+  "scene_invocation": {
+    "mode": "natural MP frame window",
+    "pc_counts": {
+      "0x0006E9D8": 592,
+      "0x00054CD4": 296,
+      "0x00054D54": 296
+    }
+  },
+  "mp_level_selection": {
+    "shape": "flat_native_scene_list",
+    "scene_root": "0x8014A450",
+    "scene_node_count": 26,
+    "level_node_count": 21,
+    "visibility_selector": "0x80096EF4",
+    "visibility_helper": "0x80096AC8",
+    "visibility_gate_field": "+0x0C",
+    "queue": [
+      "0x80129980",
+      "0x8012AEE0",
+      "0x8012C440",
+      "0x8012D9A0",
+      "0x8012EF00",
+      "0x80130460",
+      "0x801319C0",
+      "0x80132ED0",
+      "0x801343E0",
+      "0x801358F0",
+      "0x80136E00",
+      "0x80138310",
+      "0x80139820",
+      "0x8013AD30",
+      "0x8013C240",
+      "0x8013D750",
+      "0x8013EC60",
+      "0x80140170",
+      "0x80141680",
+      "0x80142B90",
+      "0x801440A0"
+    ],
+    "masks": [
+      {
+        "node": "0x80129980",
+        "visibility_mask": "0x07020200",
+        "render_flags": "0x00400211",
+        "aux_flags": "0x08000001"
+      },
+      {
+        "node": "0x8012AEE0",
+        "visibility_mask": "0x07020200",
+        "render_flags": "0x00400211",
+        "aux_flags": "0x08000001"
+      },
+      {
+        "node": "0x8012C440",
+        "visibility_mask": "0x07020200",
+        "render_flags": "0x00400211",
+        "aux_flags": "0x08000001"
+      },
+      {
+        "node": "0x8012D9A0",
+        "visibility_mask": "0x07020200",
+        "render_flags": "0x00400211",
+        "aux_flags": "0x08000001"
+      },
+      {
+        "node": "0x8012EF00",
+        "visibility_mask": "0x07020200",
+        "render_flags": "0x00400211",
+        "aux_flags": "0x08000001"
+      },
+      {
+        "node": "0x80130460",
+        "visibility_mask": "0x07020200",
+        "render_flags": "0x00400211",
+        "aux_flags": "0x08000001"
+      },
+      {
+        "node": "0x801319C0",
+        "visibility_mask": "0x07020200",
+        "render_flags": "0x00400211",
+        "aux_flags": "0x08000001"
+      },
+      {
+        "node": "0x80132ED0",
+        "visibility_mask": "0x07020200",
+        "render_flags": "0x00400211",
+        "aux_flags": "0x08000001"
+      },
+      {
+        "node": "0x801343E0",
+        "visibility_mask": "0x07020200",
+        "render_flags": "0x00400211",
+        "aux_flags": "0x08000001"
+      },
+      {
+        "node": "0x801358F0",
+        "visibility_mask": "0x07020200",
+        "render_flags": "0x00400211",
+        "aux_flags": "0x08000001"
+      },
+      {
+        "node": "0x80136E00",
+        "visibility_mask": "0x07020200",
+        "render_flags": "0x00400211",
+        "aux_flags": "0x08000001"
+      },
+      {
+        "node": "0x80138310",
+        "visibility_mask": "0x07020200",
+        "render_flags": "0x00400211",
+        "aux_flags": "0x08000001"
+      },
+      {
+        "node": "0x80139820",
+        "visibility_mask": "0x07020200",
+        "render_flags": "0x00400211",
+        "aux_flags": "0x08000001"
+      },
+      {
+        "node": "0x8013AD30",
+        "visibility_mask": "0x07020200",
+        "render_flags": "0x00400211",
+        "aux_flags": "0x08000001"
+      },
+      {
+        "node": "0x8013C240",
+        "visibility_mask": "0x07020200",
+        "render_flags": "0x00400211",
+        "aux_flags": "0x08000001"
+      },
+      {
+        "node": "0x8013D750",
+        "visibility_mask": "0x07020200",
+        "render_flags": "0x00400211",
+        "aux_flags": "0x08000001"
+      },
+      {
+        "node": "0x8013EC60",
+        "visibility_mask": "0x07020200",
+        "render_flags": "0x00400211",
+        "aux_flags": "0x08000001"
+      },
+      {
+        "node": "0x80140170",
+        "visibility_mask": "0x07020200",
+        "render_flags": "0x00400211",
+        "aux_flags": "0x08000001"
+      },
+      {
+        "node": "0x80141680",
+        "visibility_mask": "0x07020200",
+        "render_flags": "0x00400211",
+        "aux_flags": "0x08000001"
+      },
+      {
+        "node": "0x80142B90",
+        "visibility_mask": "0x07020200",
+        "render_flags": "0x00400211",
+        "aux_flags": "0x08000001"
+      },
+      {
+        "node": "0x801440A0",
+        "visibility_mask": "0x07020200",
+        "render_flags": "0x00400211",
+        "aux_flags": "0x08000001"
+      }
+    ],
+    "pvs_queue": "No separate PVS leaf queue is written by the complete 8006C61C callback; level nodes are traversed in this list order and 80096EF4 gates each object."
+  },
+  "source_saves_unchanged": true,
+  "preferences_unchanged": true,
+  "remaining_game_pids": [],
+  "exit_code": 0,
+  "raw_receipt": "analysis\\vr-baseline\\weapon-mesh-mapping\\w2-level-selector-20261026-final2\\receipt.json",
+  "raw_receipt_sha256": "913326176fd2929ee90fe3a0e7c38a04435e15acc9e0e894106726afd41b6db7",
+  "limits": [
+    "No MP frustum/render override was added in W2.1.",
+    "No weapon switch or firing occurred in this fixture.",
+    "The measured MP path is a flat native scene list; W2.2 must not assume the SP PVS leaf queue."
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "base_commit": "f43ff45",
+  "normal_boot": {
+    "default_slot": -1,
+    "auto_load_when_omitted": false,
+    "native_surface_at_startup": true
+  },
+  "pause_return_policy": {
+    "resume_after_scene_idle_vblanks": 4,
+    "reference_game_match": true,
+    "next_scene_frame_disables_native_surface": true
+  },
+  "headless_boot_check": {
+    "command": "RunVR-SteamVR.bat -Headless -Seconds 10 -MemcardDirectory <fresh> -LogDirectory <fresh>",
+    "startup_receipt": "analysis/vr-baseline/theater-menu-idle-20261025/logs/startup.json",
+    "frame": 197,
+    "openxr_running": 1,
+    "tracking": 1,
+    "submitted": 2,
+    "empty": 0,
+    "failures": 0,
+    "last_slot": -1,
+    "stereo_pair_started": false
+  },
+  "focused_test": "PASS: native menu surface resumes after four scene-idle vblanks",
+  "headset_recheck": {
+    "start_menu_visible_after_default_boot_fix": true,
+    "pause_menu_missing_before_idle_resume_patch": true,
+    "pause_menu_after_idle_resume_patch": "pending physical-headset recheck"
+  },
+  "save_isolation": {
+    "headless_check_used_fresh_memcard_directory": true,
+    "source_saves_modified": false,
+    "isolated_saves_modified": false
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "schema": 1,
+  "date": "2026-10-26",
+  "kind": "W3.2 P38 headset comparison preparation and build receipt",
+  "fixture": "fresh copied root multiplayer slot 1, P38 ID 0, zero switches",
+  "diagnostic_executable_sha256": "9db6c6bbf8aae79d3d568cb4f0067d7b1dcc6eab07f00a4dbb1abe12265fdc73",
+  "release_executable_sha256": "bae4f60f02f4bf70ce86ea85d201674df7157bafa4d6bea20c3086972f2ab71d",
+  "cmake": {
+    "configuration": "Release",
+    "PSX_DEBUG_TOOLS": "OFF",
+    "MOHU_VR_DIAGNOSTICS": "ON",
+    "PSX_OPENXR": "ON"
+  },
+  "tested_sources": {
+    "vr/tools/probe_p38_headset.py": "8045b566c07979d1308efd0284412748ad5f47f600e635f1c58cc950f4091611",
+    "vr/tests/test_p38_headset.py": "66625dd51fbdda0969377010e86455c0f93963c80968aeffafe50ee2f57c9ef5"
+  },
+  "receipts": {
+    "desktop_dry_run": {
+      "path": "vr/proof/weapon-p38-headset-dry-run-receipt.json",
+      "sha256": "b58595ce5162c0532788eb9159de2926a9e74734c9b08511b7d1b88a32288d35"
+    },
+    "headset_transport_attempt": {
+      "path": "vr/proof/weapon-p38-headset-blocked-receipt.json",
+      "sha256": "e764723014ccc531dc14b315ad9b9a6e94d639ddfbed5ee888a4641ba0431545"
+    }
+  },
+  "checks": {
+    "python_tests": {
+      "count": 29,
+      "result": "PASS"
+    },
+    "desktop_native_tracked_dry_run": "PASS",
+    "headset_transport": "BLOCKED",
+    "headset_acceptance": false,
+    "source_saves_unchanged": true,
+    "preferences_unchanged": true,
+    "remaining_game_pids": []
+  },
+  "blocked_case": {
+    "mode": "native",
+    "error": "OpenXR did not submit stereo frames",
+    "runtime_log": "mohu-vr-diag: OpenXR begin failed; flat native surface remains active",
+    "p38_model_validated": true,
+    "copied_slot_load": "PASS"
+  },
+  "status": "W3.2 remains open",
+  "next_action": "Reconnect Quest 3 through Virtual Desktop/VDXR, then rerun the bounded compare from a fresh analysis directory.",
+  "limits": [
+    "The synthetic dry run is transport evidence, not headset acceptance.",
+    "W3.1 grip, scale and muzzle data remain provisional.",
+    "Physical size, attachment, recoil, reload, switch and wall proximity remain W3.3."
+  ]
+}

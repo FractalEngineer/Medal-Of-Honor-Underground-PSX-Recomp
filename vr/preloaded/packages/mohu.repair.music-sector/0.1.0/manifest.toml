@@ -1,0 +1,26 @@
+format_version = 10
+id = "mohu.repair.music-sector"
+version = "0.1.0"
+name = "Underground streaming recovery"
+author = "Medal-Of-Honor-Underground-PSX-Recomp"
+description = "Prevents repeating music and missing world sections in the supported image. Lost audio samples remain silent."
+license = "MIT"
+resolver = "declarative"
+
+[[target]]
+game_id = "SLUS-01270"
+disc_sha256 = "0951683ffd1bc2db1094ef3b0e142df6741efe2a5f95ad13bb5f2813a6c252d9"
+
+[[feature]]
+id = "sector-header"
+name = "Recover interrupted music and world streaming"
+description = "Repair the empty header at LBA 9469 in the supported image. Does not recover the lost audio samples or modify the source disc."
+# Historical recovery for the damaged image only. Clean images need no repair.
+default_enabled = false
+
+[[patch]]
+feature = "sector-header"
+target = "disc_raw"
+offset = 22271088
+expected = "000000000000000000000000000000000000000000000000"
+replace = "00ffffffffffffffffffff00020819020000080000000800"

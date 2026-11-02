@@ -6,7 +6,7 @@ name = "Medal of Honor Underground"
 id = "SLUS-01270"
 players = 2
 exe = "disc/SLUS_012.70"
-disc = "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\Medal Of Honor Underground (USA)\\MOHU (USA).cue"
+disc = "Medal of Honor - Underground/Medal of Honor - Underground (USA).cue"
 load_address = "0x80010000"
 entry_pc = "0x8001F844"
 text_size = "0x0002B800"
@@ -15,24 +15,72 @@ stack_base = "0x801FFFF0"
 # Digests are for data Track 01 (first BINARY FILE / TRACK 01).
 [prepare_disc]
 out_dir = "disc"
-bin_name = "MOHU (USA).bin"
-cue_name = "MOHU (USA).cue"
+bin_name = "Medal of Honor - Underground (USA).bin"
+cue_name = "Medal of Honor - Underground (USA).cue"
 boot_exe = "SLUS_012.70"
 known_sizes = [748001856]
 known_md5 = [
-  "8a2e3361e8272ce09e9a4ea7bd0403ad",
+  "9b5f6e9ed0ced26fda1bfb7cdd2b7a01",
 ]
 known_sha1 = [
-  "8f5a23bb21e626b4625cfd923aa4e2faec57165f",
+  "3d4ed9b1c7fb99acd96dd9c6ce2749a40cb8a1c2",
 ]
 known_crc32 = [
-  "91bd1816",
+  "19a9614b",
 ]
 
 [recompiler]
 seeds = "seeds/ghidra_funcs.txt"
 out_dir = "generated"
 strict = true
+# Trusted VR callbacks must survive cached-native overlay execution. These
+# entries mirror the registration block in vr/underground/vr_diagnostic.c:
+# the verified engine-map bindings, mode-specific shot/camera callbacks,
+# native submit/HUD filters, and the multiplayer frame/selector hooks.
+mod_function_entry_funcs = [
+  "0x80017628", # native VSync query: guarded render-only fresh-view candidate
+  "0x80093830", # entity transform
+  "0x80013B40", # entity node transformer
+  "0x80013EB4", # GTE RT/TR loader
+  "0x80099960", # level vertex transformer
+  "0x8009D828", # gameplay render wait
+  "0x80090760", # scene draw bridge
+  "0x80091854", # scene draw dispatcher
+  "0x800913A0", # entity render entry
+  "0x80079AF8", # render list wrapper
+  "0x80076A50", # actor render entry
+  "0x8008AB84", # player render entry
+  "0x80078E08", # actor update dispatcher
+  "0x80053BB4", # frame render
+  "0x8006D65C", # frame driver
+  "0x80018B48", # DrawOTag
+  "0x8004356C", # post-render update
+  "0x80018BB8", # PutDrawEnv
+  "0x8006C61C", # multiplayer camera entry
+  "0x8006C8B0", # multiplayer shot basis
+  "0x80076C28", # single-player shot basis
+  "0x80043FB0", # SP petrol safe post-release caller; exact RA guard
+  "0x80054BC4", # multiplayer frame entry
+  "0x80096EF4", # multiplayer frustum selector
+  "0x80053CFC", # native submit tail
+  "0x8006B64C", # flat HUD text filter
+  "0x8009A478", # SP native-surface world-copy filter
+]
+# Exact words are checked again by the plugin at runtime. Listing these sites
+# makes the dirty-RAM callbacks available in generated native game code too.
+mod_instruction_sites = [
+  "0x80084CDC", # marker constructor origin
+  "0x80084B74", # marker writer
+  "0x80048AAC", # marker load
+  "0x80090954", # SP held-weapon projection
+  "0x80090A78", # SP projected muzzle/arm mask
+  "0x8009086C", # SP primitive-budget branch
+  "0x80096F78", # multiplayer frustum result
+  "0x800892E8", # first-person render entry
+  "0x800894DC", # first-person projection
+  "0x80089D30", # first-person leave
+  "0x80089600", # first-person arm mask
+]
 
 [runtime]
 window_title = "Medal of Honor Underground Recompiled"
@@ -42,6 +90,10 @@ overlay_cache = true
 [video]
 renderer = "opengl"
 aspect_ratio = "4:3"
+internal_resolution = "1080p"
+
+[audio]
+buffer_ms = 260
 
 [controller]
 default_mode = "digital"

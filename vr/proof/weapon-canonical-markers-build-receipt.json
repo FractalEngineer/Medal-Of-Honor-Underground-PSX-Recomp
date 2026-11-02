@@ -1,0 +1,124 @@
+{
+  "schema": 1,
+  "date": "2026-10-27",
+  "kind": "W5.3c canonical animated markers and affected regressions",
+  "complete": true,
+  "headset_used": false,
+  "revision_before_commit": "8fac00da6c9fb0da1d719b8f26a24b76e11ab47f",
+  "working_tree_sources": true,
+  "framework_gitlink": "555e1eabccc59b9b6ff0d9fca48aca783513dc86",
+  "framework_development_branch": "vr/shared-development",
+  "ui_gitlink": "7c635c6b366a6e0d5d3c913a7fce6ec04dd9f256",
+  "executable_sha256": "cf399e543a90a8ec9c09eea62f9ab7fd838fde1229d33e23957d8b9ea1b47e68",
+  "build": {
+    "PSX_DEBUG_TOOLS": "ON",
+    "MOHU_VR_DIAGNOSTICS": "ON",
+    "PSX_OPENXR": "ON",
+    "configuration": "Release",
+    "target": "psx-runtime",
+    "flavor": "PGXP via the MOHU_VR_DIAGNOSTICS game CMake argument",
+    "xr_runtime_during_tests": "OFF; headless OpenGL"
+  },
+  "sources": {
+    "vr/underground/vr_diagnostic.c": "c42c0a2ce40db4902d3d55aad85578d06a277531843eb822870aa7f977609f34",
+    "vr/underground/weapon_markers.h": "3034de39aab417bd7d1169b2160b70ad16b9c4851f9f63322cf64edc7eb1a0ca",
+    "vr/underground/weapon_marker_groups.inc": "102083c1e0c09471bba610bc6b8165fc7c28a124043889e0232b25e8b22e344a",
+    "vr/underground/weapon.c": "27a45a58a8343fe05400ad7f868d9b30b313e9afa9382bf18998776bd38be03f",
+    "vr/underground/weapon.h": "a8bd7a27d6fa5754bcf9739d5b16a17e83bd0d1bc2a0b252cb19866de00157d3",
+    "vr/underground/shot.h": "7f004d216c55c6dd4dd941b665e79fee7ee57da6c988276e9a972e7bfddaa885",
+    "vr/underground/input.c": "6ab1f9f8d24b65d3b9cc4f7b398e223dc7fc0dbdd4414614b8478376e47e4ac6",
+    "vr/underground/mp_view.h": "e5719fbd36617c1d6bdbd59212f8c1196096db13aa66d480474818e54346ecb6",
+    "vr/tools/probe_canonical_markers.py": "5ab96c76ee5447c109276985a45177210ef717c4766104b9f7f3877ea432a69e",
+    "vr/tools/probe_shot_families.py": "6eb23f395c3653213de97968c266c5f63e36f467ae509eb45553f4a1e160278e",
+    "vr/tools/probe_native_shot.py": "c01da4a2fc07b5e7391aeee5f30b75d9dd53188d4e82721e858f4d069a09d7cf",
+    "vr/tests/test_weapon_markers.c": "d7fede6bf1687305fd12f34c384ff461cb91464db22ff9bba9a7f8d078df2945",
+    "vr/tests/test_weapon_markers.py": "e7e66820be127e7f1db35d318480412a1a518ee3f58c509add284708afc229fe",
+    "vr/tests/test_canonical_marker_probe.py": "dc840f91ee573258d83c4c145d7188a0873d3ca0cbb73ed569f6bb51e2bb15c5",
+    "vr/proof/weapon-provisional-calibrations-receipt.json": "90e7ef868d3eec84b71430b670b75d288eb74f9f0557498a7ad283451089ffa9",
+    "vr/proof/weapon-p38-complete-calibration-receipt.json": "6879f8126f7dcd968eb604e63a94cfe0df78a90f16f7bae7eecea22907dda730",
+    "psxrecomp/runtime/src/vr_geometry_math.c": "9e51708f0f05a16182e4d5893063a06f656d4fc723965f72cea9191632661a23"
+  },
+  "receipts": {
+    "canonical_markers": {
+      "path": "vr/proof/weapon-canonical-markers-receipt.json",
+      "sha256": "c229f4fd8dc0bc8512feb78aa0b44ec380b00c8cda67f8baa123414e9fccfe36"
+    },
+    "p38_native": {
+      "path": "analysis/vr-baseline/canonical-markers-p38-native-20261027/receipt.json",
+      "sha256": "1dbce0c120f79992a9ea3411dad2d02b209cbfacf8226d413139f38cb894a6cb"
+    },
+    "p38_tracked": {
+      "path": "analysis/vr-baseline/canonical-markers-p38-tracked-20261027/receipt.json",
+      "sha256": "e90f2ab9515a6c7c57d4c6b91c234a4962a91882a82cb59e01ac5d240ae2ae60"
+    },
+    "petrol_enabled": {
+      "path": "analysis/vr-baseline/canonical-markers-petrol-control-20261027/receipt.json",
+      "sha256": "095f9bcb9fc3ba2d599494aa8a2e0d5423cd40ad9da0f9779c67f4facfec19f0"
+    },
+    "crossbow_death": {
+      "path": "analysis/vr-baseline/canonical-markers-death-control-20261027/receipt.json",
+      "sha256": "4cb60a760c798a58325624353df885fe64d5c0809a69b238ea860f094ac29416"
+    },
+    "petrol_disabled": {
+      "path": "analysis/vr-baseline/canonical-markers-petrol-native-control-20261027/native-run/receipt.json",
+      "sha256": "1d969fa60042608b83d320142e2c39824133ed0b2af8be74051fbc6f6fc5d21e"
+    },
+    "petrol_disabled_timeline": {
+      "path": "analysis/vr-baseline/canonical-markers-petrol-native-control-20261027/timeline.json",
+      "sha256": "beca6705231ea5b13f57d8fc71f6524240f067a83d6db78ce9d23b4186d31ae2"
+    },
+    "host_parity": {
+      "path": "analysis/reference-parity/canonical-markers-20261027/baseline.json",
+      "sha256": "b9e8954dda7b8f5b586dba1c07b9dc1338a650f058c035c72ae83ff37cee8b97"
+    },
+    "raw_canonical": {
+      "path": "analysis\\vr-baseline\\canonical-markers-final-20261027\\receipt.json",
+      "sha256": "9d3f181645c857384f73d8afda49c4c02acc9942c5d045a81a333a44d932df1f"
+    }
+  },
+  "checks": {
+    "python_tests": 77,
+    "strict_c": "PASS: -std=c11 -Wall -Wextra -Werror; 13 measured selections, mean and identity/load/time guard fixture",
+    "diagnostic_syntax": "PASS: strict clang -fsyntax-only",
+    "release_build": "PASS: cmake --build build-release --target psx-runtime --parallel 2",
+    "shared_math_cases": 33,
+    "weapon_ids": 13,
+    "initial_events": 18,
+    "final_origin_events": 3,
+    "cache_controls": [
+      "fresh",
+      "stale",
+      "recovered",
+      "load-invalidated",
+      "p2-isolated",
+      "disabled"
+    ],
+    "age_limit_cycles": 2257920,
+    "max_initial_age_cycles": 1128671,
+    "max_mean_error_model_units": 4.2857095650106203e-10,
+    "marker_run_new_shot_overrides": 0,
+    "marker_run_published_pairs": 2413,
+    "marker_run_discarded_attempts": 300,
+    "marker_run_rollback_checks": 5126,
+    "marker_run_rollback_mismatches": 0,
+    "p38_native_cases": 5,
+    "p38_tracked_cases": 14,
+    "p38_regression_pairs": 901,
+    "p38_regression_rollback_checks": 1802,
+    "p38_regression_failed_pairs": 0,
+    "petrol_discarded_sampler_enabled": 300,
+    "petrol_discarded_sampler_disabled": 300,
+    "crossbow_death_discarded": 0,
+    "source_saves_preferences_unchanged": true,
+    "remaining_owned_processes": []
+  },
+  "normal_defaults": "Canonical sampler disabled unless explicitly started. Existing calibration/aim flags OFF; no new shot override flag added.",
+  "limits": [
+    "Source is last completed natural P1 post-animation output before an event, not the following recoil frame.",
+    "P38 uses barrel rings; other grip-tip axes remain provisional, not measured bores.",
+    "Read-only final-stage observations are not complete ownership/code guards for writes.",
+    "Petrol fixture discards reproduce with sampler disabled; this is not zero-discard/global stereo acceptance.",
+    "No non-P38 override, moving-shot/bore alignment, zoom-fire, thrown explosion damage, NPC/SP or physical acceptance claim."
+  ],
+  "next": "W5.3d opt-in family-aware conversion, then W5.3e matched native/tracked preservation."
+}

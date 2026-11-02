@@ -1,0 +1,39 @@
+{
+  "reported_date": "2026-10-29",
+  "timezone": "Asia/Taipei",
+  "evidence_kind": "operator-reported personal SP headset smoke",
+  "operator_reports": [
+    "smoke test passed, looking good no more missing level and music",
+    "pause menu is ok, sten is ok, performance still meh"
+  ],
+  "operator_launched_personally": true,
+  "agent_started_headset_for_this_report": false,
+  "accepted_scopes": {
+    "reported_missing_level_resolved": true,
+    "reported_stuck_music_resolved": true,
+    "sp_pause_functional_headset_smoke": true,
+    "sp_sten_functional_headset_smoke": true
+  },
+  "performance": {
+    "operator_assessment": "still meh",
+    "instrumented_fps": null,
+    "minimum_target_fps": 60,
+    "preferred_target_fps": 90,
+    "target_accepted": false
+  },
+  "not_certified_by_this_report": [
+    "Every SP weapon or native NPC damage/isolation",
+    "SP grenade/rocket final-origin conversion and restoration",
+    "Exhaustive pause/comfort/HUD/transition cases",
+    "Whole-campaign stability or clean teardown",
+    "Exact runtime/binary hash, frame timing, compositor repeats or 60/90 fresh views"
+  ],
+  "active_image_sha256_from_verified_activation": "2aed19d588f69274f8be70001eaa9b6400240b62088da72bace815ab902d56ed",
+  "activation_receipt": "vr/proof/clean-disc-activation-receipt.json",
+  "image_comparison_receipt": "vr/proof/disc-image-comparison-receipt.json",
+  "desktop_gameplay_receipt": "vr/proof/sp-gameplay-repairs-receipt.json",
+  "historical_disc_recovery_enabled": false,
+  "next_task": "P3b native replay attribution, P3c measured optimization, P4/P5 fresh-view cadence/recovery",
+  "no_repeat_general_headset_smoke_now": true,
+  "mp_is_calibration_only": true
+}

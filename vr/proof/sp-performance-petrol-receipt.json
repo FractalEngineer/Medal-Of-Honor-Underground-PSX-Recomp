@@ -1,0 +1,480 @@
+{
+  "schema": 1,
+  "date": "2026-10-28",
+  "release_target": "SP",
+  "headset_acceptance": false,
+  "minimum_fresh_vr_fps": 60,
+  "preferred_fresh_vr_fps": 90,
+  "performance_target_met": false,
+  "operator_report": "Accurate tracking/laser; SP slot-3 petrol invisible after one native switch; around 30 FPS",
+  "framework_pin": "555e1eabccc59b9b6ff0d9fca48aca783513dc86",
+  "sources": {
+    "vr/run_vr.ps1": "86bbd4d092d932b285a41e209382d77bec1e76b541238393b64c6dbf28e2a00a",
+    "vr/underground/weapon.c": "5a9072ae5bb646d9c76bfa09c42d141faa8d4bd497fc6d404d31f377db2336fe",
+    "vr/underground/weapon.h": "c203efafc743a9c0ac20e88107d6d1923e326404ebbe102ec012905799dd4cdb",
+    "vr/underground/vr_diagnostic.c": "0bc3fa24900289636d6d08fc13924ceefc8ac5c91c2ea2ecdc39fd0bdb6a2dad",
+    "vr/tools/probe_sp_petrol.py": "33dec312b738eb5332bcd3a0d007947ef96db8ae208504b841c880c223963b05",
+    "vr/tools/probe_sp_performance.py": "531c464edaa7aa244b77a76e424cdec320a924334acb4024f51738b21c909636",
+    "vr/tests/test_launcher_defaults.py": "bb63a142b0cb08eb96b29b498684ceff12305bb14d64040c93b93317dc473b0e",
+    "vr/tests/test_weapon.c": "b2a9aa44c60fedc74087f46641c9cc68792ec23799a40b42d90c7f44de6fd4c4"
+  },
+  "cadence_controls": {
+    "interpreter": {
+      "raw_receipt": "analysis/vr-baseline/operator-perf-20261028/interpreter/receipt.json",
+      "receipt_sha256": "0ad9323edc96d6cf96034c48195d5bcef66bc4f27184d00282a0e4563d267f47",
+      "binary_sha256": "e34bffb996dca8d39520fbf692d9a8f760280ec55186a4644be648b22be670f6",
+      "complete": true,
+      "exit_code": 0,
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "bench": {
+        "window_start": 300,
+        "window_end": 900,
+        "frames": 600,
+        "wall_ms": 10248.981,
+        "guest_work_ms": 9771.33,
+        "pacer_ms": 9.481,
+        "autocapture_main_ms": 0.299,
+        "provider_poll_ms": 0.242,
+        "dirty_insns": 134021383,
+        "dirty_dispatches": 20853,
+        "overlay_native": 0,
+        "overlay_interp": 0,
+        "overlay_loads": 0
+      },
+      "quiet_pairs_per_second": 28.43785084015173,
+      "build": {
+        "PSX_DEBUG_TOOLS": "OFF",
+        "MOHU_VR_DIAGNOSTICS": "ON",
+        "PSX_OPENXR": "ON",
+        "configuration": "Release"
+      }
+    },
+    "native": {
+      "raw_receipt": "analysis/vr-baseline/operator-perf-20261028/native/receipt.json",
+      "receipt_sha256": "9afea888477691857c30f59db3e5c5b052c2a2e1f07bfa613bd242512f1e014d",
+      "binary_sha256": "e34bffb996dca8d39520fbf692d9a8f760280ec55186a4644be648b22be670f6",
+      "complete": true,
+      "exit_code": 0,
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "bench": {
+        "window_start": 300,
+        "window_end": 900,
+        "frames": 600,
+        "wall_ms": 9999.539,
+        "guest_work_ms": 8163.857,
+        "pacer_ms": 1556.226,
+        "autocapture_main_ms": 0.314,
+        "provider_poll_ms": 0.29,
+        "dirty_insns": 379200,
+        "dirty_dispatches": 0,
+        "overlay_native": 2813918,
+        "overlay_interp": 18600,
+        "overlay_loads": 0
+      },
+      "quiet_pairs_per_second": 29.999722573877317,
+      "build": {
+        "PSX_DEBUG_TOOLS": "OFF",
+        "MOHU_VR_DIAGNOSTICS": "ON",
+        "PSX_OPENXR": "ON",
+        "configuration": "Release"
+      }
+    }
+  },
+  "stage_controls": {
+    "stages-no-hud": {
+      "raw_receipt": "analysis/vr-baseline/operator-perf-20261028/stages-no-hud/receipt.json",
+      "receipt_sha256": "fe8d0aca70db1f64625a2400ecade5b8f70988d1b7257b871f8a6e637d386031",
+      "binary_sha256": "d7e1cdeb1f119f37bc63986b5d0b88310096f3c3268c1658c21741dc2246e183",
+      "complete": true,
+      "exit_code": 0,
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "records": 180,
+      "target_period_us": 0,
+      "mean_ms": {
+        "pair_total": 19.71857222222222,
+        "game_traverse": 0.0,
+        "game_submit": 0.0,
+        "game_select": 0.0,
+        "game_laser": 0.0,
+        "hud_capture": 0.0,
+        "hud_draw": 0.0,
+        "hud_readback": 0.0,
+        "xr_wait_frame": 0.0,
+        "xr_end_frame": 0.0
+      },
+      "build": {
+        "PSX_DEBUG_TOOLS": "ON",
+        "MOHU_VR_DIAGNOSTICS": "ON",
+        "PSX_OPENXR": "ON",
+        "configuration": "Release"
+      },
+      "production_null_no_injected_hands": false,
+      "bounded_launcher_stop": false
+    },
+    "stages-hud": {
+      "raw_receipt": "analysis/vr-baseline/operator-perf-20261028/stages-hud/receipt.json",
+      "receipt_sha256": "a7458c9e602cf33c8ed8f4f04ff4f8b93e2bdae738428db1ad8ecdab6aba3a2e",
+      "binary_sha256": "d7e1cdeb1f119f37bc63986b5d0b88310096f3c3268c1658c21741dc2246e183",
+      "complete": true,
+      "exit_code": 0,
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "records": 180,
+      "target_period_us": 0,
+      "mean_ms": {
+        "pair_total": 19.734772222222222,
+        "game_traverse": 0.0,
+        "game_submit": 0.0,
+        "game_select": 0.0,
+        "game_laser": 0.0,
+        "hud_capture": 0.0,
+        "hud_draw": 0.0,
+        "hud_readback": 0.0,
+        "xr_wait_frame": 0.0,
+        "xr_end_frame": 0.0
+      },
+      "build": {
+        "PSX_DEBUG_TOOLS": "ON",
+        "MOHU_VR_DIAGNOSTICS": "ON",
+        "PSX_OPENXR": "ON",
+        "configuration": "Release"
+      },
+      "production_null_no_injected_hands": false,
+      "bounded_launcher_stop": false
+    },
+    "null-hud": {
+      "raw_receipt": "analysis/vr-baseline/operator-perf-20261028/null-hud/receipt.json",
+      "receipt_sha256": "d16fd5ed2a4b749e162c98e16a1896c330a03d85a3a3e059732c42ff16e94e0e",
+      "binary_sha256": "6ad750fdf41ce13a4159a6fd9c548f2048f0100b180612f79aae7260e2350c93",
+      "complete": true,
+      "exit_code": 0,
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "records": 180,
+      "target_period_us": 11111,
+      "mean_ms": {
+        "pair_total": 36.40218333333333,
+        "game_traverse": 0.0,
+        "game_submit": 0.0,
+        "game_select": 0.0,
+        "game_laser": 0.0,
+        "hud_capture": 4.869072222222222,
+        "hud_draw": 1.3917166666666667,
+        "hud_readback": 3.476322222222222,
+        "xr_wait_frame": 0.015183333333333333,
+        "xr_end_frame": 1.0691222222222223
+      },
+      "build": {
+        "PSX_DEBUG_TOOLS": "ON",
+        "MOHU_VR_DIAGNOSTICS": "ON",
+        "PSX_OPENXR": "ON",
+        "configuration": "Release"
+      },
+      "production_null_no_injected_hands": false,
+      "bounded_launcher_stop": false
+    },
+    "null-no-hud-clean": {
+      "raw_receipt": "analysis/vr-baseline/operator-perf-20261028/null-no-hud-clean/receipt.json",
+      "receipt_sha256": "438d5b90984cf9caa181accd8fdb80bb09eef4e4b2308a30302dce2828aa0728",
+      "binary_sha256": "9e42cdcf6371f299ce1821319fc2754e9f2b3b25ed9de1c0add77b3b858f3c8b",
+      "complete": true,
+      "exit_code": 0,
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "records": 180,
+      "target_period_us": 11111,
+      "mean_ms": {
+        "pair_total": 38.519,
+        "game_traverse": 34.207316666666664,
+        "game_submit": 1.9826166666666665,
+        "game_select": 0.09583888888888889,
+        "game_laser": 0.023911111111111112,
+        "hud_capture": 0.0,
+        "hud_draw": 0.0,
+        "hud_readback": 0.0,
+        "xr_wait_frame": 0.016238888888888886,
+        "xr_end_frame": 1.2490666666666665
+      },
+      "build": {
+        "PSX_DEBUG_TOOLS": "ON",
+        "MOHU_VR_DIAGNOSTICS": "ON",
+        "PSX_OPENXR": "ON",
+        "configuration": "Release"
+      },
+      "production_null_no_injected_hands": false,
+      "bounded_launcher_stop": false
+    },
+    "production-null-hud": {
+      "raw_receipt": "analysis/vr-baseline/operator-perf-20261028/production-null-hud/receipt.json",
+      "receipt_sha256": "be3e3c54921d483d5bb5ba7cb24416754e549c941d8c7be258f17b5708bda050",
+      "binary_sha256": "2c299fbbd41d29b511ca9c5e3795cdbfe304d1c52a5ab01193bb6861daaf1103",
+      "complete": true,
+      "exit_code": 0,
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "records": 120,
+      "target_period_us": 11111,
+      "mean_ms": {
+        "pair_total": 33.53661666666667,
+        "game_traverse": 29.6752,
+        "game_submit": 1.7159333333333333,
+        "game_select": 0.09380833333333334,
+        "game_laser": 0.0,
+        "hud_capture": 4.501566666666666,
+        "hud_draw": 1.366575,
+        "hud_readback": 3.1340583333333334,
+        "xr_wait_frame": 0.01661666666666667,
+        "xr_end_frame": 1.2366166666666665
+      },
+      "build": {
+        "PSX_DEBUG_TOOLS": "OFF",
+        "MOHU_VR_DIAGNOSTICS": "ON",
+        "PSX_OPENXR": "ON",
+        "configuration": "Release"
+      },
+      "production_null_no_injected_hands": true,
+      "bounded_launcher_stop": true
+    },
+    "production-final": {
+      "raw_receipt": "analysis/vr-baseline/operator-perf-20261028/production-final/receipt.json",
+      "receipt_sha256": "ada9affcc1c92a6ae710f8ff47dc7dbf9b33fe65b82e678356c2714c86e10167",
+      "binary_sha256": "2049f17c23382bd143bc82b9ecd269cafca20a084888c05cceec3a1ae3b0b052",
+      "complete": true,
+      "exit_code": 0,
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "records": 120,
+      "target_period_us": 11111,
+      "mean_ms": {
+        "pair_total": 32.78990833333333,
+        "game_traverse": 28.986941666666667,
+        "game_submit": 1.69065,
+        "game_select": 0.09154166666666667,
+        "game_laser": 0.0,
+        "hud_capture": 6.482,
+        "hud_draw": 1.3061500000000001,
+        "hud_readback": 5.174716666666666,
+        "xr_wait_frame": 0.014591666666666666,
+        "xr_end_frame": 1.0721500000000002
+      },
+      "build": {
+        "PSX_DEBUG_TOOLS": "OFF",
+        "MOHU_VR_DIAGNOSTICS": "ON",
+        "PSX_OPENXR": "ON",
+        "configuration": "Release"
+      },
+      "production_null_no_injected_hands": true,
+      "bounded_launcher_stop": true
+    }
+  },
+  "counter_experiment": {
+    "raw_receipt": "analysis/vr-baseline/operator-perf-20261028/production-counter-cache/receipt.json",
+    "receipt_sha256": "49ac1d4994141d6695c4653ed9ecb1b78b8d5c85187ab918b32cca6d8c503e74",
+    "binary_sha256": "c3771238c574fec58ae9310dba8f501dbd5ef55288adac8d3aef8d2df64ba895",
+    "complete": true,
+    "exit_code": 0,
+    "source_saves_unchanged": true,
+    "preferences_unchanged": true,
+    "records": 120,
+    "target_period_us": 11111,
+    "mean_ms": {
+      "pair_total": 31.026558333333334,
+      "game_traverse": 27.646508333333337,
+      "game_submit": 1.3026083333333334,
+      "game_select": 0.09195,
+      "game_laser": 0.0,
+      "hud_capture": 5.49725,
+      "hud_draw": 1.3100833333333333,
+      "hud_readback": 4.186308333333334,
+      "xr_wait_frame": 0.014975,
+      "xr_end_frame": 1.0653666666666666
+    },
+    "retained": false,
+    "reason": "Single small/inconclusive cadence change; removed; no framework source or pin change"
+  },
+  "final_production": {
+    "build": {
+      "PSX_DEBUG_TOOLS": "OFF",
+      "MOHU_VR_DIAGNOSTICS": "ON",
+      "PSX_OPENXR": "ON",
+      "configuration": "Release"
+    },
+    "trace_pairs_per_second": 18.92192717443155,
+    "raw_receipt": "analysis/vr-baseline/operator-perf-20261028/production-final/receipt.json",
+    "receipt_sha256": "ada9affcc1c92a6ae710f8ff47dc7dbf9b33fe65b82e678356c2714c86e10167",
+    "binary_sha256": "2049f17c23382bd143bc82b9ecd269cafca20a084888c05cceec3a1ae3b0b052",
+    "complete": true,
+    "exit_code": 0,
+    "source_saves_unchanged": true,
+    "preferences_unchanged": true
+  },
+  "petrol": {
+    "raw_receipt": "analysis/vr-baseline/operator-perf-20261028/petrol-verified/receipt.json",
+    "receipt_sha256": "86ab791957dfb9b4f1a2d4a5b372f11b492ed4746d5f86d8109ac0b48e8f1c92",
+    "binary_sha256": "158e04e5d81a999fb5dfd030914a11667281cb619c411c32f29c9178c3e5304f",
+    "complete": true,
+    "exit_code": 0,
+    "source_saves_unchanged": true,
+    "preferences_unchanged": true,
+    "geometry_fnv32": "0x408599ac",
+    "render": {
+      "calibrated": 0,
+      "aim": 0,
+      "weapon_aim": 1,
+      "masked_arm_vertices": [
+        97,
+        97
+      ],
+      "visible_gun_vertices": [
+        99,
+        99
+      ]
+    },
+    "restoration": {
+      "id": 0,
+      "ok": true,
+      "plans": 0,
+      "planned": 0,
+      "wanted": 0,
+      "refused": 0,
+      "passes": 228,
+      "aborted": 0,
+      "discarded": 0,
+      "watchdog": 0,
+      "vram_leaks": 0,
+      "nesting_repairs": 0,
+      "device_reads": 0,
+      "last_device_read": "0x00000000",
+      "last_device_read_width": 0,
+      "verify_checks": 228,
+      "verify_mismatch": 0,
+      "dropped": {
+        "spu": 0,
+        "cd": 0,
+        "timer": 0,
+        "dma": 0,
+        "gpu": 0,
+        "other": 0
+      },
+      "last_pass_ms": 10.407,
+      "avg_pass_ms": 11.175,
+      "avg_begin_ms": 0.816,
+      "avg_guest_ms": 8.898,
+      "avg_end_ms": 1.002,
+      "avg_restore_ms": 0.242,
+      "guest_cycles_last": 649349,
+      "disabled": 0,
+      "promotions": 0,
+      "pass_presents": 0,
+      "blended_presents": 0,
+      "expired": 0,
+      "late_presents": 0,
+      "unmatched_flips": 0,
+      "early_presents": 0,
+      "cost_us": 0,
+      "cost_rewarms": 0,
+      "frame_images": 0,
+      "journaled": 114,
+      "image_textures": 0,
+      "image_bytes": 0,
+      "status": 1,
+      "backups_reused": 114,
+      "pass_attempts": 228,
+      "argument_refused": 0,
+      "status_refused": 0,
+      "begin_refused": 0,
+      "checkpoint_refused": 0,
+      "spans": 0,
+      "span_failures": 0,
+      "local_views": 0,
+      "local_attempts": 0,
+      "local_status": 4,
+      "admission": {
+        "plans": 0,
+        "frame": 0,
+        "zero_credit_refusals": 0,
+        "idle_ms": 0.0,
+        "present_ms": 0.0,
+        "prior_pass_ms": 0.0,
+        "present_reserve_ms": 0.0,
+        "spare_ms": 0.0,
+        "frame_ms": 0.0,
+        "cost_ms": 0.0,
+        "budget_ms": 0.0,
+        "wanted": 0,
+        "planned": 0
+      },
+      "last_failure": null,
+      "last_abort_detail": "",
+      "span_fail": {
+        "reason": 0,
+        "pc": "0x00000000",
+        "start": "0x00000000",
+        "stop": "0x00000000",
+        "ra": "0x00000000",
+        "after": "0x00000000",
+        "insns": 0
+      }
+    },
+    "visibility_passed": true,
+    "vertex_xyz_identical_to_mp": 196,
+    "sp_metadata": 128,
+    "mp_metadata": 129
+  },
+  "p38_regression": {
+    "raw_receipt": "analysis/vr-baseline/operator-perf-20261028/p38-regression/receipt.json",
+    "receipt_sha256": "ff5f98b887e0b203e34f1a9113b71f2f347949e886b27fb4f2af9246f75bd351",
+    "binary_sha256": "158e04e5d81a999fb5dfd030914a11667281cb619c411c32f29c9178c3e5304f",
+    "complete": true,
+    "exit_code": 0,
+    "source_saves_unchanged": true,
+    "preferences_unchanged": true,
+    "checks": {
+      "fresh_stereo": true,
+      "no_eye_failures": true,
+      "rollback": true,
+      "native_exec": true,
+      "native_calls_advance": true,
+      "expected_gun": true,
+      "expected_arm_mask": true,
+      "native_arena_failure_control": true,
+      "shot_policy": true
+    },
+    "render": {
+      "calibrated": 0,
+      "aim": 0,
+      "weapon_aim": 1,
+      "masked_arm_vertices": [
+        142,
+        142
+      ],
+      "visible_gun_vertices": [
+        96,
+        96
+      ]
+    }
+  },
+  "rejected_probe": {
+    "name": "null-no-hud",
+    "complete": false,
+    "forced_cleanup": true,
+    "preferences_unchanged": false,
+    "reason": "15s parent timeout interrupted launcher cleanup; never promote",
+    "recovery": "Restored affected null-driver keys from saved physical configuration; preserved unrelated current preferences. Exact prior bytes unavailable.",
+    "prevention": "Persistent backup BEFORE null driver configuration; parent allows 45s cleanup"
+  },
+  "verification": {
+    "python_tests": 127,
+    "strict_c_weapon_tests": "PASS: -std=c11 -Wall -Wextra -Werror",
+    "production_exe_sha256": "2049f17c23382bd143bc82b9ecd269cafca20a084888c05cceec3a1ae3b0b052"
+  },
+  "open": [
+    "Reduce production scene replay and HUD cost",
+    "Independent fresh render-only 60/90 cadence with native simulation unchanged",
+    "Physical SP frame-time acceptance",
+    "SP NPC damage/isolation and broader shot families after performance"
+  ]
+}

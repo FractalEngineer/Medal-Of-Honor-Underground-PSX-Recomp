@@ -1,0 +1,139 @@
+{
+  "schema": 1,
+  "date": "2026-10-26",
+  "source_revision": "afda5082a2f477f9c6e90dc124ad3de8ece514d8",
+  "framework_gitlink": "b982e66e2536eaf738fbe3021db4d8f6c0feb90b",
+  "ui_gitlink": "7c635c6b366a6e0d5d3c913a7fce6ec04dd9f256",
+  "build": "build-release",
+  "compile": {
+    "debug_tools": false,
+    "mohu_vr_diagnostics": true,
+    "opengl": true,
+    "openxr": true,
+    "pgxp": true,
+    "release_executable_sha256": "d13aa6496ea4a690e2018cf8ed5e44668ad4c47e4af9919342ea2ce9deca955a",
+    "tested_diagnostic_executable_sha256": "5fe5c4dd1c7b52ffa552b0ec6af662ea51efbff9441666da791a7402aec68984"
+  },
+  "sources": {
+    "RunFlat.bat": "7b488f8c4fe14f08e77db16743f3610d19ed3414c16b83c559c2ba52d75df6d9",
+    "vr/tests/test_frustum.c": "c73e1b2538d1e0fc8025518bcfef6694418b84ca457462e675a040d5348683e9",
+    "vr/tests/test_launcher_defaults.py": "048e0352fc65d35151d537ab62cf1175be1f6dcb9267e2b4ca35ff438a1109b9",
+    "vr/tools/check_mp_view.py": "d00f51d785bf9a24ed65a155857fa21c75a1789e28ad2aae4cd30e171c585e9f",
+    "vr/tools/probe_mp_level_selector.py": "6e1e88c674864ab3654186381a03e444642270fe5342618a4e1d8a744a492bd6",
+    "vr/underground/frustum.h": "b46e3a1915be50a8bd9116aa23bd0856fe73b62d2c94c088f4d0c3d28144e8b8",
+    "vr/underground/mp_view.h": "8e7b2a74a37f39ec3b63dd211e3fab1310107c5858589dcf061f8f2f962755f8",
+    "vr/underground/vr_diagnostic.c": "e25c5c9598ac9557cca943f1b1c61e49bc959154194d518aa0a087865dc3249e"
+  },
+  "w2_frustum": {
+    "measurement_receipt": "vr/proof/weapon-mp-frustum-measurement.json",
+    "measurement_sha256": "5aa886d21b9f0c805f1b1bb3f87f2cb4c0275a88fd65799b60f74bd1abd113a2",
+    "controls_png": "vr/proof/weapon-mp-frustum-controls.png",
+    "controls_sha256": "2c89da5a4048eb1a344467708faba32c67109867ba8d36b1de5db5895c4c35bb",
+    "zero_control": "analysis/vr-baseline/weapon-mesh-mapping/w2-frustum-zero-20261026h/receipt.json",
+    "zero_control_sha256": "0f67fd5714365dc9268434d2a850aa5b002edc10f4f2ad212bb14d5d8e6de0f9",
+    "fixture": "copied root MP slot 1, P38 ID 0, zero switches, no fire",
+    "captured_samples": 21,
+    "native_visible_nodes": 3,
+    "screen": [540, 120],
+    "projection": {
+      "h": 400,
+      "ofx_q16": 16777216,
+      "ofy_q16": 3932160
+    },
+    "zero_pair_id": 22,
+    "zero_left_sha256": "de83c69d0a08f5933805c07dc86ac27f2310df3ef8eb1e920b12d0608d9b3c9e",
+    "zero_right_sha256": "de83c69d0a08f5933805c07dc86ac27f2310df3ef8eb1e920b12d0608d9b3c9e",
+    "override_calls_per_eye": {
+      "native": 147,
+      "translated": 147,
+      "yawed": 126,
+      "lost": 126
+    },
+    "fallback_calls": 0,
+    "rollback_mismatch": 0,
+    "vram_leaks": 0,
+    "source_saves_unchanged": true,
+    "preferences_unchanged": true,
+    "remaining_game_pids": []
+  },
+  "checks": {
+    "python_unittest": {
+      "passed": 18,
+      "failed": 0
+    },
+    "strict_c_fixtures": {
+      "frustum_aabb": "passed",
+      "weapon_math": "passed",
+      "mp_view_guard": "passed"
+    },
+    "strict_diagnostic_syntax": "passed",
+    "mp_matrix": {
+      "receipt": "analysis/vr-baseline/weapon-mesh-mapping/w2-frustum-regression-20261026b/mp-matrix/receipt.json",
+      "sha256": "281b19db282c2c7c87c5304875c222448e7990c300ea7c4673778694ff982859",
+      "complete": true,
+      "rows": 16,
+      "cases": 64,
+      "unique_weapon_ids": [0, 1, 4, 5, 8, 9, 10, 12, 13, 14, 15, 16, 17],
+      "cycles_closed": true,
+      "final_pairs": 1282,
+      "final_rollback_checks": 2566,
+      "stereo_failures": 0
+    },
+    "mp_lateral": {
+      "receipt": "analysis/vr-baseline/weapon-mesh-mapping/w2-frustum-regression-20261026b/mp-lateral/receipt.json",
+      "sha256": "97ce3f1041effffcdb902be4d254852c19b2a14a589f6caa63736b52190acea7",
+      "complete": true,
+      "eye_offset": 24
+    },
+    "mp_refusal_recovery": {
+      "receipt": "analysis/vr-baseline/weapon-mesh-mapping/w2-frustum-regression-20261026b/mp-fire/receipt.json",
+      "sha256": "146ee56e34c8026efb18cce423e8d832dffe55bd29ecbf61bdfef431d424405d",
+      "complete": true,
+      "refusals": 6,
+      "fresh_recovery_pair_id": 166,
+      "failed_eyes": 0
+    },
+    "native_pistol_fire": {
+      "clip_before": 8,
+      "clip_after": 7,
+      "p2_health_raw_before": 2097152,
+      "p2_health_raw_after": 2048000
+    },
+    "flat_pose_regression": {
+      "receipt": "analysis/vr-baseline/weapon-mesh-mapping/w2-frustum-regression-20261026b/flat-poses/inventory.json",
+      "sha256": "4852928a26a675fcac63a243b7cf6a5b37b561207a7eb85e8ba928f8c3d7e834",
+      "complete": true,
+      "source_slots": 4,
+      "unique_weapon_ids": [0, 1, 4, 5, 8, 9, 10, 12, 13, 14, 15, 16, 17]
+    },
+    "sp_stereo_zero": {
+      "receipt": "analysis/vr-baseline/weapon-mesh-mapping/w2-frustum-regression-20261026b/sp-zero/receipt.json",
+      "sha256": "3f72b8896310eecc107b2b14a3c5746fe4393453dec6d26a3479d2b591c706b5",
+      "pairs": 19,
+      "verify_checks": 38,
+      "verify_mismatch": 0,
+      "vram_leaks": 0,
+      "watchdog": 0,
+      "nesting_repairs": 0
+    },
+    "flat_inherited_flag_smoke": {
+      "receipt": "analysis/vr-baseline/weapon-mesh-mapping/w2-flat-smoke-20261026-final/receipt.json",
+      "sha256": "7398a8a233849aa81e40535597744d339960f97320d151da0f020c078f23bf1f",
+      "inherited_flags_cleared": true,
+      "flat_plugin_inert": true,
+      "intentional_termination": true,
+      "remaining_game_pids": []
+    }
+  },
+  "source_saves_unchanged": true,
+  "preferences_unchanged": true,
+  "steamvr_settings_unchanged": true,
+  "game_config_generated_framework_ui_unchanged": true,
+  "remaining_game_pids": [],
+  "limits": [
+    "W2.2 proves the guarded override wiring and zero-angle P38 control, not W2.3 head-turn or near-wall geometry acceptance.",
+    "The override defaults off and has no physical-headset acceptance claim.",
+    "The measured native visible-node set is live and is not a static allowlist.",
+    "No tracked firing was implemented; native pistol fire was run only as a rollback regression."
+  ]
+}

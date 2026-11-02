@@ -1,0 +1,80 @@
+{
+  "schema": 1,
+  "date": "2026-10-26",
+  "kind": "W2.4 multiplayer input build and regression receipt",
+  "complete": true,
+  "source_revision": "8ebe08c4dda786f7b57a6585b9866cc75eb7fed0",
+  "framework_gitlink": "555e1eabccc59b9b6ff0d9fca48aca783513dc86",
+  "ui_gitlink": "7c635c6b366a6e0d5d3c913a7fce6ec04dd9f256",
+  "builds": {
+    "diagnostic": {
+      "configuration": "Release, OpenGL, OpenXR, PGXP, VR diagnostics ON, debug tools ON",
+      "executable_sha256": "a63c50dd016144dab6b44be9c3c9523810c9e5b307aac1e0f339b1210dfb2c24"
+    },
+    "release": {
+      "configuration": "Release, OpenGL, OpenXR, PGXP, VR diagnostics ON, debug tools OFF",
+      "executable_sha256": "75fa5548a737cf6a2ae2a4ce579411dcc5771f79610a340209d47531d8b6f358",
+      "result": "link pass"
+    },
+    "flat": {
+      "configuration": "Release, OpenGL, OpenXR OFF, VR diagnostics OFF, debug tools OFF",
+      "executable_sha256": "6de11e4d6a880259ce9fbd3674d085d4233607b8784205cf59fedc09cfc08a42",
+      "result": "unchanged binary; W2.4 diagnostic source is excluded from this configuration"
+    }
+  },
+  "controls": {
+    "mp_receipt": "vr/proof/weapon-mp-input-receipt.json",
+    "mp_raw_receipt": "analysis/vr-baseline/mp-input-final-20261026a/receipt.json",
+    "mp_raw_receipt_sha256": "904ce30940ddb8ca9fd551edf55148d2171c637a15aaf3b90bef1fe423134d6e",
+    "sp_movement": {
+      "receipt": "analysis/vr-baseline/movement-w24-20261026c/receipt.json",
+      "sha256": "6ba97a17d9fedeb15e36a1d63f29d79e83c75905097d39007a7c74e976664550",
+      "slot": 2,
+      "samples": 13,
+      "passed": true
+    },
+    "cross_game_parity": {
+      "reference_head": "d82a5d0024570d7477db38d3cea5dfc59dd22035",
+      "underground_head": "8ebe08c4dda786f7b57a6585b9866cc75eb7fed0",
+      "shared_geometry_sha256": "9e51708f0f05a16182e4d5893063a06f656d4fc723965f72cea9191632661a23",
+      "raw_baseline": "analysis/reference-parity/w24-final-20261026/baseline.json",
+      "raw_baseline_sha256": "147faffac62f91301220bf6bf7ea63d1366d644fa1bc1415bb33e8907ab74746",
+      "cases": 33,
+      "passed": true
+    }
+  },
+  "focused_checks": {
+    "python_unittest": {
+      "passed": 23,
+      "failed": 0
+    },
+    "strict_c_fixtures": {
+      "input_and_mp_curve": "passed",
+      "mp_view_ownership_guard": "passed",
+      "frustum": "passed",
+      "raycast": "passed",
+      "hud_packets": "passed"
+    },
+    "strict_diagnostic_syntax": "passed"
+  },
+  "source_hashes": {
+    "vr/underground/vr_diagnostic.c": "908212cc63db0ea9bb161719ae103378d644f09783715caada454fdcb1161694",
+    "vr/underground/input.c": "6ab1f9f8d24b65d3b9cc4f7b398e223dc7fc0dbdd4414614b8478376e47e4ac6",
+    "vr/underground/input.h": "5f55cab63a0a48b5b70f42e2efe172a16a77292cd4f5db2bb850a7de7d888d6d",
+    "vr/underground/mp_view.h": "e5719fbd36617c1d6bdbd59212f8c1196096db13aa66d480474818e54346ecb6",
+    "vr/tests/test_input.c": "ef1b01947045834002db326072098f429be8047ef1f3e8eb6381c3a2e1f3462b",
+    "vr/tests/test_mp_view.c": "e04475e71687119a6a81d6f13aed2221c1f6bb870fd692ea25303195c5bf4307",
+    "vr/tools/probe_mp_input.py": "cdac9e4affe710c680d8cd51c7f7364a3a6719df0df5d87393e3af74c030ed96",
+    "vr/tools/check_movement.py": "ca2cbf060a4568796be44433e707240519fd1e8c23425b93192c64d47d4cffc0",
+    "vr/run_vr.ps1": "33690ef43a11f6f4576ae464caad78552fb9d25e915fc2419c9fa2fa77fe46dc"
+  },
+  "source_saves_unchanged": true,
+  "preferences_unchanged": true,
+  "remaining_game_pids": [],
+  "limits": [
+    "C1-C4 remain represented by their historical receipts; this build receipt records a fresh parity fixture run, not a second extraction.",
+    "The launcher no longer resolves any dependency from the adjacent reference checkout; its bounded headless sanity run reached main/menu before reporting the expected absence of an OpenXR runtime.",
+    "The flat build tree's staging target stalled during an attempted refresh; the unchanged diagnostics-off binary was used for the bounded startup check.",
+    "Physical multiplayer input acceptance remains open for W2.5 and later hardware work."
+  ]
+}

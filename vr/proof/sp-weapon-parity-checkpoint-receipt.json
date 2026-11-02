@@ -1,0 +1,114 @@
+{
+  "schema": 1,
+  "date": "2026-10-29",
+  "kind": "G7a inventory and reachable SP shot-control checkpoint",
+  "headset_acceptance": false,
+  "physical_acceptance": false,
+  "release_acceptance": false,
+  "checkpoint_debug_on_binary_sha256": "5DCE6B94C8DC3366029E3193267C37E1401A85CF90DD81F70851BFC0380B2CDE",
+  "production_debug_off_binary_sha256": "A54F6CCADE89925399A4593748F226E6B3C1C3C48DE05CB30B9C1F1B828D4BDA",
+  "build": {
+    "CMAKE_BUILD_TYPE": "Release",
+    "MOHU_VR_DIAGNOSTICS": "ON",
+    "PSX_DEBUG_TOOLS": "ON",
+    "PSX_OPENXR": "ON",
+    "PSX_RUNTIME_IPO": "OFF"
+  },
+  "production_build": {
+    "CMAKE_BUILD_TYPE": "Release",
+    "MOHU_VR_DIAGNOSTICS": "ON",
+    "PSX_DEBUG_TOOLS": "OFF",
+    "PSX_OPENXR": "ON",
+    "PSX_RUNTIME_IPO": "OFF"
+  },
+  "sources": {
+    "vr/underground/shot.h": "71EA879468159CC942EA2D1CC97560928FEA9E49D016CFC7DA39E69EDC4DF0EF",
+    "vr/underground/vr_diagnostic.c": "69BF1D5171F601791D11E15834838D2E8334547064AF5ED397D689DE6807C398",
+    "vr/tools/probe_sp_weapon_inventory.py": "2D156A057139ECD8F3BE2E8902B989979D0503C6FC92E18A59B8F3C7E1F93D0F",
+    "vr/tools/probe_sp_shot_origins.py": "9D2A6C9810424BB256EA05673962F79E431A96214B6A66D81FD654D64943C398",
+    "vr/tests/test_shot.c": "632380EDB58DFB81975616763992F5E5C7207C790CF7698CBED4825FCC1AD09D",
+    "vr/tests/test_sp_weapon_parity_tools.py": "BC2ED89E32750E5861F83BB53AFDC06AEFB08F12BB226EAF0881B2BE73E4473B"
+  },
+  "fixtures": {
+    "analysis/fixtures/sp/openbios/state_8001F844_slot01.pst": "3d7d06637158aaf7c436e05f2c7e65b85d9ed124fb636edc8a92d5cfd900f94b",
+    "analysis/fixtures/sp/openbios/state_8001F844_slot02.pst": "dd1c87925c8480198d04e8d7b38c67c0099ed4985463f7dc4e46731c80f90ceb",
+    "analysis/fixtures/sp/openbios/state_8001F844_slot03.pst": "85ca88b1ca3f54856530f4af0495dfc2c990a8529d868c3c4a350ac27511cc7a",
+    "analysis/fixtures/sp/openbios/state_8001F844_slot04.pst": "e4b976b1ecde396842deb70ae81e4a5832fbd1fd04a0cb16ed3df4af6d2721f7",
+    "analysis/fixtures/sp/openbios/state_8001F844_slot05.pst": "d60a32a58b59fa012f9853c16e65f47ad3990680a1bd77869ffb4c5a992663fe"
+  },
+  "inventory": {
+    "raw_receipts": [
+      "analysis/runtime/g7a-sp-inventory-20261029/receipt.json",
+      "analysis/runtime/g7a-sp-inventory-slot2-20261029/receipt.json"
+    ],
+    "ids_by_internal_slot": {
+      "1": [16],
+      "2": [0, 13, 15, 16],
+      "3": [0, 15],
+      "4": [0, 15, 16],
+      "5": [0, 15, 16]
+    },
+    "naturally_reachable_ids": [0, 13, 15, 16],
+    "absent_ids": [1, 4, 5, 8, 9, 10, 12, 14, 17],
+    "all_layouts_valid": true,
+    "source_saves_unchanged": true,
+    "preferences_unchanged": true,
+    "exit_code": 0
+  },
+  "sp_seams": {
+    "common_basis_call": "80048604",
+    "common_basis_entry": "80076C28",
+    "common_basis_return": "8004860C",
+    "p38_sten_origin_pcs": ["80048608", "80048608", "80048608"],
+    "rocket_final_origin_pcs": ["8004874C", "80048774", "8004879C"],
+    "first_motion_pcs": ["800793E4", "80079400", "8007941C"],
+    "raw_receipt": "analysis/runtime/g7-sp-origins-0-13-16-d-20261029/receipt.json"
+  },
+  "controls": {
+    "baseline_raw": "analysis/runtime/g7-sp-controls-final-baseline-20261029/receipt.json",
+    "hand_30_raw": "analysis/runtime/g7-sp-controls-final-yaw30-20261029/receipt.json",
+    "head_30_raw": "analysis/runtime/g7-sp-controls-final-head30-20261029/receipt.json",
+    "tracking_loss_raw": "analysis/runtime/g7-sp-controls-final-loss-20261029/receipt.json",
+    "hand_rotation_degrees": {
+      "0": 29.970469,
+      "16": 29.953052,
+      "13": 29.874661
+    },
+    "head_yaw_did_not_change_rocket_direction": true,
+    "tracking_loss": {
+      "weapon_id": 13,
+      "aimed": 0,
+      "tracking_fallback": 1,
+      "native_motion_present": true
+    },
+    "ammo": {
+      "0": {"clip_before": 8, "clip_after": 7},
+      "16": {"clip_before": 32, "clip_after": 30},
+      "13": {"clip_before": 1, "clip_after": 0}
+    },
+    "all_controls_clean_exit": true,
+    "p38_render_rollback_raw": "analysis/runtime/g7-sp-p38-regression-20261029/receipt.json",
+    "p38_render_rollback_checks": 176,
+    "p38_render_rollback_mismatches": 0,
+    "source_saves_unchanged": true,
+    "preferences_unchanged": true,
+    "post_run_tool_changes": "CLI default IDs and argument validation only; recorded controls supplied explicit IDs and used equivalent execution paths"
+  },
+  "validation": {
+    "python_tests": 136,
+    "python_result": "pass",
+    "strict_shot_c_fixture": "pass",
+    "strict_weapon_c_fixture": "pass",
+    "strict_raycast_c_fixture": "pass",
+    "git_diff_check": "pass",
+    "production_smoke_raw": "analysis/runtime/g7-production-final-20261029/receipt.json",
+    "production_smoke": "pass; 120 valid pairs, clean exit, saves/preferences unchanged",
+    "production_pairs_per_second": 30.287604988546704
+  },
+  "remaining": [
+    "Petrol has a live model and ammo in slots 3-5 but no native throw constructor was observed after tested fire/use/aim inputs; G7c remains open.",
+    "No frozen SP fixture contains IDs 1, 4, 5, 8, 9, 10, 12, 14 or 17; G7b/G7e live coverage remains incomplete.",
+    "The Panzerfaust now follows hand rotation and falls back on tracking loss, but the constructor still applies its native post-basis origin adjustment; exact calibrated final origin remains open.",
+    "Rocket speed, impact, reload/switch, pause/load and physical hand alignment remain unverified."
+  ]
+}

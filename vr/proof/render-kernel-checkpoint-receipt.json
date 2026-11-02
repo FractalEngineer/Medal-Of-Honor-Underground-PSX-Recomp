@@ -1,0 +1,1007 @@
+{
+  "schema": 1,
+  "date": "2026-10-30",
+  "base_commit": "ce8544a624ca6a201d1c78e4c3d92f54da6e459d",
+  "branch": "feature/vr-port",
+  "committed_or_pushed": false,
+  "target_fps": 60,
+  "later_target_fps": 90,
+  "target_met": false,
+  "physical_headset_test": false,
+  "framework_changed": false,
+  "framework_commit": "555e1eabccc59b9b6ff0d9fca48aca783513dc86",
+  "decision": "Retain experimental render kernels; reject exact-pose final-packet cache as VR architecture. All experiments OFF in normal play.",
+  "next_task": "Decode reusable source world geometry/material/topology at native packet caller, project/clip separately for each current eye/head pose; retain native fallback.",
+  "scope_limits": [
+    "Mission-start candidate fixtures differ from original heavy frozen slot 2.",
+    "Production measurements have XR disabled and no injected hand surfaces/rays.",
+    "Coincident-eye gain is not a headset/stereo speedup.",
+    "Full-path and second-workload promotion remain open.",
+    "Canonical preflight captures have invalid homogeneous input projections; eye integration is separate.",
+    "Historical HUD/pause VRAM mismatch and remaining weapon/physical gates remain open."
+  ],
+  "source_sha256": {
+    "CMakeLists.txt": "b452f27fba76bbff44f6e90a5f50baeb8707c528e86e1e145a916b8aa0098135",
+    "game.toml": "34ea40ba6c65ec3e8d4a7b5a50537e07ed731cb00244b99414f92b113240b2c7",
+    "generated/SLUS_012.70_full_02.c": "3a7552a591bf36b181f4d3bd3d0f2bfa373ed5cdc2c0429c598ea2b5d40fb451",
+    "generated/SLUS_012.70_full_00.c": "93e8c552f2ed330aed7ba34b76539203d549839c715d17735130815668be9c4a",
+    "vr/underground/preflight.c": "a3153a0ab0b1ba13f5521dcd5d2b286f7f2516f536000219fa05bccfb6bab8db",
+    "vr/underground/preflight.h": "91172dcfbf898c844ba424da4ebf51cdad46534a65dfec91e3fbe1dfe4dd2b03",
+    "vr/underground/preflight_entry.c": "a09be133e717a1ec3cf999ada361ba265625ad9474863867e32602d743a9fc08",
+    "vr/underground/preflight_harness.c": "70f6dc3b3de85340684e301dd9a6d505cd8d23a79aa75441f268c16ccff2d431",
+    "vr/underground/packet_entry.c": "69371c23c3b94df07c42369623ce52787e8ef34cb1cd3180126136812d2a536c",
+    "vr/underground/packet_harness.c": "84f0cba95bc24e0def44aaeaeed7289466d6e5d60f20e374feb1e9617ac71e3a",
+    "vr/tools/build_packet_kernel.py": "4ad2b574ff1fd0be44afa26af51496bb5691e8fe8ba81264e5f04363526c27d8",
+    "vr/underground/world_cache.inc": "88425e932f353b0665fac5e81a48cdc320eafb958389a53338cb51472e7a6da8",
+    "vr/underground/world_cache_key.h": "a0114d263206d1d9a8ca93f59d921caf6471bde1e98ca9fca4b4e65b38a0394f",
+    "vr/underground/cadence.h": "d4704a27a4515b0a9cd478ec4ee13ee4c129fc73b0116d0be1fc2bc33491779b",
+    "vr/underground/vr_diagnostic.c": "2dac74e01b3a777111ba002144fee0b1c37a6c55b57e5c04852b210e13c6ea1c",
+    "vr/tools/profile_sp_production.py": "6ee35a912d676705e5701c7b7701855c1d0724f89fef3f16ba3da1601282e943",
+    "vr/tools/probe_sp_issues.py": "73e147932add84c1ba2667acc0fbb5a3c82f6bc28d276677c78a7445efd4c3af",
+    "vr/tools/summarize_preflight.py": "6a52c7bedf9d3db13de68ddd29d7e5f26ba083c5b1aad06d713b4d17720cd3fa",
+    "vr/tools/test_preflight.py": "3f1cd59ce3e41a427be2ec2a2aa9595b72e2f64f6ee88a0104d28c1fc486e2fb"
+  },
+  "latest_candidate_manifest": {
+    "schema": 1,
+    "profile": "ENHANCED",
+    "identity": "1b2f45c2ed83546d119ac31c37dcc6746d5a954ccbf763b8634f8815b7910ccb",
+    "shared_contract_sha256": "48e094991a789ee3a281edd0289545ee09e46f7ecdcf1ef5056383f7f54f10e3",
+    "implementations": [
+      {
+        "name": "mohu-vr-render-kernels",
+        "contract": "slus01270-render-kernels-v1",
+        "source_sha256": "fac5196f8ffec1692ff64b2450b77cd6a5f3bdb36b70c67297e746ad5d437fc3"
+      }
+    ]
+  },
+  "preflight_live": [
+    {
+      "receipt": "analysis/runtime/p3c-preflight-slot2-first-20261030/receipt.json",
+      "receipt_sha256": "6095bc1dce5db42de7585cb0f45ffdf5beaf36afacd7e83a66e7c2af03dfbc3f",
+      "complete": true,
+      "binary_sha256": "683a31ea69c3ddcff5b6af824fcd359355578233e9b71725ff67de88c5e93f75",
+      "preflight_harness": {
+        "checks": 128,
+        "remaining": 0,
+        "failed": 0,
+        "numeric_failed": 0,
+        "precision_failed": 0,
+        "refused": 0,
+        "first_reg": 4294967295,
+        "first_shadow": 4294967295,
+        "candidate_us": 62.9,
+        "reference_us": 164.2,
+        "result_counts": [
+          47,
+          81,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "winding_counts": [
+          61,
+          1,
+          47,
+          0,
+          14,
+          0,
+          5,
+          0
+        ]
+      },
+      "exit_code": 0,
+      "remaining_game_pids": [],
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "fixture_sha256": {
+        "state_8001F844_slot02.pst": "dd1c87925c8480198d04e8d7b38c67c0099ed4985463f7dc4e46731c80f90ceb",
+        "state_8001F844_slot02.thumb": "332196dd7003ad841e25a9320fc138d2a5886ce9a5e47a494894c16c178e9b55"
+      },
+      "flags": {
+        "PSX_RENDER_PASS_VERIFY": "1",
+        "PSX_OPENXR_ENABLE": "0",
+        "MOHU_VR_EYE_OFFSET": "0",
+        "MOHU_VR_FRESH_60": null,
+        "MOHU_VR_WORLD_CACHE": null,
+        "MOHU_VR_SKIP_NATIVE_WORLD_COPY": null
+      },
+      "restoration": {
+        "verify_checks": 226,
+        "verify_mismatch": 0,
+        "vram_leaks": 0,
+        "watchdog": 0,
+        "nesting_repairs": 0
+      }
+    },
+    {
+      "receipt": "analysis/runtime/p3c-preflight-slot5-20261030/receipt.json",
+      "receipt_sha256": "9329550584e50e9dbd85e0cb5f0c827b498104c5d0b9529bdec0bfbb2d0104bb",
+      "complete": true,
+      "binary_sha256": "683a31ea69c3ddcff5b6af824fcd359355578233e9b71725ff67de88c5e93f75",
+      "preflight_harness": {
+        "checks": 1024,
+        "remaining": 0,
+        "failed": 0,
+        "numeric_failed": 0,
+        "precision_failed": 0,
+        "refused": 0,
+        "first_reg": 4294967295,
+        "first_shadow": 4294967295,
+        "candidate_us": 449.2,
+        "reference_us": 1535.2,
+        "result_counts": [
+          410,
+          583,
+          6,
+          0,
+          5,
+          0,
+          4,
+          0,
+          4,
+          0,
+          10,
+          0,
+          2,
+          0,
+          0,
+          0
+        ],
+        "winding_counts": [
+          502,
+          0,
+          312,
+          0,
+          131,
+          0,
+          79,
+          0
+        ]
+      },
+      "exit_code": 0,
+      "remaining_game_pids": [],
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "fixture_sha256": {
+        "state_8001F844_slot05.pst": "d60a32a58b59fa012f9853c16e65f47ad3990680a1bd77869ffb4c5a992663fe",
+        "state_8001F844_slot05.thumb": "b3a4099c76c0ce025076113f37322f2b2b08219c4696050140818bd624e48951"
+      },
+      "flags": {
+        "PSX_RENDER_PASS_VERIFY": "1",
+        "PSX_OPENXR_ENABLE": "0",
+        "MOHU_VR_EYE_OFFSET": "0",
+        "MOHU_VR_FRESH_60": null,
+        "MOHU_VR_WORLD_CACHE": null,
+        "MOHU_VR_SKIP_NATIVE_WORLD_COPY": null
+      },
+      "restoration": {
+        "verify_checks": 294,
+        "verify_mismatch": 0,
+        "vram_leaks": 0,
+        "watchdog": 0,
+        "nesting_repairs": 0
+      }
+    }
+  ],
+  "preflight_capture_summaries": [
+    {
+      "file": "analysis/runtime/p3c-preflight-slot2-first-20261030/preflight-calls.bin",
+      "checks": 128,
+      "failed": 0,
+      "mismatch_records": [],
+      "results": {
+        "0": 47,
+        "1": 81
+      },
+      "winding": {
+        "0": 61,
+        "1": 1,
+        "2": 47,
+        "4": 14,
+        "6": 5
+      },
+      "scopes": {
+        "0": 128
+      },
+      "input_projection_valid": {
+        "0": 384
+      },
+      "capture_sha256": "871a3281fc6b24ac7dd1e9ec9c7c2252b0b7d10cc747ea3855d8cbcbe36a7055",
+      "full_frame_performance": false,
+      "physical_acceptance": false
+    },
+    {
+      "file": "analysis/runtime/p3c-preflight-slot5-20261030/preflight-calls.bin",
+      "checks": 1024,
+      "failed": 0,
+      "mismatch_records": [],
+      "results": {
+        "0": 410,
+        "1": 583,
+        "2": 6,
+        "4": 5,
+        "6": 4,
+        "8": 4,
+        "10": 10,
+        "12": 2
+      },
+      "winding": {
+        "0": 502,
+        "2": 312,
+        "4": 131,
+        "6": 79
+      },
+      "scopes": {
+        "0": 1024
+      },
+      "input_projection_valid": {
+        "0": 3072
+      },
+      "capture_sha256": "23c1e96edae996375d93dc7771e4825a70494cf3a82769f9556dcecf25603d96",
+      "full_frame_performance": false,
+      "physical_acceptance": false
+    }
+  ],
+  "packet_live": {
+    "receipt": "analysis/runtime/p3d-packet-caller-entry-fixed-20261030/receipt.json",
+    "receipt_sha256": "d2f01c9e8966be16505d9dddad976daa26d76f687b5da4cae48e94c65ecb6af2",
+    "complete": true,
+    "binary_sha256": "be07c8f1b528edaf8053bf21b617f419854a0e609e60c4fdaeebd63b7a75a3cb",
+    "packet_harness": {
+      "checks": 512,
+      "remaining": 0,
+      "failed": 0,
+      "refused": 0,
+      "reg_failed": 0,
+      "mem_failed": 0,
+      "shadow_failed": 0,
+      "first_reg": 4294967295,
+      "entries": 1,
+      "resumes": 511,
+      "writes": 8091,
+      "candidate_us": 1041.2,
+      "reference_us": 2471.7
+    },
+    "exit_code": 0,
+    "remaining_game_pids": [],
+    "source_saves_unchanged": true,
+    "preferences_unchanged": true,
+    "execution_identity": "fe88bdf41c73eb3275334f669cf015db4f26ea93242971a7e15782b4c025073f",
+    "execution_profile": "ENHANCED",
+    "fixture_sha256": {
+      "state_8001F844_slot02.pst": "e5c0cc70b6b20c19a3f38c24e52b5273885b8820e4f9e5a206256fb600ad9569",
+      "state_8001F844_slot02.thumb": "8f1f1352e8b381184432e62189f6a8190141a2dcfde62ed8d5538b04303d4eeb"
+    },
+    "flags": {
+      "PSX_RENDER_PASS_VERIFY": "1",
+      "PSX_OPENXR_ENABLE": "0",
+      "MOHU_VR_EYE_OFFSET": "0",
+      "MOHU_VR_FRESH_60": null,
+      "MOHU_VR_WORLD_CACHE": null,
+      "MOHU_VR_SKIP_NATIVE_WORLD_COPY": null
+    },
+    "restoration": {
+      "verify_checks": 194,
+      "verify_mismatch": 0,
+      "vram_leaks": 0,
+      "watchdog": 0,
+      "nesting_repairs": 0
+    }
+  },
+  "preflight_production_ab": {
+    "reference": [
+      {
+        "receipt": "analysis/runtime/p3c-ab1-reference-20261030/receipt.json",
+        "receipt_sha256": "76c7208186d3eed6c1a93d273205197aa91123a18ebe1e9a396e150bd81cfcf1",
+        "complete": true,
+        "binary_sha256": "34f86418ea69ccaaad720fd5685f92c39c25a6bfe55b63de31964bcf419b9654",
+        "pairs_per_second": 29.832038104788168,
+        "exit_code": 0,
+        "remaining_game_pids": [],
+        "source_saves_unchanged": true,
+        "preferences_unchanged": true,
+        "execution_identity": "8174a988661560c5297b4579eb11a9577ccd80a03ea5dfa794a84e21ca3c4361",
+        "execution_profile": "ENHANCED",
+        "fixture_sha256": {
+          "state_8001F844_slot02.pst": "f637b6b4bfe26dad7b86c1106deea7af7aba2027510e0aaed6b93fc0f259e706",
+          "state_8001F844_slot02.thumb": "8f1f1352e8b381184432e62189f6a8190141a2dcfde62ed8d5538b04303d4eeb"
+        },
+        "flags": {
+          "PSX_RENDER_PASS_VERIFY": "0",
+          "PSX_OPENXR_ENABLE": "0",
+          "MOHU_VR_EYE_OFFSET": "0",
+          "MOHU_VR_FRESH_60": null,
+          "MOHU_VR_WORLD_CACHE": null,
+          "MOHU_VR_SKIP_NATIVE_WORLD_COPY": "0"
+        },
+        "mean_stages_ms": {
+          "pair_total": 14.273116666666667,
+          "game_traverse": 11.315508333333334,
+          "game_submit": 0.779175,
+          "hud_capture": 0.0,
+          "game_laser": 0.0
+        }
+      },
+      {
+        "receipt": "analysis/runtime/p3c-ab2-reference-20261030/receipt.json",
+        "receipt_sha256": "662e333f422628c04784eafdd01929c37d6e0483728bd169f05a5b13d24619e6",
+        "complete": true,
+        "binary_sha256": "34f86418ea69ccaaad720fd5685f92c39c25a6bfe55b63de31964bcf419b9654",
+        "pairs_per_second": 29.922051797837565,
+        "exit_code": 0,
+        "remaining_game_pids": [],
+        "source_saves_unchanged": true,
+        "preferences_unchanged": true,
+        "execution_identity": "8174a988661560c5297b4579eb11a9577ccd80a03ea5dfa794a84e21ca3c4361",
+        "execution_profile": "ENHANCED",
+        "fixture_sha256": {
+          "state_8001F844_slot02.pst": "f637b6b4bfe26dad7b86c1106deea7af7aba2027510e0aaed6b93fc0f259e706",
+          "state_8001F844_slot02.thumb": "8f1f1352e8b381184432e62189f6a8190141a2dcfde62ed8d5538b04303d4eeb"
+        },
+        "flags": {
+          "PSX_RENDER_PASS_VERIFY": "0",
+          "PSX_OPENXR_ENABLE": "0",
+          "MOHU_VR_EYE_OFFSET": "0",
+          "MOHU_VR_FRESH_60": null,
+          "MOHU_VR_WORLD_CACHE": null,
+          "MOHU_VR_SKIP_NATIVE_WORLD_COPY": "0"
+        },
+        "mean_stages_ms": {
+          "pair_total": 14.45415,
+          "game_traverse": 11.411166666666666,
+          "game_submit": 0.77695,
+          "hud_capture": 0.0,
+          "game_laser": 0.0
+        }
+      },
+      {
+        "receipt": "analysis/runtime/p3c-ab3-reference-20261030/receipt.json",
+        "receipt_sha256": "7ba2a531516ba1a9846564871a78c153b4cb3978b876bda1167c9ff2337deaf0",
+        "complete": true,
+        "binary_sha256": "34f86418ea69ccaaad720fd5685f92c39c25a6bfe55b63de31964bcf419b9654",
+        "pairs_per_second": 29.712858926342072,
+        "exit_code": 0,
+        "remaining_game_pids": [],
+        "source_saves_unchanged": true,
+        "preferences_unchanged": true,
+        "execution_identity": "8174a988661560c5297b4579eb11a9577ccd80a03ea5dfa794a84e21ca3c4361",
+        "execution_profile": "ENHANCED",
+        "fixture_sha256": {
+          "state_8001F844_slot02.pst": "f637b6b4bfe26dad7b86c1106deea7af7aba2027510e0aaed6b93fc0f259e706",
+          "state_8001F844_slot02.thumb": "8f1f1352e8b381184432e62189f6a8190141a2dcfde62ed8d5538b04303d4eeb"
+        },
+        "flags": {
+          "PSX_RENDER_PASS_VERIFY": "0",
+          "PSX_OPENXR_ENABLE": "0",
+          "MOHU_VR_EYE_OFFSET": "0",
+          "MOHU_VR_FRESH_60": null,
+          "MOHU_VR_WORLD_CACHE": null,
+          "MOHU_VR_SKIP_NATIVE_WORLD_COPY": "0"
+        },
+        "mean_stages_ms": {
+          "pair_total": 14.29205,
+          "game_traverse": 11.307533333333334,
+          "game_submit": 0.7737833333333333,
+          "hud_capture": 0.0,
+          "game_laser": 0.0
+        }
+      }
+    ],
+    "candidate": [
+      {
+        "receipt": "analysis/runtime/p3c-ab1-enhanced-20261030/receipt.json",
+        "receipt_sha256": "52a8668f860efe8ae8f95a9b291e3f3d0cc666cb9962e6d8e6e0b409182acab8",
+        "complete": true,
+        "binary_sha256": "69fd3f8cc5ab7576e3ba07c650292188c193f85bcdf07cf8a8204a43547a9022",
+        "pairs_per_second": 30.005042864346947,
+        "exit_code": 0,
+        "remaining_game_pids": [],
+        "source_saves_unchanged": true,
+        "preferences_unchanged": true,
+        "execution_identity": "fe88bdf41c73eb3275334f669cf015db4f26ea93242971a7e15782b4c025073f",
+        "execution_profile": "ENHANCED",
+        "fixture_sha256": {
+          "state_8001F844_slot02.pst": "e5c0cc70b6b20c19a3f38c24e52b5273885b8820e4f9e5a206256fb600ad9569",
+          "state_8001F844_slot02.thumb": "8f1f1352e8b381184432e62189f6a8190141a2dcfde62ed8d5538b04303d4eeb"
+        },
+        "flags": {
+          "PSX_RENDER_PASS_VERIFY": "0",
+          "PSX_OPENXR_ENABLE": "0",
+          "MOHU_VR_EYE_OFFSET": "0",
+          "MOHU_VR_FRESH_60": null,
+          "MOHU_VR_WORLD_CACHE": null,
+          "MOHU_VR_SKIP_NATIVE_WORLD_COPY": "0"
+        },
+        "mean_stages_ms": {
+          "pair_total": 12.962891666666666,
+          "game_traverse": 10.089825000000001,
+          "game_submit": 0.769475,
+          "hud_capture": 0.0,
+          "game_laser": 0.0
+        }
+      },
+      {
+        "receipt": "analysis/runtime/p3c-ab2-enhanced-20261030/receipt.json",
+        "receipt_sha256": "2cf2005376146bffb185054830ab584118a8048b15248e9481698d3ceb8a61e5",
+        "complete": true,
+        "binary_sha256": "69fd3f8cc5ab7576e3ba07c650292188c193f85bcdf07cf8a8204a43547a9022",
+        "pairs_per_second": 28.967867575462513,
+        "exit_code": 0,
+        "remaining_game_pids": [],
+        "source_saves_unchanged": true,
+        "preferences_unchanged": true,
+        "execution_identity": "fe88bdf41c73eb3275334f669cf015db4f26ea93242971a7e15782b4c025073f",
+        "execution_profile": "ENHANCED",
+        "fixture_sha256": {
+          "state_8001F844_slot02.pst": "e5c0cc70b6b20c19a3f38c24e52b5273885b8820e4f9e5a206256fb600ad9569",
+          "state_8001F844_slot02.thumb": "8f1f1352e8b381184432e62189f6a8190141a2dcfde62ed8d5538b04303d4eeb"
+        },
+        "flags": {
+          "PSX_RENDER_PASS_VERIFY": "0",
+          "PSX_OPENXR_ENABLE": "0",
+          "MOHU_VR_EYE_OFFSET": "0",
+          "MOHU_VR_FRESH_60": null,
+          "MOHU_VR_WORLD_CACHE": null,
+          "MOHU_VR_SKIP_NATIVE_WORLD_COPY": "0"
+        },
+        "mean_stages_ms": {
+          "pair_total": 13.149366666666667,
+          "game_traverse": 10.253366666666667,
+          "game_submit": 0.76855,
+          "hud_capture": 0.0,
+          "game_laser": 0.0
+        }
+      },
+      {
+        "receipt": "analysis/runtime/p3c-ab3-enhanced-20261030/receipt.json",
+        "receipt_sha256": "08db1f482b9c2fd3419d4ff39eea0d3a82402b4c361fda09be0240083d8fb030",
+        "complete": true,
+        "binary_sha256": "69fd3f8cc5ab7576e3ba07c650292188c193f85bcdf07cf8a8204a43547a9022",
+        "pairs_per_second": 29.601990049751244,
+        "exit_code": 0,
+        "remaining_game_pids": [],
+        "source_saves_unchanged": true,
+        "preferences_unchanged": true,
+        "execution_identity": "fe88bdf41c73eb3275334f669cf015db4f26ea93242971a7e15782b4c025073f",
+        "execution_profile": "ENHANCED",
+        "fixture_sha256": {
+          "state_8001F844_slot02.pst": "e5c0cc70b6b20c19a3f38c24e52b5273885b8820e4f9e5a206256fb600ad9569",
+          "state_8001F844_slot02.thumb": "8f1f1352e8b381184432e62189f6a8190141a2dcfde62ed8d5538b04303d4eeb"
+        },
+        "flags": {
+          "PSX_RENDER_PASS_VERIFY": "0",
+          "PSX_OPENXR_ENABLE": "0",
+          "MOHU_VR_EYE_OFFSET": "0",
+          "MOHU_VR_FRESH_60": null,
+          "MOHU_VR_WORLD_CACHE": null,
+          "MOHU_VR_SKIP_NATIVE_WORLD_COPY": "0"
+        },
+        "mean_stages_ms": {
+          "pair_total": 13.087583333333335,
+          "game_traverse": 10.155325000000001,
+          "game_submit": 0.7794833333333333,
+          "hud_capture": 0.0,
+          "game_laser": 0.0
+        }
+      }
+    ]
+  },
+  "latest_production_alternation": [
+    {
+      "receipt": "analysis/runtime/p4-cache-production-20261030/receipt.json",
+      "receipt_sha256": "43f0c94c1c63be99b4dd0b414494157c3bf67c07dd20b6cc314e758a1280dbe7",
+      "complete": true,
+      "binary_sha256": "09bb6c8a782f3f3f49f30e9293edb5dec5d2f452ac983742adf7791bdc41dba8",
+      "pairs_per_second": 56.34469696969697,
+      "publication_sources": {
+        "native-draw": 60,
+        "fresh60": 60
+      },
+      "native_vblanks_per_second": 56.34469696969697,
+      "exit_code": 0,
+      "remaining_game_pids": [],
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "execution_identity": "1b2f45c2ed83546d119ac31c37dcc6746d5a954ccbf763b8634f8815b7910ccb",
+      "execution_profile": "ENHANCED",
+      "fixture_sha256": {
+        "state_8001F844_slot02.pst": "6805d0305402438255746404c5319090acc0330ff07b86ea48fe100430132590",
+        "state_8001F844_slot02.thumb": "8f1f1352e8b381184432e62189f6a8190141a2dcfde62ed8d5538b04303d4eeb"
+      },
+      "flags": {
+        "PSX_RENDER_PASS_VERIFY": "0",
+        "PSX_OPENXR_ENABLE": "0",
+        "MOHU_VR_EYE_OFFSET": "0",
+        "MOHU_VR_FRESH_60": "1",
+        "MOHU_VR_WORLD_CACHE": "1",
+        "MOHU_VR_SKIP_NATIVE_WORLD_COPY": "0"
+      },
+      "mean_stages_ms": {
+        "pair_total": 8.546025,
+        "game_traverse": 6.210875,
+        "game_submit": 0.7004583333333334,
+        "hud_capture": 0.0,
+        "game_laser": 0.0
+      }
+    },
+    {
+      "receipt": "analysis/runtime/p4-no-cache-production-20261030/receipt.json",
+      "receipt_sha256": "db28e74693987422562b945578b0f28d8a4a1526c22043d25193593708f8032b",
+      "complete": true,
+      "binary_sha256": "09bb6c8a782f3f3f49f30e9293edb5dec5d2f452ac983742adf7791bdc41dba8",
+      "pairs_per_second": 48.35432750914263,
+      "publication_sources": {
+        "native-draw": 60,
+        "fresh60": 60
+      },
+      "native_vblanks_per_second": 48.35432750914263,
+      "exit_code": 0,
+      "remaining_game_pids": [],
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "execution_identity": "1b2f45c2ed83546d119ac31c37dcc6746d5a954ccbf763b8634f8815b7910ccb",
+      "execution_profile": "ENHANCED",
+      "fixture_sha256": {
+        "state_8001F844_slot02.pst": "6805d0305402438255746404c5319090acc0330ff07b86ea48fe100430132590",
+        "state_8001F844_slot02.thumb": "8f1f1352e8b381184432e62189f6a8190141a2dcfde62ed8d5538b04303d4eeb"
+      },
+      "flags": {
+        "PSX_RENDER_PASS_VERIFY": "0",
+        "PSX_OPENXR_ENABLE": "0",
+        "MOHU_VR_EYE_OFFSET": "0",
+        "MOHU_VR_FRESH_60": "1",
+        "MOHU_VR_WORLD_CACHE": "0",
+        "MOHU_VR_SKIP_NATIVE_WORLD_COPY": "0"
+      },
+      "mean_stages_ms": {
+        "pair_total": 10.859733333333333,
+        "game_traverse": 8.44305,
+        "game_submit": 0.712425,
+        "hud_capture": 0.0,
+        "game_laser": 0.0
+      }
+    },
+    {
+      "receipt": "analysis/runtime/p4-cache-production-b2-20261030/receipt.json",
+      "receipt_sha256": "4575bd13cf320a3809e2841b0d1211e778b5b41aed1f99b25aac027559be2e78",
+      "complete": true,
+      "binary_sha256": "09bb6c8a782f3f3f49f30e9293edb5dec5d2f452ac983742adf7791bdc41dba8",
+      "pairs_per_second": 57.04697986577181,
+      "publication_sources": {
+        "native-draw": 60,
+        "fresh60": 60
+      },
+      "native_vblanks_per_second": 57.04697986577181,
+      "exit_code": 0,
+      "remaining_game_pids": [],
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "execution_identity": "1b2f45c2ed83546d119ac31c37dcc6746d5a954ccbf763b8634f8815b7910ccb",
+      "execution_profile": "ENHANCED",
+      "fixture_sha256": {
+        "state_8001F844_slot02.pst": "6805d0305402438255746404c5319090acc0330ff07b86ea48fe100430132590",
+        "state_8001F844_slot02.thumb": "8f1f1352e8b381184432e62189f6a8190141a2dcfde62ed8d5538b04303d4eeb"
+      },
+      "flags": {
+        "PSX_RENDER_PASS_VERIFY": "0",
+        "PSX_OPENXR_ENABLE": "0",
+        "MOHU_VR_EYE_OFFSET": "0",
+        "MOHU_VR_FRESH_60": "1",
+        "MOHU_VR_WORLD_CACHE": "1",
+        "MOHU_VR_SKIP_NATIVE_WORLD_COPY": "0"
+      },
+      "mean_stages_ms": {
+        "pair_total": 8.538466666666666,
+        "game_traverse": 6.187858333333334,
+        "game_submit": 0.7095333333333333,
+        "hud_capture": 0.0,
+        "game_laser": 0.0
+      }
+    },
+    {
+      "receipt": "analysis/runtime/p4-no-cache-production-a2-20261030/receipt.json",
+      "receipt_sha256": "4ae7c34d947c940a94f6f9eea1775c1f12d48dc98427bc3e691099b2f5267578",
+      "complete": true,
+      "binary_sha256": "09bb6c8a782f3f3f49f30e9293edb5dec5d2f452ac983742adf7791bdc41dba8",
+      "pairs_per_second": 48.77049180327869,
+      "publication_sources": {
+        "native-draw": 60,
+        "fresh60": 60
+      },
+      "native_vblanks_per_second": 48.77049180327869,
+      "exit_code": 0,
+      "remaining_game_pids": [],
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "execution_identity": "1b2f45c2ed83546d119ac31c37dcc6746d5a954ccbf763b8634f8815b7910ccb",
+      "execution_profile": "ENHANCED",
+      "fixture_sha256": {
+        "state_8001F844_slot02.pst": "6805d0305402438255746404c5319090acc0330ff07b86ea48fe100430132590",
+        "state_8001F844_slot02.thumb": "8f1f1352e8b381184432e62189f6a8190141a2dcfde62ed8d5538b04303d4eeb"
+      },
+      "flags": {
+        "PSX_RENDER_PASS_VERIFY": "0",
+        "PSX_OPENXR_ENABLE": "0",
+        "MOHU_VR_EYE_OFFSET": "0",
+        "MOHU_VR_FRESH_60": "1",
+        "MOHU_VR_WORLD_CACHE": "0",
+        "MOHU_VR_SKIP_NATIVE_WORLD_COPY": "0"
+      },
+      "mean_stages_ms": {
+        "pair_total": 10.934175,
+        "game_traverse": 8.487525,
+        "game_submit": 0.71935,
+        "hud_capture": 0.0,
+        "game_laser": 0.0
+      }
+    },
+    {
+      "receipt": "analysis/runtime/p4-cache-production-b3-20261030/receipt.json",
+      "receipt_sha256": "43e387920947c98f5fdad6c1c20965c3781c6aa40815b614850e14170a4f15a5",
+      "complete": true,
+      "binary_sha256": "09bb6c8a782f3f3f49f30e9293edb5dec5d2f452ac983742adf7791bdc41dba8",
+      "pairs_per_second": 56.8561872909699,
+      "publication_sources": {
+        "native-draw": 60,
+        "fresh60": 60
+      },
+      "native_vblanks_per_second": 56.8561872909699,
+      "exit_code": 0,
+      "remaining_game_pids": [],
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "execution_identity": "1b2f45c2ed83546d119ac31c37dcc6746d5a954ccbf763b8634f8815b7910ccb",
+      "execution_profile": "ENHANCED",
+      "fixture_sha256": {
+        "state_8001F844_slot02.pst": "6805d0305402438255746404c5319090acc0330ff07b86ea48fe100430132590",
+        "state_8001F844_slot02.thumb": "8f1f1352e8b381184432e62189f6a8190141a2dcfde62ed8d5538b04303d4eeb"
+      },
+      "flags": {
+        "PSX_RENDER_PASS_VERIFY": "0",
+        "PSX_OPENXR_ENABLE": "0",
+        "MOHU_VR_EYE_OFFSET": "0",
+        "MOHU_VR_FRESH_60": "1",
+        "MOHU_VR_WORLD_CACHE": "1",
+        "MOHU_VR_SKIP_NATIVE_WORLD_COPY": "0"
+      },
+      "mean_stages_ms": {
+        "pair_total": 8.592491666666668,
+        "game_traverse": 6.224333333333333,
+        "game_submit": 0.7041583333333333,
+        "hud_capture": 0.0,
+        "game_laser": 0.0
+      }
+    },
+    {
+      "receipt": "analysis/runtime/p4-no-cache-production-a3-20261030/receipt.json",
+      "receipt_sha256": "ac382380eba769ec9f991d7f3bb37ca0ec5d7970b8ce36d3cf1d3c269a1b2109",
+      "complete": true,
+      "binary_sha256": "09bb6c8a782f3f3f49f30e9293edb5dec5d2f452ac983742adf7791bdc41dba8",
+      "pairs_per_second": 48.178137651821864,
+      "publication_sources": {
+        "native-draw": 60,
+        "fresh60": 60
+      },
+      "native_vblanks_per_second": 48.178137651821864,
+      "exit_code": 0,
+      "remaining_game_pids": [],
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "execution_identity": "1b2f45c2ed83546d119ac31c37dcc6746d5a954ccbf763b8634f8815b7910ccb",
+      "execution_profile": "ENHANCED",
+      "fixture_sha256": {
+        "state_8001F844_slot02.pst": "6805d0305402438255746404c5319090acc0330ff07b86ea48fe100430132590",
+        "state_8001F844_slot02.thumb": "8f1f1352e8b381184432e62189f6a8190141a2dcfde62ed8d5538b04303d4eeb"
+      },
+      "flags": {
+        "PSX_RENDER_PASS_VERIFY": "0",
+        "PSX_OPENXR_ENABLE": "0",
+        "MOHU_VR_EYE_OFFSET": "0",
+        "MOHU_VR_FRESH_60": "1",
+        "MOHU_VR_WORLD_CACHE": "0",
+        "MOHU_VR_SKIP_NATIVE_WORLD_COPY": "0"
+      },
+      "mean_stages_ms": {
+        "pair_total": 10.944391666666666,
+        "game_traverse": 8.492591666666668,
+        "game_submit": 0.7276666666666667,
+        "hud_capture": 0.0,
+        "game_laser": 0.0
+      }
+    }
+  ],
+  "separated_eye_controls": [
+    {
+      "receipt": "analysis/runtime/p4-cache-separated-eyes-20261030/receipt.json",
+      "receipt_sha256": "38450b18624731473e2babd5e195b4ad99eabad36e321be59cdab3fcf770a3c5",
+      "complete": true,
+      "binary_sha256": "09bb6c8a782f3f3f49f30e9293edb5dec5d2f452ac983742adf7791bdc41dba8",
+      "pairs_per_second": 47.61904761904762,
+      "publication_sources": {
+        "native-draw": 60,
+        "fresh60": 60
+      },
+      "native_vblanks_per_second": 47.61904761904762,
+      "exit_code": 0,
+      "remaining_game_pids": [],
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "execution_identity": "1b2f45c2ed83546d119ac31c37dcc6746d5a954ccbf763b8634f8815b7910ccb",
+      "execution_profile": "ENHANCED",
+      "fixture_sha256": {
+        "state_8001F844_slot02.pst": "6805d0305402438255746404c5319090acc0330ff07b86ea48fe100430132590",
+        "state_8001F844_slot02.thumb": "8f1f1352e8b381184432e62189f6a8190141a2dcfde62ed8d5538b04303d4eeb"
+      },
+      "flags": {
+        "PSX_RENDER_PASS_VERIFY": "0",
+        "PSX_OPENXR_ENABLE": "0",
+        "MOHU_VR_EYE_OFFSET": "8",
+        "MOHU_VR_FRESH_60": "1",
+        "MOHU_VR_WORLD_CACHE": "1",
+        "MOHU_VR_SKIP_NATIVE_WORLD_COPY": "0"
+      },
+      "mean_stages_ms": {
+        "pair_total": 11.022541666666665,
+        "game_traverse": 8.586791666666667,
+        "game_submit": 0.7076333333333333,
+        "hud_capture": 0.0,
+        "game_laser": 0.0
+      }
+    },
+    {
+      "receipt": "analysis/runtime/p4-no-cache-separated-eyes-20261030/receipt.json",
+      "receipt_sha256": "7890188c5f112d0b46e8ae44cbddcb125ebf85ca9a192145928a6a41b4427aac",
+      "complete": true,
+      "binary_sha256": "09bb6c8a782f3f3f49f30e9293edb5dec5d2f452ac983742adf7791bdc41dba8",
+      "pairs_per_second": 48.690671031096564,
+      "publication_sources": {
+        "native-draw": 60,
+        "fresh60": 60
+      },
+      "native_vblanks_per_second": 48.690671031096564,
+      "exit_code": 0,
+      "remaining_game_pids": [],
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "execution_identity": "1b2f45c2ed83546d119ac31c37dcc6746d5a954ccbf763b8634f8815b7910ccb",
+      "execution_profile": "ENHANCED",
+      "fixture_sha256": {
+        "state_8001F844_slot02.pst": "6805d0305402438255746404c5319090acc0330ff07b86ea48fe100430132590",
+        "state_8001F844_slot02.thumb": "8f1f1352e8b381184432e62189f6a8190141a2dcfde62ed8d5538b04303d4eeb"
+      },
+      "flags": {
+        "PSX_RENDER_PASS_VERIFY": "0",
+        "PSX_OPENXR_ENABLE": "0",
+        "MOHU_VR_EYE_OFFSET": "8",
+        "MOHU_VR_FRESH_60": "1",
+        "MOHU_VR_WORLD_CACHE": "0",
+        "MOHU_VR_SKIP_NATIVE_WORLD_COPY": "0"
+      },
+      "mean_stages_ms": {
+        "pair_total": 10.946725,
+        "game_traverse": 8.484641666666667,
+        "game_submit": 0.7182000000000001,
+        "hud_capture": 0.0,
+        "game_laser": 0.0
+      }
+    }
+  ],
+  "final_rebuilt_enhanced_control": {
+    "receipt": "analysis/runtime/p4-final-enhanced-separated-20261030/receipt.json",
+    "receipt_sha256": "d80c1f83711842fac23f59372d9b1909b2498915d1b60d1af7fddf3fcde7254e",
+    "complete": true,
+    "binary_sha256": "a71bef9ba746483792e2919c855411b5f5aadc56005b587b3a29c92bc1720601",
+    "pairs_per_second": 47.072784810126585,
+    "publication_sources": {
+      "native-draw": 60,
+      "fresh60": 60
+    },
+    "native_vblanks_per_second": 47.072784810126585,
+    "exit_code": 0,
+    "remaining_game_pids": [],
+    "source_saves_unchanged": true,
+    "preferences_unchanged": true,
+    "execution_identity": "1b2f45c2ed83546d119ac31c37dcc6746d5a954ccbf763b8634f8815b7910ccb",
+    "execution_profile": "ENHANCED",
+    "fixture_sha256": {
+      "state_8001F844_slot02.pst": "6805d0305402438255746404c5319090acc0330ff07b86ea48fe100430132590",
+      "state_8001F844_slot02.thumb": "8f1f1352e8b381184432e62189f6a8190141a2dcfde62ed8d5538b04303d4eeb"
+    },
+    "flags": {
+      "PSX_RENDER_PASS_VERIFY": "0",
+      "PSX_OPENXR_ENABLE": "0",
+      "MOHU_VR_EYE_OFFSET": "8",
+      "MOHU_VR_FRESH_60": "1",
+      "MOHU_VR_WORLD_CACHE": "1",
+      "MOHU_VR_SKIP_NATIVE_WORLD_COPY": "0"
+    },
+    "mean_stages_ms": {
+      "pair_total": 11.102924999999999,
+      "game_traverse": 8.603291666666665,
+      "game_submit": 0.7219166666666667,
+      "hud_capture": 0.0,
+      "game_laser": 0.0
+    }
+  },
+  "cache_correctness": {
+    "receipt": "analysis/runtime/p4-cache-view-key-correctness-20261030/receipt.json",
+    "receipt_sha256": "bb5672c174f50bde91e8560892ed4b5d76efdde6661766fffe1ec91ff6fb16a3",
+    "complete": true,
+    "binary_sha256": "14b75e4cbaf1c0cbcbcd5ad9a80d4981c6f2b436b7209f736f495c4a5ffb3ae3",
+    "exit_code": 0,
+    "remaining_game_pids": [],
+    "source_saves_unchanged": true,
+    "preferences_unchanged": true,
+    "execution_identity": "1b2f45c2ed83546d119ac31c37dcc6746d5a954ccbf763b8634f8815b7910ccb",
+    "execution_profile": "ENHANCED",
+    "fixture_sha256": {
+      "state_8001F844_slot02.pst": "6805d0305402438255746404c5319090acc0330ff07b86ea48fe100430132590",
+      "state_8001F844_slot02.thumb": "8f1f1352e8b381184432e62189f6a8190141a2dcfde62ed8d5538b04303d4eeb"
+    },
+    "flags": {
+      "PSX_RENDER_PASS_VERIFY": "1",
+      "PSX_OPENXR_ENABLE": "0",
+      "MOHU_VR_EYE_OFFSET": "0",
+      "MOHU_VR_FRESH_60": "1",
+      "MOHU_VR_WORLD_CACHE": "1",
+      "MOHU_VR_SKIP_NATIVE_WORLD_COPY": null
+    },
+    "restoration": {
+      "verify_checks": 1176,
+      "verify_mismatch": 0,
+      "vram_leaks": 0,
+      "watchdog": 0,
+      "nesting_repairs": 0
+    },
+    "lifecycle": {
+      "paused": 196,
+      "paused_after": 196,
+      "resumed": 221,
+      "refused": 222,
+      "refused_after": 222,
+      "recovered": 231,
+      "reloaded": 276,
+      "counter_scope": "stereo_pairs"
+    },
+    "recovery_keys": [
+      "actor",
+      "input",
+      "weapon_id",
+      "object",
+      "player_bytes",
+      "render",
+      "counters",
+      "stereo",
+      "cdrom",
+      "audio",
+      "voices",
+      "irq",
+      "camera",
+      "cd_driver",
+      "cd_request",
+      "music_ram_sha256"
+    ],
+    "before_prototype_counters": {
+      "mohu.vr.world_cache.miss": 343,
+      "mohu.vr.world_cache.hit": 49,
+      "mohu.vr.fresh60.pair": 24
+    },
+    "after_prototype_counters": {
+      "mohu.vr.world_cache.miss": 903,
+      "mohu.vr.world_cache.hit": 129,
+      "mohu.vr.fresh60.pair": 64
+    }
+  },
+  "retained_failed_controls": [
+    {
+      "path": "analysis/runtime/p3d-packet-caller-entry-20261030/receipt.json",
+      "reason": "One native entry refused before scratch base prologue; complete=false, corrected guard tested separately."
+    },
+    {
+      "path": "analysis/runtime/p4-world-cache-first-20261030/receipt.json",
+      "reason": "Old precision generation receipts correctly refused; no effective cache hits. Not a performance pass."
+    },
+    {
+      "path": "analysis/runtime/p3c-candidate-normal-boot-20261030/receipt.json",
+      "reason": "Early boot captured attract/menu context; not accepted as SP gameplay fixture."
+    },
+    {
+      "path": "analysis/runtime/p4-cache-production-build.log",
+      "reason": "Sandboxed build stalled before compiler workers; interrupted and successful outside-sandbox retry retained."
+    }
+  ],
+  "reference_build": {
+    "build_success": true,
+    "binary_sha256": "b65d305fb1657dba392ab9302a09edc92da27da51966727667a22797e18a0489",
+    "execution_manifest": {
+      "schema": 1,
+      "profile": "REFERENCE",
+      "identity": "3d7344e4f3aa286eb11cad32e3addef28396898e9b7e7674186ebc5f60984470",
+      "shared_contract_sha256": "48e094991a789ee3a281edd0289545ee09e46f7ecdcf1ef5056383f7f54f10e3",
+      "implementations": [
+        {
+          "name": "mohu-vr-render-kernels",
+          "contract": "slus01270-render-kernels-v1",
+          "source_sha256": "43a9d2e4fdb4c76b392d46b4ea4cc5eb0dcfe38de3a64d65449f86b864b5a7c0"
+        }
+      ]
+    },
+    "log": "analysis/runtime/p4-reference-final-build.log",
+    "gameplay_tested": false
+  },
+  "validation": {
+    "python_tests": 140,
+    "python_log": "analysis/runtime/p4-final-python-tests.log",
+    "preflight_differential_cases": 100000,
+    "preflight_output": "analysis/runtime/p4-final-preflight",
+    "strict_c_passed": [
+      "shot",
+      "weapon",
+      "raycast",
+      "frustum",
+      "cadence",
+      "world_cache_key"
+    ],
+    "diff_check_passed": true,
+    "reference_and_enhanced_builds": true,
+    "production_smoke": {
+      "receipt": "analysis/runtime/p4-final-production-smoke2-20261030/receipt.json",
+      "receipt_sha256": "0172f9491c2062f236b7d9ba7e93ce018b03b81d2e9f70fe33fb069cf121b17d",
+      "complete": true,
+      "binary_sha256": "49936ea2ce270c8066738513d58dcca0cf23c9ba3df648fb069880b640c93753",
+      "pairs_per_second": 23.847695390781563,
+      "publication_sources": {
+        "native-draw": 120
+      },
+      "native_vblanks_per_second": 47.69539078156313,
+      "exit_code": 0,
+      "remaining_game_pids": [],
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "execution_identity": "8174a988661560c5297b4579eb11a9577ccd80a03ea5dfa794a84e21ca3c4361",
+      "execution_profile": "ENHANCED",
+      "fixture_sha256": {
+        "state_8001F844_slot02.pst": "dd1c87925c8480198d04e8d7b38c67c0099ed4985463f7dc4e46731c80f90ceb",
+        "state_8001F844_slot02.thumb": "332196dd7003ad841e25a9320fc138d2a5886ce9a5e47a494894c16c178e9b55"
+      },
+      "flags": {
+        "PSX_RENDER_PASS_VERIFY": "0",
+        "PSX_OPENXR_ENABLE": "0",
+        "MOHU_VR_EYE_OFFSET": "0",
+        "MOHU_VR_FRESH_60": "0",
+        "MOHU_VR_WORLD_CACHE": "0",
+        "MOHU_VR_SKIP_NATIVE_WORLD_COPY": "0"
+      },
+      "mean_stages_ms": {
+        "pair_total": 19.994,
+        "game_traverse": 16.715558333333334,
+        "game_submit": 1.0002083333333334,
+        "hud_capture": 0.0,
+        "game_laser": 0.0
+      }
+    },
+    "production_flags": {
+      "configuration": "Release",
+      "debug_tools": false,
+      "pgxp": true,
+      "overlay_flavor": 2,
+      "openxr": true,
+      "ipo": false,
+      "native_profile": false,
+      "harnesses": false,
+      "host_kernels": false
+    },
+    "owned_game_pids": []
+  }
+}

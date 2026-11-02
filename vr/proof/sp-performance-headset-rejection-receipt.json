@@ -1,0 +1,228 @@
+{
+  "schema": 1,
+  "date": "2026-10-30",
+  "physical_operator_test": true,
+  "accepted": false,
+  "operator_report": "Unplayable; VDXR panel shows 90fps, 45ms latency, 15ms game rendering but feels much lower.",
+  "observed_panel": {
+    "fps": 90,
+    "latency_ms": 45,
+    "game_rendering_ms": 15
+  },
+  "interpretation": "The panel rate is not fresh application throughput. Recorded VDXR application period is about 45Hz, fresh pair throughput 44.14/s and native scene draws 22.08/s. Extra synchronous render work slows wall-time native VBlank progress.",
+  "evidence": {
+    "frame-trace.json": {
+      "path": "analysis/runtime/vr-performance-test/20261030-022558-347/frame-trace.json",
+      "sha256": "3ce86a91a2d99094c7628bff23bc74f9d9f46991fc7c5096cbfe452635d0326d"
+    },
+    "vr-launch.stdout.log": {
+      "path": "analysis/runtime/vr-performance-test/20261030-022558-347/vr-launch.stdout.log",
+      "sha256": "f7b764c255acd41817debdb304bbabcb4279856a0e9f5b0cfe26e56f4788f168"
+    },
+    "vr-launch.stderr.log": {
+      "path": "analysis/runtime/vr-performance-test/20261030-022558-347/vr-launch.stderr.log",
+      "sha256": "4828d14d6a48342be04d6e40594a8da360d3c4878508f0a32d7377513bc7459a"
+    },
+    "startup.json": {
+      "path": "analysis/runtime/vr-performance-test/20261030-022558-347/startup.json",
+      "sha256": "bec103ce8d8bd630a6e2aea9275ca7e560735b641c7f904c3479d7fc7ead1ce1"
+    },
+    "psx_last_run_report.json": {
+      "path": "analysis/runtime/vr-performance-test/20261030-022558-347/psx_last_run_report.json",
+      "sha256": "75c1025c3450584dae83a9b7eb127a754832c970f8cba7be816a153e41554d2c"
+    }
+  },
+  "runtime": "VirtualDesktopXR",
+  "runtime_target_period_us": 22222,
+  "measured": {
+    "window_seconds": 2.696,
+    "records": 120,
+    "fresh_pairs_per_second": 44.13946587537092,
+    "native_scene_draws_per_second": 22.080838323353294,
+    "native_vblank_counter_per_second": 44.13946587537092,
+    "nominal_ntsc_vblanks_per_second": 59.94,
+    "native_clock_fraction_of_nominal": 0.7363941587482635,
+    "pair_intervals_ms": {
+      "mean": 22.65546218487395,
+      "p95": 24.0,
+      "maximum": 26
+    },
+    "stages_ms": {
+      "guest_sim": {
+        "mean": 22.65,
+        "p95": 24.0,
+        "maximum": 26.0
+      },
+      "pair_total": {
+        "mean": 12.263616666666667,
+        "p95": 13.16145,
+        "maximum": 13.856
+      },
+      "eye_begin_l": {
+        "mean": 0.16089166666666666,
+        "p95": 0.185,
+        "maximum": 0.266
+      },
+      "eye_guest_l": {
+        "mean": 5.152,
+        "p95": 5.605300000000001,
+        "maximum": 6.753
+      },
+      "eye_end_l": {
+        "mean": 0.46110833333333334,
+        "p95": 0.5714999999999999,
+        "maximum": 0.661
+      },
+      "eye_restore_l": {
+        "mean": 0.21964166666666668,
+        "p95": 0.249,
+        "maximum": 0.29
+      },
+      "eye_begin_r": {
+        "mean": 0.042633333333333336,
+        "p95": 0.053,
+        "maximum": 0.065
+      },
+      "eye_guest_r": {
+        "mean": 5.396183333333333,
+        "p95": 5.8001,
+        "maximum": 6.493
+      },
+      "eye_end_r": {
+        "mean": 0.61495,
+        "p95": 0.7619499999999999,
+        "maximum": 0.988
+      },
+      "eye_restore_r": {
+        "mean": 0.210525,
+        "p95": 0.24605,
+        "maximum": 0.321
+      },
+      "xr_wait_frame": {
+        "mean": 0.002616666666666667,
+        "p95": 0.004,
+        "maximum": 0.004
+      },
+      "xr_begin_frame": {
+        "mean": 0.36794166666666667,
+        "p95": 0.5052999999999999,
+        "maximum": 1.073
+      },
+      "xr_acquire": {
+        "mean": 0.0053,
+        "p95": 0.006,
+        "maximum": 0.007
+      },
+      "xr_wait_image": {
+        "mean": 0.0009166666666666666,
+        "p95": 0.001,
+        "maximum": 0.002
+      },
+      "xr_copy": {
+        "mean": 0.3907083333333333,
+        "p95": 0.51405,
+        "maximum": 0.701
+      },
+      "xr_release": {
+        "mean": 0.001875,
+        "p95": 0.004,
+        "maximum": 0.005
+      },
+      "xr_end_frame": {
+        "mean": 0.2588666666666667,
+        "p95": 0.37204999999999994,
+        "maximum": 1.528
+      },
+      "pose_age": {
+        "mean": 15.420233333333334,
+        "p95": 16.5687,
+        "maximum": 17.326
+      },
+      "hud_capture": {
+        "mean": 2.4074916666666666,
+        "p95": 2.9391,
+        "maximum": 3.241
+      },
+      "hud_draw": {
+        "mean": 1.1283916666666667,
+        "p95": 1.31905,
+        "maximum": 1.432
+      },
+      "hud_readback": {
+        "mean": 1.27845,
+        "p95": 1.7624499999999999,
+        "maximum": 2.084
+      },
+      "game_env": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "maximum": 0.0
+      },
+      "game_world": {
+        "mean": 0.05371666666666666,
+        "p95": 0.05805,
+        "maximum": 0.065
+      },
+      "game_text": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "maximum": 0.0
+      },
+      "game_traverse": {
+        "mean": 9.576841666666667,
+        "p95": 10.292200000000001,
+        "maximum": 11.101
+      },
+      "game_icon": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "maximum": 0.0
+      },
+      "game_submit": {
+        "mean": 0.8547333333333333,
+        "p95": 1.0002499999999999,
+        "maximum": 1.15
+      },
+      "game_laser": {
+        "mean": 0.0,
+        "p95": 0.0,
+        "maximum": 0.0
+      },
+      "game_select": {
+        "mean": 0.033091666666666665,
+        "p95": 0.038,
+        "maximum": 0.043
+      }
+    },
+    "sources": {
+      "native-draw": 60,
+      "fresh60": 60
+    },
+    "all_pairs_fresh_submitted": true,
+    "missing": 0,
+    "dropped": 0
+  },
+  "accounting_notes": [
+    "guest_sim is the time between traced frames, not exclusive simulation CPU cost; do not add it to pair_total.",
+    "game_traverse is nested in pair_total; hud_draw/readback are nested in hud_capture.",
+    "This is one physical run and a 2.696s detailed window; it is not a matched physical baseline A/B.",
+    "Recorded fresh submits do not measure compositor-generated/repeated frames.",
+    "No VDXR motion-reprojection/SSW setting is inferred or changed."
+  ],
+  "outcome": "Reject current full XR fresh-view trial; 60-FPS and native-real-time gates fail. Default RunVR restored to normal production. Experimental source and isolated progress preserved.",
+  "next_task": "Reusable world-space geometry per current eye/head pose; independent render deadlines must not slow native simulation. No further speculative headset test.",
+  "rollback_route": {
+    "executable": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\build-release\\Medal_of_Honor_Underground_Recompiled.exe",
+    "game_config": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\game.toml",
+    "memcard_directory": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\saves",
+    "slot": -1,
+    "performance_test": false,
+    "fresh_60": false,
+    "world_cache": false,
+    "log_directory": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\runtime\\vr",
+    "execution_identity": null
+  },
+  "game_launched_by_agent": false,
+  "owned_game_pids": [],
+  "production_sha256": "49936ea2ce270c8066738513d58dcca0cf23c9ba3df648fb069880b640c93753"
+}

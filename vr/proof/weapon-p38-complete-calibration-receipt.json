@@ -1,0 +1,127 @@
+{
+  "schema": 1,
+  "kind": "P38 complete gun with mixed-node barrel; provisional physical calibration",
+  "capture": "analysis\\vr-baseline\\p38-barrel-20261026a\\capture\\all-nodes.json",
+  "capture_sha256": "66e033a2f49da8ba1959cc62a1ca3aeea26772b89ffd09a21fa1794543c81643",
+  "triangle_stream_sha256": "4882e095af5e99e5a36dfda8add3249d9ab2a31ee13639e12dc5451c990bd37c",
+  "geometry_fnv32": "0x8544F8B9",
+  "asset": {
+    "id": 0,
+    "node": 13,
+    "vertex_count": 69,
+    "barrel_node": 11,
+    "barrel_vertex_indices": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32
+    ],
+    "barrel_triangles": 37,
+    "gun_triangles": 128,
+    "native_triangles": 354,
+    "triangle_stream_bytes": 4320
+  },
+  "animated_model": {
+    "grip_pivot": [
+      76.55555555555556,
+      100.77777777777777,
+      287.8888888888889
+    ],
+    "muzzle": [
+      81.8,
+      110.6,
+      447.6
+    ],
+    "barrel_axis_base": [
+      80.0,
+      109.42857142857143,
+      367.85714285714283
+    ],
+    "right": [
+      0.9997453372012677,
+      0.0,
+      -0.02256680624997482
+    ],
+    "up": [
+      0.0003313879226637537,
+      -0.9998921732359228,
+      0.014681010986579979
+    ],
+    "forward": [
+      0.022564372944281326,
+      0.01468475064627825,
+      0.9996375378966559
+    ],
+    "forward_span_units": 164.26576971716912,
+    "model_units_per_metre": 760.4896746165238
+  },
+  "marker_groups": {
+    "grip_node": 13,
+    "grip_vertex_indices": [
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61,
+      62,
+      63,
+      64
+    ],
+    "muzzle_node": 11,
+    "muzzle_vertex_indices": [
+      24,
+      25,
+      26,
+      27,
+      28
+    ],
+    "barrel_base_indices": [
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17
+    ]
+  },
+  "scale": {
+    "provisional": true,
+    "model_units_per_metre": 760.4896746165238,
+    "physical_acceptance": "open; W3.3"
+  },
+  "correction": "Prior node13-only profile omitted the barrel and used a receiver cap as muzzle. Historical W3.1 receipt retained."
+}

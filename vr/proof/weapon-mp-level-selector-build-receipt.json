@@ -1,0 +1,55 @@
+{
+  "schema": 1,
+  "date": "2026-10-26",
+  "source_revision": "2667308fe70faab6cc599bcf0758b77e39814ada",
+  "framework_gitlink": "b982e66e2536eaf738fbe3021db4d8f6c0feb90b",
+  "ui_gitlink": "7c635c6b366a6e0d5d3c913a7fce6ec04dd9f256",
+  "build": "build-release",
+  "compile": {
+    "debug_tools": false,
+    "mohu_vr_diagnostics": true,
+    "opengl": true,
+    "openxr": true,
+    "pgxp": true,
+    "release_executable_sha256": "a32125b089d6bea881c40e09a6147f3b18c49727aae6069f63e6a266fc5f1418",
+    "tested_diagnostic_executable_sha256": "9b3d32a6a9d162b51df0c854a1bfbf929ae1f6f3d7e48c3f1baba11a47492691"
+  },
+  "w2_level_selector": {
+    "receipt": "vr/proof/weapon-mp-level-selector-receipt.json",
+    "sha256": "2f50ec713d49bc15a925fdca7ab93a89d34c5730ad9ca8b2eeacf02855557de2",
+    "fixture": "copied root MP slot 1, P38, zero switches, stationary P2, no fire",
+    "scene_calls": 592,
+    "scene_frame_hits": 296,
+    "first_caller_hits": 296,
+    "second_caller_hits": 296,
+    "scene_nodes": 26,
+    "level_nodes": 21,
+    "function_guards": {
+      "frame": "80054BC4/0x200/6CDFBB75",
+      "scene": "8006E9D8/0x180/04C21F46",
+      "callback": "8006C61C/0x290/A2AAC71B",
+      "selector": "80096EF4/0x90/273C8059",
+      "helper": "80096AC8/0x428/77C2060F"
+    },
+    "source_saves_unchanged": true,
+    "preferences_unchanged": true,
+    "remaining_game_pids": []
+  },
+  "checks": {
+    "python_unittest": {
+      "passed": 18,
+      "failed": 0
+    },
+    "probe_py_compile": "passed",
+    "strict_diagnostic_syntax": "passed"
+  },
+  "source_saves_unchanged": true,
+  "preferences_unchanged": true,
+  "steamvr_settings_unchanged": true,
+  "remaining_game_pids": [],
+  "limits": [
+    "W2.1 is a read-only selector trace; no eye-frustum override was implemented.",
+    "No firing or weapon switch occurred in this fixture.",
+    "The MP path is a flat scene list/per-object selector, not the SP PVS leaf queue."
+  ]
+}

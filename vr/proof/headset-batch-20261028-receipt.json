@@ -1,0 +1,206 @@
+{
+  "schema": 1,
+  "date": "2026-10-28",
+  "kind": "Operator MP all-weapon visual tracking batch and SP smoke",
+  "binary_sha256": "6c39318c2fb27c7574ab90417581beb32a9ff8987c0563a3e6c216f9a063cbf8",
+  "execution_context": "Physical runs outside sandbox in interactive desktop; sandbox failure excluded",
+  "unique_mp_weapon_ids": [
+    0,
+    1,
+    4,
+    5,
+    8,
+    9,
+    10,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17
+  ],
+  "visual_smoke_accepted": false,
+  "clean_exit_accepted": false,
+  "instrumented_impact_accepted": false,
+  "exact_laser_alignment_accepted": false,
+  "numeric_headset_performance_accepted": false,
+  "remaining_game_processes": [],
+  "source_hashes": {
+    "vr/tools/run_headset_batch.py": "a91e568689dd44a4fa21b3c191d1f03434138d011d29db1da7ee9ce77d4c130d",
+    "game.toml": "9669410368d7c410916d1ddf21b7da230a7fddcb77ab6b5ae781fb0c93856c9f",
+    "vr/underground/vr_diagnostic.c": "80ef574d0179c708df4bd5b4f5ca1eefa5b3cd863cbb312b79e840a131a941a9"
+  },
+  "cases": [
+    {
+      "case": "mp1",
+      "weapons": [
+        "P38",
+        "MP40",
+        "StG44",
+        "Stick grenade"
+      ],
+      "operator_feedback": "Looks good\u2014continue to MP set 2",
+      "visual_smoke_accepted": false,
+      "exit_code": 3221226505,
+      "forced_cleanup": false,
+      "transport_passed": false,
+      "headset_ready": true,
+      "final_stereo": [
+        "5160",
+        "5160",
+        "1"
+      ],
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "laser_enabled": false,
+      "raw_files": {
+        "analysis/vr-baseline/headset-batch-20261028/mp1/headset/receipt.json": "49e8f95b4c5ddec9173bd259c914419499e486655eaaab437a04c19e637a22e5",
+        "analysis/vr-baseline/headset-batch-20261028/mp1/headset/startup.json": "3d292d73c1333a3722fe2dad39c6a9bdff09b0eeea51de3f52001764386c25bd",
+        "analysis/vr-baseline/headset-batch-20261028/mp1/headset/stdout.log": "914176b43ae68d2b0c684c3feb6f1d018c3b33c2da90d5d1700e1070b6d33f41",
+        "analysis/vr-baseline/headset-batch-20261028/mp1/headset/stderr.log": "ebee87f91b2d17bcca93c9c2c8ba18ffbd4bf60b962f1c654e794b7bd67b1669",
+        "analysis/vr-baseline/headset-batch-20261028/mp1/headset/operator-feedback.json": "8e634419b4e444bfb69f2d4ef639752add6d344752750897556f68a2bd20dbbe"
+      },
+      "initial_visual_feedback_positive": true,
+      "acceptance_note": "Initial set-level feedback preserved; subsequent detailed review reopens final acceptance; not every ID is confirmed defective"
+    },
+    {
+      "case": "mp2",
+      "weapons": [
+        "Colt .45",
+        "Sten",
+        "Shotgun",
+        "Petrol bomb"
+      ],
+      "operator_feedback": "Looks good\u2014continue to MP set 3",
+      "visual_smoke_accepted": false,
+      "exit_code": 3489660927,
+      "forced_cleanup": false,
+      "transport_passed": false,
+      "headset_ready": true,
+      "final_stereo": [
+        "3210",
+        "3210",
+        "1"
+      ],
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "laser_enabled": false,
+      "raw_files": {
+        "analysis/vr-baseline/headset-batch-20261028/mp2/headset/receipt.json": "868262897db6c0c0194c2622a0605024b2d77a9518015bce2f88848750e4c275",
+        "analysis/vr-baseline/headset-batch-20261028/mp2/headset/startup.json": "3576329743ed0e3958a42936830be02513e37484371e6194dc954a22f4176263",
+        "analysis/vr-baseline/headset-batch-20261028/mp2/headset/stdout.log": "93e473d2fb576de8c92e323c2c589a81d8e177cdd09a3903050beac9d5458198",
+        "analysis/vr-baseline/headset-batch-20261028/mp2/headset/stderr.log": "34171f4ff609bd7647ee31a0dde44c15364818b647a88fc34570eb3b312bc08a",
+        "analysis/vr-baseline/headset-batch-20261028/mp2/headset/operator-feedback.json": "62bb65869abc99d4031e5031ae714b1c116476cc8851767305daae936bac9c82"
+      },
+      "initial_visual_feedback_positive": true,
+      "acceptance_note": "Initial set-level feedback preserved; subsequent detailed review reopens final acceptance; not every ID is confirmed defective"
+    },
+    {
+      "case": "mp3",
+      "weapons": [
+        "Silenced pistol",
+        "Crossbow",
+        "Scoped rifle",
+        "Stick grenade"
+      ],
+      "operator_feedback": "Looks good\u2014continue to MP set 4",
+      "visual_smoke_accepted": false,
+      "exit_code": 3221226505,
+      "forced_cleanup": false,
+      "transport_passed": false,
+      "headset_ready": true,
+      "final_stereo": [
+        "1980",
+        "1980",
+        "1"
+      ],
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "laser_enabled": false,
+      "raw_files": {
+        "analysis/vr-baseline/headset-batch-20261028/mp3/headset/receipt.json": "ee197d8b86ced30a5eb4a1f25b1af9386a46a6aca3a89e4e888b2a0734e8e425",
+        "analysis/vr-baseline/headset-batch-20261028/mp3/headset/startup.json": "c6aa9bec5f544d7d82540940a400c93262aeaf48c0d6446c0d121184a1dfdef8",
+        "analysis/vr-baseline/headset-batch-20261028/mp3/headset/stdout.log": "d2f9577913613254011f3f4eb8ceb00180fca0abb11ae1b2748f3356b9014576",
+        "analysis/vr-baseline/headset-batch-20261028/mp3/headset/stderr.log": "59aa3b3af2541b1982b924e2e1489d71cb06ea32d69410d2b10c1e38408a7c07",
+        "analysis/vr-baseline/headset-batch-20261028/mp3/headset/operator-feedback.json": "e267e00d89fb7923055ad91384554a9ac9e3d382a106011a9b581dbb993724c2"
+      },
+      "initial_visual_feedback_positive": true,
+      "acceptance_note": "Initial set-level feedback preserved; subsequent detailed review reopens final acceptance; not every ID is confirmed defective"
+    },
+    {
+      "case": "mp4",
+      "weapons": [
+        "M1 Garand",
+        "StG44",
+        "Panzerfaust",
+        "Petrol bomb"
+      ],
+      "operator_feedback": "Looks good\u2014continue to SP smoke",
+      "visual_smoke_accepted": false,
+      "exit_code": 3221226505,
+      "forced_cleanup": false,
+      "transport_passed": false,
+      "headset_ready": true,
+      "final_stereo": [
+        "2190",
+        "2190",
+        "1"
+      ],
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "laser_enabled": false,
+      "raw_files": {
+        "analysis/vr-baseline/headset-batch-20261028/mp4/headset/receipt.json": "1d88868e9aa65ee1ccf4cac2c6579d2aed32928024a39df0879603dcb9e0ee08",
+        "analysis/vr-baseline/headset-batch-20261028/mp4/headset/startup.json": "ffb3bb884e1ebfb2ffc51f97ac86785d8a64ca3455f34f4cb4265c278f92060e",
+        "analysis/vr-baseline/headset-batch-20261028/mp4/headset/stdout.log": "e2bf741eb772be005042a97c6f785b591efb1a658aedd63b6886cefd04f62bd6",
+        "analysis/vr-baseline/headset-batch-20261028/mp4/headset/stderr.log": "97102f809d4eb44db78e60e5a72df6f1d292cc62b9f3fe9c21126e8c56079584",
+        "analysis/vr-baseline/headset-batch-20261028/mp4/headset/operator-feedback.json": "52f42527ec3b7d11cdd0f820c8c2272ac56b702ae68c0fbc9edcceb6522079cb"
+      },
+      "initial_visual_feedback_positive": true,
+      "acceptance_note": "Initial set-level feedback preserved; subsequent detailed review reopens final acceptance; not every ID is confirmed defective"
+    },
+    {
+      "case": "sp",
+      "weapons": [
+        "P38 SP visibility / flash / movement smoke"
+      ],
+      "operator_feedback": "Looks good",
+      "visual_smoke_accepted": false,
+      "exit_code": 3221226505,
+      "forced_cleanup": false,
+      "transport_passed": false,
+      "headset_ready": true,
+      "final_stereo": [
+        "4950",
+        "4950",
+        "1"
+      ],
+      "source_saves_unchanged": true,
+      "preferences_unchanged": true,
+      "laser_enabled": true,
+      "raw_files": {
+        "analysis/vr-baseline/headset-batch-20261028/sp/headset-laser/receipt.json": "23b74f2d760bf7a07cf76eb68baf08048af79626436df9a236fef6bf7d91d022",
+        "analysis/vr-baseline/headset-batch-20261028/sp/headset-laser/startup.json": "d0c5a11fc63dec20840ff670d331daea7389c6f2aad420d38383769f56a1a5b6",
+        "analysis/vr-baseline/headset-batch-20261028/sp/headset-laser/stdout.log": "c86c2723e65388938fb0cb73e89fe3e9ac4c1693315dfb4da221aac543c7fc3e",
+        "analysis/vr-baseline/headset-batch-20261028/sp/headset-laser/stderr.log": "4ab6748496a3bd8eb741122f23057fa52826b7271ac8eb63daf3e17c088f6534",
+        "analysis/vr-baseline/headset-batch-20261028/sp/headset-laser/operator-feedback.json": "fe450000a30732887bced4c7c79e4e87786fa8baab918af56dfbd47bff47b316"
+      },
+      "initial_visual_feedback_positive": true,
+      "acceptance_note": "Initial set-level feedback preserved; subsequent detailed review reopens final acceptance; not every ID is confirmed defective"
+    }
+  ],
+  "initial_visual_smoke_feedback_positive": true,
+  "subsequent_operator_review": {
+    "date": "2026-10-28",
+    "supersedes_blanket_visual_acceptance": true,
+    "reported_issues": [
+      "Grenades face forward instead of upright",
+      "Some weapon scales are too large; IDs unspecified",
+      "StG44 retains a hand",
+      "Several weapons fire high; IDs unspecified",
+      "Laser stops in mid-air instead of on a concrete surface"
+    ],
+    "status": "Calibration/gun-only/aim/laser acceptance reopened; original set answers and raw evidence hashes retained",
+    "study": "docs/vr/ALPHA_PLAYABILITY_AND_CALIBRATION.md"
+  }
+}

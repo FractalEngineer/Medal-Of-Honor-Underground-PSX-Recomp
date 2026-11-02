@@ -1,0 +1,89 @@
+{
+  "schema": 1,
+  "date": "2026-10-27",
+  "kind": "W5.3b native lifecycle and framework parity validation",
+  "complete": true,
+  "headset_used": false,
+  "revision": "eee820ded553937d746443806454b34b44d8fe64",
+  "framework_gitlink": "555e1eabccc59b9b6ff0d9fca48aca783513dc86",
+  "executable_sha256": "2fab9c257013832e9dde5aaddcb9e24a0c232d873514f5c48188c4d8e018e547",
+  "runtime_source_changed": false,
+  "build": "Existing Release/OpenGL/OpenXR/PGXP diagnostic executable; no rebuild required for Python trace tooling/docs",
+  "sources": {
+    "vr/tools/probe_shot_families.py": "6eb23f395c3653213de97968c266c5f63e36f467ae509eb45553f4a1e160278e",
+    "vr/tools/probe_native_shot.py": "c01da4a2fc07b5e7391aeee5f30b75d9dd53188d4e82721e858f4d069a09d7cf",
+    "vr/tests/test_shot_lifecycle.py": "bb35f47447f286d91c9051964bf3a4e044404b2707475b803ba0227f23d861ae",
+    "vr/underground/vr_diagnostic.c": "5f97104c3b9af3c18bb0d16eb2f95a6f88a1c20a04f7a706cdcf5ae5a5b46fe5",
+    "vr/underground/shot.h": "7f004d216c55c6dd4dd941b665e79fee7ee57da6c988276e9a972e7bfddaa885",
+    "vr/underground/weapon.c": "27a45a58a8343fe05400ad7f868d9b30b313e9afa9382bf18998776bd38be03f",
+    "psxrecomp/runtime/src/vr_geometry_math.c": "9e51708f0f05a16182e4d5893063a06f656d4fc723965f72cea9191632661a23",
+    "vr/tools/probe_projectile_origins.py": "74997637a0f8a7c3dced33d7703f66d5e96fcebc0df2dc7e4e23771798f379d0",
+    "vr/tests/test_projectile_origins.py": "2ae5b72c1bf2200363e5205397300058f50e36ad93a9a8c9308a28de201ac80e",
+    "vr/tests/test_native_shot_probe.py": "3f65039e525109b343878d2d28f56ed461d2235684af40bb722039c1ac989510"
+  },
+  "receipts": {
+    "native_lifecycle": {
+      "path": "vr/proof/weapon-shot-lifecycle-receipt.json",
+      "sha256": "00e8085d6a09b88bcbce966dddecf57030abc8f44d0a9f92e5d7d1461ca9db55"
+    },
+    "raw_lifecycle": {
+      "path": "analysis\\vr-baseline\\shot-lifecycle-final-20261027b\\receipt.json",
+      "sha256": "28ccc696a2d27910fc0b03250b74c1e6dec1075e1a9c205b76f54c4836ca8f9e"
+    },
+    "host_parity": {
+      "path": "analysis/reference-parity/framework-branches-20261027/baseline.json",
+      "sha256": "0735b74e035e0bcad657d38ec29a48dae452d05f1c42b28d4a949568a133d447"
+    },
+    "unchanged_runtime_build": {
+      "path": "vr/proof/weapon-shot-families-build-receipt.json",
+      "sha256": "aa3d40d8530d0141022e3a1c4edb30eaf1d04c349b24a6d18bdca1d404a15c76"
+    },
+    "projectile_origin_writers": {
+      "path": "vr/proof/weapon-projectile-origin-writers-receipt.json",
+      "sha256": "0a4f2680c0d077d39513091feae12f2109ca0d62bc961c7c8a98d1a72fb3384a"
+    }
+  },
+  "checks": {
+    "python_tests": 72,
+    "shared_geometry_cases": 33,
+    "weapon_ids": 13,
+    "shot_lifetimes": 22,
+    "complete_xyz_groups": 147,
+    "linked_native_damage_writes": 19,
+    "reused_address_lifetimes": 1,
+    "shotgun": {
+      "pellets": 6,
+      "maximum_pair_angle_degrees": 5.252537956386305,
+      "basis_angle_variants": 1,
+      "motion_direction_variants": 6
+    },
+    "shot_override_writes": 0,
+    "source_saves_preferences_unchanged": true,
+    "owned_game_processes_remaining": [],
+    "projectile_origin_controls": 3,
+    "last_origin_writers": {
+      "10": [
+        "0x80084CC0",
+        "0x80084CCC",
+        "0x80084CD8"
+      ],
+      "15": [
+        "0x80084AF0",
+        "0x80084B18",
+        "0x80084B40"
+      ],
+      "13": [
+        "0x80048A20",
+        "0x80048A48",
+        "0x80048A70"
+      ]
+    }
+  },
+  "limits": [
+    "Native baselines/final writer mapping do not enable non-P38 shot overrides.",
+    "Fresh canonical animated-marker sampling and full family-specific code/ownership guards remain open.",
+    "Grenade release rebuilds basis with A0 == S1 and S2 == P1 input; the constructor-only guard does not cover that call.",
+    "Matched tracked-family preservation, thrown explosion damage, zoom-fire, live NPC/SP and physical acceptance remain open."
+  ],
+  "next": "W5.3c canonical animated-marker ownership/timing contract in docs/vr/HANDOFF.md; final origin writers are already mapped."
+}

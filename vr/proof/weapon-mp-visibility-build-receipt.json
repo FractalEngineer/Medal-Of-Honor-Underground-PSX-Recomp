@@ -1,0 +1,156 @@
+{
+  "schema": 1,
+  "date": "2026-10-26",
+  "kind": "W2.3 multiplayer head visibility build and regression receipt",
+  "complete": true,
+  "source_revision": "8ebe08c4dda786f7b57a6585b9866cc75eb7fed0",
+  "framework_gitlink": "555e1eabccc59b9b6ff0d9fca48aca783513dc86",
+  "ui_gitlink": "7c635c6b366a6e0d5d3c913a7fce6ec04dd9f256",
+  "fixture": "copied root MP slot 1, P38 ID 0, no weapon switching or firing in W2.3 controls",
+  "builds": {
+    "diagnostic": {
+      "configuration": "Release, OpenGL, OpenXR, PGXP, VR diagnostics ON, debug tools ON",
+      "executable_sha256": "2a5da6b8fcdab0b6bb001c01deb8b32ac3e819d8a1b7f75e9c28a12aa02a33a3"
+    },
+    "release": {
+      "configuration": "Release, OpenGL, OpenXR, PGXP, VR diagnostics ON, debug tools OFF",
+      "executable_sha256": "9493ea4e6fa33c3637317c65192bad43773c2bc0aa38501849fc5d86fae1d92f",
+      "result": "link pass"
+    },
+    "flat": {
+      "configuration": "Release, OpenGL, OpenXR OFF, VR diagnostics OFF, debug tools OFF",
+      "executable_sha256": "6de11e4d6a880259ce9fbd3674d085d4233607b8784205cf59fedc09cfc08a42",
+      "result": "link pass"
+    }
+  },
+  "controls": {
+    "receipt": "vr/proof/weapon-mp-visibility-receipt.json",
+    "receipt_sha256": "c4656e2786c57e1ba793128609f222691c31fc691d50cb1b6ad47a985e390eff",
+    "raw_receipt": "analysis/vr-baseline/weapon-mesh-mapping/w23-visibility-20261026o/receipt.json",
+    "raw_receipt_sha256": "f8ad4b9f58aea04558c6d2955435410df5adc44347f44643df944bb037dca3b9",
+    "control_sheet": "vr/proof/weapon-mp-visibility-controls.png",
+    "control_sheet_sha256": "9ef2008ec0ab0e5af82af494a5544848ac6967e0ded77d58e817a0ae3f2f7a96",
+    "cases": [
+      {
+        "case": "zero",
+        "selector": {
+          "native_visible": [3, 3],
+          "override_visible": [7, 7],
+          "changed_nodes": [4, 4]
+        },
+        "top_world_nonblack_pixels": {
+          "off": [23040, 23040],
+          "on": [23040, 23040]
+        }
+      },
+      {
+        "case": "yaw-plus-90",
+        "selector": {
+          "native_visible": [2, 2],
+          "override_visible": [6, 7],
+          "changed_nodes": [4, 9]
+        },
+        "top_world_nonblack_pixels": {
+          "off": [2769, 2769],
+          "on": [2908, 2908]
+        }
+      },
+      {
+        "case": "yaw-minus-90",
+        "selector": {
+          "native_visible": [1, 1],
+          "override_visible": [7, 7],
+          "changed_nodes": [6, 6]
+        },
+        "top_world_nonblack_pixels": {
+          "off": [5800, 5800],
+          "on": [6444, 6444]
+        }
+      },
+      {
+        "case": "near-wall",
+        "selector": {
+          "native_visible": [2, 2],
+          "override_visible": [6, 6],
+          "changed_nodes": [4, 4]
+        },
+        "top_world_nonblack_pixels": {
+          "off": [23040, 23040],
+          "on": [23040, 23040]
+        },
+        "blocked_threshold": 200000,
+        "blocked_chunks_required": 2
+      }
+    ],
+    "body_orientations": {
+      "yaw-plus-90": [-16384, 24, 0],
+      "yaw-minus-90": [-32768, 20, -32768]
+    }
+  },
+  "regressions": {
+    "mp_matrix": {
+      "receipt": "analysis/vr-baseline/weapon-mesh-mapping/w23-regression-20261026a/mp-matrix/receipt.json",
+      "sha256": "8e94117c00c523b71312940f32adae2d14b8e5f7c5309795b541c71b65635673",
+      "rows": 16,
+      "cases": 64,
+      "weapon_ids": [0, 1, 4, 5, 8, 9, 10, 12, 13, 14, 15, 16, 17],
+      "cycles_closed": true,
+      "mp_frustum": true
+    },
+    "mp_lateral": {
+      "receipt": "analysis/vr-baseline/weapon-mesh-mapping/w23-regression-20261026a/mp-lateral/receipt.json",
+      "sha256": "96046baa1fa0dd741ca74632092434f1198a29fb972a5ef2ffdd1e932b988feb",
+      "eye_offset": 24
+    },
+    "mp_fire_recovery": {
+      "receipt": "analysis/vr-baseline/weapon-mesh-mapping/w23-regression-20261026a/mp-fire-b/receipt.json",
+      "sha256": "1b411e5064ddc29c2f8930a8cada9b180b2cfdb33d9098b08b9b52c349090798",
+      "clip_before": 8,
+      "clip_after": 7,
+      "p2_health_raw_before": 2097152,
+      "p2_health_raw_after": 2048000,
+      "refusals": 6,
+      "recovery_pair_id": 165
+    },
+    "flat_pose_inventory": {
+      "receipt": "analysis/vr-baseline/weapon-mesh-mapping/w23-regression-20261026a/flat-poses/inventory.json",
+      "sha256": "aa4accc62c26436ba4acc86ea90d8ea6a7212883e49a4445bff7e72c2309bb42"
+    },
+    "sp_zero": {
+      "receipt": "analysis/vr-baseline/weapon-mesh-mapping/w23-regression-20261026a/sp-zero/receipt.json",
+      "sha256": "8111908085e854156b69715c613629253ce725153885ff5bc876bd646ffa6e2a",
+      "intentional_termination": true
+    }
+  },
+  "focused_checks": {
+    "python_unittest": {
+      "passed": 23,
+      "failed": 0
+    },
+    "strict_c_fixtures": {
+      "frustum_aabb": "passed",
+      "mp_view_guard": "passed"
+    },
+    "strict_diagnostic_syntax": "passed"
+  },
+  "source_hashes": {
+    "vr/underground/vr_diagnostic.c": "2cf753e09157b9efde2ac2b53225b4c9039f015ba41c3c79672771ebda4b14e9",
+    "vr/underground/mp_view.h": "8e7b2a74a37f39ec3b63dd211e3fab1310107c5858589dcf061f8f2f962755f8",
+    "vr/underground/frustum.h": "9c60cb3113837ee71e702b35253c43edd076e7d0d525b1aa3061f74780d5f62b",
+    "vr/tools/check_mp_view.py": "e64b39db888fb44616b758195b4551f7eaa67e9b7f8e2b4e25fe10b56a726859",
+    "vr/tools/check_weapon_pose_spaces.py": "8935ba1e37594ca0c686dc745bfb1b986a813abee31cead8331beb7dd52ea735",
+    "vr/tests/test_mp_view.c": "622bc1cd3249826a611dfc63c170ddaa20ca54d40eeee0f51f4d570f91530b63",
+    "vr/tests/test_mp_visibility.py": "853ec272f0181f8d08fd7c1eacb9b4a7fd2c89169c40bc4e918ac091063e59f0",
+    "psxrecomp/runtime/src/vr_geometry_math.c": "9e51708f0f05a16182e4d5893063a06f656d4fc723965f72cea9191632661a23",
+    "psxrecomp/runtime/include/vr_geometry_math.h": "9669b212e9195b9be96edd47fe8f917287bdaf6e5e35e75210f6de337ae7a777"
+  },
+  "source_saves_unchanged": true,
+  "preferences_unchanged": true,
+  "remaining_game_pids": [],
+  "limits": [
+    "Desktop synthetic head controls, not physical headset acceptance.",
+    "The +90 and -90 controls use separate measured native body headings because this flat MP fixture exposes one side at a time.",
+    "The near-wall case verifies two consecutive movement chunks at or below the measured 200000 raw-position threshold, not a collision trace.",
+    "The override remains disabled by default and this receipt does not accept W2.4 input mapping."
+  ]
+}

@@ -1,0 +1,2019 @@
+{
+  "schema": 1,
+  "date": "2026-10-26",
+  "complete": true,
+  "kind": "W2.2 native MP eye-frustum layout measurement",
+  "source_revision": "afda5082a2f477f9c6e90dc124ad3de8ece514d8",
+  "fixture": "copied root MP slot 1, zero switches, no fire",
+  "executable_sha256": "5fe5c4dd1c7b52ffa552b0ec6af662ea51efbff9441666da791a7402aec68984",
+  "source_hashes": {
+    "vr/tools/probe_mp_level_selector.py": "6e1e88c674864ab3654186381a03e444642270fe5342618a4e1d8a744a492bd6",
+    "vr/underground/mp_view.h": "8e7b2a74a37f39ec3b63dd211e3fab1310107c5858589dcf061f8f2f962755f8",
+    "vr/underground/vr_diagnostic.c": "e25c5c9598ac9557cca943f1b1c61e49bc959154194d518aa0a087865dc3249e",
+    "vr/underground/frustum.h": "b46e3a1915be50a8bd9116aa23bd0856fe73b62d2c94c088f4d0c3d28144e8b8"
+  },
+  "code_contracts": {
+    "frame_caller": {
+      "address": "0x80054BC4",
+      "size": 512,
+      "fnv32": "0x6CDFBB75",
+      "sha256": "cf45995fae41b79046395a0a968d29d05ee47429ef02615d3c4c310fdde6bd02"
+    },
+    "scene_dispatch": {
+      "address": "0x8006E9D8",
+      "size": 384,
+      "fnv32": "0x04C21F46",
+      "sha256": "946ed6fc048822835c2212c05706a074e665207cd3be7ddba36b72cb23aec846"
+    },
+    "scene_node_callback": {
+      "address": "0x8006C61C",
+      "size": 656,
+      "fnv32": "0xA2AAC71B",
+      "sha256": "57cf45a06a99164e5871527aefe9481edb262016eddb7960fe6e2e70fbc9a8f9"
+    },
+    "visibility_selector": {
+      "address": "0x80096EF4",
+      "size": 144,
+      "fnv32": "0x273C8059",
+      "sha256": "b21ace4b1a551ec5dbf68e80a487a760450de527e4f0d7336894db99dca9be25"
+    },
+    "visibility_helper": {
+      "address": "0x80096AC8",
+      "size": 1064,
+      "fnv32": "0x77C2060F",
+      "sha256": "ae4958a8c2b576aa58946bcc7460c0c87ab3a4cadd5e92b8e190c6198619ff31"
+    }
+  },
+  "scene_callers": [
+    {
+      "call_site": "0x80054CD4",
+      "word": "0x0C01BA76",
+      "return_address": "0x80054CDC",
+      "disasm": [
+        {
+          "addr": "0x80054CD4",
+          "word": "0x0C01BA76",
+          "text": "JAL      0x8006E9D8"
+        },
+        {
+          "addr": "0x80054CD8",
+          "word": "0x02002021",
+          "text": "ADDU     $a0, $s0, $zero"
+        },
+        {
+          "addr": "0x80054CDC",
+          "word": "0x8E2435D4",
+          "text": "LW       $a0, 13780($s1)"
+        },
+        {
+          "addr": "0x80054CE0",
+          "word": "0x0C021EF1",
+          "text": "JAL      0x80087BC4"
+        }
+      ]
+    },
+    {
+      "call_site": "0x80054D54",
+      "word": "0x0C01BA76",
+      "return_address": "0x80054D5C",
+      "disasm": [
+        {
+          "addr": "0x80054D54",
+          "word": "0x0C01BA76",
+          "text": "JAL      0x8006E9D8"
+        },
+        {
+          "addr": "0x80054D58",
+          "word": "0x02002021",
+          "text": "ADDU     $a0, $s0, $zero"
+        },
+        {
+          "addr": "0x80054D5C",
+          "word": "0x8E2435D8",
+          "text": "LW       $a0, 13784($s1)"
+        },
+        {
+          "addr": "0x80054D60",
+          "word": "0x0C021EF1",
+          "text": "JAL      0x80087BC4"
+        }
+      ]
+    }
+  ],
+  "selector_calls": {
+    "node_callback_to_selector": [
+      {
+        "call_site": "0x8006C664",
+        "word": "0x0C025BBD",
+        "return_address": "0x8006C66C"
+      },
+      {
+        "call_site": "0x8006C688",
+        "word": "0x0C025BBD",
+        "return_address": "0x8006C690"
+      }
+    ],
+    "selector_to_helper": [
+      {
+        "call_site": "0x80096F70",
+        "word": "0x0C025AB2",
+        "return_address": "0x80096F78"
+      }
+    ]
+  },
+  "scene_invocation": {
+    "mode": "natural MP frame window",
+    "pc_counts": {
+      "0x0006E9D8": 590,
+      "0x00054CD4": 295,
+      "0x00054D54": 295
+    }
+  },
+  "mp_level_selection": {
+    "shape": "flat_native_scene_list",
+    "scene_root": "0x8014A450",
+    "scene_node_count": 26,
+    "level_node_count": 21,
+    "visibility_selector": "0x80096EF4",
+    "visibility_helper": "0x80096AC8",
+    "visibility_gate_field": "+0x0C",
+    "queue": [
+      "0x80129980",
+      "0x8012AEE0",
+      "0x8012C440",
+      "0x8012D9A0",
+      "0x8012EF00",
+      "0x80130460",
+      "0x801319C0",
+      "0x80132ED0",
+      "0x801343E0",
+      "0x801358F0",
+      "0x80136E00",
+      "0x80138310",
+      "0x80139820",
+      "0x8013AD30",
+      "0x8013C240",
+      "0x8013D750",
+      "0x8013EC60",
+      "0x80140170",
+      "0x80141680",
+      "0x80142B90",
+      "0x801440A0"
+    ],
+    "masks": [
+      {
+        "node": "0x80129980",
+        "visibility_mask": "0x07020200",
+        "render_flags": "0x00400211",
+        "aux_flags": "0x08000001"
+      },
+      {
+        "node": "0x8012AEE0",
+        "visibility_mask": "0x07020200",
+        "render_flags": "0x00400211",
+        "aux_flags": "0x08000001"
+      },
+      {
+        "node": "0x8012C440",
+        "visibility_mask": "0x07020200",
+        "render_flags": "0x00400211",
+        "aux_flags": "0x08000001"
+      },
+      {
+        "node": "0x8012D9A0",
+        "visibility_mask": "0x07020200",
+        "render_flags": "0x00400211",
+        "aux_flags": "0x08000001"
+      },
+      {
+        "node": "0x8012EF00",
+        "visibility_mask": "0x07020200",
+        "render_flags": "0x00400211",
+        "aux_flags": "0x08000001"
+      },
+      {
+        "node": "0x80130460",
+        "visibility_mask": "0x07020200",
+        "render_flags": "0x00400211",
+        "aux_flags": "0x08000001"
+      },
+      {
+        "node": "0x801319C0",
+        "visibility_mask": "0x07020200",
+        "render_flags": "0x00400211",
+        "aux_flags": "0x08000001"
+      },
+      {
+        "node": "0x80132ED0",
+        "visibility_mask": "0x07020200",
+        "render_flags": "0x00400211",
+        "aux_flags": "0x08000001"
+      },
+      {
+        "node": "0x801343E0",
+        "visibility_mask": "0x07020200",
+        "render_flags": "0x00400211",
+        "aux_flags": "0x08000001"
+      },
+      {
+        "node": "0x801358F0",
+        "visibility_mask": "0x07020200",
+        "render_flags": "0x00400211",
+        "aux_flags": "0x08000001"
+      },
+      {
+        "node": "0x80136E00",
+        "visibility_mask": "0x07020200",
+        "render_flags": "0x00400211",
+        "aux_flags": "0x08000001"
+      },
+      {
+        "node": "0x80138310",
+        "visibility_mask": "0x07020200",
+        "render_flags": "0x00400211",
+        "aux_flags": "0x08000001"
+      },
+      {
+        "node": "0x80139820",
+        "visibility_mask": "0x07020200",
+        "render_flags": "0x00400211",
+        "aux_flags": "0x08000001"
+      },
+      {
+        "node": "0x8013AD30",
+        "visibility_mask": "0x07020200",
+        "render_flags": "0x00400211",
+        "aux_flags": "0x08000001"
+      },
+      {
+        "node": "0x8013C240",
+        "visibility_mask": "0x07020200",
+        "render_flags": "0x00400211",
+        "aux_flags": "0x08000001"
+      },
+      {
+        "node": "0x8013D750",
+        "visibility_mask": "0x07020200",
+        "render_flags": "0x00400211",
+        "aux_flags": "0x08000001"
+      },
+      {
+        "node": "0x8013EC60",
+        "visibility_mask": "0x07020200",
+        "render_flags": "0x00400211",
+        "aux_flags": "0x08000001"
+      },
+      {
+        "node": "0x80140170",
+        "visibility_mask": "0x07020200",
+        "render_flags": "0x00400211",
+        "aux_flags": "0x08000001"
+      },
+      {
+        "node": "0x80141680",
+        "visibility_mask": "0x07020200",
+        "render_flags": "0x00400211",
+        "aux_flags": "0x08000001"
+      },
+      {
+        "node": "0x80142B90",
+        "visibility_mask": "0x07020200",
+        "render_flags": "0x00400211",
+        "aux_flags": "0x08000001"
+      },
+      {
+        "node": "0x801440A0",
+        "visibility_mask": "0x07020200",
+        "render_flags": "0x00400211",
+        "aux_flags": "0x08000001"
+      }
+    ],
+    "pvs_queue": "No separate PVS leaf queue is written by the complete 8006C61C callback; level nodes are traversed in this list order and 80096EF4 gates each object."
+  },
+  "mp_eye_frustum": {
+    "selector": "0x80096EF4",
+    "helper": "0x80096AC8",
+    "node_center_fields": [
+      "+0x2F4",
+      "+0x2F6",
+      "+0x2F8"
+    ],
+    "node_radius_field": "+0x2FC",
+    "camera_owner_root": "0x800A35C0",
+    "camera_input_view_pointer": "+0xC8",
+    "samples": [
+      {
+        "node": "80129980",
+        "return_address": "8006C690",
+        "center": [
+          97,
+          703,
+          4591
+        ],
+        "radius": 83,
+        "aabb": [
+          14,
+          620,
+          4508,
+          180,
+          786,
+          4674
+        ],
+        "control": [
+          "0000F005",
+          "000000CF",
+          "00001000",
+          "0000FF31",
+          "FFFFF005",
+          "FFFFFA5E",
+          "000001FC",
+          "00000202"
+        ],
+        "screen": [
+          540,
+          120
+        ],
+        "projection": [
+          400,
+          16777216,
+          3932160
+        ],
+        "camera": "8014A450",
+        "input": "8014A850",
+        "view": "8014A350",
+        "native_result": 0,
+        "camera_0x39c": "0x8014A850",
+        "input_0xc8": "0x8014A350",
+        "view_words_0x40_to_0xcc": [
+          "0x17700000",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFFF850",
+          "0x00000280",
+          "0xFFFEFFD0",
+          "0x01D55E68",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFF2410",
+          "0xFFFFFC70",
+          "0xFFFF7BD0",
+          "0xFC38AFEC",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0x0000D340",
+          "0x000000C0",
+          "0xFFFF6E80",
+          "0x05C98BF9",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFFFE10",
+          "0x0000F9D0",
+          "0xFFFFC620",
+          "0xFF64A1FA",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0x00000000",
+          "0xFFFF0750",
+          "0xFFFFC2B0",
+          "0x01814700"
+        ]
+      },
+      {
+        "node": "8012AEE0",
+        "return_address": "8006C690",
+        "center": [
+          97,
+          703,
+          -216
+        ],
+        "radius": 83,
+        "aabb": [
+          14,
+          620,
+          -299,
+          180,
+          786,
+          -133
+        ],
+        "control": [
+          "FFFCDFE6",
+          "000000F6",
+          "0032140A",
+          "0050FF0A",
+          "FFFFDFFA",
+          "FFFFF494",
+          "FFFFFEAA",
+          "000003A8"
+        ],
+        "screen": [
+          540,
+          120
+        ],
+        "projection": [
+          400,
+          16777216,
+          3932160
+        ],
+        "camera": "8014A450",
+        "input": "8014A850",
+        "view": "8014A350",
+        "native_result": 0,
+        "camera_0x39c": "0x8014A850",
+        "input_0xc8": "0x8014A350",
+        "view_words_0x40_to_0xcc": [
+          "0x17700000",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFFF850",
+          "0x00000280",
+          "0xFFFEFFD0",
+          "0x01D55E68",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFF2410",
+          "0xFFFFFC70",
+          "0xFFFF7BD0",
+          "0xFC38AFEC",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0x0000D340",
+          "0x000000C0",
+          "0xFFFF6E80",
+          "0x05C98BF9",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFFFE10",
+          "0x0000F9D0",
+          "0xFFFFC620",
+          "0xFF64A1FA",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0x00000000",
+          "0xFFFF0750",
+          "0xFFFFC2B0",
+          "0x01814700"
+        ]
+      },
+      {
+        "node": "8012C440",
+        "return_address": "8006C690",
+        "center": [
+          1717,
+          486,
+          -56
+        ],
+        "radius": 65,
+        "aabb": [
+          1652,
+          421,
+          -121,
+          1782,
+          551,
+          9
+        ],
+        "control": [
+          "FFFCDFE6",
+          "000000F6",
+          "0032140A",
+          "0050FF0A",
+          "FFFFDFFA",
+          "FFFFF494",
+          "FFFFFEAA",
+          "000003A8"
+        ],
+        "screen": [
+          540,
+          120
+        ],
+        "projection": [
+          400,
+          16777216,
+          3932160
+        ],
+        "camera": "8014A450",
+        "input": "8014A850",
+        "view": "8014A350",
+        "native_result": 0,
+        "camera_0x39c": "0x8014A850",
+        "input_0xc8": "0x8014A350",
+        "view_words_0x40_to_0xcc": [
+          "0x17700000",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFFF850",
+          "0x00000280",
+          "0xFFFEFFD0",
+          "0x01D55E68",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFF2410",
+          "0xFFFFFC70",
+          "0xFFFF7BD0",
+          "0xFC38AFEC",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0x0000D340",
+          "0x000000C0",
+          "0xFFFF6E80",
+          "0x05C98BF9",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFFFE10",
+          "0x0000F9D0",
+          "0xFFFFC620",
+          "0xFF64A1FA",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0x00000000",
+          "0xFFFF0750",
+          "0xFFFFC2B0",
+          "0x01814700"
+        ]
+      },
+      {
+        "node": "8012D9A0",
+        "return_address": "8006C690",
+        "center": [
+          -685,
+          474,
+          654
+        ],
+        "radius": 43,
+        "aabb": [
+          -728,
+          431,
+          611,
+          -642,
+          517,
+          697
+        ],
+        "control": [
+          "FFFCDFE6",
+          "000000F6",
+          "0032140A",
+          "0050FF0A",
+          "FFFFDFFA",
+          "FFFFF494",
+          "FFFFFEAA",
+          "000003A8"
+        ],
+        "screen": [
+          540,
+          120
+        ],
+        "projection": [
+          400,
+          16777216,
+          3932160
+        ],
+        "camera": "8014A450",
+        "input": "8014A850",
+        "view": "8014A350",
+        "native_result": 0,
+        "camera_0x39c": "0x8014A850",
+        "input_0xc8": "0x8014A350",
+        "view_words_0x40_to_0xcc": [
+          "0x17700000",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFFF850",
+          "0x00000280",
+          "0xFFFEFFD0",
+          "0x01D55E68",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFF2410",
+          "0xFFFFFC70",
+          "0xFFFF7BD0",
+          "0xFC38AFEC",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0x0000D340",
+          "0x000000C0",
+          "0xFFFF6E80",
+          "0x05C98BF9",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFFFE10",
+          "0x0000F9D0",
+          "0xFFFFC620",
+          "0xFF64A1FA",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0x00000000",
+          "0xFFFF0750",
+          "0xFFFFC2B0",
+          "0x01814700"
+        ]
+      },
+      {
+        "node": "8012EF00",
+        "return_address": "8006C690",
+        "center": [
+          845,
+          483,
+          3635
+        ],
+        "radius": 43,
+        "aabb": [
+          802,
+          440,
+          3592,
+          888,
+          526,
+          3678
+        ],
+        "control": [
+          "FFFCDFE6",
+          "000000F6",
+          "0032140A",
+          "0050FF0A",
+          "FFFFDFFA",
+          "FFFFF494",
+          "FFFFFEAA",
+          "000003A8"
+        ],
+        "screen": [
+          540,
+          120
+        ],
+        "projection": [
+          400,
+          16777216,
+          3932160
+        ],
+        "camera": "8014A450",
+        "input": "8014A850",
+        "view": "8014A350",
+        "native_result": 0,
+        "camera_0x39c": "0x8014A850",
+        "input_0xc8": "0x8014A350",
+        "view_words_0x40_to_0xcc": [
+          "0x17700000",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFFF850",
+          "0x00000280",
+          "0xFFFEFFD0",
+          "0x01D55E68",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFF2410",
+          "0xFFFFFC70",
+          "0xFFFF7BD0",
+          "0xFC38AFEC",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0x0000D340",
+          "0x000000C0",
+          "0xFFFF6E80",
+          "0x05C98BF9",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFFFE10",
+          "0x0000F9D0",
+          "0xFFFFC620",
+          "0xFF64A1FA",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0x00000000",
+          "0xFFFF0750",
+          "0xFFFFC2B0",
+          "0x01814700"
+        ]
+      },
+      {
+        "node": "80130460",
+        "return_address": "8006C690",
+        "center": [
+          845,
+          484,
+          4343
+        ],
+        "radius": 43,
+        "aabb": [
+          802,
+          441,
+          4300,
+          888,
+          527,
+          4386
+        ],
+        "control": [
+          "FFFCDFE6",
+          "000000F6",
+          "0032140A",
+          "0050FF0A",
+          "FFFFDFFA",
+          "FFFFF494",
+          "FFFFFEAA",
+          "000003A8"
+        ],
+        "screen": [
+          540,
+          120
+        ],
+        "projection": [
+          400,
+          16777216,
+          3932160
+        ],
+        "camera": "8014A450",
+        "input": "8014A850",
+        "view": "8014A350",
+        "native_result": 0,
+        "camera_0x39c": "0x8014A850",
+        "input_0xc8": "0x8014A350",
+        "view_words_0x40_to_0xcc": [
+          "0x17700000",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFFF850",
+          "0x00000280",
+          "0xFFFEFFD0",
+          "0x01D55E68",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFF2410",
+          "0xFFFFFC70",
+          "0xFFFF7BD0",
+          "0xFC38AFEC",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0x0000D340",
+          "0x000000C0",
+          "0xFFFF6E80",
+          "0x05C98BF9",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFFFE10",
+          "0x0000F9D0",
+          "0xFFFFC620",
+          "0xFF64A1FA",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0x00000000",
+          "0xFFFF0750",
+          "0xFFFFC2B0",
+          "0x01814700"
+        ]
+      },
+      {
+        "node": "801319C0",
+        "return_address": "8006C690",
+        "center": [
+          -3824,
+          -10,
+          -3470
+        ],
+        "radius": 58,
+        "aabb": [
+          -3882,
+          -68,
+          -3528,
+          -3766,
+          48,
+          -3412
+        ],
+        "control": [
+          "FFFCDFE6",
+          "000000F6",
+          "0032140A",
+          "0050FF0A",
+          "FFFFDFFA",
+          "FFFFF494",
+          "FFFFFEAA",
+          "000003A8"
+        ],
+        "screen": [
+          540,
+          120
+        ],
+        "projection": [
+          400,
+          16777216,
+          3932160
+        ],
+        "camera": "8014A450",
+        "input": "8014A850",
+        "view": "8014A350",
+        "native_result": 0,
+        "camera_0x39c": "0x8014A850",
+        "input_0xc8": "0x8014A350",
+        "view_words_0x40_to_0xcc": [
+          "0x17700000",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFFF850",
+          "0x00000280",
+          "0xFFFEFFD0",
+          "0x01D55E68",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFF2410",
+          "0xFFFFFC70",
+          "0xFFFF7BD0",
+          "0xFC38AFEC",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0x0000D340",
+          "0x000000C0",
+          "0xFFFF6E80",
+          "0x05C98BF9",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFFFE10",
+          "0x0000F9D0",
+          "0xFFFFC620",
+          "0xFF64A1FA",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0x00000000",
+          "0xFFFF0750",
+          "0xFFFFC2B0",
+          "0x01814700"
+        ]
+      },
+      {
+        "node": "80132ED0",
+        "return_address": "8006C690",
+        "center": [
+          -1501,
+          503,
+          713
+        ],
+        "radius": 58,
+        "aabb": [
+          -1559,
+          445,
+          655,
+          -1443,
+          561,
+          771
+        ],
+        "control": [
+          "FFFCDFE6",
+          "000000F6",
+          "0032140A",
+          "0050FF0A",
+          "FFFFDFFA",
+          "FFFFF494",
+          "FFFFFEAA",
+          "000003A8"
+        ],
+        "screen": [
+          540,
+          120
+        ],
+        "projection": [
+          400,
+          16777216,
+          3932160
+        ],
+        "camera": "8014A450",
+        "input": "8014A850",
+        "view": "8014A350",
+        "native_result": 0,
+        "camera_0x39c": "0x8014A850",
+        "input_0xc8": "0x8014A350",
+        "view_words_0x40_to_0xcc": [
+          "0x17700000",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFFF850",
+          "0x00000280",
+          "0xFFFEFFD0",
+          "0x01D55E68",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFF2410",
+          "0xFFFFFC70",
+          "0xFFFF7BD0",
+          "0xFC38AFEC",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0x0000D340",
+          "0x000000C0",
+          "0xFFFF6E80",
+          "0x05C98BF9",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFFFE10",
+          "0x0000F9D0",
+          "0xFFFFC620",
+          "0xFF64A1FA",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0x00000000",
+          "0xFFFF0750",
+          "0xFFFFC2B0",
+          "0x01814700"
+        ]
+      },
+      {
+        "node": "801343E0",
+        "return_address": "8006C690",
+        "center": [
+          2692,
+          514,
+          -1495
+        ],
+        "radius": 58,
+        "aabb": [
+          2634,
+          456,
+          -1553,
+          2750,
+          572,
+          -1437
+        ],
+        "control": [
+          "FFFCDFE6",
+          "000000F6",
+          "0032140A",
+          "0050FF0A",
+          "FFFFDFFA",
+          "FFFFF494",
+          "FFFFFEAA",
+          "000003A8"
+        ],
+        "screen": [
+          540,
+          120
+        ],
+        "projection": [
+          400,
+          16777216,
+          3932160
+        ],
+        "camera": "8014A450",
+        "input": "8014A850",
+        "view": "8014A350",
+        "native_result": 0,
+        "camera_0x39c": "0x8014A850",
+        "input_0xc8": "0x8014A350",
+        "view_words_0x40_to_0xcc": [
+          "0x17700000",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFFF850",
+          "0x00000280",
+          "0xFFFEFFD0",
+          "0x01D55E68",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFF2410",
+          "0xFFFFFC70",
+          "0xFFFF7BD0",
+          "0xFC38AFEC",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0x0000D340",
+          "0x000000C0",
+          "0xFFFF6E80",
+          "0x05C98BF9",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFFFE10",
+          "0x0000F9D0",
+          "0xFFFFC620",
+          "0xFF64A1FA",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0x00000000",
+          "0xFFFF0750",
+          "0xFFFFC2B0",
+          "0x01814700"
+        ]
+      },
+      {
+        "node": "801358F0",
+        "return_address": "8006C690",
+        "center": [
+          1898,
+          514,
+          1857
+        ],
+        "radius": 58,
+        "aabb": [
+          1840,
+          456,
+          1799,
+          1956,
+          572,
+          1915
+        ],
+        "control": [
+          "FFFCDFE6",
+          "000000F6",
+          "0032140A",
+          "0050FF0A",
+          "FFFFDFFA",
+          "FFFFF494",
+          "FFFFFEAA",
+          "000003A8"
+        ],
+        "screen": [
+          540,
+          120
+        ],
+        "projection": [
+          400,
+          16777216,
+          3932160
+        ],
+        "camera": "8014A450",
+        "input": "8014A850",
+        "view": "8014A350",
+        "native_result": 0,
+        "camera_0x39c": "0x8014A850",
+        "input_0xc8": "0x8014A350",
+        "view_words_0x40_to_0xcc": [
+          "0x17700000",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFFF850",
+          "0x00000280",
+          "0xFFFEFFD0",
+          "0x01D55E68",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFF2410",
+          "0xFFFFFC70",
+          "0xFFFF7BD0",
+          "0xFC38AFEC",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0x0000D340",
+          "0x000000C0",
+          "0xFFFF6E80",
+          "0x05C98BF9",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFFFE10",
+          "0x0000F9D0",
+          "0xFFFFC620",
+          "0xFF64A1FA",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0x00000000",
+          "0xFFFF0750",
+          "0xFFFFC2B0",
+          "0x01814700"
+        ]
+      },
+      {
+        "node": "80136E00",
+        "return_address": "8006C690",
+        "center": [
+          -2346,
+          487,
+          -5224
+        ],
+        "radius": 38,
+        "aabb": [
+          -2384,
+          449,
+          -5262,
+          -2308,
+          525,
+          -5186
+        ],
+        "control": [
+          "FFFCDFE6",
+          "000000F6",
+          "0032140A",
+          "0050FF0A",
+          "FFFFDFFA",
+          "FFFFF494",
+          "FFFFFEAA",
+          "000003A8"
+        ],
+        "screen": [
+          540,
+          120
+        ],
+        "projection": [
+          400,
+          16777216,
+          3932160
+        ],
+        "camera": "8014A450",
+        "input": "8014A850",
+        "view": "8014A350",
+        "native_result": 0,
+        "camera_0x39c": "0x8014A850",
+        "input_0xc8": "0x8014A350",
+        "view_words_0x40_to_0xcc": [
+          "0x17700000",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFFF850",
+          "0x00000280",
+          "0xFFFEFFD0",
+          "0x01D55E68",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFF2410",
+          "0xFFFFFC70",
+          "0xFFFF7BD0",
+          "0xFC38AFEC",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0x0000D340",
+          "0x000000C0",
+          "0xFFFF6E80",
+          "0x05C98BF9",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFFFE10",
+          "0x0000F9D0",
+          "0xFFFFC620",
+          "0xFF64A1FA",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0x00000000",
+          "0xFFFF0750",
+          "0xFFFFC2B0",
+          "0x01814700"
+        ]
+      },
+      {
+        "node": "80138310",
+        "return_address": "8006C690",
+        "center": [
+          -2444,
+          504,
+          -1010
+        ],
+        "radius": 38,
+        "aabb": [
+          -2482,
+          466,
+          -1048,
+          -2406,
+          542,
+          -972
+        ],
+        "control": [
+          "FFFCDFE6",
+          "000000F6",
+          "0032140A",
+          "0050FF0A",
+          "FFFFDFFA",
+          "FFFFF494",
+          "FFFFFEAA",
+          "000003A8"
+        ],
+        "screen": [
+          540,
+          120
+        ],
+        "projection": [
+          400,
+          16777216,
+          3932160
+        ],
+        "camera": "8014A450",
+        "input": "8014A850",
+        "view": "8014A350",
+        "native_result": 1,
+        "camera_0x39c": "0x8014A850",
+        "input_0xc8": "0x8014A350",
+        "view_words_0x40_to_0xcc": [
+          "0x17700000",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFFF850",
+          "0x00000280",
+          "0xFFFEFFD0",
+          "0x01D55E68",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFF2410",
+          "0xFFFFFC70",
+          "0xFFFF7BD0",
+          "0xFC38AFEC",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0x0000D340",
+          "0x000000C0",
+          "0xFFFF6E80",
+          "0x05C98BF9",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFFFE10",
+          "0x0000F9D0",
+          "0xFFFFC620",
+          "0xFF64A1FA",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0x00000000",
+          "0xFFFF0750",
+          "0xFFFFC2B0",
+          "0x01814700"
+        ]
+      },
+      {
+        "node": "80139820",
+        "return_address": "8006C690",
+        "center": [
+          2668,
+          498,
+          672
+        ],
+        "radius": 38,
+        "aabb": [
+          2630,
+          460,
+          634,
+          2706,
+          536,
+          710
+        ],
+        "control": [
+          "FFFC201A",
+          "0000FF0A",
+          "FFCE140A",
+          "005000F6",
+          "00002006",
+          "00000785",
+          "00000114",
+          "00000C58"
+        ],
+        "screen": [
+          540,
+          120
+        ],
+        "projection": [
+          400,
+          16777216,
+          3932160
+        ],
+        "camera": "8014A450",
+        "input": "8014A850",
+        "view": "8014A350",
+        "native_result": 0,
+        "camera_0x39c": "0x8014A850",
+        "input_0xc8": "0x8014A350",
+        "view_words_0x40_to_0xcc": [
+          "0x17700000",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFFF850",
+          "0x00000280",
+          "0xFFFEFFD0",
+          "0x01D55E68",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFF2410",
+          "0xFFFFFC70",
+          "0xFFFF7BD0",
+          "0xFC38AFEC",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0x0000D340",
+          "0x000000C0",
+          "0xFFFF6E80",
+          "0x05C98BF9",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFFFE10",
+          "0x0000F9D0",
+          "0xFFFFC620",
+          "0xFF64A1FA",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0x00000000",
+          "0xFFFF0750",
+          "0xFFFFC2B0",
+          "0x01814700"
+        ]
+      },
+      {
+        "node": "8013AD30",
+        "return_address": "8006C690",
+        "center": [
+          2166,
+          514,
+          4408
+        ],
+        "radius": 78,
+        "aabb": [
+          2088,
+          436,
+          4330,
+          2244,
+          592,
+          4486
+        ],
+        "control": [
+          "FFFCDFE6",
+          "000000F6",
+          "0032140A",
+          "0050FF0A",
+          "FFFFDFFA",
+          "FFFFF494",
+          "FFFFFEAA",
+          "000003A8"
+        ],
+        "screen": [
+          540,
+          120
+        ],
+        "projection": [
+          400,
+          16777216,
+          3932160
+        ],
+        "camera": "8014A450",
+        "input": "8014A850",
+        "view": "8014A350",
+        "native_result": 0,
+        "camera_0x39c": "0x8014A850",
+        "input_0xc8": "0x8014A350",
+        "view_words_0x40_to_0xcc": [
+          "0x17700000",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFFF850",
+          "0x00000280",
+          "0xFFFEFFD0",
+          "0x01D55E68",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFF2410",
+          "0xFFFFFC70",
+          "0xFFFF7BD0",
+          "0xFC38AFEC",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0x0000D340",
+          "0x000000C0",
+          "0xFFFF6E80",
+          "0x05C98BF9",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFFFE10",
+          "0x0000F9D0",
+          "0xFFFFC620",
+          "0xFF64A1FA",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0x00000000",
+          "0xFFFF0750",
+          "0xFFFFC2B0",
+          "0x01814700"
+        ]
+      },
+      {
+        "node": "8013C240",
+        "return_address": "8006C690",
+        "center": [
+          -1738,
+          516,
+          -5454
+        ],
+        "radius": 78,
+        "aabb": [
+          -1816,
+          438,
+          -5532,
+          -1660,
+          594,
+          -5376
+        ],
+        "control": [
+          "FFFCDFE6",
+          "000000F6",
+          "0032140A",
+          "0050FF0A",
+          "FFFFDFFA",
+          "FFFFF494",
+          "FFFFFEAA",
+          "000003A8"
+        ],
+        "screen": [
+          540,
+          120
+        ],
+        "projection": [
+          400,
+          16777216,
+          3932160
+        ],
+        "camera": "8014A450",
+        "input": "8014A850",
+        "view": "8014A350",
+        "native_result": 0,
+        "camera_0x39c": "0x8014A850",
+        "input_0xc8": "0x8014A350",
+        "view_words_0x40_to_0xcc": [
+          "0x17700000",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFFF850",
+          "0x00000280",
+          "0xFFFEFFD0",
+          "0x01D55E68",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFF2410",
+          "0xFFFFFC70",
+          "0xFFFF7BD0",
+          "0xFC38AFEC",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0x0000D340",
+          "0x000000C0",
+          "0xFFFF6E80",
+          "0x05C98BF9",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFFFE10",
+          "0x0000F9D0",
+          "0xFFFFC620",
+          "0xFF64A1FA",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0x00000000",
+          "0xFFFF0750",
+          "0xFFFFC2B0",
+          "0x01814700"
+        ]
+      },
+      {
+        "node": "8013D750",
+        "return_address": "8006C690",
+        "center": [
+          -617,
+          503,
+          -785
+        ],
+        "radius": 78,
+        "aabb": [
+          -695,
+          425,
+          -863,
+          -539,
+          581,
+          -707
+        ],
+        "control": [
+          "FFFCDFE6",
+          "000000F6",
+          "0032140A",
+          "0050FF0A",
+          "FFFFDFFA",
+          "FFFFF494",
+          "FFFFFEAA",
+          "000003A8"
+        ],
+        "screen": [
+          540,
+          120
+        ],
+        "projection": [
+          400,
+          16777216,
+          3932160
+        ],
+        "camera": "8014A450",
+        "input": "8014A850",
+        "view": "8014A350",
+        "native_result": 1,
+        "camera_0x39c": "0x8014A850",
+        "input_0xc8": "0x8014A350",
+        "view_words_0x40_to_0xcc": [
+          "0x17700000",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFFF850",
+          "0x00000280",
+          "0xFFFEFFD0",
+          "0x01D55E68",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFF2410",
+          "0xFFFFFC70",
+          "0xFFFF7BD0",
+          "0xFC38AFEC",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0x0000D340",
+          "0x000000C0",
+          "0xFFFF6E80",
+          "0x05C98BF9",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFFFE10",
+          "0x0000F9D0",
+          "0xFFFFC620",
+          "0xFF64A1FA",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0x00000000",
+          "0xFFFF0750",
+          "0xFFFFC2B0",
+          "0x01814700"
+        ]
+      },
+      {
+        "node": "8013EC60",
+        "return_address": "8006C690",
+        "center": [
+          802,
+          503,
+          497
+        ],
+        "radius": 78,
+        "aabb": [
+          724,
+          425,
+          419,
+          880,
+          581,
+          575
+        ],
+        "control": [
+          "FFFC201A",
+          "0000FF0A",
+          "FFCE140A",
+          "005000F6",
+          "00002006",
+          "FFFFF94F",
+          "00000116",
+          "00000A06"
+        ],
+        "screen": [
+          540,
+          120
+        ],
+        "projection": [
+          400,
+          16777216,
+          3932160
+        ],
+        "camera": "8014A450",
+        "input": "8014A850",
+        "view": "8014A350",
+        "native_result": 0,
+        "camera_0x39c": "0x8014A850",
+        "input_0xc8": "0x8014A350",
+        "view_words_0x40_to_0xcc": [
+          "0x17700000",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFFF850",
+          "0x00000280",
+          "0xFFFEFFD0",
+          "0x01D55E68",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFF2410",
+          "0xFFFFFC70",
+          "0xFFFF7BD0",
+          "0xFC38AFEC",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0x0000D340",
+          "0x000000C0",
+          "0xFFFF6E80",
+          "0x05C98BF9",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFFFE10",
+          "0x0000F9D0",
+          "0xFFFFC620",
+          "0xFF64A1FA",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0x00000000",
+          "0xFFFF0750",
+          "0xFFFFC2B0",
+          "0x01814700"
+        ]
+      },
+      {
+        "node": "80140170",
+        "return_address": "8006C690",
+        "center": [
+          4360,
+          171,
+          -91
+        ],
+        "radius": 32,
+        "aabb": [
+          4328,
+          139,
+          -123,
+          4392,
+          203,
+          -59
+        ],
+        "control": [
+          "FFFCDFE6",
+          "000000F6",
+          "0032140A",
+          "0050FF0A",
+          "FFFFDFFA",
+          "FFFFF494",
+          "FFFFFEAA",
+          "000003A8"
+        ],
+        "screen": [
+          540,
+          120
+        ],
+        "projection": [
+          400,
+          16777216,
+          3932160
+        ],
+        "camera": "8014A450",
+        "input": "8014A850",
+        "view": "8014A350",
+        "native_result": 0,
+        "camera_0x39c": "0x8014A850",
+        "input_0xc8": "0x8014A350",
+        "view_words_0x40_to_0xcc": [
+          "0x17700000",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFFF850",
+          "0x00000280",
+          "0xFFFEFFD0",
+          "0x01D55E68",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFF2410",
+          "0xFFFFFC70",
+          "0xFFFF7BD0",
+          "0xFC38AFEC",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0x0000D340",
+          "0x000000C0",
+          "0xFFFF6E80",
+          "0x05C98BF9",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFFFE10",
+          "0x0000F9D0",
+          "0xFFFFC620",
+          "0xFF64A1FA",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0x00000000",
+          "0xFFFF0750",
+          "0xFFFFC2B0",
+          "0x01814700"
+        ]
+      },
+      {
+        "node": "80141680",
+        "return_address": "8006C690",
+        "center": [
+          -4175,
+          169,
+          -643
+        ],
+        "radius": 32,
+        "aabb": [
+          -4207,
+          137,
+          -675,
+          -4143,
+          201,
+          -611
+        ],
+        "control": [
+          "FFFCDFE6",
+          "000000F6",
+          "0032140A",
+          "0050FF0A",
+          "FFFFDFFA",
+          "FFFFF494",
+          "FFFFFEAA",
+          "000003A8"
+        ],
+        "screen": [
+          540,
+          120
+        ],
+        "projection": [
+          400,
+          16777216,
+          3932160
+        ],
+        "camera": "8014A450",
+        "input": "8014A850",
+        "view": "8014A350",
+        "native_result": 0,
+        "camera_0x39c": "0x8014A850",
+        "input_0xc8": "0x8014A350",
+        "view_words_0x40_to_0xcc": [
+          "0x17700000",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFFF850",
+          "0x00000280",
+          "0xFFFEFFD0",
+          "0x01D55E68",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFF2410",
+          "0xFFFFFC70",
+          "0xFFFF7BD0",
+          "0xFC38AFEC",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0x0000D340",
+          "0x000000C0",
+          "0xFFFF6E80",
+          "0x05C98BF9",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFFFE10",
+          "0x0000F9D0",
+          "0xFFFFC620",
+          "0xFF64A1FA",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0x00000000",
+          "0xFFFF0750",
+          "0xFFFFC2B0",
+          "0x01814700"
+        ]
+      },
+      {
+        "node": "80142B90",
+        "return_address": "8006C690",
+        "center": [
+          23,
+          725,
+          -2308
+        ],
+        "radius": 32,
+        "aabb": [
+          -9,
+          693,
+          -2340,
+          55,
+          757,
+          -2276
+        ],
+        "control": [
+          "FFFCDFE6",
+          "000000F6",
+          "0032140A",
+          "0050FF0A",
+          "FFFFDFFA",
+          "FFFFF494",
+          "FFFFFEAA",
+          "000003A8"
+        ],
+        "screen": [
+          540,
+          120
+        ],
+        "projection": [
+          400,
+          16777216,
+          3932160
+        ],
+        "camera": "8014A450",
+        "input": "8014A850",
+        "view": "8014A350",
+        "native_result": 1,
+        "camera_0x39c": "0x8014A850",
+        "input_0xc8": "0x8014A350",
+        "view_words_0x40_to_0xcc": [
+          "0x17700000",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFFF850",
+          "0x00000280",
+          "0xFFFEFFD0",
+          "0x01D55E68",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFF2410",
+          "0xFFFFFC70",
+          "0xFFFF7BD0",
+          "0xFC38AFEC",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0x0000D340",
+          "0x000000C0",
+          "0xFFFF6E80",
+          "0x05C98BF9",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFFFE10",
+          "0x0000F9D0",
+          "0xFFFFC620",
+          "0xFF64A1FA",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0x00000000",
+          "0xFFFF0750",
+          "0xFFFFC2B0",
+          "0x01814700"
+        ]
+      },
+      {
+        "node": "801440A0",
+        "return_address": "8006C690",
+        "center": [
+          23,
+          725,
+          3699
+        ],
+        "radius": 32,
+        "aabb": [
+          -9,
+          693,
+          3667,
+          55,
+          757,
+          3731
+        ],
+        "control": [
+          "FFFC201A",
+          "0000FF0A",
+          "FFCE140A",
+          "005000F6",
+          "00002006",
+          "FFFFF3E1",
+          "00000219",
+          "000015E2"
+        ],
+        "screen": [
+          540,
+          120
+        ],
+        "projection": [
+          400,
+          16777216,
+          3932160
+        ],
+        "camera": "8014A450",
+        "input": "8014A850",
+        "view": "8014A350",
+        "native_result": 0,
+        "camera_0x39c": "0x8014A850",
+        "input_0xc8": "0x8014A350",
+        "view_words_0x40_to_0xcc": [
+          "0x17700000",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFFF850",
+          "0x00000280",
+          "0xFFFEFFD0",
+          "0x01D55E68",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFF2410",
+          "0xFFFFFC70",
+          "0xFFFF7BD0",
+          "0xFC38AFEC",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0x0000D340",
+          "0x000000C0",
+          "0xFFFF6E80",
+          "0x05C98BF9",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0xFFFFFE10",
+          "0x0000F9D0",
+          "0xFFFFC620",
+          "0xFF64A1FA",
+          "0xFA5E7DC7",
+          "0x010C0000",
+          "0x0202808C",
+          "0x00000000",
+          "0xFFFF0750",
+          "0xFFFFC2B0",
+          "0x01814700"
+        ]
+      }
+    ]
+  },
+  "source_saves_unchanged": true,
+  "preferences_unchanged": true,
+  "remaining_game_pids": [],
+  "exit_code": 0,
+  "raw_receipt": "analysis\\vr-baseline\\weapon-mesh-mapping\\w2-frustum-capture-20261026i\\receipt.json",
+  "raw_receipt_sha256": "0adb2eef3c3de714a835212cf1719031d70ceddcad3935bea32173c5f214769b",
+  "limits": [
+    "This capture measures the MP selector; it does not claim W2.3 head-turn coverage.",
+    "No weapon switch or firing occurred in this fixture.",
+    "The measured MP path is a flat native scene list; W2.2 must not assume the SP PVS leaf queue."
+  ]
+}

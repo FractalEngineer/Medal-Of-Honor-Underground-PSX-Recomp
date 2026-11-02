@@ -1,0 +1,82 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "scope": "Read-only first-person model and render-path mapping",
+  "model_inventory": {
+    "source": "analysis/vr-baseline/weapon-mesh-mapping/models-20261025/inventory.json",
+    "complete": true,
+    "source_saves_unchanged": true,
+    "preferences_unchanged": true,
+    "remaining_game_pids": [],
+    "executable_sha256": "f9156240029be295614442ebcb830ae6c6c218513ff7feff0f0d5ae836092b1d",
+    "revision": "a9faf46ffc1faaf455400d7e6385253fc06a9cc9",
+    "game_config_sha256": "21f53483e71f38e2f28dd649a8b9f6ab7a1ae804be954e07db6a92ccfb9b9b3e"
+  },
+  "multiplayer_model": {
+    "player_root": "0x800A3604",
+    "object_offset": "0x4AC",
+    "magic": "0x00160024",
+    "node_count": 22,
+    "node_table_sha256": "9f8c7275b3e8a1d6c7765da25a02d78b23f0c3fa4b67483f28865191d2805e4f",
+    "weapon_ids": [0, 1, 4, 5, 8, 9, 10, 12, 13, 14, 15, 16, 17],
+    "weapon_count": 13,
+    "stable_common_node_layout": true,
+    "per_weapon_state_fields_stable": false,
+    "state_field_note": "Object words around +0x5C/+0x64 changed with switching and on returning to the same weapon; they are not a mesh ID."
+  },
+  "render_path": {
+    "single_player_player_update": {
+      "address": "0x800892C8",
+      "size": "0xF20",
+      "fnv1a": "0xF4D6C439",
+      "stereo_eye_entries": 0
+    },
+    "multiplayer_player_update": {
+      "address": "0x800892E8",
+      "size": "0xA70",
+      "fnv1a": "0x39E56A35",
+      "weapon_object_owner_ra": "0x8008A7C8"
+    }
+  },
+  "production_smoke": {
+    "build": "Release/OpenGL/OpenXR/PGXP",
+    "debug_tools": false,
+    "flat_launch_inert": true,
+    "flat_weapon_pose": 0,
+    "null_hmd_pairs": 360,
+    "null_hmd_xr_failures": 0,
+    "null_hmd_frustum": "1440/1440",
+    "null_hmd_weapon_hits": "0/0",
+    "steamvr_settings_restored_sha256": "bc4b95d242547c552e4e6f672ad3c3284d357cd37249069fd643522473323f10",
+    "remaining_game_pids": []
+  },
+  "tracked_pose_validation": {
+    "receipt": "vr/proof/weapon-alignment-receipt.json",
+    "player": "P1 top view",
+    "weapon_ids": [0, 1, 4, 5, 8, 9, 10, 12, 13, 14, 15, 16, 17],
+    "alignments": [
+      {"pose_x": 0, "pose_yaw_mdeg": 0, "p2_damage_ids": 13},
+      {"pose_x": 96, "pose_yaw_mdeg": 0, "p2_damage_ids": 13},
+      {"pose_x": 0, "pose_yaw_mdeg": 12000, "p2_damage_ids": 13},
+      {"pose_x": 96, "pose_yaw_mdeg": 0, "forced_tracking_loss": true, "p2_damage_ids": 13}
+    ],
+    "p2_damage_gate": "A pre-respawn decrease at the exact P2 actor+0x108 health address in the native write trace.",
+    "source_saves_unchanged": true,
+    "preferences_unchanged": true,
+    "remaining_game_pids": []
+  },
+  "laser_pointer": {
+    "status": "implemented diagnostic; runtime visual capture pending",
+    "source": "vr/underground/raycast.h",
+    "activation": "enabled by default in VR, right squeeze held; PSX_VR_LASER=0 disables",
+    "endpoint": "first hit in the Underground level visibility tree with an impact dot",
+    "unit_test": "PASS: raycast box and visibility-tree hit guards"
+  },
+  "limits": [
+    "All 13 measured IDs hit the native P2 health writer at native, lateral, yawed, and forced-tracking-loss weapon poses.",
+    "The current actor+0x4AC affine hook changes P1's world-body representation; it is not yet proven to be the visible top-view first-person mesh seam.",
+    "No per-weapon face/mesh signature is established from the common node table.",
+    "P2 damage proves shot reachability, not muzzle-to-impact visual alignment.",
+    "Laser runtime/headset visual acceptance remains pending."
+  ]
+}

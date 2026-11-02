@@ -1,0 +1,58 @@
+{
+  "updated": "2026-10-29",
+  "complete": true,
+  "source_disc": "Medal of Honor - Underground/Medal of Honor - Underground (USA).cue",
+  "cue_sha256": "052693a2ab10e409c5c4daf1d528e6ee55ab06961c1c9f5f282e1771f0c4dfe3",
+  "bin_sha256": "2aed19d588f69274f8be70001eaa9b6400240b62088da72bace815ab902d56ed",
+  "probe_sha256": "b48b8cf794b4fcaa4da3142afc9dad7b9bcf33382a59d3bc3c850d4736e04b8c",
+  "catalog_sha256": "7e51a4a2f7f9add12cd9ca5fbce40ac20406c4f91c3c6f37e587fe5a91d73f77",
+  "toc_fingerprint": "5abe13ac21c40bd37cccbad669472f507fae740c920b971817a4eab6a49de417",
+  "toc_unchanged_from_previous_image": true,
+  "content_hashes": {
+    "size": 748001856,
+    "md5": "9b5f6e9ed0ced26fda1bfb7cdd2b7a01",
+    "sha1": "3d4ed9b1c7fb99acd96dd9c6ce2749a40cb8a1c2",
+    "crc32": "19a9614b"
+  },
+  "source_and_staged_config_identical": true,
+  "game_toml_sha256": "5ee404e92c16862ea101a6eafe6fe6f53278bb4745fed0447a33f7d0c9977e49",
+  "launcher_disc_selection_updated": true,
+  "disc_cache_updated": true,
+  "historical_recovery_default_enabled": false,
+  "historical_recovery_locally_enabled": false,
+  "recovery_manifest_sha256": "a0e859d4cafb9489f71ac29ec5691a5de31017ead7ef1a4463b5dba21aef74e7",
+  "recovery_catalog_staged": true,
+  "batch_files": {
+    "RunVR-VDXR.bat": {
+      "sha256": "e13374e15afb368fbd210585dc94502b3469e4028c7d623c992e0082d2a2d469",
+      "unchanged": true
+    },
+    "RunVR-Oculus.bat": {
+      "sha256": "967acf5cf86fb59c7d80f6f4c06f9872debcf8d110e07c08e58477c49feb96b2",
+      "unchanged": true
+    },
+    "RunVR-SteamVR.bat": {
+      "sha256": "5629be25c2c713657798da12af466a428eecae03308f8b42cbed7a975442a4a6",
+      "unchanged": true
+    }
+  },
+  "new_batch_file_created": false,
+  "headset_started": false,
+  "production_debug_tools": "OFF",
+  "binary_sha256": "035fe991d90673db38807b89a184d91fc33cfef6af721344512ede759f064eed",
+  "default_smoke": {
+    "path": "analysis/vr-baseline/clean-disc-activation-20261029/default-slot5/receipt.json",
+    "sha256": "d114f95dca5fd53d634856c8fd808a8b5535d3ea73934b99851f5538eeb3af4c",
+    "complete": true,
+    "slot": 5,
+    "disc_override": false,
+    "recovery_isolation_override": false,
+    "valid_stereo_trace": true,
+    "exit_code": 0,
+    "remaining_game_pids": [],
+    "source_saves_unchanged": true,
+    "preferences_unchanged_during_smoke": true
+  },
+  "performance_target_60_90_still_open": true,
+  "commit_or_push_performed": false
+}

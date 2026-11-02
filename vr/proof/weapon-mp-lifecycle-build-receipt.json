@@ -1,0 +1,118 @@
+{
+  "schema": 1,
+  "date": "2026-10-26",
+  "kind": "W2.5 multiplayer lifecycle build and regression receipt",
+  "complete": true,
+  "source_revision": "8ebe08c4dda786f7b57a6585b9866cc75eb7fed0",
+  "framework_gitlink": "555e1eabccc59b9b6ff0d9fca48aca783513dc86",
+  "ui_gitlink": "7c635c6b366a6e0d5d3c913a7fce6ec04dd9f256",
+  "builds": {
+    "diagnostic": {
+      "configuration": "Release, OpenGL, OpenXR, PGXP, VR diagnostics ON, debug tools ON",
+      "executable_sha256": "3f45dbe29e00df793a97690e03ed8dea74e0f470bcfe9335d562e8cd24978446",
+      "result": "link pass"
+    },
+    "release": {
+      "configuration": "Release, OpenGL, OpenXR, PGXP, VR diagnostics ON, debug tools OFF",
+      "executable_sha256": "02bd98ffc676ec79225ab58dc9c0d63aa246ab79270e9a5a92479b27d47e8278",
+      "result": "link pass"
+    },
+    "flat": {
+      "configuration": "Release, OpenGL, OpenXR OFF, VR diagnostics OFF, debug tools OFF",
+      "executable_sha256": "18f4328bc9085f0a6a2322f940eea63516f07e93698010853cf3474cad94636c",
+      "result": "build pass"
+    }
+  },
+  "controls": {
+    "mp": {
+      "receipt": "vr/proof/weapon-mp-lifecycle-receipt.json",
+      "raw_receipt": "analysis/vr-baseline/mp-lifecycle-20261026i/receipt.json",
+      "raw_receipt_sha256": "7df3355cae7857c5f11f3b8f8f0f34b36b2318193d5817868cd22faf9a44d143",
+      "passed": true
+    },
+    "sp": {
+      "raw_receipt": "analysis/vr-baseline/movement-w25-20261026c/receipt.json",
+      "raw_receipt_sha256": "ef338a606d9d013190dce0f3c93983a0794837dfac53a2e2e26c0faec28d301d",
+      "slot": 2,
+      "passed": true
+    },
+    "flat": {
+      "raw_receipt": "analysis/vr-baseline/flat-w25-20261026b/receipt.json",
+      "raw_receipt_sha256": "507ce34c90b11ec6da290591b1e7af689c9bf019b7f36f589dc8e7e8f6d2913e",
+      "passed": true
+    },
+    "cross_game_parity": {
+      "reference_head": "d82a5d0024570d7477db38d3cea5dfc59dd22035",
+      "underground_head": "8ebe08c4dda786f7b57a6585b9866cc75eb7fed0",
+      "shared_geometry_sha256": "9e51708f0f05a16182e4d5893063a06f656d4fc723965f72cea9191632661a23",
+      "raw_baseline": "analysis/reference-parity/w25-post-20261026/baseline.json",
+      "raw_baseline_sha256": "147faffac62f91301220bf6bf7ea63d1366d644fa1bc1415bb33e8907ab74746",
+      "cases": 33,
+      "passed": true
+    }
+  },
+  "focused_checks": {
+    "python_unittest": {
+      "passed": 23,
+      "failed": 0
+    },
+    "strict_c_fixtures": {
+      "directory": "analysis/vr-baseline/w25-focused-20261026a",
+      "input": "passed",
+      "mp_view": "passed",
+      "menu_surface": "passed",
+      "frustum": "passed",
+      "raycast": "passed",
+      "hud_packets": "passed",
+      "weapon": "passed"
+    },
+    "strict_diagnostic_syntax": "passed"
+  },
+  "rejected_attempts": [
+    {
+      "path": "analysis/vr-baseline/mp-lifecycle-20261026a/receipt.json",
+      "reason": "Endpoint-only turn sampling missed a rotation that later changed; replaced by per-frame observation."
+    },
+    {
+      "path": "analysis/vr-baseline/mp-lifecycle-20261026b/receipt.json",
+      "reason": "The opposite turn also completed a full sampled rotation cycle; retained as a rejected timing control."
+    },
+    {
+      "path": "analysis/vr-baseline/mp-lifecycle-20261026c/receipt.json",
+      "reason": "Pause detection waited for stereo pairs to freeze, but the replay continued; replaced with native Start plus paused actor-motion control."
+    },
+    {
+      "path": "analysis/vr-baseline/mp-lifecycle-20261026g/receipt.json",
+      "reason": "In-process MP-to-SP savestate load retained the MP overlay and the strict converter guard returned neutral; SP was moved to its cold-launcher fixture."
+    },
+    {
+      "path": "analysis/vr-baseline/movement-w25-20261026a/receipt.json",
+      "reason": "Null-HMD setup could not write SteamVR settings without elevation; no game started and settings stayed unchanged."
+    },
+    {
+      "path": "analysis/vr-baseline/flat-w25-20261026a/stdout.log",
+      "reason": "The initial live marker poll raced buffered stdout; the process was restarted and audited after intentional termination."
+    }
+  ],
+  "source_hashes": {
+    "vr/underground/vr_diagnostic.c": "23db281ff34e09ef83508e599baade54c0d6056c4053a000687852084b30c642",
+    "vr/underground/input.c": "6ab1f9f8d24b65d3b9cc4f7b398e223dc7fc0dbdd4414614b8478376e47e4ac6",
+    "vr/underground/input.h": "5f55cab63a0a48b5b70f42e2efe172a16a77292cd4f5db2bb850a7de7d888d6d",
+    "vr/underground/mp_view.h": "e5719fbd36617c1d6bdbd59212f8c1196096db13aa66d480474818e54346ecb6",
+    "vr/tests/test_input.c": "ef1b01947045834002db326072098f429be8047ef1f3e8eb6381c3a2e1f3462b",
+    "vr/tests/test_mp_view.c": "e04475e71687119a6a81d6f13aed2221c1f6bb870fd692ea25303195c5bf4307",
+    "vr/tests/test_menu_surface.c": "2310c9233521e7e85cf8c72f8b64e8f22e5c7936cd0c6e8ed18b339e1049a8f5",
+    "vr/tools/probe_mp_input.py": "d057de2754e571d683ec98c128391d1bc6d3cfb1b53499461ac6645b03292b87",
+    "vr/tools/check_movement.py": "cb0dbba15ffa8cbc0d454ef60335e8130a2c0579f076e6eec9dd1cc83917925c",
+    "vr/tools/check_flat_fallback.py": "02b9ca7ddfc0d4e9d5f6735f0625cda8bd98a08811968dc8471d53528b52cff8",
+    "vr/run_vr.ps1": "33690ef43a11f6f4576ae464caad78552fb9d25e915fc2419c9fa2fa77fe46dc"
+  },
+  "source_saves_unchanged": true,
+  "preferences_unchanged": true,
+  "remaining_game_pids": [],
+  "limits": [
+    "This receipt records fresh W2.5 controls and regressions; it does not replace the historical W1-W2.4 receipts.",
+    "The SP and flat controls are separate boundaries. A cross-overlay savestate swap is not a valid substitute for a normal mode launch.",
+    "Physical multiplayer input, grip scale, recenter, tracked shots and exact laser alignment remain open."
+  ]
+}

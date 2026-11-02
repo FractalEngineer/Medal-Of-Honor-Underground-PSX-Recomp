@@ -1,0 +1,1147 @@
+{
+  "schema": 1,
+  "kind": "W3.4 complete-gun topology and mixed-node islands",
+  "complete": true,
+  "inventory": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\weapon-mesh-mapping\\first-person-geometry-20261025\\inventory.json",
+  "inventory_sha256": "cd61933f4acf37370b3bd1136e2e849033cfb399c3b3ac35d0d90e85ee7bafbb",
+  "weapons": [
+    {
+      "id": 0,
+      "name": "P38 pistol",
+      "slot": 1,
+      "switches": 0,
+      "source": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\weapon-mesh-mapping\\first-person-geometry-20261025\\inventory.json",
+      "geometry_fnv32": "0x8544F8B9",
+      "mesh_magic": "0xe0007",
+      "native": {
+        "nodes": 14,
+        "faces": 354,
+        "vertices": 238,
+        "triangle_bytes": 4320
+      },
+      "gun": {
+        "nodes": [
+          13
+        ],
+        "partial_node": 11,
+        "partial_vertex_indices": [
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32
+        ],
+        "faces": 128,
+        "vertices": 96,
+        "masked_vertices": 142,
+        "unreferenced_vertices": 1,
+        "selected_components": [
+          {
+            "triangles": 87,
+            "vertices": 61,
+            "nodes": [
+              13
+            ]
+          },
+          {
+            "triangles": 37,
+            "vertices": 27,
+            "nodes": [
+              11
+            ]
+          },
+          {
+            "triangles": 2,
+            "vertices": 4,
+            "nodes": [
+              13
+            ]
+          },
+          {
+            "triangles": 2,
+            "vertices": 4,
+            "nodes": [
+              13
+            ]
+          }
+        ],
+        "arm_components": [
+          {
+            "triangles": 206,
+            "vertices": 124,
+            "nodes": [
+              9,
+              11
+            ]
+          },
+          {
+            "triangles": 20,
+            "vertices": 17,
+            "nodes": [
+              11
+            ]
+          }
+        ]
+      },
+      "triangle_stream_sha256": "4882e095af5e99e5a36dfda8add3249d9ab2a31ee13639e12dc5451c990bd37c",
+      "ram_sha256": "303ad4303525a219016f30bddb8d50cfbe19a30d0da53a0d6ef63fefb249e9f2",
+      "ram_path": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\weapon-mesh-mapping\\first-person-geometry-20261025\\slot-01\\ram.bin"
+    },
+    {
+      "id": 1,
+      "name": "MP40",
+      "slot": 1,
+      "switches": 1,
+      "source": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\weapon-mesh-mapping\\first-person-geometry-20261025\\inventory.json",
+      "geometry_fnv32": "0x8095CAFB",
+      "mesh_magic": "0x200007",
+      "native": {
+        "nodes": 32,
+        "faces": 316,
+        "vertices": 190,
+        "triangle_bytes": 4040
+      },
+      "gun": {
+        "nodes": [
+          26,
+          29,
+          31
+        ],
+        "partial_node": null,
+        "partial_vertex_indices": [],
+        "faces": 193,
+        "vertices": 124,
+        "masked_vertices": 66,
+        "unreferenced_vertices": 0,
+        "selected_components": [
+          {
+            "triangles": 163,
+            "vertices": 102,
+            "nodes": [
+              26
+            ]
+          },
+          {
+            "triangles": 26,
+            "vertices": 16,
+            "nodes": [
+              31
+            ]
+          },
+          {
+            "triangles": 4,
+            "vertices": 6,
+            "nodes": [
+              29
+            ]
+          }
+        ],
+        "arm_components": [
+          {
+            "triangles": 123,
+            "vertices": 66,
+            "nodes": [
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              16,
+              17,
+              19,
+              20,
+              22
+            ]
+          }
+        ]
+      },
+      "triangle_stream_sha256": "69dd83475fe23155a965543e023ed0f086fdfcc0c268d0c65f41482c4b35d9e7",
+      "ram_sha256": "303ad4303525a219016f30bddb8d50cfbe19a30d0da53a0d6ef63fefb249e9f2",
+      "ram_path": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\weapon-mesh-mapping\\first-person-geometry-20261025\\slot-01\\ram.bin"
+    },
+    {
+      "id": 4,
+      "name": "Shotgun",
+      "slot": 2,
+      "switches": 2,
+      "source": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\weapon-mesh-mapping\\first-person-geometry-20261025\\inventory.json",
+      "geometry_fnv32": "0x805BD649",
+      "mesh_magic": "0x150007",
+      "native": {
+        "nodes": 21,
+        "faces": 306,
+        "vertices": 199,
+        "triangle_bytes": 3456
+      },
+      "gun": {
+        "nodes": [
+          18,
+          20
+        ],
+        "partial_node": null,
+        "partial_vertex_indices": [],
+        "faces": 182,
+        "vertices": 137,
+        "masked_vertices": 62,
+        "unreferenced_vertices": 0,
+        "selected_components": [
+          {
+            "triangles": 132,
+            "vertices": 90,
+            "nodes": [
+              18
+            ]
+          },
+          {
+            "triangles": 46,
+            "vertices": 35,
+            "nodes": [
+              20
+            ]
+          },
+          {
+            "triangles": 1,
+            "vertices": 3,
+            "nodes": [
+              18
+            ]
+          },
+          {
+            "triangles": 1,
+            "vertices": 3,
+            "nodes": [
+              18
+            ]
+          },
+          {
+            "triangles": 1,
+            "vertices": 3,
+            "nodes": [
+              18
+            ]
+          },
+          {
+            "triangles": 1,
+            "vertices": 3,
+            "nodes": [
+              20
+            ]
+          }
+        ],
+        "arm_components": [
+          {
+            "triangles": 124,
+            "vertices": 62,
+            "nodes": [
+              8,
+              9,
+              10,
+              12,
+              13
+            ]
+          }
+        ]
+      },
+      "triangle_stream_sha256": "98feb339cc4f3c131e0918cad56be44949a3bcc220d835e0adcd1578a19d4b5c",
+      "ram_sha256": "901e00637a54c14a06db762e852fae330c572b45f0d09c561fb8517cdf0ab2ff",
+      "ram_path": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\weapon-mesh-mapping\\first-person-geometry-20261025\\slot-02\\ram.bin"
+    },
+    {
+      "id": 5,
+      "name": "Scoped rifle",
+      "slot": 3,
+      "switches": 2,
+      "source": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\weapon-mesh-mapping\\first-person-geometry-20261025\\inventory.json",
+      "geometry_fnv32": "0x9F7ADA24",
+      "mesh_magic": "0x1a0007",
+      "native": {
+        "nodes": 26,
+        "faces": 383,
+        "vertices": 237,
+        "triangle_bytes": 4864
+      },
+      "gun": {
+        "nodes": [
+          22,
+          25
+        ],
+        "partial_node": null,
+        "partial_vertex_indices": [],
+        "faces": 199,
+        "vertices": 159,
+        "masked_vertices": 78,
+        "unreferenced_vertices": 0,
+        "selected_components": [
+          {
+            "triangles": 121,
+            "vertices": 89,
+            "nodes": [
+              22
+            ]
+          },
+          {
+            "triangles": 20,
+            "vertices": 17,
+            "nodes": [
+              22
+            ]
+          },
+          {
+            "triangles": 19,
+            "vertices": 17,
+            "nodes": [
+              22
+            ]
+          },
+          {
+            "triangles": 16,
+            "vertices": 14,
+            "nodes": [
+              25
+            ]
+          },
+          {
+            "triangles": 15,
+            "vertices": 16,
+            "nodes": [
+              22
+            ]
+          },
+          {
+            "triangles": 8,
+            "vertices": 6,
+            "nodes": [
+              22
+            ]
+          }
+        ],
+        "arm_components": [
+          {
+            "triangles": 184,
+            "vertices": 78,
+            "nodes": [
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              17
+            ]
+          }
+        ]
+      },
+      "triangle_stream_sha256": "dc2ce78d25ca4f39c024e5eb16619a12d195a521f8d25a5e79d867ee1da461d3",
+      "ram_sha256": "ae33e7b29d3fde6e296b2db5e924526a2404592deadc18c2f0401275f732d92f",
+      "ram_path": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\weapon-mesh-mapping\\first-person-geometry-20261025\\slot-03\\ram.bin"
+    },
+    {
+      "id": 8,
+      "name": "Colt .45",
+      "slot": 2,
+      "switches": 0,
+      "source": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\weapon-mesh-mapping\\first-person-geometry-20261025\\inventory.json",
+      "geometry_fnv32": "0x267E86AA",
+      "mesh_magic": "0xe0007",
+      "native": {
+        "nodes": 14,
+        "faces": 303,
+        "vertices": 180,
+        "triangle_bytes": 3552
+      },
+      "gun": {
+        "nodes": [
+          13
+        ],
+        "partial_node": null,
+        "partial_vertex_indices": [],
+        "faces": 115,
+        "vertices": 68,
+        "masked_vertices": 112,
+        "unreferenced_vertices": 0,
+        "selected_components": [
+          {
+            "triangles": 115,
+            "vertices": 68,
+            "nodes": [
+              13
+            ]
+          }
+        ],
+        "arm_components": [
+          {
+            "triangles": 188,
+            "vertices": 112,
+            "nodes": [
+              9,
+              11
+            ]
+          }
+        ]
+      },
+      "triangle_stream_sha256": "76e61df66ad96625011f7364ec62e0795a35e9c1511d9aeab3c01d544761d739",
+      "ram_sha256": "901e00637a54c14a06db762e852fae330c572b45f0d09c561fb8517cdf0ab2ff",
+      "ram_path": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\weapon-mesh-mapping\\first-person-geometry-20261025\\slot-02\\ram.bin"
+    },
+    {
+      "id": 9,
+      "name": "Silenced pistol",
+      "slot": 3,
+      "switches": 0,
+      "source": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\weapon-mesh-mapping\\first-person-geometry-20261025\\inventory.json",
+      "geometry_fnv32": "0x65F76C5D",
+      "mesh_magic": "0xe0007",
+      "native": {
+        "nodes": 14,
+        "faces": 310,
+        "vertices": 199,
+        "triangle_bytes": 3728
+      },
+      "gun": {
+        "nodes": [
+          13
+        ],
+        "partial_node": 11,
+        "partial_vertex_indices": [
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31
+        ],
+        "faces": 94,
+        "vertices": 75,
+        "masked_vertices": 124,
+        "unreferenced_vertices": 0,
+        "selected_components": [
+          {
+            "triangles": 47,
+            "vertices": 35,
+            "nodes": [
+              13
+            ]
+          },
+          {
+            "triangles": 23,
+            "vertices": 18,
+            "nodes": [
+              11
+            ]
+          },
+          {
+            "triangles": 22,
+            "vertices": 16,
+            "nodes": [
+              13
+            ]
+          },
+          {
+            "triangles": 1,
+            "vertices": 3,
+            "nodes": [
+              13
+            ]
+          },
+          {
+            "triangles": 1,
+            "vertices": 3,
+            "nodes": [
+              13
+            ]
+          }
+        ],
+        "arm_components": [
+          {
+            "triangles": 216,
+            "vertices": 124,
+            "nodes": [
+              9,
+              11
+            ]
+          }
+        ]
+      },
+      "triangle_stream_sha256": "f1ec9cfa8c09a884f9f215c221e5740eb5e67b437d4260d165c9db1825ac94d4",
+      "ram_sha256": "ae33e7b29d3fde6e296b2db5e924526a2404592deadc18c2f0401275f732d92f",
+      "ram_path": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\weapon-mesh-mapping\\first-person-geometry-20261025\\slot-03\\ram.bin"
+    },
+    {
+      "id": 10,
+      "name": "Stick grenade",
+      "slot": 1,
+      "switches": 3,
+      "source": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\weapon-mesh-mapping\\first-person-geometry-20261025\\inventory.json",
+      "geometry_fnv32": "0xDDCE0989",
+      "mesh_magic": "0x180007",
+      "native": {
+        "nodes": 24,
+        "faces": 341,
+        "vertices": 163,
+        "triangle_bytes": 3712
+      },
+      "gun": {
+        "nodes": [
+          23
+        ],
+        "partial_node": null,
+        "partial_vertex_indices": [],
+        "faces": 140,
+        "vertices": 58,
+        "masked_vertices": 105,
+        "unreferenced_vertices": 0,
+        "selected_components": [
+          {
+            "triangles": 140,
+            "vertices": 58,
+            "nodes": [
+              23
+            ]
+          }
+        ],
+        "arm_components": [
+          {
+            "triangles": 201,
+            "vertices": 105,
+            "nodes": [
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ]
+          }
+        ]
+      },
+      "triangle_stream_sha256": "12281db39e35dfc60f1dd071a5c0be57464e745ace1de88d98d044bba134d6cd",
+      "ram_sha256": "303ad4303525a219016f30bddb8d50cfbe19a30d0da53a0d6ef63fefb249e9f2",
+      "ram_path": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\weapon-mesh-mapping\\first-person-geometry-20261025\\slot-01\\ram.bin"
+    },
+    {
+      "id": 12,
+      "name": "M1 Garand",
+      "slot": 4,
+      "switches": 0,
+      "source": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\weapon-mesh-mapping\\first-person-geometry-20261025\\inventory.json",
+      "geometry_fnv32": "0x450F78DC",
+      "mesh_magic": "0x170007",
+      "native": {
+        "nodes": 23,
+        "faces": 280,
+        "vertices": 203,
+        "triangle_bytes": 3632
+      },
+      "gun": {
+        "nodes": [
+          22
+        ],
+        "partial_node": null,
+        "partial_vertex_indices": [],
+        "faces": 174,
+        "vertices": 136,
+        "masked_vertices": 67,
+        "unreferenced_vertices": 0,
+        "selected_components": [
+          {
+            "triangles": 145,
+            "vertices": 96,
+            "nodes": [
+              22
+            ]
+          },
+          {
+            "triangles": 12,
+            "vertices": 10,
+            "nodes": [
+              22
+            ]
+          },
+          {
+            "triangles": 11,
+            "vertices": 12,
+            "nodes": [
+              22
+            ]
+          },
+          {
+            "triangles": 1,
+            "vertices": 3,
+            "nodes": [
+              22
+            ]
+          },
+          {
+            "triangles": 1,
+            "vertices": 3,
+            "nodes": [
+              22
+            ]
+          },
+          {
+            "triangles": 1,
+            "vertices": 3,
+            "nodes": [
+              22
+            ]
+          },
+          {
+            "triangles": 1,
+            "vertices": 3,
+            "nodes": [
+              22
+            ]
+          },
+          {
+            "triangles": 1,
+            "vertices": 3,
+            "nodes": [
+              22
+            ]
+          },
+          {
+            "triangles": 1,
+            "vertices": 3,
+            "nodes": [
+              22
+            ]
+          }
+        ],
+        "arm_components": [
+          {
+            "triangles": 106,
+            "vertices": 67,
+            "nodes": [
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              17
+            ]
+          }
+        ]
+      },
+      "triangle_stream_sha256": "ee9bce000da231b958a74bd19523aa4edf64138299d3669943067bc033b4afcc",
+      "ram_sha256": "87a57b78bc2783a81ac5ed4917e8ccc6f557c09547f60aa9c0225c20dc384bc7",
+      "ram_path": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\weapon-mesh-mapping\\first-person-geometry-20261025\\slot-04\\ram.bin"
+    },
+    {
+      "id": 13,
+      "name": "Panzerfaust",
+      "slot": 4,
+      "switches": 2,
+      "source": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\weapon-mesh-mapping\\first-person-geometry-20261025\\inventory.json",
+      "geometry_fnv32": "0x068CBD37",
+      "mesh_magic": "0x1f0007",
+      "native": {
+        "nodes": 31,
+        "faces": 333,
+        "vertices": 203,
+        "triangle_bytes": 3792
+      },
+      "gun": {
+        "nodes": [
+          27,
+          28,
+          30
+        ],
+        "partial_node": null,
+        "partial_vertex_indices": [],
+        "faces": 168,
+        "vertices": 116,
+        "masked_vertices": 87,
+        "unreferenced_vertices": 3,
+        "selected_components": [
+          {
+            "triangles": 114,
+            "vertices": 77,
+            "nodes": [
+              27,
+              28
+            ]
+          },
+          {
+            "triangles": 54,
+            "vertices": 36,
+            "nodes": [
+              30
+            ]
+          }
+        ],
+        "arm_components": [
+          {
+            "triangles": 165,
+            "vertices": 87,
+            "nodes": [
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              16,
+              17,
+              19,
+              21,
+              22
+            ]
+          }
+        ]
+      },
+      "triangle_stream_sha256": "c81c08f16ceec81c90841c0cf93b78085a8fe36d310fde02125b6abee7027567",
+      "ram_sha256": "87a57b78bc2783a81ac5ed4917e8ccc6f557c09547f60aa9c0225c20dc384bc7",
+      "ram_path": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\weapon-mesh-mapping\\first-person-geometry-20261025\\slot-04\\ram.bin"
+    },
+    {
+      "id": 14,
+      "name": "Crossbow",
+      "slot": 3,
+      "switches": 1,
+      "source": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\weapon-mesh-mapping\\first-person-geometry-20261025\\inventory.json",
+      "geometry_fnv32": "0xDFF185CA",
+      "mesh_magic": "0x1d0007",
+      "native": {
+        "nodes": 29,
+        "faces": 290,
+        "vertices": 239,
+        "triangle_bytes": 4576
+      },
+      "gun": {
+        "nodes": [
+          14,
+          17,
+          18,
+          19,
+          21,
+          23,
+          25,
+          26,
+          28
+        ],
+        "partial_node": null,
+        "partial_vertex_indices": [],
+        "faces": 187,
+        "vertices": 178,
+        "masked_vertices": 61,
+        "unreferenced_vertices": 3,
+        "selected_components": [
+          {
+            "triangles": 49,
+            "vertices": 34,
+            "nodes": [
+              14,
+              23,
+              25
+            ]
+          },
+          {
+            "triangles": 38,
+            "vertices": 33,
+            "nodes": [
+              19,
+              23,
+              25
+            ]
+          },
+          {
+            "triangles": 24,
+            "vertices": 21,
+            "nodes": [
+              28
+            ]
+          },
+          {
+            "triangles": 23,
+            "vertices": 20,
+            "nodes": [
+              17,
+              23,
+              26
+            ]
+          },
+          {
+            "triangles": 21,
+            "vertices": 23,
+            "nodes": [
+              14,
+              18,
+              19
+            ]
+          },
+          {
+            "triangles": 15,
+            "vertices": 14,
+            "nodes": [
+              21
+            ]
+          },
+          {
+            "triangles": 4,
+            "vertices": 6,
+            "nodes": [
+              14
+            ]
+          },
+          {
+            "triangles": 4,
+            "vertices": 6,
+            "nodes": [
+              14,
+              17
+            ]
+          },
+          {
+            "triangles": 2,
+            "vertices": 4,
+            "nodes": [
+              14,
+              17
+            ]
+          },
+          {
+            "triangles": 2,
+            "vertices": 4,
+            "nodes": [
+              17,
+              19
+            ]
+          },
+          {
+            "triangles": 2,
+            "vertices": 4,
+            "nodes": [
+              17,
+              19
+            ]
+          },
+          {
+            "triangles": 1,
+            "vertices": 3,
+            "nodes": [
+              17
+            ]
+          },
+          {
+            "triangles": 1,
+            "vertices": 3,
+            "nodes": [
+              19
+            ]
+          },
+          {
+            "triangles": 1,
+            "vertices": 3,
+            "nodes": [
+              23
+            ]
+          }
+        ],
+        "arm_components": [
+          {
+            "triangles": 103,
+            "vertices": 58,
+            "nodes": [
+              9,
+              10
+            ]
+          }
+        ]
+      },
+      "triangle_stream_sha256": "b6f9543f263362dfba9ef817da23a7ec544cfffb5489c660c3a6547780a84963",
+      "ram_sha256": "ae33e7b29d3fde6e296b2db5e924526a2404592deadc18c2f0401275f732d92f",
+      "ram_path": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\weapon-mesh-mapping\\first-person-geometry-20261025\\slot-03\\ram.bin"
+    },
+    {
+      "id": 15,
+      "name": "Petrol bomb",
+      "slot": 2,
+      "switches": 3,
+      "source": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\weapon-mesh-mapping\\first-person-geometry-20261025\\inventory.json",
+      "geometry_fnv32": "0x7CA0DBEC",
+      "mesh_magic": "0x1c0007",
+      "native": {
+        "nodes": 28,
+        "faces": 397,
+        "vertices": 196,
+        "triangle_bytes": 4184
+      },
+      "gun": {
+        "nodes": [
+          25,
+          26,
+          27
+        ],
+        "partial_node": null,
+        "partial_vertex_indices": [],
+        "faces": 198,
+        "vertices": 99,
+        "masked_vertices": 97,
+        "unreferenced_vertices": 0,
+        "selected_components": [
+          {
+            "triangles": 198,
+            "vertices": 99,
+            "nodes": [
+              25,
+              26,
+              27
+            ]
+          }
+        ],
+        "arm_components": [
+          {
+            "triangles": 199,
+            "vertices": 97,
+            "nodes": [
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              15,
+              16,
+              18,
+              19,
+              21
+            ]
+          }
+        ]
+      },
+      "triangle_stream_sha256": "b8bee61d17d166f57d8a512d48f18fa07e9c313dd00aa45147edda0dab3d8526",
+      "ram_sha256": "901e00637a54c14a06db762e852fae330c572b45f0d09c561fb8517cdf0ab2ff",
+      "ram_path": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\weapon-mesh-mapping\\first-person-geometry-20261025\\slot-02\\ram.bin"
+    },
+    {
+      "id": 16,
+      "name": "Sten",
+      "slot": 2,
+      "switches": 1,
+      "source": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\weapon-mesh-mapping\\first-person-geometry-20261025\\inventory.json",
+      "geometry_fnv32": "0x29D5BC18",
+      "mesh_magic": "0x1f0007",
+      "native": {
+        "nodes": 31,
+        "faces": 354,
+        "vertices": 239,
+        "triangle_bytes": 4728
+      },
+      "gun": {
+        "nodes": [
+          26,
+          29,
+          30
+        ],
+        "partial_node": null,
+        "partial_vertex_indices": [],
+        "faces": 217,
+        "vertices": 166,
+        "masked_vertices": 73,
+        "unreferenced_vertices": 1,
+        "selected_components": [
+          {
+            "triangles": 147,
+            "vertices": 98,
+            "nodes": [
+              26
+            ]
+          },
+          {
+            "triangles": 20,
+            "vertices": 17,
+            "nodes": [
+              29
+            ]
+          },
+          {
+            "triangles": 16,
+            "vertices": 14,
+            "nodes": [
+              30
+            ]
+          },
+          {
+            "triangles": 14,
+            "vertices": 16,
+            "nodes": [
+              26
+            ]
+          },
+          {
+            "triangles": 11,
+            "vertices": 10,
+            "nodes": [
+              26
+            ]
+          },
+          {
+            "triangles": 9,
+            "vertices": 10,
+            "nodes": [
+              26
+            ]
+          }
+        ],
+        "arm_components": [
+          {
+            "triangles": 137,
+            "vertices": 73,
+            "nodes": [
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              16,
+              17,
+              19,
+              20,
+              22
+            ]
+          }
+        ]
+      },
+      "triangle_stream_sha256": "439c527019983c421cd81fbcb77e3fef0e2e58043db7c8408c5ed4cd9ada5512",
+      "ram_sha256": "901e00637a54c14a06db762e852fae330c572b45f0d09c561fb8517cdf0ab2ff",
+      "ram_path": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\weapon-mesh-mapping\\first-person-geometry-20261025\\slot-02\\ram.bin"
+    },
+    {
+      "id": 17,
+      "name": "StG44",
+      "slot": 1,
+      "switches": 2,
+      "source": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\weapon-mesh-mapping\\first-person-geometry-20261025\\inventory.json",
+      "geometry_fnv32": "0xF467028B",
+      "mesh_magic": "0x200007",
+      "native": {
+        "nodes": 32,
+        "faces": 352,
+        "vertices": 234,
+        "triangle_bytes": 4904
+      },
+      "gun": {
+        "nodes": [
+          27,
+          29,
+          31
+        ],
+        "partial_node": null,
+        "partial_vertex_indices": [],
+        "faces": 215,
+        "vertices": 161,
+        "masked_vertices": 73,
+        "unreferenced_vertices": 0,
+        "selected_components": [
+          {
+            "triangles": 134,
+            "vertices": 93,
+            "nodes": [
+              27
+            ]
+          },
+          {
+            "triangles": 39,
+            "vertices": 35,
+            "nodes": [
+              27
+            ]
+          },
+          {
+            "triangles": 22,
+            "vertices": 13,
+            "nodes": [
+              31
+            ]
+          },
+          {
+            "triangles": 18,
+            "vertices": 16,
+            "nodes": [
+              29
+            ]
+          },
+          {
+            "triangles": 2,
+            "vertices": 4,
+            "nodes": [
+              27
+            ]
+          }
+        ],
+        "arm_components": [
+          {
+            "triangles": 137,
+            "vertices": 73,
+            "nodes": [
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              16,
+              17,
+              19,
+              21,
+              22
+            ]
+          }
+        ]
+      },
+      "triangle_stream_sha256": "308f97df33d02f67b6c9aebfb5aee4a9c11816b6b029cf3e47b2bdcf8fe6b066",
+      "ram_sha256": "303ad4303525a219016f30bddb8d50cfbe19a30d0da53a0d6ef63fefb249e9f2",
+      "ram_path": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-baseline\\weapon-mesh-mapping\\first-person-geometry-20261025\\slot-01\\ram.bin"
+    }
+  ],
+  "scope": "Offline native topology proof; no pose, animation, physical attachment, shot alignment or hardware acceptance claim"
+}

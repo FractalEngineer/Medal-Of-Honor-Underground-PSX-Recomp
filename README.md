@@ -1,9 +1,10 @@
-# Medal of Honor Underground Recompiled
+# Medal of Honor Underground Recompiled + Native VR
 
 <!-- retcomm-readme-metrics -->
 [![GitHub downloads (all assets, all releases)](https://img.shields.io/github/downloads/FractalEngineer/Medal-Of-Honor-Underground-PSX-Recomp/total)](https://github.com/FractalEngineer/Medal-Of-Honor-Underground-PSX-Recomp/releases)
 [![GitHub downloads (latest release)](https://img.shields.io/github/downloads/FractalEngineer/Medal-Of-Honor-Underground-PSX-Recomp/latest/total)](https://github.com/FractalEngineer/Medal-Of-Honor-Underground-PSX-Recomp/releases/latest)
 [![GitHub release](https://img.shields.io/github/v/release/FractalEngineer/Medal-Of-Honor-Underground-PSX-Recomp)](https://github.com/FractalEngineer/Medal-Of-Honor-Underground-PSX-Recomp/releases/latest)
+[![Alpha v0.1.1](https://img.shields.io/badge/alpha-v0.1.1-orange)](https://github.com/FractalEngineer/Medal-Of-Honor-Underground-PSX-Recomp/releases/tag/v0.1.1)
 <!-- /retcomm-readme-metrics -->
 
 <!-- retcomm-readme-boxart -->
@@ -16,7 +17,13 @@ Static recompilation of **Medal of Honor Underground** built on
 [psxrecomp](https://github.com/mstan/psxrecomp) and
 [recomp-ui](https://github.com/RetroPortingToolKit/recomp-ui).
 
-_Add a short pitch in catalog_identity.json / README._
+Play on a flat display or opt into the native VR alpha with motion-tracked
+stereo rendering, tracked weapons and wrist-mounted feedback. Flat play remains
+the default; VR is selected through a dedicated launcher.
+
+The **v0.1.1 Windows x64 native VR alpha** is available from
+[Releases](https://github.com/FractalEngineer/Medal-Of-Honor-Underground-PSX-Recomp/releases/tag/v0.1.1).
+Read [the alpha install and controls guide](ALPHA_README.md) before testing.
 
 | | |
 |---|---|
@@ -25,8 +32,24 @@ _Add a short pitch in catalog_identity.json / README._
 | Publisher | - |
 | Year | - |
 
-Scaffolded with the New Project Layout. See
-`psxrecomp/docs/GAME_PROJECT_SETUP.md` for the full flow.
+## Native VR alpha
+
+- Per-eye OpenXR rendering with six-degrees-of-freedom head tracking.
+- Tracked first-person weapons, hand-derived aiming and a right-grip laser.
+- Native health and compass surfaces anchored to the left wrist, with the
+  native damage marker composited into the wrist HUD.
+- Wrist-held objective camera and native frontend rendering outside gameplay.
+- Held 2.5x sniper scope with native scope range while movement stays enabled.
+- Shared memory cards and savestates between flat and VR launches.
+
+The release is Windows x64 only. Quest 3 through Virtual Desktop with VDXR is
+the primary tested setup. SteamVR and Oculus launchers are included, but broad
+runtime and headset coverage is still alpha work. Demanding scenes can remain
+below the target frame rate, and some physical scope, weapon-impact and
+transition checks remain open.
+
+See [release notes](docs/release/v0.1.1.md), [VR documentation](docs/vr/README.md),
+and [current VR status](docs/vr/HANDOFF.md).
 
 <!-- retcomm-readme-launcher -->
 ## Retro Launcher
@@ -71,18 +94,50 @@ Optional box art under `launcher_assets/img/` may come from
 
 ```bash
 git submodule update --init --recursive
-./psxrecomp/tools/ci/build_emitters.sh
-python3 psxrecomp/psxrecomp_cli.py generate \
-  --config game.toml --project-root . --disc disc/<your>.cue
-git add generated && git commit -m "Regenerate game C"
-cmake -S . -B build-release -G Ninja -DCMAKE_BUILD_TYPE=Release
-cmake --build build-release --target psx-runtime
+cmake -S . -B build-release -G Ninja -DCMAKE_BUILD_TYPE=Release \
+  -DMOHU_VR_DIAGNOSTICS=ON -DPSX_OPENXR=ON -DPSX_DEBUG_TOOLS=OFF \
+  -DMOHU_VR_NATIVE_PROFILE=OFF -DPSX_RUNTIME_IPO=OFF
+cmake --build build-release --target psx-runtime -j 2
 ```
 
+The generated game C is already committed; ordinary builds do not regenerate it.
+
+## Launchers
+
+The repository uses one active build directory, `build-release`, for flat and
+VR launches:
+
+- `RunFlat.bat` clears VR environment variables and uses the same playable
+  executable as VR. Packaged releases place the executable at the zip root;
+  development builds use `build-release/Medal_of_Honor_Underground_Recompiled.exe`.
+- `RunVR-VDXR.bat`, `RunVR-Oculus.bat`, and `RunVR-SteamVR.bat` select and pin
+  the corresponding OpenXR runtime.
+- **All normal launchers use the same root `saves/` folder**, including memory
+  cards and `saves/openbios/state_8001F844_slotNN.pst` plus thumbnails. A save
+  created in VR is available in flat mode at the same slot number.
+- Runtime logs/dumps go to `analysis/runtime/flat` or `analysis/runtime/vr`.
+- `RunVR-SteamVR.bat -Headless` is an automated diagnostic mode: it requires
+  explicit `-MemcardDirectory` pointing to a disposable fixture copy, restores
+  SteamVR settings and stops its owned runtime. It does not select personal saves.
+- VR launchers default to a normal boot (`-Slot -1`); pass an explicit
+  `-Slot N` to load a savestate or `-Build` to rebuild `build-release` before
+  launch. The default visual-scale profile is `-IPDmm 67 -WorldScale 3`.
+  Project slot references are internal indices: slot 1 uses `-Slot 1` / `slot01`.
+- Eye replay uses a rollback-protected `y=0` scratch buffer so the game's
+  double-buffered display origin cannot produce alternating black frames.
+- Additional PowerShell options such as `-Seconds`, `-GameConfig`, and
+  `-MemcardDirectory` can be passed through the `.bat` wrappers.
+
+Old benchmark executables and the retired flat-check build were archived under
+`analysis/archive/workspace-cleanup-20261029`; they are not alternate launchers.
+Frozen SP/MP fixtures live under `analysis/fixtures/`. See
+[WORKSPACE_LAYOUT](docs/vr/WORKSPACE_LAYOUT.md) for the migration and backup map.
+
 Releases: tag `vX.Y.Z` (or run the *Release builds* workflow). CI builds the
-committed `generated/` C on Linux, Windows and macOS and attaches
-`mohu-<version>-<platform>.zip`, the compiled game. Locally:
-`scripts/package_release.sh build-release linux-x64`.
+committed `generated/` C for Windows x64 and attaches
+`mohu-<version>-windows-x64.zip`, the compiled game. Release CI enables the
+OpenXR runtime and guarded VR plugin explicitly. Locally:
+`scripts/package_release.sh build-release windows-x64`.
 
 ## Symbols
 

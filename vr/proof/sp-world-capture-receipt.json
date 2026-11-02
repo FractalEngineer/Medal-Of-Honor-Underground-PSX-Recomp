@@ -1,0 +1,1527 @@
+{
+  "schema": 7,
+  "date": "2026-10-30",
+  "scope": "M1 real SP 80010CF0/80011424 inputs, per-face material mapping and resident material census",
+  "build": {
+    "binary_sha256": "e928dd146571fe7849d37907153c003d4b962bfc97872c5b16e1e31e34789218",
+    "option": "MOHU_VR_WORLD_CAPTURE=ON (diagnostic link-wrap build)",
+    "normal_play_default": "option OFF; capture is inert unless MOHU_SP_WORLD_CAPTURE is set",
+    "reason": "generated CPS bodies call psx_mod_function_entry only for the game.toml hook list, which does not include 0x80010CF0/80011424"
+  },
+  "capture_contract": {
+    "packet_entry": "0x80010CF0 with ra=0x8009A51C",
+    "face_entry": "0x80011424 with ra=0x80011008, gpr19=0x1F800000",
+    "face_packet_ptr": "gpr[4] at face entry; dumped after the real 80011424 returns",
+    "record_index": "upper 16 bits of base_word[1] (half[face+6])",
+    "record_address": "word[0x1F8003E8] + index*12",
+    "face_window": "[s7-8, s7+8), s7 = face+8, 16 bytes",
+    "scratch_dump": "0x1F800000..0x1F800400 at the next packet entry",
+    "packet_range_dump": "first 4096 bytes of [begin, limit) at the next entry"
+  },
+  "proven": [
+    "Caller is 0x8009A51C; packet range begin=0x80138390, limit=0x80144FA7 on both scenes.",
+    "Level pointer in s2 resolves sub/root/vertex table/count using the decoder layout (slot 2 draw 0: root 0x8010BA48, count 1444, table 0x8010FE4C).",
+    "The per-face lookup is index = half[face+6] = upper 16 bits of the second 8-byte strip word, and the record is table[index]+index*12.",
+    "The 12-byte record is three little-endian 32-bit words (six 16-bit halves).",
+    "Slot 2 fresh packet windows: 32/32 records parsed; 23/32 exact CLUT+texpage matches and 31/32 texpage matches; shared/stale packet pointers explain the rest.",
+    "The record table base is a runtime pointer (0x801259BC for slot 2 draw 0), not a static level field.",
+    "The geometry-only decoder census on both real arenas, masks bypassed, has no rejection: slot 2 54/25/324 with masks (203/134/1756 bypassed), slot 5 1/0/0 with masks (237/155/1932 bypassed). Counts are nodes/leaves/triangles.",
+    "The native builder face source is the visible-entry array at 0x800B74B8 (faces at +0x0C, list at +0x18), not a direct root walk; all real 80010CF0 invocations share ra=0x8009A51C.",
+    "Native face tags (s7-8) match decoded face_tag exactly: slot 2 16/16 and slot 5 91/91, zero missing; extension tags are extension_word - 4.",
+    "The visible-entry array at 0x800B74B8 decodes to exactly the submitted set: slot 2 1 entry/16 triangles, slot 5 7 entries/91 triangles, zero decoded_only, status=ok.",
+    "The 12-byte record is UV0|CLUT, UV1|texpage, UV2; the builder copies those words into packet words 3, 6 and 9.",
+    "Slot 2 resident census decodes 1756/1756 triangles with a material from table 0x801259BC, status=ok.",
+    "The decoder rejects missing/out-of-range/unreadable materials atomically with status material.",
+    "Far-plane policy is caller-supplied and kept separate from decode; selection rejects only all-three-vertices-beyond."
+  ],
+  "not_proven": [
+    "Slot 5 packet windows are shared/stale (only 3/32 contain that face's record words); the record table, not the packet window, is the material source.",
+    "Native submits only the visible set: resident triangle counts (1756) are the decoder census, not a native submitted count; the visible counts agree (16/16 and 91/91).",
+    "Resident geometry beyond the native camera view has no independent native submission reference, so full-world culling equality is not claimed.",
+    "Shading and semi-transparency mapping; they are packet draw-mode state, not fields of the 12-byte record.",
+    "Slot 5 root-walk material table: its first census rejects with status=material (index 63); the visible faces still carry captured records."
+  ],
+  "runs": [
+    {
+      "slot": 2,
+      "fixture": "slot02",
+      "runtime_receipt": "analysis\\vr-captures\\slot2-ptr-20261030\\receipt.json",
+      "capture": "analysis\\vr-captures\\slot2-ptr-20261030\\world-capture.txt",
+      "summary": "analysis\\vr-captures\\slot2-ptr-20261030\\summary.json",
+      "binary_sha256": "e928dd146571fe7849d37907153c003d4b962bfc97872c5b16e1e31e34789218",
+      "config_sha256": "34ea40ba6c65ec3e8d4a7b5a50537e07ed731cb00244b99414f92b113240b2c7",
+      "source_hashes": {
+        "state_8001F844_slot02.pst": "dd1c87925c8480198d04e8d7b38c67c0099ed4985463f7dc4e46731c80f90ceb",
+        "state_8001F844_slot02.thumb": "332196dd7003ad841e25a9320fc138d2a5886ce9a5e47a494894c16c178e9b55"
+      },
+      "complete": true,
+      "canonical_guest_hz": 59.999545454545455,
+      "capture_env": {
+        "MOHU_SP_WORLD_CAPTURE": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-captures\\slot2-ptr-20261030\\world-capture.txt",
+        "MOHU_SP_WORLD_CAPTURE_DRAWS": "3",
+        "MOHU_SP_WORLD_CAPTURE_FACES": "32"
+      },
+      "draws": [
+        {
+          "index": 0,
+          "ra": "0x8009A51C",
+          "begin": "0x80138390",
+          "limit": "0x80144FA7",
+          "level": "0x800A58A0",
+          "sub": "0x800A54A0",
+          "root": "0x8010BA48",
+          "vertex_count": 1444,
+          "vertex_table": "0x8010FE4C",
+          "record_table_before_call": "0x801141FC",
+          "record_table_entries_before_call": 16,
+          "record_table_hash_before_call": "0x2BA13871"
+        },
+        {
+          "index": 1,
+          "ra": "0x8009A51C",
+          "begin": "0x80138390",
+          "limit": "0x80144FA7",
+          "level": "0x800A5964",
+          "sub": "0x800A55B4",
+          "root": "0x800FA3B8",
+          "vertex_count": 1551,
+          "vertex_table": "0x800FDEBC",
+          "record_table_before_call": "0x80102770",
+          "record_table_entries_before_call": 16,
+          "record_table_hash_before_call": "0x89D99745"
+        },
+        {
+          "index": 2,
+          "ra": "0x8009A51C",
+          "begin": "0x80138390",
+          "limit": "0x80144FA7",
+          "level": "0x800A5A28",
+          "sub": "0x800A56C8",
+          "root": "0x800E8D28",
+          "vertex_count": 1471,
+          "vertex_table": "0x800ECE1C",
+          "record_table_before_call": "0x801FFD90",
+          "record_table_entries_before_call": 16,
+          "record_table_hash_before_call": "0xDE039D41"
+        }
+      ],
+      "faces": 32,
+      "distinct_records": 17,
+      "faces_with_record_word_in_packet": 20,
+      "matches": [
+        {
+          "face": 0,
+          "offsets": [
+            3,
+            6,
+            9
+          ],
+          "packet_ptr": "0x801321C0"
+        },
+        {
+          "face": 1,
+          "offsets": [
+            3,
+            6,
+            9
+          ],
+          "packet_ptr": "0x801321E8"
+        },
+        {
+          "face": 2,
+          "offsets": [
+            3,
+            6,
+            9
+          ],
+          "packet_ptr": "0x80132210"
+        },
+        {
+          "face": 3,
+          "offsets": [
+            3,
+            6,
+            9
+          ],
+          "packet_ptr": "0x80132238"
+        },
+        {
+          "face": 4,
+          "offsets": [
+            3,
+            6,
+            9
+          ],
+          "packet_ptr": "0x80132260"
+        },
+        {
+          "face": 5,
+          "offsets": [
+            3,
+            6,
+            9
+          ],
+          "packet_ptr": "0x80132288"
+        },
+        {
+          "face": 7,
+          "offsets": [
+            3,
+            6,
+            9
+          ],
+          "packet_ptr": "0x801322B0"
+        },
+        {
+          "face": 9,
+          "offsets": [
+            3
+          ],
+          "packet_ptr": "0x801322D8"
+        }
+      ]
+    },
+    {
+      "slot": 5,
+      "fixture": "slot05",
+      "runtime_receipt": "analysis\\vr-captures\\slot5-ptr-20261030\\receipt.json",
+      "capture": "analysis\\vr-captures\\slot5-ptr-20261030\\world-capture.txt",
+      "summary": "analysis\\vr-captures\\slot5-ptr-20261030\\summary.json",
+      "binary_sha256": "e928dd146571fe7849d37907153c003d4b962bfc97872c5b16e1e31e34789218",
+      "config_sha256": "34ea40ba6c65ec3e8d4a7b5a50537e07ed731cb00244b99414f92b113240b2c7",
+      "source_hashes": {
+        "state_8001F844_slot05.pst": "d60a32a58b59fa012f9853c16e65f47ad3990680a1bd77869ffb4c5a992663fe",
+        "state_8001F844_slot05.thumb": "b3a4099c76c0ce025076113f37322f2b2b08219c4696050140818bd624e48951"
+      },
+      "complete": true,
+      "canonical_guest_hz": 60.02727272727273,
+      "capture_env": {
+        "MOHU_SP_WORLD_CAPTURE": "C:\\Users\\titan\\Desktop\\Github_Projects\\Mine\\Medal-Of-Honor-Underground-PSX-Recomp\\analysis\\vr-captures\\slot5-ptr-20261030\\world-capture.txt",
+        "MOHU_SP_WORLD_CAPTURE_DRAWS": "3",
+        "MOHU_SP_WORLD_CAPTURE_FACES": "32"
+      },
+      "draws": [
+        {
+          "index": 0,
+          "ra": "0x8009A51C",
+          "begin": "0x80148C10",
+          "limit": "0x8015AF07",
+          "level": "0x800A58A0",
+          "sub": "0x800A54A0",
+          "root": "0x8010C788",
+          "vertex_count": 1307,
+          "vertex_table": "0x80111234",
+          "record_table_before_call": "0x80114F78",
+          "record_table_entries_before_call": 16,
+          "record_table_hash_before_call": "0x084B3F67"
+        },
+        {
+          "index": 1,
+          "ra": "0x8009A51C",
+          "begin": "0x80148C10",
+          "limit": "0x8015AF07",
+          "level": "0x800A5964",
+          "sub": "0x800A55B4",
+          "root": "0x800F8D18",
+          "vertex_count": 1481,
+          "vertex_table": "0x800FE384",
+          "record_table_before_call": "0x80102BB0",
+          "record_table_entries_before_call": 16,
+          "record_table_hash_before_call": "0xCC5956D9"
+        },
+        {
+          "index": 2,
+          "ra": "0x8009A51C",
+          "begin": "0x80148C10",
+          "limit": "0x8015AF07",
+          "level": "0x800A5A28",
+          "sub": "0x800A56C8",
+          "root": "0x800E52A8",
+          "vertex_count": 1538,
+          "vertex_table": "0x800EA364",
+          "record_table_before_call": "0x801FFD90",
+          "record_table_entries_before_call": 16,
+          "record_table_hash_before_call": "0x1EE00035"
+        }
+      ],
+      "faces": 32,
+      "distinct_records": 28,
+      "faces_with_record_word_in_packet": 3,
+      "matches": [
+        {
+          "face": 24,
+          "offsets": [
+            13,
+            16,
+            19
+          ],
+          "packet_ptr": "0x80148C10"
+        },
+        {
+          "face": 28,
+          "offsets": [
+            13,
+            16,
+            19
+          ],
+          "packet_ptr": "0x80148C38"
+        },
+        {
+          "face": 31,
+          "offsets": [
+            13
+          ],
+          "packet_ptr": "0x80148D78"
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "Diagnostic wrap build; not the production binary.",
+    "Three draws and 32 faces per scene.",
+    "The packet dump is gpr[4] at the face entry after 80011424 returns; a path that writes elsewhere is not captured.",
+    "Scratch/range dumps are read at the next packet entry and describe the prior draw.",
+    "One canonical run per scene; no XR/HUD/hands."
+  ],
+  "binary_sha256_current_normal_build": "66064682f6234237e0a2cfca52438e5e81cf5fe5daa32981d6edae8a05f54ef8",
+  "census_runs": [
+    {
+      "slot": 2,
+      "fixture": "slot02",
+      "runtime_receipt": "analysis\\vr-captures\\slot2-census2-20261030\\receipt.json",
+      "stdout": "analysis\\vr-captures\\slot2-census2-20261030\\stdout.log",
+      "binary_sha256": "bbcff007ff294ea6bcb645a94e39d1a32151a5a54e4df80b8a9505f9c23418dc",
+      "config_sha256": "34ea40ba6c65ec3e8d4a7b5a50537e07ed731cb00244b99414f92b113240b2c7",
+      "source_hashes": {
+        "state_8001F844_slot02.pst": "dd1c87925c8480198d04e8d7b38c67c0099ed4985463f7dc4e46731c80f90ceb",
+        "state_8001F844_slot02.thumb": "332196dd7003ad841e25a9320fc138d2a5886ce9a5e47a494894c16c178e9b55"
+      },
+      "complete": true,
+      "canonical_guest_hz": 59.99619047619048,
+      "mask_bypass": true,
+      "status": "ok",
+      "root": "0x8010BA48",
+      "vertex_table": "0x8010FE4C",
+      "vertex_count": 1444,
+      "masks": [
+        "0x03FF8000",
+        "0x00080000"
+      ],
+      "nodes_visited": 203,
+      "leaves_visited": 134,
+      "triangles": 1756,
+      "material_tokens": 1756,
+      "bounds": {
+        "min": [
+          -904,
+          -1829,
+          961
+        ],
+        "max": [
+          2887,
+          518,
+          9137
+        ]
+      },
+      "reject": [
+        "0x00000000",
+        "0x00000000",
+        0
+      ]
+    },
+    {
+      "slot": 5,
+      "fixture": "slot05",
+      "runtime_receipt": "analysis\\vr-captures\\slot5-census2-20261030\\receipt.json",
+      "stdout": "analysis\\vr-captures\\slot5-census2-20261030\\stdout.log",
+      "binary_sha256": "bbcff007ff294ea6bcb645a94e39d1a32151a5a54e4df80b8a9505f9c23418dc",
+      "config_sha256": "34ea40ba6c65ec3e8d4a7b5a50537e07ed731cb00244b99414f92b113240b2c7",
+      "source_hashes": {
+        "state_8001F844_slot05.pst": "d60a32a58b59fa012f9853c16e65f47ad3990680a1bd77869ffb4c5a992663fe",
+        "state_8001F844_slot05.thumb": "b3a4099c76c0ce025076113f37322f2b2b08219c4696050140818bd624e48951"
+      },
+      "complete": true,
+      "canonical_guest_hz": 60.00476190476191,
+      "mask_bypass": true,
+      "status": "ok",
+      "root": "0x8010C788",
+      "vertex_table": "0x80111234",
+      "vertex_count": 1307,
+      "masks": [
+        "0x3E00000F",
+        "0x08000000"
+      ],
+      "nodes_visited": 237,
+      "leaves_visited": 155,
+      "triangles": 1932,
+      "material_tokens": 1932,
+      "bounds": {
+        "min": [
+          -6245,
+          -2428,
+          -9468
+        ],
+        "max": [
+          1760,
+          -1248,
+          -3988
+        ]
+      },
+      "reject": [
+        "0x00000000",
+        "0x00000000",
+        0
+      ]
+    }
+  ],
+  "binary_sha256_current_capture_build": "66064682f6234237e0a2cfca52438e5e81cf5fe5daa32981d6edae8a05f54ef8",
+  "native_face_comparison": {
+    "method": "record s7-8 on every 80011424 entry (independent of the 32-face dump cap); at the next 80010CF0 entry decode the same root/table/count with masks bypassed and match native face addresses against decoded triangle source_address values",
+    "runs": [
+      {
+        "slot": 2,
+        "fixture": "slot02",
+        "runtime_receipt": "analysis\\vr-captures\\slot2-native-final\\receipt.json",
+        "capture": "analysis\\vr-captures\\slot2-native-final\\world-capture.txt",
+        "summary": "analysis\\vr-captures\\slot2-native-final\\summary.json",
+        "stdout": "analysis\\vr-captures\\slot2-native-final\\stdout.log",
+        "binary_sha256": "1027d464a151373ed423a3a58fc3b1c4469db7f93061d76591edfa31a4561ae1",
+        "config_sha256": "34ea40ba6c65ec3e8d4a7b5a50537e07ed731cb00244b99414f92b113240b2c7",
+        "source_hashes": {
+          "state_8001F844_slot02.pst": "dd1c87925c8480198d04e8d7b38c67c0099ed4985463f7dc4e46731c80f90ceb",
+          "state_8001F844_slot02.thumb": "332196dd7003ad841e25a9320fc138d2a5886ce9a5e47a494894c16c178e9b55"
+        },
+        "complete": true,
+        "canonical_guest_hz": 59.99809523809524,
+        "draw": 2,
+        "status": "ok",
+        "native_faces": 16,
+        "overflow": 0,
+        "unique_native": 16,
+        "matched": 11,
+        "missing": 5,
+        "decoded_only": 1575,
+        "duplicate_calls": 0,
+        "multi_source": 0,
+        "multi_source_triangles": 0,
+        "decoded_triangles": 1586,
+        "first_missing": "0x800EA920",
+        "first_duplicate_call": "0x00000000",
+        "first_multi_source": "0x00000000",
+        "missing_in_span": 5,
+        "missing_addrs": [
+          "0x800EA920",
+          "0x800EA93C",
+          "0x800EA958",
+          "0x800EA978",
+          "0x800EA988"
+        ],
+        "missing_owners": [
+          "0x00000000",
+          "0x00000000",
+          "0x00000000",
+          "0x00000000",
+          "0x00000000"
+        ],
+        "missing_word_sample": [
+          "0068055D,006943C1,1FFF1FFF,055C0534",
+          "006D053A,006E4539,00001FFF,05620563",
+          "003C03D9,003A43D7,00001FFF,03D603DB",
+          "004302BD,004442BC,00001FFF,02BE02BF",
+          "007002AF,007142AD,00001FFF,02B002B1"
+        ],
+        "missing_reg_sample": [
+          "800EA928,006943C1,300B3F40,7DC13F7E,1F800000,00302823,00343937,00353B3A,800F0B18,00000348,800F17FC,00000001,801FFE80,8003739C,80138390,80144FA7",
+          "800EA944,006E4539,300C7F3F,7CC14000,1F800000,00486B72,0041585C,00496E76,800F10F8,00000370,800F1838,00000001,801FFE80,8003739C,80138390,80144FA7",
+          "800EA960,003A43D7,300BBF00,7D418000,1F800000,003B5A61,002C3536,002C3333,800F0B70,000001D0,800F15C8,00000001,801FFE80,8003739C,80138390,80144FA7",
+          "800EA980,004442BC,300B8000,7D41BF3F,1F800000,006A704F,006B6F4C,006A7150,800F0704,00000220,800F1640,00000001,801FFE80,8003739C,80138390,80144FA7",
+          "800EA990,007142AD,300B3F40,7DC10075,1F800000,005B5323,005A5120,006C704E,800F06C8,00000388,800F185C,00000001,801FFE80,8003739C,80138390,80144FA7"
+        ]
+      },
+      {
+        "slot": 5,
+        "fixture": "slot05",
+        "runtime_receipt": "analysis\\vr-captures\\slot5-native-final\\receipt.json",
+        "capture": "analysis\\vr-captures\\slot5-native-final\\world-capture.txt",
+        "summary": "analysis\\vr-captures\\slot5-native-final\\summary.json",
+        "stdout": "analysis\\vr-captures\\slot5-native-final\\stdout.log",
+        "binary_sha256": "1027d464a151373ed423a3a58fc3b1c4469db7f93061d76591edfa31a4561ae1",
+        "config_sha256": "34ea40ba6c65ec3e8d4a7b5a50537e07ed731cb00244b99414f92b113240b2c7",
+        "source_hashes": {
+          "state_8001F844_slot05.pst": "d60a32a58b59fa012f9853c16e65f47ad3990680a1bd77869ffb4c5a992663fe",
+          "state_8001F844_slot05.thumb": "b3a4099c76c0ce025076113f37322f2b2b08219c4696050140818bd624e48951"
+        },
+        "complete": true,
+        "canonical_guest_hz": 60.00363636363637,
+        "draw": 2,
+        "status": "ok",
+        "native_faces": 91,
+        "overflow": 0,
+        "unique_native": 91,
+        "matched": 70,
+        "missing": 21,
+        "decoded_only": 2027,
+        "duplicate_calls": 0,
+        "multi_source": 0,
+        "multi_source_triangles": 0,
+        "decoded_triangles": 2097,
+        "first_missing": "0x800E9594",
+        "first_duplicate_call": "0x00000000",
+        "first_multi_source": "0x00000000",
+        "missing_in_span": 16,
+        "missing_addrs": [
+          "0x800E9594",
+          "0x800E95AC",
+          "0x800E9544",
+          "0x800E955C",
+          "0x800E971C",
+          "0x800E973C",
+          "0x800E9784",
+          "0x800E97AC",
+          "0x800E97C0",
+          "0x800E97D4",
+          "0x800E975C",
+          "0x800E9770",
+          "0x800E96B4",
+          "0x800E96F4",
+          "0x800EA010",
+          "0x800EA020"
+        ],
+        "missing_owners": [
+          "0x00000000",
+          "0x00000000",
+          "0x00000000",
+          "0x00000000",
+          "0x00000000",
+          "0x00000000",
+          "0x00000000",
+          "0x00000000",
+          "0x00000000",
+          "0x00000000",
+          "0x00000000",
+          "0x00000000",
+          "0x00000000",
+          "0x00000000",
+          "0x00000000",
+          "0x00000000"
+        ],
+        "missing_word_sample": [
+          "027C0014,027D8010,1FFF1FFF,000D0011",
+          "013A02B3,005782B0,00001FFF,029C02B5",
+          "013A02B4,005782B1,1FFF1FFF,02AF02B2",
+          "001A0011,0020800D,00001FFF,000E0012",
+          "02850027,02864022,1FFF1FFF,00210026"
+        ],
+        "missing_reg_sample": [
+          "800E959C,027D8010,300BC040,7F81FF7F,1F800000,00375059,00537F91,002E4147,800ED3B4,000013E8,800F0958,00000001,801FFE80,8003739C,80148C10,8015AF07",
+          "800E95B4,005782B0,300D8080,7EC5BFBF,1F800000,004C7384,00222D30,002A3A3F,800EDE34,000002B8,800EEF90,00000001,801FFE80,8003739C,80148C10,8015AF07",
+          "800E954C,005782B1,300D8080,7EC5BFBF,1F800000,00202A2D,002E4047,001C2325,800EDE38,000002B8,800EEF90,00000001,801FFE80,8003739C,80148C10,8015AF07",
+          "800E9564,0020800D,300BBF40,7F41807F,1F800000,00537F91,001E2527,00446573,800ED3A8,00000100,800EECFC,00000001,801FFE80,8003739C,80148C10,8015AF07",
+          "800E9724,02864022,3089098E,7B00208E,1F800000,000E0C09,000E0C09,000E0C09,800ED3FC,00001430,800F09C4,00000001,801FFE80,8003739C,80148C10,8015AF07"
+        ]
+      }
+    ],
+    "conclusion": "The decoder matched 11/16 native faces on slot 2 draw 2 and 70/91 on slot 5 draw 2. The missing addresses are valid base words preceded by 0x1FFF terminators, with valid vertex indices and records, so they are real faces, not culling artifacts. No absolute pointer to any missing list exists in 0x800A0000..0x80100000, so the loop reaches those lists by a mechanism not yet identified. Geometry parity is not established; do not treat the census triangle count as complete.",
+    "decoded_only_note": "Expected: the census bypasses camera culling, so the decoded mesh contains leaves the native view did not submit.",
+    "multi_source_note": "No native address was submitted more than once, and no matched source carried more than one decoded triangle in these draws."
+  },
+  "entry_attribution": {
+    "method": "record every segment dispatch, keep only real 80010CF0 entry points (pc == 0x80010CF0 or unset), and attribute each 80011424 face call to the most recent real entry; the dispatcher also re-enters the same body at 0x80011008 after each face return, and those continuations are not entries",
+    "runs": [
+      {
+        "slot": 2,
+        "runtime_receipt": "analysis\\vr-captures\\slot2-parent\\receipt.json",
+        "capture": "analysis\\vr-captures\\slot2-parent\\world-capture.txt",
+        "summary": "analysis\\vr-captures\\slot2-parent\\summary.json",
+        "stdout": "analysis\\vr-captures\\slot2-parent\\stdout.log",
+        "binary_sha256": "a66cfb994d6de88556342caf33a2ee9b4940517b84c4d51ec0e45735f1b4c3ca",
+        "config_sha256": "34ea40ba6c65ec3e8d4a7b5a50537e07ed731cb00244b99414f92b113240b2c7",
+        "complete": true,
+        "canonical_guest_hz": 59.997142857142855,
+        "entries": [
+          {
+            "index": 0,
+            "ra": "0x8009A51C",
+            "pc": "0x00000000",
+            "level": "0x800A58A0",
+            "sub": "0x800A54A0",
+            "root": "0x8010BA48",
+            "table": "0x8010FE4C",
+            "vertex_count": 1444,
+            "faces": 0,
+            "selected": true,
+            "overflow": 0,
+            "compare": false,
+            "status": 0,
+            "matched": 0,
+            "missing": 0,
+            "decoded_only": 0,
+            "triangles": 0,
+            "first_missing": "0x00000000",
+            "visible_count": 0,
+            "visible_overflow": 0,
+            "visible": []
+          },
+          {
+            "index": 1,
+            "ra": "0x8009A51C",
+            "pc": "0x00000000",
+            "level": "0x800A5964",
+            "sub": "0x800A55B4",
+            "root": "0x800FA3B8",
+            "table": "0x800FDEBC",
+            "vertex_count": 1551,
+            "faces": 0,
+            "selected": true,
+            "overflow": 0,
+            "compare": false,
+            "status": 0,
+            "matched": 0,
+            "missing": 0,
+            "decoded_only": 0,
+            "triangles": 0,
+            "first_missing": "0x00000000",
+            "visible_count": 0,
+            "visible_overflow": 0,
+            "visible": []
+          },
+          {
+            "index": 2,
+            "ra": "0x8009A51C",
+            "pc": "0x00000000",
+            "level": "0x800A5A28",
+            "sub": "0x800A56C8",
+            "root": "0x800E8D28",
+            "table": "0x800ECE1C",
+            "vertex_count": 1471,
+            "faces": 16,
+            "selected": true,
+            "overflow": 0,
+            "compare": false,
+            "status": 0,
+            "matched": 0,
+            "missing": 0,
+            "decoded_only": 0,
+            "triangles": 0,
+            "first_missing": "0x00000000",
+            "visible_count": 1,
+            "visible_overflow": 0,
+            "visible": [
+              {
+                "entry": "0x800E9098",
+                "faces": 16,
+                "list": "0x800EA91C"
+              }
+            ]
+          },
+          {
+            "index": 3,
+            "ra": "0x8009A51C",
+            "pc": "0x00000000",
+            "level": "0x800A57DC",
+            "sub": "0x800A538C",
+            "root": "0x8011D0D8",
+            "table": "0x8012163C",
+            "vertex_count": 1440,
+            "faces": 0,
+            "selected": false,
+            "overflow": 0,
+            "compare": false,
+            "status": 0,
+            "matched": 0,
+            "missing": 0,
+            "decoded_only": 0,
+            "triangles": 0,
+            "first_missing": "0x00000000",
+            "visible_count": 90,
+            "visible_overflow": 0,
+            "visible": [
+              {
+                "entry": "0x8011DCA0",
+                "faces": 2,
+                "list": "0x8011FC88"
+              },
+              {
+                "entry": "0x8011DCBC",
+                "faces": 12,
+                "list": "0x8011FC98"
+              },
+              {
+                "entry": "0x8011DC0C",
+                "faces": 2,
+                "list": "0x8011FB94"
+              },
+              {
+                "entry": "0x8011DC68",
+                "faces": 5,
+                "list": "0x8011FBF0"
+              },
+              {
+                "entry": "0x8011DC84",
+                "faces": 19,
+                "list": "0x8011FC14"
+              },
+              {
+                "entry": "0x8011DC4C",
+                "faces": 9,
+                "list": "0x8011FBA4"
+              },
+              {
+                "entry": "0x8011DBF0",
+                "faces": 4,
+                "list": "0x8011FB74"
+              },
+              {
+                "entry": "0x8011E2BC",
+                "faces": 29,
+                "list": "0x801207F4"
+              },
+              {
+                "entry": "0x8011E7A8",
+                "faces": 13,
+                "list": "0x801212B4"
+              },
+              {
+                "entry": "0x8011E8BC",
+                "faces": 18,
+                "list": "0x801214CC"
+              },
+              {
+                "entry": "0x8011E8FC",
+                "faces": 20,
+                "list": "0x8012154C"
+              },
+              {
+                "entry": "0x8011E884",
+                "faces": 12,
+                "list": "0x8012140C"
+              },
+              {
+                "entry": "0x8011E84C",
+                "faces": 8,
+                "list": "0x80121354"
+              },
+              {
+                "entry": "0x8011E868",
+                "faces": 18,
+                "list": "0x80121394"
+              },
+              {
+                "entry": "0x8011E830",
+                "faces": 13,
+                "list": "0x801212F8"
+              },
+              {
+                "entry": "0x8011E5C0",
+                "faces": 23,
+                "list": "0x80120E24"
+              },
+              {
+                "entry": "0x8011E770",
+                "faces": 15,
+                "list": "0x80121188"
+              },
+              {
+                "entry": "0x8011E78C",
+                "faces": 26,
+                "list": "0x80121204"
+              },
+              {
+                "entry": "0x8011E754",
+                "faces": 16,
+                "list": "0x80121120"
+              },
+              {
+                "entry": "0x8011E700",
+                "faces": 12,
+                "list": "0x80120FD8"
+              },
+              {
+                "entry": "0x8011E3BC",
+                "faces": 13,
+                "list": "0x801209F8"
+              },
+              {
+                "entry": "0x8011E52C",
+                "faces": 8,
+                "list": "0x80120C8C"
+              },
+              {
+                "entry": "0x8011E588",
+                "faces": 8,
+                "list": "0x80120D8C"
+              },
+              {
+                "entry": "0x8011E5A4",
+                "faces": 12,
+                "list": "0x80120DCC"
+              },
+              {
+                "entry": "0x8011E56C",
+                "faces": 32,
+                "list": "0x80120CC4"
+              },
+              {
+                "entry": "0x8011E4F4",
+                "faces": 10,
+                "list": "0x80120B5C"
+              },
+              {
+                "entry": "0x8011E510",
+                "faces": 28,
+                "list": "0x80120BAC"
+              },
+              {
+                "entry": "0x8011E460",
+                "faces": 4,
+                "list": "0x80120A74"
+              },
+              {
+                "entry": "0x8011E4BC",
+                "faces": 8,
+                "list": "0x80120B14"
+              },
+              {
+                "entry": "0x8011E4D8",
+                "faces": 2,
+                "list": "0x80120B4C"
+              },
+              {
+                "entry": "0x8011E4A0",
+                "faces": 24,
+                "list": "0x80120A8C"
+              },
+              {
+                "entry": "0x8011E444",
+                "faces": 2,
+                "list": "0x80120A64"
+              },
+              {
+                "entry": "0x8011E05C",
+                "faces": 24,
+                "list": "0x801202F8"
+              },
+              {
+                "entry": "0x8011E114",
+                "faces": 20,
+                "list": "0x801204CC"
+              },
+              {
+                "entry": "0x8011E170",
+                "faces": 16,
+                "list": "0x80120608"
+              },
+              {
+                "entry": "0x8011E1CC",
+                "faces": 4,
+                "list": "0x80120694"
+              },
+              {
+                "entry": "0x8011E284",
+                "faces": 4,
+                "list": "0x801207B4"
+              },
+              {
+                "entry": "0x8011E2A0",
+                "faces": 4,
+                "list": "0x801207D4"
+              },
+              {
+                "entry": "0x8011E24C",
+                "faces": 10,
+                "list": "0x801206F4"
+              },
+              {
+                "entry": "0x8011E268",
+                "faces": 18,
+                "list": "0x80120744"
+              },
+              {
+                "entry": "0x8011E230",
+                "faces": 10,
+                "list": "0x801206B4"
+              },
+              {
+                "entry": "0x8011E1B0",
+                "faces": 7,
+                "list": "0x80120668"
+              },
+              {
+                "entry": "0x8011E154",
+                "faces": 27,
+                "list": "0x8012054C"
+              },
+              {
+                "entry": "0x8011E0DC",
+                "faces": 15,
+                "list": "0x801203C8"
+              },
+              {
+                "entry": "0x8011E0F8",
+                "faces": 24,
+                "list": "0x8012042C"
+              },
+              {
+                "entry": "0x8011E0C0",
+                "faces": 10,
+                "list": "0x80120380"
+              },
+              {
+                "entry": "0x8011DED0",
+                "faces": 27,
+                "list": "0x8011FFB0"
+              },
+              {
+                "entry": "0x8011DF2C",
+                "faces": 16,
+                "list": "0x801200BC"
+              },
+              {
+                "entry": "0x8011E024",
+                "faces": 12,
+                "list": "0x80120234"
+              },
+              {
+                "entry": "0x8011E040",
+                "faces": 19,
+                "list": "0x80120284"
+              },
+              {
+                "entry": "0x8011DFEC",
+                "faces": 24,
+                "list": "0x8012017C"
+              },
+              {
+                "entry": "0x8011E008",
+                "faces": 2,
+                "list": "0x80120224"
+              },
+              {
+                "entry": "0x8011DFD0",
+                "faces": 8,
+                "list": "0x8012014C"
+              },
+              {
+                "entry": "0x8011DF90",
+                "faces": 4,
+                "list": "0x8012012C"
+              },
+              {
+                "entry": "0x8011DF10",
+                "faces": 10,
+                "list": "0x80120074"
+              },
+              {
+                "entry": "0x8011DD84",
+                "faces": 24,
+                "list": "0x8011FD34"
+              },
+              {
+                "entry": "0x8011DE98",
+                "faces": 9,
+                "list": "0x8011FF18"
+              },
+              {
+                "entry": "0x8011DEB4",
+                "faces": 17,
+                "list": "0x8011FF4C"
+              },
+              {
+                "entry": "0x8011DE60",
+                "faces": 8,
+                "list": "0x8011FEC0"
+              },
+              {
+                "entry": "0x8011DE7C",
+                "faces": 6,
+                "list": "0x8011FEF0"
+              },
+              {
+                "entry": "0x8011DE28",
+                "faces": 9,
+                "list": "0x8011FE34"
+              },
+              {
+                "entry": "0x8011DE44",
+                "faces": 14,
+                "list": "0x8011FE70"
+              },
+              {
+                "entry": "0x8011DE0C",
+                "faces": 20,
+                "list": "0x8011FDBC"
+              },
+              {
+                "entry": "0x8011DD68",
+                "faces": 9,
+                "list": "0x8011FCE0"
+              },
+              {
+                "entry": "0x8011D570",
+                "faces": 14,
+                "list": "0x8011F1A0"
+              },
+              {
+                "entry": "0x8011D988",
+                "faces": 2,
+                "list": "0x8011F88C"
+              },
+              {
+                "entry": "0x8011D9E4",
+                "faces": 2,
+                "list": "0x8011F8BC"
+              },
+              {
+                "entry": "0x8011DA00",
+                "faces": 30,
+                "list": "0x8011F8CC"
+              },
+              {
+                "entry": "0x8011D9C8",
+                "faces": 4,
+                "list": "0x8011F89C"
+              },
+              {
+                "entry": "0x8011D96C",
+                "faces": 3,
+                "list": "0x8011F878"
+              },
+              {
+                "entry": "0x8011DA5C",
+                "faces": 6,
+                "list": "0x8011F994"
+              },
+              {
+                "entry": "0x8011DAB8",
+                "faces": 8,
+                "list": "0x8011F9D4"
+              },
+              {
+                "entry": "0x8011DB70",
+                "faces": 2,
+                "list": "0x8011FB54"
+              },
+              {
+                "entry": "0x8011DB8C",
+                "faces": 2,
+                "list": "0x8011FB64"
+              },
+              {
+                "entry": "0x8011DB38",
+                "faces": 10,
+                "list": "0x8011FA54"
+              },
+              {
+                "entry": "0x8011DB54",
+                "faces": 32,
+                "list": "0x8011FA9C"
+              },
+              {
+                "entry": "0x8011DB1C",
+                "faces": 14,
+                "list": "0x8011FA14"
+              },
+              {
+                "entry": "0x8011DA9C",
+                "faces": 4,
+                "list": "0x8011F9B4"
+              },
+              {
+                "entry": "0x8011DA40",
+                "faces": 6,
+                "list": "0x8011F974"
+              },
+              {
+                "entry": "0x8011D6A8",
+                "faces": 16,
+                "list": "0x8011F350"
+              },
+              {
+                "entry": "0x8011D670",
+                "faces": 17,
+                "list": "0x8011F240"
+              },
+              {
+                "entry": "0x8011D654",
+                "faces": 6,
+                "list": "0x8011F218"
+              },
+              {
+                "entry": "0x8011D3E4",
+                "faces": 22,
+                "list": "0x8011EE8C"
+              },
+              {
+                "entry": "0x8011D49C",
+                "faces": 8,
+                "list": "0x8011F00C"
+              },
+              {
+                "entry": "0x8011D554",
+                "faces": 17,
+                "list": "0x8011F12C"
+              },
+              {
+                "entry": "0x8011D538",
+                "faces": 28,
+                "list": "0x8011F094"
+              },
+              {
+                "entry": "0x8011D464",
+                "faces": 12,
+                "list": "0x8011EF38"
+              },
+              {
+                "entry": "0x8011D480",
+                "faces": 17,
+                "list": "0x8011EF80"
+              },
+              {
+                "entry": "0x8011D448",
+                "faces": 3,
+                "list": "0x8011EF1C"
+              },
+              {
+                "entry": "0x8011D3C8",
+                "faces": 26,
+                "list": "0x8011EDF4"
+              }
+            ]
+          }
+        ],
+        "selected_draw": {
+          "index": 2,
+          "ra": "0x8009A51C",
+          "begin": "0x80138390",
+          "limit": "0x80144FA7",
+          "level": "0x800A5A28",
+          "sub": "0x800A56C8",
+          "root": "0x800E8D28",
+          "vertex_count": 1471,
+          "vertex_table": "0x800ECE1C",
+          "record_table_before_call": "0x801FFD90",
+          "record_table_entries_before_call": 16,
+          "record_table_hash_before_call": "0xDE039D41",
+          "native_compare": {
+            "native": 16,
+            "overflow": 0,
+            "unique": 16,
+            "matched": 11,
+            "missing": 5,
+            "decoded_only": 1575,
+            "duplicate_calls": 0,
+            "multi_source": 0,
+            "multi_source_triangles": 0,
+            "decoded_triangles": 1586,
+            "status": 0,
+            "first_missing": "0x800EA920",
+            "first_duplicate_call": "0x00000000",
+            "first_multi_source": "0x00000000",
+            "missing_in_range": 5,
+            "missing_addrs": [
+              "0x800"
+            ]
+          }
+        },
+        "visible_nodes": [
+          {
+            "visible_index": 0,
+            "node": "0x800E9098",
+            "faces": 16,
+            "list": "0x800EA91C",
+            "status": "ok",
+            "triangles": 16,
+            "first_source": "0x800EA91C",
+            "last_source": "0x800EA98C",
+            "owner": "0x800E8F20"
+          }
+        ],
+        "visible_face_total": 16,
+        "visible_triangle_total": 16
+      },
+      {
+        "slot": 5,
+        "runtime_receipt": "analysis\\vr-captures\\slot5-visible\\receipt.json",
+        "capture": "analysis\\vr-captures\\slot5-visible\\world-capture.txt",
+        "summary": "analysis\\vr-captures\\slot5-visible\\summary.json",
+        "stdout": "analysis\\vr-captures\\slot5-visible\\stdout.log",
+        "binary_sha256": "a66cfb994d6de88556342caf33a2ee9b4940517b84c4d51ec0e45735f1b4c3ca",
+        "config_sha256": "34ea40ba6c65ec3e8d4a7b5a50537e07ed731cb00244b99414f92b113240b2c7",
+        "complete": true,
+        "canonical_guest_hz": 60.001333333333335,
+        "entries": [
+          {
+            "index": 0,
+            "ra": "0x8009A51C",
+            "pc": "0x00000000",
+            "level": "0x800A58A0",
+            "sub": "0x800A54A0",
+            "root": "0x8010C788",
+            "table": "0x80111234",
+            "vertex_count": 1307,
+            "faces": 0,
+            "selected": true,
+            "overflow": 0,
+            "compare": false,
+            "status": 0,
+            "matched": 0,
+            "missing": 0,
+            "decoded_only": 0,
+            "triangles": 0,
+            "first_missing": "0x00000000",
+            "visible_count": 0,
+            "visible_overflow": 0,
+            "visible": []
+          },
+          {
+            "index": 1,
+            "ra": "0x8009A51C",
+            "pc": "0x00000000",
+            "level": "0x800A5964",
+            "sub": "0x800A55B4",
+            "root": "0x800F8D18",
+            "table": "0x800FE384",
+            "vertex_count": 1481,
+            "faces": 0,
+            "selected": true,
+            "overflow": 0,
+            "compare": false,
+            "status": 0,
+            "matched": 0,
+            "missing": 0,
+            "decoded_only": 0,
+            "triangles": 0,
+            "first_missing": "0x00000000",
+            "visible_count": 0,
+            "visible_overflow": 0,
+            "visible": []
+          },
+          {
+            "index": 2,
+            "ra": "0x8009A51C",
+            "pc": "0x00000000",
+            "level": "0x800A5A28",
+            "sub": "0x800A56C8",
+            "root": "0x800E52A8",
+            "table": "0x800EA364",
+            "vertex_count": 1538,
+            "faces": 91,
+            "selected": true,
+            "overflow": 0,
+            "compare": false,
+            "status": 0,
+            "matched": 0,
+            "missing": 0,
+            "decoded_only": 0,
+            "triangles": 0,
+            "first_missing": "0x00000000",
+            "visible_count": 7,
+            "visible_overflow": 0,
+            "visible": [
+              {
+                "entry": "0x800E6F5C",
+                "faces": 20,
+                "list": "0x800EA00C"
+              },
+              {
+                "entry": "0x800E6A70",
+                "faces": 22,
+                "list": "0x800E96B0"
+              },
+              {
+                "entry": "0x800E6ACC",
+                "faces": 6,
+                "list": "0x800E9758"
+              },
+              {
+                "entry": "0x800E6AE8",
+                "faces": 15,
+                "list": "0x800E9780"
+              },
+              {
+                "entry": "0x800E6AB0",
+                "faces": 12,
+                "list": "0x800E9718"
+              },
+              {
+                "entry": "0x800E6940",
+                "faces": 8,
+                "list": "0x800E9540"
+              },
+              {
+                "entry": "0x800E699C",
+                "faces": 8,
+                "list": "0x800E9590"
+              }
+            ]
+          },
+          {
+            "index": 3,
+            "ra": "0x8009A51C",
+            "pc": "0x00000000",
+            "level": "0x800A58A0",
+            "sub": "0x800A54A0",
+            "root": "0x8010C788",
+            "table": "0x80111234",
+            "vertex_count": 1307,
+            "faces": 0,
+            "selected": false,
+            "overflow": 0,
+            "compare": false,
+            "status": 0,
+            "matched": 0,
+            "missing": 0,
+            "decoded_only": 0,
+            "triangles": 0,
+            "first_missing": "0x00000000",
+            "visible_count": 0,
+            "visible_overflow": 0,
+            "visible": []
+          }
+        ],
+        "selected_draw": {
+          "index": 2,
+          "ra": "0x8009A51C",
+          "begin": "0x80148C10",
+          "limit": "0x8015AF07",
+          "level": "0x800A5A28",
+          "sub": "0x800A56C8",
+          "root": "0x800E52A8",
+          "vertex_count": 1538,
+          "vertex_table": "0x800EA364",
+          "record_table_before_call": "0x801FFD90",
+          "record_table_entries_before_call": 16,
+          "record_table_hash_before_call": "0x1EE00035",
+          "native_compare": {
+            "native": 91,
+            "overflow": 0,
+            "unique": 91,
+            "matched": 70,
+            "missing": 21,
+            "decoded_only": 2027,
+            "duplicate_calls": 0,
+            "multi_source": 0,
+            "multi_source_triangles": 0,
+            "decoded_triangles": 2097,
+            "status": 0,
+            "first_missing": "0x800E9594",
+            "first_duplicate_call": "0x00000000",
+            "first_multi_source": "0x00000000",
+            "missing_in_range": 16,
+            "missing_addrs": [
+              "0x800"
+            ]
+          }
+        },
+        "visible_nodes": [
+          {
+            "visible_index": 0,
+            "node": "0x800E6F5C",
+            "faces": 20,
+            "list": "0x800EA00C",
+            "status": "ok",
+            "triangles": 20,
+            "first_source": "0x800EA00C",
+            "last_source": "0x800EA094",
+            "owner": "0x800E6F20"
+          },
+          {
+            "visible_index": 1,
+            "node": "0x800E6A70",
+            "faces": 22,
+            "list": "0x800E96B0",
+            "status": "ok",
+            "triangles": 22,
+            "first_source": "0x800E96B0",
+            "last_source": "0x800E9710",
+            "owner": "0x800E68F8"
+          },
+          {
+            "visible_index": 2,
+            "node": "0x800E6ACC",
+            "faces": 6,
+            "list": "0x800E9758",
+            "status": "ok",
+            "triangles": 6,
+            "first_source": "0x800E9758",
+            "last_source": "0x800E9778",
+            "owner": "0x800E6AA8"
+          },
+          {
+            "visible_index": 3,
+            "node": "0x800E6AE8",
+            "faces": 15,
+            "list": "0x800E9780",
+            "status": "ok",
+            "triangles": 15,
+            "first_source": "0x800E9780",
+            "last_source": "0x800E97DC",
+            "owner": "0x800E6AAC"
+          },
+          {
+            "visible_index": 4,
+            "node": "0x800E6AB0",
+            "faces": 12,
+            "list": "0x800E9718",
+            "status": "ok",
+            "triangles": 12,
+            "first_source": "0x800E9718",
+            "last_source": "0x800E9750",
+            "owner": "0x800E6AA4"
+          },
+          {
+            "visible_index": 5,
+            "node": "0x800E6940",
+            "faces": 8,
+            "list": "0x800E9540",
+            "status": "ok",
+            "triangles": 8,
+            "first_source": "0x800E9540",
+            "last_source": "0x800E9568",
+            "owner": "0x800E691C"
+          },
+          {
+            "visible_index": 6,
+            "node": "0x800E699C",
+            "faces": 8,
+            "list": "0x800E9590",
+            "status": "ok",
+            "triangles": 8,
+            "first_source": "0x800E9590",
+            "last_source": "0x800E95B8",
+            "owner": "0x800E6978"
+          }
+        ],
+        "visible_face_total": 91,
+        "visible_triangle_total": 91
+      }
+    ],
+    "conclusion": "All real invocations on both scenes have ra=0x8009A51C, so the missing faces do not come from a different caller. The packet builder does not walk the root directly: it iterates the visible-entry array at 0x800B74B8, reading the face count at +0x0C and the list pointer at +0x18. That array accounts for every native face (slot 2: 1 entry/16 faces; slot 5: 7 entries/91 faces), and decoding each entry as a root returns exactly its face count with status=ok. The decoder root walk does not reach at least the slot-2 leaf 0x800E9098 (parent interior node 0x800E8F04), so the root walk is incomplete as a native reference.",
+    "next": "Decode the captured visible-entry array (or the structure that produces it) instead of treating the root walk as complete, then re-run the native face comparison."
+  },
+  "native_face_parity": {
+    "face_tag": "Native 80011424 records s7-8. For a base face that is the base address; for an extension it is extension_word - 4 (the word before the extension code), not the code address. MohuWorldTriangle.face_tag now carries this value while source_address keeps the code address.",
+    "runs": [
+      {
+        "slot": 2,
+        "capture": "analysis\\vr-captures\\slot2-parity2\\world-capture.txt",
+        "summary": "analysis\\vr-captures\\slot2-parity2\\summary.json",
+        "stdout": "analysis\\vr-captures\\slot2-parity2\\stdout.log",
+        "runtime_receipt": "analysis\\vr-captures\\slot2-parity2\\receipt.json",
+        "binary_sha256": "3359ff277804fa74eba5fbad5edeab452ef89c7c0b331855643d34db25b8ab2a",
+        "config_sha256": "34ea40ba6c65ec3e8d4a7b5a50537e07ed731cb00244b99414f92b113240b2c7",
+        "canonical_guest_hz": 60.00071428571429,
+        "visible_faces": {
+          "status": 0,
+          "native": 16,
+          "matched": 16,
+          "missing": 0,
+          "decoded_only": 0,
+          "triangles": 16,
+          "first_missing": "0x00000000"
+        },
+        "root_walk": {
+          "native": 16,
+          "overflow": 0,
+          "unique": 16,
+          "matched": 16,
+          "missing": 0,
+          "decoded_only": 1570,
+          "duplicate_calls": 0,
+          "multi_source": 0,
+          "multi_source_triangles": 0,
+          "decoded_triangles": 1586,
+          "status": 0,
+          "first_missing": "0x00000000",
+          "first_duplicate_call": "0x00000000",
+          "first_multi_source": "0x00000000",
+          "missing_in_range": 0,
+          "missing_addrs": []
+        },
+        "visible_entry_count": 1
+      },
+      {
+        "slot": 5,
+        "capture": "analysis\\vr-captures\\slot5-parity2\\world-capture.txt",
+        "summary": "analysis\\vr-captures\\slot5-parity2\\summary.json",
+        "stdout": "analysis\\vr-captures\\slot5-parity2\\stdout.log",
+        "runtime_receipt": "analysis\\vr-captures\\slot5-parity2\\receipt.json",
+        "binary_sha256": "3359ff277804fa74eba5fbad5edeab452ef89c7c0b331855643d34db25b8ab2a",
+        "config_sha256": "34ea40ba6c65ec3e8d4a7b5a50537e07ed731cb00244b99414f92b113240b2c7",
+        "canonical_guest_hz": 60.00066666666667,
+        "visible_faces": {
+          "status": 0,
+          "native": 91,
+          "matched": 91,
+          "missing": 0,
+          "decoded_only": 0,
+          "triangles": 91,
+          "first_missing": "0x00000000"
+        },
+        "root_walk": {
+          "native": 91,
+          "overflow": 0,
+          "unique": 91,
+          "matched": 91,
+          "missing": 0,
+          "decoded_only": 2006,
+          "duplicate_calls": 0,
+          "multi_source": 0,
+          "multi_source_triangles": 0,
+          "decoded_triangles": 2097,
+          "status": 0,
+          "first_missing": "0x00000000",
+          "first_duplicate_call": "0x00000000",
+          "first_multi_source": "0x00000000",
+          "missing_in_range": 0,
+          "missing_addrs": []
+        },
+        "visible_entry_count": 7
+      }
+    ],
+    "conclusion": "With face_tag, the root walk matches every submitted native face on both captured views: slot 2 16/16 and slot 5 91/91, zero missing. The visible-entry decode also matches 16/16 and 91/91 with 16 and 91 triangles and zero decoded_only. The earlier 11/16 and 70/91 result was an extension-address tag mismatch, not an unreachable leaf."
+  },
+  "gp0_probe": {
+    "capture": "analysis\\vr-captures\\slot2-gp0d\\world-capture.txt",
+    "runtime_receipt": "analysis\\vr-captures\\slot2-gp0d\\receipt.json",
+    "requires": "PSX_DEBUG_TOOLS=ON (GP0 ring is compiled out otherwise)",
+    "binary_sha256": "d6d8933310d68fe886b39f53bbbbe76b1ab63b06ab952671b62ff500f81df895",
+    "config_sha256": "34ea40ba6c65ec3e8d4a7b5a50537e07ed731cb00244b99414f92b113240b2c7",
+    "complete": true,
+    "commands_in_packet_range": 128,
+    "overflow": 141,
+    "opcodes": {
+      "0x34": 128
+    },
+    "conclusion": "The draw packet range emits GP0 0x34 commands, but their 9-word groups interleave command, vertex and UV slots, so per-face texpage/CLUT attribution is not established. The face-window dump remains preflight scratch. Texture page/CLUT stay unmapped.",
+    "attribution": "not per face: the draw commands are submitted after the face loop, so ring sequence bounds collapse to the last face; face packet pointers target a separate preflight buffer"
+  },
+  "material_mapping": {
+    "record_size": 12,
+    "record_index": "upper 16 bits of the second strip base word",
+    "table": "word[0x1F8003E8] + index*12",
+    "word0": "UV0 | CLUT << 16 (builder -> packet word 3)",
+    "word1": "UV1 | texpage << 16 (builder -> packet word 6)",
+    "word2": "UV2 low half (builder -> packet word 9)",
+    "native_evidence": "builder 80011238..80011338 loads $s4/$s5/half+8 from table+index*12",
+    "capture_evidence": "slot 2: 32/32 records parsed, 23/32 exact CLUT+texpage on fresh packet windows, 31/32 texpage; remaining packet pointers are shared/stale",
+    "residual": "shading and semi-transparency are packet draw-mode state, not in the 12-byte record"
+  },
+  "material_run": {
+    "slot2": {
+      "capture": "analysis/vr-captures/materials-capture/world-capture2.txt",
+      "stdout": "analysis/vr-captures/slot2-material-20261030b/stdout.log",
+      "census": "status=ok root=0x8010BA48 nodes=203 leaves=134 triangles=1756 materials=1756 records=0x801259BC/1024",
+      "summary": "analysis/vr-captures/slot2-material-20261030b/summary.json",
+      "record_packet_matches": 23,
+      "faces": 32
+    },
+    "slot5": {
+      "capture": "analysis/vr-captures/materials-capture/world-capture-slot5b.txt",
+      "stdout": "analysis/vr-captures/slot5-material-20261030b/stdout.log",
+      "census": "status=material root=0x8010C788 reject=0x8010E6B0/0/63",
+      "classification": "named unsupported material table pointer; not a silent omission"
+    }
+  },
+  "next": "M1 complete: slot-2 resident materials decoded; slot-5 root-walk table is a named unsupported case. Proceed to M2 textured GPU consumption."
+}

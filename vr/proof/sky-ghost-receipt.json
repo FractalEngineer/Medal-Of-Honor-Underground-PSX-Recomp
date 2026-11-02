@@ -1,0 +1,337 @@
+{
+  "scope": "isolated PGXP slot 2, static courtyard, synthetic null-HMD look-up",
+  "headset_acceptance": false,
+  "runs": {
+    "verified-zero": {
+      "executable_sha256": "77192f33e9703545e5e34756868819b2066745ed03f6e9a3447833a012c0fbb6",
+      "controls": {
+        "pitch_mdeg": 0,
+        "clear_before_submit": false,
+        "keep_replay_submit": false,
+        "trace_hud": false,
+        "synthetic_xr_pose": false
+      },
+      "raw": [
+        {
+          "name": "p000010_left.png",
+          "sha256": "49c4cf094ca0fc587d10091be29219742e9036d9f99e91a16803858b02117c7e",
+          "size": [
+            2560,
+            1200
+          ]
+        },
+        {
+          "name": "p000011_left.png",
+          "sha256": "687c6df68728130d10c7852808a145c4895ba067e9c98e0f982ad3447fccd919",
+          "size": [
+            2560,
+            1200
+          ]
+        },
+        {
+          "name": "p000010_right.png",
+          "sha256": "49c4cf094ca0fc587d10091be29219742e9036d9f99e91a16803858b02117c7e",
+          "size": [
+            2560,
+            1200
+          ]
+        },
+        {
+          "name": "p000011_right.png",
+          "sha256": "687c6df68728130d10c7852808a145c4895ba067e9c98e0f982ad3447fccd919",
+          "size": [
+            2560,
+            1200
+          ]
+        }
+      ],
+      "proof_line": "mohu-vr-diag: stereo_proof attempt=3 pairs=3 rendered=1 status=0 y=0 offset=0 level_hits=12/12 pose_apps=3/3 guest_submits=6 ot_words=0 openxr=0 xr_begin_failures=0 xr_view_failures=0 xr_ends=0 frustum=12/12 fallback=0/0 hud_skips=3/3 hud_unlinked=54/54 replay_submits_skipped=3/3",
+      "verify_checks": 37,
+      "settings_restored": true,
+      "remaining_game_pids": []
+    },
+    "verified-sky": {
+      "executable_sha256": "77192f33e9703545e5e34756868819b2066745ed03f6e9a3447833a012c0fbb6",
+      "controls": {
+        "pitch_mdeg": 45000,
+        "clear_before_submit": false,
+        "keep_replay_submit": false,
+        "trace_hud": false,
+        "synthetic_xr_pose": false
+      },
+      "raw": [
+        {
+          "name": "p000013_left.png",
+          "sha256": "81e667d105eac3186d286e2cab82968b3a7eeec9593d647a67aa1678e02946df",
+          "size": [
+            2560,
+            1200
+          ]
+        },
+        {
+          "name": "p000014_left.png",
+          "sha256": "81e667d105eac3186d286e2cab82968b3a7eeec9593d647a67aa1678e02946df",
+          "size": [
+            2560,
+            1200
+          ]
+        },
+        {
+          "name": "p000013_right.png",
+          "sha256": "1a06145b786ac43a5b270ff6cec06a16d78bbf4edf5ac07872adf789df6b36ad",
+          "size": [
+            2560,
+            1200
+          ]
+        },
+        {
+          "name": "p000014_right.png",
+          "sha256": "1a06145b786ac43a5b270ff6cec06a16d78bbf4edf5ac07872adf789df6b36ad",
+          "size": [
+            2560,
+            1200
+          ]
+        }
+      ],
+      "proof_line": "mohu-vr-diag: stereo_proof attempt=30 pairs=30 rendered=1 status=0 y=0 offset=24 level_hits=120/120 pose_apps=30/30 guest_submits=60 ot_words=0 openxr=0 xr_begin_failures=0 xr_view_failures=0 xr_ends=0 frustum=120/120 fallback=0/0 hud_skips=30/30 hud_unlinked=540/540 replay_submits_skipped=30/30",
+      "verify_checks": 48,
+      "settings_restored": true,
+      "remaining_game_pids": []
+    },
+    "verified-xr": {
+      "executable_sha256": "77192f33e9703545e5e34756868819b2066745ed03f6e9a3447833a012c0fbb6",
+      "controls": {
+        "pitch_mdeg": 45000,
+        "clear_before_submit": false,
+        "keep_replay_submit": false,
+        "trace_hud": false,
+        "synthetic_xr_pose": true
+      },
+      "raw": [
+        {
+          "name": "p000054_left.png",
+          "sha256": "cf8ea40767f1360efe81de474b901826294856375f6dbc339d3810e5f65138bf",
+          "size": [
+            2560,
+            1200
+          ]
+        },
+        {
+          "name": "p000055_left.png",
+          "sha256": "cf8ea40767f1360efe81de474b901826294856375f6dbc339d3810e5f65138bf",
+          "size": [
+            2560,
+            1200
+          ]
+        },
+        {
+          "name": "p000054_right.png",
+          "sha256": "6b8bf284540a8fc41596fea46b438d3513397962028ba0d8239e5aa695e23381",
+          "size": [
+            2560,
+            1200
+          ]
+        },
+        {
+          "name": "p000055_right.png",
+          "sha256": "6b8bf284540a8fc41596fea46b438d3513397962028ba0d8239e5aa695e23381",
+          "size": [
+            2560,
+            1200
+          ]
+        }
+      ],
+      "proof_line": "mohu-vr-diag: stereo_proof attempt=180 pairs=180 rendered=1 status=0 y=0 offset=0 level_hits=720/720 pose_apps=180/180 guest_submits=360 ot_words=0 openxr=1 xr_begin_failures=0 xr_view_failures=0 xr_ends=180 frustum=720/720 fallback=0/0 hud_skips=180/180 hud_unlinked=3240/3240 replay_submits_skipped=180/180",
+      "verify_checks": 150,
+      "settings_restored": true,
+      "remaining_game_pids": [],
+      "openxr": {
+        "submitted": 77,
+        "empty": 0,
+        "failures": 0,
+        "submitted_layer": 1,
+        "submitted_source": 1,
+        "quad_submitted": 2,
+        "native_submitted": 2,
+        "submitted_surfaces": 0,
+        "units_per_meter": 238.80597
+      },
+      "submitted_pair_id": 75
+    },
+    "verified-regression-xr": {
+      "executable_sha256": "77192f33e9703545e5e34756868819b2066745ed03f6e9a3447833a012c0fbb6",
+      "controls": {
+        "pitch_mdeg": 45000,
+        "clear_before_submit": false,
+        "keep_replay_submit": true,
+        "trace_hud": false,
+        "synthetic_xr_pose": true
+      },
+      "raw": [
+        {
+          "name": "p000052_left.png",
+          "sha256": "1a6c3bc036f7c1c234aba25c78753fd63a2dee1397988bcdc9b9f8a1e5d94e73",
+          "size": [
+            2560,
+            1200
+          ]
+        },
+        {
+          "name": "p000053_left.png",
+          "sha256": "1a6c3bc036f7c1c234aba25c78753fd63a2dee1397988bcdc9b9f8a1e5d94e73",
+          "size": [
+            2560,
+            1200
+          ]
+        },
+        {
+          "name": "p000052_right.png",
+          "sha256": "eb5741a37d51ca8bc5cea1375df145eed4e75414a887a8080ad150dfc39f0bba",
+          "size": [
+            2560,
+            1200
+          ]
+        },
+        {
+          "name": "p000053_right.png",
+          "sha256": "eb5741a37d51ca8bc5cea1375df145eed4e75414a887a8080ad150dfc39f0bba",
+          "size": [
+            2560,
+            1200
+          ]
+        }
+      ],
+      "proof_line": "mohu-vr-diag: stereo_proof attempt=180 pairs=180 rendered=1 status=0 y=0 offset=0 level_hits=720/720 pose_apps=180/180 guest_submits=360 ot_words=0 openxr=1 xr_begin_failures=0 xr_view_failures=0 xr_ends=180 frustum=720/720 fallback=0/0 hud_skips=180/180 hud_unlinked=3240/3240 replay_submits_skipped=0/0",
+      "verify_checks": 156,
+      "settings_restored": true,
+      "remaining_game_pids": [],
+      "openxr": {
+        "submitted": 79,
+        "empty": 0,
+        "failures": 0,
+        "submitted_layer": 1,
+        "submitted_source": 1,
+        "quad_submitted": 2,
+        "native_submitted": 2,
+        "submitted_surfaces": 0,
+        "units_per_meter": 238.80597
+      },
+      "submitted_pair_id": 77
+    },
+    "verified-yaw-positive": {
+      "executable_sha256": "77192f33e9703545e5e34756868819b2066745ed03f6e9a3447833a012c0fbb6",
+      "controls": {
+        "pitch_mdeg": 0,
+        "clear_before_submit": false,
+        "keep_replay_submit": false,
+        "trace_hud": false,
+        "synthetic_xr_pose": false
+      },
+      "raw": [
+        {
+          "name": "p000014_left.png",
+          "sha256": "ee2d20b31315d7823f3a7ca9d4b33f23af8c80a8addea330b817981878ee38b6",
+          "size": [
+            2560,
+            1200
+          ]
+        },
+        {
+          "name": "p000015_left.png",
+          "sha256": "ee2d20b31315d7823f3a7ca9d4b33f23af8c80a8addea330b817981878ee38b6",
+          "size": [
+            2560,
+            1200
+          ]
+        },
+        {
+          "name": "p000014_right.png",
+          "sha256": "84f9af0f1800b2bbf1440a8a7ad66549fefb19ad878112243d4652a0d03461a6",
+          "size": [
+            2560,
+            1200
+          ]
+        },
+        {
+          "name": "p000015_right.png",
+          "sha256": "84f9af0f1800b2bbf1440a8a7ad66549fefb19ad878112243d4652a0d03461a6",
+          "size": [
+            2560,
+            1200
+          ]
+        }
+      ],
+      "proof_line": "mohu-vr-diag: stereo_proof attempt=30 pairs=30 rendered=1 status=0 y=0 offset=24 level_hits=120/120 pose_apps=30/30 guest_submits=60 ot_words=0 openxr=0 xr_begin_failures=0 xr_view_failures=0 xr_ends=0 frustum=120/120 fallback=0/0 hud_skips=30/30 hud_unlinked=540/540 replay_submits_skipped=30/30",
+      "verify_checks": 48,
+      "settings_restored": true,
+      "remaining_game_pids": []
+    },
+    "verified-yaw-negative": {
+      "executable_sha256": "77192f33e9703545e5e34756868819b2066745ed03f6e9a3447833a012c0fbb6",
+      "controls": {
+        "pitch_mdeg": 0,
+        "clear_before_submit": false,
+        "keep_replay_submit": false,
+        "trace_hud": false,
+        "synthetic_xr_pose": false
+      },
+      "raw": [
+        {
+          "name": "p000014_left.png",
+          "sha256": "d848446bceaf739dc1b3de330f5ebcdb5034cc286c44d05b9922eaade1f19938",
+          "size": [
+            2560,
+            1200
+          ]
+        },
+        {
+          "name": "p000015_left.png",
+          "sha256": "d848446bceaf739dc1b3de330f5ebcdb5034cc286c44d05b9922eaade1f19938",
+          "size": [
+            2560,
+            1200
+          ]
+        },
+        {
+          "name": "p000014_right.png",
+          "sha256": "658f6883d8a79a882c2d923ba309ee5b09c7538933eb8cee37d9c3c277db2cf6",
+          "size": [
+            2560,
+            1200
+          ]
+        },
+        {
+          "name": "p000015_right.png",
+          "sha256": "658f6883d8a79a882c2d923ba309ee5b09c7538933eb8cee37d9c3c277db2cf6",
+          "size": [
+            2560,
+            1200
+          ]
+        }
+      ],
+      "proof_line": "mohu-vr-diag: stereo_proof attempt=30 pairs=30 rendered=1 status=0 y=0 offset=24 level_hits=120/120 pose_apps=30/30 guest_submits=60 ot_words=0 openxr=0 xr_begin_failures=0 xr_view_failures=0 xr_ends=0 frustum=120/120 fallback=0/0 hud_skips=30/30 hud_unlinked=540/540 replay_submits_skipped=30/30",
+      "verify_checks": 48,
+      "settings_restored": true,
+      "remaining_game_pids": []
+    }
+  },
+  "comparison": [
+    {
+      "eye": "left",
+      "static_world_pixel_agreement": 1.0,
+      "removed_background_pixels": 1294352
+    },
+    {
+      "eye": "right",
+      "static_world_pixel_agreement": 1.0,
+      "removed_background_pixels": 1289357
+    }
+  ],
+  "production": {
+    "debug_tools": false,
+    "proof_line": "mohu-vr-diag: stereo_proof attempt=360 pairs=360 rendered=1 status=0 y=0 offset=0 level_hits=1440/1440 pose_apps=360/360 guest_submits=720 ot_words=0 openxr=1 xr_begin_failures=0 xr_view_failures=0 xr_ends=360 frustum=1440/1440 fallback=0/0 hud_skips=360/360 hud_unlinked=6480/6480 replay_submits_skipped=360/360",
+    "flat_plugin_inert": true,
+    "executable_sha256": "2f5b3921cff6d5553962bbd4fbebc24f89ea4fc15a5d12479907a4791a27eb79"
+  },
+  "passed": true
+}

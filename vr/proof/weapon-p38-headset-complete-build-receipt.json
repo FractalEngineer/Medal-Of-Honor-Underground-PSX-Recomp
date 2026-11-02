@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "date": "2026-10-26",
+  "kind": "W3.2 P38 completed movement-enabled headset comparison",
+  "fixture": "fresh copied root multiplayer slot 1 per mode, P38 ID 0, zero switches",
+  "runtime": "VirtualDesktopXR",
+  "runtime_manifest": "C:\\Program Files\\Virtual Desktop Streamer\\OpenXR\\virtualdesktop-openxr.json",
+  "execution_account": "fractal-power\\titan",
+  "executable_sha256": "93499991a088650770b12a4a4bc3d01433e36b479087efbd96a84da072486db2",
+  "cmake": {
+    "configuration": "Release",
+    "PSX_DEBUG_TOOLS": "ON",
+    "MOHU_VR_DIAGNOSTICS": "ON",
+    "PSX_OPENXR": "ON"
+  },
+  "debug_build_policy": "left ON while W3.2/W3.3 work is active per operator direction",
+  "tested_sources": {
+    "vr/tools/probe_p38_headset.py": "a7b06a80b05358571721acb225045042390ff5839ed166fc4effd4e60c874bd9",
+    "vr/tests/test_p38_headset.py": "e50684738d18160a0584d20a3801fd50246ed2c1e6b4290cbc33653fb38a44d6"
+  },
+  "headset_receipt": {
+    "path": "vr/proof/weapon-p38-headset-receipt.json",
+    "sha256": "0bb070c6a49cc4eb36d5fff8610500eedfdbe34c0efe34f45b0e2d081f040388",
+    "raw_path": "analysis/vr-baseline/weapon-mesh-mapping/w32-headset-run-20261026c/receipt.json",
+    "raw_sha256": "ff4a2f3a21040967061af930405955b64061ebca0583c6f6431ab70e34e426e7"
+  },
+  "checks": {
+    "python_tests": {
+      "count": 29,
+      "result": "PASS"
+    },
+    "native_seconds": 30.016,
+    "tracked_seconds": 30.036,
+    "native_live_hands": "30/30",
+    "tracked_live_hands": "30/30",
+    "native_stereo_pairs": "21 -> 522",
+    "tracked_stereo_pairs": "19 -> 515",
+    "native_xr_submissions": "18 -> 525",
+    "tracked_xr_submissions": "15 -> 518",
+    "xr_failures": 0,
+    "stereo_failures": 0,
+    "source_saves_unchanged": true,
+    "preferences_unchanged": true,
+    "remaining_game_pids": []
+  },
+  "scope": {
+    "w3_2": "complete",
+    "headset_acceptance": false,
+    "next": "W3.3",
+    "note": "The comparison ran with movement enabled; measured user input was not required for W3.2 and remains W3.3 acceptance work."
+  }
+}
