@@ -91,6 +91,10 @@ int main(void) {
     assert(mohu_vr_camera_input_map(
         &input, .2, .65, &response, 1, 1, &pad));
     assert(pad.lx == 128 && pad.ly == 128 && pad.rx == 128);
+    assert(mohu_vr_gameplay_input_map(
+        &input, .2, .65, &response, 0, 0, &pad));
+    assert(pad.buttons == (0xffffu ^ 0xf108u));
+    assert(pad.lx != 128 && pad.ly != 128 && pad.rx != 128);
     input.active[0] = input.active[1] = 0;
     memset(input.stick, 0, sizeof input.stick);
     input.focused = 0;

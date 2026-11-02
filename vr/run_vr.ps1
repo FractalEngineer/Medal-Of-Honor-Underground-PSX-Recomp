@@ -37,6 +37,8 @@ param(
     [switch]$PerformanceTest,
     [switch]$Baseline,
     [switch]$WristHudTest,
+    [switch]$SyntheticScope,
+    [switch]$AllowNativeFrontend,
     [switch]$GracefulClose,
     [switch]$PrepareOnly
 )
@@ -378,6 +380,7 @@ try {
         PSX_VR_SUPPRESS_FLAT_HUD = $(if ($KeepFlatHud) { '0' } else { '1' })
         PSX_VR_WRIST_HUD_TEST = [string][int]$WristHudTest.IsPresent
         PSX_VR_SYNTHETIC_CONTROLLERS = [string][int]$WristHudTest.IsPresent
+        PSX_VR_SYNTHETIC_SCOPE = [string][int]$SyntheticScope.IsPresent
         PSX_VR_WRIST_HUD = [string][int]($WristHudTest -or -not $KeepFlatHud)
         PSX_VR_WRIST_REPLACE = [string][int]$WristHudTest.IsPresent
         PSX_VR_MOVEMENT = $(if ($NoMovement) { '0' } else { '1' })
@@ -385,6 +388,7 @@ try {
         PSX_VR_MOVE_DEADZONE = $MoveDeadzone.ToString([Globalization.CultureInfo]::InvariantCulture)
         PSX_VR_TURN_GAIN = $TurnGain.ToString([Globalization.CultureInfo]::InvariantCulture)
         PSX_VR_WEAPON_POSE = '1'
+        MOHU_VR_CAMERA_TUNING_FILE = (Join-Path $repoRoot 'analysis\runtime\vr\camera-offset.txt')
         MOHU_VR_WEAPON_CALIBRATED = '1'
         MOHU_VR_WEAPON_AIM = '1'
         MOHU_VR_WEAPON_GUN_ONLY = '1'
@@ -447,7 +451,7 @@ try {
         throw 'VR startup did not submit a headset frame. Start the selected OpenXR runtime first.'
     }
     Copy-Item -LiteralPath $readyPath -Destination (Join-Path $logPath 'startup.json') -Force
-    if ($Slot -ge 0) {
+    if ($Slot -ge 0 -and -not $AllowNativeFrontend) {
         $proofFirst = Wait-StereoProof -Path $stdoutLog
         Start-Sleep -Seconds 2
         $proofSecond = Wait-StereoProof -Path $stdoutLog -TimeoutSeconds 5 -AfterPairs $proofFirst.pairs
@@ -468,6 +472,8 @@ try {
             ($proofSecond.pairs - $proofFirst.pairs),
             ($proofSecond.begin_failures + $proofSecond.view_failures)
         )
+    } elseif ($AllowNativeFrontend) {
+        Write-Host 'VR native frontend active. Stereo gameplay proof intentionally skipped.'
     } else {
         Write-Host 'VR native menu active. No save slot loaded; stereo starts on a supported gameplay frame.'
     }

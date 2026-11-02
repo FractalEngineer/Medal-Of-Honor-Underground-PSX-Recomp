@@ -26,6 +26,12 @@ int mohu_vr_camera_input_map(const PSXModOpenXRInput *input, double deadzone,
                     double turn_gain, const MohuVRAnalogResponse *response,
                     int merged_y, int camera_aim,
                     PSXModControllerState *pad);
+/* Weapon zoom leaves native buttons unchanged; the host consumes the grip
+ * state for zoom/far range without entering native ADS. */
+int mohu_vr_gameplay_input_map(const PSXModOpenXRInput *input, double deadzone,
+                    double turn_gain, const MohuVRAnalogResponse *response,
+                    int merged_y, int camera_aim,
+                    PSXModControllerState *pad);
 /* Native menu buttons/D-pad, independent of gameplay calibration tables. */
 int mohu_vr_menu_input_map(const PSXModOpenXRInput *input,double deadzone,
                          PSXModControllerState *pad);

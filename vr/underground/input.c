@@ -28,6 +28,8 @@ static uint32_t combat_buttons(const PSXModOpenXRInput *input, int camera_aim) {
     if (camera_aim && input->squeeze_active[1] &&
         isfinite(input->squeeze[1]) && input->squeeze[1] >= .55f &&
         input->squeeze[1] <= 1) pressed |= 0x0200; /* R2: camera aim */
+    /* Scoped rifle grip is consumed by the host zoom path. It must not emit
+     * native R2, because native ADS pins the view and changes movement. */
     if (right & PSX_MOD_XR_PRIMARY) pressed |= 0x8000; /* A: Square/use */
     if (right & PSX_MOD_XR_SECONDARY) pressed |= 0x2000; /* B: Circle/next weapon/back */
     if (left & PSX_MOD_XR_PRIMARY) pressed |= 0x8000; /* X: Square/reload/use context */
@@ -122,7 +124,7 @@ static uint32_t inverse_axis(const MohuVRAnalogResponse *response,
     }
     return best;
 }
-int mohu_vr_camera_input_map(const PSXModOpenXRInput *input, double deadzone,
+int mohu_vr_gameplay_input_map(const PSXModOpenXRInput *input, double deadzone,
                     double turn_gain, const MohuVRAnalogResponse *response,
                     int merged_y, int camera_aim,
                     PSXModControllerState *pad) {
@@ -167,6 +169,14 @@ int mohu_vr_camera_input_map(const PSXModOpenXRInput *input, double deadzone,
     }
     if (have_ly) pad->ly = inverse_axis(response, 1, ly);
     return 1;
+}
+
+int mohu_vr_camera_input_map(const PSXModOpenXRInput *input, double deadzone,
+                    double turn_gain, const MohuVRAnalogResponse *response,
+                    int merged_y, int camera_aim,
+                    PSXModControllerState *pad) {
+    return mohu_vr_gameplay_input_map(
+        input, deadzone, turn_gain, response, merged_y, camera_aim, pad);
 }
 
 int mohu_vr_input_map(const PSXModOpenXRInput *input, double deadzone,
