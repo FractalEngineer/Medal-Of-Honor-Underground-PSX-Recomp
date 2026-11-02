@@ -493,6 +493,7 @@ jobs:
             -DPSXRECOMP_ALLOW_NO_BIOS=OFF \
             -DPSX_SETUP_WIZARD=ON \
             -DPSX_GAME_VERSION="${RELEASE_VERSION}" \
+            -DPSX_RELEASE_CHANNEL=public \
             -DPSX_OPENXR=ON \
             -DMOHU_VR_DIAGNOSTICS=ON \
             -DMOHU_VR_NATIVE_PROFILE=OFF \
