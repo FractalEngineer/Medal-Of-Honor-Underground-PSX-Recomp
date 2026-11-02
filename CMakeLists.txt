@@ -138,6 +138,7 @@ if(MOHU_VR_DIAGNOSTICS)
         "${CMAKE_CURRENT_SOURCE_DIR}/vr/underground/world_project.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/vr/underground/world_capture.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/vr/underground/weapon.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/vr/underground/scope.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/vr/underground/hud.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/vr/underground/vr_diagnostic.c")
     if(MOHU_VR_WORLD_CAPTURE)
