@@ -3,9 +3,11 @@
 These documents preserve earlier evidence and proposals. Their NEXT pointers,
 build/save paths and uncompleted proposed steps are not current instructions.
 
-Start with [workspace locations](../WORKSPACE_LAYOUT.md), [HANDOFF](../HANDOFF.md),
-[VR_PLAN](../VR_PLAN.md) and the [implementation runbook](../PERFORMANCE_NEXT_STEPS.md).
+Start with the current [release handoff](../HANDOFF.md),
+[VR documentation index](../README.md), [workspace locations](../WORKSPACE_LAYOUT.md)
+and [implementation runbook](../PERFORMANCE_NEXT_STEPS.md).
 
+- [Superseded 2026-11-02 handoff](HANDOFF_HISTORY_20261102.md).
 - [Superseded accumulated handoff](HANDOFF_HISTORY_20261029.md).
 - [Original alpha/calibration study](ALPHA_PLAYABILITY_AND_CALIBRATION.md).
 - [Earlier SP performance/petrol investigation](SP_PERFORMANCE_AND_PETROL.md).
