@@ -18,6 +18,7 @@ Static recompilation of **Medal of Honor Underground** built on
 Play the original game on a flat display, or opt into the experimental Full
 6dof VR alpha with head tracking, per-eye rendering and tracked-weapon controls.
 Flat play is the default; VR is enabled through a separate launcher.
+Watch the [VR video demo](https://youtu.be/_6LRnH667jc) for gameplay footage.
 
 The latest **Windows alpha** is available from this fork's
 [releases](https://github.com/FractalEngineer/Medal-Of-Honor-Underground-PSX-Recomp/releases/latest).
@@ -103,6 +104,14 @@ scope with native scope range. It uses the same `saves/` directory as flat play.
 The owner accepted the tested camera, HUD, frontend, pause, Sten and music behavior.
 The primary tested setup is Quest 3 through Virtual Desktop with **VDXR**;
 demanding scenes can still slow down.
+
+<p align="center">
+  <a href="https://youtu.be/_6LRnH667jc" title="Watch the Medal of Honor Underground VR alpha gameplay demo">
+    <img src="assets/vr-alpha-video-thumbnail.jpg" alt="Medal of Honor Underground VR alpha gameplay demo" width="900">
+  </a>
+  <br>
+  <a href="https://youtu.be/_6LRnH667jc"><strong>&#9654; WATCH THE VR ALPHA GAMEPLAY DEMO</strong></a>
+</p>
 
 ### Setup and launch
 
