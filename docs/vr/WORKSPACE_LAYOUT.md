@@ -1,6 +1,6 @@
 # Workspace and save locations
 
-Updated 2026-10-29. This file owns the active filesystem/launcher policy.
+Updated 2026-11-04. This file owns the active filesystem/launcher policy.
 [HANDOFF](HANDOFF.md) owns the next task; [VR_PLAN](VR_PLAN.md) owns status.
 
 2026-10-30 operator-requested performance trial **failed physical acceptance**.

@@ -99,6 +99,13 @@ size_t mohu_vr_weapon_profile_count(void);
 const MohuVrWeaponProfile* mohu_vr_weapon_profile_at(size_t index);
 const MohuVrWeaponProfile* mohu_vr_weapon_profile_find(uint8_t id);
 const MohuVrWeaponCalibration* mohu_vr_weapon_calibration_find(uint8_t id);
+/* Exact SP mission variants share a native ID and calibration with the base
+ * profile but have different topology and gun-only masks. */
+size_t mohu_vr_weapon_variant_count(void);
+const MohuVrWeaponProfile* mohu_vr_weapon_variant_at(size_t index);
+const MohuVrWeaponProfile* mohu_vr_weapon_profile_find_layout(
+    uint8_t id, uint32_t mesh_magic, unsigned face_count, unsigned node_count,
+    const uint16_t* vertices);
 /* Exact SP assets pass directly. Rendering-only metadata variants pass only
  * when their complete X/Y/Z pose stream matches the calibrated MP asset. */
 int mohu_vr_weapon_sp_geometry_valid(const MohuVrWeaponProfile* profile,

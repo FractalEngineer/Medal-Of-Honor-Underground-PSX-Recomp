@@ -2,11 +2,6 @@
 
 Reference for the game's built-in **Config. 2** control layout.
 
-![Default controls (Config. 2)](default-controls.png)
-
-> Drop the original control-card image at `docs/default-controls.png` for it to
-> render here.
-
 ## Menus
 
 | Button | Action |

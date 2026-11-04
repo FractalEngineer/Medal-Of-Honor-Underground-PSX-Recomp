@@ -40,7 +40,7 @@ static void valid_hands(PSXModOpenXRHands* hands) {
 }
 
 int main(void) {
-    CHECK(mohu_vr_weapon_profile_count() == 14u);
+    CHECK(mohu_vr_weapon_profile_count() == 15u);
     for (size_t i = 0; i < mohu_vr_weapon_profile_count(); ++i) {
         const MohuVrWeaponProfile* profile = mohu_vr_weapon_profile_at(i);
         CHECK(profile && profile->name && mohu_vr_weapon_profile_find(profile->id));
@@ -112,7 +112,46 @@ int main(void) {
         CHECK(!mohu_vr_weapon_gun_vertex(profile, profile->node_count, 0u));
     }
     CHECK(!mohu_vr_weapon_profile_at(mohu_vr_weapon_profile_count()));
+    CHECK(mohu_vr_weapon_variant_count() == 3u);
+    for (size_t i = 0; i < mohu_vr_weapon_variant_count(); ++i) {
+        const MohuVrWeaponProfile* variant = mohu_vr_weapon_variant_at(i);
+        CHECK(variant && variant->name && variant->calibration);
+        CHECK(variant->id == 4u || variant->id == 8u || variant->id == 10u);
+        CHECK(variant->gun_face_count && variant->gun_vertex_count);
+        CHECK(mohu_vr_weapon_sp_geometry_valid(
+            variant, variant->geometry_fnv32, 0u));
+        CHECK(mohu_vr_weapon_sp_geometry_valid(
+            variant, 0u, variant->geometry_pose_fnv32));
+        CHECK(mohu_vr_weapon_profile_find_layout(
+            variant->id, variant->mesh_magic, variant->face_count,
+            variant->node_count, variant->vertices) == variant);
+        CHECK(!mohu_vr_weapon_profile_find_layout(
+            variant->id, variant->mesh_magic, variant->face_count + 1u,
+            variant->node_count, variant->vertices));
+        CHECK(mohu_vr_weapon_profile_find(variant->id) != variant);
+        CHECK(mohu_vr_weapon_profile_find(variant->id)->calibration ==
+              variant->calibration);
+    }
+    CHECK(!mohu_vr_weapon_variant_at(mohu_vr_weapon_variant_count()));
+    CHECK(mohu_vr_weapon_gun_vertex(
+        mohu_vr_weapon_variant_at(0u), 26u, 0u));
+    CHECK(mohu_vr_weapon_gun_vertex(
+        mohu_vr_weapon_variant_at(1u), 13u, 0u));
+    CHECK(mohu_vr_weapon_gun_vertex(
+        mohu_vr_weapon_variant_at(2u), 21u, 0u));
+    CHECK(!mohu_vr_weapon_gun_vertex(
+        mohu_vr_weapon_variant_at(0u), 25u, 0u));
     CHECK(!mohu_vr_weapon_profile_find(2u));
+    {
+        const MohuVrWeaponProfile* bar = mohu_vr_weapon_profile_find(11u);
+        CHECK(bar && strcmp(bar->name, "BAR") == 0);
+        CHECK(bar->face_count == 323u && bar->gun_face_count == 200u);
+        CHECK(bar->node_count == 28u && bar->gun_vertex_count == 160u);
+        CHECK(mohu_vr_weapon_gun_vertex(bar, 24u, 0u));
+        CHECK(mohu_vr_weapon_gun_vertex(bar, 26u, 6u));
+        CHECK(mohu_vr_weapon_gun_vertex(bar, 27u, 6u));
+        CHECK(!mohu_vr_weapon_gun_vertex(bar, 19u, 0u));
+    }
     CHECK(mohu_vr_weapon_gun_vertex(
         mohu_vr_weapon_profile_find(0u), 11u, 6u));
     CHECK(mohu_vr_weapon_gun_vertex(

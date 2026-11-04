@@ -23,7 +23,7 @@ int main(void) {
     assert(!mohu_vr_sp_petrol_release_valid(0u, 0u, sp_player,
         sp_player, sp_player + 0x3FCu, MOHU_VR_SP_PETROL_RELEASE_RA));
     const uint32_t single[] = {0u, 5u, 8u, 9u, 12u};
-    const uint32_t repeating[] = {1u, 4u, 16u, 17u};
+    const uint32_t repeating[] = {1u, 4u, 11u, 16u, 17u};
     for (unsigned i = 0; i < sizeof single / sizeof single[0]; ++i) {
         assert(mohu_vr_shot_type(single[i]) == MOHU_VR_SHOT_TYPE_SINGLE);
         assert(mohu_vr_shot_family(mohu_vr_shot_type(single[i])) ==
@@ -49,7 +49,6 @@ int main(void) {
     assert(mohu_vr_shot_type(3u) == 0u);
     assert(mohu_vr_shot_type(6u) == 0u);
     assert(mohu_vr_shot_type(7u) == 0u);
-    assert(mohu_vr_shot_type(11u) == 0u);
     assert(mohu_vr_shot_type(255u) == 0u);
     assert(mohu_vr_shot_family(0u) == MOHU_VR_SHOT_FAMILY_UNKNOWN);
     assert(mohu_vr_shot_family(MOHU_VR_SHOT_TYPE_BOLT + 1u) ==
@@ -66,6 +65,7 @@ int main(void) {
     assert(mohu_vr_sp_tracked_type_valid(13u, 0x13F1u));
     assert(mohu_vr_sp_tracked_type_valid(14u, 0x13FAu));
     assert(mohu_vr_sp_tracked_type_valid(16u, 0x13F7u));
+    assert(mohu_vr_sp_tracked_type_valid(11u, 0x13F7u));
     assert(mohu_vr_sp_tracked_type_valid(10u, 0x13F3u));
     assert(mohu_vr_sp_tracked_type_valid(15u, 0x13F3u));
     assert(!mohu_vr_sp_tracked_type_valid(13u, 0x13F6u));

@@ -110,7 +110,7 @@ def snapshot(label: str) -> dict:
         "object": hex(object_address),
         "weapon_id": weapon_id,
         "weapon": SP_SPECIAL_WEAPONS.get(
-            weapon_id, native.WEAPONS.get(weapon_id, "Unknown")
+            weapon_id, native.SP_WEAPONS.get(weapon_id, "Unknown")
         ),
         "weapon_slot": native.read(player_input + 92, 1)[0],
         "model": geometry_identity(object_address),
@@ -456,7 +456,20 @@ def main() -> None:
                     comparison.release_load_override()
                     comparison.set_desktop_hands()
                     native.frames(8)
-                    entries.append(snapshot(f"switch-{index + 1}"))
+                    entry = snapshot(f"switch-{index + 1}")
+                    entries.append(entry)
+                    if args.dump_ram:
+                        state_dir = (
+                            out / f"slot-{slot:02}" / f"switch-{index + 1:02}"
+                        )
+                        state_dir.mkdir()
+                        (state_dir / "ram.bin").write_bytes(
+                            native.read(0x80000000, 0x200000)
+                        )
+                        native.command(
+                            "screenshot_file",
+                            path=str(state_dir / "frame.png"),
+                        )
                 receipt["inventory"].append({
                     "slot": slot,
                     "entries": entries,

@@ -72,7 +72,7 @@ static inline uint16_t mohu_vr_shot_type(uint32_t weapon_id) {
     switch (weapon_id) {
     case 0u: case 5u: case 8u: case 9u: case 12u:
         return MOHU_VR_SHOT_TYPE_SINGLE;
-    case 1u: case 4u: case 16u: case 17u:
+    case 1u: case 4u: case 11u: case 16u: case 17u:
         return MOHU_VR_SHOT_TYPE_REPEATING;
     case 10u: case 15u:
         return MOHU_VR_SHOT_TYPE_THROWN;

@@ -269,6 +269,14 @@ static const MohuVrWeaponProfile k_weapon_profiles[] = {
      {0, 0, 0, 0, 0, 0, 0, 0, 19, 16, 21, 7, 4, 4, 5, 8, 3, 5, 4, 8, 1, 0, 0, 58},
      140u, 58u, 1u << 23u, 0xFFu, {0u, 0u, 0u, 0u},
      &k_stick_grenade_calibration},
+    {11u, 5u, 1u, "BAR", 0x1c0007u, 0xff2c4feeu, 0xe6079e16u, 323u, 28u,
+     {0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 21, 5, 4, 4, 4, 4, 5, 3, 0, 2,
+      0, 0, 0, 0, 146, 0, 7, 7},
+     200u, 160u, (1u << 24u) | (1u << 26u) | (1u << 27u), 0xFFu,
+     {0u, 0u, 0u, 0u},
+     /* Nearest verified rifle calibration; replace only after a matching BAR
+      * headset/aim capture establishes its own grip and muzzle markers. */
+     &k_m1_garand_calibration},
     {12u, 4u, 0u, "M1 Garand", 0x170007u, 0x450f78dcu, 0x9172c32cu, 280u, 23u,
      {0, 0, 0, 0, 0, 0, 0, 0, 12, 16, 17, 5, 4, 4, 4, 2, 0, 3, 0, 0, 0, 0, 136},
      174u, 136u, 1u << 22u, 0xFFu, {0u, 0u, 0u, 0u},
@@ -303,6 +311,26 @@ static const MohuVrWeaponProfile k_weapon_profiles[] = {
      {UINT64_C(0xFF9FFFBFFFFF0420), UINT64_C(0xFFFFBFFFFFFFFFFF),
       UINT64_C(0xF), 0u},
      &k_stg44_calibration},
+};
+
+static const MohuVrWeaponProfile k_sp_weapon_variants[] = {
+    {4u, 5u, 1u, "Shotgun (SP endgame)", 0x1d0007u, 0xa0272e1fu,
+     0xeab2e387u, 348u, 27u,
+     {0, 0, 0, 0, 0, 0, 0, 0, 14, 21, 21, 5, 4, 4, 4, 0, 4, 4, 0, 5,
+      0, 1, 0, 0, 0, 0, 114},
+     169u, 113u, 1u << 26u, 0xFFu, {0u, 0u, 0u, 0u},
+     &k_shotgun_calibration},
+    {8u, 5u, 0u, "Colt .45 (SP endgame)", 0xe0007u, 0xeb3a2574u,
+     0x86dc0655u, 323u, 14u,
+     {0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 0, 101, 0, 68},
+     115u, 68u, 1u << 13u, 0xFFu, {0u, 0u, 0u, 0u},
+     &k_colt_45_calibration},
+    {10u, 5u, 2u, "Stick grenade (SP endgame)", 0x160007u, 0x648a6d7eu,
+     0x3664322eu, 313u, 22u,
+     {0, 0, 0, 0, 0, 0, 0, 0, 14, 21, 19, 9, 3, 5, 2, 8, 4, 4, 2, 0,
+      0, 58},
+     140u, 58u, 1u << 21u, 0xFFu, {0u, 0u, 0u, 0u},
+     &k_stick_grenade_calibration},
 };
 
 static const uint16_t k_node_counts[MOHU_VR_WEAPON_NODE_COUNT] = {
@@ -533,6 +561,45 @@ const MohuVrWeaponProfile* mohu_vr_weapon_profile_find(uint8_t id) {
     for (size_t i = 0; i < mohu_vr_weapon_profile_count(); ++i) {
         if (k_weapon_profiles[i].id == id) {
             return &k_weapon_profiles[i];
+        }
+    }
+    return NULL;
+}
+
+size_t mohu_vr_weapon_variant_count(void) {
+    return sizeof k_sp_weapon_variants / sizeof k_sp_weapon_variants[0];
+}
+
+const MohuVrWeaponProfile* mohu_vr_weapon_variant_at(size_t index) {
+    return index < mohu_vr_weapon_variant_count() ? &k_sp_weapon_variants[index]
+                                                  : NULL;
+}
+
+static int weapon_layout_matches(const MohuVrWeaponProfile* profile,
+                                 uint8_t id, uint32_t mesh_magic,
+                                 unsigned face_count, unsigned node_count,
+                                 const uint16_t* vertices) {
+    return profile && vertices && profile->id == id &&
+           profile->mesh_magic == mesh_magic &&
+           profile->face_count == face_count &&
+           profile->node_count == node_count &&
+           memcmp(profile->vertices, vertices,
+                  node_count * sizeof vertices[0]) == 0;
+}
+
+const MohuVrWeaponProfile* mohu_vr_weapon_profile_find_layout(
+    uint8_t id, uint32_t mesh_magic, unsigned face_count, unsigned node_count,
+    const uint16_t* vertices) {
+    const MohuVrWeaponProfile* profile = mohu_vr_weapon_profile_find(id);
+    if (weapon_layout_matches(profile, id, mesh_magic, face_count, node_count,
+                              vertices)) {
+        return profile;
+    }
+    for (size_t i = 0; i < mohu_vr_weapon_variant_count(); ++i) {
+        profile = &k_sp_weapon_variants[i];
+        if (weapon_layout_matches(profile, id, mesh_magic, face_count,
+                                  node_count, vertices)) {
+            return profile;
         }
     }
     return NULL;

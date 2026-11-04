@@ -35,8 +35,10 @@ CASES = (
     (4, 0, 16),  # Sten
     (2, 2, 13),  # Panzerfaust
     (3, 1, 15),  # petrol bomb, measured separately
+    (5, 0, 11),  # BAR, current endgame slot
 )
 DEFAULT_IDS = (0, 16, 13)
+SP_EXTRA_FAMILIES = {11: 0x13F7}  # BAR, measured from the updated slot 5
 
 
 def read_word(address: int) -> int:
@@ -49,9 +51,10 @@ def signed(value) -> int:
 
 
 def shot_type(weapon_id: int) -> int:
-    if weapon_id not in families.EXPECTED_FAMILIES:
+    supported = {**families.EXPECTED_FAMILIES, **SP_EXTRA_FAMILIES}
+    if weapon_id not in supported:
         raise ValueError(f"Unsupported SP trace weapon ID {weapon_id}")
-    return families.EXPECTED_FAMILIES[weapon_id]
+    return supported[weapon_id]
 
 
 def trace_dump(**values) -> dict:
@@ -187,7 +190,7 @@ def snapshot(weapon_id: int, switches: int) -> dict:
         "input": hex(player_input),
         "viewmodel": hex(object_address),
         "weapon_id": live_id,
-        "weapon": native.WEAPONS[live_id],
+        "weapon": native.SP_WEAPONS[live_id],
         "switches": switches,
         "weapon_slot": weapon_slot,
         "clip": struct.unpack("<h", native.read(clip_address, 2))[0],
@@ -399,7 +402,7 @@ def run_case(
     return {
         "slot": slot,
         "weapon_id": weapon_id,
-        "weapon": native.WEAPONS[weapon_id],
+        "weapon": native.SP_WEAPONS[weapon_id],
         "type": shot_type(weapon_id),
         "fire_buttons": fire_buttons,
         "native_body_turn": {
@@ -536,7 +539,7 @@ def main() -> None:
         "lifecycle": args.lifecycle,
         "turn_frames": args.turn_frames,
         "limits": [
-            "Natural SP fixtures cover only IDs 0, 13, 15 and 16.",
+            "Natural SP fixtures cover only IDs 0, 11, 13, 15 and 16.",
             "Tracing does not prove projectile direction under a changed hand pose.",
             "This probe consumes disposable-fixture ammunition only.",
         ],

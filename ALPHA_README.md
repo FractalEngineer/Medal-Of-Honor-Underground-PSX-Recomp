@@ -5,6 +5,11 @@ default; VR is optional. Quest 3 through Virtual Desktop with VDXR is the
 primary tested headset setup. SteamVR and Oculus launchers are included, but
 Meta Quest Link and broad runtime coverage are not yet accepted.
 
+For project context, see the [project README](README.md),
+[v0.1.1 release notes](docs/release/v0.1.1.md) and
+[documentation map](docs/README.md). The release notes summarize the package;
+this guide is the source of truth for player setup, controls and limitations.
+
 ## What is in v0.1.1
 
 - Native OpenXR stereo rendering with motion-tracked head movement.

@@ -23,6 +23,8 @@ Watch the [VR video demo](https://youtu.be/_6LRnH667jc) for gameplay footage.
 The latest **Windows alpha** is available from this fork's
 [releases](https://github.com/FractalEngineer/Medal-Of-Honor-Underground-PSX-Recomp/releases/latest).
 See [alpha installation and controls](ALPHA_README.md) before testing.
+Use the [documentation map](docs/README.md) for release notes, technical
+evidence, workspace layout and development handoffs.
 
 | | |
 |---|---|

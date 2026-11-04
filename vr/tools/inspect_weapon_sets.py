@@ -23,6 +23,7 @@ WEAPONS = {0: "P38 pistol", 1: "MP40", 4: "Shotgun", 5: "Scoped rifle",
            8: "Colt .45", 9: "Silenced pistol", 10: "Stick grenade",
            12: "M1 Garand", 13: "Panzerfaust", 14: "Crossbow",
            15: "Petrol bomb", 16: "Sten", 17: "StG44"}
+SP_WEAPONS = {**WEAPONS, 11: "BAR"}
 MODEL_OBJECT_OFFSET = 0x4AC
 MODEL_MAGIC = 0x00160024
 

@@ -1,10 +1,10 @@
 # Underground VR release handoff
 
-Updated 2026-11-03 for the `v0.1.1` Windows x64 Full 6dof VR alpha.
+Updated 2026-11-04 for the `v0.1.1` Windows x64 Full 6dof VR alpha.
 
 ## Release checkpoint
 
-- Branch: `feature/vr-port`.
+- Source branch: `master`.
 - Framework pin: `e57fd0279b86edf48cfe42364da4388046772bad`.
 - Release backend: Windows x64, OpenGL, OpenXR enabled, guarded VR plugin
   enabled, debug tools and experimental performance kernels disabled.
@@ -58,6 +58,8 @@ runtime overlay toolchain; no disc, retail BIOS or personal saves are shipped.
 
 ## Documentation policy
 
+- Use [the project documentation map](../README.md) as the index and ownership
+  guide.
 - Keep player-facing claims in `ALPHA_README.md` and the versioned release notes.
 - Keep current acceptance status here.
 - Put superseded handoffs and dated session notes under `archive/`.

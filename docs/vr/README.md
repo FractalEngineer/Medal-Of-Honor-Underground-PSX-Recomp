@@ -9,6 +9,8 @@ frontend restoration and the held sniper scope with native range.
 Start with the player-facing [alpha guide](../../ALPHA_README.md) and
 [v0.1.1 release notes](../release/v0.1.1.md). For setup paths and save
 locations, see [WORKSPACE_LAYOUT](WORKSPACE_LAYOUT.md).
+The [project documentation map](../README.md) lists the other entry points,
+technical references and cleanup policy.
 
 Current release status and open acceptance gates are summarized in
 [HANDOFF](HANDOFF.md). The sniper behavior and its evidence are in
@@ -47,6 +49,7 @@ These are known alpha limits, not claims that the release is feature-complete.
 | Pause, HUD and input | [PAUSE_MENU_PARITY](PAUSE_MENU_PARITY.md), [NATIVE_HAND_HUD](NATIVE_HAND_HUD.md), [FLAT_LOCAL_INPUT](FLAT_LOCAL_INPUT.md) |
 | VR rendering and performance evidence | [OPENXR_EVIDENCE](OPENXR_EVIDENCE.md), [STEREO_VIEW_EVIDENCE](STEREO_VIEW_EVIDENCE.md), [RENDER_KERNEL_CHECKPOINT](RENDER_KERNEL_CHECKPOINT.md) |
 | Historical reports | [archive index](archive/README.md) |
+| Documentation ownership and index | [project documentation map](../README.md) |
 
 Compact receipts under `vr/proof/` are retained evidence. Bulky captures and
 logs live in the ignored local `analysis/` tree. Historical documents keep
