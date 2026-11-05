@@ -1,0 +1,115 @@
+# Underground mouse and keyboard research gate
+
+2026-11-05, Asia/Taipei. Target: **SLUS-01270**, Windows campaign.
+
+**Phase 1 is open. There is no production mouse mod on this branch.** The
+attached specification originally targets Medal of Honor SLUS-00974; the owner
+approved adapting it to Underground. Reference-game addresses are not valid
+Underground addresses. No production hook has been selected or registered.
+
+## Reproduced native state
+
+`tools/probe_mkb_native.py` cold-boots the owner's disc through the native
+menus, or loads a copied, compatible campaign fixture. It explicitly requests
+a DualShock for analog controls. The actor and input data below were observed
+in the opening campaign street. Heap addresses identify this fixture only.
+
+| Item | Underground observation | Ownership / scope |
+| --- | --- | --- |
+| SP root | word at `0x800AA17C` | Observed actor `0x800F0BE0`; require aligned RAM pointer and actor word `+8 == 1` |
+| Input root | word at actor `+0x39C` | Observed `0x800F0FDC == actor +0x3FC`; re-read after load |
+| Player update | `0x800892C8`, size `0xF20` | SHA-256 `6517965996647b2589bf95f282f5c3bd7f1b8c6bf0118b0a3b6495960e16d401`, matches existing engine map |
+| Player pitch | actor `+0x23C`, 32 bits | Native integration adds actor `+0x248`; other branches overwrite it from input targets |
+| Player yaw | actor `+0x240`, 32 bits | Native integration adds actor `+0x24C`; not a 16-bit Euler array |
+| Pitch target candidate | input `+0x184`, 32 bits | Subtracted native look delta is stored here; temporary perturbation changes player pitch |
+| Yaw target candidate | input `+0x190`, 32 bits | Native turn delta is accumulated here; temporary perturbation changes player yaw |
+| Native look processing | `0x8008EAF0` | Called from player update at `0x80089DE4`; also handles native movement and aim contexts |
+| Camera / targeting adjustment candidate | `0x8008D81C` | Called at `0x8008F994` for context values 7/8; produces pitch/yaw angular increments |
+| Native orientation integration | `0x80078FBC` | Stores at `0x80079018` / `0x80079034` observed in write trace |
+| Shot basis | `0x80076C28` | Reads a **shot object's** orientation, not proof of authoritative player look |
+
+These are research observations, not production guards. No complete ownership,
+code-residency, execution-scope and once-per-update contract is established for
+a proposed input injection site.
+
+## Instruction evidence
+
+Small instruction anchors come from resident memory and the runtime disassembler.
+The complete local dumps remain ignored under `analysis/runtime/mkb-*`.
+
+| Address | Word | Observed operation / implication |
+| --- | --- | --- |
+| `0x800892EC` | `0x8E30039C` | Load player input from actor `+0x39C` |
+| `0x80089DE4` | `0x0C023ABC` | Call `0x8008EAF0`, after earlier weapon/action handling in this function |
+| `0x8008F468` | `0xAE020190` | Store native yaw target at input `+0x190` |
+| `0x8008F8F0` | `0x3C0302AA` | Construct upper pitch clamp `0x02AA0000` |
+| `0x8008F90C` | `0x3C03FD56` | Construct lower pitch clamp `0xFD560000` |
+| `0x8008F928` | `0xAE020184` | Store clamped pitch target at input `+0x184` |
+| `0x8008F994` | `0x0C023607` | Call adjustment function `0x8008D81C` |
+| `0x8008F9AC` | `0xAE82023C` | Alternate branch copies input pitch to actor pitch |
+| `0x8008F9B8` | `0xAE820240` | Alternate branch copies input yaw to actor yaw |
+| `0x80079018` | `0xAE02023C` | Store integrated actor pitch |
+| `0x80079034` | `0xAE020240` | Store integrated actor yaw |
+| `0x80076C90` | `0x8602023E` | Read high half of shot pitch for basis construction |
+| `0x80076C9C` | `0x86020242` | Read high half of shot yaw for basis construction |
+
+The stores, high-half angle reads and 4096-unit angular differences support
+Q16 storage with 4096 angle units per revolution. The observed pitch-branch
+limits are +/-682 native units, approximately +/-59.94 degrees. Full rotation,
+all native control modes and mounted constraints remain unverified.
+
+## Temporary perturbation result
+
+The opt-in research command changes one byte of an already traced input angle
+in a copied-save process. It does not install a mouse policy or change code.
+Changing one byte avoids a partially written four-byte target between debugger
+requests. The host pad stays neutral during the perturbation.
+
+| Experiment | Input target change | Settled actor result |
+| --- | --- | --- |
+| Yaw | `257047552 -> 259144704`, exactly +32 native units | `255197184 -> 256966656`, +27 native units; pitch also changes |
+| Pitch | `3916800 -> 6013952`, exactly +32 native units | `3956736 -> 6021120`, +31.5 native units; yaw also changes |
+
+Both the normal configuration and requested interpreter diagnostic controls
+reproduced the settled values. Backend coverage was not established by the
+empty entry rings. Samples are successive live reads, not atomic per-update snapshots.
+The experiment establishes that these targets affect orientation. It does
+**not** establish exact proportional mouse look, instantaneous response, shot
+impact alignment, or the cause of all cross-axis changes.
+
+## Native action mapping
+
+Existing Underground evidence in `../vr/MOVEMENT_EVIDENCE.md` and
+`../vr/FLAT_LOCAL_INPUT.md` documents Cross=fire, Square=reload/action,
+Circle=cycle, Triangle=jump, L2=crouch, R2=aim/look, Start=pause, with
+Cross/ Triangle as menu confirm/back. Native LX turns, LY moves, RX strafes
+and RY looks vertically in the measured analog layout.
+
+This session independently exercised both LX and RY signs and Cross firing.
+It did not revalidate every action in a fresh and existing-save control
+scheme. The existing evidence is not a completed Phase 1 action matrix.
+
+## Exact unresolved gate
+
+1. Identify the adjustment/centering/aim-assist branches and a correction that
+   removes pad smoothing from mouse input while retaining native recoil and
+   spread. The target-only experiment above fails the proportionality gate.
+2. Prove an injection boundary after native look resolution and before the
+   movement, shot and camera consumers. `0x8008F984` is a research candidate,
+   not an approved production address. Player-update entry alone is insufficient.
+3. Establish a simulation-update token independent of render/VBlank counters,
+   including actor ownership, repeated entries, restores and replay exclusion.
+4. Measure actual player-shot direction and impacts, mounted constraints,
+   native aim state, full yaw wrap and all supported action contexts.
+
+The existing dispatch and function-entry debug rings returned no internal
+player entries in these attempts, including the documented interpreter
+override. Zero trace rows cannot establish call ordering. The probe records
+`call_order_verified = false` for that condition. Further work needs a working
+instruction/entry observation path at these boundaries (or Ghidra plus live
+per-update instrumentation); do not replace missing evidence with a guessed
+token or renderer hook.
+
+Per the supplied plan's Phase 1 exit rule, subsequent package, framework,
+binding-profile and GUI phases have not been started. The requested feature
+is unfinished.
