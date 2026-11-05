@@ -16,6 +16,9 @@ ordinary input profiles, generated C and unrelated edits.
 - Branch `mkb`, original checkpoint `2cbc92a` (research probe and evidence).
   Continuation work below follows that commit; read `git log -1` for current HEAD.
 - Production mod is not implemented. Phase 1 native aim research is in progress.
+- The next implementation route is the reduced-scope
+  [practical plan](MOUSE_KEYBOARD_PRACTICAL_PLAN.md): native input paths,
+  always-on normal crosshair, native sniper scope, and no custom ADS.
 - Game baseline `53e4a50071a3c8240a3b0285c4b4342d3a1c4044`, VERSION 0.1.1.
 - Framework pin `e57fd0279b86edf48cfe42364da4388046772bad`; launcher pin
   `a95615751b413e043983944441ed8912066c65ce`; do not float submodules.
