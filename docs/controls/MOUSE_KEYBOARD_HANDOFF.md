@@ -388,3 +388,78 @@ framework edit was changed.
    coverage before production math/lifecycle, input transport, options,
    profiles and launcher controls. Keep every production feature OFF and do not
    advertise mouse support from this diagnostic result.
+
+## Continuation — physical shot endpoints, 2026-11-06
+
+The owner requested continuation again. Work resumes from checkpoint `9e0f72f`.
+This turn remains Phase 1 research only; no production input path is enabled.
+
+### New evidence and outcome
+
+- The harness now follows the first P38 object constructed in a firing window.
+  It records `80047498` shot-update entries and observes `80077e8c` release
+  calls only for that object. The runner releases Cross at the first
+  construction, so the longer sixteen-update observation cannot consume a
+  second round.
+- Release RA `80045df8` identifies the native collision path. At `80045d04`
+  that path allocates its impact effect, and at `80045d24` passes the shot's
+  `+0x220` position as the effect point. The release row therefore records the
+  native collision endpoint before the shot object is freed.
+- Release RA `800474e8` identifies lifetime expiry inside the shot updater.
+  The checker never reports that endpoint as an impact. This control caught a
+  negative-yaw shot that remained in flight for fifteen shot updates and then
+  expired rather than colliding.
+- The final matrix is `analysis/runtime/mkb-impact-sealed-20261106`:
+  **7/7 cases checked**, ten invalid commands rejected, one ammo decrement per
+  firing case, no dropped rows and no remaining game process.
+
+| Case | Endpoint | Target residual | Camera / endpoint angle |
+| --- | --- | --- | --- |
+| baseline | collision | 1.000 world unit | 17.088 / 16.947 units |
+| yaw +32 | collision | 2.449 | 16.336 / 16.573 |
+| pitch +32 | collision | 5.000 | 16.501 / 16.383 |
+| yaw -32 | expired, no impact | 4,942.344 from cached target | 18.907 camera only |
+| pitch -32 | collision | 1,349.863 | 20.307 / 20.712 |
+| pitch +64 | collision | 4.243 | 9.760 / 9.344 |
+
+Four aligned shots hit within five world units of the cached collision target.
+The negative-pitch shot collided with a nearer surface than the cached target,
+while its endpoint direction remained close to the camera direction. The
+negative-yaw control expired without any impact. This proves physical endpoint
+agreement is not equivalent to comparing actor or shot Euler angles, and it
+does not yet prove a pixel-space reticle match.
+
+Committed compact evidence is
+`docs/controls/MOUSE_KEYBOARD_IMPACT_RECEIPT.json`. Current research source
+SHA256 is `c483acd6920ee3f799fc4fe2d5bf81df42c78683991a8f26b565f8322d440ec3`;
+binary SHA256 is `44131209dd2511e49b118c4466f9d52fe0eb3d63d4ab5e50e739290a09ae3019`.
+The final raw receipt SHA256 is
+`e83a30478fc459e3f706678a5401d5868d7dad6b1d5db59121c45e3edd2a5415`.
+The compact checked receipt SHA256 is
+`863da777bbed41a622a9aa92470d505ca4f05046d16e1f48ab0d1bcd264e8323`.
+The row schema has 72 fields and capacity 192; firing windows can request up to
+16 owned updates.
+
+```powershell
+cmake --build build-probe --target psx-runtime -j 2
+python tools/probe_mkb_native.py analysis/runtime/mkb-next --slot 0 --fixtures analysis/runtime/mkb-native-analog-20261105/saves/openbios --research --research-direct --research-prepare --gate-fire --research-cases camera_order fire_camera_base fire_camera_yaw fire_camera_yaw_negative fire_camera_pitch fire_camera_pitch_negative fire_camera_pitch_large
+python tools/check_mkb_research.py analysis/runtime/mkb-next/receipt.json --out docs/controls/MOUSE_KEYBOARD_IMPACT_RECEIPT.json
+```
+
+All runs closed normally, preserved source saves and production preferences,
+and left no game process. No generated game C, production source or pre-existing
+framework edit was changed.
+
+### Next work after this checkpoint
+
+1. Add a reticle-pixel comparison using the measured camera matrix and capture
+   nonblank frames at the endpoint, rather than extrapolating agreement from
+   view angles alone.
+2. Trace the native collision query that produces the negative-pitch nearer
+   surface. Determine why its endpoint differs from the cached ray target and
+   how collider selection, quantized target storage and muzzle parallax
+   contribute without changing shot motion.
+3. Add a target-present aim-assist control, then repeat scoped, recoil, moving,
+   mounted and other weapon/mode cases. Keep the production mouse feature and
+   all gameplay writes OFF until those contexts and cached-native hook coverage
+   are proven.

@@ -93,7 +93,7 @@ def main():
                    binary_sha256=native.digest(exe), source_hashes=hashes,
                    config_sha256=native.digest(config),
                    vr_requested=False, interpreter_diagnostic=args.interpreter,
-                   research_direct=args.research_direct, research_schema=3,
+                   research_direct=args.research_direct, research_schema=4,
                    research_prepare=args.research_prepare, gated_fire=args.gate_fire, samples=[])
     if args.research:
         receipt["research_source_sha256"] = native.digest(ROOT / "controls/research/moh_mkb_research.c")
@@ -159,7 +159,7 @@ def main():
             snapshot("neutral")
             if args.research:
                 receipt["rejected_commands"] = []
-                for invalid in ["arm 0", "arm 9", "inject 1 1 0", "inject 800892c8 257 0", "inject 0 1 0", "inject 800892c8 1 0 trailing", "direct 2", "refresh 2", "prepare 2", "fire_gate 2"]:
+                for invalid in ["arm 0", "arm 17", "inject 1 1 0", "inject 800892c8 257 0", "inject 0 1 0", "inject 800892c8 1 0 trailing", "direct 2", "refresh 2", "prepare 2", "fire_gate 2"]:
                     result = native.command("mod_cmd", name="mohu.mkb.research", args=invalid)
                     if result["result"] != 0:
                         raise RuntimeError(f"Invalid research command accepted: {invalid}: {result}")
@@ -177,10 +177,16 @@ def main():
                     if fire:
                         native.command("set_input", buttons="0xbfff", pad_type=1)
                     deadline = time.monotonic() + 10
+                    released = False
                     while time.monotonic() < deadline:
                         result = research_command("dump")
+                        if fire and not released and result.get("shot_seen"):
+                            # Keep observing the first blip, but do not hold the
+                            # trigger long enough to consume a second round.
+                            native.command("set_input", buttons="0xffff", pad_type=1)
+                            released = True
                         if result.get("state") == 3:
-                            if fire:
+                            if fire and not released:
                                 native.command("set_input", buttons="0xffff", pad_type=1)
                             result["rows"] = [research_command(f"row {i}")["values"] for i in range(result["count"])]
                             return result
@@ -224,7 +230,8 @@ def main():
                         native.frames(30)
                         before = snapshot(name + "_prepared")
                     fire = name.startswith("fire_")
-                    updates = 4 if fire or name in ("scene_order", "camera_order", "camera_yaw") else 1
+                    updates = (16 if fire else
+                               4 if name in ("scene_order", "camera_order", "camera_yaw") else 1)
                     command = "arm" if not site else f"inject {site:x} {yaw} {pitch}"
                     if updates != 1:
                         command = f"arm {updates}" if not site else command + f" {updates}"

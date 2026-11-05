@@ -1,0 +1,411 @@
+{
+  "schema": 1,
+  "binary_sha256": "44131209dd2511e49b118c4466f9d52fe0eb3d63d4ab5e50e739290a09ae3019",
+  "research_source_sha256": "c483acd6920ee3f799fc4fe2d5bf81df42c78683991a8f26b565f8322d440ec3",
+  "rejected_commands": 10,
+  "direct_target_test": true,
+  "early_ray_test": false,
+  "camera_preparation_test": true,
+  "production_mouse_mod_verified": false,
+  "cases": [
+    {
+      "name": "camera_order",
+      "updates": 4,
+      "writes": 0,
+      "final_pitch_delta_units": 0.0,
+      "final_yaw_delta_units": 0.0,
+      "original_ray_calls": 4,
+      "camera_preparations": 0,
+      "matching_preparation_skips": 0,
+      "camera_forward": [
+        -0.30476357586529085,
+        -0.08473005501504714,
+        0.9486516645233636
+      ],
+      "view_ray_angle_units": 17.0875887472923,
+      "aim_assist_score": 4753,
+      "aim_assist_baseline": 4753,
+      "aim_assist_active": false,
+      "camera_input_origin": [
+        1186922496,
+        -15990784,
+        -508035072
+      ],
+      "camera_actor_position": [
+        1190920192,
+        -14876672,
+        -520486912
+      ],
+      "aim_target_world": [
+        1101463552,
+        -27262976,
+        -234422272
+      ],
+      "ray_origin_world": [
+        1186988032,
+        -10682368,
+        -490274816
+      ]
+    },
+    {
+      "name": "fire_camera_base",
+      "updates": 16,
+      "writes": 0,
+      "final_pitch_delta_units": 0.0,
+      "final_yaw_delta_units": 0.0,
+      "original_ray_calls": 16,
+      "camera_preparations": 0,
+      "matching_preparation_skips": 0,
+      "camera_forward": [
+        -0.30476357586529085,
+        -0.08473005501504714,
+        0.9486516645233636
+      ],
+      "view_ray_angle_units": 17.0875887472923,
+      "aim_assist_score": 4753,
+      "aim_assist_baseline": 4753,
+      "aim_assist_active": false,
+      "camera_input_origin": [
+        1186922496,
+        -15990784,
+        -508035072
+      ],
+      "camera_actor_position": [
+        1190920192,
+        -14876672,
+        -520486912
+      ],
+      "aim_target_world": [
+        1101463552,
+        -27262976,
+        -234422272
+      ],
+      "ray_origin_world": [
+        1186988032,
+        -10682368,
+        -490274816
+      ],
+      "shot_update_rows": 7,
+      "shot_release_calls": 1,
+      "shot_release_ra": "0x80045DF8",
+      "shot_endpoint_kind": "collision",
+      "impact_world": [
+        1101463552,
+        -27328512,
+        -234422272
+      ],
+      "impact_target_distance_world_units": 1.0,
+      "impact_view_angle_units": 16.946581594577058,
+      "first_shot_same_update": true,
+      "shots": [
+        {
+          "update": 208,
+          "pitch_units": 40.0,
+          "yaw_units": -210.0,
+          "player_pitch_units": 63.875,
+          "player_yaw_units": 3894.0
+        }
+      ]
+    },
+    {
+      "name": "fire_camera_yaw",
+      "updates": 16,
+      "writes": 1,
+      "final_pitch_delta_units": 0.0,
+      "final_yaw_delta_units": 32.0,
+      "original_ray_calls": 16,
+      "camera_preparations": 0,
+      "matching_preparation_skips": 0,
+      "camera_forward": [
+        -0.2592929803365304,
+        -0.08475757767399109,
+        0.9620724002771501
+      ],
+      "view_ray_angle_units": 16.33579054741518,
+      "aim_assist_score": 4708,
+      "aim_assist_baseline": 4708,
+      "aim_assist_active": false,
+      "camera_input_origin": [
+        1187512320,
+        -15990784,
+        -507838464
+      ],
+      "camera_actor_position": [
+        1190920192,
+        -14876672,
+        -520486912
+      ],
+      "aim_target_world": [
+        1115095040,
+        -27197440,
+        -233963520
+      ],
+      "ray_origin_world": [
+        1186988032,
+        -10682368,
+        -490274816
+      ],
+      "shot_update_rows": 7,
+      "shot_release_calls": 1,
+      "shot_release_ra": "0x80045DF8",
+      "shot_endpoint_kind": "collision",
+      "impact_world": [
+        1115160576,
+        -27066368,
+        -234029056
+      ],
+      "impact_target_distance_world_units": 2.449489742783178,
+      "impact_view_angle_units": 16.573449407085956,
+      "first_shot_same_update": true,
+      "shots": [
+        {
+          "update": 340,
+          "pitch_units": 40.0,
+          "yaw_units": -178.0,
+          "player_pitch_units": 63.875,
+          "player_yaw_units": 3926.0
+        }
+      ]
+    },
+    {
+      "name": "fire_camera_pitch",
+      "updates": 16,
+      "writes": 1,
+      "final_pitch_delta_units": 32.0,
+      "final_yaw_delta_units": 0.0,
+      "original_ray_calls": 16,
+      "camera_preparations": 1,
+      "matching_preparation_skips": 1,
+      "camera_forward": [
+        -0.3028710610913193,
+        -0.13386424947008133,
+        0.943583320680919
+      ],
+      "view_ray_angle_units": 16.501455648506568,
+      "aim_assist_score": 4816,
+      "aim_assist_baseline": 4816,
+      "aim_assist_active": false,
+      "camera_input_origin": [
+        1186922496,
+        -16646144,
+        -508035072
+      ],
+      "camera_actor_position": [
+        1190920192,
+        -14876672,
+        -520486912
+      ],
+      "aim_target_world": [
+        1099890688,
+        -42139648,
+        -234422272
+      ],
+      "ray_origin_world": [
+        1186988032,
+        -10682368,
+        -490274816
+      ],
+      "shot_update_rows": 7,
+      "shot_release_calls": 1,
+      "shot_release_ra": "0x80045DF8",
+      "shot_endpoint_kind": "collision",
+      "impact_world": [
+        1099694080,
+        -42401792,
+        -234422272
+      ],
+      "impact_target_distance_world_units": 5.0,
+      "impact_view_angle_units": 16.383069853189134,
+      "first_shot_same_update": true,
+      "shots": [
+        {
+          "update": 466,
+          "pitch_units": 76.0,
+          "yaw_units": -214.0,
+          "player_pitch_units": 95.875,
+          "player_yaw_units": 3894.0
+        }
+      ]
+    },
+    {
+      "name": "fire_camera_yaw_negative",
+      "updates": 16,
+      "writes": 1,
+      "final_pitch_delta_units": 0.0,
+      "final_yaw_delta_units": -32.0,
+      "original_ray_calls": 16,
+      "camera_preparations": 0,
+      "matching_preparation_skips": 0,
+      "camera_forward": [
+        -0.35381601734422785,
+        -0.08443460899063544,
+        0.9314961205905623
+      ],
+      "view_ray_angle_units": 18.907192609091965,
+      "aim_assist_score": 4818,
+      "aim_assist_baseline": 4818,
+      "aim_assist_active": false,
+      "camera_input_origin": [
+        1186267136,
+        -15990784,
+        -508231680
+      ],
+      "camera_actor_position": [
+        1190920192,
+        -14876672,
+        -520486912
+      ],
+      "aim_target_world": [
+        1084948480,
+        -27394048,
+        -234356736
+      ],
+      "ray_origin_world": [
+        1186988032,
+        -10682368,
+        -490274816
+      ],
+      "shot_update_rows": 15,
+      "shot_release_calls": 1,
+      "shot_release_ra": "0x800474E8",
+      "shot_endpoint_kind": "expired",
+      "expired_endpoint_world": [
+        965296128,
+        -47497216,
+        65961984
+      ],
+      "expired_endpoint_target_distance_world_units": 4942.344066837111,
+      "first_shot_same_update": true,
+      "shots": [
+        {
+          "update": 603,
+          "pitch_units": 40.0,
+          "yaw_units": -247.0,
+          "player_pitch_units": 63.875,
+          "player_yaw_units": 3862.0
+        }
+      ]
+    },
+    {
+      "name": "fire_camera_pitch_negative",
+      "updates": 16,
+      "writes": 1,
+      "final_pitch_delta_units": -32.0,
+      "final_yaw_delta_units": 0.0,
+      "original_ray_calls": 16,
+      "camera_preparations": 1,
+      "matching_preparation_skips": 1,
+      "camera_forward": [
+        -0.3054381962913428,
+        -0.03478954147029903,
+        0.9515761640828219
+      ],
+      "view_ray_angle_units": 20.307423407192193,
+      "aim_assist_score": 3340,
+      "aim_assist_baseline": 3340,
+      "aim_assist_active": false,
+      "camera_input_origin": [
+        1186922496,
+        -15335424,
+        -508035072
+      ],
+      "camera_actor_position": [
+        1190920192,
+        -14876672,
+        -520486912
+      ],
+      "aim_target_world": [
+        1127481344,
+        -12976128,
+        -317915136
+      ],
+      "ray_origin_world": [
+        1186988032,
+        -10682368,
+        -490274816
+      ],
+      "shot_update_rows": 7,
+      "shot_release_calls": 1,
+      "shot_release_ra": "0x80045DF8",
+      "shot_endpoint_kind": "collision",
+      "impact_world": [
+        1098448896,
+        -14024704,
+        -234356736
+      ],
+      "impact_target_distance_world_units": 1349.8629560070162,
+      "impact_view_angle_units": 20.71211531208417,
+      "first_shot_same_update": true,
+      "shots": [
+        {
+          "update": 733,
+          "pitch_units": 8.0,
+          "yaw_units": -217.0,
+          "player_pitch_units": 31.875,
+          "player_yaw_units": 3894.0
+        }
+      ]
+    },
+    {
+      "name": "fire_camera_pitch_large",
+      "updates": 16,
+      "writes": 1,
+      "final_pitch_delta_units": 64.0,
+      "final_yaw_delta_units": 0.0,
+      "original_ray_calls": 16,
+      "camera_preparations": 1,
+      "matching_preparation_skips": 1,
+      "camera_forward": [
+        -0.3007528786623938,
+        -0.18235887217562913,
+        0.9361052012007604
+      ],
+      "view_ray_angle_units": 9.760150131969075,
+      "aim_assist_score": 4863,
+      "aim_assist_baseline": 4863,
+      "aim_assist_active": false,
+      "camera_input_origin": [
+        1186922496,
+        -17301504,
+        -508035072
+      ],
+      "camera_actor_position": [
+        1190920192,
+        -14876672,
+        -520486912
+      ],
+      "aim_target_world": [
+        1102381056,
+        -57212928,
+        -234487808
+      ],
+      "ray_origin_world": [
+        1186988032,
+        -10682368,
+        -490274816
+      ],
+      "shot_update_rows": 7,
+      "shot_release_calls": 1,
+      "shot_release_ra": "0x80045DF8",
+      "shot_endpoint_kind": "collision",
+      "impact_world": [
+        1102315520,
+        -57475072,
+        -234422272
+      ],
+      "impact_target_distance_world_units": 4.242640687119285,
+      "impact_view_angle_units": 9.344150029014374,
+      "first_shot_same_update": true,
+      "shots": [
+        {
+          "update": 874,
+          "pitch_units": 112.0,
+          "yaw_units": -208.0,
+          "player_pitch_units": 127.875,
+          "player_yaw_units": 3894.0
+        }
+      ]
+    }
+  ],
+  "raw_receipt_sha256": "e83a30478fc459e3f706678a5401d5868d7dad6b1d5db59121c45e3edd2a5415"
+}

@@ -262,3 +262,30 @@ remaining differences arise after the camera/view and native target point are
 formed; colliding-target selection, fixed muzzle parallax and Q16 target
 quantization are candidate contributors, not yet separated. Actual impact and
 visible camera-projection agreement remain open.
+
+## Continuation: native physical endpoints
+
+The 2026-11-06 impact matrix follows the first P38 object past its cached-ray
+construction. The read-only hooks are:
+
+| Site / function | Guard and observation |
+| --- | --- |
+| `80047498` shot update | Exact prologue, caller RA `800784dc`, live shot type `13F6`, first construction pointer only; records `+0x220` position and native flags |
+| `80077e8c` release | The released pointer must equal the tracked shot and still carry type `13F6`; records the pre-release position and caller RA |
+| `80045df0 -> 80045df8` | Collision-path release. The same path allocates an impact effect at `80045d04` and supplies shot `+0x220` as the effect point at `80045d24` |
+| `800474e0 -> 800474e8` | Shot lifetime-expiry release. It is not an impact and the checker classifies it separately |
+
+The final checked run recorded one round per firing case and one release for the
+tracked shot. Baseline, +32 yaw, +32/-32/+64 pitch cases followed the collision
+path. Their endpoints were respectively 1.000, 2.449, 5.000, 1,349.863 and
+4.243 world units from the cached collision target. The four aligned cases were
+within 5 world units; negative pitch hit a nearer surface while retaining a
+20.712-unit endpoint angle versus a 20.307-unit camera angle.
+
+The -32 yaw shot did not hit within the bounded window. It remained active for
+15 update entries and released through `800474e8`; its final point was 4,942.344
+world units from the cached target. It is recorded as expired, never as an
+impact. These results show that actual surface agreement must be tested
+separately from the shot Euler angles and from the cached target. Pixel-space
+reticle projection, target-present aim assist, scoped/recoil/mounted contexts
+and other weapon families remain open.

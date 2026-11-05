@@ -25,20 +25,25 @@
 #define CONSTRUCT 0x8004815Cu
 #define AIM_ASSIST 0x8008E06Cu
 #define RAY_DONE 0x8008E7A8u
+#define SHOT_UPDATE 0x80047498u
+#define SHOT_RELEASE_FN 0x80077E8Cu
 /* Synthetic observations, never guest instruction addresses. */
 #define CAMERA_PREPARED 0xFF000018u
 #define PREPARE_SKIPPED 0xFF00001Cu
-#define CAPACITY 128
-#define FIELDS 64
+#define SHOT_RELEASE 0xFF000024u
+#define CAPACITY 192
+#define FIELDS 72
 
 enum { IDLE, ARMED, RECORDING, READY, CONFIGURING };
 static atomic_uint state, active;
 static atomic_uint direct_mode, prepare_mode, fire_gate;
+static atomic_uint shot_seen, shot_released;
 static unsigned last_direct_mode;
 static unsigned preparing;
 static unsigned prepared_sequence;
 static uint32_t prepared_result;
 static unsigned ray_calls;
+static uint32_t tracked_shot;
 /* Parameters transfer with ARMED release/acquire; observations with READY.
  * A serial debug command cannot re-arm while its previous dump is reading.
  * Guest restore/reset only changes state, never a published observations array. */
@@ -123,6 +128,19 @@ static void record(CPUState *cpu, uint32_t site, uint32_t p, uint32_t object) {
     r[60] = site == AIM_ASSIST ? cpu->gpr[30] : 0;
     for (unsigned i = 0; i < 3; ++i)
         r[61 + i] = camera ? psx_mod_read_word(camera + 0x220 + 4 * i) : 0;
+    uint32_t shot = object >= 0x800B0000u && object <= 0x801FC000u &&
+                    !(object & 3u) &&
+                    psx_mod_read_word(object + 8) == 0x13F6u ? object : 0;
+    uint32_t companion = shot ? psx_mod_read_word(shot + 0x39Cu) : 0;
+    r[64] = shot ? psx_mod_read_word(shot + 0x0Cu) : 0;
+    r[65] = shot ? psx_mod_read_word(shot + 0x10u) : 0;
+    r[66] = shot ? psx_mod_read_word(shot + 0x14u) : 0;
+    r[67] = shot ? psx_mod_read_word(shot + 0x214u) : 0;
+    r[68] = shot ? psx_mod_read_word(shot + 0x298u) : 0;
+    r[69] = companion;
+    r[70] = companion >= 0x800B0000u && companion <= 0x801FC000u && !(companion & 3u)
+        ? psx_mod_read_word(companion + 0x38u) : 0;
+    r[71] = shot ? psx_mod_read_word(shot + 0x34u) : 0;
 }
 static int observe_ray(CPUState *cpu, uint32_t site) {
     if (!cpu || !atomic_load_explicit(&active, memory_order_relaxed)) return 0;
@@ -165,6 +183,33 @@ static void perturb(CPUState *cpu, uint32_t site, uint32_t p) {
     for (unsigned i = 0; i < 4; ++i) psx_mod_write_word(addresses[i], (uint32_t)values[i]);
     applied = 1;
     record(cpu, site | 1u, p, p);
+}
+static int observe_shot_update(CPUState *cpu, uint32_t site) {
+    if (!cpu || !tracked_shot || site != SHOT_UPDATE ||
+        cpu->gpr[4] != tracked_shot || cpu->gpr[31] != 0x800784DCu ||
+        !atomic_load_explicit(&active, memory_order_relaxed) ||
+        atomic_load_explicit(&state, memory_order_acquire) != RECORDING) return 0;
+    uint32_t p = owned_player();
+    if (!p || !owned_camera(p) || tracked_shot < 0x800B0000u ||
+        tracked_shot > 0x801FC000u || (tracked_shot & 3u) ||
+        psx_mod_read_word(tracked_shot + 8) != 0x13F6u) return 0;
+    record(cpu, SHOT_UPDATE, p, tracked_shot);
+    return 0;
+}
+static int observe_shot_release(CPUState *cpu, uint32_t site) {
+    if (!cpu || !tracked_shot || cpu->gpr[4] != tracked_shot ||
+        !atomic_load_explicit(&active, memory_order_relaxed) ||
+        atomic_load_explicit(&state, memory_order_acquire) != RECORDING) return 0;
+    uint32_t p = owned_player();
+    if (!p || !owned_camera(p) || site != SHOT_RELEASE_FN ||
+        psx_mod_read_word(SHOT_UPDATE) != 0x27BDFFA8u ||
+        tracked_shot < 0x800B0000u || tracked_shot > 0x801FC000u ||
+        (tracked_shot & 3u) || psx_mod_read_word(tracked_shot + 8) != 0x13F6u)
+        return 0;
+    record(cpu, SHOT_RELEASE, p, tracked_shot);
+    atomic_store_explicit(&shot_released, 1, memory_order_release);
+    tracked_shot = 0;
+    return 0;
 }
 static void entry(CPUState *cpu, uint32_t site) {
     if (!atomic_load_explicit(&active, memory_order_relaxed) || !cpu) return;
@@ -210,6 +255,9 @@ static void entry(CPUState *cpu, uint32_t site) {
                  !(psx_mod_read_word(0x800A04B4u) & 0xFFFFu))) return;
             row_count = dropped = applied = rejected = 0;
             ray_calls = 0;
+            tracked_shot = 0;
+            atomic_store_explicit(&shot_seen, 0, memory_order_relaxed);
+            atomic_store_explicit(&shot_released, 0, memory_order_relaxed);
             remaining_updates = requested_updates;
             atomic_store_explicit(&state, RECORDING, memory_order_release);
             s = RECORDING;
@@ -236,6 +284,10 @@ static void entry(CPUState *cpu, uint32_t site) {
             object < 0x800B0000u || object > 0x801FC000u || (object & 3) ||
             psx_mod_read_word(object + 8) != 0x13F6u ||
             code_hash(CONSTRUCT, 0xDCu) != 0x073B3393u) return;
+        if (!tracked_shot) {
+            tracked_shot = object;
+            atomic_store_explicit(&shot_seen, 1, memory_order_release);
+        }
     } else if (site == AIM_ASSIST || site == RAY_DONE) {
         if (!ray_calls || cpu->gpr[22] != p || cpu->gpr[19] != p + 0x3FCu) return;
     }
@@ -267,6 +319,9 @@ static void reset(void) {
     prepared_sequence = 0;
     preparing = 0;
     last_direct_mode = 0;
+    tracked_shot = 0;
+    atomic_store_explicit(&shot_seen, 0, memory_order_relaxed);
+    atomic_store_explicit(&shot_released, 0, memory_order_relaxed);
 }
 static void restored(void) {
     atomic_store_explicit(&state, IDLE, memory_order_release);
@@ -276,6 +331,9 @@ static void restored(void) {
     prepared_sequence = 0;
     preparing = 0;
     last_direct_mode = 0;
+    tracked_shot = 0;
+    atomic_store_explicit(&shot_seen, 0, memory_order_relaxed);
+    atomic_store_explicit(&shot_released, 0, memory_order_relaxed);
 }
 static void activate(void) { reset(); atomic_store_explicit(&active, 1, memory_order_release); }
 
@@ -303,9 +361,17 @@ static int command(const char *args, char *reply, int capacity) {
     int row_request = sscanf(args, "row %u %c", &row_index, &trailing) == 1;
     if (!strcmp(args, "dump") || row_request) {
         unsigned s = atomic_load_explicit(&state, memory_order_acquire);
-        if (s != READY) { snprintf(reply, capacity, "{\"state\":%u}", s); return 1; }
+        if (s != READY) {
+            snprintf(reply, capacity, "{\"state\":%u,\"shot_seen\":%u,\"shot_released\":%u}",
+                     s, atomic_load_explicit(&shot_seen, memory_order_acquire),
+                     atomic_load_explicit(&shot_released, memory_order_acquire));
+            return 1;
+        }
         if (!row_request) {
-            snprintf(reply, capacity, "{\"state\":%u,\"applied\":%u,\"rejected\":%u,\"count\":%u,\"dropped\":%u}", s, applied, rejected, row_count, dropped);
+            snprintf(reply, capacity, "{\"state\":%u,\"applied\":%u,\"rejected\":%u,\"count\":%u,\"dropped\":%u,\"shot_seen\":%u,\"shot_released\":%u}",
+                     s, applied, rejected, row_count, dropped,
+                     atomic_load_explicit(&shot_seen, memory_order_acquire),
+                     atomic_load_explicit(&shot_released, memory_order_acquire));
             return 1;
         }
         if (row_index >= row_count || capacity < FIELDS * 11 + 20) return 0;
@@ -325,7 +391,7 @@ static int command(const char *args, char *reply, int capacity) {
         }
     }
     if ((site && site != UPDATE && site != LOOK_END && site != ADJUST_END && site != CAMERA_UPDATE) ||
-        yaw < -256 || yaw > 256 || pitch < -256 || pitch > 256 || !updates || updates > 8 ||
+        yaw < -256 || yaw > 256 || pitch < -256 || pitch > 256 || !updates || updates > 16 ||
         (!site && (yaw || pitch))) return 0;
     unsigned s = atomic_load_explicit(&state, memory_order_acquire);
     if (s != IDLE && s != READY) { snprintf(reply, capacity, "{\"busy\":true}"); return 1; }
@@ -346,6 +412,8 @@ PSX_MOD_CONSTRUCTOR(register_mkb_research) {
     psx_mod_register_function_entry_plugin(ID, CONSTRUCT, entry);
     psx_mod_register_function_filter_plugin(ID, RAY, observe_ray);
     psx_mod_register_function_filter_plugin(ID, PREPARE, prepare_filter);
+    psx_mod_register_function_filter_plugin(ID, SHOT_UPDATE, observe_shot_update);
+    psx_mod_register_function_filter_plugin(ID, SHOT_RELEASE_FN, observe_shot_release);
     psx_mod_register_instruction_plugin(ID, LOOK_END, 0x26A2FFF9u, entry);
     psx_mod_register_instruction_plugin(ID, 0x8008D8C8u, 0xAEC20248u, entry);
     psx_mod_register_instruction_plugin(ID, 0x8008D8F4u, 0xAEC20248u, entry);

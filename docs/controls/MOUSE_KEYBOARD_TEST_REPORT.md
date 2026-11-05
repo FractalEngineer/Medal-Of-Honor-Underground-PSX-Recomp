@@ -160,10 +160,22 @@ Phase 1 remains open. The 2026-11-06 basis matrix added negative and larger
 controls: yaw +32/-32 produced shot yaw +32/-37; pitch +32/-32/+64 produced
 shot pitch +36/-32/+68 with small yaw coupling. The native scoring branch stayed
 at its no-selection baseline in every case, so assistance is not the measured
-cause in this fixture. Cached-target selection, muzzle parallax and Q16
-quantization are still not separated, and actual impact agreement remains
-unmeasured. See [camera basis receipt](MOUSE_KEYBOARD_CAMERA_BASIS_RECEIPT.json)
-and the latest [handoff](MOUSE_KEYBOARD_HANDOFF.md).
+cause in this fixture.
+
+The impact continuation now measures the first P38 object through release.
+Baseline, +32 yaw, +32/-32/+64 pitch followed the collision path and landed
+1.000, 2.449, 5.000, 1,349.863 and 4.243 world units from the cached target.
+The -32 yaw shot stayed alive for fifteen shot updates and expired without an
+impact, so the checker reports no surface endpoint for it. Collision and expiry
+are distinguished by release RA `80045df8` versus `800474e8`. The four aligned
+collisions were within five world units of the cached target, but the
+negative-pitch case hit a nearer surface. See the
+[impact receipt](MOUSE_KEYBOARD_IMPACT_RECEIPT.json) and
+[camera basis receipt](MOUSE_KEYBOARD_CAMERA_BASIS_RECEIPT.json).
+
+Pixel-space reticle projection, target-present assistance, scoped/recoil/moving
+contexts and other weapon families remain unmeasured. Cached-target selection,
+muzzle parallax and Q16 quantization are still not individually separated.
 
 Recoil, other weapons/modes, action mapping and cached-native execution also remain unproven.
 The production mouse/keyboard feature is not implemented.

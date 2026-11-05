@@ -12,6 +12,18 @@ CAMERA, REFRESHED, SKIPPED = 0x8004A744, 0xFF000010, 0xFF000014
 RAY, CONSTRUCT, PREPARED, PREPARE_SKIPPED = 0x8008D81C, 0x8004815C, 0xFF000018, 0xFF00001C
 AIM_ASSIST = 0x8008E06C
 RAY_DONE = 0x8008E7A8
+SHOT_UPDATE = 0x80047498
+SHOT_RELEASE = 0xFF000024
+COLLISION_RELEASE_RA = 0x80045DF8
+EXPIRY_RELEASE_RA = 0x800474E8
+EXPECTED_ENDPOINTS = {
+    "fire_camera_base": ("collision", 8.0),
+    "fire_camera_yaw": ("collision", 8.0),
+    "fire_camera_pitch": ("collision", 8.0),
+    "fire_camera_yaw_negative": ("expired", None),
+    "fire_camera_pitch_negative": ("collision", 1400.0),
+    "fire_camera_pitch_large": ("collision", 8.0),
+}
 
 
 def signed(value):
@@ -36,6 +48,10 @@ def angle_units(first, second):
     length_b = math.sqrt(sum(value * value for value in second))
     cosine = sum(a * b for a, b in zip(first, second)) / (length_a * length_b)
     return math.degrees(math.acos(max(-1.0, min(1.0, cosine)))) * 4096.0 / 360.0
+
+
+def distance_world_units(first, second):
+    return math.sqrt(sum((a - b) ** 2 for a, b in zip(first, second))) / 65536.0
 
 
 def verify(receipt):
@@ -116,13 +132,13 @@ def verify(receipt):
                           matching_preparation_skips=len(skipped))
         assist_rows = [r for r in rows if r[0] == AIM_ASSIST]
         if receipt.get("research_schema", 0) >= 3 and assist_rows:
-            expected_assist = 1 if any(r[0] == CONSTRUCT for r in rows) else request["updates"]
-            assert len(assist_rows) == expected_assist, (case["name"], len(assist_rows))
+            assert 1 <= len(assist_rows) <= request["updates"], (
+                case["name"], len(assist_rows))
             ray_done = [r for r in rows if r[0] == RAY_DONE]
             constructors = [r for r in rows if r[0] == CONSTRUCT]
             assert 1 <= len(ray_done) <= request["updates"], (case["name"], len(ray_done))
             if constructors:
-                assert [r[3] for r in ray_done] == [r[3] for r in constructors]
+                assert ray_done[0][3] == constructors[0][3]
             camera_row = assist_rows[0]
             assert len(camera_row) >= 64 and any(9 <= abs(signed(value)) <= 4096 for value in camera_row[43:52])
             ray_row = ray_done[0]
@@ -139,9 +155,58 @@ def verify(receipt):
                           camera_actor_position=[signed(camera_row[61 + n]) for n in range(3)],
                           aim_target_world=[signed(ray_row[28 + n]) for n in range(3)],
                           ray_origin_world=[signed(ray_row[25 + n]) for n in range(3)])
+            if receipt.get("research_schema", 0) >= 4:
+                shot_updates = [r for r in rows if r[0] == SHOT_UPDATE]
+                release_rows = [r for r in rows if r[0] == SHOT_RELEASE]
+                constructors = [r for r in rows if r[0] == CONSTRUCT]
+                tracked_shots = {r[6] for r in constructors}
+                assert len(tracked_shots) <= 1, (case["name"], "multiple shots")
+                if constructors:
+                    shot = next(iter(tracked_shots))
+                    assert all(r[6] == shot for r in shot_updates)
+                    assert len(release_rows) == 1, (case["name"], "shot did not release")
+                    release = release_rows[0]
+                    release_ra = release[5]
+                    assert release_ra in (COLLISION_RELEASE_RA, EXPIRY_RELEASE_RA), (
+                        case["name"], f"unexpected shot release RA {release_ra:08X}")
+                    result["shot_update_rows"] = len(shot_updates)
+                    result["shot_release_calls"] = len(release_rows)
+                    result["shot_release_ra"] = f"0x{release_ra:08X}"
+                    result["shot_endpoint_kind"] = (
+                        "collision" if release_ra == COLLISION_RELEASE_RA else "expired")
+                    assert release[6] == shot
+                    endpoint = [signed(release[36 + n]) for n in range(3)]
+                    endpoint_vector = [
+                        endpoint[n] - signed(ray_row[25 + n]) for n in range(3)
+                    ]
+                    if release_ra == COLLISION_RELEASE_RA:
+                        impact = endpoint
+                        result["impact_world"] = impact
+                        result["impact_target_distance_world_units"] = distance_world_units(
+                            impact, [signed(ray_row[28 + n]) for n in range(3)])
+                        result["impact_view_angle_units"] = angle_units(
+                            endpoint_vector, forward)
+                    else:
+                        result["expired_endpoint_world"] = endpoint
+                        result["expired_endpoint_target_distance_world_units"] = \
+                            distance_world_units(
+                                endpoint,
+                                [signed(ray_row[28 + n]) for n in range(3)])
+                    expected = EXPECTED_ENDPOINTS.get(case["name"])
+                    if expected:
+                        expected_kind, maximum_target_distance = expected
+                        assert result["shot_endpoint_kind"] == expected_kind, (
+                            case["name"], result["shot_endpoint_kind"])
+                        if expected_kind == "collision":
+                            assert result["impact_target_distance_world_units"] <= \
+                                maximum_target_distance, case["name"]
+                            assert result["impact_view_angle_units"] <= \
+                                result["view_ray_angle_units"] + 1.0, case["name"]
+                        else:
+                            assert result["expired_endpoint_target_distance_world_units"] > 1000.0
         if case["name"].startswith("fire_"):
             shots = [r for r in rows if r[0] == BASIS and r[6] != r[4]]
-            assert shots and case["after"]["clip"] < case["before"]["clip"]
+            assert shots and case["after"]["clip"] == case["before"]["clip"] - 1
             assert all(r[5] == 0x8004860C for r in shots)
             if receipt.get("research_schema", 0) >= 2:
                 constructors = [r for r in rows if r[0] == CONSTRUCT]

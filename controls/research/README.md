@@ -31,7 +31,7 @@ To return the probe build to its ordinary catalog, configure with
 
 The existing debug `mod_cmd` API exposes name `mohu.mkb.research`:
 
-- `arm` / `arm N`: observe the next N owned updates (1..8), without a queued
+- `arm` / `arm N`: observe the next N owned updates (1..16), without a queued
   angle perturbation. Records are published when the following owned entry
   seals the observation.
 - `inject HEX_SITE YAW PITCH [N]`: explicitly perturb one update at the selected
@@ -111,8 +111,14 @@ fields as signed Q16; 4096 native angle units = one revolution.
 | 56..58 | GTE projection H / OFX / OFY |
 | 59, 60 | Native aim-target score / no-selection baseline at `8008e06c` |
 | 61..63 | Owned camera actor world position at `+0x220..+0x228` |
+| 64..66 | Shot object native flags at `+0x0C/+0x10/+0x14` |
+| 67 | Shot native update/lifetime field at `+0x214` |
+| 68 | Shot collision state at `+0x298` |
+| 69 | Shot's companion/effect pointer at `+0x39C` |
+| 70 | Companion flags at `+0x38` |
+| 71 | Shot auxiliary value at `+0x34` |
 
-The current schema has 64 fields and capacity 128 rows. Historical committed
+The current schema has 72 fields and capacity 192 rows. Historical committed
 receipts use 25 or 40 fields. Synthetic sites `ff000018` / `ff00001c` record early
 camera preparation / the matching later call being skipped. `8008d81c` is a
 read-only original ray-call observation; `8004815c` records native P38 ray
@@ -124,6 +130,12 @@ its own target blend; the checker reports the resulting camera/ray angle rather
 than requiring them to be identical.
 `8008e7a8` records the producer after its cached-target stores, so those fields
 describe the ray consumed by that owned update rather than the preceding one.
+`80047498` observes the constructed P38 shot's native update entry, while
+`ff000024` records its release at `80077e8c`. The checker distinguishes the
+collision return `80045df8` from lifetime expiry `800474e8`; only collision
+returns are reported as physical impact endpoints. The fire runner releases
+Cross after the first shot is observed so a long observation window does not
+consume a second round.
 
 Production capture/live-input eligibility is deliberately not weakened for this
 research. These explicit debugger experiments run outside the production mouse
