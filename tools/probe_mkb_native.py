@@ -15,11 +15,21 @@ import shutil
 import struct
 import subprocess
 import sys
+import time
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "vr/tools"))
 import inspect_weapon_sets as native
 import probe_p38_headset as shared
+
+RESEARCH_CASES = [
+    ("readonly", 0, 0, 0),
+    ("entry_yaw", 0x800892C8, 32, 0), ("look_yaw", 0x8008F984, 32, 0),
+    ("adjust_yaw", 0x8008F9BC, 32, 0), ("entry_pitch", 0x800892C8, 0, 32),
+    ("look_pitch", 0x8008F984, 0, 32), ("adjust_pitch", 0x8008F9BC, 0, 32),
+    ("fire_base", 0, 0, 0), ("fire_entry_yaw", 0x800892C8, 32, 0),
+    ("fire_settled_yaw", 0, 0, 0),
+]
 
 
 def main():
@@ -29,6 +39,10 @@ def main():
     parser.add_argument("--cold", action="store_true", help="Reach gameplay through native menus instead of loading a save")
     parser.add_argument("--fixtures", type=Path, default=ROOT / "analysis/fixtures/sp/openbios")
     parser.add_argument("--inject", action="store_true", help="Research only: perturb the statically traced native aim targets")
+    parser.add_argument("--trace-only", action="store_true", help="Collect a short native action/aim call window without angle perturbations")
+    parser.add_argument("--research", action="store_true", help="Run the separately built one-update research harness")
+    parser.add_argument("--research-direct", action="store_true", help="Explicitly test the native direct-target branch in the research harness")
+    parser.add_argument("--research-cases", nargs="+", choices=[x[0] for x in RESEARCH_CASES])
     parser.add_argument("--interpreter", action="store_true", help="Request diagnostic interpreter controls")
     args = parser.parse_args()
     if native.game_pids():
@@ -62,7 +76,10 @@ def main():
                    call_order_verified=False,
                    binary_sha256=native.digest(exe), source_hashes=hashes,
                    config_sha256=native.digest(config),
-                   vr_requested=False, interpreter_diagnostic=args.interpreter, samples=[])
+                   vr_requested=False, interpreter_diagnostic=args.interpreter,
+                   research_direct=args.research_direct, samples=[])
+    if args.research:
+        receipt["research_source_sha256"] = native.digest(ROOT / "controls/research/moh_mkb_research.c")
 
     def snapshot(label):
         player = int.from_bytes(native.read(0x800AA17C, 4), "little")
@@ -123,6 +140,106 @@ def main():
             native.command("set_input", buttons="0xffff", pad_type=1, lx=128, ly=128, rx=128, ry=128)
             native.frames(90)
             snapshot("neutral")
+            if args.research:
+                receipt["rejected_commands"] = []
+                for invalid in ["arm 0", "arm 9", "inject 1 1 0", "inject 800892c8 257 0", "inject 0 1 0", "inject 800892c8 1 0 trailing", "direct 2"]:
+                    result = native.command("mod_cmd", name="mohu.mkb.research", args=invalid)
+                    if result["result"] != 0:
+                        raise RuntimeError(f"Invalid research command accepted: {invalid}: {result}")
+                    receipt["rejected_commands"].append(invalid)
+                def research_command(value):
+                    result = native.command("mod_cmd", name="mohu.mkb.research", args=value)
+                    if result["result"] != 1:
+                        raise RuntimeError(result)
+                    return json.loads(result["reply"])
+                def capture(value, fire=False):
+                    armed = research_command(value)
+                    if armed != {"armed": True}:
+                        raise RuntimeError(f"Research harness not armed: {armed}")
+                    if fire:
+                        native.command("set_input", buttons="0xbfff", pad_type=1)
+                    deadline = time.monotonic() + 10
+                    while time.monotonic() < deadline:
+                        result = research_command("dump")
+                        if result.get("state") == 3:
+                            if fire:
+                                native.command("set_input", buttons="0xffff", pad_type=1)
+                            result["rows"] = [research_command(f"row {i}")["values"] for i in range(result["count"])]
+                            return result
+                        time.sleep(.02)
+                    raise TimeoutError("No complete owned player update observed")
+                receipt["research"] = []
+                for name, site, yaw, pitch in RESEARCH_CASES:
+                    if args.research_cases and name not in args.research_cases:
+                        continue
+                    if name != "readonly":
+                        native.load(args.slot)
+                        native.command("set_input", buttons="0xffff", pad_type=1)
+                        native.frames(90)
+                        if int.from_bytes(native.read(0x800A70F0, 4), "little") == 1:
+                            # Restoring pad presentation can enter the game's
+                            # native pause screen. Resume with native Start;
+                            # never edit the pause flag or snapshot identity.
+                            native.command("set_input", buttons="0xfff7", pad_type=1)
+                            native.frames(6)
+                            native.command("set_input", buttons="0xffff", pad_type=1)
+                            native.frames(30)
+                    before = snapshot(name + "_before")
+                    if before["pause"]:
+                        raise RuntimeError("Native campaign is paused; no research write armed")
+                    if args.research_direct:
+                        research_command("direct 1")
+                        native.frames(6)
+                        before = snapshot(name + "_direct_before")
+                    preparation = None
+                    if name == "fire_settled_yaw":
+                        preparation = capture("inject 800892c8 32 0")
+                        native.frames(30)
+                        before = snapshot(name + "_prepared")
+                    fire = name.startswith("fire_")
+                    command = "arm" if not site else f"inject {site:x} {yaw} {pitch}"
+                    if fire:
+                        command = "arm 4" if not site else command + " 4"
+                    result = capture(command, fire)
+                    native.frames(120)
+                    after = snapshot(name + "_settled")
+                    receipt["research"].append(dict(name=name, request=dict(site=site, yaw=yaw, pitch=pitch, updates=4 if fire else 1), preparation=preparation, before=before, observation=result, after=after))
+                    print(json.dumps(dict(name=name, rows=len(result["rows"]), applied=result["applied"], rejected=result["rejected"])), flush=True)
+                receipt["collection_complete"] = True
+                return
+            def collect_call_order():
+                # Compiled log_call_entry forwards virtual addresses unchanged.
+                # The earlier physical filter excluded every KSEG0 callback.
+                native.command("fn_filter", lo="0x80076000", hi="0x80090000")
+                native.command("fn_clear")
+                watched = "0x800892C8,0x8008EAF0,0x80078FBC,0x80076C28,0x8008AD04,0x8008D81C"
+                receipt["watched_targets"] = native.command("xprobe_watch", targets=watched)
+                player = int.from_bytes(native.read(0x800AA17C, 4), "little")
+                ray = int.from_bytes(native.read(player + 0x39C, 4), "little") + 0x1A4
+                native.command("wtrace_range", lo=hex(ray), hi=hex(ray + 24))
+                native.command("wtrace_clear")
+                receipt["overlay_before"] = native.command("overlay_native_ring")["ring"]
+                native.command("set_input", buttons="0xbfff", pad_type=1)
+                native.frames(6)
+                native.command("set_input", buttons="0xffff", pad_type=1)
+                trace = native.command("fn_entry_dump", count=2048)
+                receipt["trace_stats"] = native.command("fn_stats")
+                native.command("fn_disable")
+                receipt["overlay_after"] = native.command("overlay_native_ring")["ring"]
+                (out / "aim_ray_writes.json").write_text(json.dumps(native.command("wtrace_dump", count=256), indent=2) + "\n")
+                (out / "aim_dirty_flow.json").write_text(json.dumps(native.command("dirty_flow_log", target_lo="0x80076000", target_hi="0x80090000", count=256), indent=2) + "\n")
+                (out / "aim_call_order.json").write_text(json.dumps(trace, indent=2) + "\n")
+                internal = native.command("xprobe")
+                (out / "aim_xprobe.json").write_text(json.dumps(internal, indent=2) + "\n")
+                receipt["function_trace_entries"] = len(trace["entries"])
+                receipt["internal_trace_events"] = len(internal["xprobe"]["watched"])
+                if not trace["entries"] and not receipt["internal_trace_events"]:
+                    receipt["unresolved"] = "No internal player-update entries reached the trace ring; call ordering and update ownership are unproven"
+            if args.trace_only:
+                collect_call_order()
+                snapshot("after_fire")
+                receipt["collection_complete"] = True
+                return
             if args.inject:
                 for label, offset in [("yaw_target", 0x190), ("pitch_target", 0x184)]:
                     native.frames(120)
@@ -137,19 +254,7 @@ def main():
                     snapshot(label + "_early")
                     native.frames(120)
                     snapshot(label + "_settled")
-                # The dispatch ring does not cover internal dirty-RAM calls.
-                # Use the function-entry ring, with its physical range filter.
-                native.command("fn_filter", lo="0x00076000", hi="0x00090000")
-                native.command("fn_clear")
-                native.command("set_input", buttons="0xbfff", pad_type=1)
-                native.frames(6)
-                native.command("set_input", buttons="0xffff", pad_type=1)
-                trace = native.command("fn_entry_dump", count=2048)
-                native.command("fn_disable")
-                (out / "aim_call_order.json").write_text(json.dumps(trace, indent=2) + "\n")
-                receipt["function_trace_entries"] = len(trace["entries"])
-                if not trace["entries"]:
-                    receipt["unresolved"] = "No internal player-update entries reached the trace ring; call ordering and update ownership are unproven"
+                collect_call_order()
             for label, axes in [("turn_right", dict(lx=255)), ("turn_left", dict(lx=0)),
                                 ("look_up", dict(ry=0)), ("look_down", dict(ry=255))]:
                 native.command("set_input", buttons="0xffff", pad_type=1, lx=128, ly=128, rx=128, ry=128)
@@ -203,7 +308,7 @@ def main():
                            preferences_unchanged=shared.hash_existing(shared.preference_paths()) == preferences,
                            remaining_game_pids=native.game_pids())
             (out / "receipt.json").write_text(json.dumps(receipt, indent=2) + "\n")
-            print(json.dumps({k: v for k, v in receipt.items() if k != "samples"}), flush=True)
+            print(json.dumps({k: v for k, v in receipt.items() if k not in ("samples", "research", "overlay_before", "overlay_after")}), flush=True)
 
 
 if __name__ == "__main__":

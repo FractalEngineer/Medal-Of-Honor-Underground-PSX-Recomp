@@ -2,6 +2,11 @@
 
 Date: 2026-11-05, Asia/Taipei. Branch: `mkb`.
 
+The initial checkpoint below is historical. Current research continues in
+[MOUSE_KEYBOARD_HANDOFF.md](MOUSE_KEYBOARD_HANDOFF.md); the same-date continuation
+in [MOUSE_KEYBOARD_HOOKS.md](MOUSE_KEYBOARD_HOOKS.md) resolves the empty-ring issue
+and records the direct-angle experiments and remaining cached-shot-ray gate.
+
 **Requested feature is not implemented. Phase 0 baseline work is complete;
 Phase 1 has unresolved native aim and update-order requirements.** No mod
 package, mouse policy, special binding profile or launcher UI was added.

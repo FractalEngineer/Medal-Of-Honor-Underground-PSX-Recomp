@@ -1,0 +1,21 @@
+format_version = 7
+id = "mohu.controls.research"
+version = "0.1.0"
+name = "Underground native aim research"
+author = "Medal-Of-Honor-Underground-PSX-Recomp"
+description = "Isolated debug-only aim observations and explicit one-update perturbations. Not the mouse mod."
+license = "MIT"
+resolver = "declarative"
+
+[[target]]
+game_id = "SLUS-01270"
+
+[[feature]]
+id = "research"
+name = "Native aim research"
+channel = "experimental"
+default_enabled = true
+
+[[plugin]]
+feature = "research"
+id = "mohu.controls.research"

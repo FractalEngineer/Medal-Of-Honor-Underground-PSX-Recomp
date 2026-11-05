@@ -1,0 +1,108 @@
+{
+  "schema": 1,
+  "binary_sha256": "65beb8df4c0c633d8601105fdf859a1a6ec54cb484ffd4f991adf8c8efdfed8e",
+  "research_source_sha256": "992af08e8d88dbc23f74fdbeb474cf6e77f4c1fcc661ac90132e7a28f714110d",
+  "rejected_commands": 7,
+  "direct_target_test": true,
+  "production_mouse_mod_verified": false,
+  "cases": [
+    {
+      "name": "readonly",
+      "updates": 1,
+      "writes": 0,
+      "final_pitch_delta_units": 0.0,
+      "final_yaw_delta_units": 0.0
+    },
+    {
+      "name": "entry_yaw",
+      "updates": 1,
+      "writes": 1,
+      "final_pitch_delta_units": 0.0,
+      "final_yaw_delta_units": 32.0
+    },
+    {
+      "name": "look_yaw",
+      "updates": 1,
+      "writes": 1,
+      "final_pitch_delta_units": 0.0,
+      "final_yaw_delta_units": 32.0
+    },
+    {
+      "name": "adjust_yaw",
+      "updates": 1,
+      "writes": 1,
+      "final_pitch_delta_units": 0.0,
+      "final_yaw_delta_units": 32.0
+    },
+    {
+      "name": "entry_pitch",
+      "updates": 1,
+      "writes": 1,
+      "final_pitch_delta_units": 32.0,
+      "final_yaw_delta_units": 0.0
+    },
+    {
+      "name": "look_pitch",
+      "updates": 1,
+      "writes": 1,
+      "final_pitch_delta_units": 32.0,
+      "final_yaw_delta_units": 0.0
+    },
+    {
+      "name": "adjust_pitch",
+      "updates": 1,
+      "writes": 1,
+      "final_pitch_delta_units": 32.0,
+      "final_yaw_delta_units": 0.0
+    },
+    {
+      "name": "fire_base",
+      "updates": 4,
+      "writes": 0,
+      "final_pitch_delta_units": 0.0,
+      "final_yaw_delta_units": 0.0,
+      "shots": [
+        {
+          "update": 794,
+          "pitch_units": 40.0,
+          "yaw_units": -210.0,
+          "player_pitch_units": 63.875,
+          "player_yaw_units": 3894.0
+        }
+      ]
+    },
+    {
+      "name": "fire_entry_yaw",
+      "updates": 4,
+      "writes": 1,
+      "final_pitch_delta_units": 0.0,
+      "final_yaw_delta_units": 32.0,
+      "shots": [
+        {
+          "update": 895,
+          "pitch_units": 40.0,
+          "yaw_units": -210.0,
+          "player_pitch_units": 63.875,
+          "player_yaw_units": 3926.0
+        }
+      ]
+    },
+    {
+      "name": "fire_settled_yaw",
+      "updates": 4,
+      "writes": 0,
+      "final_pitch_delta_units": 0.0,
+      "final_yaw_delta_units": 0.0,
+      "shots": [
+        {
+          "update": 1018,
+          "pitch_units": 40.0,
+          "yaw_units": -182.0,
+          "player_pitch_units": 63.875,
+          "player_yaw_units": 3926.0
+        }
+      ]
+    }
+  ],
+  "raw_receipt_sha256": "97ee4a3f733888e09bfefc298d75d3a6df3cffebdbf2440350554c9891e5e2e0"
+}

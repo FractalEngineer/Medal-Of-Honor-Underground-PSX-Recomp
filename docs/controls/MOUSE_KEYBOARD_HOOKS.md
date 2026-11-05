@@ -7,6 +7,9 @@ attached specification originally targets Medal of Honor SLUS-00974; the owner
 approved adapting it to Underground. Reference-game addresses are not valid
 Underground addresses. No production hook has been selected or registered.
 
+The continuation results below supersede the initial empty-ring blocker. See
+[the handoff](MOUSE_KEYBOARD_HANDOFF.md) for the current continuation state.
+
 ## Reproduced native state
 
 `tools/probe_mkb_native.py` cold-boots the owner's disc through the native
@@ -113,3 +116,79 @@ token or renderer hook.
 Per the supplied plan's Phase 1 exit rule, subsequent package, framework,
 binding-profile and GUI phases have not been started. The requested feature
 is unfinished.
+
+## Continuation: ordered observations and angular control
+
+The empty function-entry rings did not mean the player callbacks were absent.
+The probe executable reported **zero cached-native overlay calls**. Internal
+dirty-RAM calls bypass those rings; the existing `xprobe_watch` recorder does
+observe their JAL/JALR transfers. In the opening street it establishes this
+order (actual guest cycles, not timing inferred from host reads):
+
+1. `0x800784D4` calls the owned player's `0x800892C8` callback, RA `0x800784DC`.
+2. The callback processes weapon/actions, then calls look processing at
+   `0x80089DE4 -> 0x8008EAF0`.
+3. `0x8008F984` follows native look resolution; `0x8008F994` calls the
+   adjustment function; `0x8008F9BC` follows that call.
+4. `0x80078624 -> 0x80078FBC` integrates the owned player's movement/angles.
+5. `0x800786E0 -> 0x80076C28` rebuilds the actor basis.
+
+A dedicated `MOHU_MKB_RESEARCH` build now observes those sites within a bounded
+owned player-update window. It records CPU/data on the emulation thread,
+publishes completed observations to the debug thread, and pages small replies
+through the existing mod command interface. The package is a development-only
+fixture, not the production mouse package. Disabled builds do not link it.
+Guest writes require explicit research commands; no mouse policy is installed.
+
+The observed update-entry sequence is a useful ownership token candidate:
+increment on the validated `0x800892C8` call for P1 with RA `0x800784DC`, then
+consume at a later validated boundary only once for that sequence. The final
+production design still needs execution-scope/replay/restore eligibility and
+cached-native coverage. A host frame counter is not used as the token.
+
+Two experiments distinguish angular response from native firing geometry:
+
+- Bypassing the adjustment call through the existing direct-target branch at
+  `0x8008F988` produces exact body angle changes, **but leaves the cached native
+  firing ray stale**. This experiment is rejected and is absent from the final
+  harness implementation.
+- Suppressing only the adjustment function's angular output preserves its ray
+  calculation. In the current harness the guarded stores at `0x8008D8C8`,
+  `0x8008D8F4`, `0x8008E7A8` write pitch increments (`0xAEC20248`), and
+  `0x8008D910`, `0x8008E660` write yaw increments (`0xAEC2024C`). Their source
+  register `$v0` is set to zero only for the owned P1/default mode 7/8 in the
+  explicit research mode. Original instructions still execute; guest code is
+  not patched. The complete input/layout and SP update hash checks remain.
+
+The six +32-unit pitch/yaw experiments (at update entry, after native input,
+and after adjustment) all retain **exactly +32 requested units, zero cross-axis
+motion**, after 120 host VBlanks. The read-only control remains unchanged.
+Each one-update observation contains exactly one owned entry and one injection;
+four-update firing controls contain four distinct owned update sequences.
+
+The correction-only experiment still does not close the shot gate. P38 shots
+use `0x8004815C`, which copies the origin from input `+0x1A4/+0x1A8/+0x1AC`
+and aims toward input `+0x1B0` through native `0x80047DF0`. This is a cached
+native ray, so a same-update player-angle change need not reach that shot.
+The measured baseline shot yaw was -210; a settled +32 player-yaw change moved
+it to -182 (+28), while an immediate shot still used -210. Preserve these
+negative controls: do not claim exact shot alignment from exact actor fields.
+The next tracing target is the producer, timing, quantization and possible
+aim assistance of that cached ray, plus preservation of its origin/spread.
+
+The experimental nullable target argument at `0x80047FE8` was not used by the
+P38 path in this fixture. It does not establish an aim-assist toggle; that
+ineffective experiment was removed from the final harness.
+
+A write trace independently identified the ray producers in `0x8008D81C`:
+target writes at `0x8008E1E0/+0x1B0`, `0x8008E1F0/+0x1B4`,
+`0x8008E200/+0x1B8`; origin writes at `0x8008E540/+0x1A4`,
+`0x8008E544/+0x1A8`, `0x8008E548/+0x1AC`. Local receipt:
+`analysis/runtime/mkb-ray-writers-20261105/aim_ray_writes.json`.
+The settled shot's 28-unit change might include native ray quantization,
+parallax or assistance. This session does not distinguish those causes.
+
+The compact, mechanically checked observations are in
+[MOUSE_KEYBOARD_RESEARCH_RECEIPT.json](MOUSE_KEYBOARD_RESEARCH_RECEIPT.json).
+They verify the ten bounded research cases, not actual mouse event delivery,
+impact alignment, recoil parity, mounted constraints or campaign completion.
