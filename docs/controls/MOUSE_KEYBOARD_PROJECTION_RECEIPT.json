@@ -1,0 +1,569 @@
+{
+  "schema": 5,
+  "binary_sha256": "7e88daf3dde589c63f0bbc79d10d393d630a70f114434577239fd9da831863b2",
+  "research_source_sha256": "14cf90525a318b66e7a05078923ed97d78bbf8832081290fa6580278d8c3eba3",
+  "rejected_commands": 10,
+  "direct_target_test": true,
+  "early_ray_test": false,
+  "camera_preparation_test": true,
+  "production_mouse_mod_verified": false,
+  "cases": [
+    {
+      "name": "fire_camera_base",
+      "updates": 16,
+      "writes": 0,
+      "final_pitch_delta_units": 0.0,
+      "final_yaw_delta_units": 0.0,
+      "original_ray_calls": 16,
+      "camera_preparations": 0,
+      "matching_preparation_skips": 0,
+      "camera_forward": [
+        -0.30476357586529085,
+        -0.08473005501504714,
+        0.9486516645233636
+      ],
+      "view_ray_angle_units": 17.0875887472923,
+      "aim_assist_score": 4753,
+      "aim_assist_baseline": 4753,
+      "aim_assist_active": false,
+      "camera_input_origin": [
+        1186922496,
+        -15990784,
+        -508035072
+      ],
+      "camera_actor_position": [
+        1190920192,
+        -14876672,
+        -520486912
+      ],
+      "aim_target_world": [
+        1101463552,
+        -27262976,
+        -234422272
+      ],
+      "ray_origin_world": [
+        1186988032,
+        -10682368,
+        -490274816
+      ],
+      "shot_update_rows": 7,
+      "shot_release_calls": 1,
+      "shot_release_ra": "0x80045DF8",
+      "shot_endpoint_kind": "collision",
+      "impact_world": [
+        1101463552,
+        -27328512,
+        -234422272
+      ],
+      "impact_target_distance_world_units": 1.0,
+      "impact_view_angle_units": 16.946581594577058,
+      "first_shot_same_update": true,
+      "shots": [
+        {
+          "update": 104,
+          "pitch_units": 40.0,
+          "yaw_units": -210.0,
+          "player_pitch_units": 63.875,
+          "player_yaw_units": 3894.0
+        }
+      ],
+      "shot_projected_pixel": [
+        259.24068582733315,
+        138.19298233509875
+      ],
+      "muzzle_projected_target_pixel": [
+        251.30488328157722,
+        129.34635655591447
+      ],
+      "muzzle_parallax_pixels": 11.884433083750954,
+      "shot_reticle_offset_pixels": 18.479357425968388,
+      "endpoint_projected_pixel": [
+        259.2406450590912,
+        138.10147865831576
+      ],
+      "endpoint_reticle_offset_pixels": 18.389271601030668,
+      "native_projection_center_pixel": [
+        256.0,
+        120.0
+      ],
+      "native_frame_size": [
+        512.0,
+        240.0
+      ],
+      "screenshot": {
+        "file": "fire_camera_base.endpoint.png",
+        "sha256": "12404c685afa5ebd7b51132bc58aefb29f3f5a0961994fd9930d5a9c68989609",
+        "width": 2048,
+        "height": 960,
+        "scale": 4,
+        "colors": 1521,
+        "nonblank": true
+      },
+      "target_endpoint_pixel_distance": 0.09150368586486435
+    },
+    {
+      "name": "fire_camera_yaw",
+      "updates": 16,
+      "writes": 1,
+      "final_pitch_delta_units": 0.0,
+      "final_yaw_delta_units": 32.0,
+      "original_ray_calls": 16,
+      "camera_preparations": 0,
+      "matching_preparation_skips": 0,
+      "camera_forward": [
+        -0.2592929803365304,
+        -0.08475757767399109,
+        0.9620724002771501
+      ],
+      "view_ray_angle_units": 16.33579054741518,
+      "aim_assist_score": 4708,
+      "aim_assist_baseline": 4708,
+      "aim_assist_active": false,
+      "camera_input_origin": [
+        1187512320,
+        -15990784,
+        -507838464
+      ],
+      "camera_actor_position": [
+        1190920192,
+        -14876672,
+        -520486912
+      ],
+      "aim_target_world": [
+        1115095040,
+        -27197440,
+        -233963520
+      ],
+      "ray_origin_world": [
+        1186988032,
+        -10682368,
+        -490274816
+      ],
+      "shot_update_rows": 7,
+      "shot_release_calls": 1,
+      "shot_release_ra": "0x80045DF8",
+      "shot_endpoint_kind": "collision",
+      "impact_world": [
+        1115160576,
+        -27066368,
+        -234029056
+      ],
+      "impact_target_distance_world_units": 2.449489742783178,
+      "impact_view_angle_units": 16.573449407085956,
+      "first_shot_same_update": true,
+      "shots": [
+        {
+          "update": 230,
+          "pitch_units": 40.0,
+          "yaw_units": -178.0,
+          "player_pitch_units": 63.875,
+          "player_yaw_units": 3926.0
+        }
+      ],
+      "shot_projected_pixel": [
+        257.8994855650375,
+        138.13118968038833
+      ],
+      "muzzle_projected_target_pixel": [
+        251.9227302080318,
+        129.14898894439511
+      ],
+      "muzzle_parallax_pixels": 10.78895428941903,
+      "shot_reticle_offset_pixels": 18.230416469132187,
+      "endpoint_projected_pixel": [
+        257.96536041369416,
+        138.31194557704487
+      ],
+      "endpoint_reticle_offset_pixels": 18.417111401421483,
+      "native_projection_center_pixel": [
+        256.0,
+        120.0
+      ],
+      "native_frame_size": [
+        512.0,
+        240.0
+      ],
+      "screenshot": {
+        "file": "fire_camera_yaw.endpoint.png",
+        "sha256": "b85732ded697ef3630d3044b34bf168d120a2997370de86c47547662a5435a16",
+        "width": 2048,
+        "height": 960,
+        "scale": 4,
+        "colors": 1537,
+        "nonblank": true
+      },
+      "target_endpoint_pixel_distance": 0.19238552404390533
+    },
+    {
+      "name": "fire_camera_pitch",
+      "updates": 16,
+      "writes": 1,
+      "final_pitch_delta_units": 32.0,
+      "final_yaw_delta_units": 0.0,
+      "original_ray_calls": 16,
+      "camera_preparations": 1,
+      "matching_preparation_skips": 1,
+      "camera_forward": [
+        -0.3028710610913193,
+        -0.13386424947008133,
+        0.943583320680919
+      ],
+      "view_ray_angle_units": 16.501455648506568,
+      "aim_assist_score": 4816,
+      "aim_assist_baseline": 4816,
+      "aim_assist_active": false,
+      "camera_input_origin": [
+        1186922496,
+        -16646144,
+        -508035072
+      ],
+      "camera_actor_position": [
+        1190920192,
+        -14876672,
+        -520486912
+      ],
+      "aim_target_world": [
+        1099890688,
+        -42139648,
+        -234422272
+      ],
+      "ray_origin_world": [
+        1186988032,
+        -10682368,
+        -490274816
+      ],
+      "shot_update_rows": 7,
+      "shot_release_calls": 1,
+      "shot_release_ra": "0x80045DF8",
+      "shot_endpoint_kind": "collision",
+      "impact_world": [
+        1099694080,
+        -42401792,
+        -234422272
+      ],
+      "impact_target_distance_world_units": 5.0,
+      "impact_view_angle_units": 16.383069853189134,
+      "first_shot_same_update": true,
+      "shots": [
+        {
+          "update": 370,
+          "pitch_units": 76.0,
+          "yaw_units": -214.0,
+          "player_pitch_units": 95.875,
+          "player_yaw_units": 3894.0
+        }
+      ],
+      "shot_projected_pixel": [
+        257.0345107402512,
+        138.28949174152658
+      ],
+      "muzzle_projected_target_pixel": [
+        249.03021506748794,
+        127.33946740123925
+      ],
+      "muzzle_parallax_pixels": 13.563619807039043,
+      "shot_reticle_offset_pixels": 18.318725955564265,
+      "endpoint_projected_pixel": [
+        256.7744628183333,
+        137.93368651273337
+      ],
+      "endpoint_reticle_offset_pixels": 17.950401237687576,
+      "native_projection_center_pixel": [
+        256.0,
+        120.0
+      ],
+      "native_frame_size": [
+        512.0,
+        240.0
+      ],
+      "screenshot": {
+        "file": "fire_camera_pitch.endpoint.png",
+        "sha256": "dd131b4b5801d52e486074afd0f5f76be75cdb0188ed862b8dbde57239bbd57a",
+        "width": 2048,
+        "height": 960,
+        "scale": 4,
+        "colors": 1487,
+        "nonblank": true
+      },
+      "target_endpoint_pixel_distance": 0.44070657191652646
+    },
+    {
+      "name": "fire_camera_yaw_negative",
+      "updates": 16,
+      "writes": 1,
+      "final_pitch_delta_units": 0.0,
+      "final_yaw_delta_units": -32.0,
+      "original_ray_calls": 16,
+      "camera_preparations": 0,
+      "matching_preparation_skips": 0,
+      "camera_forward": [
+        -0.35381601734422785,
+        -0.08443460899063544,
+        0.9314961205905623
+      ],
+      "view_ray_angle_units": 18.907192609091965,
+      "aim_assist_score": 4818,
+      "aim_assist_baseline": 4818,
+      "aim_assist_active": false,
+      "camera_input_origin": [
+        1186267136,
+        -15990784,
+        -508231680
+      ],
+      "camera_actor_position": [
+        1190920192,
+        -14876672,
+        -520486912
+      ],
+      "aim_target_world": [
+        1084948480,
+        -27394048,
+        -234356736
+      ],
+      "ray_origin_world": [
+        1186988032,
+        -10682368,
+        -490274816
+      ],
+      "shot_update_rows": 15,
+      "shot_release_calls": 1,
+      "shot_release_ra": "0x800474E8",
+      "shot_endpoint_kind": "expired",
+      "expired_endpoint_world": [
+        965296128,
+        -47497216,
+        65961984
+      ],
+      "expired_endpoint_target_distance_world_units": 4942.344066837111,
+      "first_shot_same_update": true,
+      "shots": [
+        {
+          "update": 507,
+          "pitch_units": 40.0,
+          "yaw_units": -247.0,
+          "player_pitch_units": 63.875,
+          "player_yaw_units": 3862.0
+        }
+      ],
+      "shot_projected_pixel": [
+        259.4656294808621,
+        138.2066470419174
+      ],
+      "muzzle_projected_target_pixel": [
+        249.44790748269986,
+        129.5679652841104
+      ],
+      "muzzle_parallax_pixels": 13.228060195853786,
+      "shot_reticle_offset_pixels": 18.533552929958677,
+      "endpoint_projected_pixel": [
+        254.25281758280917,
+        133.34337459274062
+      ],
+      "endpoint_reticle_offset_pixels": 13.457276541750065,
+      "native_projection_center_pixel": [
+        256.0,
+        120.0
+      ],
+      "native_frame_size": [
+        512.0,
+        240.0
+      ],
+      "screenshot": {
+        "file": "fire_camera_yaw_negative.endpoint.png",
+        "sha256": "72d43d6608e1b48338ab4d906dee410ca8029f40ef308a7e92b64f322dce76b1",
+        "width": 2048,
+        "height": 960,
+        "scale": 4,
+        "colors": 1484,
+        "nonblank": true
+      }
+    },
+    {
+      "name": "fire_camera_pitch_negative",
+      "updates": 16,
+      "writes": 1,
+      "final_pitch_delta_units": -32.0,
+      "final_yaw_delta_units": 0.0,
+      "original_ray_calls": 16,
+      "camera_preparations": 1,
+      "matching_preparation_skips": 1,
+      "camera_forward": [
+        -0.3054381962913428,
+        -0.03478954147029903,
+        0.9515761640828219
+      ],
+      "view_ray_angle_units": 20.307423407192193,
+      "aim_assist_score": 3340,
+      "aim_assist_baseline": 3340,
+      "aim_assist_active": false,
+      "camera_input_origin": [
+        1186922496,
+        -15335424,
+        -508035072
+      ],
+      "camera_actor_position": [
+        1190920192,
+        -14876672,
+        -520486912
+      ],
+      "aim_target_world": [
+        1127481344,
+        -12976128,
+        -317915136
+      ],
+      "ray_origin_world": [
+        1186988032,
+        -10682368,
+        -490274816
+      ],
+      "shot_update_rows": 7,
+      "shot_release_calls": 1,
+      "shot_release_ra": "0x80045DF8",
+      "shot_endpoint_kind": "collision",
+      "impact_world": [
+        1098448896,
+        -14024704,
+        -234356736
+      ],
+      "impact_target_distance_world_units": 1349.8629560070162,
+      "impact_view_angle_units": 20.71211531208417,
+      "first_shot_same_update": true,
+      "shots": [
+        {
+          "update": 649,
+          "pitch_units": 8.0,
+          "yaw_units": -217.0,
+          "player_pitch_units": 31.875,
+          "player_yaw_units": 3894.0
+        }
+      ],
+      "shot_projected_pixel": [
+        259.03143725248367,
+        138.66279859473048
+      ],
+      "muzzle_projected_target_pixel": [
+        247.26050650031956,
+        128.8788343135275
+      ],
+      "muzzle_parallax_pixels": 15.30623297314196,
+      "shot_reticle_offset_pixels": 18.90739704991725,
+      "endpoint_projected_pixel": [
+        255.1678310728742,
+        135.74208961519724
+      ],
+      "endpoint_reticle_offset_pixels": 15.764069607058154,
+      "native_projection_center_pixel": [
+        256.0,
+        120.0
+      ],
+      "native_frame_size": [
+        512.0,
+        240.0
+      ],
+      "screenshot": {
+        "file": "fire_camera_pitch_negative.endpoint.png",
+        "sha256": "7ebb666747926fca0d4c11ce6818318d0185562d2fbfdb0b5e712761702d9005",
+        "width": 2048,
+        "height": 960,
+        "scale": 4,
+        "colors": 1539,
+        "nonblank": true
+      },
+      "target_endpoint_pixel_distance": 4.843345295789107
+    },
+    {
+      "name": "fire_camera_pitch_large",
+      "updates": 16,
+      "writes": 1,
+      "final_pitch_delta_units": 64.0,
+      "final_yaw_delta_units": 0.0,
+      "original_ray_calls": 16,
+      "camera_preparations": 1,
+      "matching_preparation_skips": 1,
+      "camera_forward": [
+        -0.3007528786623938,
+        -0.18235887217562913,
+        0.9361052012007604
+      ],
+      "view_ray_angle_units": 9.760150131969075,
+      "aim_assist_score": 4863,
+      "aim_assist_baseline": 4863,
+      "aim_assist_active": false,
+      "camera_input_origin": [
+        1186922496,
+        -17301504,
+        -508035072
+      ],
+      "camera_actor_position": [
+        1190920192,
+        -14876672,
+        -520486912
+      ],
+      "aim_target_world": [
+        1102381056,
+        -57212928,
+        -234487808
+      ],
+      "ray_origin_world": [
+        1186988032,
+        -10682368,
+        -490274816
+      ],
+      "shot_update_rows": 7,
+      "shot_release_calls": 1,
+      "shot_release_ra": "0x80045DF8",
+      "shot_endpoint_kind": "collision",
+      "impact_world": [
+        1102315520,
+        -57475072,
+        -234422272
+      ],
+      "impact_target_distance_world_units": 4.242640687119285,
+      "impact_view_angle_units": 9.344150029014374,
+      "first_shot_same_update": true,
+      "shots": [
+        {
+          "update": 780,
+          "pitch_units": 112.0,
+          "yaw_units": -208.0,
+          "player_pitch_units": 127.875,
+          "player_yaw_units": 3894.0
+        }
+      ],
+      "shot_projected_pixel": [
+        260.3923962708411,
+        137.94493638896208
+      ],
+      "muzzle_projected_target_pixel": [
+        252.61352036276426,
+        124.92045266754494
+      ],
+      "muzzle_parallax_pixels": 15.17063237319785,
+      "shot_reticle_offset_pixels": 18.474682324846462,
+      "endpoint_projected_pixel": [
+        260.332135318995,
+        137.6008184369724
+      ],
+      "endpoint_reticle_offset_pixels": 18.126119443315794,
+      "native_projection_center_pixel": [
+        256.0,
+        120.0
+      ],
+      "native_frame_size": [
+        512.0,
+        240.0
+      ],
+      "screenshot": {
+        "file": "fire_camera_pitch_large.endpoint.png",
+        "sha256": "4e8e507e897b7a3e0a2da05f72ad899a182d1e3c698052727a91448ee039d4f3",
+        "width": 2048,
+        "height": 960,
+        "scale": 4,
+        "colors": 1466,
+        "nonblank": true
+      },
+      "target_endpoint_pixel_distance": 0.34935447213250415
+    }
+  ],
+  "raw_receipt_sha256": "241041568b813d4a1b41615fac1f13d84ede579bdfb4bee721bcecda0e02cdfc"
+}

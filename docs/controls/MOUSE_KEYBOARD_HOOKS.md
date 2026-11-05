@@ -244,6 +244,25 @@ The 2026-11-06 basis run adds two observations inside the original ray producer:
 | Camera input `+100` | 9 signed Q12 coefficients used by the native view/ray calculation |
 | Camera input origin / actor `+220` | Kept separately because the ray producer loads the actor position, while the input origin is a distinct camera-space source |
 
+The pixel-space continuation adds one read-only transform observation:
+
+| Site / field | Evidence |
+| --- | --- |
+| `8008DAA4` | `ADDIU $v0,$sp,80`; after the five GTE camera-matrix `CTC2` stores and before `MVMVA`. Capturing RT/TR here is the transform the ray producer actually installs |
+| Runtime RT columns | Measured Q12 columns are mutually orthonormal to within 0.0004 after length normalization. Their normalized third column is the camera forward used by the ray path |
+| Native projection | `H=400`, `OFX=256.0`, `OFY=120.0`; the world point relative to the camera input origin is dotted with the normalized RT columns, then projected with native `H/OFX/OFY` |
+| Endpoint screenshot | `screenshot_hires` captures the first released shot frame; the checker verifies a real PNG, native `512x240` geometry, 4x scale, nonblank colour content and hashes it in the compact receipt |
+
+Across all six firing cases the fired ray target projects only `1.0..4.4`
+pixels horizontally and `17.9..18.7` pixels vertically from the measured
+camera projection centre. The perpendicular screen offset is consistently
+`18.23..18.91` pixels. Reprojecting from the native muzzle origin instead of
+the camera origin moves the same target `10.79..15.31` pixels; this isolates a
+measurable origin-parallax contribution. Aligned collision endpoints stay
+within `0.09..0.44` screen pixels of the cached target projection. The
+negative-pitch nearer collision moves its endpoint `4.84` pixels from the
+cached target. The expired negative-yaw control has no impact endpoint.
+
 The no-target score stayed equal to its baseline in baseline, +/-yaw and
 +/-pitch/+64 firing cases. This rules out the scoring blend as the cause of the
 measured shot-angle deltas in this fixture; target-present aim-assist behavior

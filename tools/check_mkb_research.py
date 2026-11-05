@@ -7,11 +7,14 @@ import json
 import math
 from pathlib import Path
 
+from PIL import Image, ImageStat
+
 UPDATE, LOOK, ADJUST, INTEGRATE, BASIS = 0x800892C8, 0x8008F984, 0x8008F9BC, 0x80078FBC, 0x80076C28
 CAMERA, REFRESHED, SKIPPED = 0x8004A744, 0xFF000010, 0xFF000014
 RAY, CONSTRUCT, PREPARED, PREPARE_SKIPPED = 0x8008D81C, 0x8004815C, 0xFF000018, 0xFF00001C
 AIM_ASSIST = 0x8008E06C
 RAY_DONE = 0x8008E7A8
+RAY_TRANSFORM = 0x8008DAA4
 SHOT_UPDATE = 0x80047498
 SHOT_RELEASE = 0xFF000024
 COLLISION_RELEASE_RA = 0x80045DF8
@@ -54,11 +57,41 @@ def distance_world_units(first, second):
     return math.sqrt(sum((a - b) ** 2 for a, b in zip(first, second))) / 65536.0
 
 
-def verify(receipt):
+def project_world_point(ray_row, transform_row, point, origin=None):
+    """Project a Q16 world point through the native ray camera transform."""
+    matrix = [signed(value) / 4096.0 for value in transform_row[43:52]]
+    camera_origin = origin or [signed(value) for value in ray_row[40:43]]
+    delta = [point[n] - camera_origin[n] for n in range(3)]
+    camera = []
+    for column in range(3):
+        axis = [matrix[row * 3 + column] for row in range(3)]
+        length = math.sqrt(sum(value * value for value in axis))
+        assert length > 0
+        camera.append(sum(delta[row] * axis[row] for row in range(3)) / length)
+    assert camera[2] > 0, ("point behind camera", camera)
+    h = transform_row[56]
+    return [
+        transform_row[57] / 65536.0 + h * camera[0] / camera[2],
+        transform_row[58] / 65536.0 + h * camera[1] / camera[2],
+    ]
+
+
+def image_stats(path):
+    with Image.open(path) as source:
+        image = source.convert("RGB")
+        stat = ImageStat.Stat(image)
+        extrema = stat.extrema
+        sample = image.resize((64, 30)).getcolors(maxcolors=64 * 30)
+    occupied = any(high - low > 16 for low, high in extrema)
+    return dict(width=image.width, height=image.height, colors=len(sample or []),
+                channel_extrema=extrema, nonblank=bool(occupied and sample and len(sample) >= 8))
+
+
+def verify(receipt, base_dir):
     for key in ("collection_complete", "source_saves_unchanged", "preferences_unchanged"):
         assert receipt[key], key
     assert receipt["exit_code"] == 0 and not receipt["remaining_game_pids"]
-    summary = dict(schema=1, binary_sha256=receipt["binary_sha256"],
+    summary = dict(schema=5, binary_sha256=receipt["binary_sha256"],
                    research_source_sha256=receipt.get("research_source_sha256"),
                    rejected_commands=len(receipt.get("rejected_commands", [])),
                    direct_target_test=receipt.get("research_direct", False),
@@ -186,12 +219,14 @@ def verify(receipt):
                             impact, [signed(ray_row[28 + n]) for n in range(3)])
                         result["impact_view_angle_units"] = angle_units(
                             endpoint_vector, forward)
+                        result["_impact_world"] = impact
                     else:
                         result["expired_endpoint_world"] = endpoint
                         result["expired_endpoint_target_distance_world_units"] = \
                             distance_world_units(
                                 endpoint,
                                 [signed(ray_row[28 + n]) for n in range(3)])
+                        result["_expired_endpoint_world"] = endpoint
                     expected = EXPECTED_ENDPOINTS.get(case["name"])
                     if expected:
                         expected_kind, maximum_target_distance = expected
@@ -223,6 +258,71 @@ def verify(receipt):
                                     yaw_units=signed(r[9]) / 65536,
                                     player_pitch_units=signed(r[22]) / 65536,
                                     player_yaw_units=signed(r[23]) / 65536) for r in shots]
+        if receipt.get("research_schema", 0) >= 5 and case["name"].startswith("fire_"):
+            frame = case["observation"].get("frame")
+            assert frame and frame.get("ok") and frame.get("scale", 0) > 0
+            frame_path = base_dir / frame["file"]
+            assert frame_path.name == frame["file"] and frame_path.is_file(), frame["file"]
+            assert hashlib.sha256(frame_path.read_bytes()).hexdigest() == frame["sha256"]
+            pixels = image_stats(frame_path)
+            assert pixels["nonblank"], (case["name"], "endpoint frame is blank", pixels)
+            assert pixels["width"] == frame["width"] and pixels["height"] == frame["height"]
+            native_width = pixels["width"] / frame["scale"]
+            native_height = pixels["height"] / frame["scale"]
+
+            release = release_rows[0]
+            shot_seq = shots[0][3]
+            target_ray = max((r for r in rows if r[0] == RAY_DONE and r[3] == shot_seq),
+                             key=lambda r: r[1] + (r[2] << 32))
+            target_transform = max((r for r in rows if r[0] == RAY_TRANSFORM and r[3] == shot_seq),
+                                   key=lambda r: r[1] + (r[2] << 32))
+            release_ray = max((r for r in rows if r[0] == RAY_DONE and r[3] <= release[3]),
+                              key=lambda r: (r[3], r[1] + (r[2] << 32)))
+            release_transform = max((r for r in rows if r[0] == RAY_TRANSFORM and r[3] <= release[3]),
+                                    key=lambda r: (r[3], r[1] + (r[2] << 32)))
+            target_pixel = project_world_point(
+                target_ray, target_transform,
+                [signed(target_ray[28 + n]) for n in range(3)])
+            muzzle_target_pixel = project_world_point(
+                target_ray, target_transform,
+                [signed(target_ray[28 + n]) for n in range(3)],
+                [signed(target_ray[25 + n]) for n in range(3)])
+            center = [target_transform[57] / 65536.0, target_transform[58] / 65536.0]
+            shot_offset = math.dist(target_pixel, center)
+            release_center = [release_transform[57] / 65536.0,
+                              release_transform[58] / 65536.0]
+            endpoint_world = result.get("_impact_world", result.get("_expired_endpoint_world"))
+            endpoint_pixel = project_world_point(release_ray, release_transform, endpoint_world)
+            endpoint_offset = math.dist(endpoint_pixel, release_center)
+            for point in (target_pixel, endpoint_pixel):
+                assert -1024.0 <= point[0] <= native_width + 1024.0, point
+                assert -1024.0 <= point[1] <= native_height + 1024.0, point
+            assert 0 <= center[0] <= native_width and 0 <= center[1] <= native_height
+            assert 10.0 <= shot_offset <= 32.0, (case["name"], shot_offset)
+            assert math.isclose(center[0] * 2, native_width, abs_tol=1.0), (
+                case["name"], center, native_width)
+            assert math.isclose(center[1] * 2, native_height, abs_tol=1.0), (
+                case["name"], center, native_height)
+            result.update(
+                shot_projected_pixel=target_pixel,
+                muzzle_projected_target_pixel=muzzle_target_pixel,
+                muzzle_parallax_pixels=math.dist(target_pixel, muzzle_target_pixel),
+                shot_reticle_offset_pixels=shot_offset,
+                endpoint_projected_pixel=endpoint_pixel,
+                endpoint_reticle_offset_pixels=endpoint_offset,
+                native_projection_center_pixel=release_center,
+                native_frame_size=[native_width, native_height],
+                screenshot=dict(file=frame["file"], sha256=frame["sha256"],
+                                width=pixels["width"], height=pixels["height"],
+                                scale=frame["scale"], colors=pixels["colors"],
+                                nonblank=True),
+            )
+            if result["shot_endpoint_kind"] == "collision":
+                target_endpoint_delta = math.dist(target_pixel, endpoint_pixel)
+                assert target_endpoint_delta <= 8.0, (case["name"], target_endpoint_delta)
+                result["target_endpoint_pixel_distance"] = target_endpoint_delta
+            result.pop("_impact_world", None)
+            result.pop("_expired_endpoint_world", None)
         summary["cases"].append(result)
     return summary
 
@@ -232,7 +332,8 @@ def main():
     parser.add_argument("receipt", type=Path)
     parser.add_argument("--out", type=Path)
     args = parser.parse_args()
-    result = verify(json.loads(args.receipt.read_text(encoding="utf-8")))
+    result = verify(json.loads(args.receipt.read_text(encoding="utf-8")),
+                    args.receipt.resolve().parent)
     result["raw_receipt_sha256"] = hashlib.sha256(args.receipt.read_bytes()).hexdigest()
     encoded = json.dumps(result, indent=2) + "\n"
     if args.out:

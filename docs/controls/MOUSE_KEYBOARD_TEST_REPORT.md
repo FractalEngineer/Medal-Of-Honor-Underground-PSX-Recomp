@@ -174,8 +174,25 @@ negative-pitch case hit a nearer surface. See the
 [camera basis receipt](MOUSE_KEYBOARD_CAMERA_BASIS_RECEIPT.json).
 
 Pixel-space reticle projection, target-present assistance, scoped/recoil/moving
-contexts and other weapon families remain unmeasured. Cached-target selection,
-muzzle parallax and Q16 quantization are still not individually separated.
+contexts and other weapon families remain unmeasured. Collision-point selection
+and Q16 quantization are still not individually separated.
+
+The 2026-11-06 projection continuation closes the basic pixel checkpoint. It
+captures the native camera RT/TR immediately before its `MVMVA`, projects the
+cached target and released endpoint through native `H/OFX/OFY`, and captures a
+nonblank `screenshot_hires` frame at shot release. The six-case matrix produced
+one collision endpoint per aligned case except the known negative-yaw expiry.
+Every fired target projected `18.23..18.91` pixels from the `512x240` camera
+centre. Reprojection from the muzzle revealed `10.79..15.31` pixels of
+origin-parallax displacement. Aligned collision endpoints landed within
+`0.09..0.44` pixels of the target projection; the negative-pitch nearer
+surface differed by `4.84` pixels. See
+[MOUSE_KEYBOARD_PROJECTION_RECEIPT.json](MOUSE_KEYBOARD_PROJECTION_RECEIPT.json).
+
+This fixture does not render a centre crosshair, so the comparison uses the
+native GTE `OFX/OFY` projection centre as the aim axis. Target-present
+assistance, scoped/recoil/moving modes, other weapons and production input
+remain open.
 
 Recoil, other weapons/modes, action mapping and cached-native execution also remain unproven.
 The production mouse/keyboard feature is not implemented.

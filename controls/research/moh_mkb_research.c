@@ -25,6 +25,7 @@
 #define CONSTRUCT 0x8004815Cu
 #define AIM_ASSIST 0x8008E06Cu
 #define RAY_DONE 0x8008E7A8u
+#define RAY_TRANSFORM 0x8008DAA4u
 #define SHOT_UPDATE 0x80047498u
 #define SHOT_RELEASE_FN 0x80077E8Cu
 /* Synthetic observations, never guest instruction addresses. */
@@ -141,6 +142,17 @@ static void record(CPUState *cpu, uint32_t site, uint32_t p, uint32_t object) {
     r[70] = companion >= 0x800B0000u && companion <= 0x801FC000u && !(companion & 3u)
         ? psx_mod_read_word(companion + 0x38u) : 0;
     r[71] = shot ? psx_mod_read_word(shot + 0x34u) : 0;
+    if (site == RAY_TRANSFORM) {
+        /* Reuse matrix/aim-target/origin slots on this synthetic projection
+         * row so the fixed debug reply limit still fits every row. */
+        for (unsigned i = 0; i < 9; ++i) {
+            uint32_t packed = cpu->gte_ctrl[i / 2];
+            r[43 + i] = (uint32_t)(int32_t)(int16_t)((i & 1u) ? packed >> 16 : packed);
+        }
+        for (unsigned i = 0; i < 3; ++i) r[52 + i] = cpu->gte_ctrl[5 + i];
+        r[25] = psx_mod_read_word(cpu->gpr[29] + 80);
+        r[26] = psx_mod_read_word(cpu->gpr[29] + 84);
+    }
 }
 static int observe_ray(CPUState *cpu, uint32_t site) {
     if (!cpu || !atomic_load_explicit(&active, memory_order_relaxed)) return 0;
@@ -290,6 +302,8 @@ static void entry(CPUState *cpu, uint32_t site) {
         }
     } else if (site == AIM_ASSIST || site == RAY_DONE) {
         if (!ray_calls || cpu->gpr[22] != p || cpu->gpr[19] != p + 0x3FCu) return;
+    } else if (site == RAY_TRANSFORM) {
+        if (!ray_calls) return;
     }
     record(cpu, site, p, object);
     unsigned was_applied = applied;
@@ -421,6 +435,7 @@ PSX_MOD_CONSTRUCTOR(register_mkb_research) {
     psx_mod_register_instruction_plugin(ID, 0x8008E660u, 0xAEC2024Cu, entry);
     psx_mod_register_instruction_plugin(ID, 0x8008E7A8u, 0xAEC20248u, entry);
     psx_mod_register_instruction_plugin(ID, AIM_ASSIST, 0x125E0059u, entry);
+    psx_mod_register_instruction_plugin(ID, RAY_TRANSFORM, 0x27A20050u, entry);
     psx_mod_register_instruction_plugin(ID, ADJUST_END, 0x02002821u, entry);
     psx_mod_register_command("mohu.mkb.research", command);
 }

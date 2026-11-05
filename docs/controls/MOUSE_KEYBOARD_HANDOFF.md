@@ -463,3 +463,74 @@ framework edit was changed.
    mounted and other weapon/mode cases. Keep the production mouse feature and
    all gameplay writes OFF until those contexts and cached-native hook coverage
    are proven.
+
+## Continuation - pixel-space projection, 2026-11-06
+
+The next checkpoint captures the camera transform that the native ray producer
+actually installs. At `8008DAA4` the transform RT/TR values are complete and the
+input vector address is formed; `MVMVA` immediately follows. The checker
+normalizes the three measured Q12 RT columns and projects world points with
+the native `H/OFX/OFY` values. It also captures one `screenshot_hires` frame
+when the tracked shot releases, or at the end of the bounded window if release
+was observed too late.
+
+The final matrix is `analysis/runtime/mkb-projection-final-20261106`:
+**6/6 cases checked**, ten invalid commands rejected, one ammo decrement per
+firing case, six nonblank endpoint frames and no remaining game process.
+Every screenshot is `2048x960` at scale 4, preserving the native `512x240`
+display geometry.
+
+| Case | Endpoint | Projected endpoint | Offset from camera centre | Muzzle parallax |
+| --- | --- | --- | --- | --- |
+| baseline | collision | 259.24 / 138.10 | 18.39 px | 11.88 px |
+| yaw +32 | collision | 257.97 / 138.31 | 18.42 px | 10.79 px |
+| pitch +32 | collision | 256.77 / 137.93 | 17.95 px | 13.56 px |
+| yaw -32 | expired | 254.25 / 133.34 | 13.46 px | 13.23 px |
+| pitch -32 | collision | 255.17 / 135.74 | 15.76 px | 15.31 px |
+| pitch +64 | collision | 260.33 / 137.60 | 18.13 px | 15.17 px |
+
+The fired ray target itself projects at `257.03..260.39` x and
+`137.94..138.66` y in all six cases, a perpendicular offset of
+`18.23..18.91` px from the `256/120` camera projection centre. The fixed
+screen-space displacement is therefore measured, not inferred from Euler
+angles. Reprojecting each target from the native muzzle origin instead of the
+camera origin moves it `10.79..15.31` px, which isolates the origin-parallax
+component of the discrepancy.
+
+For the four aligned collisions, the released endpoint projects within
+`0.09..0.44` px of the cached target. The negative-pitch case hit a nearer
+surface and moves `4.84` px from its cached target. The negative-yaw shot
+expired with no impact and is not compared as a hit.
+
+Committed compact evidence is
+`docs/controls/MOUSE_KEYBOARD_PROJECTION_RECEIPT.json`. Current research source
+SHA256 is `14cf90525a318b66e7a05078923ed97d78bbf8832081290fa6580278d8c3eba3`;
+binary SHA256 is `7e88daf3dde589c63f0bbc79d10d393d630a70f114434577239fd9da831863b2`.
+The final raw receipt SHA256 is
+`241041568b813d4a1b41615fac1f13d84ede579bdfb4bee721bcecda0e02cdfc`.
+The compact checked receipt SHA256 is
+`4da274f3074d494aa81bed4dcb69cbea07b9c6ea8a6a95b0ce8187db2792e6a6`.
+
+```powershell
+cmake --build build-probe --target psx-runtime -j 2
+python tools/probe_mkb_native.py analysis/runtime/mkb-next --slot 0 --fixtures analysis/runtime/mkb-native-analog-20261105/saves/openbios --research --research-direct --research-prepare --gate-fire --research-cases fire_camera_base fire_camera_yaw fire_camera_pitch fire_camera_yaw_negative fire_camera_pitch_negative fire_camera_pitch_large
+python tools/check_mkb_research.py analysis/runtime/mkb-next/receipt.json --out docs/controls/MOUSE_KEYBOARD_PROJECTION_RECEIPT.json
+```
+
+The final matrix run closed normally, preserved source saves and production
+preferences, and left no game process. The fixture does not draw a centre
+crosshair, so
+`OFX/OFY` is used as the native aim axis rather than an image-detected reticle.
+No production input path or gameplay write was enabled.
+
+### Next work after this checkpoint
+
+1. Add a target-present aim-assist control and measure whether the projected
+   target moves relative to the fixed camera axis.
+2. Repeat projection and impact checks for scoped, recoil, moving, mounted and
+   other weapon/mode cases. Do not generalize the P38 result.
+3. Trace the negative-pitch nearer collision and Q16 target quantization
+   separately now that endpoint, target and muzzle-origin pixels are recorded.
+4. Finish cached-native lifecycle and action-mapping coverage before any
+   production mouse input, options, profiles or launcher work. Keep all
+   production features OFF.

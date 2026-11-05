@@ -93,7 +93,7 @@ def main():
                    binary_sha256=native.digest(exe), source_hashes=hashes,
                    config_sha256=native.digest(config),
                    vr_requested=False, interpreter_diagnostic=args.interpreter,
-                   research_direct=args.research_direct, research_schema=4,
+                   research_direct=args.research_direct, research_schema=5,
                    research_prepare=args.research_prepare, gated_fire=args.gate_fire, samples=[])
     if args.research:
         receipt["research_source_sha256"] = native.digest(ROOT / "controls/research/moh_mkb_research.c")
@@ -169,7 +169,7 @@ def main():
                     if result["result"] != 1:
                         raise RuntimeError(result)
                     return json.loads(result["reply"])
-                def capture(value, fire=False):
+                def capture(value, fire=False, frame_path=None):
                     research_command(f"fire_gate {int(fire and args.gate_fire)}")
                     armed = research_command(value)
                     if armed != {"armed": True}:
@@ -178,6 +178,18 @@ def main():
                         native.command("set_input", buttons="0xbfff", pad_type=1)
                     deadline = time.monotonic() + 10
                     released = False
+                    frame = None
+
+                    def capture_frame():
+                        if not fire or frame_path is None:
+                            return None
+                        if not frame_path.exists():
+                            info = native.command("screenshot_hires", path=str(frame_path))
+                            if not frame_path.is_file():
+                                raise RuntimeError(f"Endpoint screenshot missing: {info}")
+                        return dict(file=frame_path.name, sha256=native.digest(frame_path),
+                                    bytes=frame_path.stat().st_size, **info)
+
                     while time.monotonic() < deadline:
                         result = research_command("dump")
                         if fire and not released and result.get("shot_seen"):
@@ -185,10 +197,15 @@ def main():
                             # trigger long enough to consume a second round.
                             native.command("set_input", buttons="0xffff", pad_type=1)
                             released = True
+                        if fire and frame is None and result.get("shot_released"):
+                            frame = capture_frame()
                         if result.get("state") == 3:
                             if fire and not released:
                                 native.command("set_input", buttons="0xffff", pad_type=1)
+                            if fire and frame is None:
+                                frame = capture_frame()
                             result["rows"] = [research_command(f"row {i}")["values"] for i in range(result["count"])]
+                            result["frame"] = frame
                             return result
                         time.sleep(.02)
                     raise TimeoutError("No complete owned player update observed")
@@ -235,7 +252,11 @@ def main():
                     command = "arm" if not site else f"inject {site:x} {yaw} {pitch}"
                     if updates != 1:
                         command = f"arm {updates}" if not site else command + f" {updates}"
-                    result = capture(command, fire)
+                    result = capture(
+                        command,
+                        fire,
+                        out / f"{name}.endpoint.png" if fire else None,
+                    )
                     if args.camera_writes or args.camera_target_writes:
                         (out / f"{name}.camera-writes.json").write_text(json.dumps(native.command("wtrace_dump", count=256), indent=2) + "\n")
                         (out / f"{name}.camera-after.bin").write_bytes(native.read(camera, 0x600))

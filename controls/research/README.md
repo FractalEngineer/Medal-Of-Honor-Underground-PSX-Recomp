@@ -56,6 +56,11 @@ The existing debug `mod_cmd` API exposes name `mohu.mkb.research`:
   neutral followed only by Cross; this is a diagnostic scheduling control,
   not production mouse eligibility or a general fire-action detector. Upper
   bits are `ffff` even when neutral and must be excluded.
+- The isolated runner captures one `screenshot_hires` frame as soon as the
+  tracked shot is released, or when the bounded firing window ends if release
+  was not observed earlier. The checker hashes and decodes every frame, checks
+  nonblank colour content, and stores its internal resolution and scale in the
+  compact receipt. Gameplay remains unmodified by the capture.
 - `dump`: return state and completed observation metadata.
 - `row I`: return one completed observation row. Pagination fits the existing
   debug reply limit. No command reads the observation array while it is mutable.
@@ -130,6 +135,15 @@ its own target blend; the checker reports the resulting camera/ray angle rather
 than requiring them to be identical.
 `8008e7a8` records the producer after its cached-target stores, so those fields
 describe the ray consumed by that owned update rather than the preceding one.
+`8008daa4` observes the native camera matrix after its five `CTC2` matrix stores
+and before `MVMVA`. On this row, fields 43..51 and 52..54 hold the measured Q12
+RT/TR matrix rather than the camera input matrix/aim target, and fields 25/26
+hold the two words that `LWC2` loads as the transform input. The checker
+normalizes the three RT columns and applies native `H/OFX/OFY` to project the
+ray target and released endpoint into the `512x240` screen:
+`(x, y, z) = RT_norm^T * (world - camera_origin)` and
+`screen = (OFX + H*x/z, OFY + H*y/z)`. The camera projection centre is the
+fixture's aim axis; this is not an image-detected HUD reticle.
 `80047498` observes the constructed P38 shot's native update entry, while
 `ff000024` records its release at `80077e8c`. The checker distinguishes the
 collision return `80045df8` from lifetime expiry `800474e8`; only collision
