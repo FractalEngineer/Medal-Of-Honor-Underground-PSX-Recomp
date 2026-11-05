@@ -1,0 +1,346 @@
+{
+  "schema": 1,
+  "binary_sha256": "ab0e4ba4604629903b75025b6cf940910ab3649568dd972fd677c4e8769059da",
+  "research_source_sha256": "3c460d438f4abefb37d342d3e7ce9a30e524e72df3ed8948b869647611866b96",
+  "rejected_commands": 10,
+  "direct_target_test": true,
+  "early_ray_test": false,
+  "camera_preparation_test": true,
+  "production_mouse_mod_verified": false,
+  "cases": [
+    {
+      "name": "camera_order",
+      "updates": 4,
+      "writes": 0,
+      "final_pitch_delta_units": 0.0,
+      "final_yaw_delta_units": 0.0,
+      "original_ray_calls": 4,
+      "camera_preparations": 0,
+      "matching_preparation_skips": 0,
+      "camera_forward": [
+        -0.30476357586529085,
+        -0.08473005501504714,
+        0.9486516645233636
+      ],
+      "view_ray_angle_units": 17.0875887472923,
+      "aim_assist_score": 4753,
+      "aim_assist_baseline": 4753,
+      "aim_assist_active": false,
+      "camera_input_origin": [
+        1186922496,
+        -15990784,
+        -508035072
+      ],
+      "camera_actor_position": [
+        1190920192,
+        -14876672,
+        -520486912
+      ],
+      "aim_target_world": [
+        1101463552,
+        -27262976,
+        -234422272
+      ],
+      "ray_origin_world": [
+        1186988032,
+        -10682368,
+        -490274816
+      ]
+    },
+    {
+      "name": "fire_camera_base",
+      "updates": 4,
+      "writes": 0,
+      "final_pitch_delta_units": 0.0,
+      "final_yaw_delta_units": 0.0,
+      "original_ray_calls": 4,
+      "camera_preparations": 0,
+      "matching_preparation_skips": 0,
+      "camera_forward": [
+        -0.30476357586529085,
+        -0.08473005501504714,
+        0.9486516645233636
+      ],
+      "view_ray_angle_units": 17.0875887472923,
+      "aim_assist_score": 4753,
+      "aim_assist_baseline": 4753,
+      "aim_assist_active": false,
+      "camera_input_origin": [
+        1186922496,
+        -15990784,
+        -508035072
+      ],
+      "camera_actor_position": [
+        1190920192,
+        -14876672,
+        -520486912
+      ],
+      "aim_target_world": [
+        1101463552,
+        -27262976,
+        -234422272
+      ],
+      "ray_origin_world": [
+        1186988032,
+        -10682368,
+        -490274816
+      ],
+      "first_shot_same_update": true,
+      "shots": [
+        {
+          "update": 202,
+          "pitch_units": 40.0,
+          "yaw_units": -210.0,
+          "player_pitch_units": 63.875,
+          "player_yaw_units": 3894.0
+        }
+      ]
+    },
+    {
+      "name": "fire_camera_yaw",
+      "updates": 4,
+      "writes": 1,
+      "final_pitch_delta_units": 0.0,
+      "final_yaw_delta_units": 32.0,
+      "original_ray_calls": 4,
+      "camera_preparations": 0,
+      "matching_preparation_skips": 0,
+      "camera_forward": [
+        -0.2592929803365304,
+        -0.08475757767399109,
+        0.9620724002771501
+      ],
+      "view_ray_angle_units": 16.33579054741518,
+      "aim_assist_score": 4708,
+      "aim_assist_baseline": 4708,
+      "aim_assist_active": false,
+      "camera_input_origin": [
+        1187512320,
+        -15990784,
+        -507838464
+      ],
+      "camera_actor_position": [
+        1190920192,
+        -14876672,
+        -520486912
+      ],
+      "aim_target_world": [
+        1115095040,
+        -27197440,
+        -233963520
+      ],
+      "ray_origin_world": [
+        1186988032,
+        -10682368,
+        -490274816
+      ],
+      "first_shot_same_update": true,
+      "shots": [
+        {
+          "update": 312,
+          "pitch_units": 40.0,
+          "yaw_units": -178.0,
+          "player_pitch_units": 63.875,
+          "player_yaw_units": 3926.0
+        }
+      ]
+    },
+    {
+      "name": "fire_camera_pitch",
+      "updates": 4,
+      "writes": 1,
+      "final_pitch_delta_units": 32.0,
+      "final_yaw_delta_units": 0.0,
+      "original_ray_calls": 4,
+      "camera_preparations": 1,
+      "matching_preparation_skips": 1,
+      "camera_forward": [
+        -0.3028710610913193,
+        -0.13386424947008133,
+        0.943583320680919
+      ],
+      "view_ray_angle_units": 16.501455648506568,
+      "aim_assist_score": 4816,
+      "aim_assist_baseline": 4816,
+      "aim_assist_active": false,
+      "camera_input_origin": [
+        1186922496,
+        -16646144,
+        -508035072
+      ],
+      "camera_actor_position": [
+        1190920192,
+        -14876672,
+        -520486912
+      ],
+      "aim_target_world": [
+        1099890688,
+        -42139648,
+        -234422272
+      ],
+      "ray_origin_world": [
+        1186988032,
+        -10682368,
+        -490274816
+      ],
+      "first_shot_same_update": true,
+      "shots": [
+        {
+          "update": 415,
+          "pitch_units": 76.0,
+          "yaw_units": -214.0,
+          "player_pitch_units": 95.875,
+          "player_yaw_units": 3894.0
+        }
+      ]
+    },
+    {
+      "name": "fire_camera_yaw_negative",
+      "updates": 4,
+      "writes": 1,
+      "final_pitch_delta_units": 0.0,
+      "final_yaw_delta_units": -32.0,
+      "original_ray_calls": 4,
+      "camera_preparations": 0,
+      "matching_preparation_skips": 0,
+      "camera_forward": [
+        -0.35381601734422785,
+        -0.08443460899063544,
+        0.9314961205905623
+      ],
+      "view_ray_angle_units": 18.907192609091965,
+      "aim_assist_score": 4818,
+      "aim_assist_baseline": 4818,
+      "aim_assist_active": false,
+      "camera_input_origin": [
+        1186267136,
+        -15990784,
+        -508231680
+      ],
+      "camera_actor_position": [
+        1190920192,
+        -14876672,
+        -520486912
+      ],
+      "aim_target_world": [
+        1084948480,
+        -27394048,
+        -234356736
+      ],
+      "ray_origin_world": [
+        1186988032,
+        -10682368,
+        -490274816
+      ],
+      "first_shot_same_update": true,
+      "shots": [
+        {
+          "update": 522,
+          "pitch_units": 40.0,
+          "yaw_units": -247.0,
+          "player_pitch_units": 63.875,
+          "player_yaw_units": 3862.0
+        }
+      ]
+    },
+    {
+      "name": "fire_camera_pitch_negative",
+      "updates": 4,
+      "writes": 1,
+      "final_pitch_delta_units": -32.0,
+      "final_yaw_delta_units": 0.0,
+      "original_ray_calls": 4,
+      "camera_preparations": 1,
+      "matching_preparation_skips": 1,
+      "camera_forward": [
+        -0.3054381962913428,
+        -0.03478954147029903,
+        0.9515761640828219
+      ],
+      "view_ray_angle_units": 20.307423407192193,
+      "aim_assist_score": 3340,
+      "aim_assist_baseline": 3340,
+      "aim_assist_active": false,
+      "camera_input_origin": [
+        1186922496,
+        -15335424,
+        -508035072
+      ],
+      "camera_actor_position": [
+        1190920192,
+        -14876672,
+        -520486912
+      ],
+      "aim_target_world": [
+        1127481344,
+        -12976128,
+        -317915136
+      ],
+      "ray_origin_world": [
+        1186988032,
+        -10682368,
+        -490274816
+      ],
+      "first_shot_same_update": true,
+      "shots": [
+        {
+          "update": 629,
+          "pitch_units": 8.0,
+          "yaw_units": -217.0,
+          "player_pitch_units": 31.875,
+          "player_yaw_units": 3894.0
+        }
+      ]
+    },
+    {
+      "name": "fire_camera_pitch_large",
+      "updates": 4,
+      "writes": 1,
+      "final_pitch_delta_units": 64.0,
+      "final_yaw_delta_units": 0.0,
+      "original_ray_calls": 4,
+      "camera_preparations": 1,
+      "matching_preparation_skips": 1,
+      "camera_forward": [
+        -0.3007528786623938,
+        -0.18235887217562913,
+        0.9361052012007604
+      ],
+      "view_ray_angle_units": 9.760150131969075,
+      "aim_assist_score": 4863,
+      "aim_assist_baseline": 4863,
+      "aim_assist_active": false,
+      "camera_input_origin": [
+        1186922496,
+        -17301504,
+        -508035072
+      ],
+      "camera_actor_position": [
+        1190920192,
+        -14876672,
+        -520486912
+      ],
+      "aim_target_world": [
+        1102381056,
+        -57212928,
+        -234487808
+      ],
+      "ray_origin_world": [
+        1186988032,
+        -10682368,
+        -490274816
+      ],
+      "first_shot_same_update": true,
+      "shots": [
+        {
+          "update": 735,
+          "pitch_units": 112.0,
+          "yaw_units": -208.0,
+          "player_pitch_units": 127.875,
+          "player_yaw_units": 3894.0
+        }
+      ]
+    }
+  ],
+  "raw_receipt_sha256": "30432d5ce933a796c4565937334ad110844f2fabf1c4be3fc5d3acd962b5072b"
+}

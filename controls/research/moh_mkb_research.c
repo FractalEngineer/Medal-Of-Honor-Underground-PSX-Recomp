@@ -23,11 +23,13 @@
 #define RAY 0x8008D81Cu
 #define PREPARE 0x8008AD04u
 #define CONSTRUCT 0x8004815Cu
+#define AIM_ASSIST 0x8008E06Cu
+#define RAY_DONE 0x8008E7A8u
 /* Synthetic observations, never guest instruction addresses. */
 #define CAMERA_PREPARED 0xFF000018u
 #define PREPARE_SKIPPED 0xFF00001Cu
 #define CAPACITY 128
-#define FIELDS 40
+#define FIELDS 64
 
 enum { IDLE, ARMED, RECORDING, READY, CONFIGURING };
 static atomic_uint state, active;
@@ -78,6 +80,8 @@ static void record(CPUState *cpu, uint32_t site, uint32_t p, uint32_t object) {
     if (row_count == CAPACITY) { ++dropped; return; }
     uint32_t *r = rows[row_count++];
     uint32_t in = p + 0x3FCu;
+    uint32_t camera = owned_camera(p);
+    uint32_t camera_in = camera ? camera + 0x3FCu : 0;
     r[0] = site; r[1] = (uint32_t)psx_cycle_count;
     r[2] = (uint32_t)(psx_cycle_count >> 32);
     r[3] = update_sequence + ((site & ~1u) == CAMERA_UPDATE || site == CAMERA_PREPARED);
@@ -105,6 +109,20 @@ static void record(CPUState *cpu, uint32_t site, uint32_t p, uint32_t object) {
     r[35] = psx_mod_read_word(0x800A04BCu);
     for (unsigned i = 0; i < 3; ++i) r[36 + i] = psx_mod_read_word(object + 0x220 + 4 * i);
     r[39] = psx_mod_read_word(object + 8);
+    for (unsigned i = 0; i < 3; ++i)
+        r[40 + i] = camera ? psx_mod_read_word(camera_in + 4 * i) : 0;
+    for (unsigned i = 0; i < 9; ++i)
+        r[43 + i] = camera ? (uint32_t)(int32_t)(int16_t)psx_mod_read_half(camera_in + 0x100 + 2 * i) : 0;
+    for (unsigned i = 0; i < 3; ++i)
+        r[52 + i] = camera ? psx_mod_read_word(camera_in + 0x1C + 4 * i) : 0;
+    r[55] = camera ? psx_mod_read_word(camera_in + 0x28) : 0;
+    r[56] = cpu->gte_ctrl[26] & 0xFFFFu;
+    r[57] = cpu->gte_ctrl[24];
+    r[58] = cpu->gte_ctrl[25];
+    r[59] = site == AIM_ASSIST ? cpu->gpr[18] : 0;
+    r[60] = site == AIM_ASSIST ? cpu->gpr[30] : 0;
+    for (unsigned i = 0; i < 3; ++i)
+        r[61 + i] = camera ? psx_mod_read_word(camera + 0x220 + 4 * i) : 0;
 }
 static int observe_ray(CPUState *cpu, uint32_t site) {
     if (!cpu || !atomic_load_explicit(&active, memory_order_relaxed)) return 0;
@@ -158,6 +176,10 @@ static void entry(CPUState *cpu, uint32_t site) {
         uint32_t mode = psx_mod_read_word(p + 0x3FC + 0x1D4);
         if (direct && cpu->gpr[22] == p && cpu->gpr[19] == p + 0x3FCu &&
             (mode == 7 || mode == 8)) cpu->gpr[2] = 0;
+        if (site == RAY_DONE && ray_calls &&
+            cpu->gpr[22] == p && cpu->gpr[19] == p + 0x3FCu &&
+            atomic_load_explicit(&state, memory_order_acquire) == RECORDING)
+            record(cpu, RAY_DONE, p, p);
         return;
     }
     if (site == UPDATE) {
@@ -214,6 +236,8 @@ static void entry(CPUState *cpu, uint32_t site) {
             object < 0x800B0000u || object > 0x801FC000u || (object & 3) ||
             psx_mod_read_word(object + 8) != 0x13F6u ||
             code_hash(CONSTRUCT, 0xDCu) != 0x073B3393u) return;
+    } else if (site == AIM_ASSIST || site == RAY_DONE) {
+        if (!ray_calls || cpu->gpr[22] != p || cpu->gpr[19] != p + 0x3FCu) return;
     }
     record(cpu, site, p, object);
     unsigned was_applied = applied;
@@ -328,6 +352,7 @@ PSX_MOD_CONSTRUCTOR(register_mkb_research) {
     psx_mod_register_instruction_plugin(ID, 0x8008D910u, 0xAEC2024Cu, entry);
     psx_mod_register_instruction_plugin(ID, 0x8008E660u, 0xAEC2024Cu, entry);
     psx_mod_register_instruction_plugin(ID, 0x8008E7A8u, 0xAEC20248u, entry);
+    psx_mod_register_instruction_plugin(ID, AIM_ASSIST, 0x125E0059u, entry);
     psx_mod_register_instruction_plugin(ID, ADJUST_END, 0x02002821u, entry);
     psx_mod_register_command("mohu.mkb.research", command);
 }

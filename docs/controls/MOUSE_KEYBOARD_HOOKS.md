@@ -232,3 +232,33 @@ processing: the P1 callback queues actions before look resolution, but this P38
 fixture's actual cached-ray consumption happens after the original ray update.
 Moving the whole ray producer is therefore not required for this measured path.
 Other weapons and native aim modes still need their own ordering evidence.
+
+## Continuation: post-write ray and target-score control
+
+The 2026-11-06 basis run adds two observations inside the original ray producer:
+
+| Site / field | Evidence |
+| --- | --- |
+| `8008E06C` | `125E0059` (`beq $s2,$fp`), actor target-scoring branch. A score different from the baseline takes the native blend at `8008E074..8008E1D0` |
+| `8008E7A8` | `AEC20248`; the guarded pitch-increment store also serves as the post-cache marker. Its cached target fields are current, unlike a `RAY` entry observation from the same update |
+| Camera input `+100` | 9 signed Q12 coefficients used by the native view/ray calculation |
+| Camera input origin / actor `+220` | Kept separately because the ray producer loads the actor position, while the input origin is a distinct camera-space source |
+
+The no-target score stayed equal to its baseline in baseline, +/-yaw and
++/-pitch/+64 firing cases. This rules out the scoring blend as the cause of the
+measured shot-angle deltas in this fixture; target-present aim-assist behavior
+remains untested.
+
+| Input | Player result | Shot result |
+| --- | --- | --- |
+| yaw +32 | exact +32 | yaw +32, pitch unchanged |
+| yaw -32 | exact -32 | yaw -37, pitch unchanged |
+| pitch +32 | exact +32 | pitch +36, yaw -4 |
+| pitch -32 | exact -32 | pitch -32, yaw -7 |
+| pitch +64 | exact +64 | pitch +68, yaw +2 |
+
+Every shot used the first owned update and its native muzzle origin. The
+remaining differences arise after the camera/view and native target point are
+formed; colliding-target selection, fixed muzzle parallax and Q16 target
+quantization are candidate contributors, not yet separated. Actual impact and
+visible camera-projection agreement remain open.

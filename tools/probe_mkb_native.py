@@ -38,6 +38,9 @@ RESEARCH_CASES = [
     ("fire_camera_base", 0x8004A744, 0, 0),
     ("fire_camera_yaw", 0x8004A744, 32, 0),
     ("fire_camera_pitch", 0x8004A744, 0, 32),
+    ("fire_camera_yaw_negative", 0x8004A744, -32, 0),
+    ("fire_camera_pitch_negative", 0x8004A744, 0, -32),
+    ("fire_camera_pitch_large", 0x8004A744, 0, 64),
 ]
 
 
@@ -90,7 +93,7 @@ def main():
                    binary_sha256=native.digest(exe), source_hashes=hashes,
                    config_sha256=native.digest(config),
                    vr_requested=False, interpreter_diagnostic=args.interpreter,
-                   research_direct=args.research_direct, research_schema=2,
+                   research_direct=args.research_direct, research_schema=3,
                    research_prepare=args.research_prepare, gated_fire=args.gate_fire, samples=[])
     if args.research:
         receipt["research_source_sha256"] = native.digest(ROOT / "controls/research/moh_mkb_research.c")

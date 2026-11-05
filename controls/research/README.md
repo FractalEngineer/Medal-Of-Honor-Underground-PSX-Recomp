@@ -18,8 +18,9 @@ python tools/check_mkb_research.py analysis/runtime/mkb-research-new/receipt.jso
 The fixture path is local, ignored and requires the owner's lawful disc. The
 probe copies it, refuses concurrent game sessions, hashes source saves and
 preferences, closes its owned process, and records cleanup in `receipt.json`.
-For camera timing experiments add `--research-prepare --gate-fire
---research-cases camera_order fire_camera_base fire_camera_yaw fire_camera_pitch`.
+For camera timing and basis experiments add `--research-prepare --gate-fire
+--research-cases camera_order fire_camera_base fire_camera_yaw fire_camera_pitch
+fire_camera_yaw_negative fire_camera_pitch_negative fire_camera_pitch_large`.
 The initial incompatible historical slot is not a substitute;
 never modify a state header or execution identity.
 
@@ -103,13 +104,26 @@ fields as signed Q16; 4096 native angle units = one revolution.
 | 34, 35 | Native sampled P1 current / previous button words (addresses `800A04B4/BC`) |
 | 36..38 | Observed object's native world position at `+0x220..+0x228` |
 | 39 | Observed object's class at `+8` |
+| 40..42 | Owned camera input origin, input `+0..+8` |
+| 43..51 | Owned camera view matrix from input `+0x100` |
+| 52..54 | Camera aim target at input `+0x1C..+0x24` |
+| 55 | Camera prepared component at input `+0x28` |
+| 56..58 | GTE projection H / OFX / OFY |
+| 59, 60 | Native aim-target score / no-selection baseline at `8008e06c` |
+| 61..63 | Owned camera actor world position at `+0x220..+0x228` |
 
-The current schema has 40 fields and capacity 128 rows. Historical committed
-receipts use 25 fields. Synthetic sites `ff000018` / `ff00001c` record early
+The current schema has 64 fields and capacity 128 rows. Historical committed
+receipts use 25 or 40 fields. Synthetic sites `ff000018` / `ff00001c` record early
 camera preparation / the matching later call being skipped. `8008d81c` is a
 read-only original ray-call observation; `8004815c` records native P38 ray
 consumption with RA `800482cc`. The discarded early-ray experiment used
 `ff000010` / `ff000014`; those are absent from current source and captures.
+`8008e06c` records the native aim-target scoring branch once after each owned
+ray call. A score different from the baseline means the ray producer applied
+its own target blend; the checker reports the resulting camera/ray angle rather
+than requiring them to be identical.
+`8008e7a8` records the producer after its cached-target stores, so those fields
+describe the ray consumed by that owned update rather than the preceding one.
 
 Production capture/live-input eligibility is deliberately not weakened for this
 research. These explicit debugger experiments run outside the production mouse

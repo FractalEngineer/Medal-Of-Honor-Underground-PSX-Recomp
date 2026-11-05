@@ -4,15 +4,38 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 from pathlib import Path
 
 UPDATE, LOOK, ADJUST, INTEGRATE, BASIS = 0x800892C8, 0x8008F984, 0x8008F9BC, 0x80078FBC, 0x80076C28
 CAMERA, REFRESHED, SKIPPED = 0x8004A744, 0xFF000010, 0xFF000014
 RAY, CONSTRUCT, PREPARED, PREPARE_SKIPPED = 0x8008D81C, 0x8004815C, 0xFF000018, 0xFF00001C
+AIM_ASSIST = 0x8008E06C
+RAY_DONE = 0x8008E7A8
 
 
 def signed(value):
     return value if value < 0x80000000 else value - 0x100000000
+
+
+def matrix_forward(row):
+    a, b, c, d, e, f, g, h, i = [signed(row[43 + n]) / 4096.0 for n in range(9)]
+    # Inverse of the native view matrix applied to camera-space +Z.
+    x = b * f - c * e
+    y = c * d - a * f
+    z = a * e - b * d
+    determinant = a * (e * i - f * h) - b * (d * i - f * g) + c * (d * h - e * g)
+    assert determinant
+    forward = [x / determinant, y / determinant, z / determinant]
+    length = math.sqrt(sum(value * value for value in forward))
+    return [value / length for value in forward]
+
+
+def angle_units(first, second):
+    length_a = math.sqrt(sum(value * value for value in first))
+    length_b = math.sqrt(sum(value * value for value in second))
+    cosine = sum(a * b for a, b in zip(first, second)) / (length_a * length_b)
+    return math.degrees(math.acos(max(-1.0, min(1.0, cosine)))) * 4096.0 / 360.0
 
 
 def verify(receipt):
@@ -53,6 +76,13 @@ def verify(receipt):
                 assert sites.index(LOOK) < sites.index(RAY) < sites.index(ADJUST)
                 assert all(sites.index(ADJUST) < i for i, r in enumerate(group) if r[0] == CONSTRUCT)
                 assert all(r[31:33] == [0, 0] for r in group)
+            if receipt.get("research_schema", 0) >= 3:
+                sites = [r[0] for r in group]
+                if AIM_ASSIST in sites:
+                    assert sites.index(RAY) < sites.index(AIM_ASSIST) < sites.index(ADJUST)
+                if RAY_DONE in sites:
+                    assert sites.index(AIM_ASSIST) < sites.index(RAY_DONE) < sites.index(ADJUST)
+                assert all(len(r) >= 64 for r in group)
         if receipt.get("research_schema", 0) >= 2:
             calls = [r for r in rows if r[0] == RAY]
             assert [r[33] for r in calls] == list(range(1, request["updates"] + 1))
@@ -84,6 +114,31 @@ def verify(receipt):
         if receipt.get("research_schema", 0) >= 2:
             result.update(original_ray_calls=len(calls), camera_preparations=len(prepared),
                           matching_preparation_skips=len(skipped))
+        assist_rows = [r for r in rows if r[0] == AIM_ASSIST]
+        if receipt.get("research_schema", 0) >= 3 and assist_rows:
+            expected_assist = 1 if any(r[0] == CONSTRUCT for r in rows) else request["updates"]
+            assert len(assist_rows) == expected_assist, (case["name"], len(assist_rows))
+            ray_done = [r for r in rows if r[0] == RAY_DONE]
+            constructors = [r for r in rows if r[0] == CONSTRUCT]
+            assert 1 <= len(ray_done) <= request["updates"], (case["name"], len(ray_done))
+            if constructors:
+                assert [r[3] for r in ray_done] == [r[3] for r in constructors]
+            camera_row = assist_rows[0]
+            assert len(camera_row) >= 64 and any(9 <= abs(signed(value)) <= 4096 for value in camera_row[43:52])
+            ray_row = ray_done[0]
+            assert len(ray_row) >= 64
+            ray = [signed(ray_row[28 + n]) - signed(ray_row[25 + n]) for n in range(3)]
+            assert any(ray)
+            forward = matrix_forward(camera_row)
+            result.update(camera_forward=forward,
+                          view_ray_angle_units=angle_units(ray, forward),
+                          aim_assist_score=signed(camera_row[59]),
+                          aim_assist_baseline=signed(camera_row[60]),
+                          aim_assist_active=camera_row[59] != camera_row[60],
+                          camera_input_origin=[signed(camera_row[40 + n]) for n in range(3)],
+                          camera_actor_position=[signed(camera_row[61 + n]) for n in range(3)],
+                          aim_target_world=[signed(ray_row[28 + n]) for n in range(3)],
+                          ray_origin_world=[signed(ray_row[25 + n]) for n in range(3)])
         if case["name"].startswith("fire_"):
             shots = [r for r in rows if r[0] == BASIS and r[6] != r[4]]
             assert shots and case["after"]["clip"] < case["before"]["clip"]

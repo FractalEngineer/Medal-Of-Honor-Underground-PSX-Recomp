@@ -306,3 +306,85 @@ the latest baseline checks. Probe remains research ON, release remains OFF.
    coverage (current local runs still report zero cached-native overlay calls).
    Keep the Phase 1 gate open. Production math/lifecycle, input transport,
    package/options, profiles and GUI work remain the later plan phases.
+
+## Continuation — camera basis and native aim-target scoring, 2026-11-06
+
+The owner requested continuation again. Work resumes from checkpoint `8eb8a7c`.
+This turn remains Phase 1 research only; no production input path is enabled.
+
+### New evidence and outcome
+
+- The P38 ray producer resolves the camera matrix at input `+0x100`, gathers a
+  native collision point, then runs a scene-actor target-scoring loop before it
+  caches the ray. The scoring branch is at `8008E06C` (`125E0059`,
+  `beq $s2,$fp`). If the score changes, `8008E074..8008E1D0` blends the target
+  point before the final `+0x1B0/+0x1B4/+0x1B8` stores.
+- Research rows now retain the nine owned-camera view-matrix coefficients,
+  camera input origin, camera actor position, native GTE projection values,
+  and the aim-target score/baseline. The checker reports the angle between the
+  cached shot vector and the inverse camera forward instead of assuming they
+  must be identical.
+- `8008E7A8` marks the producer after the cached-target stores. The first
+  post-write trace shows the scoring loop at `score == baseline` in all seven
+  cases, so native aim assist did not select a target in this fixture. The
+  earlier assumption that assistance caused the shot-angle discrepancy is not
+  supported by this control.
+- Added gated P38 firing controls for negative yaw, negative pitch and +64
+  pitch. These distinguish fixed geometric bias from nonlinear native scoring
+  and test linearity around the checked +32 cases.
+
+Final run: `analysis/runtime/mkb-camera-final-basis-20261106`.
+**7/7 cases checked**, ten invalid requests rejected, no dropped rows, one
+original ray call per owned update and every shot constructed in its first
+observed owned update. P1 body angles and native muzzle origins remain exact.
+
+| Case | Input yaw/pitch | Shot pitch/yaw | Shot delta | Preparation / skip |
+| --- | --- | --- | --- | --- |
+| baseline | 0/0 | 40/-210 | 0/0 | 0/0 |
+| yaw positive | +32/0 | 40/-178 | 0/+32 | 0/0 |
+| yaw negative | -32/0 | 40/-247 | 0/-37 | 0/0 |
+| pitch positive | 0/+32 | 76/-214 | +36/-4 | 1/1 |
+| pitch negative | 0/-32 | 8/-217 | -32/-7 | 1/1 |
+| pitch large | 0/+64 | 112/-208 | +68/+2 | 1/1 |
+
+The cached ray target moved with the changed camera view, while the native
+target score stayed unchanged. The shot vector is computed from that target
+minus the native muzzle, not from the actor angle directly, so a fixed muzzle
+offset plus collision-point selection and Q16 target quantization can produce
+the measured nonlinear deltas. This control does not yet decompose those
+contributions or prove physical impact agreement.
+
+Committed compact evidence is
+`docs/controls/MOUSE_KEYBOARD_CAMERA_BASIS_RECEIPT.json`. Current research
+source SHA256 is `3c460d438f4abefb37d342d3e7ce9a30e524e72df3ed8948b869647611866b96`;
+binary SHA256 is `ab0e4ba4604629903b75025b6cf940910ab3649568dd972fd677c4e8769059da`.
+The final raw receipt SHA256 is
+`30432d5ce933a796c4565937334ad110844f2fabf1c4be3fc5d3acd962b5072b`.
+The compact checked receipt SHA256 is
+`958fdeb47945b9082788bdeb78eaa77335857c0e9d062f22aeff661608a082e6`.
+The row schema has 64 fields and capacity 128; see the research README.
+
+```powershell
+cmake --build build-probe --target psx-runtime -j 2
+python tools/probe_mkb_native.py analysis/runtime/mkb-next --slot 0 --fixtures analysis/runtime/mkb-native-analog-20261105/saves/openbios --research --research-direct --research-prepare --gate-fire --research-cases camera_order fire_camera_base fire_camera_yaw fire_camera_yaw_negative fire_camera_pitch fire_camera_pitch_negative fire_camera_pitch_large
+python tools/check_mkb_research.py analysis/runtime/mkb-next/receipt.json --out docs/controls/MOUSE_KEYBOARD_CAMERA_BASIS_RECEIPT.json
+```
+
+All runs closed normally, left no game process and preserved source saves and
+production preferences. No generated game C, production source or pre-existing
+framework edit was changed.
+
+### Next work after this checkpoint
+
+1. Measure the actual surface/actor impact and camera projection for these six
+   firing cases. Compare the cached collision target, muzzle-to-target ray and
+   resulting decal/effect position. Separate collision-point selection from
+   Q16 quantization and muzzle parallax; do not call the inactive scoring loop
+   the cause without a target-present control.
+2. Extend basis evidence to native aim/scoping, recoil, movement and mounted
+   constraints, then to other weapon classes. Inspect unhandled angular stores
+   such as `8008E4F4` before widening mode support.
+3. Finish action mapping, fresh/save/profile checks and cached-native hook
+   coverage before production math/lifecycle, input transport, options,
+   profiles and launcher controls. Keep every production feature OFF and do not
+   advertise mouse support from this diagnostic result.
