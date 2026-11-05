@@ -193,3 +193,116 @@ P pause; no stale input after interruption/restore; defaults do not overwrite
 ordinary P1/P2 binds; primary/secondary/unbind/reset via GUI; all sensitivities
 persist through mod options; no netplay/split-screen or simultaneous active VR.
 Do not advertise mouse support or completion from this diagnostic harness.
+
+## Continuation — camera and cached-ray timing, 2026-11-05
+
+The owner requested continuation again. Work resumes from checkpoint `35f8181`.
+This turn extends Phase 1 only; the production feature remains unimplemented.
+
+### New evidence and experiments
+
+- Owned camera root `0x800AA160` resolves to class 2, input at `camera+0x3FC`.
+  Its `input+0x0C` handle resolves through `0x800AA1A0 + index*4` to P1.
+  Update callback `0x8004A744` (size `0x1E8`, FNV `0xA707D113`) runs after the
+  previous P1 update and approximately 19,042 guest cycles before the next one.
+  Its generic actor-call RA is `0x800784DC`. Camera observations now carry the
+  upcoming owned P1 sequence; camera-anchored windows contain complete updates.
+- The ray producer `0x8008D81C` (size `0x1058`, FNV `0x787AC4B0`) uses the
+  camera input's `+0x100` matrix. Native matrix writes were traced to
+  `0x8004C3C4` and following stores in `0x8004C2BC`, called by `0x8004C50C`.
+  The camera look-at target stores are `0x8004B100/114/128` in `0x8004ADA8`.
+- An explicit `refresh 1` experiment moves the original ray producer to P1
+  entry and filters its later matching native call. Four owned updates each
+  showed one refresh and one skip. Baseline P38 yaw -210 changed to -178 when
+  +32 was applied at camera entry. This does NOT establish that moving the ray
+  producer is necessary: a subsequent control with refresh OFF also produced
+  -178 in the same owned update. Prefer retaining original order if confirmed.
+- Pitch needs its own camera preparation: native `0x8008AD04` (size `0x130`,
+  FNV `0xC1B54110`) reads input pitch and prepares camera input `+0x28` using
+  native sine/cosine; later `0x80049FCC` smooths `+0x1C` toward it. Its usual
+  mode-7 call is `0x8008F9C0`, RA `0x8008F9C8`, after the native ray producer.
+  An explicit `prepare 1` experiment runs it once after a queued camera pitch
+  perturbation, carries its target delta into `+0x1C` preserving the existing
+  smoothing residual, then skips only the matching later mode-7 native call.
+  Body pitch stays exactly +32. The first refreshed ray now changes immediately;
+  observed P38 pitch changes 40 -> 76 and yaw -210 -> -214. Native parallax,
+  projection quantization, assistance and actual impact agreement remain open.
+  No shot-angle, shot-origin, spread or collision stores were replaced.
+- The constructor actually calls `0x8004815C` from `0x800482C4`, RA
+  `0x800482CC` (the earlier reference to 0x80048288 identified the caller's
+  function entry, not that call instruction). New read-only constructor and
+  original ray-call observations will resolve the exact consumption ordering.
+
+Local receipts: `mkb-camera-order-20261105`, `mkb-camera-refresh-20261105`,
+`mkb-camera-matrix-writers-20261105`, `mkb-camera-target-writers-20261105`,
+`mkb-camera-prepared-20261105`, `mkb-camera-native-ray-order-20261105`, all under
+`analysis/runtime/`. All completed runs exited 0, preserved source saves and
+production preferences, and left no game process. The first refresh/preparation
+matrices pass the current behavior checker, which does not assert shot alignment.
+The historical committed ten-case receipt remains unchanged.
+
+### Final outcome of this continuation
+
+The native-order/preparation run completed. It confirmed one original ray call
+per owned update, followed by actual P38 cached-ray consumption after P1 basis.
+The early-ray experiment and its command/CLI switch were removed. Current
+source only observes that original ray call and optionally moves the small
+native pitch preparation, preserving original ray/projectile ordering.
+
+Separate arm/fire commands sometimes put shots in the next owned update.
+Queuing them during a host pause did not guarantee a first-update shot either;
+that attempt and switch were removed. A research-only gate now waits for the
+native sampled P1 button word at `800A04B4` (reader `800834FC`, 6C bytes, FNV
+141AED00). The first gate mistakenly considered the always-FFFF upper bits;
+the checker caught the resulting scheduling failure. Masking to low 16 bits
+corrected it: neutral 0000 -> Cross 0040, previous word at `800A04BC` still 0000.
+The checker now requires this actual fresh sample and a shot in that same P1
+sequence, alongside constructor ownership, native origin, and call counts.
+
+Final full run: `analysis/runtime/mkb-camera-complete-matrix-20261105`.
+**19/19 cases pass**, ten invalid requests rejected. Includes prior controls,
+negative deltas, crossing 4096 yaw units, camera windows and six firing cases.
+All six firing cases constructed shots in the first observed owned update,
+with exact native cached muzzle origins. Every update ran the original ray
+producer once, with no early-ray replacement. Each queued camera pitch change
+performed one early preparation and one matching later skip. Raw yaw crossed
+3894 -> 4150 without native canonicalization; production still needs deliberate
+wrapping. The checker compares yaw deltas modulo one revolution.
+
+The final gated camera shots are baseline 40/-210, yaw +32 -> 40/-178, pitch
++32 -> 76/-214. Body angles retain exact requested displacement. This narrows
+the same-update stale-ray problem but does not resolve pitch geometry, native
+assistance, actual impacts or all gameplay contexts. The original entry-yaw
+negative control still fires -210, proving boundary selection matters.
+
+Committed compact evidence is `docs/controls/MOUSE_KEYBOARD_CAMERA_RECEIPT.json`;
+the prior ten-case receipt remains historical and unchanged. Current research
+source SHA256 is `3209174449d36a20f60ffe69f3086f63b9393c7306e975e390c70b66e008d8e5`;
+binary SHA256 is `31b052e35d2f7f412858e07204d4222e805f6428cde4851a27ef56bb38efe442`.
+The schema now has 40 fields, capacity 128; see the research README. All runs
+closed normally, left no game process and preserved source saves/preferences.
+
+```powershell
+cmake --build build-probe --target psx-runtime -j 2
+python tools/probe_mkb_native.py analysis/runtime/mkb-next --slot 0 --fixtures analysis/runtime/mkb-native-analog-20261105/saves/openbios --research --research-direct --research-prepare --gate-fire
+python tools/check_mkb_research.py analysis/runtime/mkb-next/receipt.json
+```
+
+Also passed this turn: strict C11 warnings-as-errors syntax, Python compilation,
+and whitespace checking. Framework/launcher code and production CMake selection
+did not change; their earlier five passing tests and release-OFF build remain
+the latest baseline checks. Probe remains research ON, release remains OFF.
+
+### Next work after this checkpoint
+
+1. Explain and measure native view/ray/projectile agreement, particularly the
+   +36 pitch / -4 yaw result from +32 pitch input. Preserve `80047DF0`'s native
+   atan/sqrt, collision, origin, spread and target ownership. Capture actual
+   impacts and reticle projection, rather than asserting exact shot angles.
+2. Extend camera preparation beyond this mode-7 fixture only after measuring
+   native aim/scoping, recoil, other weapons, moving headings and constraints.
+   Inspect unhandled angular stores (e.g. `8008E4F4`) before wider mode support.
+3. Finish action mapping, fresh/save/profile checks and cached-native hook
+   coverage (current local runs still report zero cached-native overlay calls).
+   Keep the Phase 1 gate open. Production math/lifecycle, input transport,
+   package/options, profiles and GUI work remain the later plan phases.

@@ -192,3 +192,43 @@ The compact, mechanically checked observations are in
 [MOUSE_KEYBOARD_RESEARCH_RECEIPT.json](MOUSE_KEYBOARD_RESEARCH_RECEIPT.json).
 They verify the ten bounded research cases, not actual mouse event delivery,
 impact alignment, recoil parity, mounted constraints or campaign completion.
+
+## Continuation: camera ownership and same-update firing
+
+The latest camera experiment retains original ray and projectile call order.
+An earlier experiment moving the ray calculation was unnecessary and removed.
+The current candidate boundary is the owned camera callback, immediately before
+the next P1 update. These are measured SLUS-01270 campaign facts, not copied
+SLUS-00974 addresses.
+
+| Site / field | Guard and evidence | Ordering / use |
+| --- | --- | --- |
+| Camera root `800AA160` | Aligned valid actor, class 2, input = actor+3FC, callback at +380 = `8004A744`; input+0C handle index <512 resolves through `800AA1A0` to P1 | Camera belongs to the campaign player; fixture actor `800F2180` |
+| Camera update `8004A744` | 1E8 bytes, FNV A707D113; a0 = owned camera, RA `800784DC` | Approximately 19,042 guest cycles before the next P1 callback in the four-update observation |
+| Camera preparation `8008AD04` | 130 bytes, FNV C1B54110; P1/input/camera-input arguments; normal call `8008F9C0`, RA `8008F9C8` in mode 7 | Reads input pitch high half at +186, uses native sin/cos, writes camera input +28; normally after the ray call |
+| Camera input +1C / +28 | Native smoothing in `80049FCC`; shift at `8004A010`; world-Q16 camera target component | Experimental early preparation carries only the queued pitch target delta into +1C, retaining the previous smoothing residual; later matching preparation call skipped once |
+| Camera input +100 | Native matrix stores `8004C3C4` and following, in `8004C2BC`, called by `8004C50C` | Read by original ray producer; neither matrix nor world camera position is replaced by the harness |
+| Ray producer `8008D81C` | 1058 bytes, FNV 787AC4B0, P1/input arguments, RA `8008F99C` | One original call after look resolution and before adjustment-end observation |
+| P38 cached-ray consumer `8004815C` | DC bytes, FNV 073B3393; a0=P1, a1=shot class 13F6, RA `800482CC` | Call instruction `800482C4` in caller `80048288`; observed AFTER P1 integration/basis, before owned shot basis |
+| Native sampled buttons `800A04B4/BC` | Reader `800834FC`, 6C bytes, FNV 141AED00 | Low 16 bits change 0000 -> 0040 for debug Cross, previous remains 0000. Upper bits are FFFF even when neutral. Research scheduling waits for this native sample |
+
+Camera observations carry the upcoming owned P1 sequence. The native fire gate
+eliminates the ambiguity of separate debugger arm/fire commands landing in
+adjacent updates. It is a research-only neutral-to-Cross control and must not be
+used as production live-input eligibility.
+
+With direct angular control and early camera pitch preparation, the checked
+four-case gated run recorded baseline shot pitch/yaw 40/-210, +32 yaw shot
+40/-178, and +32 pitch shot 76/-214. Each shot was constructed in the first
+owned update of its window; body changes remained exactly +32 on the requested
+axis. Every shot's world position exactly equalled the native cached ray origin.
+Pitch's +36 shot change and -4 yaw change still require explanation and impact
+validation. `80047DF0` derives the angles from cached target minus native origin
+using native atan/sqrt helpers; this geometric path was retained. Do not infer
+an aim-assist toggle or exact impact alignment from these fields.
+
+The constructor/basis trace clarifies the earlier description of weapon/action
+processing: the P1 callback queues actions before look resolution, but this P38
+fixture's actual cached-ray consumption happens after the original ray update.
+Moving the whole ray producer is therefore not required for this measured path.
+Other weapons and native aim modes still need their own ordering evidence.

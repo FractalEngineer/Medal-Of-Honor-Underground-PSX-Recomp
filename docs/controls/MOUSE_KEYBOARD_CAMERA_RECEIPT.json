@@ -1,0 +1,263 @@
+{
+  "schema": 1,
+  "binary_sha256": "31b052e35d2f7f412858e07204d4222e805f6428cde4851a27ef56bb38efe442",
+  "research_source_sha256": "3209174449d36a20f60ffe69f3086f63b9393c7306e975e390c70b66e008d8e5",
+  "rejected_commands": 10,
+  "direct_target_test": true,
+  "early_ray_test": false,
+  "camera_preparation_test": true,
+  "production_mouse_mod_verified": false,
+  "cases": [
+    {
+      "name": "readonly",
+      "updates": 1,
+      "writes": 0,
+      "final_pitch_delta_units": 0.0,
+      "final_yaw_delta_units": 0.0,
+      "original_ray_calls": 1,
+      "camera_preparations": 0,
+      "matching_preparation_skips": 0
+    },
+    {
+      "name": "entry_yaw",
+      "updates": 1,
+      "writes": 1,
+      "final_pitch_delta_units": 0.0,
+      "final_yaw_delta_units": 32.0,
+      "original_ray_calls": 1,
+      "camera_preparations": 0,
+      "matching_preparation_skips": 0
+    },
+    {
+      "name": "look_yaw",
+      "updates": 1,
+      "writes": 1,
+      "final_pitch_delta_units": 0.0,
+      "final_yaw_delta_units": 32.0,
+      "original_ray_calls": 1,
+      "camera_preparations": 0,
+      "matching_preparation_skips": 0
+    },
+    {
+      "name": "adjust_yaw",
+      "updates": 1,
+      "writes": 1,
+      "final_pitch_delta_units": 0.0,
+      "final_yaw_delta_units": 32.0,
+      "original_ray_calls": 1,
+      "camera_preparations": 0,
+      "matching_preparation_skips": 0
+    },
+    {
+      "name": "entry_pitch",
+      "updates": 1,
+      "writes": 1,
+      "final_pitch_delta_units": 32.0,
+      "final_yaw_delta_units": 0.0,
+      "original_ray_calls": 1,
+      "camera_preparations": 0,
+      "matching_preparation_skips": 0
+    },
+    {
+      "name": "look_pitch",
+      "updates": 1,
+      "writes": 1,
+      "final_pitch_delta_units": 32.0,
+      "final_yaw_delta_units": 0.0,
+      "original_ray_calls": 1,
+      "camera_preparations": 0,
+      "matching_preparation_skips": 0
+    },
+    {
+      "name": "adjust_pitch",
+      "updates": 1,
+      "writes": 1,
+      "final_pitch_delta_units": 32.0,
+      "final_yaw_delta_units": 0.0,
+      "original_ray_calls": 1,
+      "camera_preparations": 0,
+      "matching_preparation_skips": 0
+    },
+    {
+      "name": "fire_base",
+      "updates": 4,
+      "writes": 0,
+      "final_pitch_delta_units": 0.0,
+      "final_yaw_delta_units": 0.0,
+      "original_ray_calls": 4,
+      "camera_preparations": 0,
+      "matching_preparation_skips": 0,
+      "first_shot_same_update": true,
+      "shots": [
+        {
+          "update": 801,
+          "pitch_units": 40.0,
+          "yaw_units": -210.0,
+          "player_pitch_units": 63.875,
+          "player_yaw_units": 3894.0
+        }
+      ]
+    },
+    {
+      "name": "fire_entry_yaw",
+      "updates": 4,
+      "writes": 1,
+      "final_pitch_delta_units": 0.0,
+      "final_yaw_delta_units": 32.0,
+      "original_ray_calls": 4,
+      "camera_preparations": 0,
+      "matching_preparation_skips": 0,
+      "first_shot_same_update": true,
+      "shots": [
+        {
+          "update": 907,
+          "pitch_units": 40.0,
+          "yaw_units": -210.0,
+          "player_pitch_units": 63.875,
+          "player_yaw_units": 3926.0
+        }
+      ]
+    },
+    {
+      "name": "fire_settled_yaw",
+      "updates": 4,
+      "writes": 0,
+      "final_pitch_delta_units": 0.0,
+      "final_yaw_delta_units": 0.0,
+      "original_ray_calls": 4,
+      "camera_preparations": 0,
+      "matching_preparation_skips": 0,
+      "first_shot_same_update": true,
+      "shots": [
+        {
+          "update": 1034,
+          "pitch_units": 40.0,
+          "yaw_units": -182.0,
+          "player_pitch_units": 63.875,
+          "player_yaw_units": 3926.0
+        }
+      ]
+    },
+    {
+      "name": "scene_order",
+      "updates": 4,
+      "writes": 0,
+      "final_pitch_delta_units": 0.0,
+      "final_yaw_delta_units": 0.0,
+      "original_ray_calls": 4,
+      "camera_preparations": 0,
+      "matching_preparation_skips": 0
+    },
+    {
+      "name": "camera_order",
+      "updates": 4,
+      "writes": 0,
+      "final_pitch_delta_units": 0.0,
+      "final_yaw_delta_units": 0.0,
+      "original_ray_calls": 4,
+      "camera_preparations": 0,
+      "matching_preparation_skips": 0
+    },
+    {
+      "name": "camera_yaw",
+      "updates": 4,
+      "writes": 1,
+      "final_pitch_delta_units": 0.0,
+      "final_yaw_delta_units": 32.0,
+      "original_ray_calls": 4,
+      "camera_preparations": 0,
+      "matching_preparation_skips": 0
+    },
+    {
+      "name": "camera_yaw_wrap",
+      "updates": 1,
+      "writes": 1,
+      "final_pitch_delta_units": 0.0,
+      "final_yaw_delta_units": 256.0,
+      "original_ray_calls": 1,
+      "camera_preparations": 0,
+      "matching_preparation_skips": 0
+    },
+    {
+      "name": "camera_yaw_negative",
+      "updates": 1,
+      "writes": 1,
+      "final_pitch_delta_units": 0.0,
+      "final_yaw_delta_units": -32.0,
+      "original_ray_calls": 1,
+      "camera_preparations": 0,
+      "matching_preparation_skips": 0
+    },
+    {
+      "name": "camera_pitch_negative",
+      "updates": 1,
+      "writes": 1,
+      "final_pitch_delta_units": -32.0,
+      "final_yaw_delta_units": 0.0,
+      "original_ray_calls": 1,
+      "camera_preparations": 1,
+      "matching_preparation_skips": 1
+    },
+    {
+      "name": "fire_camera_base",
+      "updates": 4,
+      "writes": 0,
+      "final_pitch_delta_units": 0.0,
+      "final_yaw_delta_units": 0.0,
+      "original_ray_calls": 4,
+      "camera_preparations": 0,
+      "matching_preparation_skips": 0,
+      "first_shot_same_update": true,
+      "shots": [
+        {
+          "update": 1744,
+          "pitch_units": 40.0,
+          "yaw_units": -210.0,
+          "player_pitch_units": 63.875,
+          "player_yaw_units": 3894.0
+        }
+      ]
+    },
+    {
+      "name": "fire_camera_yaw",
+      "updates": 4,
+      "writes": 1,
+      "final_pitch_delta_units": 0.0,
+      "final_yaw_delta_units": 32.0,
+      "original_ray_calls": 4,
+      "camera_preparations": 0,
+      "matching_preparation_skips": 0,
+      "first_shot_same_update": true,
+      "shots": [
+        {
+          "update": 1846,
+          "pitch_units": 40.0,
+          "yaw_units": -178.0,
+          "player_pitch_units": 63.875,
+          "player_yaw_units": 3926.0
+        }
+      ]
+    },
+    {
+      "name": "fire_camera_pitch",
+      "updates": 4,
+      "writes": 1,
+      "final_pitch_delta_units": 32.0,
+      "final_yaw_delta_units": 0.0,
+      "original_ray_calls": 4,
+      "camera_preparations": 1,
+      "matching_preparation_skips": 1,
+      "first_shot_same_update": true,
+      "shots": [
+        {
+          "update": 1957,
+          "pitch_units": 76.0,
+          "yaw_units": -214.0,
+          "player_pitch_units": 95.875,
+          "player_yaw_units": 3894.0
+        }
+      ]
+    }
+  ],
+  "raw_receipt_sha256": "914f2f7e7ec404962afb840b56c4410715d929d3801fb85671eaab85aaa050a6"
+}

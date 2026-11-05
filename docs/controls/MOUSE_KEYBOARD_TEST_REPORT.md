@@ -147,10 +147,20 @@ code, personal save or user preference file is added to Git.
 
 ## Remaining release requirements
 
-The immediate gate is a verified proportional direct-aim path, exact hook
-ordering and a real player simulation-update token. Native target-only changes
-did not produce identical angular player changes, and internal entry tracing
-did not establish the missing ordering. No release claim is made from either.
+The initial target-only and empty-ring results above are historical. The
+continuations now establish guarded player/camera ownership, actual owned
+update sequences, proportional body angles and same-update P38 cached-ray
+consumption. The full 19-case camera matrix passes, with ten invalid commands
+rejected, one original ray call per update, matching one-time native camera
+preparation/skips and exact native cached shot origins. See
+[camera receipt](MOUSE_KEYBOARD_CAMERA_RECEIPT.json) and
+[handoff](MOUSE_KEYBOARD_HANDOFF.md) for source/binary hashes and reproduction.
+
+Phase 1 remains open: +32 pitch changes native shot pitch by +36 and yaw by -4
+in the measured fixture. Native camera projection, parallax, quantization,
+assistance and actual impact agreement need to be distinguished; recoil, other
+weapons/modes, action mapping and cached-native execution also remain unproven.
+The production mouse/keyboard feature is not implemented.
 
 After resolving that gate, all package/settings, capture takeover/eligibility,
 contextual binding persistence, launcher controls, incompatibility refusal,

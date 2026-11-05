@@ -29,6 +29,15 @@ RESEARCH_CASES = [
     ("look_pitch", 0x8008F984, 0, 32), ("adjust_pitch", 0x8008F9BC, 0, 32),
     ("fire_base", 0, 0, 0), ("fire_entry_yaw", 0x800892C8, 32, 0),
     ("fire_settled_yaw", 0, 0, 0),
+    ("scene_order", 0, 0, 0),
+    ("camera_order", 0x8004A744, 0, 0),
+    ("camera_yaw", 0x8004A744, 32, 0),
+    ("camera_yaw_wrap", 0x8004A744, 256, 0),
+    ("camera_yaw_negative", 0x8004A744, -32, 0),
+    ("camera_pitch_negative", 0x8004A744, 0, -32),
+    ("fire_camera_base", 0x8004A744, 0, 0),
+    ("fire_camera_yaw", 0x8004A744, 32, 0),
+    ("fire_camera_pitch", 0x8004A744, 0, 32),
 ]
 
 
@@ -42,6 +51,10 @@ def main():
     parser.add_argument("--trace-only", action="store_true", help="Collect a short native action/aim call window without angle perturbations")
     parser.add_argument("--research", action="store_true", help="Run the separately built one-update research harness")
     parser.add_argument("--research-direct", action="store_true", help="Explicitly test the native direct-target branch in the research harness")
+    parser.add_argument("--research-prepare", action="store_true", help="Research only: prepare the native camera pitch before its callback")
+    parser.add_argument("--gate-fire", action="store_true", help="Wait for the native sampled button word before starting a firing window")
+    parser.add_argument("--camera-writes", action="store_true", help="Trace native camera-matrix stores around each research window")
+    parser.add_argument("--camera-target-writes", action="store_true", help="Trace camera look-at target stores instead of its matrix")
     parser.add_argument("--research-cases", nargs="+", choices=[x[0] for x in RESEARCH_CASES])
     parser.add_argument("--interpreter", action="store_true", help="Request diagnostic interpreter controls")
     args = parser.parse_args()
@@ -77,7 +90,8 @@ def main():
                    binary_sha256=native.digest(exe), source_hashes=hashes,
                    config_sha256=native.digest(config),
                    vr_requested=False, interpreter_diagnostic=args.interpreter,
-                   research_direct=args.research_direct, samples=[])
+                   research_direct=args.research_direct, research_schema=2,
+                   research_prepare=args.research_prepare, gated_fire=args.gate_fire, samples=[])
     if args.research:
         receipt["research_source_sha256"] = native.digest(ROOT / "controls/research/moh_mkb_research.c")
 
@@ -142,7 +156,7 @@ def main():
             snapshot("neutral")
             if args.research:
                 receipt["rejected_commands"] = []
-                for invalid in ["arm 0", "arm 9", "inject 1 1 0", "inject 800892c8 257 0", "inject 0 1 0", "inject 800892c8 1 0 trailing", "direct 2"]:
+                for invalid in ["arm 0", "arm 9", "inject 1 1 0", "inject 800892c8 257 0", "inject 0 1 0", "inject 800892c8 1 0 trailing", "direct 2", "refresh 2", "prepare 2", "fire_gate 2"]:
                     result = native.command("mod_cmd", name="mohu.mkb.research", args=invalid)
                     if result["result"] != 0:
                         raise RuntimeError(f"Invalid research command accepted: {invalid}: {result}")
@@ -153,6 +167,7 @@ def main():
                         raise RuntimeError(result)
                     return json.loads(result["reply"])
                 def capture(value, fire=False):
+                    research_command(f"fire_gate {int(fire and args.gate_fire)}")
                     armed = research_command(value)
                     if armed != {"armed": True}:
                         raise RuntimeError(f"Research harness not armed: {armed}")
@@ -191,19 +206,32 @@ def main():
                         research_command("direct 1")
                         native.frames(6)
                         before = snapshot(name + "_direct_before")
+                    if args.research_prepare:
+                        research_command("prepare 1")
+                    if args.camera_writes or args.camera_target_writes:
+                        camera = int.from_bytes(native.read(0x800AA160, 4), "little")
+                        camera_input = int.from_bytes(native.read(camera + 0x39C, 4), "little")
+                        (out / f"{name}.camera-before.bin").write_bytes(native.read(camera, 0x600))
+                        offset, size = (0, 12) if args.camera_target_writes else (0x100, 0x20)
+                        native.command("wtrace_range", lo=hex(camera_input + offset), hi=hex(camera_input + offset + size))
+                        native.command("wtrace_clear")
                     preparation = None
                     if name == "fire_settled_yaw":
                         preparation = capture("inject 800892c8 32 0")
                         native.frames(30)
                         before = snapshot(name + "_prepared")
                     fire = name.startswith("fire_")
+                    updates = 4 if fire or name in ("scene_order", "camera_order", "camera_yaw") else 1
                     command = "arm" if not site else f"inject {site:x} {yaw} {pitch}"
-                    if fire:
-                        command = "arm 4" if not site else command + " 4"
+                    if updates != 1:
+                        command = f"arm {updates}" if not site else command + f" {updates}"
                     result = capture(command, fire)
+                    if args.camera_writes or args.camera_target_writes:
+                        (out / f"{name}.camera-writes.json").write_text(json.dumps(native.command("wtrace_dump", count=256), indent=2) + "\n")
+                        (out / f"{name}.camera-after.bin").write_bytes(native.read(camera, 0x600))
                     native.frames(120)
                     after = snapshot(name + "_settled")
-                    receipt["research"].append(dict(name=name, request=dict(site=site, yaw=yaw, pitch=pitch, updates=4 if fire else 1), preparation=preparation, before=before, observation=result, after=after))
+                    receipt["research"].append(dict(name=name, request=dict(site=site, yaw=yaw, pitch=pitch, updates=updates), preparation=preparation, before=before, observation=result, after=after))
                     print(json.dumps(dict(name=name, rows=len(result["rows"]), applied=result["applied"], rejected=result["rejected"])), flush=True)
                 receipt["collection_complete"] = True
                 return
