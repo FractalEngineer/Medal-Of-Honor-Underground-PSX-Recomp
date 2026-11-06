@@ -924,3 +924,11 @@ Next priorities after this checkpoint:
    based on that evidence; direct look already removes pad acceleration/drift.
 4. Finish feature-OFF/controller compatibility and package acceptance checks
    before widening beyond experimental, default-OFF campaign support.
+
+Implementation commit `91582007421b6c0cd9e265546db05680a0e38877` is pushed to
+`origin/mkb`; the remote game and framework branch hashes were verified.
+The menu build is LEFT RUNNING for the owner at slot 01: PID `10452` at launch,
+session `analysis/runtime/mkb-menu-play-20261106`. Slots 00, 01 and checkpoint
+11 were copied and startup verified debugger ownership. The four unrelated VR
+framework edits remain local; `.commandcode/` and the loose test executable are
+also excluded from the commits. Recheck the active session before any restart.
