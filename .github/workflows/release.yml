@@ -556,7 +556,7 @@ jobs:
           LIST="$(unzip -Z1 "${ZIP}")"
           # 1. It is a game: the executable, the bundled OpenBIOS, and the
           #    runtime data sit at the root.
-          for must in 'bios/openbios.bin' 'bios/OpenBIOS.LICENSE' 'game.toml' 'psx_game_version.txt' 'assets/fonts/' 'licenses/recomp-ui-LICENSE' 'assets/fonts/NOTICE.md' 'assets/img/NOTICE.md' 'mods/bundled/'; do
+          for must in 'bios/openbios.bin' 'bios/OpenBIOS.LICENSE' 'game.toml' 'psx_game_version.txt' 'assets/fonts/' 'licenses/recomp-ui-LICENSE' 'assets/fonts/NOTICE.md' 'assets/img/NOTICE.md' 'mods/bundled/' 'Launch.ps1' 'RunFlat.bat' 'RunVR-VDXR.bat' 'RunVR-SteamVR.bat' 'RunVR-Oculus.bat'; do
             if ! grep -q "^${must}" <<<"${LIST}"; then
               echo "::error::release zip lacks ${must}" >&2
               printf '%s\n' "${LIST}" | head -40 >&2

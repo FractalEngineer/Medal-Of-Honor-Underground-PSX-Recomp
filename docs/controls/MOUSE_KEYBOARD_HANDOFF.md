@@ -1330,3 +1330,23 @@ A focused before-main registration test runs ahead of the full CI build; the
 final suite now contains six title checks. This fixes startup without disabling
 the failing audit or changing gameplay behavior.
 The pre-existing game.toml and four framework VR edits remain excluded.
+
+Run **42288651175** succeeded: the before-main regression, all **6/6** title
+checks, final ZIP checks, upload and publication passed. Tag v0.1.2 points to
+`daba7ace00172b964bd61a7597d350cb0dc58800`; its framework includes startup fix
+`3c1050e8c7c8be93434b3a4a8dac97a231f3e681`.
+
+Downloaded-asset inspection caught a longstanding packaging omission: neither
+the previous v0.1.1 ZIP nor the initial v0.1.2 ZIP included the documented BAT
+launchers. Dedicated packaged launchers now live in scripts/windows-release,
+and the packager includes them at the ZIP root. Launch.ps1 opens the normal
+disc picker, accepts -DiscPath, uses the shared saves directory and selects
+OpenXR only in the child process without editing system runtime settings.
+VR environment defaults match the accepted production profile. Developer
+launchers remain unchanged. Future CI ZIP checks require all five files.
+
+The v0.1.2 asset is corrected by adding only those launcher files and provenance
+text to the CI archive; the compiled executable and runtime bytes are unchanged.
+Launcher preparation checks cover flat, VDXR, SteamVR, Oculus and current-runtime
+modes without starting a game or headset session. Final asset verification and
+default-branch publication follow this packaging commit.

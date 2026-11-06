@@ -97,8 +97,6 @@ launches retain flat rendering and normal controller input. VR environment
 overrides should be absent for flat play; the VR wrapper restores its process
 environment when it exits.
 
-`RunVR-SteamVR.bat -Headless` is a stereo diagnostic mode, not the ordinary flat launch.
-
 ## Mouse and keyboard gameplay
 
 Enable **Mouse and keyboard** under **Mods** for single-player campaign play.

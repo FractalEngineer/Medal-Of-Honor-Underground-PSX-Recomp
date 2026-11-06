@@ -41,8 +41,11 @@ else
   EXTRA+=(--ship-without-overlay-cache-because \
     "no disc at package time: the committed static AOT shard is compiled in and overlay_toolchain/ autocompiles the rest on the player's machine")
 fi
-# Extra docs shipped at the zip root.
-for _doc in DISC.md ALPHA_README.md docs/controls/MOUSE_KEYBOARD.md docs/release/v0.1.2.md; do
+# Extra player documents and launch scripts shipped at the zip root.
+for _doc in DISC.md ALPHA_README.md docs/controls/MOUSE_KEYBOARD.md docs/release/v0.1.2.md \
+    scripts/windows-release/Launch.ps1 scripts/windows-release/RunFlat.bat \
+    scripts/windows-release/RunVR-VDXR.bat scripts/windows-release/RunVR-SteamVR.bat \
+    scripts/windows-release/RunVR-Oculus.bat; do
   if [[ -f "${ROOT}/${_doc}" ]]; then
     EXTRA+=(--doc "${_doc}")
   fi
