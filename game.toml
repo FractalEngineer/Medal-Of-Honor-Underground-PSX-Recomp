@@ -76,6 +76,9 @@ mod_instruction_sites = [
   "0x800891D0", # MKB: selected slot through the native switch routine
   "0x800894FC", # MKB: scoped rifle retains normal control mode
   "0x8008D854", # MKB: refresh the native firing ray at scope zoom
+  "0x8008A0E8", # MKB: ordinary firearms use eased 1.25x zoom without aim lock
+  "0x8008ABAC", # MKB: keep ordinary held weapons visible at the zoomed focal length
+  "0x8008C5D4", # MKB: tighten only the native ordinary crosshair line packets
   "0x8008D9D8", "0x8008D9E4", # MKB: scoped ray uses the centre of the artwork
   "0x8008DA00", # MKB: scope focal plane must not overflow the native ray vector
   "0x8008E06C", # MKB: scoped shots do not blend toward off-centre targets
@@ -87,6 +90,7 @@ mod_instruction_sites = [
   "0x8008E660", "0x8008E7A8", # MKB: retain native ray calculation
   "0x8008E4A0", "0x8008E4A8", "0x8008E4F4", # MKB: near-wall/steep-pitch corrections
   "0x8008C1B4", # MKB: native crosshair visibility only, no player aim flag
+  "0x8008C1FC", # MKB: hide the optional normal-view crosshair path
   "0x80084CDC", # marker constructor origin
   "0x80084B74", # marker writer
   "0x80048AAC", # marker load

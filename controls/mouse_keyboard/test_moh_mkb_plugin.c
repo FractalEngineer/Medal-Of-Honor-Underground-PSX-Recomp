@@ -156,6 +156,18 @@ int main(void) {
     CHECK(cpu.gpr[2] == 0x123456u);
     test_mode = 7;
     restored();
+    mouse_captured = 1;
+    CHECK(transformed_buttons() == 0xBFFFu);
+    CHECK(firearm_aiming(owned_player_input()));
+    test_weapon = 10;
+    CHECK(transformed_buttons() == 0xBFFFu);
+    CHECK(!firearm_zooming(owned_player_input()));
+    test_weapon = 5;
+    CHECK(transformed_buttons() == 0xBDFFu);
+    CHECK(!firearm_zooming(owned_player_input()));
+    test_weapon = 0;
+    restored();
+    CHECK(!zoom_held && !firearm_zooming(owned_player_input()));
     /* Final input has physical R2 and fire asserted: only R2 is released. */
     CHECK(transformed_buttons() == 0xBFFFu);
     test_weapon = SNIPER_WEAPON_ID;
@@ -212,10 +224,10 @@ int main(void) {
 
     keys[SDL_SCANCODE_3] = 1;
     CHECK(installed_transform.transform(&frame, &state));
-    CHECK(requested_slot == 2);
+    CHECK(requested_slot == -1); /* Number keys belong to framework shortcuts. */
     requested_slot = -1;
     CHECK(installed_transform.transform(&frame, &state));
-    CHECK(requested_slot == -1); /* held number is not retriggered */
+    CHECK(requested_slot == -1);
 
     memset(keys, 0, sizeof keys);
     PSXModMouseEvent acquired = {.struct_size = sizeof(acquired),

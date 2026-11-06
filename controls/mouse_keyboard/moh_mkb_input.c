@@ -1,6 +1,27 @@
 #include "moh_mkb.h"
 #include <math.h>
 
+int mohu_mkb_firearm_zoom_supported(unsigned weapon) {
+    switch (weapon) {
+    case 0: case 1: case 4: case 8: case 9: case 11: case 12:
+    case 13: case 14: case 16: case 17:
+        return 1;
+    default:
+        return 0; /* Native sniper scope, camera and throwables. */
+    }
+}
+
+double mohu_mkb_zoom_step(double amount, int held) {
+    /* Three native campaign updates, about 100 ms, in either direction. */
+    const double next = fmax(0, fmin(1, amount + (held ? 1.0 : -1.0) / 3.0));
+    return next < 1e-9 ? 0 : next > 1 - 1e-9 ? 1 : next;
+}
+
+double mohu_mkb_zoom_ease(double amount) {
+    amount = fmax(0, fmin(1, amount));
+    return amount * amount * (3 - 2 * amount);
+}
+
 void mohu_mkb_mouse_reset(MohuMkbMouse* state) {
     if (!state) return;
     state->pending_x = state->pending_y = 0;

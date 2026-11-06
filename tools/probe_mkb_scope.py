@@ -59,7 +59,7 @@ def main():
     parser.add_argument("out", type=Path)
     parser.add_argument("--pid", type=int, required=True)
     parser.add_argument("--sensitivity", type=float, default=50)
-    parser.add_argument("--scoped-sensitivity", type=float, default=100)
+    parser.add_argument("--scoped-sensitivity", type=float, default=80)
     args = parser.parse_args()
     native.require_debugger_owner(args.pid)
     args.out.mkdir(parents=True, exist_ok=True)

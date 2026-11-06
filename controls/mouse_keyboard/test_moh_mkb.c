@@ -12,6 +12,23 @@
 } while (0)
 
 int main(void) {
+    const unsigned guns[] = {0, 1, 4, 8, 9, 11, 12, 13, 16, 17};
+    for (unsigned i = 0; i < sizeof(guns) / sizeof(guns[0]); ++i)
+        CHECK(mohu_mkb_firearm_zoom_supported(guns[i]));
+    CHECK(!mohu_mkb_firearm_zoom_supported(5)); /* Keep native sniper scope. */
+    CHECK(!mohu_mkb_firearm_zoom_supported(7));
+    CHECK(!mohu_mkb_firearm_zoom_supported(10));
+    CHECK(mohu_mkb_firearm_zoom_supported(14)); /* Crossbow uses ordinary zoom. */
+    CHECK(!mohu_mkb_firearm_zoom_supported(15));
+    double zoom = 0;
+    zoom = mohu_mkb_zoom_step(zoom, 1);
+    CHECK(fabs(mohu_mkb_zoom_ease(zoom) - 7.0 / 27.0) < 1e-9);
+    zoom = mohu_mkb_zoom_step(zoom, 1);
+    CHECK(fabs(mohu_mkb_zoom_ease(zoom) - 20.0 / 27.0) < 1e-9);
+    zoom = mohu_mkb_zoom_step(zoom, 1);
+    CHECK(zoom == 1);
+    for (int i = 0; i < 3; ++i) zoom = mohu_mkb_zoom_step(zoom, 0);
+    CHECK(zoom == 0);
     uint8_t lx = 0, ly = 0;
     mohu_mkb_stick_pair(0, 0, 0, 0, &lx, &ly);
     CHECK(lx == 128 && ly == 128);

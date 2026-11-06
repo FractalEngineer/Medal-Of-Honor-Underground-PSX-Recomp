@@ -3,8 +3,8 @@
 Update this file every work turn. This is the current task's continuation
 record; evidence and commands belong here or in the linked detailed reports.
 
-**Latest checkpoint:** scoped firing origin/ray fixed; fractional camera look
-and editable sensitivity, owner confirms good feel, 2026-11-06, in the final continuation section. Start there; earlier research
+**Latest checkpoint:** eased 1.25x aiming, visible weapons/crossbow, aiming-only
+crosshair, global/aiming sensitivity and number-key removal, 2026-11-06, in the final continuation section. Start there; earlier research
 next-work lists are historical.
 
 ## Objective and authorization
@@ -1129,3 +1129,71 @@ once to capture; hold RMB for scope. Receipt/log root:
 `final-stdout.log`, `final-stderr.log`. Preserve the owner's session. Current
 source changes remain uncommitted, including the preceding release-build policy
 changes; unrelated framework VR edits and `.commandcode/` remain untouched.
+
+## Continuation - aiming zoom and final control preferences, 2026-11-06
+
+The owner requested committing/pushing the accepted controls, then ordinary
+firearm zoom. The accepted scoped-firing/precision checkpoint is committed and
+pushed to **origin/mkb, `f80f91f`**, before starting this feature. The final owner
+preferences supersede the initial 1.5x / always-on-reticle proposal:
+
+- Hold RMB for **1.25x** optical zoom on firearms and the crossbow. Ease in and
+  out over three native campaign updates (about **100 ms**) using smoothstep.
+  Native focal values are `400 -> 426 -> 474 -> 500` and reverse on release.
+- Reticle appears **only while aiming** and hides immediately on release.
+  Tighten the native ordinary four-line reticle while aiming; do not change
+  weapon accuracy/spread. The native sniper scope/reticle stays native.
+- Keep ordinary held weapons **visible** during zoom, including the crossbow.
+  Native held rendering at `8008ABAC` normally refuses focal lengths other
+  than 400. A byte/hash/owner-guarded scratch comparison bypass keeps it drawn
+  without changing the real focal length. Renderer hash `8008AB84 + 160` is
+  `ED5849B4`; native hidden/reload animation gates remain.
+- **Global mouse sensitivity** and **Aiming sensitivity** are the existing
+  persisted/live mod options, with clearer labels. Defaults: **50** global,
+  **80%** zoom-adjusted aiming rate (20% slower screen motion for precision).
+  Stable option IDs remain `sensitivity` and `scoped_sensitivity`.
+- Removed physical **number-key weapon selection** entirely. Numbers belong
+  to PSXRecomp filter shortcuts. Wheel cycling and Q remain. Explicit debug
+  inventory selection remains available for regression tools, not key bindings.
+
+The optical path keeps native movement mode 7 and releases ordinary R2, avoiding
+the stationary native aim state. `8008A0E8` changes only the native focal store;
+`8008D854` keeps the native crosshair ray updating above focal length 400.
+`8008C1B4/8008C1FC` gate reticle visibility; `8008C5D4` tightens only four line
+packets after validating every original coordinate. Crossbow weapon ID **14**
+is supported, while camera/throwables remain excluded. Its owned test fixture
+is **save slot 1, weapon inventory slot 2**. Weapon visibility and native shot
+origin handling avoid the stale-muzzle issue when zoom changes held rendering.
+
+Verification:
+
+- Built only **build-release**, two compile jobs. Root CTest **4/4** passes.
+  Pure tests cover firearm/crossbow classification, easing endpoints/reversal,
+  reset behavior and number keys no longer requesting weapons.
+- `tools/probe_mkb_firearm_zoom.py` verifies **17/17** live checks, including
+  easing, world focal length, sensitivity, aiming-only reticle, packet tightening,
+  visible weapons, movement/fire, actual shot origin, native sniper compatibility,
+  and the actual owned crossbow's zoom/crosshair/visibility. Inspected aimed
+  screenshots show both pistol and crossbow visible with the reticle.
+- Final receipt:
+  `analysis/runtime/mkb-firearm-zoom-20261106/final-verified/receipt.json`.
+  Binary SHA256:
+  `b01bfc4bab1a393ea1f679a758a9c91109c1d1aac49853be0354e3596e652146`.
+  All source personal saves were unchanged by the replay.
+- Earlier diagnostic receipts in this directory are historical/incomplete.
+  Uncaptured background mouse reset events initially reset zoom test state;
+  explicit debug `aim 0|1` now drives the same optical state independently and
+  is released/reset at cleanup. Physical pad behavior is covered by plugin
+  tests and the owner's playtest. Live GTE H can belong to the visible weapon
+  pass (e.g. 133), so the player's stored world focal length is authoritative.
+  Native shot construction may use cached-ray OR direct-camera position stores;
+  the final replay covers both rather than assuming only `800481A0/A4/A8`.
+- Existing slot 2 and slot 6 personal states failed serializer compatibility
+  while locating the crossbow. They were left untouched; compatible slot 1
+  already supplies it. No new save or build directory was created.
+
+Final session: **PID 45456** at launch, release executable, personal root saves,
+slot **00** reloaded and all raw/host/diagnostic input released. Preserve it for
+the owner's playtest. The feature changes and this continuation belong to the
+next implementation checkpoint on branch `mkb`; use `git log -1` for its hash.
+The four unrelated framework VR edits and `.commandcode/` remain excluded.

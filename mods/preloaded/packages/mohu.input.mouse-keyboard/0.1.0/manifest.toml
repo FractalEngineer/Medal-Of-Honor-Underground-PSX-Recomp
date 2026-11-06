@@ -3,7 +3,7 @@ id = "mohu.input.mouse-keyboard"
 version = "0.1.0"
 name = "Mouse and keyboard gameplay"
 author = "Medal-Of-Honor-Underground-PSX-Recomp"
-description = "Experimental direct mouse look, WASD movement, native actions, and an always-on ordinary-weapon reticle."
+description = "Experimental direct mouse look, WASD movement, native actions, firearm zoom and an aiming-only native reticle."
 license = "MIT"
 resolver = "declarative"
 
@@ -13,14 +13,14 @@ game_id = "SLUS-01270"
 [[feature]]
 id = "mouse-keyboard"
 name = "Mouse and keyboard"
-description = "Click to capture; Escape releases. R reloads, wheel cycles, 1-8 select weapons. Menus: WASD, E confirm, Q back. Right mouse scopes the sniper only."
+description = "Click to capture; Escape releases. R reloads and wheel cycles weapons. Menus: WASD, E confirm, Q back. Right mouse smoothly zooms firearms/crossbow 1.25x or uses the native sniper scope."
 channel = "experimental"
 default_enabled = false
 
 [[option]]
 feature = "mouse-keyboard"
 id = "sensitivity"
-label = "Mouse sensitivity"
+label = "Global mouse sensitivity"
 description = "Turn rate in percent of one native angle unit per mouse count. 50 is about 0.044 degrees per count. No acceleration or smoothing."
 type = "integer"
 min = 1
@@ -31,13 +31,13 @@ default = 50
 [[option]]
 feature = "mouse-keyboard"
 id = "scoped_sensitivity"
-label = "Scoped sensitivity"
-description = "Percent of the zoom-adjusted mouse sensitivity. 100 preserves screen-space sensitivity as the native scope zoom changes."
+label = "Aiming sensitivity"
+description = "Percent of the zoom-adjusted global sensitivity. Applies to right-click zoom and sniper scope. 80 gives 20% slower screen movement for precision."
 type = "integer"
 min = 1
 max = 200
 step = 1
-default = 100
+default = 80
 
 [[plugin]]
 feature = "mouse-keyboard"

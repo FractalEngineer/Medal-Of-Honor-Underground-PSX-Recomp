@@ -2,6 +2,11 @@
 
 ## Decision
 
+Update, 2026-11-06: the owner now requests 1.25× right-click zoom on ordinary
+firearms, a quick eased transition with lower sensitivity, and a crosshair only
+while aiming. This supersedes the earlier no-zoom / always-on-crosshair choices
+below. Native stationary aim remains excluded; the sniper keeps its native scope.
+
 Build a playable, feature-flagged direct-mouse mod. The owner rejected native
 analog mouse emulation after playtesting it as sluggish and laggy, and explicitly
 requested direct control like VR. Reuse native movement/action machinery. Ordinary

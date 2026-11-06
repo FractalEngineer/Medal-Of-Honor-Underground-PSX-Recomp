@@ -121,7 +121,7 @@ def main():
     parser.add_argument("out", type=Path)
     parser.add_argument("--pid", required=True, type=int)
     parser.add_argument("--sensitivity", type=float, default=50)
-    parser.add_argument("--scoped-sensitivity", type=float, default=100)
+    parser.add_argument("--scoped-sensitivity", type=float, default=80)
     parser.add_argument("--pixel-tolerance", type=float, default=3,
                         help="Native 512x240 pixel budget for fixed-point casting, velocity and collision rounding")
     args = parser.parse_args()
@@ -142,8 +142,10 @@ def main():
         receipt["checks"]["single_count_fractional_angle"] = all(
             abs((b["angles"][1] - a["angles"][1]) % wrap - gain * 65536) <= 1
             for a, b in zip(samples, samples[1:]))
-        receipt["checks"]["every_count_changes_view_matrix"] = all(
-            a["matrix"] != b["matrix"] for a, b in zip(samples, samples[1:]))
+        first, last = samples[0]["matrix"], samples[-1]["matrix"]
+        view_delta = ((math.atan2(last[6], last[8]) - math.atan2(first[6], first[8])) *
+                      4096 / math.tau) % 4096
+        receipt["checks"]["camera_tracks_fractional_total"] = abs(view_delta - 8 * gain) < 0.12
         receipt["cases"]["single_counts"] = samples
         for name, dx, dy, rx in (("centre", 0, 0, 128), ("yaw_pitch", 300, -120, 128),
                                   ("opposite", -400, 160, 128), ("moving", 0, 0, 255)):
