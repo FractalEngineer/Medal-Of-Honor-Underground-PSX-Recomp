@@ -17,6 +17,10 @@ angles feed the view matrix directly; there is
 no mouse acceleration or smoothing. Native camera and projectile fixed-point
 precision still apply.
 
+**Aimed zoom (x)** is a slider from **1.00 to 2.50**, default **1.25**, for
+ordinary firearms and the crossbow. The sniper retains its native scope zoom.
+Mouse gain while aiming is `aiming sensitivity x 0.00879 degrees/count / zoom`.
+
 | Control | Gameplay | Menus |
 | --- | --- | --- |
 | Mouse motion | Direct look | — |
@@ -35,7 +39,7 @@ precision still apply.
 | Enter / Backspace | Fire / jump alternatives | Confirm / back |
 
 The crosshair is hidden in normal view and appears only while right-click
-aiming. Ordinary firearms and the crossbow zoom 1.25× in about 100 ms, with reduced mouse
+aiming. Ordinary firearms and the crossbow ease to the selected zoom in about 100 ms, with reduced mouse
 sensitivity and a tighter native crosshair. Releasing right click hides the
 crosshair immediately and eases back out. The held weapon stays visible and
 weapon accuracy is unchanged. Number keys are reserved for PSXRecomp's filter

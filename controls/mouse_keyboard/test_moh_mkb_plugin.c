@@ -348,6 +348,26 @@ int main(void) {
     CHECK(look_gain(owned_player_input()) == 0.5);
     zoom_amount = 1;
     CHECK(fabs(look_gain(owned_player_input()) - 0.16) < 1e-9);
+    override_id = "aimed_zoom"; override_value = "100";
+    CHECK(sensitivity_changed(override_id, override_value));
+    CHECK(aimed_zoom == 1 && firearm_zoom_ratio() == 1);
+    CHECK(fabs(look_gain(owned_player_input()) - 0.4) < 1e-9);
+    override_value = "250";
+    CHECK(sensitivity_changed(override_id, override_value));
+    CHECK(firearm_zoom_ratio() == 2.5);
+    CHECK(fabs(look_gain(owned_player_input()) - 0.16) < 1e-9);
+    zoom_amount = 0;
+    CHECK(firearm_zoom_ratio() == 1 && look_gain(owned_player_input()) == 0.5);
+    const long focal[] = {556, 844, 1000};
+    for (unsigned i = 0; i < 3; ++i) {
+        zoom_amount = mohu_mkb_zoom_step(zoom_amount, 1);
+        CHECK(lround(400 * firearm_zoom_ratio()) == focal[i]);
+    }
+    override_value = "99";
+    CHECK(sensitivity_changed(override_id, override_value) && aimed_zoom == 1.25);
+    override_value = "251";
+    CHECK(sensitivity_changed(override_id, override_value) && aimed_zoom == 1.25);
+    CHECK(lround(400 * firearm_zoom_ratio()) == 500);
     on_reset();
     CHECK(!active && !installed_transform.transform);
     puts("mouse keyboard plugin: PASS");

@@ -1262,3 +1262,59 @@ actions, independent sensitivity, regression updates and this handoff; use its
 Git log for the final root hash. The four unrelated framework VR edits and
 `.commandcode/` remain uncommitted and excluded. No game restart, rebuild or
 personal settings/save changes were needed for committing this tested source.
+
+## Continuation - aimed zoom slider and UI review, 2026-11-07
+
+Owner's annotated screenshot requests removing repeated control instructions
+and replacing verbose sensitivity tooltips with one line of math. Feature copy
+is now "Click to capture; Escape releases." Global tooltip states the base turn
+rate; aiming tooltip states its independent rate divided by zoom.
+
+Added **Aimed zoom (x)**, range **1.00-2.50**, default **1.25**, stored as integer
+option `aimed_zoom` (100-250, step 1). Ordinary firearms/crossbow use the selected
+magnification and compensate mouse gain by the actual eased zoom ratio. Native
+sniper scope behavior stays unchanged. Easing still takes three native updates.
+At 2.50x, focal values are `400 -> 556 -> 844 -> 1000`; at 1.00x, aiming keeps
+the reticle and reduced sensitivity with no magnification.
+
+Framework manifest format 13 adds `display_divisor` for decimal integer-slider
+presentation, with exact integer persistence and bounds. UI renders this slider
+as 1.25 rather than 125. Divisors must be powers of ten from 1 to 1000000 and
+require an integer slider. Existing format-12 sliders/bindings remain supported.
+
+Only build-release was built, two compile jobs; no game/build process was
+running before building. Root CTest **5/5** and default-zoom live checks **17/17**
+passed; source personal saves were unchanged. The launcher displayed **1.25**
+and the shorter description. Further UI/range checks stopped when the owner
+pressed physical Escape; defaults remained unchanged. The 2.50x focal/gain
+behavior and 1.00x endpoint are covered by plugin tests, not a new live replay.
+Preserve the pre-existing `game.toml` edit, the four framework VR edits and
+`.commandcode/`. Central Beads path remains unavailable (checked without and
+with elevation); no local issue database was created.
+
+## Continuation - v0.1.2 publication, 2026-11-07
+
+Owner authorized committing/pushing the zoom slider and publishing a release,
+plus the exact README title "Medal of Honor Underground Recompiled + Full 6dof
+VR + Mouse/Keyboard" and another gameplay mention. README, alpha guide and
+versioned v0.1.2 notes now describe editable MKB actions and aimed zoom.
+
+Published decimal-slider dependency commits:
+- Framework `6b0ae62d59913321bd924624ac20b49e76b66f98`.
+- UI `73dc1cb5a2525b9bfaf0e7a7553abc7451aa269b`.
+Both remain on their `mkb/configurable-input` fork branches; root pins them.
+
+The previous VR release catalog excluded MKB. CMake now composes the declared
+catalog inside build-release from the normal catalog plus VR manifests when
+VR is built. Framework staging/auditing still owns mods/bundled. Combined
+configuration validated **14 packages**, including all three game packages.
+The workflow builds the game and overlay emitters in one build-release CMake
+tree with two compile jobs, runs the five title tests and checks the final ZIP
+for both MKB and VR manifests plus aimed_zoom. Personal mod state never ships.
+
+YAML, all 15 shell steps and the package wrapper passed syntax checks. Local
+combined compilation reached linking, where the existing release launcher
+**PID 30028** locked the executable. That session is preserved; no more local
+builds will run while it is open. CI builds from committed dependencies and is
+the authoritative clean release validation. Publication is pending its result.
+The pre-existing game.toml and four framework VR edits remain excluded.

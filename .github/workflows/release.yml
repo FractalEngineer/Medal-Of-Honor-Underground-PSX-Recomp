@@ -36,8 +36,7 @@
 # runtime still loads the ICD dynamically via SDL.
 #
 # workflow_dispatch: leave version empty to auto-bump patch (or choose bump).
-# reuse_cached_emitters skips rebuilding psxrecomp-game/bios when the
-# psxrecomp submodule SHA cache hits. See docs/ci/BUNDLED_RELEASES.md.
+# Game and packaged overlay emitters share the build-release CMake tree.
 
 name: Release builds
 
@@ -65,11 +64,6 @@ on:
         required: true
         type: boolean
         default: true
-      reuse_cached_emitters:
-        description: 'Skip emitter rebuild when build-recompiler cache hits (psxrecomp SHA)'
-        required: false
-        type: boolean
-        default: true
   push:
     tags:
       - 'v*'
@@ -92,7 +86,6 @@ jobs:
       version: ${{ steps.meta.outputs.version }}
       tag: ${{ steps.meta.outputs.tag }}
       publish: ${{ steps.meta.outputs.publish }}
-      reuse_emitters: ${{ steps.meta.outputs.reuse_emitters }}
     steps:
       - name: Checkout (tags for auto-bump)
         if: github.event_name == 'workflow_dispatch'
@@ -109,12 +102,10 @@ jobs:
             RAW="${{ github.event.inputs.version }}"
             BUMP="${{ github.event.inputs.bump || 'patch' }}"
             PUBLISH="${{ github.event.inputs.publish }}"
-            REUSE="${{ github.event.inputs.reuse_cached_emitters }}"
           else
             RAW="${{ github.ref_name }}"
             BUMP="patch"
             PUBLISH="true"
-            REUSE="true"
           fi
           RAW="$(printf '%s' "${RAW}" | tr -d '[:space:]')"
           if [[ -z "${RAW}" ]]; then
@@ -159,8 +150,7 @@ jobs:
           echo "version=${VER}" >>"$GITHUB_OUTPUT"
           echo "tag=${TAG}" >>"$GITHUB_OUTPUT"
           echo "publish=${PUBLISH}" >>"$GITHUB_OUTPUT"
-          echo "reuse_emitters=${REUSE}" >>"$GITHUB_OUTPUT"
-          echo "Using version ${VER} (tag ${TAG}), publish=${PUBLISH}, reuse_emitters=${REUSE}"
+          echo "Using version ${VER} (tag ${TAG}), publish=${PUBLISH}"
   build:
     name: ${{ matrix.artifact }}
     needs: prepare
@@ -363,46 +353,6 @@ jobs:
         with:
           artifact: ${{ matrix.artifact }}
 
-      # Emitters ship inside overlay_toolchain/ so the runtime can compile
-      # overlays from the player's disc (and a BIOS backend for a known image
-      # this build does not link). Host/UI-only bumps keep the same psxrecomp
-      # gitlink → cache hit skips rebuilding them (see reuse_cached_emitters).
-      - name: Emitter cache key
-        id: emitter_cache
-        shell: bash
-        run: |
-          set -euo pipefail
-          SHA="$(git -C psxrecomp rev-parse HEAD)"
-          echo "psxrecomp_sha=${SHA}" >>"$GITHUB_OUTPUT"
-          echo "key=${{ runner.os }}-${{ matrix.artifact }}-emitters-${SHA}" >>"$GITHUB_OUTPUT"
-          echo "psxrecomp SHA ${SHA}"
-
-      - name: Cache emitters (build-recompiler)
-        id: cache_emitters
-        uses: actions/cache@v4
-        with:
-          path: build-recompiler
-          key: ${{ steps.emitter_cache.outputs.key }}
-
-      - name: Build recompiler tools (emitters)
-        if: >-
-          steps.cache_emitters.outputs.cache-hit != 'true' ||
-          needs.prepare.outputs.reuse_emitters != 'true'
-        uses: ./psxrecomp/.github/actions/build-emitters
-
-      - name: Verify emitters present
-        shell: bash
-        run: |
-          set -euo pipefail
-          # Restored cache or fresh build must leave both emitters in place.
-          test -d build-recompiler
-          find build-recompiler -type f \( -name 'psxrecomp-game*' -o -name 'psxrecomp-bios*' \) | head
-          count="$(find build-recompiler -type f \( -name 'psxrecomp-game*' -o -name 'psxrecomp-bios*' \) | wc -l | tr -d ' ')"
-          if [[ "${count}" -lt 2 ]]; then
-            echo "::error::expected psxrecomp-game + psxrecomp-bios under build-recompiler (found ${count})"
-            exit 1
-          fi
-
       # The generated game C is tens of MB per title; ccache turns a host/UI
       # bump into a link-only rebuild on every platform.
       - name: Setup ccache (Linux/macOS)
@@ -462,7 +412,7 @@ jobs:
           if command -v glslc >/dev/null 2>&1; then
             EXTRA+=("-DGLSLC_EXE=$(command -v glslc)")
           fi
-          JOBS="$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)"
+          JOBS=2
           # Emitters may have set PSXRECOMP_TOOLCHAIN_DIR (llvm-mingw) via
           # GITHUB_ENV. Clear it before the MSYS2 g++ configure so the pack's
           # lib/ cannot win -L for -static-libstdc++ (codecvt link errors).
@@ -485,7 +435,7 @@ jobs:
           elif [[ -f "${GITHUB_WORKSPACE}/.cache/sdl3-src/CMakeLists.txt" ]]; then
             EXTRA+=("-DFETCHCONTENT_SOURCE_DIR_SDL3=${GITHUB_WORKSPACE}/.cache/sdl3-src")
           fi
-          cmake -S . -B build-ci -G Ninja \
+          cmake -S . -B build-release -G Ninja \
             -DCMAKE_BUILD_TYPE=Release \
             -DPSXRECOMP_REQUIRE_GAME_C=ON \
             -DPSXRECOMP_BIOS_STALE_FATAL=ON \
@@ -496,20 +446,22 @@ jobs:
             -DPSX_RELEASE_CHANNEL=public \
             -DPSX_OPENXR=ON \
             -DMOHU_VR_DIAGNOSTICS=ON \
+            -DMOHU_RELEASE_TOOLS=ON \
+            -DBUILD_TESTING=ON \
             -DMOHU_VR_NATIVE_PROFILE=OFF \
             -DPSX_DEBUG_TOOLS=OFF \
             -DPSX_RUNTIME_IPO=OFF \
-            "${EXTRA[@]}" 2>&1 | tee build-ci-configure.log
+            "${EXTRA[@]}" 2>&1 | tee build-release-configure.log
           # Assert the configure took the FULL path, not the setup-host one.
-          if ! grep -q 'linking generated game C (full runtime)' build-ci-configure.log; then
+          if ! grep -q 'linking generated game C (full runtime)' build-release-configure.log; then
             echo "::error::CMake did not link the generated game C (see configure log)"
             exit 1
           fi
-          if ! grep -qE 'BIOS backends linked: .*OpenBIOS' build-ci-configure.log; then
+          if ! grep -qE 'BIOS backends linked: .*OpenBIOS' build-release-configure.log; then
             echo "::error::CMake did not link the OpenBIOS backend (psxrecomp/generated missing or stale?)"
             exit 1
           fi
-          if ! grep -q 'Vulkan backend: headers' build-ci-configure.log; then
+          if ! grep -q 'Vulkan backend: headers' build-release-configure.log; then
             echo "::error::CMake did not enable PSX_HAVE_VULKAN (see configure log)"
             exit 1
           fi
@@ -519,9 +471,9 @@ jobs:
           for define in PSX_HAVE_VULKAN PSX_HAS_GAME_DISPATCH PSX_OPENXR; do
             FOUND=0
             for f in \
-                build-ci/build.ninja \
-                build-ci/compile_commands.json \
-                build-ci/CMakeFiles/psx-runtime.dir/flags.make; do
+                build-release/build.ninja \
+                build-release/compile_commands.json \
+                build-release/CMakeFiles/psx-runtime.dir/flags.make; do
               if [[ -f "${f}" ]] && grep -q "${define}" "${f}"; then
                 FOUND=1
                 echo "Found ${define} in ${f}"
@@ -533,22 +485,29 @@ jobs:
               exit 1
             fi
           done
-          if ! grep -q 'vr/underground/vr_diagnostic.c' build-ci/build.ninja; then
+          if ! grep -q 'vr/underground/vr_diagnostic.c' build-release/build.ninja; then
             echo "::error::VR plugin source missing; MOHU_VR_DIAGNOSTICS was not applied"
             exit 1
           fi
-          cmake --build build-ci --target psx-runtime -j"${JOBS}"
+          if ! grep -q 'controls/mouse_keyboard/moh_mkb.c' build-release/build.ninja; then
+            echo "::error::MKB plugin source missing"
+            exit 1
+          fi
+          cmake --build build-release --target psx-runtime psxrecomp-game psxrecomp-bios \
+            mohu_mkb_input_test mohu_mkb_plugin_test mohu_mod_binding_options_test -j"${JOBS}"
+          ctest --test-dir build-release --output-on-failure \
+            -R '^(psx_mod_plugin_audit_psx-runtime|mohu_mkb_input_test|mohu_mkb_plugin_test|mohu_mod_binding_options_test|psx_staged_mod_catalog_test)$'
           # Lobby list pin must match RELEASE_VERSION (the packager enforces).
           STAMP=""
           for cand in \
-              build-ci/psx_game_version.txt \
-              build-ci/Release/psx_game_version.txt \
-              build-ci/*/psx_game_version.txt
+              build-release/psx_game_version.txt \
+              build-release/Release/psx_game_version.txt \
+              build-release/*/psx_game_version.txt
           do
             if [[ -f "${cand}" ]]; then STAMP="${cand}"; break; fi
           done
           if [[ -z "${STAMP}" ]]; then
-            STAMP="$(find build-ci -name psx_game_version.txt -type f 2>/dev/null | head -n1 || true)"
+            STAMP="$(find build-release -name psx_game_version.txt -type f 2>/dev/null | head -n1 || true)"
           fi
           if [[ -z "${STAMP}" || ! -f "${STAMP}" ]]; then
             echo "::error::missing psx_game_version.txt after build (update psxrecomp submodule)"
@@ -581,7 +540,7 @@ jobs:
             export BPE_RUNTIME_BIN_DIR=/mingw64/bin
           fi
           export RELEASE_VERSION
-          scripts/package_release.sh build-ci "${{ matrix.artifact }}" build-recompiler
+          scripts/package_release.sh build-release "${{ matrix.artifact }}" build-release
           ls -la dist/
 
       - name: Verify zip contents
@@ -606,6 +565,17 @@ jobs:
           echo "mod manifests in zip: ${MANIFESTS}"
           if [[ "${MANIFESTS}" -lt 1 ]]; then
             echo "::error::release zip ships no mod catalog (mods/bundled/*/manifest.toml)" >&2
+            exit 1
+          fi
+          for id in mohu.input.mouse-keyboard mohu.vr.diagnostic; do
+            if ! grep -q "^mods/bundled/${id}/.*/manifest.toml$" <<<"${LIST}"; then
+              echo "::error::release zip lacks ${id}" >&2
+              exit 1
+            fi
+          done
+          if ! unzip -p "${ZIP}" 'mods/bundled/mohu.input.mouse-keyboard/*/manifest.toml' \
+              | grep -q 'id = "aimed_zoom"'; then
+            echo "::error::release zip lacks the aimed zoom option" >&2
             exit 1
           fi
           # 2. It is NOT a build kit: no framework tree, no CLI, no emitters at
@@ -714,7 +684,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ needs.prepare.outputs.tag }}
-          name: "Medal of Honor Underground Recompiled + Full 6dof VR - ${{ needs.prepare.outputs.tag }} Alpha"
+          name: "Medal of Honor Underground Recompiled + Full 6dof VR + Mouse/Keyboard - ${{ needs.prepare.outputs.tag }} Alpha"
           body_path: docs/release/${{ needs.prepare.outputs.tag }}.md
           files: |
             dist/mohu-*.zip

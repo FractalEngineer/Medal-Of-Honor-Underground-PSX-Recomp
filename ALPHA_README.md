@@ -1,16 +1,16 @@
-# Medal of Honor Underground Recompiled - Full 6dof VR Alpha
+# Medal of Honor Underground Recompiled + Full 6dof VR + Mouse/Keyboard
 
-This is the Windows x64 **v0.1.1** testing release. Flat play remains the
+This is the Windows x64 **v0.1.2** testing release. Flat play remains the
 default; VR is optional. Quest 3 through Virtual Desktop with VDXR is the
 primary tested headset setup. SteamVR and Oculus launchers are included, but
 Meta Quest Link and broad runtime coverage are not yet accepted.
 
 For project context, see the [project README](README.md),
-[v0.1.1 release notes](docs/release/v0.1.1.md) and
+[v0.1.2 release notes](docs/release/v0.1.2.md) and
 [documentation map](docs/README.md). The release notes summarize the package;
 this guide is the source of truth for player setup, controls and limitations.
 
-## What is in v0.1.1
+## What is in v0.1.2
 
 - Native OpenXR stereo rendering with motion-tracked head movement.
 - Tracked first-person weapons with hand-derived aiming and a right-grip laser.
@@ -19,6 +19,8 @@ this guide is the source of truth for player setup, controls and limitations.
   frontend, videos and menus.
 - A held 2.5x sniper scope with native scope range and normal player movement.
 - Shared memory cards and savestates between flat and VR launchers.
+- Mouse and keyboard campaign gameplay with editable actions, independent
+  sensitivity sliders, wheel weapon cycling and adjustable 1.00x-2.50x aim zoom.
 
 This is an alpha. Weapon and damage alignment beyond the exercised P38, Sten,
 Panzerfaust and petrol-bomb paths still needs broader validation. Demanding
@@ -27,7 +29,7 @@ alignment and some frontend transitions still need physical-headset checks.
 
 ## Install and play
 
-1. Download `mohu-0.1.1-windows-x64.zip` and extract the entire archive to a
+1. Download `mohu-0.1.2-windows-x64.zip` and extract the entire archive to a
    writable folder. Keep the executable, assets, mods and overlay toolchain
    together.
 2. Supply your own **Medal of Honor Underground SLUS-01270 (NTSC-U)** CUE/BIN
@@ -58,6 +60,19 @@ For an explicit disc path:
 ```powershell
 .\RunVR-VDXR.bat -DiscPath "C:\Games\Medal of Honor Underground\game.cue"
 ```
+
+## Mouse and keyboard
+
+For flat play, open **Mods** and enable **Mouse and keyboard**. Click the game
+to capture the mouse; Escape releases it. Defaults are WASD movement, left
+mouse fire, right mouse aim, R reload, E use and mouse wheel weapon cycling.
+Menus use WASD/arrows, E to choose and Q to go back.
+
+All actions can be rebound on the mod page. Global and aiming sensitivity have
+independent 1-10 sliders (defaults 5 and 4). **Aimed zoom (x)** ranges from 1.00
+to 2.50, default 1.25. The weapon stays visible; the native crosshair appears
+only while aiming. The sniper retains its native scope and supports movement.
+Number keys remain available for the framework's filter shortcuts.
 
 ## Touch controls
 

@@ -26,6 +26,7 @@ set(PSX_SETUP_WIZARD ON CACHE BOOL
     "Advertise first-run setup wizard + Generate & rebuild in recomp-ui" FORCE)
 option(MOHU_VR_DIAGNOSTICS "Build the guarded Underground VR diagnostic plugin" OFF)
 option(MOHU_PGXP "Build the PGXP runtime/save flavor independently of the VR plugin" OFF)
+option(MOHU_RELEASE_TOOLS "Build release emitters in the same build-release tree" OFF)
 option(MOHU_MKB_RESEARCH "Build the isolated native mouse aim research harness (debug tools only)" OFF)
 option(MOHU_VR_NATIVE_PROFILE "Time native CPS function segments (diagnostic only)" OFF)
 option(MOHU_VR_PREFLIGHT_HARNESS "Isolated native/host preflight caller comparisons (diagnostic only)" OFF)
@@ -45,11 +46,27 @@ include("${PSXRECOMP_ROOT}/runtime/runtime.cmake")
 # configure if a catalog exists here but is not declared. Never copy it by
 # hand: five titles did, and framework 4cc04be3's rename of the staged
 # directory broke all five silently (bead beads-eio.3.101).
+set(PSX_PRELOADED_MODS "${CMAKE_CURRENT_BINARY_DIR}/mohu-mod-catalog")
+set(_mohu_catalog_roots "${CMAKE_CURRENT_SOURCE_DIR}/mods/preloaded")
 if(MOHU_VR_DIAGNOSTICS)
-    set(PSX_PRELOADED_MODS "${CMAKE_CURRENT_SOURCE_DIR}/vr/preloaded")
+    list(APPEND _mohu_catalog_roots "${CMAKE_CURRENT_SOURCE_DIR}/vr/preloaded")
 else()
-    set(PSX_PRELOADED_MODS "${CMAKE_CURRENT_SOURCE_DIR}/mods/preloaded")
+    # Remove only our generated VR catalog inputs when returning to flat-only.
+    file(REMOVE
+        "${PSX_PRELOADED_MODS}/packages/mohu.vr.diagnostic/0.1.0/manifest.toml"
+        "${PSX_PRELOADED_MODS}/packages/mohu.repair.music-sector/0.1.0/manifest.toml")
 endif()
+foreach(_mohu_catalog_root IN LISTS _mohu_catalog_roots)
+    file(GLOB_RECURSE _mohu_catalog_manifests CONFIGURE_DEPENDS
+        "${_mohu_catalog_root}/packages/*/manifest.toml")
+    foreach(_mohu_manifest IN LISTS _mohu_catalog_manifests)
+        file(RELATIVE_PATH _mohu_manifest_rel "${_mohu_catalog_root}" "${_mohu_manifest}")
+        configure_file("${_mohu_manifest}"
+            "${PSX_PRELOADED_MODS}/${_mohu_manifest_rel}" COPYONLY)
+    endforeach()
+endforeach()
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/mods/preloaded/README.md"
+    "${PSX_PRELOADED_MODS}/README.md" COPYONLY)
 # Existing release saves use the PGXP ABI. Flat controls can retain that flavor
 # without activating/staging VR; changing build directories is not a save fix.
 if(MOHU_VR_DIAGNOSTICS OR MOHU_PGXP)
@@ -65,6 +82,18 @@ if(MOHU_MKB_RESEARCH)
         message(FATAL_ERROR "MOHU_MKB_RESEARCH is a development harness, not a release package")
     endif()
     set(PSX_PRELOADED_MODS "${CMAKE_CURRENT_SOURCE_DIR}/controls/research/preloaded")
+endif()
+
+if(MOHU_RELEASE_TOOLS)
+    # One configure/build tree for the game and its packaged overlay emitters.
+    set(_mohu_saved_testing "${BUILD_TESTING}")
+    set(BUILD_TESTING OFF)
+    set(PSXRECOMP_ENABLE_CHD OFF)
+    set(PSXRECOMP_STATIC_CLI ON)
+    add_subdirectory("${PSXRECOMP_ROOT}/recompiler" "${CMAKE_CURRENT_BINARY_DIR}/emitters")
+    set(BUILD_TESTING "${_mohu_saved_testing}")
+    set_target_properties(psxrecomp-game psxrecomp-bios PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}")
 endif()
 if(NOT IS_DIRECTORY "${PSX_PRELOADED_MODS}")
     set(PSX_PRELOADED_MODS "NONE")

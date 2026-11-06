@@ -1,4 +1,4 @@
-format_version = 12
+format_version = 13
 id = "mohu.input.mouse-keyboard"
 version = "0.1.0"
 name = "Mouse and keyboard gameplay"
@@ -13,7 +13,7 @@ game_id = "SLUS-01270"
 [[feature]]
 id = "mouse-keyboard"
 name = "Mouse and keyboard"
-description = "Click to capture; Escape releases. R reloads and wheel cycles weapons. Menus: WASD, E confirm, Q back. Right mouse smoothly zooms firearms/crossbow 1.25x or uses the native sniper scope."
+description = "Click to capture; Escape releases."
 channel = "experimental"
 default_enabled = false
 
@@ -21,7 +21,7 @@ default_enabled = false
 feature = "mouse-keyboard"
 id = "look_sensitivity"
 label = "Global mouse sensitivity"
-description = "Independent 1-10 turn rate. Global 5 keeps the original feel; aiming 4 is slightly slower. Equal values give equal screen movement. No acceleration or smoothing."
+description = "Degrees/count = sensitivity x 0.00879."
 group = "Sensitivity"
 type = "integer"
 min = 1
@@ -34,7 +34,7 @@ default = 5
 feature = "mouse-keyboard"
 id = "aim_sensitivity"
 label = "Aiming sensitivity"
-description = "Independent 1-10 turn rate. Global 5 keeps the original feel; aiming 4 is slightly slower. Equal values give equal screen movement. No acceleration or smoothing."
+description = "Degrees/count = aiming sensitivity x 0.00879 / zoom."
 group = "Sensitivity"
 type = "integer"
 min = 1
@@ -42,6 +42,20 @@ max = 10
 step = 1
 slider = true
 default = 4
+
+[[option]]
+feature = "mouse-keyboard"
+id = "aimed_zoom"
+label = "Aimed zoom (x)"
+description = "Zoom while aiming firearms and the crossbow; the sniper keeps its native scope."
+group = "Aiming"
+type = "integer"
+min = 100
+max = 250
+step = 1
+slider = true
+display_divisor = 100
+default = 125
 
 [[option]]
 feature = "mouse-keyboard"

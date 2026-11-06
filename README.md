@@ -1,4 +1,4 @@
-# Medal of Honor Underground Recompiled + Full 6dof VR
+# Medal of Honor Underground Recompiled + Full 6dof VR + Mouse/Keyboard
 
 <!-- retcomm-readme-metrics -->
 [![GitHub downloads (all assets, all releases)](https://img.shields.io/github/downloads/FractalEngineer/Medal-Of-Honor-Underground-PSX-Recomp/total)](https://github.com/FractalEngineer/Medal-Of-Honor-Underground-PSX-Recomp/releases)
@@ -18,6 +18,9 @@ Static recompilation of **Medal of Honor Underground** built on
 Play the original game on a flat display, or opt into the experimental Full
 6dof VR alpha with head tracking, per-eye rendering and tracked-weapon controls.
 Flat play is the default; VR is enabled through a separate launcher.
+Flat gameplay also supports direct mouse look and keyboard movement, with
+editable bindings, independent sensitivity sliders and adjustable aiming zoom.
+Enable **Mouse and keyboard** in the launcher's **Mods** page.
 Watch the [VR video demo](https://youtu.be/_6LRnH667jc) for gameplay footage.
 
 The latest **Windows alpha** is available from this fork's
@@ -95,6 +98,19 @@ overrides should be absent for flat play; the VR wrapper restores its process
 environment when it exits.
 
 `RunVR-SteamVR.bat -Headless` is a stereo diagnostic mode, not the ordinary flat launch.
+
+## Mouse and keyboard gameplay
+
+Enable **Mouse and keyboard** under **Mods** for single-player campaign play.
+It provides direct mouse look, WASD movement, R reload, mouse-wheel weapon
+cycling and keyboard menu navigation. Every gameplay/menu action is editable.
+
+Global and aiming sensitivity use independent **1-10 sliders**, defaulting to
+**5** and **4**. Aimed zoom ranges from **1.00x to 2.50x**, default **1.25x**,
+with a quick smooth transition. Firearms and the crossbow keep their held weapon
+visible and show the native crosshair only while aiming; the sniper retains its
+native scope with mouse aiming and movement. Number keys retain PSXRecomp's
+filter shortcuts. See the [full controls guide](docs/controls/MOUSE_KEYBOARD.md).
 
 ## Experimental VR alpha (Windows)
 

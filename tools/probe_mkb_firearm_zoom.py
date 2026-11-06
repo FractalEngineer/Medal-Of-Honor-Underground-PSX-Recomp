@@ -20,6 +20,8 @@ def main():
     parser.add_argument("--pid", type=int)
     parser.add_argument("--sensitivity", type=float, default=5)
     parser.add_argument("--aiming-sensitivity", type=float, default=4)
+    parser.add_argument("--zoom", type=float, default=1.25,
+                        help="Aimed zoom multiplier selected in the MKB mod")
     args = parser.parse_args()
     out = args.out.resolve()
     out.mkdir(parents=True, exist_ok=True)
@@ -91,11 +93,12 @@ def main():
         checks = receipt["checks"]
         # Live GTE H can belong to the held-weapon pass. Its world focal length
         # is the player's field, consumed by the native world projection.
-        checks["projection_125"] = before["depth"] == 400 and aimed["depth"] == 500
-        checks["eased_in"] = all(v in values_in for v in (426, 474, 500))
-        checks["eased_out"] = all(v in values_out for v in (474, 426, 400))
+        focal = [round(400 * (1 + (args.zoom - 1) * t)) for t in (7 / 27, 20 / 27, 1)]
+        checks["selected_zoom_projection"] = before["depth"] == 400 and aimed["depth"] == focal[-1]
+        checks["eased_in"] = all(v in values_in for v in focal)
+        checks["eased_out"] = all(v in values_out for v in (focal[1], focal[0], 400))
         checks["no_stationary_aim"] = aimed["mode"] == 7 and not aimed["flags"] & 0x20
-        expected = 30 * args.aiming_sensitivity / 10 / 1.25 * 65536
+        expected = 30 * args.aiming_sensitivity / 10 / args.zoom * 65536
         checks["lower_sensitivity"] = abs(moved_mouse["angles"][1] - aimed["angles"][1] - expected) <= 1
         visible = "mohu.mkb.reticle.visible"
         tight = "mohu.mkb.firearm.reticle.tight"
@@ -157,7 +160,7 @@ def main():
         n.frames(12)
         crossbow = snapshot()
         actor = int.from_bytes(n.read(0x800AA17C, 4), "little")
-        checks["crossbow_zoom"] = n.read(actor + 0x459, 1)[0] == 14 and crossbow["depth"] == 500
+        checks["crossbow_zoom"] = n.read(actor + 0x459, 1)[0] == 14 and crossbow["depth"] == focal[-1]
         checks["crossbow_crosshair"] = crossbow["counters"].get(visible, 0) > crossbow_before["counters"].get(visible, 0)
         checks["crossbow_visible"] = crossbow["counters"].get("mohu.mkb.firearm.weapon.visible", 0) > crossbow_before["counters"].get("mohu.mkb.firearm.weapon.visible", 0)
         receipt["cases"]["crossbow"] = crossbow

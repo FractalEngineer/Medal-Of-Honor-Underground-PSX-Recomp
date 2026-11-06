@@ -43,6 +43,7 @@ static int wheel_steps, requested_slot = -1, selecting_slot = -1;
 static double wheel_remainder;
 static int profile_context = -1;
 static double mouse_gain = 0.5, scoped_gain = 0.4;
+static double aimed_zoom = 1.25;
 enum { FORWARD, BACKWARD, LEFT, RIGHT, FIRE, AIM, RELOAD, USE, JUMP, CROUCH,
        NEXT_WEAPON, PREV_WEAPON, PAUSE, OBJECTIVES, MENU_UP, MENU_DOWN,
        MENU_LEFT, MENU_RIGHT, MENU_CONFIRM, MENU_BACK, ACTION_COUNT };
@@ -65,17 +66,18 @@ static double zoom_amount;
 static uint32_t reticle_stack;
 static void reset_look(void);
 
-static int sensitivity_option(const char* name, int fallback, int maximum) {
+static int integer_option(const char* name, int fallback, int minimum, int maximum) {
     char value[16], *end;
     if (!psx_mod_option_value(PLUGIN_ID, "mouse-keyboard", name, value, sizeof(value)))
         return fallback;
-    const long percent = strtol(value, &end, 10);
-    return end != value && !*end && percent >= 1 && percent <= maximum ? (int)percent : fallback;
+    const long number = strtol(value, &end, 10);
+    return end != value && !*end && number >= minimum && number <= maximum ? (int)number : fallback;
 }
 
 static void refresh_sensitivity(void) {
-    mouse_gain = sensitivity_option("look_sensitivity", 5, 10) / 10.0;
-    scoped_gain = sensitivity_option("aim_sensitivity", 4, 10) / 10.0;
+    mouse_gain = integer_option("look_sensitivity", 5, 1, 10) / 10.0;
+    scoped_gain = integer_option("aim_sensitivity", 4, 1, 10) / 10.0;
+    aimed_zoom = integer_option("aimed_zoom", 125, 100, 250) / 100.0;
 }
 
 static int sensitivity_changed(const char* option, const char* value);
@@ -166,7 +168,8 @@ static int sensitivity_changed(const char* option, const char* value) {
         refresh_bindings();
         contextual_controls(1);
         reset_weapon_input();
-    } else if (!strcmp(option, "look_sensitivity") || !strcmp(option, "aim_sensitivity")) {
+    } else if (!strcmp(option, "look_sensitivity") || !strcmp(option, "aim_sensitivity") ||
+               !strcmp(option, "aimed_zoom")) {
         refresh_sensitivity();
     } else return 0;
     reset_look();
@@ -249,6 +252,10 @@ static int firearm_aiming(uint32_t input) {
     return firearm_zoom_eligible(input) && held;
 }
 
+static double firearm_zoom_ratio(void) {
+    return 1 + (aimed_zoom - 1) * mohu_mkb_zoom_ease(zoom_amount);
+}
+
 static void firearm_focal(CPUState* cpu, uint32_t site) {
     if (!cpu || !active || g_psx_render_pass_active) return;
     const uint32_t input = owned_player_input();
@@ -257,7 +264,7 @@ static void firearm_focal(CPUState* cpu, uint32_t site) {
         cpu->gpr[17] == input - SP_PLAYER_INPUT_OFFSET && cpu->gpr[2] == 400u &&
         code_hash(0x800892C8u, 0xF20u) == 0xF4D6C439u) {
         zoom_amount = mohu_mkb_zoom_step(zoom_amount, firearm_aiming(input));
-        cpu->gpr[2] = 400u + (uint32_t)lround(100 * mohu_mkb_zoom_ease(zoom_amount));
+        cpu->gpr[2] = (uint32_t)lround(400 * firearm_zoom_ratio());
         if (zoom_amount > 0) psx_mod_counter_add("mohu.mkb.firearm.zoom", 1);
     } else if (site == 0x8008D854u && cpu->gpr[4] == input - SP_PLAYER_INPUT_OFFSET &&
                cpu->gpr[19] == input &&
@@ -396,7 +403,7 @@ static void scoped_origin(CPUState* cpu, uint32_t site) {
 static double look_gain(uint32_t input) {
     if (firearm_zooming(input)) {
         const double blend = mohu_mkb_zoom_ease(zoom_amount);
-        return (mouse_gain * (1 - blend) + scoped_gain * blend) / (1 + 0.25 * blend);
+        return (mouse_gain * (1 - blend) + scoped_gain * blend) / firearm_zoom_ratio();
     }
     if (psx_mod_read_byte(input + 93u) == SNIPER_WEAPON_ID &&
         (psx_mod_read_word(input) & 0x20u))
