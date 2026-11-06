@@ -1,4 +1,4 @@
-format_version = 11
+format_version = 12
 id = "mohu.input.mouse-keyboard"
 version = "0.1.0"
 name = "Mouse and keyboard gameplay"
@@ -19,25 +19,211 @@ default_enabled = false
 
 [[option]]
 feature = "mouse-keyboard"
-id = "sensitivity"
+id = "look_sensitivity"
 label = "Global mouse sensitivity"
-description = "Turn rate in percent of one native angle unit per mouse count. 50 is about 0.044 degrees per count. No acceleration or smoothing."
+description = "Independent 1-10 turn rate. Global 5 keeps the original feel; aiming 4 is slightly slower. Equal values give equal screen movement. No acceleration or smoothing."
+group = "Sensitivity"
 type = "integer"
 min = 1
-max = 400
+max = 10
 step = 1
-default = 50
+slider = true
+default = 5
 
 [[option]]
 feature = "mouse-keyboard"
-id = "scoped_sensitivity"
+id = "aim_sensitivity"
 label = "Aiming sensitivity"
-description = "Percent of the zoom-adjusted global sensitivity. Applies to right-click zoom and sniper scope. 80 gives 20% slower screen movement for precision."
+description = "Independent 1-10 turn rate. Global 5 keeps the original feel; aiming 4 is slightly slower. Equal values give equal screen movement. No acceleration or smoothing."
+group = "Sensitivity"
 type = "integer"
 min = 1
-max = 200
+max = 10
 step = 1
-default = 80
+slider = true
+default = 4
+
+[[option]]
+feature = "mouse-keyboard"
+id = "bind_forward"
+label = "Forward"
+description = "Click a binding and press a key or mouse button. Right-click clears; Reset restores this action. Escape cancels capture. Up to three alternatives."
+group = "Movement"
+type = "binding"
+default = "key:26"
+
+[[option]]
+feature = "mouse-keyboard"
+id = "bind_backward"
+label = "Backward"
+description = "Click a binding and press a key or mouse button. Right-click clears; Reset restores this action. Escape cancels capture. Up to three alternatives."
+group = "Movement"
+type = "binding"
+default = "key:22"
+
+[[option]]
+feature = "mouse-keyboard"
+id = "bind_left"
+label = "Strafe left"
+description = "Click a binding and press a key or mouse button. Right-click clears; Reset restores this action. Escape cancels capture. Up to three alternatives."
+group = "Movement"
+type = "binding"
+default = "key:4"
+
+[[option]]
+feature = "mouse-keyboard"
+id = "bind_right"
+label = "Strafe right"
+description = "Click a binding and press a key or mouse button. Right-click clears; Reset restores this action. Escape cancels capture. Up to three alternatives."
+group = "Movement"
+type = "binding"
+default = "key:7"
+
+[[option]]
+feature = "mouse-keyboard"
+id = "bind_jump"
+label = "Jump"
+description = "Click a binding and press a key or mouse button. Right-click clears; Reset restores this action. Escape cancels capture. Up to three alternatives."
+group = "Movement"
+type = "binding"
+default = "key:44,key:42"
+
+[[option]]
+feature = "mouse-keyboard"
+id = "bind_crouch"
+label = "Crouch"
+description = "Click a binding and press a key or mouse button. Right-click clears; Reset restores this action. Escape cancels capture. Up to three alternatives."
+group = "Movement"
+type = "binding"
+default = "key:224"
+
+[[option]]
+feature = "mouse-keyboard"
+id = "bind_fire"
+label = "Fire"
+description = "Click a binding and press a key or mouse button. Right-click clears; Reset restores this action. Escape cancels capture. Up to three alternatives."
+group = "Combat"
+type = "binding"
+default = "mouse:1,key:40"
+
+[[option]]
+feature = "mouse-keyboard"
+id = "bind_aim"
+label = "Aim / scope"
+description = "Click a binding and press a key or mouse button. Right-click clears; Reset restores this action. Escape cancels capture. Up to three alternatives."
+group = "Combat"
+type = "binding"
+default = "mouse:3"
+
+[[option]]
+feature = "mouse-keyboard"
+id = "bind_reload"
+label = "Reload"
+description = "Click a binding and press a key or mouse button. Right-click clears; Reset restores this action. Escape cancels capture. Up to three alternatives."
+group = "Combat"
+type = "binding"
+default = "key:21"
+
+[[option]]
+feature = "mouse-keyboard"
+id = "bind_use"
+label = "Use / interact"
+description = "Click a binding and press a key or mouse button. Right-click clears; Reset restores this action. Escape cancels capture. Up to three alternatives."
+group = "Combat"
+type = "binding"
+default = "key:8"
+
+[[option]]
+feature = "mouse-keyboard"
+id = "bind_next_weapon"
+label = "Next weapon"
+description = "Click a binding and press a key or mouse button. Right-click clears; Reset restores this action. Escape cancels capture. Up to three alternatives."
+group = "Weapons"
+type = "binding"
+default = "key:20,wheel:down"
+allow_wheel = true
+
+[[option]]
+feature = "mouse-keyboard"
+id = "bind_prev_weapon"
+label = "Previous weapon"
+description = "Click a binding and press a key or mouse button. Right-click clears; Reset restores this action. Escape cancels capture. Up to three alternatives."
+group = "Weapons"
+type = "binding"
+default = "wheel:up"
+allow_wheel = true
+
+[[option]]
+feature = "mouse-keyboard"
+id = "bind_pause"
+label = "Pause / start"
+description = "Click a binding and press a key or mouse button. Right-click clears; Reset restores this action. Escape cancels capture. Up to three alternatives."
+group = "Menus"
+type = "binding"
+default = "key:19"
+
+[[option]]
+feature = "mouse-keyboard"
+id = "bind_objectives"
+label = "Objectives / select"
+description = "Click a binding and press a key or mouse button. Right-click clears; Reset restores this action. Escape cancels capture. Up to three alternatives."
+group = "Menus"
+type = "binding"
+default = "key:43"
+
+[[option]]
+feature = "mouse-keyboard"
+id = "bind_menu_up"
+label = "Menu up"
+description = "Click a binding and press a key or mouse button. Right-click clears; Reset restores this action. Escape cancels capture. Up to three alternatives."
+group = "Menus"
+type = "binding"
+default = "key:26,key:82"
+
+[[option]]
+feature = "mouse-keyboard"
+id = "bind_menu_down"
+label = "Menu down"
+description = "Click a binding and press a key or mouse button. Right-click clears; Reset restores this action. Escape cancels capture. Up to three alternatives."
+group = "Menus"
+type = "binding"
+default = "key:22,key:81"
+
+[[option]]
+feature = "mouse-keyboard"
+id = "bind_menu_left"
+label = "Menu left"
+description = "Click a binding and press a key or mouse button. Right-click clears; Reset restores this action. Escape cancels capture. Up to three alternatives."
+group = "Menus"
+type = "binding"
+default = "key:4,key:80"
+
+[[option]]
+feature = "mouse-keyboard"
+id = "bind_menu_right"
+label = "Menu right"
+description = "Click a binding and press a key or mouse button. Right-click clears; Reset restores this action. Escape cancels capture. Up to three alternatives."
+group = "Menus"
+type = "binding"
+default = "key:7,key:79"
+
+[[option]]
+feature = "mouse-keyboard"
+id = "bind_menu_confirm"
+label = "Menu confirm"
+description = "Click a binding and press a key or mouse button. Right-click clears; Reset restores this action. Escape cancels capture. Up to three alternatives."
+group = "Menus"
+type = "binding"
+default = "key:8,key:40,mouse:1"
+
+[[option]]
+feature = "mouse-keyboard"
+id = "bind_menu_back"
+label = "Menu back"
+description = "Click a binding and press a key or mouse button. Right-click clears; Reset restores this action. Escape cancels capture. Up to three alternatives."
+group = "Menus"
+type = "binding"
+default = "key:20,key:42"
 
 [[plugin]]
 feature = "mouse-keyboard"

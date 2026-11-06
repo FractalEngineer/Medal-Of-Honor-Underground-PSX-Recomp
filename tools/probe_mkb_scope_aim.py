@@ -120,8 +120,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("out", type=Path)
     parser.add_argument("--pid", required=True, type=int)
-    parser.add_argument("--sensitivity", type=float, default=50)
-    parser.add_argument("--scoped-sensitivity", type=float, default=80)
+    parser.add_argument("--sensitivity", type=float, default=5)
+    parser.add_argument("--scoped-sensitivity", type=float, default=4)
     parser.add_argument("--pixel-tolerance", type=float, default=3,
                         help="Native 512x240 pixel budget for fixed-point casting, velocity and collision rounding")
     args = parser.parse_args()
@@ -137,7 +137,7 @@ def main():
         for _ in range(8):
             motion(1, 0)
             samples.append(snapshot())
-        gain = args.sensitivity / 100 * args.scoped_sensitivity / 100 * 400 / samples[0]["depth"]
+        gain = args.scoped_sensitivity / 10 * 400 / samples[0]["depth"]
         wrap = 4096 * 65536
         receipt["checks"]["single_count_fractional_angle"] = all(
             abs((b["angles"][1] - a["angles"][1]) % wrap - gain * 65536) <= 1

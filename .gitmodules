@@ -4,5 +4,5 @@
 	branch = master
 [submodule "recomp-ui"]
 	path = recomp-ui
-	url = https://github.com/RetroPortingToolKit/recomp-ui.git
+	url = https://github.com/FractalEngineer/recomp-ui.git
 	branch = master

@@ -18,8 +18,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("out", type=Path)
     parser.add_argument("--pid", type=int)
-    parser.add_argument("--sensitivity", type=float, default=50)
-    parser.add_argument("--aiming-sensitivity", type=float, default=80)
+    parser.add_argument("--sensitivity", type=float, default=5)
+    parser.add_argument("--aiming-sensitivity", type=float, default=4)
     args = parser.parse_args()
     out = args.out.resolve()
     out.mkdir(parents=True, exist_ok=True)
@@ -95,7 +95,7 @@ def main():
         checks["eased_in"] = all(v in values_in for v in (426, 474, 500))
         checks["eased_out"] = all(v in values_out for v in (474, 426, 400))
         checks["no_stationary_aim"] = aimed["mode"] == 7 and not aimed["flags"] & 0x20
-        expected = 30 * args.sensitivity / 100 * args.aiming_sensitivity / 100 / 1.25 * 65536
+        expected = 30 * args.aiming_sensitivity / 10 / 1.25 * 65536
         checks["lower_sensitivity"] = abs(moved_mouse["angles"][1] - aimed["angles"][1] - expected) <= 1
         visible = "mohu.mkb.reticle.visible"
         tight = "mohu.mkb.firearm.reticle.tight"

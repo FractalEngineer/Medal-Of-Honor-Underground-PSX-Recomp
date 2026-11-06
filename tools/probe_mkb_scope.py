@@ -58,8 +58,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("out", type=Path)
     parser.add_argument("--pid", type=int, required=True)
-    parser.add_argument("--sensitivity", type=float, default=50)
-    parser.add_argument("--scoped-sensitivity", type=float, default=80)
+    parser.add_argument("--sensitivity", type=float, default=5)
+    parser.add_argument("--scoped-sensitivity", type=float, default=4)
     args = parser.parse_args()
     native.require_debugger_owner(args.pid)
     args.out.mkdir(parents=True, exist_ok=True)
@@ -83,9 +83,9 @@ def main():
             after = snapshot()
             yaw = (after["angles"][1] - before["angles"][1]) % (4096 << 16)
             pitch = after["angles"][0] - before["angles"][0]
-            gain = args.sensitivity / 100
+            gain = args.sensitivity / 10
             if scoped:
-                gain *= args.scoped_sensitivity / 100 * 400 / max(400, before["depth"])
+                gain = args.scoped_sensitivity / 10 * 400 / max(400, before["depth"])
             check(label + "_direct_mouse", abs(yaw - 60 * gain * 65536) <= 1 and
                   abs(pitch + 25 * gain * 65536) <= 1)
             native.frames(20)

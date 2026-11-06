@@ -1,11 +1,13 @@
 #include "mod_plugins.h"
 #include "moh_mkb.h"
 #include "psx_keybinds.h"
+#include "mod_input_binding.h"
 #include "cpu_state.h"
 #include "psx_openxr.h"
 #include "psx_cycle_freeze.h"
 
 #include <stdint.h>
+#include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
@@ -40,7 +42,24 @@ static int preparing;
 static int wheel_steps, requested_slot = -1, selecting_slot = -1;
 static double wheel_remainder;
 static int profile_context = -1;
-static double mouse_gain = 0.5, scoped_gain = 0.8;
+static double mouse_gain = 0.5, scoped_gain = 0.4;
+enum { FORWARD, BACKWARD, LEFT, RIGHT, FIRE, AIM, RELOAD, USE, JUMP, CROUCH,
+       NEXT_WEAPON, PREV_WEAPON, PAUSE, OBJECTIVES, MENU_UP, MENU_DOWN,
+       MENU_LEFT, MENU_RIGHT, MENU_CONFIRM, MENU_BACK, ACTION_COUNT };
+static const struct { const char* id; const char* defaults; } actions[ACTION_COUNT] = {
+    {"forward", "key:26"}, {"backward", "key:22"},
+    {"left", "key:4"}, {"right", "key:7"},
+    {"fire", "mouse:1,key:40"}, {"aim", "mouse:3"},
+    {"reload", "key:21"}, {"use", "key:8"},
+    {"jump", "key:44,key:42"}, {"crouch", "key:224"},
+    {"next_weapon", "key:20,wheel:down"}, {"prev_weapon", "wheel:up"},
+    {"pause", "key:19"}, {"objectives", "key:43"},
+    {"menu_up", "key:26,key:82"}, {"menu_down", "key:22,key:81"},
+    {"menu_left", "key:4,key:80"}, {"menu_right", "key:7,key:79"},
+    {"menu_confirm", "key:8,key:40,mouse:1"}, {"menu_back", "key:20,key:42"}
+};
+static PSXModInputBindings bindings[ACTION_COUNT];
+static int cycle_held[2];
 static int zoom_held;
 static double zoom_amount;
 static uint32_t reticle_stack;
@@ -55,17 +74,11 @@ static int sensitivity_option(const char* name, int fallback, int maximum) {
 }
 
 static void refresh_sensitivity(void) {
-    mouse_gain = sensitivity_option("sensitivity", 50, 400) / 100.0;
-    scoped_gain = sensitivity_option("scoped_sensitivity", 80, 200) / 100.0;
+    mouse_gain = sensitivity_option("look_sensitivity", 5, 10) / 10.0;
+    scoped_gain = sensitivity_option("aim_sensitivity", 4, 10) / 10.0;
 }
 
-static int sensitivity_changed(const char* option, const char* value) {
-    (void)value;
-    if (strcmp(option, "sensitivity") && strcmp(option, "scoped_sensitivity")) return 0;
-    reset_look();
-    refresh_sensitivity();
-    return 1;
-}
+static int sensitivity_changed(const char* option, const char* value);
 
 static int direct_mode_supported(uint32_t mode) {
     return mode == 7u || mode == 8u || mode == 9u;
@@ -89,44 +102,76 @@ static void reset_weapon_input(void) {
     wheel_steps = 0;
     wheel_remainder = 0;
     requested_slot = selecting_slot = -1;
+    cycle_held[0] = cycle_held[1] = 0;
 }
 
-static const PsxPlayerBinds profile = {
-    .up = SDL_SCANCODE_UP,
-    .down = SDL_SCANCODE_DOWN,
-    .left = SDL_SCANCODE_LEFT,
-    .right = SDL_SCANCODE_RIGHT,
-    .cross = PSXKB_MOUSE_SC(SDL_BUTTON_LEFT),
-    .circle = SDL_SCANCODE_Q,
-    .square = SDL_SCANCODE_R,
-    .triangle = SDL_SCANCODE_SPACE,
-    .l1 = SDL_SCANCODE_UNKNOWN,
-    .r1 = SDL_SCANCODE_UNKNOWN,
-    .l2 = SDL_SCANCODE_LCTRL,
-    .r2 = PSXKB_MOUSE_SC(SDL_BUTTON_RIGHT),
-    .l3 = SDL_SCANCODE_UNKNOWN,
-    .r3 = SDL_SCANCODE_UNKNOWN,
-    .start = SDL_SCANCODE_P,
-    .select = SDL_SCANCODE_TAB,
-    .ls_up = SDL_SCANCODE_W,
-    .ls_down = SDL_SCANCODE_S,
-    .ls_left = SDL_SCANCODE_A,
-    .ls_right = SDL_SCANCODE_D,
-    .rs_up = SDL_SCANCODE_UNKNOWN,
-    .rs_down = SDL_SCANCODE_UNKNOWN,
-    .rs_left = SDL_SCANCODE_UNKNOWN,
-    .rs_right = SDL_SCANCODE_UNKNOWN,
-};
+/* Only this session's host profile is replaced. Physical pads and saved
+ * profiles remain owned by the framework; configured host actions fold below. */
+static const PsxPlayerBinds profile = {0};
 
-/* The profile is selected before physical folding, so menu Q does not also
- * assert the gameplay Circle binding. The user's saved profiles stay intact. */
-static const PsxPlayerBinds menu_profile = {
-    .up = SDL_SCANCODE_UP, .down = SDL_SCANCODE_DOWN,
-    .left = SDL_SCANCODE_LEFT, .right = SDL_SCANCODE_RIGHT,
-    .cross = PSXKB_MOUSE_SC(SDL_BUTTON_LEFT),
-    .triangle = SDL_SCANCODE_Q,
-    .start = SDL_SCANCODE_P, .select = SDL_SCANCODE_TAB,
-};
+static void refresh_bindings(void) {
+    for (int i = 0; i < ACTION_COUNT; ++i) {
+        char id[64], value[96];
+        snprintf(id, sizeof(id), "bind_%s", actions[i].id);
+        if (!psx_mod_option_value(PLUGIN_ID, "mouse-keyboard", id, value, sizeof(value)) ||
+            !psx_mod_parse_input_bindings(value, &bindings[i]))
+            (void)psx_mod_parse_input_bindings(actions[i].defaults, &bindings[i]);
+    }
+}
+
+static SDL_Scancode control_code(PSXModInputBinding binding) {
+    return binding.kind == PSX_MOD_BIND_MOUSE ? PSXKB_MOUSE_SC(binding.code) :
+        binding.kind == PSX_MOD_BIND_KEY ? (SDL_Scancode)binding.code : SDL_SCANCODE_UNKNOWN;
+}
+
+static int raw_down(PSXModInputBinding binding, const uint8_t* keys, uint32_t buttons) {
+    if (binding.kind == PSX_MOD_BIND_KEY) return keys && keys[binding.code];
+    if (binding.kind == PSX_MOD_BIND_MOUSE) return (buttons & (1u << (binding.code - 1))) != 0;
+    return 0;
+}
+
+static void contextual_controls(int suppress_held) {
+    const uint8_t* keys = SDL_GetKeyboardState(NULL);
+    const uint32_t buttons = SDL_GetMouseState(NULL, NULL);
+    /* Also release old bindings removed while held. They no longer occur in
+     * the action table, but must not remain suppressed after their key-up. */
+    for (int sc = 1; sc < SDL_NUM_SCANCODES; ++sc)
+        if (!keys || !keys[sc]) psx_keybinds_release_control(1, (SDL_Scancode)sc);
+    for (int button = 1; button <= 5; ++button)
+        if (!(buttons & (1u << (button - 1))))
+            psx_keybinds_release_control(1, PSXKB_MOUSE_SC(button));
+    if (!suppress_held) return;
+    for (int i = 0; i < ACTION_COUNT; ++i)
+        for (int j = 0; j < bindings[i].count; ++j) {
+            const PSXModInputBinding binding = bindings[i].input[j];
+            const SDL_Scancode sc = control_code(binding);
+            if (!sc) continue;
+            if (raw_down(binding, keys, buttons)) psx_keybinds_suppress_control(1, sc);
+        }
+}
+
+static int action_down(int action, const uint8_t* keys, uint32_t buttons) {
+    for (int i = 0; i < bindings[action].count; ++i) {
+        const PSXModInputBinding binding = bindings[action].input[i];
+        if (!psx_keybinds_control_suppressed(1, control_code(binding)) &&
+            raw_down(binding, keys, buttons)) return 1;
+    }
+    return 0;
+}
+
+static int sensitivity_changed(const char* option, const char* value) {
+    (void)value;
+    if (!strncmp(option, "bind_", 5)) {
+        contextual_controls(1);
+        refresh_bindings();
+        contextual_controls(1);
+        reset_weapon_input();
+    } else if (!strcmp(option, "look_sensitivity") || !strcmp(option, "aim_sensitivity")) {
+        refresh_sensitivity();
+    } else return 0;
+    reset_look();
+    return 1;
+}
 
 static uint32_t split_screen_player2(void) {
     const uint32_t player = psx_mod_read_word(MP_PLAYER2_ROOT);
@@ -154,15 +199,10 @@ static int in_menu(void) {
 
 static int refresh_profile(void) {
     const int menu = in_menu();
-    const uint8_t* keys = SDL_GetKeyboardState(NULL);
-    const SDL_Scancode contextual[] = {SDL_SCANCODE_E, SDL_SCANCODE_Q};
-    for (unsigned i = 0; i < sizeof(contextual) / sizeof(contextual[0]); ++i)
-        if (!keys || !keys[contextual[i]]) psx_keybinds_release_control(1, contextual[i]);
+    contextual_controls(profile_context >= 0 && profile_context != menu);
     if (profile_context == menu) return 1;
-    if (!psx_keybinds_set_session_player(1, menu ? &menu_profile : &profile)) return 0;
-    if (profile_context >= 0)
-        for (unsigned i = 0; i < sizeof(contextual) / sizeof(contextual[0]); ++i)
-            if (keys && keys[contextual[i]]) psx_keybinds_suppress_control(1, contextual[i]);
+    if (!psx_keybinds_set_session_player(1, &profile)) return 0;
+    reset_weapon_input();
     profile_context = menu;
     return 1;
 }
@@ -353,6 +393,17 @@ static void scoped_origin(CPUState* cpu, uint32_t site) {
 /* This is the previously measured camera-before-player boundary. Apply the
  * complete displacement here, before the native view matrix and firing ray
  * are rebuilt. No pad curve, VBlank pulse, delta-time multiplier or turn cap. */
+static double look_gain(uint32_t input) {
+    if (firearm_zooming(input)) {
+        const double blend = mohu_mkb_zoom_ease(zoom_amount);
+        return (mouse_gain * (1 - blend) + scoped_gain * blend) / (1 + 0.25 * blend);
+    }
+    if (psx_mod_read_byte(input + 93u) == SNIPER_WEAPON_ID &&
+        (psx_mod_read_word(input) & 0x20u))
+        return scoped_gain * 400.0 / fmax(400.0, psx_mod_read_word(input + 0xACu));
+    return mouse_gain;
+}
+
 static void direct_camera(CPUState* cpu, uint32_t site) {
     if (!cpu || site != 0x8004A744u || !active || g_psx_render_pass_active) return;
 #ifndef PSX_NO_DEBUG_TOOLS
@@ -393,17 +444,7 @@ static void direct_camera(CPUState* cpu, uint32_t site) {
     prepared_camera = 0;
     direct_player = player;
     int64_t dyaw = 0, dpitch = 0;
-    double gain = mouse_gain;
-    if (firearm_zooming(input)) {
-        const double blend = mohu_mkb_zoom_ease(zoom_amount);
-        gain *= (1 + blend * (scoped_gain - 1)) / (1 + 0.25 * blend);
-    }
-    else if (psx_mod_read_byte(input + 93u) == SNIPER_WEAPON_ID &&
-        (psx_mod_read_word(input) & 0x20u)) {
-        const uint32_t depth = psx_mod_read_word(input + 0xACu);
-        gain *= scoped_gain * 400.0 / fmax(400.0, depth);
-    }
-    mohu_mkb_mouse_take_scaled(&mouse, gain, &dyaw, &dpitch);
+    mohu_mkb_mouse_take_scaled(&mouse, look_gain(input), &dyaw, &dpitch);
     const int32_t old_pitch = (int32_t)psx_mod_read_word(player + 0x23Cu);
     int32_t pitch, yaw;
     mohu_mkb_angles(old_pitch, (int32_t)psx_mod_read_word(player + 0x240u),
@@ -617,8 +658,16 @@ static void mouse_event(const PSXModMouseEvent* event) {
         mohu_mkb_mouse_motion(&mouse, event->dx, event->dy);
     } else if (event->type == PSX_MOD_MOUSE_WHEEL && mouse_captured) {
         double whole;
-        wheel_remainder = modf(wheel_remainder - event->dy, &whole);
-        wheel_steps = (int)fmax(-16, fmin(16, wheel_steps + whole));
+        wheel_remainder = modf(wheel_remainder + event->dy, &whole);
+        const int direction = whole > 0 ? 1 : -1;
+        for (int action = NEXT_WEAPON; action <= PREV_WEAPON; ++action)
+            for (int i = 0; i < bindings[action].count; ++i)
+                if (bindings[action].input[i].kind == PSX_MOD_BIND_WHEEL &&
+                    bindings[action].input[i].code == direction) {
+                    wheel_steps = (int)fmax(-16, fmin(16, wheel_steps +
+                        fabs(whole) * (action == NEXT_WEAPON ? 1 : -1)));
+                    break;
+                }
     }
 }
 
@@ -642,37 +691,38 @@ static int gameplay_pad(const PSXModPadFrame* frame, PSXModPadOutput* out) {
 
     uint8_t filtered_keys[SDL_NUM_SCANCODES];
     psx_keybinds_host_keys(SDL_GetKeyboardState(NULL), filtered_keys);
-    const uint8_t* keys = filtered_keys;
+    const uint32_t buttons = SDL_GetMouseState(NULL, NULL);
+    int down[ACTION_COUNT];
+    for (int i = 0; i < ACTION_COUNT; ++i)
+        down[i] = action_down(i, filtered_keys, buttons);
     if (in_menu()) {
         zoom_amount = 0;
         out->buttons = mohu_mkb_menu_buttons((uint16_t)out->buttons,
-            keys && keys[SDL_SCANCODE_A], keys && keys[SDL_SCANCODE_D],
-            keys && keys[SDL_SCANCODE_W], keys && keys[SDL_SCANCODE_S],
-            keys && (keys[SDL_SCANCODE_E] || keys[SDL_SCANCODE_RETURN]),
-            keys && (keys[SDL_SCANCODE_Q] || keys[SDL_SCANCODE_BACKSPACE]));
+            down[MENU_LEFT], down[MENU_RIGHT], down[MENU_UP], down[MENU_DOWN],
+            down[MENU_CONFIRM], down[MENU_BACK]);
+        if (down[PAUSE]) out->buttons &= ~PSX_START;
         mouse_strafe = 128;
-        wheel_steps = 0;
-        requested_slot = -1;
-        if (keys && (keys[SDL_SCANCODE_W] || keys[SDL_SCANCODE_A] ||
-                     keys[SDL_SCANCODE_S] || keys[SDL_SCANCODE_D]))
+        reset_weapon_input();
+        if (down[MENU_UP] || down[MENU_DOWN] || down[MENU_LEFT] || down[MENU_RIGHT])
             out->lx = out->ly = out->rx = out->ry = 128;
         return 1;
     }
-    if (keys) {
-        out->buttons = mohu_mkb_action_aliases(
-            (uint16_t)out->buttons,
-            keys[SDL_SCANCODE_RETURN] != 0,
-            keys[SDL_SCANCODE_BACKSPACE] != 0,
-            keys[SDL_SCANCODE_E] != 0);
+    if (down[FIRE]) out->buttons &= ~0x4000u;
+    if (down[AIM]) out->buttons &= ~PSX_R2;
+    if (down[RELOAD] || down[USE]) out->buttons &= ~0x8000u;
+    if (down[JUMP]) out->buttons &= ~0x1000u;
+    if (down[CROUCH]) out->buttons &= ~0x0100u;
+    if (down[PAUSE]) out->buttons &= ~PSX_START;
+    if (down[OBJECTIVES]) out->buttons &= ~0x0001u;
+    for (int i = 0; i < 2; ++i) {
+        const int held = down[NEXT_WEAPON + i];
+        if (mouse_captured && held && !cycle_held[i])
+            wheel_steps = (int)fmax(-16, fmin(16, wheel_steps + (i ? -1 : 1)));
+        cycle_held[i] = held;
     }
-
     uint8_t lx = 128, ly = 128;
-    mohu_mkb_stick_pair(
-        keys && keys[SDL_SCANCODE_A], keys && keys[SDL_SCANCODE_D],
-        keys && keys[SDL_SCANCODE_W], keys && keys[SDL_SCANCODE_S],
-        &lx, &ly);
-    const int movement = keys && (keys[SDL_SCANCODE_A] || keys[SDL_SCANCODE_D] ||
-                                 keys[SDL_SCANCODE_W] || keys[SDL_SCANCODE_S]);
+    mohu_mkb_stick_pair(down[LEFT], down[RIGHT], down[FORWARD], down[BACKWARD], &lx, &ly);
+    const int movement = down[LEFT] || down[RIGHT] || down[FORWARD] || down[BACKWARD];
     if (movement) {
         out->lx = 128;
         out->rx = lx; /* Native RX strafes; native LX turns. */
@@ -711,6 +761,7 @@ static void deactivate(void) {
 static void activate(void) {
     if (active) return;
     refresh_sensitivity();
+    refresh_bindings();
     mohu_mkb_mouse_reset(&mouse);
     const PSXModPadTransform transform = {
         .struct_size = sizeof(transform),

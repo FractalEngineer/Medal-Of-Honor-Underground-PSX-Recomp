@@ -118,6 +118,19 @@ if(BUILD_TESTING)
         target_link_libraries(mohu_mkb_plugin_test PRIVATE m)
     endif()
     add_test(NAME mohu_mkb_plugin_test COMMAND mohu_mkb_plugin_test)
+    add_executable(mohu_mod_binding_options_test
+        "${PSXRECOMP_ROOT}/runtime/tests/test_mod_binding_options.cpp"
+        "${PSXRECOMP_ROOT}/runtime/src/mod_packages.cpp"
+        "${PSXRECOMP_ROOT}/runtime/src/mod_media.cpp"
+        "${PSXRECOMP_ROOT}/runtime/src/iso_reader.cpp"
+        "${PSXRECOMP_ROOT}/runtime/src/cue_sheet.cpp"
+        "${PSXRECOMP_ROOT}/runtime/src/crc32.c"
+        "${PSXRECOMP_ROOT}/runtime/src/psx_sha256.c")
+    target_include_directories(mohu_mod_binding_options_test PRIVATE
+        "${PSXRECOMP_ROOT}/runtime/include" "${PSXRECOMP_ROOT}/recompiler/include"
+        "${PSXRECOMP_ROOT}/recompiler/lib/toml11")
+    target_link_libraries(mohu_mod_binding_options_test PRIVATE chdr-static)
+    add_test(NAME mohu_mod_binding_options_test COMMAND mohu_mod_binding_options_test)
 endif()
 
 get_target_property(_mohu_execution_profile psx-runtime PSX_EXECUTION_PROFILE)

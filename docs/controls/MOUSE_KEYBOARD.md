@@ -9,8 +9,11 @@ uses `MOHU_PGXP=ON` to retain compatibility with existing release saves; this is
 independent of the VR plugin. Do not create extra build directories for testing.
 
 **Global mouse sensitivity** and **Aiming sensitivity** are editable in this
-mod's options. The defaults are 50 (about 0.044 degrees per count) and 80% of the
-zoom-adjusted rate for more precise aiming. Fractional angles feed the view matrix directly; there is
+mod's options as **1-10 sliders**. Defaults are **5 global** (about 0.044 degrees
+per count) and **4 aiming** for more precise aiming. Each uses the same base
+scale independently: changing global does not change the aiming rate. Zoom
+compensation keeps equal slider values at equal screen movement. Fractional
+angles feed the view matrix directly; there is
 no mouse acceleration or smoothing. Native camera and projectile fixed-point
 precision still apply.
 
@@ -27,8 +30,9 @@ precision still apply.
 | Left Ctrl | Crouch | — |
 | Space | Jump | — |
 | P | Pause | Start / resume |
-| Arrow keys | Native D-pad | Navigate |
-| Enter / Backspace | Confirm / back aliases | Confirm / back |
+| Tab | Objectives / select | — |
+| Arrow keys | — | Navigate |
+| Enter / Backspace | Fire / jump alternatives | Confirm / back |
 
 The crosshair is hidden in normal view and appears only while right-click
 aiming. Ordinary firearms and the crossbow zoom 1.25× in about 100 ms, with reduced mouse
@@ -41,9 +45,15 @@ its native scope view with direct mouse look and normal walking/strafe controls.
 Weapon changes, ammunition, reload/use context and
 collision remain native.
 
-Menu bindings are selected for the frontend and native pause menu. They do not
-overwrite the player's saved keyboard/controller bindings. The current MKB
-defaults are a temporary session profile; editable bindings are still pending.
+All gameplay and menu actions are editable under **Mods > Mouse and keyboard**.
+Click a binding button, then press a key or mouse button. Weapon cycling also
+accepts wheel up/down. Each action supports three alternatives; right-click a
+slot to clear it, or use its **Reset** button to restore the defaults. Escape
+cancels a pending rebind. Changes save automatically and apply live when edited
+in the running mod UI. The table above lists defaults, including alternatives.
+Click-to-capture and Escape-to-release remain fixed framework controls.
+Menu bindings apply to the game's frontend and native pause menu. The player's
+ordinary saved keyboard/controller profiles remain unchanged.
 
 This implementation targets local single-player campaign play. Sniper controls
 are verified on the owner's slot 1. Other campaign contexts and remaining input

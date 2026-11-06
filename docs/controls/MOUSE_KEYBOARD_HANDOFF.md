@@ -1197,3 +1197,68 @@ slot **00** reloaded and all raw/host/diagnostic input released. Preserve it for
 the owner's playtest. The feature changes and this continuation belong to the
 next implementation checkpoint on branch `mkb`; use `git log -1` for its hash.
 The four unrelated framework VR edits and `.commandcode/` remain excluded.
+
+## Continuation - configurable bindings and sensitivity, 2026-11-06
+
+Owner accepted the previous checkpoint (`bd5803e`, pushed to origin/mkb) and
+requested every MKB action in the mod UI plus simple independent sensitivity.
+Implemented generic format-12 binding options and integer sliders in
+framework/UI branches `mkb/configurable-input`; root remains `mkb`.
+Twenty gameplay/menu actions have up to three keyboard/mouse alternatives;
+weapon cycling also accepts wheel directions. Click to capture, right-click
+to clear, per-action Reset, Escape cancels capture. Capture/release safety
+affordances (click game/Escape) remain framework-owned. Number-key weapon
+shortcuts stay absent, though a player may explicitly assign any key.
+
+Sensitivity IDs become `look_sensitivity` (default 5) and `aim_sensitivity`
+(default 4), both integer sliders 1-10. Their base rates are independently
+level/10 native angle units per mouse count. Zoom compensation uses the aiming
+rate alone at settled zoom; transitions interpolate between the two rates.
+Defaults exactly preserve the accepted 50-global/80%-aim feel. The current
+release state has no explicit old sensitivity overrides, so no state migration
+is needed locally. Existing personal profiles and saves remain untouched.
+
+Runtime action folding now uses an empty temporary host profile and configured
+actions, preserving physical pads and avoiding hidden hardcoded aliases after
+rebinding. Held configured inputs are suppressed across menu/game transitions
+and rebinding until release. Release polling also clears suppression for keys
+removed from the binding table while held, once they are physically released.
+
+Verification completed in `build-release` only, two compile jobs:
+
+- Root CTest **5/5** passes. The new framework binding-option test verifies
+  format gating, wheel permissions, token validation, slider bounds and actual
+  state.toml persistence/reload. Plugin tests verify old sources stop working
+  after remapping, cleared actions, configured movement/menu transitions,
+  removed-held-key release, wheel rebinding and global/aiming independence.
+- Live firearm/scope/crossbow regression **17/17** passes at the new defaults:
+  `analysis/runtime/mkb-bindings-20261106/zoom-verified/receipt.json`.
+  All source personal saves remain unchanged. An earlier sandboxed launch
+  timed out before its debugger started; it is not successful evidence.
+- Real launcher UI: captured Forward from W to I, observed `key:12` saved in
+  the release state, then used Reset and verified W restored. Changed the global
+  slider from 5 to 7 while aiming stayed 4, then restored global 5. Both sliders
+  and three binding slots render correctly; longer mouse/wheel labels fit.
+- Diagnostic scripts now interpret sensitivity arguments on the 1-10 scale,
+  with aiming gain independent of global. Previous percentage-based receipts
+  are historical and retain their original interpretation.
+
+Final binary SHA256:
+`314b10a2b7242b8e4d4baed45c07696789f5a9e11118576055e3350df09f82bf`.
+Final owned session **PID 33512** at launch is the release launcher, open to
+**Mods > Mouse and keyboard**, defaults restored, with personal root saves.
+Session receipt: `analysis/runtime/mkb-bindings-20261106/final-ui-session.json`.
+The owner subsequently requested committing and pushing this checkpoint.
+Published dependency commits on `mkb/configurable-input`:
+
+- Framework: `03ec8d2adbda897640c7e118e032e7a0ba1666cf`,
+  `FractalEngineer/psxrecomp`.
+- UI: `5fe695979297f4d89f01661cd6716b8cc8f982d6`,
+  `FractalEngineer/recomp-ui` (new fork; upstream is read-only).
+
+Root `mkb` pins both commits and points the UI submodule URL to the owner's
+fork so fresh checkouts can fetch it. The root checkpoint includes configurable
+actions, independent sensitivity, regression updates and this handoff; use its
+Git log for the final root hash. The four unrelated framework VR edits and
+`.commandcode/` remain uncommitted and excluded. No game restart, rebuild or
+personal settings/save changes were needed for committing this tested source.

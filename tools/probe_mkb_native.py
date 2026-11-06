@@ -61,8 +61,8 @@ def main():
     parser.add_argument("--exe", type=Path, default=ROOT / "build-release/Medal_of_Honor_Underground_Recompiled.exe")
     parser.add_argument("--gameplay-checks", action="store_true", help="Check final host-pad R2 suppression, movement, look and fire")
     parser.add_argument("--direct-checks", action="store_true", help="Check direct displacement, no drift, native switching and reload")
-    parser.add_argument("--sensitivity", type=float, default=50,
-                        help="Mouse sensitivity percent selected in the MKB mod (direct checks)")
+    parser.add_argument("--sensitivity", type=float, default=5,
+                        help="Mouse sensitivity level 1-10 selected in the MKB mod (direct checks)")
     parser.add_argument("--camera-writes", action="store_true", help="Trace native camera-matrix stores around each research window")
     parser.add_argument("--camera-target-writes", action="store_true", help="Trace camera look-at target stores instead of its matrix")
     parser.add_argument("--research-cases", nargs="+", choices=[x[0] for x in RESEARCH_CASES])
@@ -186,10 +186,10 @@ def main():
                 returned = direct("direct_return", -232, 32)
                 wrap = 4096 * 65536
                 checks = {
-                    "yaw_exact": abs((turned["rotation_q16"][1] - base["rotation_q16"][1]) % wrap - 32 * 65536 * args.sensitivity / 100) <= 1,
+                    "yaw_exact": abs((turned["rotation_q16"][1] - base["rotation_q16"][1]) % wrap - 32 * 65536 * args.sensitivity / 10) <= 1,
                     "no_idle_drift": idle["rotation_q16"] == turned["rotation_q16"],
-                    "pitch_exact": abs(pitched["rotation_q16"][0] - idle["rotation_q16"][0] - 32 * 65536 * args.sensitivity / 100) <= 1,
-                    "fast_flick_not_stick_capped": abs((fast["rotation_q16"][1] - pitched["rotation_q16"][1]) % wrap - 200 * 65536 * args.sensitivity / 100) <= 1,
+                    "pitch_exact": abs(pitched["rotation_q16"][0] - idle["rotation_q16"][0] - 32 * 65536 * args.sensitivity / 10) <= 1,
+                    "fast_flick_not_stick_capped": abs((fast["rotation_q16"][1] - pitched["rotation_q16"][1]) % wrap - 200 * 65536 * args.sensitivity / 10) <= 1,
                     "return_exact": returned["rotation_q16"] == base["rotation_q16"],
                 }
                 native.command("screenshot_hires", path=str(out / "direct-look.png"))

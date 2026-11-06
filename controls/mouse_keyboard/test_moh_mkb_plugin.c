@@ -4,12 +4,18 @@
 #include <string.h>
 
 static uint8_t keys[SDL_NUM_SCANCODES];
+static uint32_t mouse_buttons;
+static uint32_t test_mouse(float* x, float* y) {
+    (void)x; (void)y; return mouse_buttons;
+}
 static const uint8_t* test_keyboard(int* count) {
     if (count) *count = SDL_NUM_SCANCODES;
     return keys;
 }
 #undef SDL_GetKeyboardState
 #define SDL_GetKeyboardState test_keyboard
+#undef SDL_GetMouseState
+#define SDL_GetMouseState test_mouse
 #include "moh_mkb.c"
 
 static uint32_t test_player = 0x800F0BE0u;
@@ -21,7 +27,8 @@ static PSXModPadTransform installed_transform;
 static PSXModActivationCallback on_activate, on_reset, on_frame;
 static PSXModMousePolicy installed_mouse;
 static PsxPlayerBinds installed_profile;
-static uint8_t suppressed_keys[SDL_NUM_SCANCODES];
+static uint8_t suppressed_keys[PSXKB_MOUSE_SC_BASE + 6];
+static const char *override_id, *override_value;
 static int test_started = 1;
 int g_psx_render_pass_active;
 
@@ -29,7 +36,10 @@ void psx_mod_write_word(uint32_t address, uint32_t value) { (void)address; (void
 void psx_mod_write_half(uint32_t address, uint16_t value) { (void)address; (void)value; }
 int psx_mod_option_value(const char* package, const char* feature,
         const char* option, char* out, uint32_t size) {
-    (void)package; (void)feature; (void)option;
+    (void)package; (void)feature;
+    if (override_id && !strcmp(option, override_id)) {
+        snprintf(out, size, "%s", override_value); return 1;
+    }
     if (size) out[0] = 0;
     return 0;
 }
@@ -81,6 +91,9 @@ void psx_keybinds_suppress_control(int player, SDL_Scancode sc) {
 }
 void psx_keybinds_release_control(int player, SDL_Scancode sc) {
     (void)player; suppressed_keys[sc] = 0;
+}
+int psx_keybinds_control_suppressed(int player, SDL_Scancode sc) {
+    (void)player; return suppressed_keys[sc];
 }
 void psx_keybinds_host_keys(const uint8_t* input, uint8_t out[SDL_NUM_SCANCODES]) {
     for (unsigned i = 0; i < SDL_NUM_SCANCODES; ++i)
@@ -176,7 +189,7 @@ int main(void) {
     CHECK(transformed_buttons() == 0xBDFFu);
     CHECK(on_frame);
     on_frame();
-    CHECK(installed_profile.triangle == SDL_SCANCODE_Q);
+    CHECK(installed_profile.triangle == SDL_SCANCODE_UNKNOWN);
     CHECK(installed_profile.circle == SDL_SCANCODE_UNKNOWN);
     CHECK(installed_profile.square == SDL_SCANCODE_UNKNOWN);
     keys[SDL_SCANCODE_W] = keys[SDL_SCANCODE_D] = 1;
@@ -201,7 +214,7 @@ int main(void) {
     CHECK(in_menu());
     test_started = 1;
     on_frame();
-    CHECK(installed_profile.square == SDL_SCANCODE_R && installed_profile.circle == SDL_SCANCODE_Q);
+    CHECK(installed_profile.square == SDL_SCANCODE_UNKNOWN && installed_profile.circle == SDL_SCANCODE_UNKNOWN);
     test_pause = 0; test_split = 1;
     CHECK(!installed_mouse.eligible(0xFFFFu));
     test_split = 0; test_vr = 1;
@@ -264,6 +277,77 @@ int main(void) {
     installed_mouse.sample(0, &output);
     CHECK(output.rx == 128 && output.ry == 128);
     CHECK(wheel_steps == 0 && requested_slot == -1);
+
+    PSXModInputBindings parsed;
+    CHECK(psx_mod_parse_input_bindings("key:511,mouse:5,wheel:up", &parsed));
+    CHECK(parsed.count == 3 && parsed.input[2].code == 1);
+    const char* invalid[] = {"", "key:0", "key:512", "key:01", "mouse:6", "wheel:left",
+                            "none,", "none,none,none,none", "key: 2", "key:2x"};
+    for (unsigned i = 0; i < sizeof(invalid) / sizeof(invalid[0]); ++i)
+        CHECK(!psx_mod_parse_input_bindings(invalid[i], &parsed));
+    CHECK(psx_mod_parse_input_bindings("none", &parsed));
+
+    /* Rebinding removes the old source, survives refresh, and leaves the
+     * temporary framework profile empty instead of retaining hidden aliases. */
+    memset(keys, 0, sizeof keys);
+    keys[SDL_SCANCODE_W] = 1;
+    override_id = "bind_forward"; override_value = "key:12"; /* I */
+    CHECK(sensitivity_changed(override_id, override_value));
+    CHECK(suppressed_keys[SDL_SCANCODE_W]);
+    keys[SDL_SCANCODE_W] = 0; on_frame();
+    CHECK(!suppressed_keys[SDL_SCANCODE_W]);
+    keys[SDL_SCANCODE_W] = 1;
+    state.ly = state.rx = 128; state.buttons = 0xFFFF;
+    CHECK(installed_transform.transform(&frame, &state) && state.ly == 128);
+    keys[SDL_SCANCODE_W] = 0; keys[SDL_SCANCODE_I] = 1;
+    state.ly = 128;
+    CHECK(installed_transform.transform(&frame, &state) && state.ly == 0);
+    test_pause = 1; on_frame();
+    CHECK(suppressed_keys[SDL_SCANCODE_I]);
+    keys[SDL_SCANCODE_I] = 0; on_frame();
+    CHECK(!suppressed_keys[SDL_SCANCODE_I]);
+    test_pause = 0; on_frame();
+    override_id = "bind_fire"; override_value = "key:9"; /* F */
+    CHECK(sensitivity_changed(override_id, override_value));
+    mouse_buttons = 1; state.buttons = 0xFFFF;
+    CHECK(installed_transform.transform(&frame, &state) && (state.buttons & 0x4000));
+    mouse_buttons = 0; keys[SDL_SCANCODE_F] = 1; state.buttons = 0xFFFF;
+    CHECK(installed_transform.transform(&frame, &state) && !(state.buttons & 0x4000));
+    keys[SDL_SCANCODE_F] = 0; on_frame();
+    override_id = "bind_fire"; override_value = "none";
+    CHECK(sensitivity_changed(override_id, override_value));
+    keys[SDL_SCANCODE_RETURN] = keys[SDL_SCANCODE_F] = 1; mouse_buttons = 1;
+    state.buttons = 0xFFFF;
+    CHECK(installed_transform.transform(&frame, &state) && (state.buttons & 0x4000));
+    memset(keys, 0, sizeof keys); mouse_buttons = 0; on_frame();
+    override_id = "bind_next_weapon"; override_value = "wheel:up";
+    CHECK(sensitivity_changed(override_id, override_value));
+    /* Both cycle actions may intentionally use the same direction; they cancel. */
+    installed_mouse.event(&acquired); wheel.dy = 1; installed_mouse.event(&wheel);
+    CHECK(wheel_steps == 0);
+    override_id = "bind_prev_weapon"; override_value = "none";
+    CHECK(sensitivity_changed(override_id, override_value));
+    (void)psx_mod_parse_input_bindings("wheel:up", &bindings[NEXT_WEAPON]);
+    installed_mouse.event(&wheel);
+    CHECK(wheel_steps == 1);
+    wheel.dy = -1; installed_mouse.event(&wheel);
+    CHECK(wheel_steps == 1); /* Old wheel-down binding is gone. */
+
+    override_id = NULL; refresh_bindings(); refresh_sensitivity();
+    test_weapon = 0; zoom_amount = 0;
+    CHECK(fabs(look_gain(owned_player_input()) - 0.5) < 1e-9);
+    zoom_amount = 1;
+    CHECK(fabs(look_gain(owned_player_input()) - 0.32) < 1e-9);
+    override_id = "look_sensitivity"; override_value = "10";
+    CHECK(sensitivity_changed(override_id, override_value));
+    CHECK(mouse_gain == 1 && fabs(look_gain(owned_player_input()) - 0.32) < 1e-9);
+    zoom_amount = 0;
+    CHECK(look_gain(owned_player_input()) == 1);
+    override_id = "aim_sensitivity"; override_value = "2";
+    CHECK(sensitivity_changed(override_id, override_value));
+    CHECK(look_gain(owned_player_input()) == 0.5);
+    zoom_amount = 1;
+    CHECK(fabs(look_gain(owned_player_input()) - 0.16) < 1e-9);
     on_reset();
     CHECK(!active && !installed_transform.transform);
     puts("mouse keyboard plugin: PASS");
