@@ -11,6 +11,13 @@ void mohu_mkb_mouse_motion(MohuMkbMouse* mouse, double dx, double dy);
 /* Consume displacement once at the owned simulation update, in Q16 native
  * angle units. Positive mouse Y looks down (negative native pitch). */
 void mohu_mkb_mouse_take(MohuMkbMouse* mouse, int64_t* yaw, int64_t* pitch);
+void mohu_mkb_mouse_take_scaled(MohuMkbMouse* mouse, double gain,
+                                int64_t* yaw, int64_t* pitch);
+/* Native camera rows use scales 2, 5/4, 2. Preserve fractional Q16 pose. */
+void mohu_mkb_view_matrix(int32_t pitch, int32_t yaw, const int32_t eye[3],
+                          int16_t rotation[9], int32_t translation[3]);
+int mohu_mkb_shot_matrix(const int32_t origin[3], const int32_t target[3],
+                         int16_t rotation[9]);
 void mohu_mkb_angles(int32_t pitch, int32_t yaw, int64_t dp, int64_t dy,
                      int32_t* next_pitch, int32_t* next_yaw);
 

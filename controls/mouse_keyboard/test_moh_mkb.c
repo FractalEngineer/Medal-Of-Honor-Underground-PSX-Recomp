@@ -45,6 +45,32 @@ int main(void) {
     CHECK(dyaw == 200 * 65536 && dpitch == 300 * 65536);
     mohu_mkb_mouse_take(&mouse, &dyaw, &dpitch);
     CHECK(dyaw == 0 && dpitch == 0);
+
+    /* Tiny motions survive consumption; batching cannot change turn rate. */
+    mohu_mkb_mouse_reset(&mouse);
+    for (int i = 0; i < 8; ++i) {
+        mohu_mkb_mouse_motion(&mouse, 1, -1);
+        mohu_mkb_mouse_take_scaled(&mouse, 0.125, &dyaw, &dpitch);
+        CHECK(dyaw == 8192 && dpitch == 8192);
+    }
+    int16_t rotation[9], previous[9];
+    int32_t translation[3];
+    const int32_t eye[3] = {100 * 65536 + 16384, 20 * 65536, -30 * 65536};
+    mohu_mkb_view_matrix(0, 0, eye, previous, translation);
+    CHECK(translation[0] == -201 && translation[1] == -25 && translation[2] == 60);
+    for (int i = 1; i <= 8; ++i) {
+        mohu_mkb_view_matrix(0, i * 8192, eye, rotation, translation);
+        CHECK(rotation[2] < previous[2] && rotation[6] > previous[6]);
+        for (unsigned j = 0; j < 9; ++j) previous[j] = rotation[j];
+    }
+    /* The forward column follows a nearby target with vertical parallax. */
+    const int32_t origin[3] = {10 * 65536, 40 * 65536, 20 * 65536};
+    const int32_t target[3] = {110 * 65536, 5 * 65536, 120 * 65536};
+    CHECK(mohu_mkb_shot_matrix(origin, target, rotation));
+    const double norm = sqrt(100 * 100 + 35 * 35 + 100 * 100);
+    CHECK(fabs(rotation[2] / 4096.0 - 100 / norm) < 1.0 / 4096);
+    CHECK(fabs(rotation[5] / 4096.0 + 35 / norm) < 1.0 / 4096);
+    CHECK(!mohu_mkb_shot_matrix(origin, origin, rotation));
     int32_t pitch, yaw;
     mohu_mkb_angles(0, 4090 * 65536, -32 * 65536, 32 * 65536, &pitch, &yaw);
     CHECK(pitch == -32 * 65536 && yaw == 26 * 65536);

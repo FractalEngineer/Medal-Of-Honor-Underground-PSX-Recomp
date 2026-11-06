@@ -49,7 +49,7 @@ def main():
     parser.add_argument("out", type=Path)
     parser.add_argument("--slot", type=int, choices=range(12), default=3)
     parser.add_argument("--cold", action="store_true", help="Reach gameplay through native menus instead of loading a save")
-    parser.add_argument("--fixtures", type=Path, default=ROOT / "analysis/fixtures/sp/openbios")
+    parser.add_argument("--fixtures", type=Path, default=ROOT / "saves/openbios")
     parser.add_argument("--inject", action="store_true", help="Research only: perturb the statically traced native aim targets")
     parser.add_argument("--trace-only", action="store_true", help="Collect a short native action/aim call window without angle perturbations")
     parser.add_argument("--research", action="store_true", help="Run the separately built one-update research harness")
@@ -58,9 +58,11 @@ def main():
     parser.add_argument("--gate-fire", action="store_true", help="Wait for the native sampled button word before starting a firing window")
     parser.add_argument("--aim-states", action="store_true", help="Capture native neutral/R2/Cross states and movement")
     parser.add_argument("--dump-hud", action="store_true", help="Read campaign HUD code for the render-only crosshair gate")
-    parser.add_argument("--exe", type=Path, default=ROOT / "build-probe/Medal_of_Honor_Underground_Recompiled.exe")
+    parser.add_argument("--exe", type=Path, default=ROOT / "build-release/Medal_of_Honor_Underground_Recompiled.exe")
     parser.add_argument("--gameplay-checks", action="store_true", help="Check final host-pad R2 suppression, movement, look and fire")
     parser.add_argument("--direct-checks", action="store_true", help="Check direct displacement, no drift, native switching and reload")
+    parser.add_argument("--sensitivity", type=float, default=50,
+                        help="Mouse sensitivity percent selected in the MKB mod (direct checks)")
     parser.add_argument("--camera-writes", action="store_true", help="Trace native camera-matrix stores around each research window")
     parser.add_argument("--camera-target-writes", action="store_true", help="Trace camera look-at target stores instead of its matrix")
     parser.add_argument("--research-cases", nargs="+", choices=[x[0] for x in RESEARCH_CASES])
@@ -184,10 +186,10 @@ def main():
                 returned = direct("direct_return", -232, 32)
                 wrap = 4096 * 65536
                 checks = {
-                    "yaw_exact": (turned["rotation_q16"][1] - base["rotation_q16"][1]) % wrap == 32 * 65536,
+                    "yaw_exact": abs((turned["rotation_q16"][1] - base["rotation_q16"][1]) % wrap - 32 * 65536 * args.sensitivity / 100) <= 1,
                     "no_idle_drift": idle["rotation_q16"] == turned["rotation_q16"],
-                    "pitch_exact": pitched["rotation_q16"][0] - idle["rotation_q16"][0] == 32 * 65536,
-                    "fast_flick_not_stick_capped": (fast["rotation_q16"][1] - pitched["rotation_q16"][1]) % wrap == 200 * 65536,
+                    "pitch_exact": abs(pitched["rotation_q16"][0] - idle["rotation_q16"][0] - 32 * 65536 * args.sensitivity / 100) <= 1,
+                    "fast_flick_not_stick_capped": abs((fast["rotation_q16"][1] - pitched["rotation_q16"][1]) % wrap - 200 * 65536 * args.sensitivity / 100) <= 1,
                     "return_exact": returned["rotation_q16"] == base["rotation_q16"],
                 }
                 native.command("screenshot_hires", path=str(out / "direct-look.png"))

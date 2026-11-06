@@ -7,11 +7,56 @@ void mohu_mkb_mouse_reset(MohuMkbMouse* state) {
 }
 
 void mohu_mkb_mouse_take(MohuMkbMouse* state, int64_t* yaw, int64_t* pitch) {
-    if (!state || !yaw || !pitch) return;
-    *yaw = (int64_t)(state->pending_x * 65536.0);
-    *pitch = -(int64_t)(state->pending_y * 65536.0);
-    state->pending_x -= (double)*yaw / 65536.0;
-    state->pending_y += (double)*pitch / 65536.0;
+    mohu_mkb_mouse_take_scaled(state, 1.0, yaw, pitch);
+}
+
+void mohu_mkb_mouse_take_scaled(MohuMkbMouse* state, double gain,
+                                int64_t* yaw, int64_t* pitch) {
+    if (!state || !yaw || !pitch || !isfinite(gain) || gain <= 0 || gain > 8) return;
+    const double scale = gain * 65536.0;
+    *yaw = (int64_t)(state->pending_x * scale);
+    *pitch = -(int64_t)(state->pending_y * scale);
+    state->pending_x -= (double)*yaw / scale;
+    state->pending_y += (double)*pitch / scale;
+}
+
+void mohu_mkb_view_matrix(int32_t pitch, int32_t yaw, const int32_t eye[3],
+                          int16_t rotation[9], int32_t translation[3]) {
+    const double radians = 6.2831853071795864769 / (4096.0 * 65536.0);
+    const double sp = sin(pitch * radians), cp = cos(pitch * radians);
+    const double sy = sin(yaw * radians), cy = cos(yaw * radians);
+    const double rows[9] = {cy, 0, -sy, sy * sp, cp, cy * sp,
+                           sy * cp, -sp, cy * cp};
+    for (unsigned row = 0; row < 3; ++row) {
+        const double scale = row == 1 ? 5120.0 : 8192.0;
+        double t = 0;
+        for (unsigned col = 0; col < 3; ++col) {
+            const unsigned at = 3 * row + col;
+            rotation[at] = (int16_t)lround(rows[at] * scale);
+            t -= (double)rotation[at] * eye[col] / (4096.0 * 65536.0);
+        }
+        translation[row] = (int32_t)lround(t);
+    }
+}
+
+int mohu_mkb_shot_matrix(const int32_t origin[3], const int32_t target[3],
+                         int16_t rotation[9]) {
+    double f[3];
+    for (unsigned i = 0; i < 3; ++i) f[i] = (double)target[i] - origin[i];
+    const double length = hypot(hypot(f[0], f[1]), f[2]);
+    if (length < 65536.0) return 0;
+    for (unsigned i = 0; i < 3; ++i) f[i] /= length;
+    const double horizontal = hypot(f[0], f[2]);
+    if (horizontal < 0.001) return 0;
+    const double right[3] = {f[2] / horizontal, 0, -f[0] / horizontal};
+    const double up[3] = {-f[1] * f[0] / horizontal, horizontal,
+                          -f[1] * f[2] / horizontal};
+    for (unsigned row = 0; row < 3; ++row) {
+        rotation[3 * row] = (int16_t)lround(right[row] * 4096);
+        rotation[3 * row + 1] = (int16_t)lround(up[row] * 4096);
+        rotation[3 * row + 2] = (int16_t)lround(f[row] * 4096);
+    }
+    return 1;
 }
 
 void mohu_mkb_angles(int32_t pitch, int32_t yaw, int64_t dp, int64_t dy,

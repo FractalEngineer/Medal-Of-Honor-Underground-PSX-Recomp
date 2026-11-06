@@ -26,6 +26,16 @@ static int test_started = 1;
 int g_psx_render_pass_active;
 
 void psx_mod_write_word(uint32_t address, uint32_t value) { (void)address; (void)value; }
+void psx_mod_write_half(uint32_t address, uint16_t value) { (void)address; (void)value; }
+int psx_mod_option_value(const char* package, const char* feature,
+        const char* option, char* out, uint32_t size) {
+    (void)package; (void)feature; (void)option;
+    if (size) out[0] = 0;
+    return 0;
+}
+int psx_mod_register_option_changed_plugin(const char* id, PSXModOptionChangedCallback fn) {
+    (void)id; (void)fn; return 1;
+}
 uint32_t psx_mod_call_guest(CPUState* cpu, uint32_t fn, uint32_t ra,
         uint32_t a0, uint32_t a1, uint32_t a2, uint32_t a3) {
     (void)cpu; (void)fn; (void)ra; (void)a0; (void)a1; (void)a2; (void)a3;

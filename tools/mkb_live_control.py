@@ -32,7 +32,7 @@ def start_session(out: Path, slot: int, source: Path) -> dict:
     hashes = {str(p): native.digest(p) for p in fixtures}
     for path in fixtures:
         shutil.copyfile(path, target / path.name)
-    exe = ROOT / "build-mkb-probe/Medal_of_Honor_Underground_Recompiled.exe"
+    exe = ROOT / "build-release/Medal_of_Honor_Underground_Recompiled.exe"
     env = shared.clean_environment(os.environ)
     env.update(SDL_AUDIODRIVER="dummy", PSX_DEV_INPUT="0", PSX_LOAD_SLOT="-1")
     with (out / "stdout.log").open("w") as so, (out / "stderr.log").open("w") as se:
@@ -95,7 +95,7 @@ def main() -> None:
     parser.add_argument("--slot", type=int, default=0)
     parser.add_argument("--path", type=Path)
     parser.add_argument("--fixtures", type=Path,
-                        default=ROOT / "analysis/runtime/mkb-gameplay-20261106/saves/openbios")
+                        default=ROOT / "saves/openbios")
     args = parser.parse_args()
 
     if args.action == "start":

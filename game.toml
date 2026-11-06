@@ -40,6 +40,7 @@ strict = true
 mod_function_entry_funcs = [
   "0x800892C8", # MKB: native inventory selection at owned player update
   "0x8004A744", # MKB: owned camera before native ray/shot update
+  "0x8004C2BC", # MKB: precise camera matrix from fractional direct look
   "0x8008AD04", # MKB: native pitch preparation, once per owned update
   "0x80017628", # native VSync query: guarded render-only fresh-view candidate
   "0x80093830", # entity transform
@@ -73,6 +74,14 @@ mod_function_entry_funcs = [
 # makes the dirty-RAM callbacks available in generated native game code too.
 mod_instruction_sites = [
   "0x800891D0", # MKB: selected slot through the native switch routine
+  "0x800894FC", # MKB: scoped rifle retains normal control mode
+  "0x8008D854", # MKB: refresh the native firing ray at scope zoom
+  "0x8008D9D8", "0x8008D9E4", # MKB: scoped ray uses the centre of the artwork
+  "0x8008DA00", # MKB: scope focal plane must not overflow the native ray vector
+  "0x8008E06C", # MKB: scoped shots do not blend toward off-centre targets
+  "0x80076CB8", # MKB: preserve the scoped projectile's fractional basis
+  "0x800481A0", "0x800481A4", "0x800481A8", # MKB: scoped shot starts at the live eye
+  "0x8008EB3C", "0x8008EB50", # MKB: scope does not lock locomotion
   "0x8008F984", # MKB: preserve direct mouse target after native look
   "0x8008D8C8", "0x8008D8F4", "0x8008D910", # MKB: angular corrections only
   "0x8008E660", "0x8008E7A8", # MKB: retain native ray calculation
@@ -100,6 +109,9 @@ overlay_cache = true
 renderer = "opengl"
 aspect_ratio = "4:3"
 internal_resolution = "1080p"
+crt_filter = "raw"
+scanlines = false
+dithering = "off"
 
 [audio]
 buffer_ms = 260

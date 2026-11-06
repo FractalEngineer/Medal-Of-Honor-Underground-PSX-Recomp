@@ -25,6 +25,7 @@ include(CTest)
 set(PSX_SETUP_WIZARD ON CACHE BOOL
     "Advertise first-run setup wizard + Generate & rebuild in recomp-ui" FORCE)
 option(MOHU_VR_DIAGNOSTICS "Build the guarded Underground VR diagnostic plugin" OFF)
+option(MOHU_PGXP "Build the PGXP runtime/save flavor independently of the VR plugin" OFF)
 option(MOHU_MKB_RESEARCH "Build the isolated native mouse aim research harness (debug tools only)" OFF)
 option(MOHU_VR_NATIVE_PROFILE "Time native CPS function segments (diagnostic only)" OFF)
 option(MOHU_VR_PREFLIGHT_HARNESS "Isolated native/host preflight caller comparisons (diagnostic only)" OFF)
@@ -46,11 +47,14 @@ include("${PSXRECOMP_ROOT}/runtime/runtime.cmake")
 # directory broke all five silently (bead beads-eio.3.101).
 if(MOHU_VR_DIAGNOSTICS)
     set(PSX_PRELOADED_MODS "${CMAKE_CURRENT_SOURCE_DIR}/vr/preloaded")
-    # Full render-view tests need PGXP packet provenance. The default target
-    # below remains the base flavor.
-    set(_MOHU_RUNTIME_OPTIONS PGXP)
 else()
     set(PSX_PRELOADED_MODS "${CMAKE_CURRENT_SOURCE_DIR}/mods/preloaded")
+endif()
+# Existing release saves use the PGXP ABI. Flat controls can retain that flavor
+# without activating/staging VR; changing build directories is not a save fix.
+if(MOHU_VR_DIAGNOSTICS OR MOHU_PGXP)
+    set(_MOHU_RUNTIME_OPTIONS PGXP)
+else()
     set(_MOHU_RUNTIME_OPTIONS)
 endif()
 if(MOHU_MKB_RESEARCH)

@@ -7,6 +7,8 @@
 
 #include <stdint.h>
 #include <math.h>
+#include <stdlib.h>
+#include <string.h>
 #ifndef PSX_NO_DEBUG_TOOLS
 #include <stdatomic.h>
 #include <stdio.h>
@@ -38,6 +40,29 @@ static int wheel_steps, requested_slot = -1, selecting_slot = -1;
 static double wheel_remainder;
 static unsigned number_keys;
 static int profile_context = -1;
+static double mouse_gain = 0.5, scoped_gain = 1.0;
+static void reset_look(void);
+
+static int sensitivity_option(const char* name, int fallback, int maximum) {
+    char value[16], *end;
+    if (!psx_mod_option_value(PLUGIN_ID, "mouse-keyboard", name, value, sizeof(value)))
+        return fallback;
+    const long percent = strtol(value, &end, 10);
+    return end != value && !*end && percent >= 1 && percent <= maximum ? (int)percent : fallback;
+}
+
+static void refresh_sensitivity(void) {
+    mouse_gain = sensitivity_option("sensitivity", 50, 400) / 100.0;
+    scoped_gain = sensitivity_option("scoped_sensitivity", 100, 200) / 100.0;
+}
+
+static int sensitivity_changed(const char* option, const char* value) {
+    (void)value;
+    if (strcmp(option, "sensitivity") && strcmp(option, "scoped_sensitivity")) return 0;
+    reset_look();
+    refresh_sensitivity();
+    return 1;
+}
 
 static int direct_mode_supported(uint32_t mode) {
     return mode == 7u || mode == 8u || mode == 9u;
@@ -164,6 +189,119 @@ static int captured(void) {
 #endif
 }
 
+/* R2 still owns native sniper zoom and its overlay. Only the control-mode
+ * result and the two locomotion tests see ordinary walking semantics; the
+ * real aim flags remain available to camera, weapon and HUD consumers. */
+static void sniper_controls(CPUState* cpu, uint32_t site) {
+    if (!cpu || !active || !captured() || g_psx_render_pass_active ||
+        psx_mod_read_word(SP_PAUSE)) return;
+    const uint32_t input = owned_player_input();
+    if (!input || psx_mod_read_byte(input + 93u) != SNIPER_WEAPON_ID) return;
+    const uint32_t player = input - SP_PLAYER_INPUT_OFFSET;
+    if (site == 0x800894FCu) {
+        if (cpu->gpr[17] == player && cpu->gpr[16] == input && cpu->gpr[2] == 2u &&
+            code_hash(0x80087790u, 0xBCu) == 0x8728EEBCu) {
+            cpu->gpr[2] = 7u;
+            psx_mod_counter_add("mohu.mkb.scope.walk", 1);
+        }
+    } else if (site == 0x8008D854u && cpu->gpr[4] == player &&
+               cpu->gpr[19] == input && (psx_mod_read_word(input) & 0x20u) &&
+               code_hash(0x8008D81Cu, 0x1058u) == 0x787AC4B0u) {
+        /* Native walking normally skips its cached ray at scope zoom (>400).
+         * Keep the actual zoom for projection and refresh the ray normally. */
+        cpu->gpr[2] = 400u;
+    } else if ((site == 0x8008D9D8u || site == 0x8008D9E4u ||
+                site == 0x8008DA00u || site == 0x8008E06Cu) &&
+               cpu->gpr[22] == player && cpu->gpr[19] == input &&
+               (psx_mod_read_word(input) & 0x20u) &&
+               code_hash(0x8008D81Cu, 0x1058u) == 0x787AC4B0u) {
+        /* Scope artwork is centred. Its ray must not inherit the ordinary
+         * weapon's movable reticle or native off-centre target-score blend. */
+        if (site == 0x8008D9D8u) cpu->gpr[4] = 256u;
+        else if (site == 0x8008D9E4u) cpu->gpr[3] = cpu->gpr[2];
+        /* The focal-plane vector is signed 16-bit. Zoom >2047 would wrap Z
+         * behind the player; centre rays can use the ordinary 400-unit plane. */
+        else if (site == 0x8008DA00u) cpu->gpr[2] = 400u;
+        else cpu->gpr[18] = cpu->gpr[30];
+    } else if ((site == 0x8008EB3Cu || site == 0x8008EB50u) &&
+               cpu->gpr[20] == player && cpu->gpr[16] == input &&
+               code_hash(0x8008EAF0u, 0xF04u) == 0x389240BCu) {
+        cpu->gpr[2] &= ~0x20u;
+    }
+}
+
+static int precise_view(CPUState* cpu, uint32_t site) {
+    if (!cpu || site != 0x8004C2BCu || !active || !captured() ||
+        g_psx_render_pass_active || psx_mod_read_word(SP_PAUSE)) return 0;
+    const uint32_t input = owned_player_input();
+    const uint32_t player = input ? input - SP_PLAYER_INPUT_OFFSET : 0;
+    const uint32_t camera = player ? owned_camera(player) : 0;
+    if (!camera || direct_player != player || cpu->gpr[4] != camera + 0x4E0u ||
+        cpu->gpr[5] != camera || cpu->gpr[31] != 0x8004C5B8u ||
+        !direct_mode_supported(psx_mod_read_word(input + 0x1D4u)) ||
+        (psx_mod_read_word(camera + 0x498u) & 0x1800u) ||
+        code_hash(0x8004C2BCu, 0x250u) != 0xB7059F78u ||
+        code_hash(0x8004C50Cu, 0x204u) != 0xFD960C32u) return 0;
+    int32_t eye[3], translation[3];
+    int16_t rotation[9];
+    for (unsigned i = 0; i < 3; ++i)
+        eye[i] = (int32_t)psx_mod_read_word(camera + 0x220u + 4u * i);
+    mohu_mkb_view_matrix((int32_t)psx_mod_read_word(player + 0x23Cu),
+        (int32_t)psx_mod_read_word(player + 0x240u), eye, rotation, translation);
+    const uint32_t matrix = camera + 0x4FCu;
+    for (unsigned i = 0; i < 9; ++i)
+        psx_mod_write_half(matrix + 2u * i, (uint16_t)rotation[i]);
+    for (unsigned i = 0; i < 3; ++i)
+        psx_mod_write_word(matrix + 0x14u + 4u * i, (uint32_t)translation[i]);
+    cpu->gpr[2] = (uint32_t)translation[2];
+    psx_mod_counter_add("mohu.mkb.view.precise", 1);
+    return 1;
+}
+
+static void precise_shot(CPUState* cpu, uint32_t site) {
+    if (!cpu || site != 0x80076CB8u || !active || !captured() ||
+        g_psx_render_pass_active || psx_mod_read_word(SP_PAUSE)) return;
+    const uint32_t input = owned_player_input();
+    if (!input || psx_mod_read_byte(input + 93u) != SNIPER_WEAPON_ID ||
+        !(psx_mod_read_word(input) & 0x20u)) return;
+    const uint32_t shot = cpu->gpr[16], sp = cpu->gpr[29];
+    if (shot < 0x800B0000u || shot > 0x801FC000u || (shot & 3u) ||
+        psx_mod_read_word(shot + 8u) != 0x13F6u || cpu->gpr[17] != shot + 0x354u ||
+        sp < 0x800B0000u || sp > 0x801FFF00u ||
+        psx_mod_read_word(sp + 0x44u) != 0x8004860Cu ||
+        psx_mod_read_word(sp + 0x40u) != input - SP_PLAYER_INPUT_OFFSET ||
+        code_hash(0x80076C28u, 0x104u) != 0xD4FD2F11u) return;
+    int32_t origin[3], target[3];
+    int16_t rotation[9];
+    for (unsigned i = 0; i < 3; ++i) {
+        origin[i] = (int32_t)psx_mod_read_word(shot + 0x220u + 4u * i);
+        target[i] = (int32_t)psx_mod_read_word(input + 0x1B0u + 4u * i);
+    }
+    if (!mohu_mkb_shot_matrix(origin, target, rotation)) return;
+    for (unsigned i = 0; i < 9; ++i)
+        psx_mod_write_half(shot + 0x354u + 2u * i, (uint16_t)rotation[i]);
+    psx_mod_counter_add("mohu.mkb.scope.shot.precise", 1);
+}
+
+static void scoped_origin(CPUState* cpu, uint32_t site) {
+    if (!cpu || !active || !captured() || g_psx_render_pass_active ||
+        psx_mod_read_word(SP_PAUSE) || site < 0x800481A0u || site > 0x800481A8u) return;
+    const uint32_t input = owned_player_input();
+    if (!input || psx_mod_read_byte(input + 93u) != SNIPER_WEAPON_ID ||
+        !(psx_mod_read_word(input) & 0x20u) || cpu->gpr[2] != input ||
+        cpu->gpr[17] != input + 0x1B0u) return;
+    const uint32_t shot = cpu->gpr[16];
+    const uint32_t camera = owned_camera(input - SP_PLAYER_INPUT_OFFSET);
+    if (!camera || shot < 0x800B0000u || shot > 0x801FC000u || (shot & 3u) ||
+        cpu->gpr[18] != shot + 0x220u || psx_mod_read_word(shot + 8u) != 0x13F6u ||
+        code_hash(0x8004815Cu, 0xDCu) != 0x073B3393u) return;
+    /* The hidden scoped viewmodel does not refresh the normal muzzle cache.
+     * Use this scope's current eye for construction, without changing that cache. */
+    const unsigned axis = (site - 0x800481A0u) / 4u;
+    cpu->gpr[8u + axis] = psx_mod_read_word(camera + 0x220u + 4u * axis);
+    if (!axis) psx_mod_counter_add("mohu.mkb.scope.origin", 1);
+}
+
 /* This is the previously measured camera-before-player boundary. Apply the
  * complete displacement here, before the native view matrix and firing ray
  * are rebuilt. No pad curve, VBlank pulse, delta-time multiplier or turn cap. */
@@ -203,7 +341,13 @@ static void direct_camera(CPUState* cpu, uint32_t site) {
     prepared_camera = 0;
     direct_player = player;
     int64_t dyaw = 0, dpitch = 0;
-    mohu_mkb_mouse_take(&mouse, &dyaw, &dpitch);
+    double gain = mouse_gain;
+    if (psx_mod_read_byte(input + 93u) == SNIPER_WEAPON_ID &&
+        (psx_mod_read_word(input) & 0x20u)) {
+        const uint32_t depth = psx_mod_read_word(input + 0xACu);
+        gain *= scoped_gain * 400.0 / fmax(400.0, depth);
+    }
+    mohu_mkb_mouse_take_scaled(&mouse, gain, &dyaw, &dpitch);
     const int32_t old_pitch = (int32_t)psx_mod_read_word(player + 0x23Cu);
     int32_t pitch, yaw;
     mohu_mkb_angles(old_pitch, (int32_t)psx_mod_read_word(player + 0x240u),
@@ -457,6 +601,7 @@ static void deactivate(void) {
 
 static void activate(void) {
     if (active) return;
+    refresh_sensitivity();
     mohu_mkb_mouse_reset(&mouse);
     const PSXModPadTransform transform = {
         .struct_size = sizeof(transform),
@@ -491,9 +636,23 @@ PSX_MOD_CONSTRUCTOR(register_mohu_mkb) {
     (void)psx_mod_register_session_reset_plugin(PLUGIN_ID, deactivate);
     (void)psx_mod_register_savestate_plugin(PLUGIN_ID, restored);
     (void)psx_mod_register_vblank_plugin(PLUGIN_ID, input_context);
+    (void)psx_mod_register_option_changed_plugin(PLUGIN_ID, sensitivity_changed);
+    (void)psx_mod_register_function_filter_plugin(PLUGIN_ID, 0x8004C2BCu, precise_view);
     (void)psx_mod_register_function_entry_plugin(PLUGIN_ID, 0x8004A744u, direct_camera);
     (void)psx_mod_register_function_entry_plugin(PLUGIN_ID, 0x800892C8u, weapon_update);
     (void)psx_mod_register_instruction_plugin(PLUGIN_ID, 0x800891D0u, 0x00408021u, selected_weapon);
+    (void)psx_mod_register_instruction_plugin(PLUGIN_ID, 0x800894FCu, 0xAE0201D4u, sniper_controls);
+    (void)psx_mod_register_instruction_plugin(PLUGIN_ID, 0x8008D854u, 0x2C420191u, sniper_controls);
+    (void)psx_mod_register_instruction_plugin(PLUGIN_ID, 0x8008D9D8u, 0x2484FF00u, sniper_controls);
+    (void)psx_mod_register_instruction_plugin(PLUGIN_ID, 0x8008D9E4u, 0x00621823u, sniper_controls);
+    (void)psx_mod_register_instruction_plugin(PLUGIN_ID, 0x8008DA00u, 0x00021180u, sniper_controls);
+    (void)psx_mod_register_instruction_plugin(PLUGIN_ID, 0x8008E06Cu, 0x125E0059u, sniper_controls);
+    (void)psx_mod_register_instruction_plugin(PLUGIN_ID, 0x80076CB8u, 0x86020222u, precise_shot);
+    (void)psx_mod_register_instruction_plugin(PLUGIN_ID, 0x800481A0u, 0xAE080220u, scoped_origin);
+    (void)psx_mod_register_instruction_plugin(PLUGIN_ID, 0x800481A4u, 0xAE090224u, scoped_origin);
+    (void)psx_mod_register_instruction_plugin(PLUGIN_ID, 0x800481A8u, 0xAE0A0228u, scoped_origin);
+    (void)psx_mod_register_instruction_plugin(PLUGIN_ID, 0x8008EB3Cu, 0x30420020u, sniper_controls);
+    (void)psx_mod_register_instruction_plugin(PLUGIN_ID, 0x8008EB50u, 0x30420020u, sniper_controls);
     (void)psx_mod_register_function_filter_plugin(PLUGIN_ID, 0x8008AD04u, prepared_pitch);
     (void)psx_mod_register_instruction_plugin(PLUGIN_ID, 0x8008F984u, 0x26A2FFF9u, direct_adjust);
     /* Every nonzero angular store in the guarded native adjustment routine,

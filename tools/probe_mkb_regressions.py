@@ -33,7 +33,7 @@ def main():
     hashes = {str(p): native.digest(p) for p in files}
     for p in files:
         shutil.copyfile(p, target / p.name)
-    exe = ROOT / "build-mkb-probe/Medal_of_Honor_Underground_Recompiled.exe"
+    exe = ROOT / "build-release/Medal_of_Honor_Underground_Recompiled.exe"
     env = shared.clean_environment(os.environ)
     env.update(SDL_AUDIODRIVER="dummy", PSX_DEV_INPUT="0", PSX_LOAD_SLOT="-1")
     receipt = dict(binary_sha256=native.digest(exe), source_hashes=hashes,
