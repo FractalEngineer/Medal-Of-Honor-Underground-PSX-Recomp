@@ -1321,4 +1321,12 @@ The first run, `42285087806`, reached the new test compilation and exposed GCC
 16's default C++20 char8_t filesystem strings. The title's binding test target
 now explicitly uses C++17, matching the runtime ABI. No gameplay source changed
 for this fix; publication is retried from the follow-up commit.
+The second run, `42286606058`, compiled the complete game and emitters and
+passed input/plugin/binding/catalog tests, but the executable's startup audit
+threw std::system_error before main. The VR C constructor calls command
+registration before the translation-unit global std::mutex is initialized on
+GCC 16. Command storage and its mutex now initialize together on first use.
+A focused before-main registration test runs ahead of the full CI build; the
+final suite now contains six title checks. This fixes startup without disabling
+the failing audit or changing gameplay behavior.
 The pre-existing game.toml and four framework VR edits remain excluded.

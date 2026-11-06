@@ -163,6 +163,12 @@ if(BUILD_TESTING)
     set_target_properties(mohu_mod_binding_options_test PROPERTIES
         CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF)
     add_test(NAME mohu_mod_binding_options_test COMMAND mohu_mod_binding_options_test)
+    add_executable(mohu_mod_command_startup_test
+        "${PSXRECOMP_ROOT}/runtime/tests/test_mod_command_startup.cpp")
+    target_include_directories(mohu_mod_command_startup_test PRIVATE
+        "${PSXRECOMP_ROOT}/runtime/include")
+    target_compile_features(mohu_mod_command_startup_test PRIVATE cxx_std_17)
+    add_test(NAME mohu_mod_command_startup_test COMMAND mohu_mod_command_startup_test)
 endif()
 
 get_target_property(_mohu_execution_profile psx-runtime PSX_EXECUTION_PROFILE)

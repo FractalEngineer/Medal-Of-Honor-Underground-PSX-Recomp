@@ -493,10 +493,12 @@ jobs:
             echo "::error::MKB plugin source missing"
             exit 1
           fi
+          cmake --build build-release --target mohu_mod_command_startup_test -j"${JOBS}"
+          ctest --test-dir build-release --output-on-failure -R '^mohu_mod_command_startup_test$'
           cmake --build build-release --target psx-runtime psxrecomp-game psxrecomp-bios \
             mohu_mkb_input_test mohu_mkb_plugin_test mohu_mod_binding_options_test -j"${JOBS}"
           ctest --test-dir build-release --output-on-failure \
-            -R '^(psx_mod_plugin_audit_psx-runtime|mohu_mkb_input_test|mohu_mkb_plugin_test|mohu_mod_binding_options_test|psx_staged_mod_catalog_test)$'
+            -R '^(psx_mod_plugin_audit_psx-runtime|mohu_mkb_input_test|mohu_mkb_plugin_test|mohu_mod_binding_options_test|mohu_mod_command_startup_test|psx_staged_mod_catalog_test)$'
           # Lobby list pin must match RELEASE_VERSION (the packager enforces).
           STAMP=""
           for cand in \
