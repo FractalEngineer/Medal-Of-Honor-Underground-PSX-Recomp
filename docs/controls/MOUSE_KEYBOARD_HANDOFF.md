@@ -1349,4 +1349,25 @@ The v0.1.2 asset is corrected by adding only those launcher files and provenance
 text to the CI archive; the compiled executable and runtime bytes are unchanged.
 Launcher preparation checks cover flat, VDXR, SteamVR, Oculus and current-runtime
 modes without starting a game or headset session. Final asset verification and
-default-branch publication follow this packaging commit.
+default-branch publication complete this packaging checkpoint.
+
+Final release: https://github.com/FractalEngineer/Medal-Of-Honor-Underground-PSX-Recomp/releases/tag/v0.1.2
+
+- Asset: `mohu-0.1.2-windows-x64.zip`, **28,040,640 bytes**.
+- ZIP SHA256: `8c2b5ae2fa580c188a291525998ff6c5eb5c26e93a9c3dd20e9d38947b8ba399`;
+  matches GitHub's digest after replacement.
+- Executable SHA256: `ffd8d4949622536ff32f3f5b55e688c1632c460a0bb7351864a1d896fea0c7de`,
+  unchanged from the successful CI archive.
+- Launcher source: `6c4cdc714372130ef6c488d8363f9976464ca61d`, recorded inside
+  `RELEASE_LAUNCHERS.txt` in the ZIP. Compiled-source tag remains v0.1.2/daba7ac.
+- Final archive checks passed: version, executable/OpenBIOS, four BAT launchers,
+  guides, all 20 bindings, sensitivity defaults, zoom bounds/default, VR catalog,
+  no personal mod state, disc data, memory cards or retail BIOS.
+- All five launcher modes passed preparation/argument/environment tests without
+  starting emulation. No new physical-headset validation is claimed.
+
+The final documentation checkpoint is pushed to mkb and master by fast-forward
+so the default-branch README has the requested title and MKB gameplay section.
+The local launcher session stays open; build-release's combined relink was
+blocked by that process, so the published CI executable is the verified release
+binary. Personal saves/settings and the unrelated edits remain unchanged.
