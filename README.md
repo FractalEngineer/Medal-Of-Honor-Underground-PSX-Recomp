@@ -97,19 +97,6 @@ launches retain flat rendering and normal controller input. VR environment
 overrides should be absent for flat play; the VR wrapper restores its process
 environment when it exits.
 
-## Mouse and keyboard gameplay
-
-Enable **Mouse and keyboard** under **Mods** for single-player campaign play.
-It provides direct mouse look, WASD movement, R reload, mouse-wheel weapon
-cycling and keyboard menu navigation. Every gameplay/menu action is editable.
-
-Global and aiming sensitivity use independent **1-10 sliders**, defaulting to
-**5** and **4**. Aimed zoom ranges from **1.00x to 2.50x**, default **1.25x**,
-with a quick smooth transition. Firearms and the crossbow keep their held weapon
-visible and show the native crosshair only while aiming; the sniper retains its
-native scope with mouse aiming and movement. Number keys retain PSXRecomp's
-filter shortcuts. See the [full controls guide](docs/controls/MOUSE_KEYBOARD.md).
-
 ## Experimental VR alpha (Windows)
 
 The current [Windows Alpha](https://github.com/FractalEngineer/Medal-Of-Honor-Underground-PSX-Recomp/releases/latest)
@@ -192,6 +179,27 @@ For development context, start with the
 [VR documentation](docs/vr/README.md). Game-specific weapons, controls
 and HUD changes belong here; generic framework work is tracked in
 [the upstream inventory](docs/vr/FRAMEWORK_UPSTREAM_TRACKER.md).
+
+## Mouse and keyboard gameplay
+
+Enable **Mouse and keyboard** under **Mods** for single-player campaign play.
+It provides direct mouse look, WASD movement, R reload, mouse-wheel weapon
+cycling and keyboard menu navigation. Every gameplay/menu action is editable.
+
+Global and aiming sensitivity use independent **1-10 sliders**, defaulting to
+**5** and **4**. Aimed zoom ranges from **1.00x to 2.50x**, default **1.25x**,
+with a quick smooth transition. Firearms and the crossbow keep their held weapon
+visible and show the native crosshair only while aiming; the sniper retains its
+native scope with mouse aiming and movement. Number keys retain PSXRecomp's
+filter shortcuts. See the [full controls guide](docs/controls/MOUSE_KEYBOARD.md).
+
+<p align="center">
+  <a href="https://youtu.be/oN-fc_6xWl4" title="Watch the Medal of Honor Underground mouse and keyboard gameplay demo">
+    <img src="https://img.youtube.com/vi/oN-fc_6xWl4/hqdefault.jpg" alt="Medal of Honor Underground mouse and keyboard gameplay demo" width="900">
+  </a>
+  <br>
+  <a href="https://youtu.be/oN-fc_6xWl4"><strong>&#9654; WATCH THE MOUSE AND KEYBOARD GAMEPLAY DEMO</strong></a>
+</p>
 
 ## Development build
 

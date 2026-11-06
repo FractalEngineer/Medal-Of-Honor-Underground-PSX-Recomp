@@ -1371,3 +1371,26 @@ so the default-branch README has the requested title and MKB gameplay section.
 The local launcher session stays open; build-release's combined relink was
 blocked by that process, so the published CI executable is the verified release
 binary. Personal saves/settings and the unrelated edits remain unchanged.
+
+## Branch cleanup - 2026-11-07
+
+Owner requested deleting mkb and checking the VR branch's apparent extra commit.
+Both root branches are deleted locally and from origin. Master is checked out
+at `66d8692e460c3700d3dcc046ff7df89c3d676099`, tracking origin/master.
+VR commit `8640d74` is patch-equivalent to master commit `019264a` (stable patch
+ID `28dd412148e3f6e288c0187119ceb2c07eb75090`); its documentation changes were
+already integrated under a different commit hash, so no unique work was lost.
+Existing game.toml, framework VR edits and .commandcode remain preserved.
+Dependency fork branches remain because the released submodule pins rely on
+their published commits. Backup/shelf branches were outside the cleanup request.
+This administrative handoff update remains local; no new code commit was needed.
+
+## README video placement - 2026-11-07
+
+Owner requested moving the main README's mouse/keyboard section below the VR
+section and adding https://youtu.be/oN-fc_6xWl4. The complete MKB section now
+follows all VR subsections, before Development build, with a linked YouTube
+thumbnail and video caption matching the existing VR demo presentation.
+Owner subsequently requested committing and pushing these documentation edits
+to master, including the preceding branch-cleanup handoff. No build or game
+interaction was needed; unrelated working-tree changes remain excluded.
