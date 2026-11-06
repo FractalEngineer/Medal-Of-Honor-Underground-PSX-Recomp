@@ -36,7 +36,18 @@ def game_pids():
     result = subprocess.run(["powershell", "-NoProfile", "-Command",
         "Get-Process Medal_of_Honor*Recompiled* -ErrorAction SilentlyContinue | ForEach-Object { $_.Id }"],
         capture_output=True, text=True, creationflags=subprocess.CREATE_NO_WINDOW)
+    if result.returncode:
+        raise RuntimeError("Cannot verify existing game processes: " + result.stderr.strip())
     return [int(value) for value in result.stdout.split()]
+
+
+def require_debugger_owner(pid, port=4372):
+    """Never drive a debugger that belongs to a different game session."""
+    result = subprocess.run(["powershell", "-NoProfile", "-Command",
+        f"Get-NetTCPConnection -State Listen -LocalPort {int(port)} -ErrorAction Stop | ForEach-Object {{ $_.OwningProcess }}"],
+        capture_output=True, text=True, creationflags=subprocess.CREATE_NO_WINDOW)
+    if result.returncode or result.stdout.split() != [str(pid)]:
+        raise RuntimeError("Owned process did not bind its debugger; preserve other sessions")
 
 
 def save(path, value):

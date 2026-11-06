@@ -10,6 +10,7 @@ if(NOT EXISTS "${PSXRECOMP_ROOT}/runtime/runtime.cmake")
 endif()
 
 project(Medal_of_Honor_Underground_Recomp LANGUAGES C CXX)
+include(CTest)
 
 # --- Opt-in product surfaces (OFF by default in the framework) -------------
 # Scaffold prompts / flags fill these. Without recomp-ui, PSX_RECOMP_UI is OFF.
@@ -86,6 +87,33 @@ psxrecomp_add_game_runtime(psx-runtime
 
 if(MOHU_MKB_RESEARCH)
     target_sources(psx-runtime PRIVATE controls/research/moh_mkb_research.c)
+else()
+    target_sources(psx-runtime PRIVATE
+        controls/mouse_keyboard/moh_mkb.c
+        controls/mouse_keyboard/moh_mkb_input.c)
+endif()
+
+if(BUILD_TESTING)
+    add_executable(mohu_mkb_input_test
+        controls/mouse_keyboard/test_moh_mkb.c
+        controls/mouse_keyboard/moh_mkb_input.c)
+    if(NOT WIN32)
+        target_link_libraries(mohu_mkb_input_test PRIVATE m)
+    endif()
+    add_test(NAME mohu_mkb_input_test COMMAND mohu_mkb_input_test)
+    add_executable(mohu_mkb_plugin_test
+        controls/mouse_keyboard/test_moh_mkb_plugin.c
+        controls/mouse_keyboard/moh_mkb_input.c)
+    target_include_directories(mohu_mkb_plugin_test PRIVATE
+        "${PSXRECOMP_ROOT}/runtime/include")
+    target_link_libraries(mohu_mkb_plugin_test PRIVATE ${PSX_SDL_LIBRARIES})
+    if(PSX_SDL3)
+        target_compile_definitions(mohu_mkb_plugin_test PRIVATE PSX_SDL3)
+    endif()
+    if(NOT WIN32)
+        target_link_libraries(mohu_mkb_plugin_test PRIVATE m)
+    endif()
+    add_test(NAME mohu_mkb_plugin_test COMMAND mohu_mkb_plugin_test)
 endif()
 
 get_target_property(_mohu_execution_profile psx-runtime PSX_EXECUTION_PROFILE)

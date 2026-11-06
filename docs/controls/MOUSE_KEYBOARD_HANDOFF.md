@@ -3,6 +3,10 @@
 Update this file every work turn. This is the current task's continuation
 record; evidence and commands belong here or in the linked detailed reports.
 
+**Latest checkpoint:** usable MKB checkpoint with WASD/E/Q menu controls,
+2026-11-06, in the final continuation section. Start there; earlier research
+next-work lists are historical.
+
 ## Objective and authorization
 
 Implement the supplied opt-in flat mouse/keyboard plan on branch `mkb`, adapted
@@ -15,12 +19,19 @@ ordinary input profiles, generated C and unrelated edits.
 
 - Branch `mkb`, original checkpoint `2cbc92a` (research probe and evidence).
   Continuation work below follows that commit; read `git log -1` for current HEAD.
-- Production mod is not implemented. Phase 1 native aim research is in progress.
+- An experimental normal-build plugin and default-OFF package are implemented
+  in the working tree. The playable acceptance checks are still in progress;
+  see the latest continuation below. Historical research-only status and
+  next-work lists below are superseded by the practical plan.
 - The next implementation route is the reduced-scope
   [practical plan](MOUSE_KEYBOARD_PRACTICAL_PLAN.md): native input paths,
   always-on normal crosshair, native sniper scope, and no custom ADS.
+- Owner correction: ordinary native R2 aim prevents walking and must NOT be
+  entered. Right mouse retains R2 only for scoped rifle ID 5. Crosshair
+  visibility is independent of the player's aim state.
 - Game baseline `53e4a50071a3c8240a3b0285c4b4342d3a1c4044`, VERSION 0.1.1.
-- Framework pin `e57fd0279b86edf48cfe42364da4388046772bad`; launcher pin
+- Framework pin `0e4c7c5fe6c03a46a1fc8a7ae436f6f67e3dc4be` (captured wheel support);
+  launcher pin
   `a95615751b413e043983944441ed8912066c65ce`; do not float submodules.
 - Pre-existing framework edits: `runtime/include/mod_plugins.h`,
   `runtime/src/gpu_gl_renderer.c`, `runtime/src/psx_openxr.c`,
@@ -537,3 +548,379 @@ No production input path or gameplay write was enabled.
 4. Finish cached-native lifecycle and action-mapping coverage before any
    production mouse input, options, profiles or launcher work. Keep all
    production features OFF.
+
+## Continuation - experimental native-input implementation, 2026-11-06
+
+The owner's correction is authoritative: do not use ordinary native R2 aiming.
+It makes the movement inputs pitch/lean and prevents walking. Sniper weapon ID
+5 alone retains native R2. The practical plan now reflects this correction.
+
+### Implemented in the working tree
+
+- `controls/mouse_keyboard/moh_mkb.c`, `moh_mkb_input.c`, `moh_mkb.h` and
+  two focused test programs; normal-build CMake integration and an experimental
+  `mohu.input.mouse-keyboard` package, default OFF in its manifest.
+- Temporary P1 sampling profile, persistent click-to-capture, Escape release,
+  and reset on interruptions. Capture-across-transitions is deliberately not
+  enabled. Ordinary saved bindings are not overwritten. The current temporary
+  profile supplies fixed defaults; editable MKB bindings still need integration.
+- One final pad transform preserves incoming sticks. W/S drive LY; A/D drive
+  RX. Mouse X drives LX, and mouse Y uses RY. The measured native layout is
+  **LX turn, LY walk, RX strafe, RY pitch** (also recorded in HOOKS.md).
+  During capture keyboard strafe is supplied via the mouse policy RX output,
+  so the generic right-stick takeover gate cannot release capture just because
+  A/D is held. No player angle or aim-state writes are made.
+- Native input source approach was removed: its source-owned axes discarded
+  the virtual host's movement/look. Do not restore it without addressing the
+  physical/source merge order. Mouse counts now commit once per guest VBlank;
+  repeated sampling does not consume a pulse.
+- R2 is released for ordinary weapons in the **final transform**, after
+  physical/source buttons are merged. The original source-level OR was an
+  active-low release, not an assertion, but could not cancel physical RMB.
+- Native crosshair renderer is `8008C124..8008C620`, FNV1a `71C28163`.
+  Instruction hook `8008C1B4`, expected word `30420020`, changes only scratch
+  `$v0` for its visibility check. Later native flag reads, scope selection,
+  crosshair style and drawing remain stock. Guards require the complete
+  renderer bytes, owned SP actor/input, unpaused gameplay, active package,
+  non-sniper weapon and no active XR or split-screen. `game.toml` lists the
+  instruction site for cached-native code. No guest code word is patched.
+- Mouse reducer preserves fractional counts, bounds large input, rejects
+  non-finite motion, clears on reset, and skips the native 37-count dead zone
+  for nonzero pulses. Diagonal keyboard input uses approximately 0.707 per
+  axis, rather than the earlier half-strength diagonals. Native turn-rate and
+  smoothing remain; raw proportional mouse feel is not yet proven.
+
+### Verification and evidence
+
+Normal SDL3 Release build: `build-mkb-probe/Medal_of_Honor_Underground_Recompiled.exe`.
+Current tested SHA256:
+`b9e93120eb990e8c8a05790dde192065a347167baa9fbe576def014950678309`.
+
+Four root tests pass: plugin audit, reducer, actual plugin with controlled
+host/guest services, and staged mod catalog. The plugin test checks final merged
+R2 release, sniper passthrough, supported-mode eligibility, native axis
+preservation, correct keyboard axes, simultaneous captured mouse-turn/keyboard
+strafe, and reset/teardown.
+
+Four focused existing framework tests rebuilt and passed in
+`analysis/mkb-framework-make`: local mouse policy, binding suppression, keyboard
+pad chords and external-input ordering. These are deterministic lifecycle tests,
+not physical OS capture verification.
+
+Runtime evidence:
+
+- `analysis/runtime/mkb-crosshair-gate-20261106`: original campaign renderer
+  bytes read from the compatible research fixture.
+- `analysis/runtime/mkb-render-cold-20261106/neutral.png`: inspected native
+  red crosshair while player flags remain `0x80000` (aim bit `0x20` clear).
+  Its renderer hook executed 77 times during that cold-start check.
+- `analysis/runtime/mkb-layout-check-20261106/receipt.json`: all **6/6** final
+  host-pipeline gameplay checks pass. Ordinary RMB + forward moves the player,
+  aim bit stays clear, final pad R2 is released, LX look changes the actual yaw
+  target, P38 fire decrements ammo 8 -> 7, and release leaves ammo at 7. The
+  native crosshair hook executed 185 times. No game process remained; source
+  saves and ordinary preferences were unchanged.
+- The earlier `mkb-gameplay-final-20261106` result used an insufficient actor
+  rotation check: RX strafing also changes camera bob. The final check requires
+  the yaw target to change and uses the correct LX turn input. Do not cite that
+  earlier rotation-only check as mouse-look proof.
+
+Old research save ABI `131107` is incompatible with the normal build ABI `35`.
+Do not edit its header. A fresh normal-build fixture was created by cold boot
+in `analysis/runtime/mkb-gameplay-20261106/saves/openbios`, slot 0. Its source
+PST SHA256 is `a26269c586907de27d0c3514faf997ff79af607741a3be1518516a4d9d599717`.
+Copy that fixture for normal-build checks. The failed old-save attempt and the
+failed source-axis attempt are retained in analysis for diagnosis.
+
+```powershell
+cmake --build build-mkb-probe --target psx-runtime mohu_mkb_input_test mohu_mkb_plugin_test -j 2
+ctest --test-dir build-mkb-probe --output-on-failure
+cmake --build analysis/mkb-framework-make --target local_mouse_policy_test mouse_binding_suppression_test keyboard_pad_chord_test pad_external_input_test -j 2
+ctest --test-dir analysis/mkb-framework-make --output-on-failure -R '^(local_mouse_policy_test|mouse_binding_suppression_test|keyboard_pad_chord_test|pad_external_input_test)$'
+python tools/probe_mkb_native.py analysis/runtime/mkb-next --slot 0 --fixtures analysis/runtime/mkb-gameplay-20261106/saves/openbios --gameplay-checks --exe build-mkb-probe/Medal_of_Honor_Underground_Recompiled.exe
+```
+
+`probe_mkb_native.py` also accepts `--dump-hud`, `--aim-states`, and `--exe`.
+The aim-state movement receipt now uses the immediate aim-forward starting
+position instead of an earlier unrelated baseline.
+
+### Next work
+
+1. Physically validate click capture/no acquisition shot, vertical direction,
+   simultaneous mouse + WASD, Escape, focus loss, pause and restore in an owned
+   disposable window. The headless host-pad check cannot validate OS mouse
+   capture or mouse feel. Verify that the VBlank pulse cadence feels acceptable.
+2. Obtain a compatible normal-build sniper fixture and verify native scope
+   entry/exit and reticle appearance. The old personal sniper slot is ABI
+   incompatible; do not alter it. Sniper passthrough currently has deterministic
+   plugin coverage, not an in-game scoped screenshot.
+3. Verify reload/use, cycle, crouch/jump, menu aliases, held automatic fire,
+   feature-OFF behavior, and same-shot impact alignment with the visible reticle.
+4. Finish editable bindings through the existing controls store. Fixed temporary
+   defaults work without saving over ordinary bindings, but launcher edits do
+   not currently change the temporary profile.
+
+The first-playable acceptance checklist is not complete. Keep the package
+experimental and default OFF. No commits or publication were made this turn;
+generated game C, submodule pins, personal saves and unrelated framework edits
+were preserved. Working build's pre-existing local `mods/state.toml` selects
+the package for these tests; the packaged manifest remains default OFF.
+
+## Continuation - owner playtest corrections, 2026-11-06
+
+The owner confirmed the existing normal-build save works and then reported
+two issues during play: inverted vertical mouse look and abnormally slow
+combined forward/back + strafe. Both are corrected in the rebuilt candidate:
+
+- Mouse Y now maps to `128 + signed_pulse` instead of subtracting it. The
+  reducer and plugin expectations cover the corrected positive/negative
+  direction and clamping.
+- Keyboard diagonals now send full native axis values (0/255 on both held
+  axes), rather than the previous 38/218 pre-scaling. The native nonlinear
+  analog curve made those reduced bytes too slow. Opposing keys still cancel.
+  The earlier 0.707 scaling note is superseded; physical diagonal speed/feel
+  remains for the owner to confirm.
+- The normal Release executable was relinked after the owner explicitly
+  approved restarting and loading the existing save. SHA256:
+  `858978d5cac50b83d2b46a6c41f7d749c1d4e205b77aa1c5f98aca6cc9ac3d26`.
+  All four root CTest checks pass with these corrections.
+
+The game is deliberately LEFT RUNNING for the owner:
+
+- Owned process at launch: PID `18828` (recheck rather than assuming it persists).
+- Session directory: `analysis/runtime/mkb-physical-fix-20261106`.
+- Copied saves: that directory's `saves/openbios`, slot 0 loaded successfully.
+- Session receipt: `session.json`; stdout/stderr are in the same directory.
+- Source was `analysis/runtime/mkb-physical-20261106/saves/openbios`; its PST
+  and thumbnail hashes still match the compatible fixture recorded above.
+- No debug pad/host override remains: real local input owns the controls.
+
+`tools/mkb_live_control.py` now has `start --path <new-directory> --fixtures
+<source-directory>` to launch one guarded disposable window, copy the selected
+fixture, load it, clear injected input and record launch/save/preference hashes.
+Its `snapshot --path <file>` records ammo, pitch/yaw targets, pad and counters.
+The `load` action now fully clears injection rather than leaving a neutral host
+layer that would mask physical input. Run against only the owned session.
+
+Computer Use was initialized using the bundled computer-use skill. The owner
+used physical Escape, and the helper stopped Computer Use; no more UI automation
+was attempted afterward. Do not claim completed automated capture/escape tests:
+the only observed snapshots had native aim clear, local pad input active and
+the native crosshair visible. The owner is now checking the corrected build.
+
+Continue from owner feedback. Preserve this active session until another
+restart is authorized or it exits. Sniper scope, complete action mapping,
+editable bindings and the remaining acceptance checks above remain pending.
+
+## Continuation - direct mouse look and weapon controls, 2026-11-06
+
+The owner rejected the stick-emulated mouse path as sluggish/laggy and explicitly
+requested direct control like VR. That instruction supersedes the practical
+plan's earlier no-angle-writes decision. They also requested R reload, mouse
+wheel cycling in both directions and number-key quick selection.
+
+### Current implementation
+
+- Mouse events accumulate fractional displacement. The old analog mouse pulse
+  reducer, dead-zone skip and VBlank commit are removed. The owned campaign
+  camera callback `8004A744` consumes displacement exactly once before native
+  camera matrix/ray/player updates. One mouse count = one native angle unit,
+  represented in Q16; yaw wraps at 4096 units and pitch retains +/-682 units.
+  Positive mouse Y produces negative pitch, preserving the owner's corrected
+  normal vertical direction. No delta-time multiplier, stick curve or byte cap.
+- Direct writes update owned player pitch/yaw and matching input targets. The
+  existing native ray producer still runs. The five previously measured angular
+  increment stores are suppressed only for captured, owned, unpaused SP in
+  native modes 7/8. At `8008F984`, native pitch centering is prevented from
+  pulling the mouse target back. All complete code hashes and ownership guards
+  come from the recorded research; no generated C or guest code words changed.
+- The measured native mode-7 pitch preparation is moved before the camera
+  update when pitch changes; its target delta is carried through the existing
+  camera residual and its matching later call is skipped once. Camera position,
+  original ray construction, projectile and weapon routines remain native.
+- Capture/reset/restore discard pending mouse and weapon requests. Render-only
+  passes are excluded. Mouse sampling presents only keyboard strafe through RX;
+  mouse look never emits LX/RY stick displacement. Keyboard movement also clears
+  keyboard LX turning when uncaptured, so A/D no longer turn as well as strafe.
+- R is the primary native Square reload/use binding (E remains an alias).
+  Wheel up = previous weapon; wheel down = next weapon, while captured.
+  Number keys 1..8 select owned native inventory slots; unowned/out-of-range
+  slots are ignored, and held keys do not retrigger.
+- Weapon selection calls the original `800891AC` switch routine (11C bytes,
+  FNV `5A361CFB`), replacing only its next-slot result at instruction `800891D0`
+  (`00408021`) for that owned call. It does not fabricate inventory, ammunition,
+  weapon identity or viewmodel state. Native inventory count is `800AB5B4`,
+  ownership is reserve != -1, reserve array is input+5E, current slot input+5C.
+  Only the measured maximum eight-slot layout is accepted.
+- The existing mouse policy gained a captured, eligible, timestamp-checked wheel
+  event. Its event struct is unchanged; enum value 5 carries detents in dx/dy.
+  SDL normalizes flipped wheel direction. This adds changes in framework
+  `local_mouse_policy.h/.cpp`, `local_mouse_sdl.cpp` and its focused test, plus
+  the existing dirty `mod_plugins.h`; preserve the unrelated VR edits there.
+- Debug builds alone expose `mohu.mkb.test` requests: `motion DX DY`, `select N`,
+  `wheel N`, `release`. The debug thread queues atomic requests; the owned game
+  update executes them. These bypass OS capture solely for explicit isolated
+  tests. Ordinary play and builds without debug tools use actual capture only.
+
+### Validation
+
+Normal SDL3 Release executable SHA256:
+`4087e26607cd3152a17f41faf1923c1874dfe251ba93bb4378c6558b3163d396`.
+
+Four root tests and four focused framework tests pass, including direct count
+consumption, fractional accumulation, yaw wrap, pitch clamp, native button/axis
+preservation, number-key edges, wheel direction/reset and capture gating.
+
+`analysis/runtime/mkb-direct-final-20261106/receipt.json` passes **10/10** runtime
+checks on the normal-build fixture: exact +32 yaw, zero drift over 90 VBlanks,
+exact +32 pitch, full +200 fast-flick yaw (not capped to a stick byte), exact
+return to the starting pose, native fire, native reload, number selection,
+previous wheel and next wheel. It changed P38 clip 8 -> 7 -> 8, selected petrol
+bomb slot 1, returned to P38 slot 0, then selected slot 1 again. Source fixtures
+and ordinary preferences were unchanged; the test exited cleanly with no game
+process remaining. `mkb-direct-first-20261106` is the preceding equivalent run.
+
+```powershell
+cmake --build build-mkb-probe --target psx-runtime mohu_mkb_input_test mohu_mkb_plugin_test -j 2
+ctest --test-dir build-mkb-probe --output-on-failure
+cmake --build analysis/mkb-framework-make --target local_mouse_policy_test mouse_binding_suppression_test keyboard_pad_chord_test pad_external_input_test -j 2
+ctest --test-dir analysis/mkb-framework-make --output-on-failure -R '^(local_mouse_policy_test|mouse_binding_suppression_test|keyboard_pad_chord_test|pad_external_input_test)$'
+python tools/probe_mkb_native.py analysis/runtime/mkb-next-direct --slot 0 --fixtures analysis/runtime/mkb-gameplay-20261106/saves/openbios --direct-checks --exe build-mkb-probe/Medal_of_Honor_Underground_Recompiled.exe
+```
+
+These runtime checks exercise the actual direct-angle and native weapon-switch
+paths through explicit debug input, not physical wheel/number events or measured
+end-to-end latency. Physical feel, sniper scope and broad recoil/impact coverage
+remain pending. Keep the feature experimental/default OFF. No commits, releases,
+submodule pin changes or edits to personal saves were made. The owner's prior
+PID 18828 session had already exited before the builds/tests began.
+
+The tested direct build was then launched for the owner and LEFT RUNNING:
+PID `52684` at launch, session directory
+`analysis/runtime/mkb-direct-play-20261106`, successful slot-0 load, no injected
+pad input. `session.json` records its executable and source-save hashes. Preserve
+that session until it exits or the owner authorizes a restart. Recheck the PID
+and command line before acting; do not assume the old physical-test PID lives.
+
+## Continuation - petrol-bomb and unwanted-turn regressions, 2026-11-06
+
+The owner reports that direct look is substantially better, though still a bit
+laggy. New reports were: petrol-bomb selection stops all mouse look, forward
+movement into the brick wall in their new slot 01 turns/moves left, and steep
+downward look causes an uncommanded left spin. All three are addressed below.
+
+### Causes and fixes
+
+- Petrol bomb uses native input mode **9**. The direct-look gate accepted only
+  7/8, so it discarded all motion for that weapon. Direct look now accepts
+  7/8/9, and the same verified native pitch-preparation path is used for mode
+  9 as for 7. This was checked with actual petrol-bomb yaw and pitch changes.
+- The near-collision/steep-pitch projection fallback has three additional
+  angular stores inside the already byte-guarded `8008D81C` routine:
+  `8008E4A0` and `8008E4A8` write yaw velocity (`AEC2024C`), while `8008E4F4`
+  writes pitch velocity (`AEC20248`). These were absent from the five-hook
+  suppression list. They are now registered and listed in `game.toml`, bringing
+  coverage to every nonzero angular store in that native routine (eight total).
+  Native collision and ray calculation still execute; the unwanted angular
+  outputs alone are zeroed during owned captured direct look.
+- The plugin regression test checks registration and suppression of all eight
+  sites, explicitly covering the three missed ones and rejecting mode 6.
+
+### Reproduction and validation
+
+Source fixtures are in `analysis/runtime/mkb-direct-play-20261106/saves/openbios`.
+The owner created slot 01 there for the wall reproduction. Slots 00 and 01 are
+preserved byte-for-byte. Before closing the owned session, a separate checkpoint
+was saved into unused slot **11** to preserve its current progress. New window
+launches now copy all available save slots, not just the selected slot.
+
+Valid before/after evidence:
+
+- `analysis/runtime/mkb-bugs-repro-20261106/receipt.json`: petrol-bomb mode 9
+  stayed at exactly the same angles after requested motion; wall walking changed
+  direct yaw from Q16 `66387968` to `4325376` with no mouse delta.
+- `analysis/runtime/mkb-bugs-verified-20261106/receipt.json`: **7/7 regression
+  checks pass**. Petrol-bomb +32 yaw/+16 pitch is exact. The slot-01 wall run
+  holds yaw at `66387968` throughout contact and release, with zero angular
+  velocity. A -500-unit downward pitch stays exact with zero yaw change and
+  no idle drift. Inspected screenshots show the wall straight ahead and the
+  downward ground view. Normal native wall sliding is not replaced.
+- `analysis/runtime/mkb-direct-post-bugs-20261106/receipt.json`: all previous
+  **10/10** direct-look/fire/reload/weapon-selection checks still pass.
+- All four root CTest checks pass; Python helper compilation passes.
+- Source saves and ordinary preferences remain unchanged; isolated runs exited
+  cleanly. Compact evidence is `docs/controls/MOUSE_KEYBOARD_BUGFIX_RECEIPT.json`.
+
+Tested executable SHA256:
+`9da20044d14ea7cc29446ca0ced902c37903619007041e69ddef81aebeb6776f`.
+
+```powershell
+cmake --build build-mkb-probe --target psx-runtime mohu_mkb_plugin_test -j 2
+ctest --test-dir build-mkb-probe --output-on-failure
+python tools/probe_mkb_regressions.py analysis/runtime/mkb-next-regression
+python tools/probe_mkb_native.py analysis/runtime/mkb-next-direct --slot 0 --fixtures analysis/runtime/mkb-gameplay-20261106/saves/openbios --direct-checks --exe build-mkb-probe/Medal_of_Honor_Underground_Recompiled.exe
+```
+
+The new regression runner copies both owner fixtures and verifies that the
+debugger listener's actual process ID matches the process it launched before
+driving it. The live-session helper uses the same ownership check. Process
+enumeration failures now abort rather than pretending no game exists. Use an
+approved/escalated execution context for these local-debugger tools when the
+sandbox denies socket/process inspection. An initial sandboxed attempt and a
+buffered-log ownership check were aborted; neither is valid regression evidence.
+
+Remaining small latency, physical feel after these fixes, scoped sniper and the
+rest of the earlier acceptance checklist remain pending. Keep the feature
+experimental/default OFF. No generated C, submodule pins or unrelated framework
+edits changed, and no commit or release was made this turn.
+
+The verified bugfix build is LEFT RUNNING for the owner at slot **01**:
+PID `1128` at launch, directory `analysis/runtime/mkb-bugfix-play-20261106`.
+All source save slots (00, 01 and checkpoint 11) were copied and their hashes
+recorded in `session.json`; startup verifies debugger ownership against the
+launched PID. There is no debug pad override. Preserve this session for the
+owner's physical confirmation, and recheck identity before any future restart.
+
+## Continuation - menu controls and committed checkpoint, 2026-11-06
+
+The owner confirms the controls are now very usable and requested WASD in
+menus, E = Cross/confirm, Q = Triangle/back, then a commit and push of progress.
+
+- Frontend and native pause menus now map WASD to D-pad directions, with E/Q
+  confirm/back. Arrow keys, Enter/Backspace and left-mouse confirm remain.
+- A separate temporary menu profile is selected at guest VBlank before physical
+  input folding. Q therefore emits Triangle without also emitting gameplay
+  Circle. E is Cross in menus and remains native use/reload in gameplay.
+- E/Q held across a menu transition are suppressed until release, preventing
+  menu confirmation/back from becoming an immediate gameplay action.
+- Saved ordinary keyboard/controller profiles remain untouched. Menu tests cover
+  frontend/pause context, direction cancellation, correct button words, profile
+  switching and held-key transition suppression. Four root and four focused
+  framework tests pass. User-facing bindings are in `MOUSE_KEYBOARD.md`.
+- The framework wheel support is committed and pushed on the fork's branch
+  `mkb/local-mouse-wheel`, commit
+  `0e4c7c5fe6c03a46a1fc8a7ae436f6f67e3dc4be`. The game pins this commit, so
+  its MKB implementation has a reachable, self-contained framework dependency.
+  Only wheel changes were staged in that commit. The four pre-existing VR
+  framework edits remain dirty and are intentionally excluded.
+- The game checkpoint is on branch `mkb`; use `git log -1` and its remote
+  tracking state for the final commit and push status. Commits include the MKB
+  plugin/package/tests, input hooks, tools, evidence and documentation. They
+  exclude `.commandcode/`, the loose reducer-test EXE, saves and generated C.
+
+Menu-build executable SHA256:
+`927033b8d0b36edddc202b61a098fa13d27daf53fecb889bddabc267719bc413`.
+The earlier regression receipts identify their own binaries; do not substitute
+the menu build hash into older receipts. Final copied-save regression output
+is in `analysis/runtime/mkb-menu-regressions-20261106`.
+
+Next priorities after this checkpoint:
+
+1. Verify native sniper scope and capture/focus/pause/restore lifecycle with a
+   compatible scoped-rifle fixture, then broader weapons and campaign contexts.
+2. Expose mouse sensitivity and editable MKB bindings through the existing
+   controls/settings store instead of the fixed temporary defaults.
+3. Measure the remaining input-to-render delay and tune sampling/presentation
+   based on that evidence; direct look already removes pad acceleration/drift.
+4. Finish feature-OFF/controller compatibility and package acceptance checks
+   before widening beyond experimental, default-OFF campaign support.

@@ -38,6 +38,9 @@ strict = true
 # the verified engine-map bindings, mode-specific shot/camera callbacks,
 # native submit/HUD filters, and the multiplayer frame/selector hooks.
 mod_function_entry_funcs = [
+  "0x800892C8", # MKB: native inventory selection at owned player update
+  "0x8004A744", # MKB: owned camera before native ray/shot update
+  "0x8008AD04", # MKB: native pitch preparation, once per owned update
   "0x80017628", # native VSync query: guarded render-only fresh-view candidate
   "0x80093830", # entity transform
   "0x80013B40", # entity node transformer
@@ -69,6 +72,12 @@ mod_function_entry_funcs = [
 # Exact words are checked again by the plugin at runtime. Listing these sites
 # makes the dirty-RAM callbacks available in generated native game code too.
 mod_instruction_sites = [
+  "0x800891D0", # MKB: selected slot through the native switch routine
+  "0x8008F984", # MKB: preserve direct mouse target after native look
+  "0x8008D8C8", "0x8008D8F4", "0x8008D910", # MKB: angular corrections only
+  "0x8008E660", "0x8008E7A8", # MKB: retain native ray calculation
+  "0x8008E4A0", "0x8008E4A8", "0x8008E4F4", # MKB: near-wall/steep-pitch corrections
+  "0x8008C1B4", # MKB: native crosshair visibility only, no player aim flag
   "0x80084CDC", # marker constructor origin
   "0x80084B74", # marker writer
   "0x80048AAC", # marker load

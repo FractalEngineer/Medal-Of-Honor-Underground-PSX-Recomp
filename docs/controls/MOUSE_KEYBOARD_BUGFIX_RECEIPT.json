@@ -1,0 +1,123 @@
+{
+  "format_version": 1,
+  "kind": "Underground MKB regression receipt",
+  "binary_sha256": "9da20044d14ea7cc29446ca0ced902c37903619007041e69ddef81aebeb6776f",
+  "fixture_hashes": {
+    "state_8001F844_slot00.pst": "a26269c586907de27d0c3514faf997ff79af607741a3be1518516a4d9d599717",
+    "state_8001F844_slot00.thumb": "ea3af117e204f72e37bf25a77999e629e4d8ab59df1d06155c5fbb59bae28900",
+    "state_8001F844_slot01.pst": "f6ad77b7e402a4ebd2735065c95c826fbbe7ab9844e3f9fe550e6b296b66801c",
+    "state_8001F844_slot01.thumb": "c845aaeb601e1d741c696246d29a2c1b4141fabe8f04e14b7092fab159241227"
+  },
+  "before": {
+    "bomb_modes": [
+      9,
+      9
+    ],
+    "bomb_angles": [
+      [
+        114688,
+        259260416,
+        0
+      ],
+      [
+        114688,
+        259260416,
+        0
+      ]
+    ],
+    "wall_yaw": [
+      66387968,
+      66387968,
+      37421056,
+      14548992,
+      4325376,
+      4325376,
+      4325376,
+      4325376,
+      4325376,
+      4325376
+    ]
+  },
+  "after": {
+    "bomb_angles": [
+      [
+        114688,
+        259260416,
+        0
+      ],
+      [
+        1163264,
+        261357568,
+        0
+      ]
+    ],
+    "wall_yaw": [
+      66387968,
+      66387968,
+      66387968,
+      66387968,
+      66387968,
+      66387968,
+      66387968,
+      66387968,
+      66387968,
+      66387968
+    ],
+    "down_angles": [
+      [
+        114688,
+        259260416,
+        0
+      ],
+      [
+        -32653312,
+        259260416,
+        0
+      ],
+      [
+        -32653312,
+        259260416,
+        0
+      ],
+      [
+        -32653312,
+        259260416,
+        0
+      ],
+      [
+        -32653312,
+        259260416,
+        0
+      ],
+      [
+        -32653312,
+        259260416,
+        0
+      ]
+    ]
+  },
+  "regression_checks": {
+    "bomb_yaw": true,
+    "bomb_pitch": true,
+    "wall_no_uncommanded_turn": true,
+    "wall_no_angular_velocity": true,
+    "down_no_uncommanded_turn": true,
+    "down_pitch_exact": true,
+    "down_no_idle_drift": true
+  },
+  "direct_checks": {
+    "yaw_exact": true,
+    "no_idle_drift": true,
+    "pitch_exact": true,
+    "fast_flick_not_stick_capped": true,
+    "return_exact": true,
+    "native_fire": true,
+    "native_reload": true,
+    "number_select": true,
+    "wheel_previous": true,
+    "wheel_next": true
+  },
+  "source_saves_unchanged": true,
+  "preferences_unchanged": true,
+  "exit_code": 0
+}

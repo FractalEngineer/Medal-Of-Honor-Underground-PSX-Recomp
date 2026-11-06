@@ -1,0 +1,22 @@
+format_version = 7
+id = "mohu.input.mouse-keyboard"
+version = "0.1.0"
+name = "Mouse and keyboard gameplay"
+author = "Medal-Of-Honor-Underground-PSX-Recomp"
+description = "Experimental direct mouse look, WASD movement, native actions, and an always-on ordinary-weapon reticle."
+license = "MIT"
+resolver = "declarative"
+
+[[target]]
+game_id = "SLUS-01270"
+
+[[feature]]
+id = "mouse-keyboard"
+name = "Mouse and keyboard"
+description = "Click to capture; Escape releases. R reloads, wheel cycles, 1-8 select weapons. Menus: WASD, E confirm, Q back. Right mouse scopes the sniper only."
+channel = "experimental"
+default_enabled = false
+
+[[plugin]]
+feature = "mouse-keyboard"
+id = "mohu.input.mouse-keyboard"

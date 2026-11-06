@@ -2,17 +2,23 @@
 
 ## Decision
 
-Build a playable, feature-flagged native-input mod before expanding the research
-matrix. Reuse the game's existing aim button and movement/action machinery
-instead of creating a parallel ADS or weapon system.
+Build a playable, feature-flagged direct-mouse mod. The owner rejected native
+analog mouse emulation after playtesting it as sluggish and laggy, and explicitly
+requested direct control like VR. Reuse native movement/action machinery. Ordinary
+native R2 aim is excluded: it repurposes movement as pitch/lean and prevents
+walking. This owner correction supersedes the initial native-aim proposal.
 
 First-playable decisions:
 
-- Mouse motion drives the existing native right-stick/look path through the
-  framework's local mouse policy. Do not write guest yaw/pitch directly in v1.
-- W/A/S/D drive native movement and strafe. A/D never keyboard-turn.
+- Mouse motion directly changes owned player pitch/yaw and targets at the
+  measured camera-before-player boundary. Consume displacement once per native
+  update, without stick curves, VBlank pulses or a turn-rate cap. Native ray
+  construction still executes; only audited angular correction stores are
+  suppressed during captured direct look.
+- W/S drive native LY movement; A/D drive native RX strafe. A/D never turn.
 - Left mouse maps to native Cross: fire/confirm.
-- Right mouse maps to native R2: the game's existing aim/look button.
+- Right mouse maps to native R2 only for the scoped rifle (weapon ID 5).
+  Release R2 for ordinary weapons after physical and plugin input are merged.
 - Do not add a new ADS, FOV, weapon transform, or camera mode.
 - Show the native crosshair for all normal weapons, including when R2 is not
   held.
@@ -22,9 +28,10 @@ First-playable decisions:
   no full custom launcher screen in the first playable.
 - Package defaults OFF until the input path and lifecycle checks pass.
 
-This intentionally defers direct actor/camera angle writes. The completed
-research remains the fallback if the native right-stick route cannot meet the
-latency or shot-alignment acceptance checks.
+The earlier native-stick route failed the owner's usability check. The direct
+route uses the already measured actor/camera/ray hooks; the old stick-emulation
+reducer has been removed. Default sensitivity is one native angle unit per mouse
+count, yaw wraps at 4096 units, pitch retains the native +/-682-unit limit.
 
 ## Non-negotiable behavior
 
@@ -66,9 +73,8 @@ Acceptance:
 - The sniper scope gate is distinguishable from the normal crosshair.
 - No save, preference or gameplay state changes survive the run.
 
-If ordinary R2 pins the camera or zooms a non-sniper weapon against the
-requested no-ADS behavior, suppress only that visual/FOV effect. Keep native
-aim logic and native movement semantics where possible.
+Ordinary R2 does prevent walking (confirmed in the P38 fixture). Do not enter
+that mode. Isolate crosshair visibility in the renderer instead.
 
 ## Step 1: production plugin skeleton
 
@@ -105,7 +111,12 @@ Implementation contract:
 
 - One click captures; the capture click is suppressed.
 - Escape releases.
-- Motion accumulates as counts and feeds only the native right-stick path.
+- Motion accumulates as counts and applies directly to pitch/yaw at the owned
+  camera update. Mouse Y positive maps to negative native pitch (look down).
+- The pad transform preserves native sticks when no keyboard/mouse override
+  applies. During capture it presents keyboard strafe through the mouse policy's
+  RX output, preventing A/D from triggering the generic right-stick takeover
+  gate. It never interprets RX strafe as horizontal look.
 - Clear motion, axes and activation state on every reset or ineligibility.
 - Do not modify native right-stick input when the plugin is OFF.
 - Keep the reducer independent enough for direct unit tests.
@@ -128,20 +139,25 @@ First-playable defaults:
 | Forward/back | W / S |
 | Strafe left/right | A / D |
 | Fire/confirm | Left mouse / Enter |
-| Aim | Right mouse |
+| Sniper scope only | Right mouse |
 | Reload/use | R / E |
 | Next weapon | Q |
+| Previous / next weapon | Wheel up / wheel down, while captured |
+| Quick weapon selection | 1 through 8: owned inventory slots |
 | Crouch | Left Ctrl |
 | Jump | Space |
 | Pause/Start | P |
-| Menu directions | Arrow keys |
-| Menu back | Backspace |
+| Menu directions | W/A/S/D / Arrow keys |
+| Menu confirm | E / Enter / Left mouse (Cross) |
+| Menu back | Q / Backspace (Triangle) |
 | Release capture | Escape, fixed host action |
 
 Implementation notes:
 
-- Bind movement through left-stick directions rather than keyboard turning.
-- Merge opposite directions to neutral and prevent diagonal speed-up.
+- Bind W/S through LY and A/D through RX rather than keyboard turning (LX).
+- Merge opposite directions to neutral. Send full native deflection on each
+  held axis, including diagonals: pre-scaling diagonal bytes makes the game's
+  nonlinear analog response abnormally slow. Leave velocity handling native.
 - Preserve native press/hold/release and menu-context behavior.
 - Do not let gameplay bindings trigger menu actions or vice versa.
 - Do not overwrite ordinary P1/P2 controller bindings.
@@ -150,12 +166,14 @@ If the current generic Controls page can edit these through the existing PSX
 24-input store, use it. Add a title-specific semantic page only if the generic
 page cannot expose movement, fire, aim and actions clearly.
 
-## Step 4: native aim button and always-on crosshair
+## Step 4: sniper scope and always-on crosshair
 
-Right mouse must inject native R2, not a custom aim mode.
+Right mouse must inject native R2 only for the scoped rifle.
 
 - Add or reuse the `R2` binding.
-- For normal weapons, R2 retains the game's native aim behavior.
+- For normal weapons, release R2 in the final pad transform. Releasing it in
+  a controller source is insufficient: the physical button word is ANDed in
+  afterward and can assert it again.
 - Do not create a new FOV, zoom, camera pin, model pose or spread path.
 - For sniper weapons, native R2 remains responsible for scope entry/exit.
 
@@ -215,7 +233,6 @@ The first playable checkpoint is complete when:
 
 ## Deferred until after first playable
 
-- Direct native yaw/pitch writes as a latency/quality fallback.
 - Full target-present aim-assist matrix.
 - Exhaustive recoil, moving, mounted and every-weapon research.
 - Per-weapon ADS tuning. There is no custom ADS in this design.
@@ -224,12 +241,12 @@ The first playable checkpoint is complete when:
 
 ## Known risks
 
-- The native right-stick path may have smoothing or a reachable-axis limit that
-  feels worse than direct angle writes.
+- The direct look still needs owner feel/latency testing, scoped contexts and
+  broad weapon/recoil/impact coverage. Native game rendering cadence remains.
 - Crosshair visibility may share state with aim logic; isolate display from
   gameplay before forcing it.
-- Non-sniper R2 may pin the camera or movement. Measure it before deciding
-  whether a narrow visual suppression is needed.
+- Non-sniper R2 prevents movement. The final pad transform must suppress it;
+  the crosshair hook must never set the player's actual aim flag.
 - Existing launcher binding UI may need a small bridge, but not a separate
   settings system.
 
@@ -248,5 +265,5 @@ Existing evidence:
 - `docs/vr/FLAT_LOCAL_INPUT.md`
 - `vr/underground/input.c` for the measured R2 mapping
 
-Do not reopen completed camera/ray research unless the chosen native-stick path
+Do not reopen completed camera/ray research unless the chosen native analog path
 fails one of the first-playable acceptance checks.

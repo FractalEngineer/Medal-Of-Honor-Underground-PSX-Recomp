@@ -56,6 +56,11 @@ def main():
     parser.add_argument("--research-direct", action="store_true", help="Explicitly test the native direct-target branch in the research harness")
     parser.add_argument("--research-prepare", action="store_true", help="Research only: prepare the native camera pitch before its callback")
     parser.add_argument("--gate-fire", action="store_true", help="Wait for the native sampled button word before starting a firing window")
+    parser.add_argument("--aim-states", action="store_true", help="Capture native neutral/R2/Cross states and movement")
+    parser.add_argument("--dump-hud", action="store_true", help="Read campaign HUD code for the render-only crosshair gate")
+    parser.add_argument("--exe", type=Path, default=ROOT / "build-probe/Medal_of_Honor_Underground_Recompiled.exe")
+    parser.add_argument("--gameplay-checks", action="store_true", help="Check final host-pad R2 suppression, movement, look and fire")
+    parser.add_argument("--direct-checks", action="store_true", help="Check direct displacement, no drift, native switching and reload")
     parser.add_argument("--camera-writes", action="store_true", help="Trace native camera-matrix stores around each research window")
     parser.add_argument("--camera-target-writes", action="store_true", help="Trace camera look-at target stores instead of its matrix")
     parser.add_argument("--research-cases", nargs="+", choices=[x[0] for x in RESEARCH_CASES])
@@ -75,7 +80,7 @@ def main():
     for path in fixtures:
         shutil.copyfile(path, target / path.name)
     preferences = shared.hash_existing(shared.preference_paths())
-    exe = ROOT / "build-probe/Medal_of_Honor_Underground_Recompiled.exe"
+    exe = args.exe.resolve()
     env = shared.clean_environment(os.environ)
     env.update(SDL_AUDIODRIVER="dummy", PSX_DEV_INPUT="0", PSX_LOAD_SLOT="-1")
     config = ROOT / "game.toml"
@@ -94,7 +99,8 @@ def main():
                    config_sha256=native.digest(config),
                    vr_requested=False, interpreter_diagnostic=args.interpreter,
                    research_direct=args.research_direct, research_schema=5,
-                   research_prepare=args.research_prepare, gated_fire=args.gate_fire, samples=[])
+                   research_prepare=args.research_prepare, gated_fire=args.gate_fire,
+                   aim_states=[], samples=[])
     if args.research:
         receipt["research_source_sha256"] = native.digest(ROOT / "controls/research/moh_mkb_research.c")
 
@@ -156,7 +162,175 @@ def main():
                 receipt["load"] = native.load(args.slot)
             native.command("set_input", buttons="0xffff", pad_type=1, lx=128, ly=128, rx=128, ry=128)
             native.frames(90)
-            snapshot("neutral")
+            neutral = snapshot("neutral")
+            if args.direct_checks:
+                native.command("clear_input")
+                native.command("set_input", layer="host", buttons=0xffff, pad_type=1,
+                               lx=128, ly=128, rx=128, ry=128)
+
+                def direct(label, dx, dy):
+                    info = native.command("mod_cmd", name="mohu.mkb.test", args=f"motion {dx} {dy}")
+                    if info["result"] != 1:
+                        raise RuntimeError(f"Direct command rejected: {info}")
+                    native.frames(8)
+                    return snapshot(label)
+
+                base = direct("direct_zero", 0, 0)
+                turned = direct("direct_yaw", 32, 0)
+                native.frames(90)
+                idle = snapshot("direct_idle")
+                pitched = direct("direct_pitch", 0, -32)
+                fast = direct("direct_fast", 200, 0)
+                returned = direct("direct_return", -232, 32)
+                wrap = 4096 * 65536
+                checks = {
+                    "yaw_exact": (turned["rotation_q16"][1] - base["rotation_q16"][1]) % wrap == 32 * 65536,
+                    "no_idle_drift": idle["rotation_q16"] == turned["rotation_q16"],
+                    "pitch_exact": pitched["rotation_q16"][0] - idle["rotation_q16"][0] == 32 * 65536,
+                    "fast_flick_not_stick_capped": (fast["rotation_q16"][1] - pitched["rotation_q16"][1]) % wrap == 200 * 65536,
+                    "return_exact": returned["rotation_q16"] == base["rotation_q16"],
+                }
+                native.command("screenshot_hires", path=str(out / "direct-look.png"))
+                native.command("set_input", layer="host", buttons=0xbfff,
+                               lx=128, ly=128, rx=128, ry=128)
+                native.frames(10)
+                native.command("set_input", layer="host", buttons=0xffff)
+                native.frames(30)
+                fired = snapshot("direct_fire")
+                checks["native_fire"] = fired["clip"] < returned["clip"]
+                native.command("set_input", layer="host", buttons=0x7fff)
+                native.frames(90)
+                native.command("set_input", layer="host", buttons=0xffff)
+                native.frames(30)
+                reloaded = snapshot("direct_reload")
+                checks["native_reload"] = reloaded["clip"] > fired["clip"]
+                inp = int(reloaded["input"], 16)
+                count = int.from_bytes(native.read(0x800AB5B4, 4), "little")
+                reserves = list(struct.unpack("<8h", native.read(inp + 0x5e, 16)))
+                receipt["weapon_inventory"] = dict(count=count, reserves=reserves)
+                owned = [i for i in range(min(count, 8)) if reserves[i] != -1]
+                if len(owned) > 1:
+                    current = reloaded["weapon_slot"]
+                    target = next(i for i in owned if i != current)
+                    native.command("mod_cmd", name="mohu.mkb.test", args=f"select {target + 1}")
+                    native.frames(90)
+                    selected = snapshot("number_select")
+                    checks["number_select"] = selected["weapon_slot"] == target
+                    native.command("mod_cmd", name="mohu.mkb.test", args="wheel -1")
+                    native.frames(90)
+                    previous = snapshot("wheel_previous")
+                    expected = owned[(owned.index(target) - 1) % len(owned)]
+                    checks["wheel_previous"] = previous["weapon_slot"] == expected
+                    native.command("mod_cmd", name="mohu.mkb.test", args="wheel 1")
+                    native.frames(90)
+                    following = snapshot("wheel_next")
+                    checks["wheel_next"] = following["weapon_slot"] == target
+                receipt["direct_checks"] = checks
+                receipt["mod_counters"] = native.command("mod_counters")
+                native.command("mod_cmd", name="mohu.mkb.test", args="release")
+                if not all(checks.values()):
+                    raise RuntimeError("Direct-control check failed; inspect receipt")
+                receipt["collection_complete"] = True
+                return
+            if args.gameplay_checks:
+                native.command("savestate", op="save", slot=0)
+                native.frames(15)
+                receipt["saved_fixture"] = native.command("savestate_status")
+                if receipt["saved_fixture"]["pending"] or not receipt["saved_fixture"]["last_ok"]:
+                    raise RuntimeError("Compatible fixture save did not complete")
+                native.command("clear_input")
+
+                def host_sample(label, *, buttons=0xffff, lx=128, ly=128, rx=128, ry=128, frames=30):
+                    native.command("set_input", layer="host", buttons=buttons,
+                                   pad_type=1, lx=lx, ly=ly, rx=rx, ry=ry)
+                    native.frames(frames)
+                    row = snapshot(label)
+                    native.command("screenshot_hires", path=str(out / f"{label}.png"))
+                    return row
+
+                start = host_sample("host_neutral")
+                moved = host_sample("rmb_forward", buttons=0xfdff, ly=0, frames=45)
+                settled = host_sample("host_settled")
+                looked = host_sample("host_look", lx=220, frames=24)
+                before_fire = host_sample("before_fire")
+                fired = host_sample("host_fire", buttons=0xbfff, frames=10)
+                released = host_sample("host_release")
+                receipt["gameplay_checks"] = {
+                    "rmb_allows_movement": moved["position"] != start["position"],
+                    "rmb_does_not_enter_aim": not (int(moved["input_flags"], 16) & 0x20),
+                    "final_pad_releases_r2": bool(int(moved["pad"]["slot0"]["buttons"], 16) & 0x200),
+                    "native_look_changes_yaw_target": looked["aim_yaw_q16"] != settled["aim_yaw_q16"],
+                    "native_fire_uses_ammo": fired["clip"] < before_fire["clip"],
+                    "release_keeps_ammo": released["clip"] == fired["clip"],
+                }
+                receipt["mod_counters"] = native.command("mod_counters")
+                if not all(receipt["gameplay_checks"].values()):
+                    raise RuntimeError("Gameplay check failed; inspect receipt")
+                receipt["collection_complete"] = True
+                return
+            if args.dump_hud:
+                for label, address, size in [("campaign", 0x800892C8, 0x6E00),
+                                             ("hud", 0x8006C874, 0x4CC)]:
+                    (out / f"{label}.code.bin").write_bytes(native.read(address, size))
+                receipt["hud_disasm"] = native.command("disasm", addr="0x8008f9f4", count=128)
+                receipt["mod_counters"] = native.command("mod_counters")
+                native.command("screenshot_hires", path=str(out / "neutral.png"))
+                receipt["collection_complete"] = True
+                return
+            if args.aim_states:
+                def aim_word(*buttons):
+                    word = 0xffff
+                    for button in buttons:
+                        word &= ~button
+                    return f"0x{word:04x}"
+
+                def aim_capture(label, buttons, *, ly=128, frames=24):
+                    native.command("set_input", buttons=buttons, pad_type=1,
+                                   lx=128, ly=ly, rx=128, ry=128)
+                    native.frames(frames)
+                    path = out / f"{label}.png"
+                    info = native.command("screenshot_hires", path=str(path))
+                    if not path.is_file():
+                        raise RuntimeError(f"Missing aim-state frame: {info}")
+                    native.frames(30)
+                    row = snapshot(label)
+                    row["screenshot"] = dict(
+                        file=path.name, sha256=native.digest(path),
+                        bytes=path.stat().st_size, **info)
+                    receipt["aim_states"].append(row)
+                    return row
+
+                neutral = aim_capture("neutral", "0xffff")
+                aim = aim_capture("aim", aim_word(0x0200))
+                fire_state = aim_capture("fire", aim_word(0x4000))
+                aim_fire = aim_capture("aim_fire", aim_word(0x0200, 0x4000))
+                forward = aim_capture("forward", "0xffff", ly=0, frames=45)
+                native.command("set_input", buttons="0xffff", pad_type=1,
+                               lx=128, ly=128, rx=128, ry=128)
+                native.frames(30)
+                forward_settled = snapshot("forward_settled")
+                aim_forward_start = snapshot("aim_forward_start")
+                aim_forward = aim_capture(
+                    "aim_forward", aim_word(0x0200), ly=0, frames=45)
+                native.command("set_input", buttons="0xffff", pad_type=1,
+                               lx=128, ly=128, rx=128, ry=128)
+                native.frames(30)
+                aim_forward_settled = snapshot("aim_forward_settled")
+                receipt.update(
+                    aim_changed_pose=(
+                        aim["position"] != neutral["position"] or
+                        aim["rotation_q16"] != neutral["rotation_q16"]),
+                    aim_fire_constructed=aim_fire["clip"] != aim["clip"],
+                    single_fire_constructed=fire_state["clip"] != neutral["clip"],
+                    movement=dict(
+                        neutral_forward_delta=[
+                            forward_settled["position"][axis] - neutral["position"][axis]
+                            for axis in range(3)],
+                        aim_forward_delta=[
+                            aim_forward_settled["position"][axis] - aim_forward_start["position"][axis]
+                            for axis in range(3)]),
+                    collection_complete=True)
+                return
             if args.research:
                 receipt["rejected_commands"] = []
                 for invalid in ["arm 0", "arm 17", "inject 1 1 0", "inject 800892c8 257 0", "inject 0 1 0", "inject 800892c8 1 0 trailing", "direct 2", "refresh 2", "prepare 2", "fire_gate 2"]:
