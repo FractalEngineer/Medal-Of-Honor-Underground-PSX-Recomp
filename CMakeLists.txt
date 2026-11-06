@@ -159,6 +159,9 @@ if(BUILD_TESTING)
         "${PSXRECOMP_ROOT}/runtime/include" "${PSXRECOMP_ROOT}/recompiler/include"
         "${PSXRECOMP_ROOT}/recompiler/lib/toml11")
     target_link_libraries(mohu_mod_binding_options_test PRIVATE chdr-static)
+    # GCC 16 defaults to C++20; keep the runtime filesystem string ABI at 17.
+    set_target_properties(mohu_mod_binding_options_test PROPERTIES
+        CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF)
     add_test(NAME mohu_mod_binding_options_test COMMAND mohu_mod_binding_options_test)
 endif()
 

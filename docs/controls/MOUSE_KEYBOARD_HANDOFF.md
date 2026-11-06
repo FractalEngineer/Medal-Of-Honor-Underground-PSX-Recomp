@@ -1317,4 +1317,8 @@ combined compilation reached linking, where the existing release launcher
 **PID 30028** locked the executable. That session is preserved; no more local
 builds will run while it is open. CI builds from committed dependencies and is
 the authoritative clean release validation. Publication is pending its result.
+The first run, `42285087806`, reached the new test compilation and exposed GCC
+16's default C++20 char8_t filesystem strings. The title's binding test target
+now explicitly uses C++17, matching the runtime ABI. No gameplay source changed
+for this fix; publication is retried from the follow-up commit.
 The pre-existing game.toml and four framework VR edits remain excluded.
