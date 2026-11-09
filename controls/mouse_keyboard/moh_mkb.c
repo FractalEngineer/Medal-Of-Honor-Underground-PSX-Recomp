@@ -610,10 +610,16 @@ static void weapon_update(CPUState* cpu, uint32_t site) {
         code_hash(0x800891ACu, 0x11Cu) != 0x5A361CFBu) {
         reset_weapon_input(); return;
     }
-    int16_t reserve[8];
-    for (unsigned i = 0; i < count; ++i)
+    int16_t reserve[8], clip[8];
+    uint16_t flags[8];
+    for (unsigned i = 0; i < count; ++i) {
         reserve[i] = (int16_t)psx_mod_read_half(input + 0x5Eu + 2u * i);
-    const int slot = mohu_mkb_weapon_slot(reserve, count, current, wheel_steps, requested_slot);
+        clip[i] = (int16_t)psx_mod_read_half(input + 0x6Eu + 2u * i);
+        const uint32_t weapon = psx_mod_read_byte(0x800ABAD4u + i);
+        if (weapon >= 18u) { reset_weapon_input(); return; }
+        flags[i] = psx_mod_read_half(0x800AB60Cu + weapon * 68u + 42u);
+    }
+    const int slot = mohu_mkb_weapon_slot(reserve, clip, flags, count, current, wheel_steps, requested_slot);
     if (requested_slot >= 0) requested_slot = -1;
     else wheel_steps += wheel_steps > 0 ? -1 : 1;
     if (slot < 0 || (unsigned)slot == current) return;

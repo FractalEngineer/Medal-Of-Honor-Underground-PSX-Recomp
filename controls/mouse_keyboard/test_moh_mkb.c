@@ -47,12 +47,18 @@ int main(void) {
     CHECK(mohu_mkb_menu_buttons(0xFFFFu, 0, 0, 0, 1, 0, 0) == 0xFFBFu);
     CHECK(mohu_mkb_menu_buttons(0xFFFFu, 1, 1, 1, 1, 0, 0) == 0xFFFFu);
     CHECK(mohu_mkb_menu_buttons(0xFFFFu, 0, 0, 0, 0, 1, 1) == 0xAFFFu);
-    const int16_t inventory[] = {24, -1, 0, 8};
-    CHECK(mohu_mkb_weapon_slot(inventory, 4, 0, 1, -1) == 2);
-    CHECK(mohu_mkb_weapon_slot(inventory, 4, 0, -1, -1) == 3);
-    CHECK(mohu_mkb_weapon_slot(inventory, 4, 3, 1, -1) == 0);
-    CHECK(mohu_mkb_weapon_slot(inventory, 4, 0, 0, 1) == -1);
-    CHECK(mohu_mkb_weapon_slot(inventory, 4, 0, 0, 3) == 3);
+    const int16_t inventory[] = {24, -1, 0, 8, 0, 0, 0};
+    const int16_t clips[] = {0, 10, 0, 0, 3, 0, 0};
+    const uint16_t weapon_flags[] = {0, 9, 0, 0, 0, 1, 8};
+    CHECK(mohu_mkb_weapon_slot(inventory, clips, weapon_flags, 7, 3, -1, -1) == 0);
+    CHECK(mohu_mkb_weapon_slot(inventory, clips, weapon_flags, 7, 0, 1, -1) == 3);
+    CHECK(mohu_mkb_weapon_slot(inventory, clips, weapon_flags, 7, 3, 1, -1) == 4);
+    CHECK(mohu_mkb_weapon_slot(inventory, clips, weapon_flags, 7, 4, 1, -1) == 5);
+    CHECK(mohu_mkb_weapon_slot(inventory, clips, weapon_flags, 7, 5, 1, -1) == 6);
+    CHECK(mohu_mkb_weapon_slot(inventory, clips, weapon_flags, 7, 6, 1, -1) == 0);
+    CHECK(mohu_mkb_weapon_slot(inventory, clips, weapon_flags, 7, 0, 0, 1) == -1);
+    CHECK(mohu_mkb_weapon_slot(inventory, clips, weapon_flags, 7, 0, 0, 2) == -1);
+    CHECK(mohu_mkb_weapon_slot(inventory, clips, weapon_flags, 7, 0, 0, 4) == 4);
 
     MohuMkbMouse mouse = {0};
     mohu_mkb_mouse_reset(&mouse);

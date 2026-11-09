@@ -157,16 +157,22 @@ uint16_t mohu_mkb_action_aliases(uint16_t buttons, int enter, int backspace,
     return out;
 }
 
-int mohu_mkb_weapon_slot(const int16_t* reserve, unsigned count, unsigned current,
+static int weapon_selectable(int16_t reserve, int16_t clip, uint16_t flags) {
+    return reserve != -1 && ((flags & 0x9u) || reserve != 0 || clip != 0);
+}
+
+int mohu_mkb_weapon_slot(const int16_t* reserve, const int16_t* clip, const uint16_t* flags,
+                         unsigned count, unsigned current,
                          int direction, int requested) {
-    if (!reserve || !count || count > 8 || current >= count) return -1;
+    if (!reserve || !clip || !flags || !count || count > 8 || current >= count) return -1;
     if (requested >= 0)
-        return (unsigned)requested < count && reserve[requested] != -1 ? requested : -1;
+        return (unsigned)requested < count &&
+            weapon_selectable(reserve[requested], clip[requested], flags[requested]) ? requested : -1;
     if (!direction) return -1;
     for (unsigned step = 1; step < count; ++step) {
         unsigned slot = direction > 0 ? (current + step) % count :
                                         (current + count - step) % count;
-        if (reserve[slot] != -1) return (int)slot;
+        if (weapon_selectable(reserve[slot], clip[slot], flags[slot])) return (int)slot;
     }
     return -1;
 }

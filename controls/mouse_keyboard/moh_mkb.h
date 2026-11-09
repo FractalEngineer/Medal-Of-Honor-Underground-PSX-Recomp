@@ -32,7 +32,8 @@ void mohu_mkb_stick_pair(int left, int right, int up, int down,
 
 uint16_t mohu_mkb_action_aliases(uint16_t buttons, int enter, int backspace,
                                  int alternate_square);
-int mohu_mkb_weapon_slot(const int16_t* reserve, unsigned count, unsigned current,
+int mohu_mkb_weapon_slot(const int16_t* reserve, const int16_t* clip, const uint16_t* flags,
+                         unsigned count, unsigned current,
                          int direction, int requested);
 uint16_t mohu_mkb_menu_buttons(uint16_t buttons, int left, int right, int up,
                                int down, int confirm, int back);
