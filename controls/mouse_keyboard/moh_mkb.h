@@ -23,6 +23,9 @@ double mohu_mkb_zoom_step(double amount, int held);
 double mohu_mkb_zoom_ease(double amount);
 void mohu_mkb_angles(int32_t pitch, int32_t yaw, int64_t dp, int64_t dy,
                      int32_t* next_pitch, int32_t* next_yaw);
+int32_t mohu_mkb_mounted_yaw(int32_t current, int32_t anchor, int64_t delta, int limit);
+int mohu_mkb_mounted_pitch(int32_t center, int32_t x, int32_t z,
+                           int narrow, int32_t pitch, int32_t* next_target, int32_t* applied);
 
 void mohu_mkb_stick_pair(int left, int right, int up, int down,
                          uint8_t* lx, uint8_t* ly);

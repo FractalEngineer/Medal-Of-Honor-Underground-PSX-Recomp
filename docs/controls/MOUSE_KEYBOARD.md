@@ -46,6 +46,8 @@ weapon accuracy is unchanged. Number keys are reserved for PSXRecomp's filter
 shortcuts; use the wheel to cycle weapons.
 Walking and strafing remain available. While the mouse is captured, the sniper retains
 its native scope view with direct mouse look and normal walking/strafe controls.
+At a mounted machine gun, mouse movement aims the gun and the left/right movement
+bindings traverse it. The gun's native horizontal travel limits still apply.
 Weapon changes, ammunition, reload/use context and
 collision remain native.
 

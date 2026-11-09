@@ -88,6 +88,24 @@ int main(void) {
     CHECK(fabs(rotation[2] / 4096.0 - 100 / norm) < 1.0 / 4096);
     CHECK(fabs(rotation[5] / 4096.0 + 35 / norm) < 1.0 / 4096);
     CHECK(!mohu_mkb_shot_matrix(origin, origin, rotation));
+    CHECK(mohu_mkb_mounted_yaw(0x01000000, 0x01000000, 0x10000, 660) == 0x01010000);
+    CHECK(mohu_mkb_mounted_yaw(0x01000000, 0x01000000, 0x08000000, 660) == 0x03940000);
+    CHECK(mohu_mkb_mounted_yaw(0x01000000, 0x01000000, -0x08000000, 330) == (int32_t)0xffb60000u);
+    CHECK(mohu_mkb_mounted_yaw(0x07ff0000, 0, 0x20000, 0) == (int32_t)0xf8010000u);
+    int32_t pitch_target, applied;
+    CHECK(mohu_mkb_mounted_pitch(-272, 0, 200, 0,
+                                 50 * 65536, &pitch_target, &applied));
+    CHECK(pitch_target < -272 * 65536 && applied == 50 * 65536);
+    CHECK(mohu_mkb_mounted_pitch(-272, 0, 200, 0,
+                                 1000 * 65536, &pitch_target, &applied));
+    CHECK(pitch_target == (-272 - 60) * 65536 && applied < 1000 * 65536);
+    CHECK(mohu_mkb_mounted_pitch(-272, 0, 200, 1,
+                                 -1000 * 65536, &pitch_target, &applied));
+    CHECK(pitch_target == (-272 + 27) * 65536 && applied > -1000 * 65536);
+    CHECK(!mohu_mkb_mounted_pitch(0, 0, 0, 0, 1, &pitch_target, &applied));
+    CHECK(mohu_mkb_mounted_pitch(-272, 0, 200, 0,
+                                 -33 * 65536, &pitch_target, &applied));
+    CHECK(pitch_target > -272 * 65536 && applied == -33 * 65536);
     int32_t pitch, yaw;
     mohu_mkb_angles(0, 4090 * 65536, -32 * 65536, 32 * 65536, &pitch, &yaw);
     CHECK(pitch == -32 * 65536 && yaw == 26 * 65536);

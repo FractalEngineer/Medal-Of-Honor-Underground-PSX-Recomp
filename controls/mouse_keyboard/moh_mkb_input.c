@@ -80,6 +80,37 @@ int mohu_mkb_shot_matrix(const int32_t origin[3], const int32_t target[3],
     return 1;
 }
 
+int mohu_mkb_mounted_pitch(int32_t center, int32_t x, int32_t z,
+                           int narrow, int32_t pitch, int32_t* next_target, int32_t* applied) {
+    const double distance = hypot((double)x, (double)z);
+    if (distance < 1.0 || !next_target || !applied) return 0;
+    const double units = 268435456.0 / (2.0 * 3.14159265358979323846);
+    double angle = pitch / units;
+    const double low = atan2(-(double)(narrow ? 27 : 110), distance);
+    const double high = atan2((double)(narrow ? 15 : 60), distance);
+    if (angle < low) angle = low;
+    if (angle > high) angle = high;
+    *next_target = (int32_t)llround(((double)center - tan(angle) * distance) * 65536.0);
+    *applied = (int32_t)llround(angle * units);
+    return 1;
+}
+
+int32_t mohu_mkb_mounted_yaw(int32_t current, int32_t anchor, int64_t delta, int limit) {
+    const int64_t turn = 0x10000000LL, half = turn / 2;
+    int64_t relative = ((int64_t)current - anchor + delta % turn) % turn;
+    if (relative > half) relative -= turn;
+    if (relative < -half) relative += turn;
+    if (limit > 0) {
+        const int64_t bound = (int64_t)limit * 65536;
+        if (relative > bound) relative = bound;
+        if (relative < -bound) relative = -bound;
+    }
+    int64_t result = ((int64_t)anchor + relative) % turn;
+    if (result > half) result -= turn;
+    if (result < -half) result += turn;
+    return (int32_t)result;
+}
+
 void mohu_mkb_angles(int32_t pitch, int32_t yaw, int64_t dp, int64_t dy,
                      int32_t* next_pitch, int32_t* next_yaw) {
     int64_t p = (int64_t)pitch + dp;

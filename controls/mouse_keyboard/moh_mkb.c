@@ -227,6 +227,48 @@ static uint32_t owned_camera(uint32_t player) {
     return camera;
 }
 
+/* The mounted player and gun updates resolve the same actor handle. */
+static uint32_t mounted_gun(uint32_t input) {
+    if (!input || !(psx_mod_read_word(input) & 0x4000u)) return 0;
+    const uint32_t player = input - SP_PLAYER_INPUT_OFFSET;
+    if (psx_mod_read_word(player + 0x380u) != 0x80088B7Cu ||
+        code_hash(0x80088B7Cu, 0x584u) != 0x9AA0A7D3u ||
+        code_hash(0x8006806Cu, 0x6E0u) != 0x16508E60u) return 0;
+    const uint32_t handle = psx_mod_read_word(input + 0x1BCu);
+    if (!handle || (handle & 0xFFFFu) >= 512u) return 0;
+    const uint32_t gun = psx_mod_read_word(0x800AA1A0u + 4u * (handle & 0xFFFFu));
+    if (gun < 0x800B0000u || gun > 0x801FC000u || (gun & 3u) ||
+        psx_mod_read_word(gun + 8u) != 0x1772u ||
+        psx_mod_read_word(gun + 0x380u) != 0x8006806Cu ||
+        !psx_mod_read_word(gun + 0x70u)) return 0;
+    return gun;
+}
+
+static int mounted_target(uint32_t gun, int32_t* anchor, int* limit) {
+    const uint32_t model = psx_mod_read_word(gun + 0x114u);
+    if (model < 0x800B0000u || model > 0x801FF000u || (model & 3u)) return 0;
+    const uint32_t definition = psx_mod_read_word(model + 8u);
+    if (definition < 0x800B0000u || definition > 0x801FF000u || (definition & 3u)) return 0;
+    if (psx_mod_read_word(definition) == 0x17BB2CA0u) {
+        *anchor = 0; *limit = 0; return 1;
+    }
+    const uint32_t other = psx_mod_read_word(gun + 0x84u);
+    if (other) {
+        if (other < 0x800B0000u || other > 0x801FC000u || (other & 3u) ||
+            !(psx_mod_read_word(other + 12u) & 0x400000u)) return 0;
+        *anchor = (int32_t)psx_mod_read_word(other + 0x240u);
+        *limit = 330;
+    } else {
+        const uint32_t parent = psx_mod_read_word(gun + 0x1Cu);
+        if (parent < 0x800B0000u || parent > 0x801FF000u || (parent & 3u)) return 0;
+        const uint32_t base = psx_mod_read_word(parent + 4u);
+        if (base < 0x800B0000u || base > 0x801FF000u || (base & 3u)) return 0;
+        *anchor = (int32_t)(int16_t)psx_mod_read_half(base + 0x1Au) * 65536;
+        *limit = 660;
+    }
+    return 1;
+}
+
 static int captured(void) {
 #ifndef PSX_NO_DEBUG_TOOLS
     return mouse_captured || diagnostic_capture;
@@ -456,11 +498,40 @@ static void direct_camera(CPUState* cpu, uint32_t site) {
     int32_t pitch, yaw;
     mohu_mkb_angles(old_pitch, (int32_t)psx_mod_read_word(player + 0x240u),
                     dpitch, dyaw, &pitch, &yaw);
+    const uint32_t gun = mounted_gun(input);
+    if (gun) {
+        int32_t anchor, target, applied;
+        int limit;
+        if (!mounted_target(gun, &anchor, &limit)) { reset_look(); return; }
+        const uint32_t definition = psx_mod_read_word(psx_mod_read_word(gun + 0x114u) + 8u);
+        const uint32_t camera_input = camera + 0x3FCu;
+        const int32_t center = (int16_t)psx_mod_read_half(gun + 0x226u) +
+            (int16_t)psx_mod_read_half(definition + 0xDCu) -
+            (int16_t)psx_mod_read_half(player + 0x21Eu);
+        const int32_t old_target = (int32_t)psx_mod_read_word(camera_input + 0x28u);
+        if (!mohu_mkb_mounted_pitch(center,
+                (int16_t)psx_mod_read_half(camera_input + 0x26u),
+                (int16_t)psx_mod_read_half(camera_input + 0x2Eu),
+                psx_mod_read_word(gun + 0x84u) != 0,
+                pitch, &target, &applied)) { reset_look(); return; }
+        pitch = applied;
+        psx_mod_write_word(camera_input + 0x28u, (uint32_t)target);
+        psx_mod_write_word(camera_input + 0x1Cu,
+            psx_mod_read_word(camera_input + 0x1Cu) + (uint32_t)target - (uint32_t)old_target);
+    }
+    if (gun && dyaw) {
+        int32_t anchor;
+        int limit;
+        if (!mounted_target(gun, &anchor, &limit)) { reset_look(); return; }
+        yaw = mohu_mkb_mounted_yaw((int32_t)psx_mod_read_word(gun + 0x240u),
+                                    anchor, dyaw, limit);
+        psx_mod_write_word(gun + 0x240u, (uint32_t)yaw);
+    }
     psx_mod_write_word(player + 0x23Cu, (uint32_t)pitch);
     psx_mod_write_word(player + 0x240u, (uint32_t)yaw);
     psx_mod_write_word(input + 0x184u, (uint32_t)pitch);
     psx_mod_write_word(input + 0x190u, (uint32_t)yaw);
-    if (pitch != old_pitch && (mode == 7u || mode == 9u)) {
+    if (!gun && pitch != old_pitch && (mode == 7u || mode == 9u)) {
         const uint32_t camera_input = camera + 0x3FCu;
         const uint32_t old_target = psx_mod_read_word(camera_input + 0x28u);
         preparing = 1;
@@ -730,12 +801,13 @@ static int gameplay_pad(const PSXModPadFrame* frame, PSXModPadOutput* out) {
     uint8_t lx = 128, ly = 128;
     mohu_mkb_stick_pair(down[LEFT], down[RIGHT], down[FORWARD], down[BACKWARD], &lx, &ly);
     const int movement = down[LEFT] || down[RIGHT] || down[FORWARD] || down[BACKWARD];
+    const uint32_t input = owned_player_input();
+    const int mounted = mounted_gun(input) != 0;
     if (movement) {
-        out->lx = 128;
-        out->rx = lx; /* Native RX strafes; native LX turns. */
+        out->lx = mounted ? lx : 128;
+        out->rx = mounted ? 128 : lx; /* Native RX strafes; native LX turns. */
         out->ly = ly;
     }
-    const uint32_t input = owned_player_input();
 #ifndef PSX_NO_DEBUG_TOOLS
     if (diagnostic_aim) out->buttons &= ~PSX_R2;
 #endif
@@ -744,7 +816,7 @@ static int gameplay_pad(const PSXModPadFrame* frame, PSXModPadOutput* out) {
         zoom_amount = 0;
     mouse_strafe = out->rx;
     if (input && psx_mod_read_word(SP_PAUSE) == 0 && mouse_captured) {
-        out->lx = 128;
+        if (!mounted) out->lx = 128;
         if (movement) out->rx = 128;
     }
     if (input && psx_mod_read_word(SP_PAUSE) == 0 &&

@@ -21,6 +21,7 @@ static const uint8_t* test_keyboard(int* count) {
 static uint32_t test_player = 0x800F0BE0u;
 static uint32_t test_pause, test_split, test_vr, test_weapon;
 static uint32_t test_mode = 7;
+static int test_mounted;
 static uint32_t registered_adjust[8];
 static unsigned registered_adjust_count;
 static PSXModPadTransform installed_transform;
@@ -73,11 +74,26 @@ uint32_t psx_mod_read_word(uint32_t address) {
     if (address == 0x8010039Cu) return 0x80100400u;
     if (address == test_player + 8u) return 1;
     if (address == test_player + 0x39Cu) return test_player + SP_PLAYER_INPUT_OFFSET;
+    if (test_mounted) {
+        if (address == test_player + 0x380u) return 0x80088B7Cu;
+        if (address == test_player + SP_PLAYER_INPUT_OFFSET) return 0x4000u;
+        if (address == test_player + SP_PLAYER_INPUT_OFFSET + 0x1BCu) return 0x10003u;
+        if (address == 0x800AA1ACu) return 0x800F3000u;
+        if (address == 0x800F3008u) return 0x1772u;
+        if (address == 0x800F3380u) return 0x8006806Cu;
+        if (address == 0x800F3070u) return 1;
+    }
     if (address == test_player + SP_PLAYER_INPUT_OFFSET + 0x1D4u) return test_mode;
     if (address == SP_PAUSE) return test_pause;
     return 0;
 }
 uint8_t psx_mod_read_byte(uint32_t address) {
+    static const uint8_t player_tail[] = {66, 90, 207, 107, 0};
+    static const uint8_t gun_tail[] = {234, 180, 137, 32, 0};
+    if (test_mounted && address >= 0x80088B7Cu + 0x584u - 5u && address < 0x80088B7Cu + 0x584u)
+        return player_tail[address - (0x80088B7Cu + 0x584u - 5u)];
+    if (test_mounted && address >= 0x8006806Cu + 0x6E0u - 5u && address < 0x8006806Cu + 0x6E0u)
+        return gun_tail[address - (0x8006806Cu + 0x6E0u - 5u)];
     return address == test_player + SP_PLAYER_INPUT_OFFSET + 93u ? (uint8_t)test_weapon : 0;
 }
 uint16_t psx_mod_read_half(uint32_t address) { (void)address; return 0xFFFFu; }
@@ -231,6 +247,12 @@ int main(void) {
     keys[SDL_SCANCODE_W] = keys[SDL_SCANCODE_D] = 1;
     CHECK(installed_transform.transform(&frame, &state));
     CHECK(state.lx == 128 && state.ly == 0 && state.rx == 255);
+    test_mounted = 1; mouse_captured = 1;
+    state.lx = state.ly = state.rx = state.ry = 128;
+    CHECK(mounted_gun(owned_player_input()) == 0x800F3000u);
+    CHECK(installed_transform.transform(&frame, &state));
+    CHECK(state.lx == 255 && state.ly == 0 && state.rx == 128 && mouse_strafe == 128);
+    test_mounted = 0; mouse_captured = 0;
     keys[SDL_SCANCODE_A] = keys[SDL_SCANCODE_S] = 1;
     CHECK(installed_transform.transform(&frame, &state));
     CHECK(state.lx == 128 && state.ly == 128 && state.rx == 128);
