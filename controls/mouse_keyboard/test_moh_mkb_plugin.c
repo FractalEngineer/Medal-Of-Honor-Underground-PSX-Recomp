@@ -20,6 +20,7 @@ static const uint8_t* test_keyboard(int* count) {
 
 static uint32_t test_player = 0x800F0BE0u;
 static uint32_t test_pause, test_split, test_vr, test_weapon;
+static uint32_t test_frontend, test_gameplay = 1;
 static uint32_t test_mode = 7;
 static int test_mounted;
 static uint32_t registered_adjust[8];
@@ -85,6 +86,8 @@ uint32_t psx_mod_read_word(uint32_t address) {
     }
     if (address == test_player + SP_PLAYER_INPUT_OFFSET + 0x1D4u) return test_mode;
     if (address == SP_PAUSE) return test_pause;
+    if (address == SP_FRONTEND_ACTIVE) return test_frontend;
+    if (address == SP_GAMEPLAY_ACTIVE) return test_gameplay;
     return 0;
 }
 uint8_t psx_mod_read_byte(uint32_t address) {
@@ -229,6 +232,13 @@ int main(void) {
     test_started = 0;
     CHECK(in_menu());
     test_started = 1;
+    test_frontend = 1; test_gameplay = 0;
+    CHECK(in_menu()); /* Mission debrief / codename frontend with a stale player. */
+    test_frontend = 0; test_gameplay = 1;
+    CHECK(!in_menu());
+    test_pause = 1;
+    CHECK(in_menu());
+    test_pause = 0;
     on_frame();
     CHECK(installed_profile.square == SDL_SCANCODE_UNKNOWN && installed_profile.circle == SDL_SCANCODE_UNKNOWN);
     test_pause = 0; test_split = 1;

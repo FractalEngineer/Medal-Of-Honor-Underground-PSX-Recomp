@@ -1394,3 +1394,29 @@ thumbnail and video caption matching the existing VR demo presentation.
 Owner subsequently requested committing and pushing these documentation edits
 to master, including the preceding branch-cleanup handoff. No build or game
 interaction was needed; unrelated working-tree changes remain excluded.
+
+## Frontend menu input fix - 2026-11-10
+
+Issue #6: once MKB was active, the mission-end Evaluation screen lost
+left/right, Cross and Triangle, and the codename/typewriter screen lost all
+directions. Both screens keep the stale campaign player/input objects, so the
+old `in_menu()` test (no owned player or `SP_PAUSE`) stayed false and gameplay
+mappings ran.
+
+The native scene state distinguishes them: `0x800A5110 = 1` and
+`0x800A0480 = 0` on both frontends, while gameplay and the pause menu keep
+`0/1` (pause remains covered by `SP_PAUSE`). `in_menu()` now also returns true
+for that frontend pair, so the existing menu profile maps W/A/S/D and E/Q
+normally.
+
+Verified with the operator's copied slot 05 (codename/typewriter) and slot 04
+(mission-end walk-forward). Live pad words on slot 05: neutral `0xFFFF`,
+D `0xFFDF` (Right), W `0xFFEF` (Up); the plugin test covers all four directions
+plus Cross/Triangle (`0xAFCF` for W+D+E+Q). Root CTest is 6/6. Source saves
+`slot04.pst` and `slot05.pst` remained byte-identical; no memory card was
+written.
+
+`build-release` was temporarily reconfigured with `PSX_DEBUG_TOOLS=ON` for the
+debugger. The disposable slot 05 session was closed afterward and the release
+configuration restored (`PSX_DEBUG_TOOLS=OFF`) before the final build and
+CTest run.

@@ -25,6 +25,8 @@ static int diagnostic_aim;
 #define SP_PLAYER_INPUT_OFFSET 0x3FCu
 #define SP_PLAYER_CLASS 1u
 #define SP_PAUSE 0x800A70F0u
+#define SP_FRONTEND_ACTIVE 0x800A5110u
+#define SP_GAMEPLAY_ACTIVE 0x800A0480u
 #define MP_PLAYER2_ROOT 0x800A3608u
 #define MP_PLAYER_INPUT_OFFSET 0x400u
 
@@ -196,8 +198,18 @@ static uint32_t owned_player_input(void) {
     return input == player + SP_PLAYER_INPUT_OFFSET ? input : 0;
 }
 
+/* Mission debriefs and the codename/save screens keep the stale campaign
+ * player and input objects, so those pointers cannot identify a frontend. The
+ * native scene state flips to frontend=1, gameplay=0 there, while the pause
+ * menu keeps the gameplay pair (and is already handled by SP_PAUSE). */
+static int frontend_active(void) {
+    return psx_mod_read_word(SP_FRONTEND_ACTIVE) == 1u &&
+           psx_mod_read_word(SP_GAMEPLAY_ACTIVE) == 0u;
+}
+
 static int in_menu(void) {
-    return !owned_player_input() || psx_mod_read_word(SP_PAUSE) != 0;
+    return !owned_player_input() || psx_mod_read_word(SP_PAUSE) != 0 ||
+           frontend_active();
 }
 
 static int refresh_profile(void) {
