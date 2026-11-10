@@ -1,0 +1,137 @@
+name: Bug report
+description: Report a crash, control problem, visual/audio bug or VR issue in the alpha.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Fill in the **controls mode** first, then the matching details field.
+        GitHub cannot hide fields, so choose **Not applicable** or write `N/A`
+        for modes you are not using. Never attach disc images or BIOS dumps.
+
+  - type: dropdown
+    id: controls_mode
+    attributes:
+      label: Controls mode
+      description: Which input mode were you using when the problem occurred?
+      options:
+        - Original (gamepad / original-style controls)
+        - VR (OpenXR headset)
+        - Mouse and keyboard
+        - Mixed (gamepad plus mouse and keyboard)
+        - Not sure
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Version or build
+      description: Release ZIP version, or the commit SHA for a self-built binary.
+      placeholder: "v0.1.3 or 30dfd2c"
+    validations:
+      required: true
+
+  - type: textarea
+    id: system
+    attributes:
+      label: System
+      value: |
+        - OS:
+        - CPU:
+        - GPU:
+        - RAM:
+        - Headset (if VR):
+      render: markdown
+    validations:
+      required: true
+
+  - type: dropdown
+    id: vr_runtime
+    attributes:
+      label: VR runtime
+      description: VR only. Choose Not applicable if you are not using VR.
+      options:
+        - VDXR (Virtual Desktop)
+        - SteamVR
+        - Oculus (Meta Quest Link / Air Link)
+        - Other or custom OpenXR runtime
+        - Not applicable (not using VR)
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: mkb_enabled
+    attributes:
+      label: Mouse and keyboard mod
+      description: Mouse and keyboard mode only. Choose Not applicable otherwise.
+      options:
+        - label: I enabled **Mouse and keyboard** in the launcher's **Mods** menu.
+        - label: The mod was **not** enabled for this session.
+        - label: Not applicable (not using mouse and keyboard)
+    validations:
+      required: true
+
+  - type: input
+    id: location
+    attributes:
+      label: Mission, map or menu
+      description: Where in the game does this happen?
+      placeholder: "Example: Mission 2 - Ruins, or Main menu > Options"
+    validations:
+      required: true
+
+  - type: textarea
+    id: what_happened
+    attributes:
+      label: What happened?
+      description: What went wrong, and what did you expect instead?
+      placeholder: The game crashes when... I expected it to...
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Include the launch method and whether a savestate or memory card was loaded.
+      value: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: reproducibility
+    attributes:
+      label: How often does it happen?
+      options:
+        - Every time
+        - Most of the time
+        - Sometimes
+        - Happened once
+        - Could not reproduce
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Console output or logs
+      description: |
+        Optional but very helpful. Copy the console text or attach the files.
+
+        **Flat play (`RunFlat.bat`):** look in `analysis\runtime\flat\` for
+        `psx_crash.txt`, `psx_last_run_report.json` and
+        `psx_freeze_heartbeat.json`.
+
+        **VR (`RunVR-*.bat`):** look in `analysis\runtime\vr\` for
+        `vr-launch.stdout.log`, `vr-launch.stderr.log` and the same
+        `psx_*` report files.
+
+        If those folders are empty, copy the launcher console window text.
+        Remove personal file paths before posting.
+    validations:
+      required: false

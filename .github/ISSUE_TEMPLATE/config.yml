@@ -1,0 +1,12 @@
+blank_issues_enabled: true
+
+contact_links:
+  - name: Alpha setup and known limitations
+    url: https://github.com/FractalEngineer/Medal-Of-Honor-Underground-PSX-Recomp/blob/master/ALPHA_README.md
+    about: Install steps, launchers, controls and the current alpha limitations.
+  - name: Documentation map
+    url: https://github.com/FractalEngineer/Medal-Of-Honor-Underground-PSX-Recomp/blob/master/docs/README.md
+    about: Release notes, VR evidence and development handoffs.
+  - name: R.A.I.D. Discord
+    url: https://discord.gg/Ad9BwSzctP
+    about: Ask setup questions and discuss the alpha with the community.
