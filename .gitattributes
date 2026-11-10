@@ -1,0 +1,2 @@
+# The launcher rewrites game.toml using LF endings.
+game.toml text eol=lf
