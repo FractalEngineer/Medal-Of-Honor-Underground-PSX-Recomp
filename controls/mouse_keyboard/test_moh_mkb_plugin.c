@@ -20,6 +20,7 @@ static const uint8_t* test_keyboard(int* count) {
 
 static uint32_t test_player = 0x800F0BE0u;
 static uint32_t test_pause, test_split, test_vr, test_weapon;
+static uint32_t test_aim, test_depth;
 static uint32_t test_frontend, test_gameplay = 1;
 static uint32_t test_mode = 7;
 static int test_mounted;
@@ -84,6 +85,8 @@ uint32_t psx_mod_read_word(uint32_t address) {
         if (address == 0x800F3380u) return 0x8006806Cu;
         if (address == 0x800F3070u) return 1;
     }
+    if (address == test_player + SP_PLAYER_INPUT_OFFSET) return test_aim ? 0x20u : 0u;
+    if (address == test_player + SP_PLAYER_INPUT_OFFSET + 0xACu) return test_depth;
     if (address == test_player + SP_PLAYER_INPUT_OFFSET + 0x1D4u) return test_mode;
     if (address == SP_PAUSE) return test_pause;
     if (address == SP_FRONTEND_ACTIVE) return test_frontend;
@@ -163,6 +166,9 @@ static uint32_t transformed_buttons(void) {
 
 int main(void) {
     CHECK(on_activate && on_reset);
+    CHECK(native_aim_weapon(SNIPER_WEAPON_ID));
+    CHECK(native_aim_weapon(CAMERA_WEAPON_ID));
+    CHECK(!native_aim_weapon(0));
     CHECK(direct_mode_supported(9)); /* Petrol bomb / throwable native look. */
     CHECK(!direct_mode_supported(6));
     on_activate();
@@ -204,6 +210,8 @@ int main(void) {
     CHECK(transformed_buttons() == 0xBFFFu);
     test_weapon = SNIPER_WEAPON_ID;
     CHECK(transformed_buttons() == 0xBDFFu);
+    test_weapon = CAMERA_WEAPON_ID;
+    CHECK(transformed_buttons() == 0xBDFFu); /* Camera keeps native R2 aim. */
     test_weapon = 0; test_pause = 1;
     CHECK(transformed_buttons() == 0xBDFFu);
     CHECK(on_frame);
@@ -366,6 +374,13 @@ int main(void) {
     CHECK(wheel_steps == 1); /* Old wheel-down binding is gone. */
 
     override_id = NULL; refresh_bindings(); refresh_sensitivity();
+    test_weapon = CAMERA_WEAPON_ID; test_aim = 1; test_depth = 800;
+    CHECK(fabs(look_gain(owned_player_input()) - 0.2) < 1e-9);
+    test_depth = 400;
+    CHECK(fabs(look_gain(owned_player_input()) - 0.4) < 1e-9);
+    test_aim = 0;
+    CHECK(fabs(look_gain(owned_player_input()) - 0.5) < 1e-9);
+    test_depth = 0;
     test_weapon = 0; zoom_amount = 0;
     CHECK(fabs(look_gain(owned_player_input()) - 0.5) < 1e-9);
     zoom_amount = 1;

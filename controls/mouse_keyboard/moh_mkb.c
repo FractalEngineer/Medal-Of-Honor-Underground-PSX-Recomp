@@ -34,6 +34,11 @@ static int diagnostic_aim;
 #define PSX_START 0x0008u
 
 #define SNIPER_WEAPON_ID 5u
+#define CAMERA_WEAPON_ID 7u
+
+static int native_aim_weapon(uint32_t weapon) {
+    return weapon == SNIPER_WEAPON_ID || weapon == CAMERA_WEAPON_ID;
+}
 
 static int active;
 static int mouse_captured;
@@ -334,18 +339,22 @@ static void firearm_focal(CPUState* cpu, uint32_t site) {
     }
 }
 
-/* R2 still owns native sniper zoom and its overlay. Only the control-mode
- * result and the two locomotion tests see ordinary walking semantics; the
- * real aim flags remain available to camera, weapon and HUD consumers. */
+/* R2 still owns the native sniper scope and objective-camera view. Only the
+ * control-mode result and the two locomotion tests see ordinary walking
+ * semantics; the real aim flags remain available to camera, weapon and HUD
+ * consumers. */
 static void sniper_controls(CPUState* cpu, uint32_t site) {
     if (!cpu || !active || !captured() || g_psx_render_pass_active ||
         psx_mod_read_word(SP_PAUSE)) return;
     firearm_focal(cpu, site);
     const uint32_t input = owned_player_input();
-    if (!input || psx_mod_read_byte(input + 93u) != SNIPER_WEAPON_ID) return;
+    if (!input || !native_aim_weapon(psx_mod_read_byte(input + 93u))) return;
     const uint32_t player = input - SP_PLAYER_INPUT_OFFSET;
     if (site == 0x800894FCu) {
-        if (cpu->gpr[17] == player && cpu->gpr[16] == input && cpu->gpr[2] == 2u &&
+        const uint32_t weapon = psx_mod_read_byte(input + 93u);
+        const uint32_t stationary = weapon == CAMERA_WEAPON_ID ? 6u : 2u;
+        if (cpu->gpr[17] == player && cpu->gpr[16] == input &&
+            cpu->gpr[2] == stationary &&
             code_hash(0x80087790u, 0xBCu) == 0x8728EEBCu) {
             cpu->gpr[2] = 7u;
             psx_mod_counter_add("mohu.mkb.scope.walk", 1);
@@ -433,7 +442,7 @@ static void scoped_origin(CPUState* cpu, uint32_t site) {
     if (!cpu || !active || !captured() || g_psx_render_pass_active ||
         psx_mod_read_word(SP_PAUSE) || site < 0x800481A0u || site > 0x800481A8u) return;
     const uint32_t input = owned_player_input();
-    const int scoped = input && psx_mod_read_byte(input + 93u) == SNIPER_WEAPON_ID &&
+    const int scoped = input && native_aim_weapon(psx_mod_read_byte(input + 93u)) &&
         (psx_mod_read_word(input) & 0x20u);
     if (!input || (!scoped && !firearm_zooming(input)) || cpu->gpr[2] != input ||
         cpu->gpr[17] != input + 0x1B0u) return;
@@ -459,7 +468,7 @@ static double look_gain(uint32_t input) {
         const double blend = mohu_mkb_zoom_ease(zoom_amount);
         return (mouse_gain * (1 - blend) + scoped_gain * blend) / firearm_zoom_ratio();
     }
-    if (psx_mod_read_byte(input + 93u) == SNIPER_WEAPON_ID &&
+    if (native_aim_weapon(psx_mod_read_byte(input + 93u)) &&
         (psx_mod_read_word(input) & 0x20u))
         return scoped_gain * 400.0 / fmax(400.0, psx_mod_read_word(input + 0xACu));
     return mouse_gain;
@@ -680,7 +689,7 @@ static void native_reticle(CPUState* cpu, uint32_t address) {
     if (!active || !cpu || (address != 0x8008C1B4u && address != 0x8008C1FCu) || !input ||
         cpu->gpr[6] != input || cpu->gpr[16] != input - SP_PLAYER_INPUT_OFFSET ||
         psx_mod_read_word(SP_PAUSE) != 0 ||
-        (psx_mod_read_byte(input + 93u) == SNIPER_WEAPON_ID &&
+        (native_aim_weapon(psx_mod_read_byte(input + 93u)) &&
          (psx_mod_read_word(input) & 0x20u))) return;
     uint32_t hash = 2166136261u;
     for (uint32_t p = 0x8008C124u; p < 0x8008C620u; ++p)
@@ -838,7 +847,7 @@ static int gameplay_pad(const PSXModPadFrame* frame, PSXModPadOutput* out) {
         if (movement) out->rx = 128;
     }
     if (input && psx_mod_read_word(SP_PAUSE) == 0 &&
-        psx_mod_read_byte(input + 93u) != SNIPER_WEAPON_ID)
+        !native_aim_weapon(psx_mod_read_byte(input + 93u)))
         out->buttons |= PSX_R2; /* Active-low: release ordinary aim. */
     return 1;
 }

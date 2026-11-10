@@ -1444,3 +1444,30 @@ grenade (weapons 0/16/13/15), so ID 10 is covered by the shared classifier and
 pure test rather than a separate live throw. Source saves remained unchanged.
 Throw arcs and projectile origins are still native (`scoped_origin` excludes
 the thrown shot type).
+
+## Objective camera native aim - 2026-11-10
+
+Owner requested native aiming and shooting for the objective camera (weapon ID
+**7**) through the sniper-rifle path, retaining movement while the viewfinder
+is held.
+
+- Added `native_aim_weapon()` for sniper ID **5** and camera ID **7**. R2 is
+  now passed through for both; other weapons still release ordinary R2.
+- The native-aim movement hooks now cover the camera. Its native stationary
+  mode **6** maps to ordinary walking mode **7**; the sniper keeps **2 -> 7**.
+  The two locomotion aim-bit masks, reticle exclusion and current-eye shot
+  origin use the same classifier.
+- Aimed mouse gain uses the sniper depth-compensation formula for the camera's
+  native viewfinder depth.
+
+Live verification used a copied slot 1 with the camera already equipped
+(inventory slot 2, weapon ID 7). Neutral state was mode **9**, depth **400**,
+radius flags `0x00080000`. With captured aim, mode became **7**, the native aim
+flag was set (`0x00280020`), depth became **480**, and `mohu.mkb.scope.walk`
+advanced. Holding forward moved the actor while pitch and yaw stayed unchanged.
+Releasing aim restored mode **9**, depth **400** and cleared the aim flag. Root
+CTest is **6/6**. Source saves remained unchanged.
+
+`build-release` was temporarily reconfigured with `PSX_DEBUG_TOOLS=ON` for the
+debugger and restored to `PSX_DEBUG_TOOLS=OFF` before the final build and CTest
+run.

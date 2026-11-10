@@ -3,7 +3,7 @@
 
 int mohu_mkb_zoom_supported(unsigned weapon) {
     /* Ordinary firearms, the crossbow, stick grenade (10) and petrol bomb
-     * (15); the sniper scope and objective camera stay native. */
+     * (15); the sniper scope and objective camera use native aim instead. */
     switch (weapon) {
     case 0: case 1: case 4: case 8: case 9: case 10:
     case 11: case 12: case 13: case 14: case 15: case 16: case 17:

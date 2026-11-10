@@ -16,7 +16,7 @@ int main(void) {
     for (unsigned i = 0; i < sizeof(weapons) / sizeof(weapons[0]); ++i)
         CHECK(mohu_mkb_zoom_supported(weapons[i]));
     CHECK(!mohu_mkb_zoom_supported(5)); /* Keep native sniper scope. */
-    CHECK(!mohu_mkb_zoom_supported(7)); /* Objective camera. */
+    CHECK(!mohu_mkb_zoom_supported(7)); /* Camera uses native aim. */
     double zoom = 0;
     zoom = mohu_mkb_zoom_step(zoom, 1);
     CHECK(fabs(mohu_mkb_zoom_ease(zoom) - 7.0 / 27.0) < 1e-9);
