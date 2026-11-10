@@ -1,6 +1,6 @@
 # Project Documentation
 
-Updated 2026-11-09 for the `v0.1.3` Windows x64 VR and Mouse/Keyboard alpha.
+Updated 2026-11-10 for the `v0.1.4` Windows x64 VR and Mouse/Keyboard alpha.
 This directory is the central index for retained project documentation.
 
 ## Start here
@@ -9,7 +9,7 @@ This directory is the central index for retained project documentation.
 | --- | --- |
 | Understand the project or build it | [Project README](../README.md) |
 | Install, play or report an alpha issue | [Player guide](../ALPHA_README.md) |
-| Check what shipped in the current alpha | [v0.1.3 release notes](release/v0.1.3.md) |
+| Check what shipped in the current alpha | [v0.1.4 release notes](release/v0.1.4.md) |
 | Configure mouse and keyboard gameplay | [MKB controls](controls/MOUSE_KEYBOARD.md) |
 | See current acceptance and open gates | [Release handoff](vr/HANDOFF.md) |
 | Find launches, saves and recovery files | [Workspace layout](vr/WORKSPACE_LAYOUT.md) |
@@ -26,7 +26,7 @@ here instead of becoming independent installation or status instructions.
 | --- | --- |
 | [Project README](../README.md) | Project overview, legal boundary, release downloads and build flow |
 | [Player guide](../ALPHA_README.md) | Installation, controls and player-facing alpha limitations |
-| [v0.1.3 release notes](release/v0.1.3.md) | Versioned release summary and package expectations |
+| [v0.1.4 release notes](release/v0.1.4.md) | Versioned release summary and package expectations |
 | [Release handoff](vr/HANDOFF.md) | Current acceptance surface, verification and open gates |
 | [Workspace layout](vr/WORKSPACE_LAYOUT.md) | Executable, launcher, save, fixture and cleanup policy |
 | [VR plan](vr/VR_PLAN.md) | Technical program, accepted checkpoints and remaining work |

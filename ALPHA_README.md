@@ -1,16 +1,16 @@
 # Medal of Honor Underground Recompiled + Full 6dof VR + Mouse/Keyboard
 
-This is the Windows x64 **v0.1.3** testing release. Flat play remains the
+This is the Windows x64 **v0.1.4** testing release. Flat play remains the
 default; VR is optional. Quest 3 through Virtual Desktop with VDXR is the
 primary tested headset setup. SteamVR and Oculus launchers are included, but
 Meta Quest Link and broad runtime coverage are not yet accepted.
 
 For project context, see the [project README](README.md),
-[v0.1.3 release notes](docs/release/v0.1.3.md) and
+[v0.1.4 release notes](docs/release/v0.1.4.md) and
 [documentation map](docs/README.md). The release notes summarize the package;
 this guide is the source of truth for player setup, controls and limitations.
 
-## What is in v0.1.3
+## What is in v0.1.4
 
 - Native OpenXR stereo rendering with motion-tracked head movement.
 - Tracked first-person weapons with hand-derived aiming and a right-grip laser.
@@ -20,9 +20,12 @@ this guide is the source of truth for player setup, controls and limitations.
 - A held 2.5x sniper scope with native scope range and normal player movement.
 - Shared memory cards and savestates between flat and VR launchers.
 - Mouse and keyboard campaign gameplay with editable actions, independent
-  sensitivity sliders, wheel weapon cycling and adjustable 1.00x-2.50x aim zoom.
+  sensitivity sliders, wheel weapon cycling and adjustable 1.00x-2.50x aim zoom
+  for firearms, the crossbow and both throwables.
 - Mouse aiming and left/right traversal for mounted guns, plus corrected weapon
   cycling past empty inventory slots in either direction.
+- Native frontend screens use the menu profile, so gameplay bindings do not
+  leak into mission-end Evaluation or codename/typewriter pages.
 
 This is an alpha. Weapon and damage alignment beyond the exercised P38, Sten,
 Panzerfaust and petrol-bomb paths still needs broader validation. Demanding
@@ -31,7 +34,7 @@ alignment and some frontend transitions still need physical-headset checks.
 
 ## Install and play
 
-1. Download `mohu-0.1.3-windows-x64.zip` and extract the entire archive to a
+1. Download `mohu-0.1.4-windows-x64.zip` and extract the entire archive to a
    writable folder. Keep the executable, assets, mods and overlay toolchain
    together.
 2. Supply your own **Medal of Honor Underground SLUS-01270 (NTSC-U)** CUE/BIN
