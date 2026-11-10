@@ -1471,3 +1471,58 @@ CTest is **6/6**. Source saves remained unchanged.
 `build-release` was temporarily reconfigured with `PSX_DEBUG_TOOLS=ON` for the
 debugger and restored to `PSX_DEBUG_TOOLS=OFF` before the final build and CTest
 run.
+
+### Aimed weapon-switch teleport
+
+Cycling away from the aimed camera moved the player hundreds of millions of
+fixed-point units in one frame. The native update at `0x8008ED58` moves the
+actor toward the position target in the control block (`+0x98/+0x9C/+0xA0`)
+through the pending displacement at actor `+0x204/+0x208/+0x20C`. While the
+camera is aimed, that target stays at the camera's distant aim point. Switching
+weapons applied the whole difference in one movement-integration step.
+
+On a native-aim weapon switch with the aim button still held, the plugin now
+sets the control target back to the actor's current position and clears the
+three pending displacement words. It also seeds `zoom_amount` to the fully
+aimed value, so switching to an optical firearm does not ease from focal 400 to
+500 while the button remains held.
+
+Live verification used fresh slot 1 with the camera equipped. Before the fix,
+one wheel step moved the player from `(411460497, 4849664, -241069802)` to
+`(615848708, 4849664, -214213436)` (delta `204388211, 0, 26856366`). After the
+fix the same switch produced delta `0, 0, 0`, with `weapon.move.hold` and
+`weapon.zoom.hold` incremented, mode `7`, and depth `500` on the next frame.
+Holding forward after the switch then moved normally with unchanged angles.
+Root CTest is **6/6**.
+
+`build-release` was restored to `PSX_DEBUG_TOOLS=OFF` after this check.
+
+### Screen-centred reticle and shot target - 2026-11-10
+
+Owner reported every weapon aiming low on screen and asked for a centre
+reticle, including the mounted machine gun. The native aim-assist writer at
+`0x8008E1D4` stores the shot target at input `+0x1B0`; its target sits below
+the camera axis. The reticle draw at `0x8008C5D4` uses separate native screen
+coordinates and also sat low.
+
+Two hooks now correct this while the mouse is captured:
+
+- At `0x8008E204`, immediately after the native target stores, the plugin
+  rebuilds input `+0x1B0` on the player's camera-forward axis from the current
+  camera eye. It preserves the native target distance, so range and impact
+  behaviour stay intact. This applies to every weapon and item, including the
+  mounted gun.
+- At `0x8008C5D4`, the four ordinary reticle line packets are rewritten around
+  the live guest display centre from `psx_mod_display_width()/2` and
+  `psx_mod_display_height()/2` (`256,120` at 512x240) instead of the native
+  offset centre. The centre helper falls back to 512x240 only when geometry is
+  not established, and is tested at 320x240, 512x240 and 640x480. The mounted
+  gun is included through `reticle_aiming()`, which treats an active mount as
+  aimed even when the player's zoom classifier does not apply.
+
+Live screenshots on save 1 measured the pistol and weapon 1 crosshair centroid
+at `(256.375, 120.375)`; before the reticle change the same crosshair was at
+`(256.375, 131.375)`. The `mohu.mkb.aim.center` counter advances every frame,
+and the shot/impact angle was confirmed good by the owner. Root CTest is
+**6/6**. `build-release` was restored to `PSX_DEBUG_TOOLS=OFF` after the
+check.

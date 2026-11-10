@@ -62,6 +62,43 @@ void mohu_mkb_view_matrix(int32_t pitch, int32_t yaw, const int32_t eye[3],
     }
 }
 
+void mohu_mkb_screen_centre(uint32_t width, uint32_t height, int16_t out[2]) {
+    if (!out) return;
+    if (!width) width = 512;
+    if (!height) height = 240;
+    out[0] = (int16_t)(width / 2u);
+    out[1] = (int16_t)(height / 2u);
+}
+
+void mohu_mkb_forward(int32_t pitch, int32_t yaw, double forward[3]) {
+    if (!forward) return;
+    const double radians = 6.2831853071795864769 / (4096.0 * 65536.0);
+    const double sp = sin(pitch * radians), cp = cos(pitch * radians);
+    const double sy = sin(yaw * radians), cy = cos(yaw * radians);
+    forward[0] = sy * cp;
+    forward[1] = -sp;
+    forward[2] = cy * cp;
+}
+
+int mohu_mkb_center_target(const int32_t eye[3], const int32_t target[3],
+                           int32_t pitch, int32_t yaw, int32_t out[3]) {
+    if (!eye || !target || !out) return 0;
+    double delta[3], distance = 0;
+    for (unsigned i = 0; i < 3; ++i) {
+        delta[i] = (double)target[i] - eye[i];
+        distance += delta[i] * delta[i];
+    }
+    distance = sqrt(distance);
+    if (distance < 65536.0) return 0;
+    double forward[3];
+    mohu_mkb_forward(pitch, yaw, forward);
+    for (unsigned i = 0; i < 3; ++i) {
+        const double value = eye[i] + forward[i] * distance;
+        out[i] = (int32_t)lround(fmax(INT32_MIN, fmin(INT32_MAX, value)));
+    }
+    return 1;
+}
+
 int mohu_mkb_shot_matrix(const int32_t origin[3], const int32_t target[3],
                          int16_t rotation[9]) {
     double f[3];

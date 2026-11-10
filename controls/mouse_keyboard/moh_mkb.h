@@ -16,6 +16,10 @@ void mohu_mkb_mouse_take_scaled(MohuMkbMouse* mouse, double gain,
 /* Native camera rows use scales 2, 5/4, 2. Preserve fractional Q16 pose. */
 void mohu_mkb_view_matrix(int32_t pitch, int32_t yaw, const int32_t eye[3],
                           int16_t rotation[9], int32_t translation[3]);
+void mohu_mkb_screen_centre(uint32_t width, uint32_t height, int16_t out[2]);
+void mohu_mkb_forward(int32_t pitch, int32_t yaw, double forward[3]);
+int mohu_mkb_center_target(const int32_t eye[3], const int32_t target[3],
+                           int32_t pitch, int32_t yaw, int32_t out[3]);
 int mohu_mkb_shot_matrix(const int32_t origin[3], const int32_t target[3],
                          int16_t rotation[9]);
 int mohu_mkb_zoom_supported(unsigned weapon);

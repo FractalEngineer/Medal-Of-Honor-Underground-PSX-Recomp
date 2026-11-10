@@ -40,6 +40,17 @@ static int native_aim_weapon(uint32_t weapon) {
     return weapon == SNIPER_WEAPON_ID || weapon == CAMERA_WEAPON_ID;
 }
 
+static int leaves_native_aim(uint32_t previous, int aiming) {
+    return aiming && native_aim_weapon(previous);
+}
+
+/* Leaving native aim for an optical weapon with the aim button still held must
+ * not ease up from focal 400: the native view is already zoomed. */
+static int keeps_aim_zoom(uint32_t previous, uint32_t next, int aiming) {
+    return leaves_native_aim(previous, aiming) &&
+        mohu_mkb_zoom_supported(next);
+}
+
 static int active;
 static int mouse_captured;
 static uint32_t mouse_strafe = 128;
@@ -303,12 +314,22 @@ static int firearm_zooming(uint32_t input) {
     return firearm_zoom_eligible(input) && zoom_amount > 0;
 }
 
-static int firearm_aiming(uint32_t input) {
+static int aim_held(void) {
     int held = zoom_held;
 #ifndef PSX_NO_DEBUG_TOOLS
     held |= diagnostic_aim;
 #endif
-    return firearm_zoom_eligible(input) && held;
+    return held;
+}
+
+static int firearm_aiming(uint32_t input) {
+    return firearm_zoom_eligible(input) && aim_held();
+}
+
+/* Mounted guns use the same reticle packets but do not pass through the
+ * player's zoom classifier, so treat an active mount as aimed for the HUD. */
+static int reticle_aiming(uint32_t input) {
+    return firearm_aiming(input) || (input && mounted_gun(input) != 0);
 }
 
 static double firearm_zoom_ratio(void) {
@@ -458,6 +479,32 @@ static void scoped_origin(CPUState* cpu, uint32_t site) {
     const unsigned axis = (site - 0x800481A0u) / 4u;
     cpu->gpr[8u + axis] = psx_mod_read_word(camera + 0x220u + 4u * axis);
     if (!axis) psx_mod_counter_add(scoped ? "mohu.mkb.scope.origin" : "mohu.mkb.firearm.origin", 1);
+}
+
+/* The native aim-assist target sits below the camera axis, so every weapon
+ * reticle and shot lands low. Rebuild that target on the camera's forward
+ * axis at the native range, which keeps the reticle and the shot together at
+ * screen centre for firearms, throwables, the camera and the mounted gun. */
+static void center_aim_target(CPUState* cpu, uint32_t site) {
+    if (!cpu || site != 0x8008E204u || !active || !captured() ||
+        g_psx_render_pass_active || psx_mod_read_word(SP_PAUSE) ||
+        code_hash(0x8008D81Cu, 0x1058u) != 0x787AC4B0u) return;
+    const uint32_t input = owned_player_input();
+    if (!input || cpu->gpr[19] != input) return;
+    const uint32_t player = input - SP_PLAYER_INPUT_OFFSET;
+    const uint32_t camera = owned_camera(player);
+    if (!camera) return;
+    int32_t eye[3], target[3], centered[3];
+    for (unsigned i = 0; i < 3; ++i) {
+        eye[i] = (int32_t)psx_mod_read_word(camera + 0x220u + 4u * i);
+        target[i] = (int32_t)psx_mod_read_word(input + 0x1B0u + 4u * i);
+    }
+    if (!mohu_mkb_center_target(eye, target,
+            (int32_t)psx_mod_read_word(player + 0x23Cu),
+            (int32_t)psx_mod_read_word(player + 0x240u), centered)) return;
+    for (unsigned i = 0; i < 3; ++i)
+        psx_mod_write_word(input + 0x1B0u + 4u * i, (uint32_t)centered[i]);
+    psx_mod_counter_add("mohu.mkb.aim.center", 1);
 }
 
 /* This is the previously measured camera-before-player boundary. Apply the
@@ -646,10 +693,29 @@ static void weapon_update(CPUState* cpu, uint32_t site) {
     if (slot < 0 || (unsigned)slot == current) return;
     /* Reuse the full native switch routine. Only its next-slot result is
      * replaced for this call; inventory, ammo and viewmodel setup stay native. */
+    const uint32_t previous = psx_mod_read_byte(input + 93u);
     selecting_slot = slot;
     (void)psx_mod_call_guest(cpu, 0x800891ACu, 0x800784DCu,
         input - SP_PLAYER_INPUT_OFFSET, input, 0, 0);
     selecting_slot = -1;
+    const int aiming = aim_held();
+    if (leaves_native_aim(previous, aiming)) {
+        /* The camera's native aim target stays far ahead when the weapon
+         * switches. The owned update moves the actor toward that target in
+         * one step, so snap the target back to the current position and drop
+         * any pending displacement before the update continues. */
+        const uint32_t player = input - SP_PLAYER_INPUT_OFFSET;
+        for (unsigned i = 0; i < 3; ++i) {
+            psx_mod_write_word(input + 0x98u + 4u * i,
+                psx_mod_read_word(player + 0x220u + 4u * i));
+            psx_mod_write_word(player + 0x204u + 4u * i, 0);
+        }
+        psx_mod_counter_add("mohu.mkb.weapon.move.hold", 1);
+    }
+    if (keeps_aim_zoom(previous, psx_mod_read_byte(input + 93u), aiming)) {
+        zoom_amount = 1;
+        psx_mod_counter_add("mohu.mkb.weapon.zoom.hold", 1);
+    }
     psx_mod_counter_add("mohu.mkb.weapon.select", 1);
 }
 
@@ -695,7 +761,7 @@ static void native_reticle(CPUState* cpu, uint32_t address) {
     for (uint32_t p = 0x8008C124u; p < 0x8008C620u; ++p)
         hash = (hash ^ psx_mod_read_byte(p)) * 16777619u;
     if (hash != 0x71C28163u) return;
-    const int aiming = firearm_aiming(input);
+    const int aiming = reticle_aiming(input);
     if (address == 0x8008C1B4u) {
         reticle_stack = aiming ? cpu->gpr[29] : 0;
         if (aiming) {
@@ -711,18 +777,23 @@ static void native_reticle(CPUState* cpu, uint32_t address) {
 static void tighten_reticle(CPUState* cpu, uint32_t site) {
     if (!cpu || !active || site != 0x8008C5D4u || !reticle_stack ||
         cpu->gpr[29] != reticle_stack || g_psx_render_pass_active ||
-        !firearm_aiming(owned_player_input()) ||
+        !reticle_aiming(owned_player_input()) ||
         code_hash(0x8008C124u, 0x4FCu) != 0x71C28163u) return;
     const uint32_t base = cpu->gpr[22] - 48u;
     const uint32_t physical = base & 0x1FFFFFFFu;
     if (physical < 0xB0000u || physical > 0x1FFFC0u || (base & 3u)) return;
     const int16_t centre[2] = {(int16_t)cpu->gpr[19], (int16_t)cpu->gpr[20]};
+    int16_t screen_centre[2];
+    mohu_mkb_screen_centre(psx_mod_display_width(), psx_mod_display_height(),
+        screen_centre);
     const int16_t original[8][2] = {{0,-12},{0,-5},{0,12},{0,5},
                                    {-18,0},{-8,0},{18,0},{8,0}};
     const int16_t tight[8][2] = {{0,-8},{0,-3},{0,8},{0,3},
                                 {-12,0},{-5,0},{12,0},{5,0}};
     /* Only the four ordinary line packets, with every original coordinate
-     * validated. Scope/special reticles and weapon accuracy are untouched. */
+     * validated. Scope/special reticles and weapon accuracy are untouched.
+     * The native reticle sits below the camera axis; redraw it at screen
+     * centre so it matches the centred shot target. */
     for (unsigned p = 0; p < 8; ++p)
         for (unsigned axis = 0; axis < 2; ++axis)
             if ((int16_t)psx_mod_read_half(base + 16u * (p / 2u) + 8u + 4u * (p % 2u) + 2u * axis)
@@ -730,7 +801,7 @@ static void tighten_reticle(CPUState* cpu, uint32_t site) {
     for (unsigned p = 0; p < 8; ++p)
         for (unsigned axis = 0; axis < 2; ++axis)
             psx_mod_write_half(base + 16u * (p / 2u) + 8u + 4u * (p % 2u) + 2u * axis,
-                (uint16_t)(centre[axis] + original[p][axis] +
+                (uint16_t)(screen_centre[axis] + original[p][axis] +
                     lround((tight[p][axis] - original[p][axis]) * mohu_mkb_zoom_ease(zoom_amount))));
     reticle_stack = 0;
     psx_mod_counter_add("mohu.mkb.firearm.reticle.tight", 1);
@@ -916,6 +987,7 @@ PSX_MOD_CONSTRUCTOR(register_mohu_mkb) {
     (void)psx_mod_register_instruction_plugin(PLUGIN_ID, 0x8008D9E4u, 0x00621823u, sniper_controls);
     (void)psx_mod_register_instruction_plugin(PLUGIN_ID, 0x8008DA00u, 0x00021180u, sniper_controls);
     (void)psx_mod_register_instruction_plugin(PLUGIN_ID, 0x8008E06Cu, 0x125E0059u, sniper_controls);
+    (void)psx_mod_register_instruction_plugin(PLUGIN_ID, 0x8008E204u, 0x8EC20114u, center_aim_target);
     (void)psx_mod_register_instruction_plugin(PLUGIN_ID, 0x80076CB8u, 0x86020222u, precise_shot);
     (void)psx_mod_register_instruction_plugin(PLUGIN_ID, 0x800481A0u, 0xAE080220u, scoped_origin);
     (void)psx_mod_register_instruction_plugin(PLUGIN_ID, 0x800481A4u, 0xAE090224u, scoped_origin);

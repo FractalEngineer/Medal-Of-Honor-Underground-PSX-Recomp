@@ -169,6 +169,15 @@ int main(void) {
     CHECK(native_aim_weapon(SNIPER_WEAPON_ID));
     CHECK(native_aim_weapon(CAMERA_WEAPON_ID));
     CHECK(!native_aim_weapon(0));
+    CHECK(leaves_native_aim(CAMERA_WEAPON_ID, 1));
+    CHECK(leaves_native_aim(SNIPER_WEAPON_ID, 1));
+    CHECK(!leaves_native_aim(CAMERA_WEAPON_ID, 0));
+    CHECK(!leaves_native_aim(0, 1));
+    CHECK(keeps_aim_zoom(CAMERA_WEAPON_ID, 0, 1));
+    CHECK(keeps_aim_zoom(SNIPER_WEAPON_ID, 0, 1));
+    CHECK(!keeps_aim_zoom(CAMERA_WEAPON_ID, 0, 0));
+    CHECK(!keeps_aim_zoom(CAMERA_WEAPON_ID, SNIPER_WEAPON_ID, 1));
+    CHECK(!keeps_aim_zoom(0, 0, 1));
     CHECK(direct_mode_supported(9)); /* Petrol bomb / throwable native look. */
     CHECK(!direct_mode_supported(6));
     on_activate();

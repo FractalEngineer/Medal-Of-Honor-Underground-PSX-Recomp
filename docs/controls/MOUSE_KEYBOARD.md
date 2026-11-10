@@ -49,9 +49,12 @@ PSXRecomp's filter shortcuts; use the wheel to cycle weapons.
 Walking and strafing remain available. While the mouse is captured, the sniper
 retains its native scope view and the objective camera its native viewfinder,
 both with direct mouse look, normal walking/strafe controls and native fire.
-Left mouse takes the camera's photograph. At a mounted machine gun, mouse
-movement aims the gun and the left/right movement bindings traverse it. The
-gun's native horizontal travel limits still apply.
+Left mouse takes the camera's photograph. Cycling weapons while the sniper or
+camera is aimed keeps the player in place and carries the aimed zoom into the
+new weapon. Aiming reticles and the shot/photo target are centred on screen
+for every weapon and item, including mounted machine guns. At a mounted
+machine gun, mouse movement aims the gun and the left/right movement bindings
+traverse it. The gun's native horizontal travel limits still apply.
 Weapon changes, ammunition, reload/use context and
 collision remain native.
 
