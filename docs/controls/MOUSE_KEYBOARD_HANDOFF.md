@@ -3,9 +3,11 @@
 Update this file every work turn. This is the current task's continuation
 record; evidence and commands belong here or in the linked detailed reports.
 
-**Latest checkpoint:** eased 1.25x aiming, visible weapons/crossbow, aiming-only
-crosshair, global/aiming sensitivity and number-key removal, 2026-11-06, in the final continuation section. Start there; earlier research
-next-work lists are historical.
+**Latest checkpoint:** eased 1.25x aiming on firearms, the crossbow and both
+throwables, frontend menu input, visible weapons, aiming-only crosshair,
+global/aiming sensitivity and number-key removal; see the 2026-11-10
+continuation sections. Start there; earlier research next-work lists are
+historical.
 
 ## Objective and authorization
 
@@ -1420,3 +1422,25 @@ written.
 debugger. The disposable slot 05 session was closed afterward and the release
 configuration restored (`PSX_DEBUG_TOOLS=OFF`) before the final build and
 CTest run.
+
+## Throwable optical aiming - 2026-11-10
+
+Owner requested the same firearm-style zoom/cursor aiming on all throwables.
+Weapon IDs **10** (stick grenade) and **15** (petrol bomb) now pass the same
+optical classifier as firearms and the crossbow (renamed
+`mohu_mkb_zoom_supported`). The existing focal-length hook, aiming-only
+reticle/tightening, zoom-compensated mouse gain and visible-held-weapon path
+apply unchanged. Sniper ID 5 keeps its native scope and objective camera ID 7
+remains excluded.
+
+Pure tests now classify both throwables as zoom-capable and retain the sniper
+and camera exclusions. Live verification used a copied slot 1 (petrol bomb:
+weapon 15, native mode 9): focal **400 -> 500**, aiming reticle and tight
+packets active, weapon visible, 30-count aim turn **629146** (the expected
+1.25x-reduced sensitivity), release back to **400** and reticle hidden.
+Screenshots and the receipt are under
+`analysis/runtime/mkb-throwable-zoom-20261110/`. Slot 1's inventory has no
+grenade (weapons 0/16/13/15), so ID 10 is covered by the shared classifier and
+pure test rather than a separate live throw. Source saves remained unchanged.
+Throw arcs and projectile origins are still native (`scoped_origin` excludes
+the thrown shot type).

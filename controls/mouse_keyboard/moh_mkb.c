@@ -291,7 +291,7 @@ static int captured(void) {
 
 static int firearm_zoom_eligible(uint32_t input) {
     return input && captured() && !psx_mod_read_word(SP_PAUSE) &&
-        mohu_mkb_firearm_zoom_supported(psx_mod_read_byte(input + 93u));
+        mohu_mkb_zoom_supported(psx_mod_read_byte(input + 93u));
 }
 
 static int firearm_zooming(uint32_t input) {
@@ -830,7 +830,7 @@ static int gameplay_pad(const PSXModPadFrame* frame, PSXModPadOutput* out) {
     if (diagnostic_aim) out->buttons &= ~PSX_R2;
 #endif
     zoom_held = input && (out->buttons & PSX_R2) == 0;
-    if (!input || !mohu_mkb_firearm_zoom_supported(psx_mod_read_byte(input + 93u)))
+    if (!input || !mohu_mkb_zoom_supported(psx_mod_read_byte(input + 93u)))
         zoom_amount = 0;
     mouse_strafe = out->rx;
     if (input && psx_mod_read_word(SP_PAUSE) == 0 && mouse_captured) {

@@ -18,7 +18,7 @@ void mohu_mkb_view_matrix(int32_t pitch, int32_t yaw, const int32_t eye[3],
                           int16_t rotation[9], int32_t translation[3]);
 int mohu_mkb_shot_matrix(const int32_t origin[3], const int32_t target[3],
                          int16_t rotation[9]);
-int mohu_mkb_firearm_zoom_supported(unsigned weapon);
+int mohu_mkb_zoom_supported(unsigned weapon);
 double mohu_mkb_zoom_step(double amount, int held);
 double mohu_mkb_zoom_ease(double amount);
 void mohu_mkb_angles(int32_t pitch, int32_t yaw, int64_t dp, int64_t dy,

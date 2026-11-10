@@ -1,13 +1,15 @@
 #include "moh_mkb.h"
 #include <math.h>
 
-int mohu_mkb_firearm_zoom_supported(unsigned weapon) {
+int mohu_mkb_zoom_supported(unsigned weapon) {
+    /* Ordinary firearms, the crossbow, stick grenade (10) and petrol bomb
+     * (15); the sniper scope and objective camera stay native. */
     switch (weapon) {
-    case 0: case 1: case 4: case 8: case 9: case 11: case 12:
-    case 13: case 14: case 16: case 17:
+    case 0: case 1: case 4: case 8: case 9: case 10:
+    case 11: case 12: case 13: case 14: case 15: case 16: case 17:
         return 1;
     default:
-        return 0; /* Native sniper scope, camera and throwables. */
+        return 0;
     }
 }
 
