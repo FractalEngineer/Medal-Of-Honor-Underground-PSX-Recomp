@@ -29,7 +29,7 @@ body:
     attributes:
       label: Version or build
       description: Release ZIP version, or the commit SHA for a self-built binary.
-      placeholder: "v0.1.5 or d643b04"
+      placeholder: "v0.1.6 or 81c2cf1"
     validations:
       required: true
 
