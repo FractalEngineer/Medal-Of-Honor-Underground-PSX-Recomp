@@ -6,3 +6,6 @@
 	path = recomp-ui
 	url = https://github.com/RetroPortingToolKit/recomp-ui.git
 	branch = master
+[submodule "rl-achievements"]
+	path = rl-achievements
+	url = https://github.com/elripalda/RecompAchievements.git

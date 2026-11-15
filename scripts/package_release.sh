@@ -41,15 +41,38 @@ else
   EXTRA+=(--ship-without-overlay-cache-because \
     "no disc at package time: the committed static AOT shard is compiled in and overlay_toolchain/ autocompiles the rest on the player's machine")
 fi
-# Extra player documents and launch scripts shipped at the zip root.
-for _doc in DISC.md ALPHA_README.md docs/controls/MOUSE_KEYBOARD.md docs/release/v0.1.6.md \
-    scripts/windows-release/Launch.ps1 scripts/windows-release/RunFlat.bat \
+# Extra player documents and launch scripts shipped in the archive root.
+# Platform launchers are kept to their own archive: .bat/.ps1 on Windows,
+# run-flat.sh on Linux. Release notes follow RELEASE_VERSION (or VERSION).
+VERSION_FOR_DOCS="${RELEASE_VERSION:-$(tr -d '[:space:]' < "${ROOT}/VERSION" 2>/dev/null || true)}"
+VERSION_FOR_DOCS="${VERSION_FOR_DOCS#v}"
+DOCS=(DISC.md ALPHA_README.md recomplauncher.json docs/controls/MOUSE_KEYBOARD.md)
+if [[ "${ARTIFACT_TAG}" == linux-* ]]; then
+  DOCS+=(scripts/linux-release/run-flat.sh)
+else
+  DOCS+=(scripts/windows-release/Launch.ps1 scripts/windows-release/RunFlat.bat \
     scripts/windows-release/RunVR-VDXR.bat scripts/windows-release/RunVR-SteamVR.bat \
-    scripts/windows-release/RunVR-Oculus.bat; do
+    scripts/windows-release/RunVR-Oculus.bat)
+fi
+if [[ -n "${VERSION_FOR_DOCS}" && -f "${ROOT}/docs/release/v${VERSION_FOR_DOCS}.md" ]]; then
+  DOCS+=("docs/release/v${VERSION_FOR_DOCS}.md")
+fi
+for _doc in "${DOCS[@]}"; do
   if [[ -f "${ROOT}/${_doc}" ]]; then
     EXTRA+=(--doc "${_doc}")
   fi
 done
+# The achievements SDK is linked into the game; ship its license with the
+# other third-party notices.
+if [[ -f "${ROOT}/licenses/rl-achievements-LICENSE" ]]; then
+  EXTRA+=(--runtime-file licenses/rl-achievements-LICENSE)
+fi
+
+# Linux launchers are tar archives; Windows keeps the zip.
+ARCHIVE_ARGS=()
+case "${ARTIFACT_TAG}" in
+  linux-*) ARCHIVE_ARGS+=(--archive tar.gz) ;;
+esac
 
 cd "${ROOT}"
 exec bash "${PACKAGER}" \
@@ -62,4 +85,5 @@ exec bash "${PACKAGER}" \
   --recompiler-build "${RECOMPILER_BUILD}" \
   --version-env RELEASE_VERSION \
   --disc-hint "your legally owned Medal of Honor Underground disc" \
+  "${ARCHIVE_ARGS[@]}" \
   "${EXTRA[@]}"

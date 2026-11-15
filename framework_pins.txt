@@ -1,4 +1,6 @@
-psxrecomp=fd32746 (fd32746007d940ce5baff8bc215c954c76f03889)
-recomp-ui=a956157 (a95615751b413e043983944441ed8912066c65ce)
+psxrecomp=b263b855 (b263b8552e5b8838b317f8921dfde8b6aca97904)
+psxrecomp-support=cfdebf50 (cfdebf50a41d72d567fa45834e2a6519c2d5baae) local recomplauncher-support branch
+recomp-ui=3c64156 (3c641560c32ab55dc169f21daa9ba210a121eb96)
+rl-achievements=faf094a (faf094acdf1efb57d8db7c8187b4b47aa1501805)
 recomp-net=7a4d330 (7a4d330ecf995b881d167234da3c0b01675fd512)
 retcomm-rbengine=28a2a47 (28a2a472986a7d692d0378a22e756b0936413507)

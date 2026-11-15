@@ -1,37 +1,33 @@
 # Medal of Honor Underground Recompiled + Full 6dof VR + Mouse/Keyboard
 
-This is the Windows x64 **v0.1.6** testing release. Flat play remains the
-default; VR is optional. Quest 3 through Virtual Desktop with VDXR is the
+This is the **v0.1.7** testing release. Windows x64 ships flat and optional VR;
+Linux x64 and arm64 ship flat. Quest 3 through Virtual Desktop with VDXR is the
 primary tested headset setup. SteamVR and Oculus launchers are included, but
 Meta Quest Link and broad runtime coverage are not yet accepted.
 
 For project context, see the [project README](README.md),
-[v0.1.6 release notes](docs/release/v0.1.6.md) and
+[v0.1.7 release notes](docs/release/v0.1.7.md) and
 [documentation map](docs/README.md). The release notes summarize the package;
 this guide is the source of truth for player setup, controls and limitations.
 
-## What is in v0.1.6
+## What is in v0.1.7
 
-- Native OpenXR stereo rendering with motion-tracked head movement.
-- Tracked first-person weapons with hand-derived aiming and a right-grip laser.
-- A wrist-mounted health and compass HUD, including the native under-fire marker.
-- Wrist placement for the objective camera and native rendering for the game's
-  frontend, videos and menus.
-- A held 2.5x sniper scope with native scope range and normal player movement.
-- Shared memory cards and savestates between flat and VR launchers.
-- Mouse and keyboard campaign gameplay with editable actions, independent
-  sensitivity sliders, wheel weapon cycling and adjustable 1.00x-2.50x aim zoom
-  for firearms, the crossbow and both throwables.
-- Mouse aiming and left/right traversal for mounted guns, plus corrected weapon
-  cycling past empty inventory slots in either direction.
-- Native frontend screens use the menu profile, so gameplay bindings do not
-  leak into mission-end Evaluation or codename/typewriter pages.
-- Native objective-camera aiming and photo capture, with walking and strafing
-  while the viewfinder is held.
-- Reticles and shot/photo targets centred on screen for every weapon and item,
-  including mounted machine guns, at any display resolution.
-- Weapon swaps while the sniper scope or camera viewfinder is aimed keep the
-  player in place and carry the aimed zoom into the new weapon.
+- RecompLauncher one-click setup, with the game's settings, VR mode and mods on
+  its page.
+- Recomp Achievements: five starter unlocks for the USA disc (gameplay start,
+  sniper, weapon switch, a low-health recovery and a ten-minute session).
+- Linux x64 and arm64 flat builds as `.tar.gz` archives.
+- VR from RecompLauncher: VDXR, SteamVR, Meta/Oculus or the current OpenXR
+  runtime, without editing environment variables.
+- Mouse and keyboard enable, sensitivity, aimed zoom and bindings from the
+  game's RecompLauncher page, plus CRT/scanline/internal-resolution choices.
+- Specific startup messages for a missing, damaged or wrong-region disc.
+
+It keeps the VR and flat feature set from v0.1.6: native OpenXR stereo rendering
+with motion-tracked head movement, tracked first-person weapons with a
+right-grip laser, a wrist HUD and damage marker, native frontend screens, a held
+2.5x sniper scope, shared flat/VR saves, mouse and keyboard campaign gameplay,
+centred reticles and shot targets, and corrected weapon cycling.
 
 This is an alpha. Weapon and damage alignment beyond the exercised P38, Sten,
 Panzerfaust and petrol-bomb paths still needs broader validation. Demanding
@@ -40,15 +36,17 @@ alignment and some frontend transitions still need physical-headset checks.
 
 ## Install and play
 
-1. Download `mohu-0.1.6-windows-x64.zip` and extract the entire archive to a
-   writable folder. Keep the executable, assets, mods and overlay toolchain
-   together.
-2. Supply your own **Medal of Honor Underground SLUS-01270 (NTSC-U)** CUE/BIN
-   image. No game data or retail BIOS dump is included. The package includes
-   the redistributable MIT OpenBIOS.
-3. For flat play, run `RunFlat.bat` and select your disc in the launcher.
-4. For VR, connect your headset and run the launcher for the intended OpenXR
-   runtime:
+1. Download the archive for your PC: `mohu-0.1.7-windows-x64.zip` (flat and VR)
+   or `mohu-0.1.7-linux-x64.tar.gz` / `mohu-0.1.7-linux-arm64.tar.gz` (flat).
+   Extract the entire archive to a writable folder. Keep the executable,
+   assets, mods and overlay toolchain together.
+2. Supply your own **Medal of Honor Underground SLUS-01270 (NTSC-U)** CUE/BIN,
+   ISO or CHD image. No game data or retail BIOS dump is included. The package
+   includes the redistributable MIT OpenBIOS.
+3. On Windows, run `RunFlat.bat` and select your disc in the launcher. On Linux,
+   run `./run-flat.sh`. RecompLauncher can do this setup for you.
+4. For VR, connect your headset and either choose the runtime on the game's
+   RecompLauncher page or run the matching launcher:
 
 ```powershell
 .\RunVR-VDXR.bat
@@ -74,16 +72,25 @@ For an explicit disc path:
 
 ## Mouse and keyboard
 
-For flat play, open **Mods** and enable **Mouse and keyboard**. Click the game
+For flat play, open **Mods** and enable **Mouse and keyboard**, or use the
+**Mouse and keyboard** section on the game's RecompLauncher page. Click the game
 to capture the mouse; Escape releases it. Defaults are WASD movement, left
 mouse fire, right mouse aim, R reload, E use and mouse wheel weapon cycling.
 Menus use WASD/arrows, E to choose and Q to go back.
 
-All actions can be rebound on the mod page. Global and aiming sensitivity have
-independent 1-10 sliders (defaults 5 and 4). **Aimed zoom (x)** ranges from 1.00
-to 2.50, default 1.25. The weapon stays visible; the native crosshair appears
-only while aiming. The sniper retains its native scope and supports movement.
-Number keys remain available for the framework's filter shortcuts.
+All actions can be rebound on the mod page, or in RecompLauncher's Bindings
+section. Global and aiming sensitivity have independent 1-10 sliders (defaults
+5 and 4). **Aimed zoom (x)** ranges from 1.00 to 2.50, default 1.25. Launcher
+values win over the stored Mods-page values for that launch; the game's Mods
+page remains the place for direct launches.
+
+## Achievements
+
+Recomp Achievements is provided through RecompLauncher. The starter set covers
+entering gameplay, equipping the sniper rifle, switching weapons, recovering
+from 10 health or less, and ten minutes in gameplay. It does nothing when the
+game is started outside RecompLauncher. A full mission-complete set is still
+being researched.
 
 ## Touch controls
 
@@ -116,8 +123,13 @@ Movement is not disabled by the scope.
   need wider testing.
 - Quest 3 with VDXR is the primary tested setup. SteamVR and Oculus are
   available but not broadly accepted.
-- This release targets Windows OpenGL. Linux, macOS and Vulkan VR are not
-  supported by this alpha package.
+- Linux is flat only in this release; Linux VR is not supported. The Linux
+  builds need a working OpenGL 4.x driver.
+- The achievements set is a starter set; mission-complete achievements and a
+  full Beaten/Mastered path still need research.
+- Launcher-provided mouse/keyboard and graphics-mod settings are session
+  overrides; the game's own Mods page remains the stored choice for direct
+  launches.
 
 ## Reporting issues
 

@@ -88,6 +88,9 @@ starvation_dump.jsonl
 /*.png
 !/catalog_identity.json
 !/disc_probe.json
+!/recomplauncher.json
+# Local Command Code session state
+.commandcode/
 # Multi-disc sets (update_disc_set.py): per-disc probes + the set verdict.
 !/disc_probe.*.json
 !/disc_set.json

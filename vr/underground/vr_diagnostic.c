@@ -22,6 +22,7 @@
 #include "frame_trace.h"
 #include "psx_openxr.h"
 #include "vr_pose_math.h"
+#include "vr_settings.h"
 
 #include <math.h>
 #include <stdbool.h>
@@ -5455,7 +5456,78 @@ static void vr_weapon_fp_enter(CPUState* cpu, uint32_t address) {
     }
 }
 
+static void set_process_env(const char* name, const char* value) {
+#ifdef _WIN32
+    _putenv_s(name, value);
+#else
+    setenv(name, value, 1);
+#endif
+}
+
+static int process_env_set(const char* name) {
+    const char* value = getenv(name);
+    return value && *value;
+}
+
+/* RecompLauncher starts the game directly (--no-launcher) and cannot set a
+ * different environment per setting, so it writes [vr] into settings.toml.
+ * Apply the same profile scripts/windows-release/Launch.ps1 uses, only when
+ * the launcher started us and no explicit VR environment is present. */
+static void apply_launcher_vr_profile(void) {
+    const char* launcher = getenv("RECOMPLAUNCHER");
+    if (!launcher || !*launcher || strcmp(launcher, "0") == 0) return;
+    if (process_env_set("MOHU_VR_OPENXR") || process_env_set("PSX_OPENXR_ENABLE"))
+        return;
+    const char* path = getenv("MOHU_LAUNCHER_CONFIG");
+    if (!path || !*path) path = getenv("MOHU_SETTINGS_PATH");
+    if (!path || !*path) return;
+    MohuVrSettings settings;
+    mohu_vr_settings_read(&settings, path);
+    if (!settings.has_enabled || !settings.enabled) return;
+
+    const char* manifest = mohu_vr_runtime_manifest(settings.runtime);
+    if (strcmp(settings.runtime, "current") != 0 && !manifest) {
+        fprintf(stdout,
+                "mohu-vr-diag: no OpenXR manifest for runtime '%s'; staying flat\n",
+                settings.runtime);
+        fflush(stdout);
+        return;
+    }
+    if (manifest) set_process_env("XR_RUNTIME_JSON", manifest);
+    set_process_env("PSX_OPENXR_ENABLE", "1");
+    set_process_env("MOHU_VR_OPENXR", "1");
+
+    static const struct { const char* name; const char* value; } profile[] = {
+        {"MOHU_VR_UNITS_PER_METER", "238.8059701492537"},
+        {"MOHU_VR_MENU_DISTANCE", "2"},
+        {"MOHU_VR_MENU_WIDTH", "2"},
+        {"PSX_STEREO_SHED", "0"},
+        {"PSX_VSYNC", "0"},
+        {"PSX_DITHERING", "0"},
+        {"PSX_INTERNAL_RESOLUTION", "1080p"},
+        {"PSX_VR_HEAD_FRUSTUM", "1"},
+        {"PSX_VR_SUPPRESS_FLAT_HUD", "1"},
+        {"PSX_VR_WRIST_HUD", "1"},
+        {"PSX_VR_MOVEMENT", "1"},
+        {"PSX_VR_LASER", "1"},
+        {"PSX_VR_MOVE_DEADZONE", "0.2"},
+        {"PSX_VR_TURN_GAIN", "0.65"},
+        {"PSX_VR_WEAPON_POSE", "1"},
+        {"MOHU_VR_WEAPON_CALIBRATED", "1"},
+        {"MOHU_VR_WEAPON_AIM", "1"},
+        {"MOHU_VR_WEAPON_GUN_ONLY", "1"},
+        {"MOHU_VR_P38_CALIBRATED", "0"},
+        {"MOHU_VR_P38_AIM", "0"},
+        {"MOHU_VR_FRESH_60", "0"},
+        {"MOHU_VR_WORLD_CACHE", "0"},
+        {"MOHU_VR_SKIP_NATIVE_WORLD_COPY", "0"},
+    };
+    for (size_t i = 0; i < sizeof(profile) / sizeof(profile[0]); ++i)
+        set_process_env(profile[i].name, profile[i].value);
+}
+
 static void vr_diagnostic_activate(void) {
+    apply_launcher_vr_profile();
     g_muzzle_enabled=g_muzzle_requested=false;
     g_sp_weapon_profile = NULL;
     vr_muzzle_invalidate();

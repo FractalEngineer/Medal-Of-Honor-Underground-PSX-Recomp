@@ -1,0 +1,312 @@
+{
+  "$schema": "https://recomplauncher.com/schema/recomplauncher.json",
+  "format": 1,
+  "name": "Medal of Honor Underground Recompiled",
+  "repo": "FractalEngineer/Medal-Of-Honor-Underground-PSX-Recomp",
+  "game": {
+    "kind": "iso",
+    "label": "Your Medal of Honor Underground disc image for PlayStation (USA, SLUS-01270): its .cue with the .bin tracks beside it, or its .iso.",
+    "check": { "iso9660": "SLUS_012.70" },
+    "dumps": [
+      { "name": "USA", "size": 748001856, "crc32": "19a9614b" }
+    ]
+  },
+  "start": {
+    "program": [
+      "Medal_of_Honor_Underground_Recompiled.exe",
+      "Medal_of_Honor_Underground_Recompiled"
+    ],
+    "args": [
+      "--game", "{install}/game.toml",
+      "--disc", "{game}",
+      "--memcard-dir", "{install}/saves",
+      "--no-launcher"
+    ],
+    "env": {
+      "MOHU_LAUNCHER_CONFIG": "{install}/mohu-launcher.toml"
+    }
+  },
+  "config": [
+    {
+      "id": "main",
+      "format": "toml",
+      "file": [{ "path": "{install}/settings.toml" }],
+      "new": {
+        "video/fullscreen": "0",
+        "video/window_width": "0",
+        "video/vsync": "\"on\""
+      }
+    },
+    {
+      "id": "launcher",
+      "format": "toml",
+      "file": [{ "path": "{install}/mohu-launcher.toml" }],
+      "ensure": {
+        "vr/enabled": "false",
+        "vr/runtime": "\"current\"",
+        "mkb/look_sensitivity": "5",
+        "mkb/aim_sensitivity": "4",
+        "mkb/aimed_zoom": "125"
+      },
+      "new": {
+        "vr/enabled": "false",
+        "vr/runtime": "\"current\"",
+        "mkb/look_sensitivity": "5",
+        "mkb/aim_sensitivity": "4",
+        "mkb/aimed_zoom": "125"
+      }
+    }
+  ],
+  "settings": [
+    {
+      "id": "window_mode",
+      "label": "Window",
+      "group": "Display",
+      "help": "Fullscreen fills your desktop without changing its mode. Windowed uses Window size.",
+      "choices": [
+        { "label": "Windowed", "set": { "video/fullscreen": "0" } },
+        { "label": "Fullscreen", "set": { "video/fullscreen": "1" } }
+      ],
+      "defaults": { "video/fullscreen": "0" }
+    },
+    {
+      "id": "window_size",
+      "label": "Window size",
+      "group": "Display",
+      "help": "The game's window in Windowed mode. Automatic fits it to your screen; larger sizes are fitted too.",
+      "when": { "video/fullscreen": "0" },
+      "choices": [
+        { "label": "Automatic", "set": { "video/window_width": "0" } },
+        { "label": "1280 x 960", "set": { "video/window_width": "1280" } },
+        { "label": "1600 x 1200", "set": { "video/window_width": "1600" } },
+        { "label": "1920 x 1440", "set": { "video/window_width": "1920" } }
+      ],
+      "defaults": { "video/window_width": "0", "video/fullscreen": "0" }
+    },
+    {
+      "id": "vsync",
+      "label": "V-Sync",
+      "group": "Display",
+      "help": "On keeps the picture tear-free. Off can feel a little more responsive.",
+      "choices": [
+        { "label": "On", "set": { "video/vsync": "\"on\"" } },
+        { "label": "Off", "set": { "video/vsync": "\"off\"" } }
+      ],
+      "defaults": { "video/vsync": "\"on\"" }
+    },
+    {
+      "id": "vr",
+      "label": "VR",
+      "group": "VR",
+      "in": "launcher",
+      "help": "Windows only. Off plays flat. VR needs the chosen OpenXR runtime installed and running.",
+      "choices": [
+        { "label": "Off", "set": { "vr/enabled": "false" } },
+        { "label": "Virtual Desktop (VDXR)", "set": { "vr/enabled": "true", "vr/runtime": "\"vdxr\"" } },
+        { "label": "SteamVR", "set": { "vr/enabled": "true", "vr/runtime": "\"steamvr\"" } },
+        { "label": "Meta / Oculus", "set": { "vr/enabled": "true", "vr/runtime": "\"oculus\"" } },
+        { "label": "Current OpenXR runtime", "set": { "vr/enabled": "true", "vr/runtime": "\"current\"" } }
+      ],
+      "defaults": { "vr/enabled": "false", "vr/runtime": "\"current\"" }
+    },
+    {
+      "id": "mkb_enabled",
+      "label": "Mouse and keyboard",
+      "group": "Mouse and keyboard",
+      "in": "args",
+      "help": "Direct mouse look and WASD. Click the game to capture the mouse; Escape releases it.",
+      "choices": [
+        { "label": "Off", "args": ["--mod-feature", "mohu.input.mouse-keyboard/mouse-keyboard=off"] },
+        { "label": "On", "args": ["--mod-feature", "mohu.input.mouse-keyboard/mouse-keyboard=on"] }
+      ]
+    },
+    {
+      "id": "mkb_look_sensitivity",
+      "label": "Look sensitivity",
+      "group": "Mouse and keyboard",
+      "in": "launcher",
+      "help": "How far the view turns per mouse count. 5 is the mod's default.",
+      "slider": {
+        "key": "mkb/look_sensitivity",
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "format": "%d"
+      },
+      "defaults": { "mkb/look_sensitivity": "5" }
+    },
+    {
+      "id": "mkb_aim_sensitivity",
+      "label": "Aim sensitivity",
+      "group": "Mouse and keyboard",
+      "in": "launcher",
+      "help": "Look speed while aiming; the aimed zoom divides it further. 4 is the mod's default.",
+      "slider": {
+        "key": "mkb/aim_sensitivity",
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "format": "%d"
+      },
+      "defaults": { "mkb/aim_sensitivity": "4" }
+    },
+    {
+      "id": "mkb_aimed_zoom",
+      "label": "Aimed zoom",
+      "group": "Mouse and keyboard",
+      "in": "launcher",
+      "help": "How far firearms zoom while aiming. The sniper keeps its native scope.",
+      "choices": [
+        { "label": "1.00x", "set": { "mkb/aimed_zoom": "100" } },
+        { "label": "1.25x (default)", "set": { "mkb/aimed_zoom": "125" } },
+        { "label": "1.50x", "set": { "mkb/aimed_zoom": "150" } },
+        { "label": "1.75x", "set": { "mkb/aimed_zoom": "175" } },
+        { "label": "2.00x", "set": { "mkb/aimed_zoom": "200" } },
+        { "label": "2.50x", "set": { "mkb/aimed_zoom": "250" } }
+      ],
+      "defaults": { "mkb/aimed_zoom": "125" }
+    },
+    {
+      "id": "mkb_bindings",
+      "label": "Bindings",
+      "group": "Mouse and keyboard",
+      "in": "launcher",
+      "help": "Click a binding, then press a key or mouse button. Applies when Mouse and keyboard is on.",
+      "bindings": {
+        "separator": ",",
+        "max": 3,
+        "names": {
+          "Left Mouse": "mouse:1",
+          "Mouse Left": "mouse:1",
+          "LMB": "mouse:1",
+          "Right Mouse": "mouse:3",
+          "Mouse Right": "mouse:3",
+          "RMB": "mouse:3",
+          "Middle Mouse": "mouse:2",
+          "Mouse Middle": "mouse:2",
+          "MMB": "mouse:2",
+          "Wheel Up": "wheel:up",
+          "Mouse Wheel Up": "wheel:up",
+          "Wheel Down": "wheel:down",
+          "Mouse Wheel Down": "wheel:down",
+          "Enter": "key:40",
+          "Space": "key:44"
+        },
+        "actions": [
+          { "label": "Forward", "key": "mkb_bindings/bind_forward" },
+          { "label": "Backward", "key": "mkb_bindings/bind_backward" },
+          { "label": "Strafe left", "key": "mkb_bindings/bind_left" },
+          { "label": "Strafe right", "key": "mkb_bindings/bind_right" },
+          { "label": "Jump", "key": "mkb_bindings/bind_jump" },
+          { "label": "Crouch", "key": "mkb_bindings/bind_crouch" },
+          { "label": "Fire", "key": "mkb_bindings/bind_fire" },
+          { "label": "Aim / scope", "key": "mkb_bindings/bind_aim" },
+          { "label": "Reload", "key": "mkb_bindings/bind_reload" },
+          { "label": "Use / interact", "key": "mkb_bindings/bind_use" },
+          { "label": "Next weapon", "key": "mkb_bindings/bind_next_weapon" },
+          { "label": "Previous weapon", "key": "mkb_bindings/bind_prev_weapon" },
+          { "label": "Pause / start", "key": "mkb_bindings/bind_pause" },
+          { "label": "Objectives / select", "key": "mkb_bindings/bind_objectives" },
+          { "label": "Menu up", "key": "mkb_bindings/bind_menu_up" },
+          { "label": "Menu down", "key": "mkb_bindings/bind_menu_down" },
+          { "label": "Menu left", "key": "mkb_bindings/bind_menu_left" },
+          { "label": "Menu right", "key": "mkb_bindings/bind_menu_right" },
+          { "label": "Menu confirm", "key": "mkb_bindings/bind_menu_confirm" },
+          { "label": "Menu back", "key": "mkb_bindings/bind_menu_back" }
+        ]
+      },
+      "defaults": {
+        "mkb_bindings/bind_forward": "key:26",
+        "mkb_bindings/bind_backward": "key:22",
+        "mkb_bindings/bind_left": "key:4",
+        "mkb_bindings/bind_right": "key:7",
+        "mkb_bindings/bind_jump": "key:44,key:42",
+        "mkb_bindings/bind_crouch": "key:224",
+        "mkb_bindings/bind_fire": "mouse:1,key:40",
+        "mkb_bindings/bind_aim": "mouse:3",
+        "mkb_bindings/bind_reload": "key:21",
+        "mkb_bindings/bind_use": "key:8",
+        "mkb_bindings/bind_next_weapon": "key:20,wheel:down",
+        "mkb_bindings/bind_prev_weapon": "wheel:up",
+        "mkb_bindings/bind_pause": "key:19",
+        "mkb_bindings/bind_objectives": "key:43",
+        "mkb_bindings/bind_menu_up": "key:26,key:82",
+        "mkb_bindings/bind_menu_down": "key:22,key:81",
+        "mkb_bindings/bind_menu_left": "key:4,key:80",
+        "mkb_bindings/bind_menu_right": "key:7,key:79",
+        "mkb_bindings/bind_menu_confirm": "key:8,key:40,mouse:1",
+        "mkb_bindings/bind_menu_back": "key:20,key:42"
+      }
+    },
+    {
+      "id": "crt_filter",
+      "label": "CRT filter",
+      "group": "Graphics (mods)",
+      "in": "args",
+      "help": "A CRT look from the framework's CRT Filter mod. Game's own keeps your Mods-page choice.",
+      "choices": [
+        { "label": "Game's own", "args": [] },
+        { "label": "CRT", "args": ["--mod-feature", "psx.enhancement.crt-filter/crt-filter=on", "--mod-option", "psx.enhancement.crt-filter/crt-filter/screen_model=crt"] },
+        { "label": "Composite", "args": ["--mod-feature", "psx.enhancement.crt-filter/crt-filter=on", "--mod-option", "psx.enhancement.crt-filter/crt-filter/screen_model=composite"] },
+        { "label": "Trinitron", "args": ["--mod-feature", "psx.enhancement.crt-filter/crt-filter=on", "--mod-option", "psx.enhancement.crt-filter/crt-filter/screen_model=trinitron"] },
+        { "label": "Off", "args": ["--mod-feature", "psx.enhancement.crt-filter/crt-filter=off"] }
+      ]
+    },
+    {
+      "id": "scanlines",
+      "label": "Scanlines",
+      "group": "Graphics (mods)",
+      "in": "args",
+      "help": "Adds scanlines with the CRT Filter mod. Game's own keeps your Mods-page choice.",
+      "choices": [
+        { "label": "Game's own", "args": [] },
+        { "label": "On", "args": ["--mod-feature", "psx.enhancement.crt-filter/crt-filter=on", "--mod-option", "psx.enhancement.crt-filter/crt-filter/scanlines=on"] },
+        { "label": "Off", "args": ["--mod-feature", "psx.enhancement.crt-filter/crt-filter=on", "--mod-option", "psx.enhancement.crt-filter/crt-filter/scanlines=off"] }
+      ]
+    },
+    {
+      "id": "internal_resolution",
+      "label": "Internal resolution",
+      "group": "Graphics (mods)",
+      "in": "args",
+      "help": "What the game draws at. The framework mod defaults to 4x; Game's own keeps your Mods-page choice.",
+      "choices": [
+        { "label": "Game's own", "args": [] },
+        { "label": "720p", "args": ["--mod-feature", "psx.enhancement.internal-resolution/internal-resolution=on", "--mod-option", "psx.enhancement.internal-resolution/internal-resolution/resolution=720p"] },
+        { "label": "1080p", "args": ["--mod-feature", "psx.enhancement.internal-resolution/internal-resolution=on", "--mod-option", "psx.enhancement.internal-resolution/internal-resolution/resolution=1080p"] },
+        { "label": "1440p", "args": ["--mod-feature", "psx.enhancement.internal-resolution/internal-resolution=on", "--mod-option", "psx.enhancement.internal-resolution/internal-resolution/resolution=1440p"] },
+        { "label": "4K", "args": ["--mod-feature", "psx.enhancement.internal-resolution/internal-resolution=on", "--mod-option", "psx.enhancement.internal-resolution/internal-resolution/resolution=4k"] }
+      ]
+    }
+  ],
+  "saves": [
+    "{install}/saves",
+    "{install}/settings.toml",
+    "{install}/mohu-launcher.toml",
+    "{install}/mods/state.toml"
+  ],
+  "folders": {
+    "saves": [{ "path": "{install}/saves" }]
+  },
+  "actions": [
+    {
+      "id": "saves",
+      "label": "Saves",
+      "help": "Memory cards and savestates.",
+      "open": "saves"
+    }
+  ],
+  "exit_codes": {
+    "4": "No disc image was selected. Pick your Medal of Honor Underground disc on the game's page.",
+    "5": "The disc image could not be read. It may be incomplete or damaged; check that the .bin tracks are next to the .cue.",
+    "6": "That is not the USA release (SLUS-01270). This recomp needs the NTSC-U disc.",
+    "7": "This disc needs its SBI file. Put the matching .sbi file next to the disc image.",
+    "8": "The disc image could not be mounted. Re-check the .cue and every .bin track it names.",
+    "9": "The BIOS could not start. Reinstall the recomp so the bundled OpenBIOS is restored.",
+    "10": "The game's mod setup failed. Turn off the last mod you enabled, or reset mods, and try again.",
+    "11": "The graphics window could not start. Update your graphics driver and try again."
+  },
+  "looks": {
+    "graphics": "opengl"
+  }
+}

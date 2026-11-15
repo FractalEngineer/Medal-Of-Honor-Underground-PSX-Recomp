@@ -157,13 +157,19 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
-      # Windows-only for now. Linux/macOS entries (linux-x64, macos-arm64,
-      # macos-x64) failed at Package game zip; re-add them here once fixed.
+      # Windows is the VR target. Linux ships flat (no OpenXR) on x64 and
+      # arm64; both use the framework packager's tar.gz archive format.
       matrix:
         include:
           - os: windows-2022
             artifact: windows-x64
             shell: 'msys2 {0}'
+          - os: ubuntu-24.04
+            artifact: linux-x64
+            shell: bash
+          - os: ubuntu-24.04-arm
+            artifact: linux-arm64
+            shell: bash
     defaults:
       run:
         shell: ${{ matrix.shell }}
@@ -188,6 +194,14 @@ jobs:
       - name: Record framework revisions
         shell: bash
         run: bash psxrecomp/tools/ci/record_pins.sh
+
+      # Upstream-PR-ready runtime changes (startup exit codes, strict disc
+      # identity, launcher mod overrides, tar.gz archives). They live as
+      # patches until the framework PR lands; then delete them and bump the
+      # submodule pin.
+      - name: Apply framework patches
+        shell: bash
+        run: bash scripts/apply_framework_patches.sh
 
       # game.toml, CMakeLists GEN_MARKER and codegen_setup.c each carry the
       # boot-EXE name; the committed generated/ files are named after it, so a
@@ -435,6 +449,13 @@ jobs:
           elif [[ -f "${GITHUB_WORKSPACE}/.cache/sdl3-src/CMakeLists.txt" ]]; then
             EXTRA+=("-DFETCHCONTENT_SOURCE_DIR_SDL3=${GITHUB_WORKSPACE}/.cache/sdl3-src")
           fi
+          # VR/OpenXR is the Windows product. Linux ships flat but keeps the
+          # PGXP save flavor so a save moves between platforms.
+          if [[ "$(uname -s)" == MINGW* || "$(uname -s)" == MSYS* ]]; then
+            EXTRA+=("-DPSX_OPENXR=ON" "-DMOHU_VR_DIAGNOSTICS=ON")
+          else
+            EXTRA+=("-DPSX_OPENXR=OFF" "-DMOHU_VR_DIAGNOSTICS=OFF" "-DMOHU_PGXP=ON")
+          fi
           cmake -S . -B build-release -G Ninja \
             -DCMAKE_BUILD_TYPE=Release \
             -DPSXRECOMP_REQUIRE_GAME_C=ON \
@@ -444,8 +465,6 @@ jobs:
             -DPSX_SETUP_WIZARD=ON \
             -DPSX_GAME_VERSION="${RELEASE_VERSION}" \
             -DPSX_RELEASE_CHANNEL=public \
-            -DPSX_OPENXR=ON \
-            -DMOHU_VR_DIAGNOSTICS=ON \
             -DMOHU_RELEASE_TOOLS=ON \
             -DBUILD_TESTING=ON \
             -DMOHU_VR_NATIVE_PROFILE=OFF \
@@ -468,7 +487,11 @@ jobs:
           # Ninja does not emit flags.make (Makefiles generator only). Probe
           # whichever compile-flag artifact exists for the defines the release
           # depends on.
-          for define in PSX_HAVE_VULKAN PSX_HAS_GAME_DISPATCH PSX_OPENXR; do
+          DEFINES=(PSX_HAVE_VULKAN PSX_HAS_GAME_DISPATCH)
+          if [[ "$(uname -s)" == MINGW* || "$(uname -s)" == MSYS* ]]; then
+            DEFINES+=(PSX_OPENXR)
+          fi
+          for define in "${DEFINES[@]}"; do
             FOUND=0
             for f in \
                 build-release/build.ninja \
@@ -485,20 +508,27 @@ jobs:
               exit 1
             fi
           done
-          if ! grep -q 'vr/underground/vr_diagnostic.c' build-release/build.ninja; then
-            echo "::error::VR plugin source missing; MOHU_VR_DIAGNOSTICS was not applied"
-            exit 1
+          if [[ "$(uname -s)" == MINGW* || "$(uname -s)" == MSYS* ]]; then
+            if ! grep -q 'vr/underground/vr_diagnostic.c' build-release/build.ninja; then
+              echo "::error::VR plugin source missing; MOHU_VR_DIAGNOSTICS was not applied"
+              exit 1
+            fi
           fi
           if ! grep -q 'controls/mouse_keyboard/moh_mkb.c' build-release/build.ninja; then
             echo "::error::MKB plugin source missing"
             exit 1
           fi
+          if ! grep -q 'achievements/mohu_achievements.c' build-release/build.ninja; then
+            echo "::error::achievements plugin source missing"
+            exit 1
+          fi
           cmake --build build-release --target mohu_mod_command_startup_test -j"${JOBS}"
           ctest --test-dir build-release --output-on-failure -R '^mohu_mod_command_startup_test$'
           cmake --build build-release --target psx-runtime psxrecomp-game psxrecomp-bios \
-            mohu_mkb_input_test mohu_mkb_plugin_test mohu_mod_binding_options_test -j"${JOBS}"
+            mohu_mkb_input_test mohu_mkb_plugin_test mohu_mod_binding_options_test \
+            mohu_achievements_test mohu_mkb_settings_test mohu_vr_settings_test -j"${JOBS}"
           ctest --test-dir build-release --output-on-failure \
-            -R '^(psx_mod_plugin_audit_psx-runtime|mohu_mkb_input_test|mohu_mkb_plugin_test|mohu_mod_binding_options_test|mohu_mod_command_startup_test|psx_staged_mod_catalog_test)$'
+            -R '^(psx_mod_plugin_audit_psx-runtime|mohu_mkb_input_test|mohu_mkb_plugin_test|mohu_mod_binding_options_test|mohu_mod_command_startup_test|mohu_achievements_test|mohu_mkb_settings_test|mohu_vr_settings_test|psx_staged_mod_catalog_test)$'
           # Lobby list pin must match RELEASE_VERSION (the packager enforces).
           STAMP=""
           for cand in \
@@ -545,39 +575,78 @@ jobs:
           scripts/package_release.sh build-release "${{ matrix.artifact }}" build-release
           ls -la dist/
 
-      - name: Verify zip contents
+      - name: Verify archive contents
         shell: bash
         run: |
           set -euo pipefail
           # Assert the artifact, not the intent: every rule below was once
           # "the packager does that by default" and shipped broken anyway.
-          ZIP=$(ls dist/mohu-*-"${{ matrix.artifact }}".zip | head -1)
-          echo "checking ${ZIP}"
-          LIST="$(unzip -Z1 "${ZIP}")"
-          # 1. It is a game: the executable, the bundled OpenBIOS, and the
-          #    runtime data sit at the root.
-          for must in 'bios/openbios.bin' 'bios/OpenBIOS.LICENSE' 'game.toml' 'psx_game_version.txt' 'assets/fonts/' 'licenses/recomp-ui-LICENSE' 'assets/fonts/NOTICE.md' 'assets/img/NOTICE.md' 'mods/bundled/' 'Launch.ps1' 'RunFlat.bat' 'RunVR-VDXR.bat' 'RunVR-SteamVR.bat' 'RunVR-Oculus.bat'; do
+          ARTIFACT="${{ matrix.artifact }}"
+          if [[ "${ARTIFACT}" == windows-* ]]; then
+            ARCHIVE=$(ls dist/mohu-*-"${ARTIFACT}".zip | head -1)
+            LIST="$(unzip -Z1 "${ARCHIVE}")"
+            EXE='Medal_of_Honor_Underground_Recompiled.exe'
+          else
+            ARCHIVE=$(ls dist/mohu-*-"${ARTIFACT}".tar.gz | head -1)
+            LIST="$(tar -tzf "${ARCHIVE}")"
+            EXE='Medal_of_Honor_Underground_Recompiled'
+          fi
+          echo "checking ${ARCHIVE}"
+          # 1. It is a game: the executable, the bundled OpenBIOS, the runtime
+          #    data and the achievements license sit at the root.
+          for must in "${EXE}" 'bios/openbios.bin' 'bios/OpenBIOS.LICENSE' 'game.toml' 'psx_game_version.txt' 'recomplauncher.json' 'assets/fonts/' 'licenses/recomp-ui-LICENSE' 'licenses/rl-achievements-LICENSE' 'assets/fonts/NOTICE.md' 'assets/img/NOTICE.md' 'mods/bundled/'; do
             if ! grep -q "^${must}" <<<"${LIST}"; then
-              echo "::error::release zip lacks ${must}" >&2
+              echo "::error::release archive lacks ${must}" >&2
               printf '%s\n' "${LIST}" | head -40 >&2
               exit 1
             fi
           done
+          if [[ "${ARTIFACT}" == windows-* ]]; then
+            for must in 'Launch.ps1' 'RunFlat.bat' 'RunVR-VDXR.bat' 'RunVR-SteamVR.bat' 'RunVR-Oculus.bat'; do
+              if ! grep -q "^${must}" <<<"${LIST}"; then
+                echo "::error::release archive lacks ${must}" >&2
+                exit 1
+              fi
+            done
+          else
+            if ! grep -qx 'run-flat.sh' <<<"${LIST}"; then
+              echo "::error::Linux archive lacks run-flat.sh" >&2
+              exit 1
+            fi
+            if grep -qE '^(Launch\.ps1|RunFlat\.bat|RunVR-.*\.bat)$' <<<"${LIST}"; then
+              echo "::error::Linux archive contains Windows launchers" >&2
+              exit 1
+            fi
+          fi
           MANIFESTS=$(grep -c 'mods/bundled/.*/manifest\.toml' <<<"${LIST}" || true)
-          echo "mod manifests in zip: ${MANIFESTS}"
+          echo "mod manifests in archive: ${MANIFESTS}"
           if [[ "${MANIFESTS}" -lt 1 ]]; then
-            echo "::error::release zip ships no mod catalog (mods/bundled/*/manifest.toml)" >&2
+            echo "::error::release archive ships no mod catalog (mods/bundled/*/manifest.toml)" >&2
             exit 1
           fi
-          for id in mohu.input.mouse-keyboard mohu.vr.diagnostic; do
+          REQUIRED_MODS=(mohu.input.mouse-keyboard mohu.achievements)
+          if [[ "${ARTIFACT}" == windows-* ]]; then
+            REQUIRED_MODS+=(mohu.vr.diagnostic)
+          fi
+          for id in "${REQUIRED_MODS[@]}"; do
             if ! grep -q "^mods/bundled/${id}/.*/manifest.toml$" <<<"${LIST}"; then
-              echo "::error::release zip lacks ${id}" >&2
+              echo "::error::release archive lacks ${id}" >&2
               exit 1
             fi
           done
-          if ! unzip -p "${ZIP}" 'mods/bundled/mohu.input.mouse-keyboard/*/manifest.toml' \
-              | grep -q 'id = "aimed_zoom"'; then
-            echo "::error::release zip lacks the aimed zoom option" >&2
+          if [[ "${ARTIFACT}" == windows-* ]]; then
+            MODS_TEXT=$(unzip -p "${ARCHIVE}" 'mods/**/manifest.toml' 2>/dev/null || true)
+            MKB_MANIFEST=$(unzip -p "${ARCHIVE}" 'mods/bundled/mohu.input.mouse-keyboard/*/manifest.toml' 2>/dev/null || true)
+          else
+            MODS_TEXT=$(tar --wildcards -xOzf "${ARCHIVE}" 'mods/bundled/*/*/manifest.toml' 2>/dev/null || true)
+            MKB_MANIFEST=$(tar --wildcards -xOzf "${ARCHIVE}" 'mods/bundled/mohu.input.mouse-keyboard/*/manifest.toml' 2>/dev/null || true)
+          fi
+          if ! grep -q 'id = "aimed_zoom"' <<<"${MKB_MANIFEST}"; then
+            echo "::error::release archive lacks the aimed zoom option" >&2
+            exit 1
+          fi
+          if ! grep -q 'id = "achievements"' <<<"${MODS_TEXT}"; then
+            echo "::error::release archive lacks the achievements feature" >&2
             exit 1
           fi
           # 2. It is NOT a build kit: no framework tree, no CLI, no emitters at
@@ -585,34 +654,35 @@ jobs:
           for never in '^psxrecomp/' '^recomp-ui/' '^psxrecomp_cli.py' '^psxrecomp-game' '^psxrecomp-bios' \
                        '^generated/' '^seeds/' '^CMakeLists.txt' '^codegen_setup\.' '^toolchain/' '^src/'; do
             if grep -qE "${never}" <<<"${LIST}"; then
-              echo "::error::release zip contains build-kit content matching ${never}" >&2
+              echo "::error::release archive contains build-kit content matching ${never}" >&2
               grep -E "${never}" <<<"${LIST}" | head -20 >&2
               exit 1
             fi
           done
           if grep -E '\.c$' <<<"${LIST}" | grep -qv '^overlay_toolchain/'; then
-            echo "::error::release zip contains C sources outside overlay_toolchain/" >&2
+            echo "::error::release archive contains C sources outside overlay_toolchain/" >&2
             grep -E '\.c$' <<<"${LIST}" | grep -v '^overlay_toolchain/' | head -20 >&2
             exit 1
           fi
           # 2b. A bundled TinyCC ships its LGPL-2.1 notice beside the binary and
-          #     in licenses/ (its win64 zip carries none of its own).
-          if grep -q '^overlay_toolchain/tcc/tcc\.exe$' <<<"${LIST}"; then
+          #     in licenses/ (its Windows zip carries none of its own).
+          if grep -qx 'overlay_toolchain/tcc/tcc.exe' <<<"${LIST}" || \
+             grep -qx 'overlay_toolchain/tcc/tcc' <<<"${LIST}"; then
             for must in 'overlay_toolchain/tcc/COPYING' 'licenses/TinyCC-LICENSE.txt'; do
               if ! grep -qx "${must}" <<<"${LIST}"; then
-                echo "::error::release zip bundles TinyCC without ${must}" >&2
+                echo "::error::release archive bundles TinyCC without ${must}" >&2
                 exit 1
               fi
             done
           fi
           # 3. No BIOS dump, disc, or memory card; the only image is OpenBIOS.
           if grep -iE '(^|/)SCPH|\.(cue|iso|img|chd|mcd|mcr)$' <<<"${LIST}" | grep -qv '\.toml$'; then
-            echo "::error::release zip contains a BIOS dump, disc, or memory card" >&2
+            echo "::error::release archive contains a BIOS dump, disc, or memory card" >&2
             grep -iE '(^|/)SCPH|\.(cue|iso|img|chd|mcd|mcr)$' <<<"${LIST}" | grep -v '\.toml$' >&2
             exit 1
           fi
           if grep -iE '\.bin$' <<<"${LIST}" | grep -qv '^bios/openbios.bin$'; then
-            echo "::error::release zip contains a .bin other than bios/openbios.bin" >&2
+            echo "::error::release archive contains a .bin other than bios/openbios.bin" >&2
             grep -iE '\.bin$' <<<"${LIST}" | grep -v '^bios/openbios.bin$' >&2
             exit 1
           fi
@@ -620,26 +690,25 @@ jobs:
           #    selections, mods/installed/ is one developer's installs, and
           #    developer-channel packages are unfinished work.
           if grep -q 'state\.toml' <<<"${LIST}"; then
-            echo "::error::release zip contains mods/state.toml (per-machine state)" >&2
+            echo "::error::release archive contains mods/state.toml (per-machine state)" >&2
             exit 1
           fi
           if grep -q 'mods/installed/' <<<"${LIST}"; then
-            echo "::error::release zip contains mods/installed (per-machine installs)" >&2
+            echo "::error::release archive contains mods/installed (per-machine installs)" >&2
             exit 1
           fi
-          if unzip -p "${ZIP}" 'mods/**/manifest.toml' 2>/dev/null \
-               | grep -Eq '^[[:space:]]*channel[[:space:]]*=[[:space:]]*"developer"'; then
-            echo "::error::release zip contains developer-channel mod packages" >&2
+          if grep -Eq '^[[:space:]]*channel[[:space:]]*=[[:space:]]*"developer"' <<<"${MODS_TEXT}"; then
+            echo "::error::release archive contains developer-channel mod packages" >&2
             exit 1
           fi
-          echo "zip verified: compiled game, bundled OpenBIOS, mod catalog, no kit / dumps / dev mods"
+          echo "archive verified: compiled game, bundled OpenBIOS, mod catalog, no kit / dumps / dev mods"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          # Artifact name uses the title zip prefix (e.g. bpe, motk).
+          # Artifact name uses the title archive prefix (e.g. bpe, motk).
           name: mohu-${{ matrix.artifact }}
-          path: dist/mohu-*-${{ matrix.artifact }}.zip
+          path: dist/mohu-*-${{ matrix.artifact }}.*
           if-no-files-found: error
           retention-days: 30
 
@@ -660,11 +729,11 @@ jobs:
           path: artifacts
           merge-multiple: false
 
-      - name: Flatten zips
+      - name: Flatten archives
         run: |
           set -euo pipefail
           mkdir -p dist
-          find artifacts -type f -name 'mohu-*.zip' -exec cp -v {} dist/ \;
+          find artifacts -type f \( -name 'mohu-*.zip' -o -name 'mohu-*.tar.gz' \) -exec cp -v {} dist/ \;
           ls -la dist/
 
       - name: Ensure release tag exists
@@ -690,5 +759,6 @@ jobs:
           body_path: docs/release/${{ needs.prepare.outputs.tag }}.md
           files: |
             dist/mohu-*.zip
+            dist/mohu-*.tar.gz
           fail_on_unmatched_files: true
           target_commitish: ${{ github.sha }}

@@ -5,6 +5,8 @@
 [![Latest release](https://img.shields.io/github/v/release/FractalEngineer/Medal-Of-Honor-Underground-PSX-Recomp?sort=semver)](https://github.com/FractalEngineer/Medal-Of-Honor-Underground-PSX-Recomp/releases/latest)
 <!-- /retcomm-readme-metrics -->
 
+<a href="https://recomplauncher.com/game/medal-of-honor-underground-psx-recomp"><picture><source media="(prefers-color-scheme: dark)" srcset="https://recomplauncher.com/assets/press/launcher/badge-light.svg"><img alt="Get it on RecompLauncher" src="https://recomplauncher.com/assets/press/launcher/badge-dark.svg" height="48"></picture></a>
+
 <!-- retcomm-readme-boxart -->
 <p align="center">
   <img src="launcher_assets/img/boxart.png" alt="Medal of Honor Underground box art" width="280">
@@ -17,17 +19,27 @@ Static recompilation of **Medal of Honor Underground** built on
 
 Play the original game on a flat display, or opt into the experimental Full
 6dof VR alpha with head tracking, per-eye rendering and tracked-weapon controls.
-Flat play is the default; VR is enabled through a separate launcher.
+Flat play is the default; VR can be enabled from RecompLauncher's game page or
+through a separate launcher.
 Flat gameplay also supports direct mouse look and keyboard movement, with
 editable bindings, independent sensitivity sliders and adjustable aiming zoom.
-Enable **Mouse and keyboard** in the launcher's **Mods** page.
+Enable **Mouse and keyboard** in the launcher's **Mods** page, or on the game's
+page in RecompLauncher.
+Recomp Achievements adds starter unlocks and leaderboards through
+RecompLauncher; a full Beaten/Mastered set needs the mission-complete hooks.
 Watch the [VR video demo](https://youtu.be/_6LRnH667jc) for gameplay footage.
 
-The latest **Windows alpha** is available from this fork's
+The latest alpha covers **Windows** (flat and VR) and **Linux x64/arm64**
+(flat) from this fork's
 [releases](https://github.com/FractalEngineer/Medal-Of-Honor-Underground-PSX-Recomp/releases/latest).
 See [alpha installation and controls](ALPHA_README.md) before testing.
 Use the [documentation map](docs/README.md) for release notes, technical
 evidence, workspace layout and development handoffs.
+
+**How to play:** extract `mohu-<version>-windows-x64.zip` (or
+`mohu-<version>-linux-x64.tar.gz` / `-linux-arm64.tar.gz`). On Windows run
+`RunFlat.bat` or `RunVR-*.bat`; on Linux run `./run-flat.sh`. Pick your own
+**SLUS-01270 (NTSC-U)** CUE/BIN or ISO image. No game data is included.
 
 | | |
 |---|---|
@@ -97,6 +109,20 @@ launches retain flat rendering and normal controller input. VR environment
 overrides should be absent for flat play; the VR wrapper restores its process
 environment when it exits.
 
+## Linux (flat)
+
+The Linux release is flat-only (no OpenXR/VR) and ships `linux-x64` and
+`linux-arm64` `.tar.gz` archives. Extract the archive and run:
+
+```sh
+./run-flat.sh
+```
+
+`run-flat.sh` clears any VR environment, then starts the game with the disc
+picker. Steam Deck and other Mesa desktops use the same binary; the renderer
+still needs a working OpenGL 4.x driver. Saves and settings stay in the extracted
+folder, so keep it when updating. VR remains Windows-only for now.
+
 ## Experimental VR alpha (Windows)
 
 The current [Windows Alpha](https://github.com/FractalEngineer/Medal-Of-Honor-Underground-PSX-Recomp/releases/latest)
@@ -119,7 +145,8 @@ demanding scenes can still slow down.
 ### Setup and launch
 
 Download the Windows release and extract the entire ZIP. Connect your headset
-and double-click the launcher for your runtime: `RunVR-VDXR.bat` (Virtual
+and either choose the runtime on the game's page in RecompLauncher, or
+double-click the launcher for your runtime: `RunVR-VDXR.bat` (Virtual
 Desktop VDXR), `RunVR-SteamVR.bat` or `RunVR-Oculus.bat` (Meta Quest Link / Air
 Link). Each selects that runtime for the launch and leaves the system's active
 runtime unchanged. Select your own
@@ -223,14 +250,20 @@ For Windows VR, configure the Release build with `-DPSX_OPENXR=ON` and
 build tools and generated game C. Compiling OpenXR support does not
 automatically enable VR when launching the executable.
 
-Windows releases use a CI-built Windows-only alpha package with OpenXR and the
-guarded VR plugin enabled. Other `vX.Y.Z` tags (or the *Release builds*
-workflow) build the committed `generated/` C for Windows x64 and attach
-`mohu-<version>-windows-x64.zip`, the compiled game. Locally:
-`scripts/package_release.sh build-release windows-x64`.
+Releases use a CI-built alpha package. Windows x64 ships flat and VR as
+`mohu-<version>-windows-x64.zip`; Linux x64 and arm64 ship flat as
+`mohu-<version>-linux-x64.tar.gz` / `-linux-arm64.tar.gz`. All are built from
+the committed `generated/` C. Locally:
+
+```sh
+scripts/package_release.sh build-release windows-x64
+scripts/package_release.sh build-release linux-x64 build-release
+```
+
 Windows packaging requires the public release channel, OpenXR and the VR plugin
-(`-DPSX_RELEASE_CHANNEL=public -DPSX_OPENXR=ON -DMOHU_VR_DIAGNOSTICS=ON`), and
-includes the flat and VR launchers.
+(`-DPSX_RELEASE_CHANNEL=public -DPSX_OPENXR=ON -DMOHU_VR_DIAGNOSTICS=ON`).
+Linux configures flat-only with `-DPSX_OPENXR=OFF -DMOHU_VR_DIAGNOSTICS=OFF`
+and keeps the PGXP save flavor with `-DMOHU_PGXP=ON`.
 
 ## Symbols
 

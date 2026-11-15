@@ -118,15 +118,52 @@ psxrecomp_add_game_runtime(psx-runtime
     CODEGEN_SETUP_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/codegen_setup.c"
 )
 
+# Recomp Achievements: a small C library that reports unlocks to RecompLauncher
+# over its local channel. Outside the launcher every call is inert, so it ships
+# unconditionally. The submodule is required; fail with the command to fix it.
+if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/rl-achievements/sdk/CMakeLists.txt")
+    message(FATAL_ERROR
+        "Recomp Achievements SDK is missing: rl-achievements/sdk/CMakeLists.txt\n"
+        "Run: git submodule update --init --recursive")
+endif()
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/rl-achievements/sdk"
+    "${CMAKE_CURRENT_BINARY_DIR}/rl-achievements")
+target_link_libraries(psx-runtime PRIVATE rl_achievements)
+target_include_directories(psx-runtime PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/rl-achievements/sdk/include")
+
+target_sources(psx-runtime PRIVATE
+    achievements/mohu_achievements.c
+    achievements/mohu_achievements_state.c)
+
 if(MOHU_MKB_RESEARCH)
     target_sources(psx-runtime PRIVATE controls/research/moh_mkb_research.c)
 else()
     target_sources(psx-runtime PRIVATE
         controls/mouse_keyboard/moh_mkb.c
-        controls/mouse_keyboard/moh_mkb_input.c)
+        controls/mouse_keyboard/moh_mkb_input.c
+        controls/mouse_keyboard/moh_mkb_settings.c)
 endif()
 
 if(BUILD_TESTING)
+    add_executable(mohu_mkb_settings_test
+        controls/mouse_keyboard/test_moh_mkb_settings.c
+        controls/mouse_keyboard/moh_mkb_settings.c)
+    set_target_properties(mohu_mkb_settings_test PROPERTIES
+        C_STANDARD 99 C_STANDARD_REQUIRED ON C_EXTENSIONS OFF)
+    add_test(NAME mohu_mkb_settings_test COMMAND mohu_mkb_settings_test)
+    add_executable(mohu_vr_settings_test
+        vr/underground/test_vr_settings.c
+        vr/underground/vr_settings.c)
+    set_target_properties(mohu_vr_settings_test PROPERTIES
+        C_STANDARD 99 C_STANDARD_REQUIRED ON C_EXTENSIONS OFF)
+    add_test(NAME mohu_vr_settings_test COMMAND mohu_vr_settings_test)
+    add_executable(mohu_achievements_test
+        achievements/mohu_achievements_test.c
+        achievements/mohu_achievements_state.c)
+    set_target_properties(mohu_achievements_test PROPERTIES
+        C_STANDARD 99 C_STANDARD_REQUIRED ON C_EXTENSIONS OFF)
+    add_test(NAME mohu_achievements_test COMMAND mohu_achievements_test)
     add_executable(mohu_mkb_input_test
         controls/mouse_keyboard/test_moh_mkb.c
         controls/mouse_keyboard/moh_mkb_input.c)
@@ -136,7 +173,8 @@ if(BUILD_TESTING)
     add_test(NAME mohu_mkb_input_test COMMAND mohu_mkb_input_test)
     add_executable(mohu_mkb_plugin_test
         controls/mouse_keyboard/test_moh_mkb_plugin.c
-        controls/mouse_keyboard/moh_mkb_input.c)
+        controls/mouse_keyboard/moh_mkb_input.c
+        controls/mouse_keyboard/moh_mkb_settings.c)
     target_include_directories(mohu_mkb_plugin_test PRIVATE
         "${PSXRECOMP_ROOT}/runtime/include")
     target_link_libraries(mohu_mkb_plugin_test PRIVATE ${PSX_SDL_LIBRARIES})
@@ -237,6 +275,7 @@ if(MOHU_VR_DIAGNOSTICS)
         "${CMAKE_CURRENT_SOURCE_DIR}/vr/underground/weapon.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/vr/underground/scope.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/vr/underground/hud.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/vr/underground/vr_settings.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/vr/underground/vr_diagnostic.c")
     if(MOHU_VR_WORLD_CAPTURE)
         target_sources(psx-runtime PRIVATE

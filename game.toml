@@ -5,6 +5,9 @@
 name = "Medal of Honor Underground"
 id = "SLUS-01270"
 players = 2
+# Refuse a readable disc with a different serial instead of booting it. The
+# launcher's own ISO check catches this before Play; this covers direct starts.
+strict_disc_id = true
 exe = "disc/SLUS_012.70"
 disc = "Medal of Honor - Underground/Medal of Honor - Underground (USA).cue"
 load_address = "0x80010000"

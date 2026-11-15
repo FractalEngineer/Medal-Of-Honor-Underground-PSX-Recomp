@@ -1,0 +1,718 @@
+diff --git a/docs/EXIT_CODES.md b/docs/EXIT_CODES.md
+new file mode 100644
+index 00000000..c5270c15
+--- /dev/null
++++ b/docs/EXIT_CODES.md
+@@ -0,0 +1,42 @@
++# Startup exit codes
++
++The runtime returns a small, stable set of process exit codes so a launcher
++can name the failure instead of showing one generic "the game did not start".
++They are declared in `runtime/include/psx_exit_codes.h`.
++
++| Code | Name | Meaning |
++|---|---|---|
++| 0 | `PSX_EXIT_OK` | Normal quit / clean end of a session. |
++| 1 | `PSX_EXIT_ERROR` | Unclassified error. Keep this for crash reports. |
++| 2 | `PSX_EXIT_USAGE` | A command-line argument was malformed. |
++| 3 | `PSX_EXIT_GAME_CONFIG` | Missing or invalid `game.toml` / regional config. |
++| 4 | `PSX_EXIT_NO_DISC` | No disc image was selected. |
++| 5 | `PSX_EXIT_DISC_UNREADABLE` | The disc image could not be opened or read. |
++| 6 | `PSX_EXIT_WRONG_DISC` | The image is not this title's expected disc/region. |
++| 7 | `PSX_EXIT_SBI_REQUIRED` | The disc needs its matching `.sbi` companion. |
++| 8 | `PSX_EXIT_DISC_MOUNT` | The image opened but the CD-ROM layer could not mount it. |
++| 9 | `PSX_EXIT_BIOS` | The selected BIOS could not be activated. |
++| 10 | `PSX_EXIT_MOD_PLAN` | The selected mod plan could not be resolved or activated. |
++| 11 | `PSX_EXIT_RENDERER` | The window/graphics backend could not be created. |
++
++## `[game] strict_disc_id`
++
++A readable disc whose serial does not match the title used to warn and boot
++anyway. With:
++
++```toml
++[game]
++strict_disc_id = true
++```
++
++the runtime refuses it with `PSX_EXIT_WRONG_DISC` and prints/launcher-shows the
++identity warning. Multi-disc sets are still checked disc by disc through
++`[game] disc_serials`. Titles that accept several regions, or deliberately
++boot odd images, simply leave the key out (the default).
++
++## Launcher use
++
++A launcher can map the codes it knows to one-line messages and leave 1
++unmapped so unexpected failures still produce a crash report. The codes never
++replace a successful session's 0, and no code is reused for a different
++meaning.
+diff --git a/docs/MOD_PACKAGES.md b/docs/MOD_PACKAGES.md
+index add12a43..69760086 100644
+--- a/docs/MOD_PACKAGES.md
++++ b/docs/MOD_PACKAGES.md
+@@ -1399,3 +1399,22 @@ callbacks. Address collisions or capacity failures reject the launch through
+ always-on direct implementations. Every session rearms its selected plan.
+ Replacement overrides cannot be selected as netplay local-view plugins: they
+ change shared execution rather than only sandboxed presentation.
++
++## Launcher session overrides
++
++A launcher that owns a game page can start an install with a feature set or
++option values different from the player's saved `mods/state.toml`, without
++rewriting that file. Pass either flag (repeatable) before the first mod
++commit:
++
++```
++--mod-feature <package>/<feature>=on|off
++--mod-option <package>/<feature>/<option>=<value>
++```
++
++The runtime resolves the plan over a copy of the player's selection, applies
++the overrides through the same catalog validation as the launcher ABI, and
++restores the saved selection before `install_plan()` persists it. Overrides
++therefore apply to the session only; `mods/state.toml` stays the player's.
++Unknown package, feature or option ids fail the launch with
++`PSX_EXIT_MOD_PLAN` instead of being ignored.
+diff --git a/generated/OpenBIOS.emitter.sha b/generated/OpenBIOS.emitter.sha
+index 41eb79eb..f91dbb1e 100644
+--- a/generated/OpenBIOS.emitter.sha
++++ b/generated/OpenBIOS.emitter.sha
+@@ -1 +1 @@
+-58ed97502c77b329a79002a6fac9b6a1e0fe269c51fe078a724d8e30530eb54b
++d61601355b6dfed302f90d0076a48a859f09397c6421a581b4fc565f35bf1ae0
+diff --git a/recompiler/src/config_loader.cpp b/recompiler/src/config_loader.cpp
+index ea413b55..e2af3405 100644
+--- a/recompiler/src/config_loader.cpp
++++ b/recompiler/src/config_loader.cpp
+@@ -1928,6 +1928,11 @@ GameConfig load_game_config(const fs::path& config_path_in) {
+     auto required_disc_sha256=required_hashes("required_disc_sha256");
+     auto required_disc_fps=required_hashes("required_disc_fps");
+ 
++    // Opt-in hard serial gate for direct/launcher starts.
++    bool strict_disc_id = false;
++    if (game.contains("strict_disc_id"))
++        strict_disc_id = toml::find<bool>(game, "strict_disc_id");
++
+     // [netplay] mount / TOC policy for online (see DiscIdentity::disc_fp).
+     bool netplay_require_cue = false;
+     int netplay_required_tracks = 0;
+@@ -3007,6 +3012,7 @@ GameConfig load_game_config(const fs::path& config_path_in) {
+         /*disc_sha1*/        disc_sha1,
+         /*required_disc_sha256*/ required_disc_sha256,
+         /*required_disc_fps*/ required_disc_fps,
++        /*strict_disc_id*/    strict_disc_id,
+         /*netplay_require_cue*/ netplay_require_cue,
+         /*netplay_required_tracks*/ netplay_required_tracks,
+         /*has_netplay_required_leadout*/ has_netplay_required_leadout,
+diff --git a/recompiler/src/config_loader.h b/recompiler/src/config_loader.h
+index 5237049c..d644887d 100644
+--- a/recompiler/src/config_loader.h
++++ b/recompiler/src/config_loader.h
+@@ -1072,6 +1072,10 @@ struct GameConfig {
+     std::vector<std::string> required_disc_sha256;
+     // Optional original mount/TOC identities; same canonical disc_fp as netplay.
+     std::vector<std::string> required_disc_fps;
++    // Opt-in: refuse a readable disc whose serial does not match this title
++    // (PSX_EXIT_WRONG_DISC) instead of warning and booting. Multi-disc sets
++    // use the per-disc serial above, so a set is still checked disc by disc.
++    bool                  strict_disc_id = false;
+ 
+     // [netplay] disc mount policy (portable across psxrecomp titles).
+     // Data-track CRC proves "right game"; these prove "same CD geometry"
+diff --git a/runtime/include/mod_launcher_overrides.h b/runtime/include/mod_launcher_overrides.h
+new file mode 100644
+index 00000000..cb9fdc01
+--- /dev/null
++++ b/runtime/include/mod_launcher_overrides.h
+@@ -0,0 +1,28 @@
++#pragma once
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++/* Session-scoped mod selections supplied on the command line by a launcher.
++ *
++ * The runtime already persists player choices in mods/state.toml. A launcher
++ * that owns the game page needs to start the same install with a different
++ * feature set or option value without rewriting that file (which belongs to
++ * the player and to the in-game Mods page). These overrides are resolved over
++ * a copy of the saved selection for the launch, and are never saved back.
++ *
++ * Add them before the first mod runtime commit (main() parses the CLI flags
++ * and calls these before mod_runtime_commit). Unknown package, feature or
++ * option ids fail the launch plan instead of being ignored, so a typo in a
++ * launcher profile is visible. */
++int psx_mod_launcher_override_feature(const char* package_id,
++                                      const char* feature_id, int enabled);
++int psx_mod_launcher_override_option(const char* package_id,
++                                     const char* feature_id,
++                                     const char* option_id, const char* value);
++void psx_mod_launcher_override_clear(void);
++
++#ifdef __cplusplus
++}
++#endif
+diff --git a/runtime/include/psx_exit_codes.h b/runtime/include/psx_exit_codes.h
+new file mode 100644
+index 00000000..b35d0afe
+--- /dev/null
++++ b/runtime/include/psx_exit_codes.h
+@@ -0,0 +1,26 @@
++#pragma once
++
++/* Stable process exit codes for launchers and wrappers.
++ *
++ * The runtime historically returned 1 for every startup failure, so a launcher
++ * could only say "the game did not start". These codes name the failure class
++ * without changing the meaning of 0 (clean quit) or 1 (unclassified error).
++ * New codes are only added for failures a launcher can act on; anything
++ * ambiguous stays PSX_EXIT_ERROR.
++ *
++ * Keep this list append-only. A launcher ships a mapping for the codes it
++ * knows and shows a generic report for the rest. */
++enum PsxExitCode {
++    PSX_EXIT_OK = 0,
++    PSX_EXIT_ERROR = 1,
++    PSX_EXIT_USAGE = 2,
++    PSX_EXIT_GAME_CONFIG = 3,
++    PSX_EXIT_NO_DISC = 4,
++    PSX_EXIT_DISC_UNREADABLE = 5,
++    PSX_EXIT_WRONG_DISC = 6,
++    PSX_EXIT_SBI_REQUIRED = 7,
++    PSX_EXIT_DISC_MOUNT = 8,
++    PSX_EXIT_BIOS = 9,
++    PSX_EXIT_MOD_PLAN = 10,
++    PSX_EXIT_RENDERER = 11,
++};
+diff --git a/runtime/src/main.cpp b/runtime/src/main.cpp
+index 292a5b5c..e2dd9ef0 100644
+--- a/runtime/src/main.cpp
++++ b/runtime/src/main.cpp
+@@ -1,5 +1,7 @@
+ #include "audio_sync.h"
+ #include "audio_catchup.h"
++#include "psx_exit_codes.h"
++#include "mod_launcher_overrides.h"
+ /* main.cpp — Phase 3 runtime entry point.
+  *
+  * Loads BIOS ROM, initializes CPU state + SDL display, calls into
+@@ -3245,25 +3247,43 @@ static DiscValidation validate_disc_image(const std::filesystem::path& selected_
+     return v;
+ }
+ 
++static bool g_strict_disc_id = false;
++/* Why the last validate_disc_for_launch() refused the image. The resolver
++ * returns an empty path for several different reasons; main() reports this
++ * code so a launcher can tell "no disc chosen" from "wrong region". */
++static int g_disc_failure_code = PSX_EXIT_NO_DISC;
++
+ static bool validate_disc_for_launch(const std::filesystem::path& path,
+                                      const std::string& game_id) {
++    g_disc_failure_code = PSX_EXIT_NO_DISC;
+     std::string identity_error;
+     if (!PSXRecompV4::required_original_disc_matches(path, &identity_error)) {
+         std::fprintf(stderr, "psxrecomp: %s\n", identity_error.c_str());
++        g_disc_failure_code = PSX_EXIT_WRONG_DISC;
+         return false;
+     }
+     const DiscValidation v = validate_disc_image(path, game_id);
+     if (!v.opened) {
++        g_disc_failure_code = PSX_EXIT_DISC_UNREADABLE;
+         launcher_warning("Disc Image Not Found", v.detail + "\n\nSelected path:\n" + path.string());
+         return false;
+     }
+     if (!v.has_header || !v.id_matches) {
++        const std::string message =
++            v.detail + "\n\nThis may be the wrong game or a corrupt image.";
++        if (g_strict_disc_id) {
++            g_disc_failure_code = PSX_EXIT_WRONG_DISC;
++            launcher_warning("Wrong Disc Image",
++                message + "\n\nThis recomp refuses a disc it cannot identify.");
++            return false;
++        }
+         launcher_warning("Disc Image Warning",
+-            v.detail + "\n\nThis may be the wrong game or a corrupt image. The runtime will try to run it anyway.");
++            message + " The runtime will try to run it anyway.");
+     }
+     const auto resolved = PSXRecompV4::resolve_disc_path(path);
+     const auto companion = PSXRecompV4::check_sbi_setup(resolved.data, resolved.mount);
+     if (!companion.ready) {
++        g_disc_failure_code = PSX_EXIT_SBI_REQUIRED;
+         launcher_warning("SBI file required", companion.message);
+         return false;
+     }
+@@ -17842,6 +17862,47 @@ int main(int argc, char** argv) {
+         cli_path_arg_storage.push_back(std::move(best));
+         return cli_path_arg_storage.back().c_str();
+     };
++    /* Session-scoped mod overrides. A launcher owns the game page and needs
++     * to start the same install with a different feature/option set without
++     * rewriting the player's mods/state.toml. Parsing is strict so a typo in
++     * a launcher profile fails here (usage) instead of silently launching
++     * with the player's selection. */
++    auto parse_mod_feature_override = [](const char* spec) -> bool {
++        if (!spec) return false;
++        const std::string text(spec);
++        const size_t slash = text.find('/');
++        const size_t equal = text.rfind('=');
++        if (slash == std::string::npos || equal == std::string::npos ||
++            equal <= slash + 1 || slash == 0) return false;
++        const std::string package_id = text.substr(0, slash);
++        const std::string feature_id = text.substr(slash + 1, equal - slash - 1);
++        const std::string value = text.substr(equal + 1);
++        int enabled = -1;
++        if (value == "on" || value == "1" || value == "true") enabled = 1;
++        else if (value == "off" || value == "0" || value == "false") enabled = 0;
++        if (enabled < 0) return false;
++        return psx_mod_launcher_override_feature(
++            package_id.c_str(), feature_id.c_str(), enabled) != 0;
++    };
++    auto parse_mod_option_override = [](const char* spec) -> bool {
++        if (!spec) return false;
++        const std::string text(spec);
++        const size_t first = text.find('/');
++        const size_t second = first == std::string::npos
++            ? std::string::npos : text.find('/', first + 1);
++        const size_t equal = second == std::string::npos
++            ? std::string::npos : text.find('=', second + 1);
++        if (first == std::string::npos || second == std::string::npos ||
++            equal == std::string::npos || first == 0 ||
++            second == first + 1 || equal == second + 1) return false;
++        const std::string package_id = text.substr(0, first);
++        const std::string feature_id = text.substr(first + 1, second - first - 1);
++        const std::string option_id = text.substr(second + 1, equal - second - 1);
++        const std::string value = text.substr(equal + 1);
++        return psx_mod_launcher_override_option(
++            package_id.c_str(), feature_id.c_str(),
++            option_id.c_str(), value.c_str()) != 0;
++    };
+     PsxNetplayConfig net_cfg;
+     psx_netplay_config_defaults(&net_cfg);
+     psx_netplay_apply_env(&net_cfg);  /* CLI flags below win over env */
+@@ -17850,6 +17911,10 @@ int main(int argc, char** argv) {
+      *   --game <toml>       load a game config (single source of truth for
+      *                       disc / memcard / window title / debug port)
+      *   --disc <path>       override the game config disc path
++     *   --mod-feature <pkg>/<feature>=on|off
++     *                       enable/disable a mod feature for this launch only
++     *   --mod-option <pkg>/<feature>/<option>=<value>
++     *                       override one mod option for this launch only
+      *   --debug-port <n>    override the TCP debug-server port (multi-instance)
+      *   --memcard-dir <path> override card/save/options state (multi-instance)
+      *   --renderer <name>   override the renderer: software|opengl|vulkan
+@@ -17877,6 +17942,20 @@ int main(int argc, char** argv) {
+             game_config_path = consume_path_arg(i);
+         } else if (std::strcmp(argv[i], "--disc") == 0 && i + 1 < argc) {
+             disc_override_path = consume_path_arg(i);
++        } else if (std::strcmp(argv[i], "--mod-feature") == 0 && i + 1 < argc) {
++            if (!parse_mod_feature_override(argv[++i])) {
++                std::fprintf(stderr,
++                    "psxrecomp: --mod-feature wants <package>/<feature>=on|off, got: %s\n",
++                    argv[i]);
++                return PSX_EXIT_USAGE;
++            }
++        } else if (std::strcmp(argv[i], "--mod-option") == 0 && i + 1 < argc) {
++            if (!parse_mod_option_override(argv[++i])) {
++                std::fprintf(stderr,
++                    "psxrecomp: --mod-option wants <package>/<feature>/<option>=<value>, got: %s\n",
++                    argv[i]);
++                return PSX_EXIT_USAGE;
++            }
+         } else if (std::strcmp(argv[i], "--debug-port") == 0 && i + 1 < argc) {
+             cli_debug_port = std::atoi(argv[++i]);
+         } else if (std::strcmp(argv[i], "--memcard-dir") == 0 && i + 1 < argc) {
+@@ -17979,7 +18058,7 @@ int main(int argc, char** argv) {
+             const auto own = PSXRecompV4::regional::self.parent_path() / "game.toml";
+             if (!std::filesystem::is_regular_file(own)) {
+                 std::fprintf(stderr, "Missing regional backend game.toml\n");
+-                return 1;
++                return PSX_EXIT_GAME_CONFIG;
+             }
+             default_game_config_storage = own.string();
+             game_config_path = default_game_config_storage.c_str();
+@@ -18119,6 +18198,7 @@ int main(int argc, char** argv) {
+             game_disc_crc     = gc.disc_crc;
+             PSXRecompV4::required_disc_sha256() = gc.required_disc_sha256;
+             PSXRecompV4::required_disc_fps() = gc.required_disc_fps;
++            g_strict_disc_id = gc.strict_disc_id;
+             resolved_audio_buffer_ms = gc.runtime.audio_buffer_ms;
+             g_netplay_disc_expect.require_cue = gc.netplay_require_cue;
+             g_netplay_disc_expect.required_tracks = gc.netplay_required_tracks;
+@@ -18784,7 +18864,7 @@ int main(int argc, char** argv) {
+         } catch (const std::exception& ex) {
+             std::fprintf(stderr, "psxrecomp: failed to load --game %s: %s\n",
+                          game_config_path, ex.what());
+-            return 1;
++            return PSX_EXIT_GAME_CONFIG;
+         }
+     }
+ #if defined(RECOMP_LAUNCHER)
+@@ -20372,7 +20452,7 @@ int main(int argc, char** argv) {
+             resolved_disc, disc_override_path, game_id, argv[0]);
+         if (game_config_path && resolved_disc.empty()) {
+             std::fprintf(stderr, "psxrecomp: no disc image selected; exiting.\n");
+-            return 1;
++            return g_disc_failure_code;
+         }
+     }
+ 
+@@ -20389,12 +20469,12 @@ int main(int argc, char** argv) {
+                                  ? "psxrecomp: cannot apply netplay mods: %s\n"
+                                  : "psxrecomp: cannot clear mods for netplay: %s\n",
+                              mod_error.c_str());
+-                return 1;
++                return PSX_EXIT_MOD_PLAN;
+             }
+         } else if (!PSXRecompV4::mod_runtime_commit(resolved_disc, &mod_error)) {
+             std::fprintf(stderr, "psxrecomp: cannot launch with selected mods: %s\n",
+                          mod_error.c_str());
+-            return 1;
++            return PSX_EXIT_MOD_PLAN;
+         }
+         timing.success();
+     }
+@@ -20614,7 +20694,7 @@ session_reboot:
+         std::fprintf(stderr, "psxrecomp: BIOS activate failed for %s%s\n",
+                      bios_path_str.c_str(),
+                      rematch_session ? " (rematch)" : "");
+-        return 1;
++        return PSX_EXIT_BIOS;
+     }
+     if (rematch_session) {
+         std::fprintf(stdout,
+@@ -21002,7 +21082,7 @@ session_reboot:
+         detail += "\n\nIf this is a .cue, check that every FILE line it names "
+                   "exists next to it; selecting the .bin directly also works.";
+         launcher_warning("Disc Could Not Be Mounted", detail);
+-        return 1;
++        return PSX_EXIT_DISC_MOUNT;
+     }
+     /* Register the roster so the mounted image can still be changed once the
+      * game runs (debug server `disc_select`). Take the current index from what
+@@ -21351,7 +21431,7 @@ session_reboot:
+     );
+     if (!sdl_window) {
+         std::fprintf(stderr, "SDL_CreateWindow failed: %s\n", SDL_GetError());
+-        return 1;
++        return PSX_EXIT_RENDERER;
+     }
+     psx_apply_window_icon(sdl_window, argv[0]);
+     s_window_fullscreen = {};
+diff --git a/runtime/src/mod_runtime.cpp b/runtime/src/mod_runtime.cpp
+index bfcf80de..c774b213 100644
+--- a/runtime/src/mod_runtime.cpp
++++ b/runtime/src/mod_runtime.cpp
+@@ -104,10 +104,111 @@ extern "C" void mod_runtime_set_progress_hook(void (*hook)(void)) {
+     g_progress_hook = hook;
+ }
+ 
++/* Launcher session overrides (mod_launcher_overrides.h). Stored as the
++ * launcher spelled them; validated against the catalog when a commit resolves
++ * a plan, so they never depend on scan order or on main() knowing the ids. */
++namespace {
++struct LauncherFeatureOverride {
++    std::string package_id;
++    std::string feature_id;
++    bool enabled = false;
++};
++struct LauncherOptionOverride {
++    std::string package_id;
++    std::string feature_id;
++    std::string option_id;
++    std::string value;
++};
++std::vector<LauncherFeatureOverride> g_launcher_feature_overrides;
++std::vector<LauncherOptionOverride> g_launcher_option_overrides;
++}  // namespace
++
++extern "C" int psx_mod_launcher_override_feature(const char* package_id,
++                                                 const char* feature_id,
++                                                 int enabled) {
++    if (!package_id || !feature_id || !package_id[0] || !feature_id[0]) return 0;
++    g_launcher_feature_overrides.push_back(
++        {package_id, feature_id, enabled != 0});
++    return 1;
++}
++
++extern "C" int psx_mod_launcher_override_option(const char* package_id,
++                                                const char* feature_id,
++                                                const char* option_id,
++                                                const char* value) {
++    if (!package_id || !feature_id || !option_id || !value ||
++        !package_id[0] || !feature_id[0] || !option_id[0]) return 0;
++    g_launcher_option_overrides.push_back(
++        {package_id, feature_id, option_id, value});
++    return 1;
++}
++
++extern "C" void psx_mod_launcher_override_clear(void) {
++    g_launcher_feature_overrides.clear();
++    g_launcher_option_overrides.clear();
++}
++
++
+ namespace PSXRecompV4 {
+ namespace {
+ thread_local const ModPrepareProgress* active_prepare_progress = nullptr;
+ 
++bool have_launcher_overrides() {
++    return !::g_launcher_feature_overrides.empty() ||
++           !::g_launcher_option_overrides.empty();
++}
++
++/* Layer the launch-only overrides over a copy of the player's saved
++ * selections. The caller resolves against this copy and restores the
++ * original before install_plan() saves state, so a launcher launch never
++ * rewrites mods/state.toml. */
++bool apply_launcher_overrides(ModPackageManager& selected, std::string* error) {
++    for (const auto& item : ::g_launcher_feature_overrides) {
++        const ModFeature* feature =
++            selected.selected_feature(item.package_id, item.feature_id);
++        if (!feature) {
++            if (error) *error = "launcher override: no feature " +
++                item.package_id + "/" + item.feature_id + " in this build's catalog";
++            return false;
++        }
++        std::string detail;
++        const bool ok = feature->legacy
++            ? selected.set_enabled(item.package_id, item.enabled, &detail)
++            : selected.set_feature_enabled(item.package_id, item.feature_id,
++                                           item.enabled, &detail);
++        if (!ok) {
++            if (error) *error = detail.empty()
++                ? "launcher override: cannot set " + item.package_id + "/" +
++                    item.feature_id
++                : detail;
++            return false;
++        }
++    }
++    for (const auto& item : ::g_launcher_option_overrides) {
++        const ModFeature* feature =
++            selected.selected_feature(item.package_id, item.feature_id);
++        if (!feature) {
++            if (error) *error = "launcher override: no feature " +
++                item.package_id + "/" + item.feature_id + " in this build's catalog";
++            return false;
++        }
++        std::string detail;
++        const bool ok = feature->legacy
++            ? selected.set_option(item.package_id, item.option_id, item.value,
++                                  &detail)
++            : selected.set_feature_option(item.package_id, item.feature_id,
++                                          item.option_id, item.value, &detail);
++        if (!ok) {
++            if (error) *error = detail.empty()
++                ? "launcher override: unsupported option " + item.option_id +
++                    " on " + item.package_id + "/" + item.feature_id
++                : detail;
++            return false;
++        }
++    }
++    return true;
++}
++
+ bool preparation_continues(float fraction, const char* text, std::string* error) {
+     if (!active_prepare_progress || !*active_prepare_progress ||
+         (*active_prepare_progress)(fraction,text)) return true;
+@@ -2498,7 +2599,8 @@ bool mod_runtime_commit(const std::filesystem::path& disc_path, std::string* err
+         if (error) *error = s.error;
+         return false;
+     }
+-    if (save_selection && prepared_ticket_matches(disc_path)) {
++    if (save_selection && !have_launcher_overrides() &&
++        prepared_ticket_matches(disc_path)) {
+         if (!s.provider_preparing) s.ticket_ready = false;
+         clear_function_entry_hooks();
+         s.disc_extents.clear();
+@@ -2554,11 +2656,26 @@ bool mod_runtime_commit(const std::filesystem::path& disc_path, std::string* err
+     inputs.stable = false;
+ #endif
+     ModResolution plan;
++    std::map<std::string, ModSelection> player_selection;
++    const bool use_launcher_overrides =
++        save_selection && have_launcher_overrides();
++    if (use_launcher_overrides) {
++        /* Resolve over a copy; the real manager (and therefore save_state)
++         * keeps the player's own selection. */
++        ModPackageManager overridden = s.manager;
++        if (!apply_launcher_overrides(overridden, &s.error)) {
++            if (error) *error = s.error;
++            return false;
++        }
++        player_selection = s.manager.exchange_selections(overridden.selections());
++    }
+     {
+         HostLaunchTimingScope resolve_timing(HOST_LAUNCH_RESOLVE);
+         plan = s.manager.resolve(s.game_id, s.exe_sha256, s.disc_sha256);
+         if (plan.ok) resolve_timing.success();
+     }
++    if (use_launcher_overrides)
++        s.manager.exchange_selections(std::move(player_selection));
+     const bool ok = install_plan(s, std::move(plan), save_selection,
+                                  !save_selection, error, &inputs);
+     if (ok) timing.success();
+diff --git a/tools/create_release_archive.py b/tools/create_release_archive.py
+new file mode 100644
+index 00000000..983381b2
+--- /dev/null
++++ b/tools/create_release_archive.py
+@@ -0,0 +1,82 @@
++#!/usr/bin/env python3
++"""Create a release archive from a staged game directory.
++
++The Windows packager has always written a zip. Linux launchers (and
++RecompLauncher) expect a tar archive, so the packager can hand the same
++staged tree to this script instead. Executable bits are preserved from the
++stage, which is what makes run-flat.sh executable after extraction.
++
++Usage:
++  create_release_archive.py --source dist/stage-game-linux-x64 \
++                            --output dist/mohu-1.0.0-linux-x64.tar.gz
++"""
++
++from __future__ import annotations
++
++import argparse
++import os
++import sys
++import tarfile
++
++
++MODES = {
++    ".tar": "w",
++    ".tar.gz": "w:gz",
++    ".tgz": "w:gz",
++    ".tar.xz": "w:xz",
++    ".txz": "w:xz",
++}
++
++
++def archive_mode(path: str) -> str:
++    for suffix, mode in MODES.items():
++        if path.endswith(suffix):
++            return mode
++    raise SystemExit(
++        "error: output must end in .tar, .tar.gz/.tgz or .tar.xz/.txz: " + path
++    )
++
++
++def add_tree(tar: tarfile.TarFile, source: str, arcname: str) -> None:
++    info = tar.gettarinfo(source, arcname=arcname)
++    # Keep content ownership out of the archive; extraction maps it to the
++    # player. Permissions (including the executable bit) are preserved.
++    info.uid = 0
++    info.gid = 0
++    info.uname = ""
++    info.gname = ""
++    if info.isdir():
++        tar.addfile(info)
++        for name in sorted(os.listdir(source)):
++            add_tree(tar, os.path.join(source, name), arcname + "/" + name)
++    elif info.isreg():
++        with open(source, "rb") as handle:
++            tar.addfile(info, handle)
++    else:
++        # Symlinks and the like are rare beside a game, but keep them as tar
++        # describes them rather than silently dropping staged content.
++        tar.addfile(info)
++
++
++def main() -> int:
++    parser = argparse.ArgumentParser()
++    parser.add_argument("--source", required=True)
++    parser.add_argument("--output", required=True)
++    args = parser.parse_args()
++
++    if not os.path.isdir(args.source):
++        print(f"error: source is not a directory: {args.source}", file=sys.stderr)
++        return 1
++
++    mode = archive_mode(args.output)
++    out_dir = os.path.dirname(os.path.abspath(args.output))
++    if out_dir:
++        os.makedirs(out_dir, exist_ok=True)
++    with tarfile.open(args.output, mode) as tar:
++        for name in sorted(os.listdir(args.source)):
++            add_tree(tar, os.path.join(args.source, name), name)
++    return 0
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+diff --git a/tools/package_game_release.sh b/tools/package_game_release.sh
+index 00a3b5ca..215f86d3 100755
+--- a/tools/package_game_release.sh
++++ b/tools/package_game_release.sh
+@@ -25,7 +25,8 @@
+ #     [--overlay-cache-root DIR]         # ship a prebuilt overlay shard cache
+ #     [--ship-without-overlay-cache-because REASON]
+ #     [--no-overlay-toolchain]           # do not bundle overlay_toolchain/
+-#     [--stage-only]                    # validate/stage, without ZIP compression
++#     [--archive zip|tar|tar.gz|tar.xz]  # output format (default: zip)
++#     [--stage-only]                    # validate/stage, without compression
+ #     [--disc-hint "your legally owned disc"] [--version-env RELEASE_VERSION]
+ #
+ # Overlay cache. The runtime's overlay shard cache is compiled FROM THE DISC,
+@@ -84,6 +85,7 @@ SHIP_WITHOUT_OVERLAY_CACHE_BECAUSE=""
+ SHIP_WITHOUT_OVERLAY_CACHE_KEY_BECAUSE=""
+ STAGE_OVERLAY_TOOLCHAIN=1
+ STAGE_ONLY=0
++ARCHIVE_FORMAT="zip"
+ if [[ -z "${EXCLUDE_DEV_MODS:-}" ]]; then
+   if [[ -n "${CI:-}" ]]; then EXCLUDE_DEV_MODS=1; else EXCLUDE_DEV_MODS=0; fi
+ fi
+@@ -113,6 +115,7 @@ while [[ $# -gt 0 ]]; do
+     --ship-without-overlay-cache-because) SHIP_WITHOUT_OVERLAY_CACHE_BECAUSE="${2:?}"; shift 2 ;;
+     --ship-without-overlay-cache-key-because) SHIP_WITHOUT_OVERLAY_CACHE_KEY_BECAUSE="${2:?}"; shift 2 ;;
+     --no-overlay-toolchain) STAGE_OVERLAY_TOOLCHAIN=0; shift ;;
++    --archive) ARCHIVE_FORMAT="${2:?}"; shift 2 ;;
+     --stage-only) STAGE_ONLY=1; shift ;;
+     --exclude-dev-mods) EXCLUDE_DEV_MODS=1; shift ;;
+     --include-dev-mods) EXCLUDE_DEV_MODS=0; shift ;;
+@@ -242,7 +245,16 @@ printf '%s\n' "${VERSION}" >"${ROOT}/VERSION"
+ 
+ DIST="${ROOT:?}/dist"
+ STAGE="${DIST:?}/stage-game-${ARTIFACT:?}"
+-ZIP_NAME="${ZIP_PREFIX:?}-${VERSION:?}${CHANNEL_SUFFIX}-${ARTIFACT:?}.zip"
++case "${ARCHIVE_FORMAT}" in
++  zip)    ARCHIVE_EXT=".zip" ;;
++  tar)    ARCHIVE_EXT=".tar" ;;
++  tar.gz) ARCHIVE_EXT=".tar.gz" ;;
++  tar.xz) ARCHIVE_EXT=".tar.xz" ;;
++  *)
++    echo "error: --archive must be zip, tar, tar.gz or tar.xz (got '${ARCHIVE_FORMAT}')" >&2
++    exit 2 ;;
++esac
++ZIP_NAME="${ZIP_PREFIX:?}-${VERSION:?}${CHANNEL_SUFFIX}-${ARTIFACT:?}${ARCHIVE_EXT}"
+ rm -rf "${STAGE:?}"
+ mkdir -p "${STAGE}" "${DIST}"
+ if [[ "${STAGE_ONLY}" != 1 ]]; then rm -f "${DIST:?}/${ZIP_NAME:?}"; fi
+@@ -438,6 +450,9 @@ for d in "${DOCS[@]+"${DOCS[@]}"}"; do
+   [[ -f "${ROOT}/${d}" ]] || { echo "error: --doc ${d} not found" >&2; exit 1; }
+   cp -a "${ROOT}/${d}" "${STAGE}/$(basename "${d}")"
+ done
++# A staged shell launcher must stay executable through tar/zip extraction, even
++# when the source came from a Windows checkout that did not carry the mode bit.
++find "${STAGE}" -maxdepth 1 -name '*.sh' -exec chmod +x {} + 2>/dev/null || true
+ mkdir -p "${STAGE}/saves"
+ 
+ cat >"${STAGE}/README.txt" <<EOF
+@@ -518,10 +533,15 @@ fi
+ find "${STAGE}" -exec touch -c {} + 2>/dev/null || find "${STAGE}" -exec touch {} +
+ 
+ if [[ "${STAGE_ONLY}" == 1 ]]; then
+-  echo "Staged ${STAGE} (ZIP compression skipped)"
++  echo "Staged ${STAGE} (compression skipped)"
+   exit 0
+ fi
+ 
+-"${PY}" "${SCRIPT_DIR}/create_release_zip.py" --source "${STAGE}" --output "${DIST}/${ZIP_NAME}" >/dev/null
++case "${ARCHIVE_FORMAT}" in
++  zip)
++    "${PY}" "${SCRIPT_DIR}/create_release_zip.py" --source "${STAGE}" --output "${DIST}/${ZIP_NAME}" >/dev/null ;;
++  *)
++    "${PY}" "${SCRIPT_DIR}/create_release_archive.py" --source "${STAGE}" --output "${DIST}/${ZIP_NAME}" >/dev/null ;;
++esac
+ echo "Wrote ${DIST}/${ZIP_NAME}"
+ du -h "${DIST}/${ZIP_NAME}"

@@ -1,0 +1,22 @@
+format_version = 13
+id = "mohu.achievements"
+version = "0.1.0"
+name = "Recomp Achievements"
+author = "Medal-Of-Honor-Underground-PSX-Recomp"
+description = "Reports gameplay milestones to RecompLauncher. Does nothing when the game is started outside the launcher."
+license = "Recomp Achievements License 1.0"
+resolver = "declarative"
+
+[[target]]
+game_id = "SLUS-01270"
+
+[[feature]]
+id = "achievements"
+name = "Achievements"
+description = "Achievements, Beaten and Mastered, and leaderboards through RecompLauncher."
+channel = "stable"
+default_enabled = true
+
+[[plugin]]
+feature = "achievements"
+id = "mohu.achievements"

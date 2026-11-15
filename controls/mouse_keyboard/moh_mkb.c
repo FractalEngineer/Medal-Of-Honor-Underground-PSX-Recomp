@@ -1,5 +1,6 @@
 #include "mod_plugins.h"
 #include "moh_mkb.h"
+#include "moh_mkb_settings.h"
 #include "psx_keybinds.h"
 #include "mod_input_binding.h"
 #include "cpu_state.h"
@@ -62,6 +63,32 @@ static double wheel_remainder;
 static int profile_context = -1;
 static double mouse_gain = 0.5, scoped_gain = 0.4;
 static double aimed_zoom = 1.25;
+static MohuMkbSettings launcher_settings;
+static int launcher_settings_loaded;
+
+/* RecompLauncher writes settings.toml before starting the game. Only honor
+ * its [mkb]/[mkb_bindings] tables when the launcher actually started us, so a
+ * direct RunFlat launch keeps the player's own Mods-page choices. */
+static void load_launcher_settings(void) {
+    memset(&launcher_settings, 0, sizeof(launcher_settings));
+    launcher_settings_loaded = 0;
+    const char* launcher = getenv("RECOMPLAUNCHER");
+    if (!launcher || !*launcher || !strcmp(launcher, "0")) return;
+    const char* configured = getenv("MOHU_LAUNCHER_CONFIG");
+    if (!configured || !*configured) configured = getenv("MOHU_SETTINGS_PATH");
+    if (configured && *configured) {
+        mohu_mkb_settings_read(&launcher_settings, configured);
+        launcher_settings_loaded = 1;
+        return;
+    }
+    const char* base = SDL_GetBasePath();
+    if (!base) return;
+    char path[4096];
+    snprintf(path, sizeof(path), "%ssettings.toml", base);
+    SDL_free((void*)base);
+    mohu_mkb_settings_read(&launcher_settings, path);
+    launcher_settings_loaded = 1;
+}
 enum { FORWARD, BACKWARD, LEFT, RIGHT, FIRE, AIM, RELOAD, USE, JUMP, CROUCH,
        NEXT_WEAPON, PREV_WEAPON, PAUSE, OBJECTIVES, MENU_UP, MENU_DOWN,
        MENU_LEFT, MENU_RIGHT, MENU_CONFIRM, MENU_BACK, ACTION_COUNT };
@@ -85,6 +112,11 @@ static uint32_t reticle_stack;
 static void reset_look(void);
 
 static int integer_option(const char* name, int fallback, int minimum, int maximum) {
+    if (launcher_settings_loaded) {
+        int found = 0;
+        const int value = mohu_mkb_settings_integer(&launcher_settings, name, &found);
+        if (found && value >= minimum && value <= maximum) return value;
+    }
     char value[16], *end;
     if (!psx_mod_option_value(PLUGIN_ID, "mouse-keyboard", name, value, sizeof(value)))
         return fallback;
@@ -133,6 +165,13 @@ static void refresh_bindings(void) {
     for (int i = 0; i < ACTION_COUNT; ++i) {
         char id[64], value[96];
         snprintf(id, sizeof(id), "bind_%s", actions[i].id);
+        if (launcher_settings_loaded) {
+            char tokens[256];
+            if (mohu_mkb_settings_binding_tokens(&launcher_settings, id,
+                                                tokens, sizeof(tokens)) &&
+                psx_mod_parse_input_bindings(tokens, &bindings[i]))
+                continue;
+        }
         if (!psx_mod_option_value(PLUGIN_ID, "mouse-keyboard", id, value, sizeof(value)) ||
             !psx_mod_parse_input_bindings(value, &bindings[i]))
             (void)psx_mod_parse_input_bindings(actions[i].defaults, &bindings[i]);
@@ -937,6 +976,7 @@ static void deactivate(void) {
 
 static void activate(void) {
     if (active) return;
+    load_launcher_settings();
     refresh_sensitivity();
     refresh_bindings();
     mohu_mkb_mouse_reset(&mouse);

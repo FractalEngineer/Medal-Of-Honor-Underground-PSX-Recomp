@@ -1,0 +1,45 @@
+{
+  "format": 1,
+  "game": "medal-of-honor-underground-psx-recomp",
+  "source": "events",
+  "console": "psx",
+  "versions": ">=0.1.7",
+  "achievements": [
+    {
+      "id": 1,
+      "title": "Welcome to the Underground",
+      "description": "Enter gameplay for the first time.",
+      "points": 5,
+      "type": "progression",
+      "event": "gameplay_started"
+    },
+    {
+      "id": 2,
+      "title": "Scoped",
+      "description": "Equip the sniper rifle.",
+      "points": 5,
+      "event": "sniper_equipped"
+    },
+    {
+      "id": 3,
+      "title": "Armed and Dangerous",
+      "description": "Switch weapons during a mission.",
+      "points": 10,
+      "event": "weapon_switched"
+    },
+    {
+      "id": 4,
+      "title": "Against All Odds",
+      "description": "Recover from 10 health or less to 50 or more.",
+      "points": 10,
+      "event": "close_call"
+    },
+    {
+      "id": 5,
+      "title": "Long Haul",
+      "description": "Spend ten minutes in gameplay in one session.",
+      "points": 10,
+      "event": "long_haul"
+    }
+  ]
+}
