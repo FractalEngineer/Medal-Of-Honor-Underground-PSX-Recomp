@@ -1,9 +1,9 @@
 # Medal of Honor Underground Recompiled + Full 6dof VR + Mouse/Keyboard
 
-This is the **v0.1.7** testing release. Windows x64 ships flat and optional VR;
-Linux x64 and arm64 ship flat. Quest 3 through Virtual Desktop with VDXR is the
-primary tested headset setup. SteamVR and Oculus launchers are included, but
-Meta Quest Link and broad runtime coverage are not yet accepted.
+This is the **v0.1.7** testing release. **Linux x64 and arm64 are new** and ship
+flat; Windows x64 ships flat and optional VR. Quest 3 through Virtual Desktop
+with VDXR is the primary tested headset setup. SteamVR and Oculus launchers are
+included, but Meta Quest Link and broad runtime coverage are not yet accepted.
 
 For project context, see the [project README](README.md),
 [v0.1.7 release notes](docs/release/v0.1.7.md) and
@@ -12,11 +12,11 @@ this guide is the source of truth for player setup, controls and limitations.
 
 ## What is in v0.1.7
 
+- **Linux x64 and arm64 flat builds** as `.tar.gz` archives.
 - RecompLauncher one-click setup, with the game's settings, VR mode and mods on
   its page.
 - Recomp Achievements: five starter unlocks for the USA disc (gameplay start,
   sniper, weapon switch, a low-health recovery and a ten-minute session).
-- Linux x64 and arm64 flat builds as `.tar.gz` archives.
 - VR from RecompLauncher: VDXR, SteamVR, Meta/Oculus or the current OpenXR
   runtime, without editing environment variables.
 - Mouse and keyboard enable, sensitivity, aimed zoom and bindings from the

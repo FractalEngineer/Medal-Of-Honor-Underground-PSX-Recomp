@@ -29,8 +29,8 @@ Recomp Achievements adds starter unlocks and leaderboards through
 RecompLauncher; a full Beaten/Mastered set needs the mission-complete hooks.
 Watch the [VR video demo](https://youtu.be/_6LRnH667jc) for gameplay footage.
 
-The latest alpha covers **Windows** (flat and VR) and **Linux x64/arm64**
-(flat) from this fork's
+The latest alpha adds **Linux x64/arm64** flat builds alongside **Windows**
+(flat and VR) from this fork's
 [releases](https://github.com/FractalEngineer/Medal-Of-Honor-Underground-PSX-Recomp/releases/latest).
 See [alpha installation and controls](ALPHA_README.md) before testing.
 Use the [documentation map](docs/README.md) for release notes, technical
